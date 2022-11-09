@@ -57,12 +57,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
         this.uuid = legendaryWeapon.getUUID();
         this.date = legendaryWeapon.getDate();
         this.selectedWeaponSkin = legendaryWeapon.getSelectedWeaponSkin();
-        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+        this.unlockedWeaponSkins = legendaryWeapon.getUnlockedWeaponSkins();
         this.specialization = legendaryWeapon.getSpecializations();
         this.isBound = legendaryWeapon.isBound();
 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
-        this.unlockedSkillBoosts.add(selectedSkillBoost);
+        this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
         this.unlockedTitles = legendaryWeapon.getUnlockedTitles();
         generateStats();
         for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
