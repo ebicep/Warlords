@@ -84,6 +84,21 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
     }
 
+    public void merge(PvEDatabaseStatInformation other) {
+        super.merge(other);
+        this.experiencePvE += other.experiencePvE;
+        this.totalWavesCleared += other.totalWavesCleared;
+        this.totalTimePlayed += other.totalTimePlayed;
+        this.highestWaveCleared = Math.max(this.highestWaveCleared, other.highestWaveCleared);
+        this.longestTimeInCombat = Math.max(this.longestTimeInCombat, other.longestTimeInCombat);
+        this.mostDamageInRound = Math.max(this.mostDamageInRound, other.mostDamageInRound);
+        this.mostDamageInWave = Math.max(this.mostDamageInWave, other.mostDamageInWave);
+        this.fastestGameFinished = Math.min(this.fastestGameFinished, other.fastestGameFinished);
+        other.mobKills.forEach((s, aLong) -> this.mobKills.merge(s, aLong, Long::sum));
+        other.mobAssists.forEach((s, aLong) -> this.mobAssists.merge(s, aLong, Long::sum));
+        other.mobDeaths.forEach((s, aLong) -> this.mobDeaths.merge(s, aLong, Long::sum));
+    }
+
     public long getExperiencePvE() {
         return experiencePvE;
     }

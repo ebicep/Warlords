@@ -105,4 +105,19 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
 
+    public void merge(DatabasePlayerPvEPlayerCountStats other) {
+        super.merge(other);
+        mage.merge(other.mage);
+        warrior.merge(other.warrior);
+        paladin.merge(other.paladin);
+        shaman.merge(other.shaman);
+        rogue.merge(other.rogue);
+        for (Classes value : Classes.VALUES) {
+            this.getClass(value).merge(other.getClass(value));
+        }
+        for (Specializations value : Specializations.VALUES) {
+            this.getSpec(value).merge(other.getSpec(value));
+        }
+    }
+
 }

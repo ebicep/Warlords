@@ -67,6 +67,19 @@ public abstract class AbstractDatabaseStatInformation {
             PlayersCollections playersCollection
     );
 
+    public void merge(AbstractDatabaseStatInformation other) {
+        this.kills += other.kills;
+        this.assists += other.assists;
+        this.deaths += other.deaths;
+        this.wins += other.wins;
+        this.losses += other.losses;
+        this.plays += other.plays;
+        this.damage += other.damage;
+        this.healing += other.healing;
+        this.absorbed += other.absorbed;
+        this.experience += other.experience;
+    }
+
     public double getKDA() {
         if (deaths <= 0) {
             return 0;
