@@ -177,8 +177,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
     @Override
     public void upgrade() {
         super.upgrade();
-        this.energyPerSecondBonus *= energyPerSecondBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.energyPerHitBonus *= energyPerHitBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        if (energyPerSecondBonus > 0) {
+            this.energyPerSecondBonus *= getUpgradeMultiplier();
+        }
+        if (energyPerHitBonus > 0) {
+            this.energyPerHitBonus *= getUpgradeMultiplier();
+        }
         this.skillCritChanceBonus *= skillCritChanceBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
         this.skillCritMultiplierBonus *= skillCritMultiplierBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
     }
@@ -186,11 +190,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
     @Override
     public List<String> getUpgradeLore() {
         List<String> upgradeLore = new ArrayList<>(super.getUpgradeLore());
-        if (energyPerSecondBonus != 0) {
+        if (energyPerSecondBonus > 0) {
             upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(energyPerSecondBonus) + " > " +
                     format(energyPerSecondBonus * (energyPerSecondBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }
-        if (energyPerHitBonus != 0) {
+        if (energyPerHitBonus > 0) {
             upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(energyPerHitBonus) + " > " +
                     format(energyPerHitBonus * (energyPerHitBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }

@@ -198,7 +198,8 @@ public class DatabaseTiming {
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
         List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.CTF)
-                .getComps()
+                .getCategories()
+                .get(1)
                 .getLeaderboards();
         org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players",
                 statsLeaderboards.get(0).getSortedPlayers(PlayersCollections.WEEKLY).size()

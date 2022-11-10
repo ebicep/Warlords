@@ -11,7 +11,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -69,7 +68,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
     }
 
     @Override
-    public PvEDatabaseStatInformation getSpec(Specializations specializations) {
+    public DatabaseBasePvE getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -106,7 +105,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
     }
 
     @Override
-    public PvEDatabaseStatInformation getClass(Classes classes) {
+    public DatabaseBasePvE getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -127,10 +126,38 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
 
+    public DatabaseMagePvE getMage() {
+        return mage;
+    }
+
+    public DatabaseWarriorPvE getWarrior() {
+        return warrior;
+    }
+
+    public DatabasePaladinPvE getPaladin() {
+        return paladin;
+    }
+
+    public DatabaseShamanPvE getShaman() {
+        return shaman;
+    }
+
+    public DatabaseRoguePvE getRogue() {
+        return rogue;
+    }
+
+    public Map<Integer, DatabasePlayerPvEPlayerCountStats> getPlayerCountStats() {
+        return playerCountStats;
+    }
+
     public DatabasePlayerPvEPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;
         }
         return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEPlayerCountStats());
+    }
+
+    public float getClearRate() {
+        return plays == 0 ? 0 : (float) wins / plays;
     }
 }

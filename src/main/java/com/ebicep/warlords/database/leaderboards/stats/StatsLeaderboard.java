@@ -60,7 +60,6 @@ public class StatsLeaderboard {
         for (PlayersCollections value : PlayersCollections.VALUES) {
             sortedTimedPlayers.put(value, new ArrayList<>());
         }
-
     }
 
     public StatsLeaderboard(
@@ -70,6 +69,16 @@ public class StatsLeaderboard {
         this(title, location, valueFunction, stringFunction);
         this.filter = filter;
     }
+
+    public StatsLeaderboard(
+            String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction,
+            Predicate<DatabasePlayer> filter, boolean hidden
+    ) {
+        this(title, location, valueFunction, stringFunction);
+        this.filter = filter;
+        this.hidden = hidden;
+    }
+
 
     @Override
     public int hashCode() {

@@ -120,8 +120,12 @@ public class CompensateCommand extends BaseCommand {
                             .get(),
                     (m, e) -> {
                         if (!e.isShiftClick()) {
-                            SignGUI.open(player, new String[]{"", "Enter Reward", "Title", ""}, (p, lines) -> {
+                            SignGUI.open(player, new String[]{"", "Enter Reward", "Title", "Blank to Cancel"}, (p, lines) -> {
                                 String title = lines[0];
+                                if (title.isEmpty()) {
+                                    ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled", true);
+                                    return;
+                                }
                                 compensate(player, compensation, compensatedPlayers, title);
                             });
                         } else {
