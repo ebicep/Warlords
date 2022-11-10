@@ -42,7 +42,14 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isHealingInstance() || event.getAttacker() != player || !event.getAbility().isEmpty()) {
+                if (event.getAttacker() != player) {
+                    return;
+                }
+                String ability = event.getAbility();
+                if (!ability.isEmpty() && !ability.equals("Windfury Weapon") && !ability.equals("Earthliving Weapon")) {
+                    return;
+                }
+                if (event.isHealingInstance() && !ability.equals("Earthliving Weapon")) {
                     return;
                 }
                 meleeCounter++;
