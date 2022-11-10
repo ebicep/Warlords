@@ -106,7 +106,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets. Can be triggered every " + COOLDOWN + " seconds.";
+        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets for 10 seconds. Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override
