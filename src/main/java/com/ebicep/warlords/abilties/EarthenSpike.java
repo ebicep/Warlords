@@ -170,7 +170,7 @@ public class EarthenSpike extends AbstractAbility {
                                                 .entitiesAround(targetLocation, 6, 6, 6)
                                                 .aliveEnemiesOf(wp)
                                         ) {
-                                            wave.addDamageInstance(wp, "Earthen Rupture", 548, 755, -1, 100, false);
+                                            wave.addDamageInstance(wp, "Earthen Rupture", 548, 695, -1, 100, false);
                                             wave.addSpeedModifier("Spike Slow", -50, 20);
                                         }
                                         Utils.playGlobalSound(targetLocation, Sound.DIG_GRAVEL, 2, 0.5f);

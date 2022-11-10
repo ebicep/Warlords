@@ -66,6 +66,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                 Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
                 EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
             }
+            warlordsNPC.getMob().removeTarget();
         }
     }
 

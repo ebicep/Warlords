@@ -86,9 +86,11 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         masterUpgrade = new Upgrade(
                 "Deflective Tesseract",
                 "Prism Guard - Master Upgrade",
-                "Enemies in a 15 block radius will target you while Prism Guard is active.",
+                "Enemies in a 15 block radius will target you while Prism Guard is active. Additionally, increase your passive damage reduction by 25%",
                 50000,
                 () -> {
+                    abilityTree.getPlayer().getSpec().setDamageResistance(abilityTree.getPlayer().getSpec().getDamageResistance() + 25);
+                    ability.setDuration(ability.getDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

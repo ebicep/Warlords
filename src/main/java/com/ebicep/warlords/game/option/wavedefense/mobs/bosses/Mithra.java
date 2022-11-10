@@ -13,9 +13,11 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -67,46 +69,8 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         int hitRadius = 15;
-        if (ticksElapsed % 80 == 0) {
-            new CircleEffect(
-                    warlordsNPC.getGame(),
-                    warlordsNPC.getTeam(),
-                    warlordsNPC.getLocation(),
-                    10,
-                    new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2.5)
-            ).playEffects();
-            for (WarlordsEntity swapTarget : PlayerFilter
-                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-                    .lookingAtFirst(warlordsNPC)
-            ) {
-                Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
-                Location swapLocation = swapTarget.getLocation();
-                Location ownLocation = warlordsNPC.getLocation();
-                EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
-                EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
-                swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
-                swapTarget.teleport(new Location(
-                        ownLocation.getWorld(),
-                        ownLocation.getX(),
-                        ownLocation.getY(),
-                        ownLocation.getZ(),
-                        ownLocation.getYaw(),
-                        ownLocation.getPitch())
-                );
 
-                warlordsNPC.teleport(new Location(
-                        swapLocation.getWorld(),
-                        swapLocation.getX(),
-                        swapLocation.getY(),
-                        swapLocation.getZ(),
-                        swapLocation.getYaw(),
-                        swapLocation.getPitch())
-                );
-            }
-        }
-
-        if (ticksElapsed % 160 == 0) {
+        if (ticksElapsed % 150 == 0) {
             EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), hitRadius, ParticleEffect.FLAME, 1);
             for (WarlordsEntity knockTarget : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
@@ -127,9 +91,17 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 140 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
-            warlordsNPC.addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
+        if (ticksElapsed % 210 == 0) {
+            int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 5 : 10;
+            Utils.playGlobalSound(warlordsNPC.getLocation(), "mage.inferno.activation", 500, 0.5f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), "mage.inferno.activation", 500, 0.5f);
+            new GameRunnable(warlordsNPC.getGame()) {
+                @Override
+                public void run() {
+                    warlordsNPC.addSpeedModifier("Mithra Slowness", -99, 100);
+                    flameBurstBarrage(multiplier, 10);
+                }
+            }.runTaskLater(40);
         }
     }
 
@@ -155,5 +127,20 @@ public class Mithra extends AbstractZombie implements BossMob {
                 .with(FireworkEffect.Type.BALL_LARGE)
                 .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
+    }
+
+    private void flameBurstBarrage(int delayBetweenShots, int amountOfShots) {
+        new GameRunnable(warlordsNPC.getGame()) {
+            int counter = 0;
+            @Override
+            public void run() {
+                counter++;
+                warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
+
+                if (counter == amountOfShots) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, delayBetweenShots);
     }
 }

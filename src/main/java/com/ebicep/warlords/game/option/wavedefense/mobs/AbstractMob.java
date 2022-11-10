@@ -129,7 +129,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     difficultyMultiplier = 0.75f;
                     break;
                 case HARD:
-                    difficultyMultiplier = 1.25f;
+                    difficultyMultiplier = 1.5f;
                     break;
                 default:
                     difficultyMultiplier = 1;

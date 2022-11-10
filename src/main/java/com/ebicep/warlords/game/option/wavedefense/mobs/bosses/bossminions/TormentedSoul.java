@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -40,7 +41,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-
+        reduceCooldown = option.getDifficulty() == DifficultyIndex.HARD ? 0.4f : 0.2f;
     }
 
     @Override

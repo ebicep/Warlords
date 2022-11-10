@@ -24,7 +24,7 @@ public enum DifficultyIndex {
     ),
     HARD("Hard",
             "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
-                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n\nExtreme scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
+                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n\nExtreme scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
             ChatColor.GOLD,
             25,
             96,
