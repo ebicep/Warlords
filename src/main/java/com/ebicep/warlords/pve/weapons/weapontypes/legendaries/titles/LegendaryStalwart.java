@@ -15,7 +15,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     public static final int CRIT_CHANCE = 20;
     public static final int CRIT_MULTIPLIER = 160;
     public static final int HEALTH_BONUS = 1000;
-    public static final int SPEED_BONUS = 5;
+    public static final int SPEED_BONUS = 7;
 
 
     public LegendaryStalwart() {
