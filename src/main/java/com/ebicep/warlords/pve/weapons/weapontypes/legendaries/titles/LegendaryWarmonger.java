@@ -23,8 +23,8 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 200;
     public static final int HEALTH_BONUS = 800;
     public static final int SPEED_BONUS = 10;
-    public static final float SKILL_CRIT_CHANCE_BONUS = 2.5f;
-    public static final float SKILL_CRIT_MULTIPLIER_BONUS = 5f;
+    public static final int SKILL_CRIT_CHANCE_BONUS = 5;
+    public static final int SKILL_CRIT_MULTIPLIER_BONUS = 10;
 
     public static final int DAMAGE_TO_TAKE = 10000;
     public static final int COOLDOWN = 30;
