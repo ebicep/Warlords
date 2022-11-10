@@ -3,19 +3,21 @@ package com.ebicep.warlords.database.leaderboards.guilds;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 public class GuildLeaderboardManager {
 
-    public static final HashMap<Timing, TreeSet<Guild>> EXPERIENCE_LEADERBOARD = new HashMap<Timing, TreeSet<Guild>>() {{
+    public static final HashMap<Timing, TreeSet<Guild>> EXPERIENCE_LEADERBOARD = new HashMap<>() {{
         for (Timing value : Timing.VALUES) {
             put(value, new TreeSet<>((g1, g2) -> Long.compare(g2.getExperience(value), g1.getExperience(value))));
         }
     }};
-    public static final HashMap<Timing, TreeSet<Guild>> COINS_LEADERBOARD = new HashMap<Timing, TreeSet<Guild>>() {{
+    public static final HashMap<Timing, TreeSet<Guild>> COINS_LEADERBOARD = new HashMap<>() {{
         for (Timing value : Timing.VALUES) {
             put(value, new TreeSet<>((g1, g2) -> Long.compare(g2.getCoins(value), g1.getCoins(value))));
         }
@@ -39,13 +41,16 @@ public class GuildLeaderboardManager {
         COINS_LEADERBOARD.get(timing).addAll(GuildManager.GUILDS);
     }
 
-    public static String getLeaderboardList(TreeSet<Guild> leaderboard, String leaderboardName) {
+    public static String getLeaderboardList(TreeSet<Guild> leaderboard, String leaderboardName, Function<Guild, Number> valueFunction) {
         StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Guild " + leaderboardName + " Leaderboards\n");
 
         int index = 0;
         for (Guild guild : leaderboard) {
-            //TODO show value
-            stringBuilder.append(ChatColor.GRAY).append(index + 1).append(". ").append(ChatColor.GOLD).append(guild.getName()).append("\n");
+            stringBuilder.append(ChatColor.GRAY).append(index + 1).append(". ")
+                    .append(ChatColor.GOLD).append(guild.getName())
+                    .append(ChatColor.GRAY).append(" - ")
+                    .append(ChatColor.GREEN).append(NumberFormat.addCommaAndRound(valueFunction.apply(guild).doubleValue()))
+                    .append("\n");
             index++;
         }
 

@@ -1,9 +1,11 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -15,12 +17,11 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -148,24 +149,22 @@ public abstract class DatabaseGameBase {
                 addGameToDatabase(databaseGame, null);
             }
 
+            if (updatePlayerStats && game.getGameMode() == GameMode.WAVE_DEFENSE) {
+                GuildLeaderboardManager.recalculateAllLeaderboards();
+            }
+
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
 
             //sending message if player information remained the same
-            for (WarlordsPlayer value : PlayerFilterGeneric.playingGameWarlordsPlayers(game)) {
-                if (updatePlayerStats) {
-                    Permissions.sendMessageToDebug(value,
-                            ChatColor.GREEN + "This game was added to the database and player information was updated"
-                    );
-                } else {
-                    Permissions.sendMessageToDebug(value,
-                            ChatColor.GREEN + "This game was added to the database but player information remained the same"
-                    );
-                }
-
-            }
+            ChatChannels.sendDebugMessage((CommandIssuer) null,
+                    ChatColor.GREEN + (updatePlayerStats ?
+                            "This game was added to the database and player information was updated" :
+                            "This game was added to the database but player information remained the same"),
+                    true
+            );
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("ERROR TRYING TO ADD GAME");
+            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Error adding game to database");
         }
         return updatePlayerStats;
     }
