@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerUpgradeUnlockEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import org.bukkit.event.EventHandler;
@@ -43,7 +43,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
             int upgradeCount = 0;
 
             @EventHandler
-            public void onEvent(WarlordsPlayerUpgradeUnlockEvent event) {
+            public void onEvent(WarlordsUpgradeUnlockEvent event) {
                 if (event.getPlayer() == player) {
                     if (baseMaxHealth == -1) {
                         baseMaxHealth = player.getMaxBaseHealth();

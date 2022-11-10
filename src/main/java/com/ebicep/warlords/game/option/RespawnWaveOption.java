@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -120,7 +120,7 @@ public class RespawnWaveOption implements Option, Listener {
             respawn += this.taskPeriod;
         }
         AtomicInteger respawnTime = new AtomicInteger(respawn);
-        Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveRespawnEvent(player, respawnTime));
+        Bukkit.getPluginManager().callEvent(new WarlordsGiveRespawnEvent(player, respawnTime));
         player.setRespawnTimer(Math.max(2, respawnTime.get()));
     }
     

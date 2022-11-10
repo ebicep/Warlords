@@ -1569,7 +1569,7 @@ public abstract class WarlordsEntity {
             }
         }
         if (!fromAttacker) {
-            Bukkit.getPluginManager().callEvent(new WarlordsPlayerEnergyUsed(this, amountSubtracted));
+            Bukkit.getPluginManager().callEvent(new WarlordsEnergyUsedEvent(this, amountSubtracted));
         }
         return amountSubtracted;
     }

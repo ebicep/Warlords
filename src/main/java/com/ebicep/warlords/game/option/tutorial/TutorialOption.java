@@ -2,10 +2,10 @@ package com.ebicep.warlords.game.option.tutorial;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerAbilityActivateEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerUpgradeUnlockEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -88,7 +88,7 @@ public class TutorialOption implements Option {
             }
 
             @EventHandler
-            public void onAbilityActivate(WarlordsPlayerAbilityActivateEvent event) {
+            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
                 if (!event.getPlayer().equals(warlordsPlayer)) {
                     return;
                 }
@@ -171,7 +171,7 @@ public class TutorialOption implements Option {
             }
 
             @EventHandler
-            public void onUpgradePurchase(WarlordsPlayerUpgradeUnlockEvent event) {
+            public void onUpgradePurchase(WarlordsUpgradeUnlockEvent event) {
                 if (event.getPlayer().equals(warlordsPlayer)) {
                     if (stage.get() == 3 && stageSection.get() == 5) {
                         nextStageSection();

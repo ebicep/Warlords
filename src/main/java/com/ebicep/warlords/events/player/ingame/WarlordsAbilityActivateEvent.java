@@ -7,14 +7,14 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
-public class WarlordsPlayerAbilityActivateEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
+public class WarlordsAbilityActivateEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final AbstractAbility ability;
     private boolean cancelled;
 
-    public WarlordsPlayerAbilityActivateEvent(@Nonnull WarlordsEntity player, AbstractAbility ability) {
+    public WarlordsAbilityActivateEvent(@Nonnull WarlordsEntity player, AbstractAbility ability) {
         super(player);
         this.ability = ability;
     }

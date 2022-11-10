@@ -1,16 +1,16 @@
 package com.ebicep.warlords.events.player.ingame.pve;
 
-import com.ebicep.warlords.events.player.ingame.AbstractWarlordsPlayerEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsPlayerDropWeaponEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsDropWeaponEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final AtomicDouble dropRate;
 
-    public WarlordsPlayerDropWeaponEvent(WarlordsEntity player, AtomicDouble dropRate) {
+    public WarlordsDropWeaponEvent(WarlordsEntity player, AtomicDouble dropRate) {
         super(player);
         this.dropRate = dropRate;
     }

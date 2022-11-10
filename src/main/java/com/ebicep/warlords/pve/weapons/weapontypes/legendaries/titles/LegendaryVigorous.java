@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerEnergyUsed;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -51,7 +51,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         player.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onEvent(WarlordsPlayerEnergyUsed event) {
+            public void onEvent(WarlordsEnergyUsedEvent event) {
                 if (event.getPlayer() != player) {
                     return;
                 }

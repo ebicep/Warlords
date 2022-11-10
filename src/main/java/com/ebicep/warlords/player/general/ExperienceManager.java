@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -440,7 +440,7 @@ public class ExperienceManager {
                     break;
                 }
             }
-            Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveExperienceEvent(warlordsPlayer, expGain));
+            Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));
         } else {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
             float multiplier = 1;

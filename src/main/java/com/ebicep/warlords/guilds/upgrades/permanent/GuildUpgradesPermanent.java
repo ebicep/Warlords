@@ -1,7 +1,7 @@
 package com.ebicep.warlords.guilds.upgrades.permanent;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
@@ -35,7 +35,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerGiveExperienceEvent event) {
+                public void onEvent(WarlordsGiveExperienceEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }
@@ -65,7 +65,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerGiveGuildCoinEvent event) {
+                public void onEvent(WarlordsGiveGuildCoinEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }

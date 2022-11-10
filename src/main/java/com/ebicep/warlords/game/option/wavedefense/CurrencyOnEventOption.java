@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -57,7 +57,7 @@ public class CurrencyOnEventOption implements Option, Listener {
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
                 AtomicInteger currencyToAdd = new AtomicInteger(baseCurrencyToAdd);
-                Bukkit.getPluginManager().callEvent(new WarlordsPlayerAddCurrencyEvent(player, currencyToAdd));
+                Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(player, currencyToAdd));
                 player.sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
                 player.addCurrency(currencyToAdd.get());
             }
