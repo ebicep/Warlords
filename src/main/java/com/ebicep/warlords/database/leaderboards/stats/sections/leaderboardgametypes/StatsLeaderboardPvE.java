@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
@@ -22,7 +23,7 @@ import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardMa
 public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> {
 
     private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues", "All"));
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Modes", "All"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getEasyStats(), "Easy Mode", "Easy"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getNormalStats(), "Normal Mode", "Normal"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getHardStats(), "Hard Mode", "Hard"));
@@ -146,27 +147,30 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
                                 .apply(databasePlayer))
-                                .getMasterworksFairEntries();
+                                .getMasterworksFairEntries()
+                                .stream()
+                                .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                                .collect(Collectors.toList());
                         if (masterworksFairEntries.isEmpty()) {
                             return 0;
                         }
                         return (double) masterworksFairEntries.stream()
-                                .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
                                 .mapToInt(MasterworksFairEntry::getPlacement)
                                 .sum() / masterworksFairEntries.size();
                     },
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
                                 .apply(databasePlayer))
-                                .getMasterworksFairEntries();
+                                .getMasterworksFairEntries()
+                                .stream()
+                                .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                                .collect(Collectors.toList());
                         if (masterworksFairEntries.isEmpty()) {
                             return "0";
                         }
-                        return NumberFormat.formatOptionalHundredths(
-                                (double) masterworksFairEntries.stream()
-                                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                        .mapToInt(MasterworksFairEntry::getPlacement)
-                                        .sum() / masterworksFairEntries.size());
+                        return NumberFormat.formatOptionalHundredths((double) masterworksFairEntries.stream()
+                                .mapToInt(MasterworksFairEntry::getPlacement)
+                                .sum() / masterworksFairEntries.size());
                     },
                     databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                     true

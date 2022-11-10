@@ -10,12 +10,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -23,6 +21,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.quests.Quests;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -31,7 +30,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
 import java.util.*;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
@@ -58,6 +56,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //PATERON
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
+    //COMPENSATION
+    @Field("compensation_rewards")
+    private List<CompensationReward> compensationRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -229,7 +230,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.supplyDropEntries.add(entry);
     }
 
-    public List<MasterworksFairReward> getRewards() {
+    public List<MasterworksFairReward> getMasterworksFairRewards() {
         return masterworksFairRewards;
     }
 
@@ -271,4 +272,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     public List<PatreonReward> getPatreonRewards() {
         return patreonRewards;
     }
+
+    public List<CompensationReward> getCompensationRewards() {
+        return compensationRewards;
+    }
+
 }

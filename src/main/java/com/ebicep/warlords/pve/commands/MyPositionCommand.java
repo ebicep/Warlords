@@ -171,7 +171,7 @@ public class MyPositionCommand extends BaseCommand {
                 appendStat("Average Masterworks Fair " + value.name + " Placement", databasePlayer, stats);
             }
 
-            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.toString().replaceAll("Masterworks Fair ", ""), ChatColor.GREEN, true);
         });
     }
 

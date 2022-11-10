@@ -256,8 +256,8 @@ public class CustomScoreboard {
             validatePlayerHolograms(uuid);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
             GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
-            Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
+            int statsCategory = playerLeaderboardInfo.getStatsCategory();
 
             StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.getStatsLeaderboards().get(0);
             List<DatabasePlayer> databasePlayerList = statsLeaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
@@ -266,8 +266,9 @@ public class CustomScoreboard {
             if (!selectedGameType.shortName.isEmpty()) {
                 scoreboardSelection += selectedGameType.shortName + "/";
             }
-            if (!selectedCategory.shortName.isEmpty()) {
-                scoreboardSelection += selectedCategory.shortName + "/";
+            String shortName = STATS_LEADERBOARDS.get(selectedGameType).getCategories().get(statsCategory).getShortName();
+            if (!shortName.isEmpty()) {
+                scoreboardSelection += shortName + "/";
             }
             scoreboardSelection += selectedCollection.name;
 

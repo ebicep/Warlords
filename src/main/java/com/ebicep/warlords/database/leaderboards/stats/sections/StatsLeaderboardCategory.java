@@ -33,7 +33,7 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
         for (StatsLeaderboard statsLeaderboard : getStatsLeaderboards()) {
-            statsLeaderboard.resetHolograms(collection, databasePlayers, getCategoryName(), subTitle);
+            statsLeaderboard.resetHolograms(collection, databasePlayers, getShortName(), subTitle);
         }
     }
 

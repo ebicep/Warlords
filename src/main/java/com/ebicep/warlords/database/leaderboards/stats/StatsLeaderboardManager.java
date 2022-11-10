@@ -153,7 +153,13 @@ public class StatsLeaderboardManager {
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
         int selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
-        return STATS_LEADERBOARDS.get(selectedGameType).getCategories().get(selectedCategory);
+        List<? extends StatsLeaderboardCategory<?>> categories = STATS_LEADERBOARDS.get(selectedGameType).getCategories();
+        if (selectedCategory >= categories.size()) {
+            selectedCategory = 0;
+            playerLeaderboardInfo.setStatsCategory(selectedCategory);
+        }
+
+        return categories.get(selectedCategory);
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
@@ -238,7 +244,7 @@ public class StatsLeaderboardManager {
                 categories.get(selectedCategory),
                 categories.get(selectedCategory == 0 ? categories.size() - 1 : selectedCategory - 1),
                 categories.get(selectedCategory == categories.size() - 1 ? 0 : selectedCategory + 1),
-                StatsLeaderboardCategory::getShortName,
+                StatsLeaderboardCategory::getCategoryName,
                 category -> playerLeaderboardInfo.setStatsCategory(categories.indexOf(category))
         );
         //TIME
