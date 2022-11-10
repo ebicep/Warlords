@@ -55,38 +55,38 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+0.5 Blocks hit radius\n-2.5 Energy cost",
+                "+0.5 Blocks hit radius\n-5 Energy cost",
                 5000,
                 () -> {
                     ability.setHitbox(hitbox + 0.5f);
-                    ability.setEnergyCost(energyCost - 2.5f);
+                    ability.setEnergyCost(energyCost - 5);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+1 Blocks hit radius\n-5 Energy cost",
+                "+1 Blocks hit radius\n-10 Energy cost",
                 10000,
                 () -> {
                     ability.setHitbox(hitbox + 1f);
-                    ability.setEnergyCost(energyCost - 5f);
+                    ability.setEnergyCost(energyCost - 10);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+1.5 Blocks hit radius\n-7.5 Energy cost",
+                "+1.5 Blocks hit radius\n-15 Energy cost",
                 15000,
                 () -> {
                     ability.setHitbox(hitbox + 1.5f);
-                    ability.setEnergyCost(energyCost - 7.5f);
+                    ability.setEnergyCost(energyCost - 15);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+2 Block hit radius\n-10 Energy cost",
+                "+2 Block hit radius\n-20 Energy cost",
                 20000,
                 () -> {
                     ability.setHitbox(hitbox + 2);
-                    ability.setEnergyCost(energyCost - 10);
+                    ability.setEnergyCost(energyCost - 20);
                 }
         ));
 

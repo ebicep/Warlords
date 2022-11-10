@@ -41,7 +41,9 @@ public class NarmerAcolyte extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-
+        if (ticksElapsed % 400 == 0) {
+            warlordsNPC.getMob().removeTarget();
+        }
     }
 
     @Override

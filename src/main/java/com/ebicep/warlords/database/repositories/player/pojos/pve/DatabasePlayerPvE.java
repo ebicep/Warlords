@@ -10,12 +10,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -23,6 +21,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.quests.Quests;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -33,14 +32,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
 
-    private DatabaseMagePvE mage = new DatabaseMagePvE();
-    private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
-    private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
-    private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
-    private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
     //DIFFICULTY STATS
+    @Field("easy_stats")
+    private DatabasePlayerPvEDifficultyStats easyStats = new DatabasePlayerPvEDifficultyStats();
     @Field("normal_stats")
     private DatabasePlayerPvEDifficultyStats normalStats = new DatabasePlayerPvEDifficultyStats();
     @Field("hard_stats")
@@ -60,6 +56,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     //PATERON
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
+    //COMPENSATION
+    @Field("compensation_rewards")
+    private List<CompensationReward> compensationRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -191,87 +190,12 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.subtractCurrency(currency, (long) amount);
     }
 
-    @Override
-    public DatabaseBasePvE getSpec(Specializations specializations) {
-        switch (specializations) {
-            case PYROMANCER:
-                return mage.getPyromancer();
-            case CRYOMANCER:
-                return mage.getCryomancer();
-            case AQUAMANCER:
-                return mage.getAquamancer();
-            case BERSERKER:
-                return warrior.getBerserker();
-            case DEFENDER:
-                return warrior.getDefender();
-            case REVENANT:
-                return warrior.getRevenant();
-            case AVENGER:
-                return paladin.getAvenger();
-            case CRUSADER:
-                return paladin.getCrusader();
-            case PROTECTOR:
-                return paladin.getProtector();
-            case THUNDERLORD:
-                return shaman.getThunderlord();
-            case SPIRITGUARD:
-                return shaman.getSpiritguard();
-            case EARTHWARDEN:
-                return shaman.getEarthwarden();
-            case ASSASSIN:
-                return rogue.getAssassin();
-            case VINDICATOR:
-                return rogue.getVindicator();
-            case APOTHECARY:
-                return rogue.getApothecary();
-        }
-        return null;
-    }
-
-    @Override
-    public DatabaseBasePvE getClass(Classes classes) {
-        switch (classes) {
-            case MAGE:
-                return mage;
-            case WARRIOR:
-                return warrior;
-            case PALADIN:
-                return paladin;
-            case SHAMAN:
-                return shaman;
-            case ROGUE:
-                return rogue;
-        }
-        return null;
-    }
-
-    @Override
-    public DatabaseBasePvE[] getClasses() {
-        return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
-    }
-
     public void subtractCurrency(Currencies currency, Long amount) {
         this.addCurrency(currency, -amount);
     }
 
-    public DatabaseMagePvE getMage() {
-        return mage;
-    }
-
-    public DatabaseWarriorPvE getWarrior() {
-        return warrior;
-    }
-
-    public DatabasePaladinPvE getPaladin() {
-        return paladin;
-    }
-
-    public DatabaseShamanPvE getShaman() {
-        return shaman;
-    }
-
-    public DatabaseRoguePvE getRogue() {
-        return rogue;
+    public DatabasePlayerPvEDifficultyStats getEasyStats() {
+        return easyStats;
     }
 
     public DatabasePlayerPvEDifficultyStats getNormalStats() {
@@ -348,4 +272,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     public List<PatreonReward> getPatreonRewards() {
         return patreonRewards;
     }
+
+    public List<CompensationReward> getCompensationRewards() {
+        return compensationRewards;
+    }
+
 }

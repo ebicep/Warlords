@@ -15,7 +15,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
 
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Fortify - Tier I",
                 "+5% Damage reduction",
                 5000,
                 () -> {
@@ -23,7 +23,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Fortify - Tier II",
                 "+10% Damage reduction",
                 10000,
                 () -> {
@@ -31,7 +31,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Fortify - Tier III",
                 "+15% Damage reduction",
                 15000,
                 () -> {
@@ -39,7 +39,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Fortify - Tier IV",
                 "+20% Damage reduction",
                 20000,
                 () -> {
@@ -87,7 +87,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         masterUpgrade = new Upgrade(
                 "Reflective Barrier",
                 "Vindicate - Master Upgrade",
-                "Enemies who try to attack you from the front are pushed back and reflect the damage you would have taken back.",
+                "Enemies who try to attack you while Vindicate is active are pushed back and reflect the damage you would have taken back.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

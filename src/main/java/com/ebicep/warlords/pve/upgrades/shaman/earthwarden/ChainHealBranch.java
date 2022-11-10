@@ -16,7 +16,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Alleviate - Tier I",
                 "+10% Healing",
                 5000,
                 () -> {
@@ -25,7 +25,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Alleviate - Tier II",
                 "+20% Healing",
                 10000,
                 () -> {
@@ -34,7 +34,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Alleviate - Tier III",
                 "+30% Healing",
                 15000,
                 () -> {
@@ -43,7 +43,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Alleviate - Tier IV",
                 "+40% Healing",
                 20000,
                 () -> {

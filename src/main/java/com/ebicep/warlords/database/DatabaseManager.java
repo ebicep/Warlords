@@ -37,6 +37,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,13 @@ import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame
 
 public class DatabaseManager {
 
-    private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>>() {{
+    private static final AtomicBoolean UPDATING = new AtomicBoolean(false);
+    private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<>() {{
+        for (PlayersCollections value : PlayersCollections.VALUES) {
+            put(value, new HashSet<>());
+        }
+    }};
+    private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE_2 = new ConcurrentHashMap<>() {{
         for (PlayersCollections value : PlayersCollections.VALUES) {
             put(value, new HashSet<>());
         }
@@ -118,9 +125,15 @@ public class DatabaseManager {
 
             @Override
             public void run() {
+                PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> PLAYERS_TO_UPDATE.get(playersCollections).addAll(databasePlayers));
+                PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
+                UPDATING.set(true);
                 Warlords.newChain()
                         .async(DatabaseManager::updateQueue)
-                        .sync(() -> PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.clear()))
+                        .sync(() -> {
+                            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
+                            UPDATING.set(false);
+                        })
                         .execute();
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
@@ -249,6 +262,17 @@ public class DatabaseManager {
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
     }
 
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        if (UPDATING.get()) {
+            PLAYERS_TO_UPDATE_2.get(PlayersCollections.LIFETIME).add(databasePlayer);
+        } else {
+            PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
+        }
+    }
+
     public static void checkUpdatePlayerName(Player player, DatabasePlayer databasePlayer) {
         if (!Objects.equals(databasePlayer.getName(), player.getName())) {
             databasePlayer.setName(player.getName());
@@ -256,24 +280,8 @@ public class DatabaseManager {
         }
     }
 
-    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
-        //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
-    }
-
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, onNotFound);
-    }
-
-    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
-        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void updateGameAsync(DatabaseGameBase databaseGame) {
@@ -305,6 +313,18 @@ public class DatabaseManager {
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
         getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
         });
+    }
+
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        if (UPDATING.get()) {
+            PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
+        } else {
+            PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
+        }
+        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {

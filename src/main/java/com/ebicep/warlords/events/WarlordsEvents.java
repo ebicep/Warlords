@@ -109,7 +109,7 @@ public class WarlordsEvents implements Listener {
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             player.setAllowFlight(true);
-            e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
+            e.setJoinMessage(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GOLD + " joined the lobby!");
         }
 
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
@@ -199,7 +199,7 @@ public class WarlordsEvents implements Listener {
                                     20
                             );
                             //sumSmash is now prestige level 5 in Pyromancer!
-                            Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(
+                            Bukkit.broadcastMessage(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(
                                     prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }

@@ -1,6 +1,9 @@
 package com.ebicep.warlords.database.repositories.player;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.mongodb.MongoNamespace;
+import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -64,13 +67,22 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
                         collections.collectionName,
-                        DatabasePlayer.class)
+                        DatabasePlayer.class
+                )
                 .getMappedResults();
     }
 
     @Override
     public <T> T convertDocumentToClass(Document document, Class<T> clazz) {
         return mongoTemplate.getConverter().read(clazz, document);
+    }
+
+    @Override
+    public void renameCollection(String collectionName, String newCollectionName, boolean dropTarget) {
+        mongoTemplate.getCollection(collectionName).renameCollection(
+                new MongoNamespace(DatabaseManager.warlordsDatabase.getName(), newCollectionName),
+                new RenameCollectionOptions().dropTarget(dropTarget)
+        );
     }
 
 }

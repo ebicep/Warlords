@@ -15,15 +15,11 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -851,16 +847,16 @@ public enum ChallengeAchievements implements Achievement {
 
     @Override
     public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
-        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200)).create()
-        ));
+        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: ")
+                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
+                .append(ChatColor.GREEN + "  <<")
+                .create();
         warlordsEntity.getGame().warlordsPlayers()
                 //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())
                 .filter(wp -> wp != warlordsEntity)
                 .filter(wp -> wp.getEntity() instanceof Player)
                 .map(wp -> (Player) wp.getEntity())
-                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true));
+                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true));
     }
 
     public static class ChallengeAchievementRecord extends AbstractAchievementRecord<ChallengeAchievements> {

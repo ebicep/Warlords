@@ -24,7 +24,7 @@ import java.util.List;
 public class VitalityLiquor extends AbstractAbility {
 
     public int numberOfAdditionalWaves = 0;
-    private final int duration = 3;
+    private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
     private float minWaveHealing = 268;
@@ -91,6 +91,9 @@ public class VitalityLiquor extends AbstractAbility {
                 .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveEnemiesOf(wp)
         ) {
+            if (pveUpgrade) {
+                enemyTarget.getSpeed().addSpeedModifier("Vitality Slowness", -30, 20 * 3);
+            }
             new CooldownFilter<>(enemyTarget, RegularCooldown.class)
                     .filterCooldownClass(ImpalingStrike.class)
                     .filterCooldownFrom(wp)
@@ -178,5 +181,13 @@ public class VitalityLiquor extends AbstractAbility {
 
     public void setVitalityRange(int vitalityRange) {
         this.vitalityRange = vitalityRange;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

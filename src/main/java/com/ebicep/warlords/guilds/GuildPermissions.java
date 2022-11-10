@@ -17,6 +17,7 @@ public enum GuildPermissions {
     PURCHASE_UPGRADES("Purchase Upgrades", "Purchase Upgrades for the Guild", Material.ENCHANTMENT_TABLE),
     OFFICER_CHAT("Use Officer Chat", "Allows player to use officer chat", Material.EYE_OF_ENDER),
     MODIFY_TAG("Modify Guild Tag", "Allows player to modify the guild's tag", Material.NAME_TAG),
+    MODIFY_MOTD("Modify Guild MOTD", "Allows player to modify the guild's MOTD", Material.SIGN),
 
     ;
 

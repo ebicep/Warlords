@@ -9,11 +9,12 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 public class LegendaryTitanic extends AbstractLegendaryWeapon {
+
     public static final int MELEE_DAMAGE_MIN = 130;
     public static final int MELEE_DAMAGE_MAX = 150;
     public static final int CRIT_CHANCE = 15;
     public static final int CRIT_MULTIPLIER = 160;
-    public static final int HEALTH_BONUS = 1000;
+    public static final int HEALTH_BONUS = 1500;
     public static final int SPEED_BONUS = 5;
     private static final float HEALTH_INCREASE_PER_UPGRADE = 0.01f;
 
@@ -55,7 +56,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase maximum health by 0.3% per upgrade purchased.";
+        return "Increase maximum health by 1% per upgrade purchased.";
     }
 
     @Override

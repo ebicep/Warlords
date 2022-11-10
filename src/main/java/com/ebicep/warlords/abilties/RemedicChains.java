@@ -84,7 +84,7 @@ public class RemedicChains extends AbstractAbility {
                     ChatColor.GOLD + duration +
                     ChatColor.GRAY + " seconds!"
             );
-            float healthIncrease = warlordsEntity.getMaxHealth() * .3f;
+            float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             healthBoosts.put(warlordsEntity, healthIncrease);
             if (pveUpgrade) {
                 warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() + healthIncrease);
@@ -93,7 +93,7 @@ public class RemedicChains extends AbstractAbility {
         });
 
         if (pveUpgrade) {
-            float healthIncrease = wp.getMaxHealth() * .3f;
+            float healthIncrease = wp.getMaxHealth() * .25f;
             healthBoosts.put(wp, healthIncrease);
             wp.setMaxHealth(wp.getMaxHealth() + healthIncrease);
         }
@@ -180,7 +180,7 @@ public class RemedicChains extends AbstractAbility {
                             linkedEntities.remove(i);
                             i--;
                             if (pveUpgrade) {
-                                linked.setMaxHealth(healthBoosts.getOrDefault(linked, (float) linked.getSpec().getMaxHealth()));
+                                linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
                             }
                         }
                     }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -70,8 +71,27 @@ public class RighteousStrike extends AbstractStrikeBase {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
         if (pveUpgrade) {
-            knockbackOnHit(wp, nearPlayer, 1.15, 0.2);
-            tripleHit(wp, nearPlayer);
+            SoulShackle.shacklePlayer(wp, nearPlayer, 80);
+            knockbackOnHit(wp, nearPlayer, 1.3, 0.3);
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(nearPlayer, 4, 4, 4)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(nearPlayer)
+                    .excluding(nearPlayer)
+                    .limit(4)
+            ) {
+                SoulShackle.shacklePlayer(wp, we, 80);
+                knockbackOnHit(wp, we, 1.3, 0.3);
+                we.addDamageInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier,
+                        false
+                );
+            }
         }
 
         return true;

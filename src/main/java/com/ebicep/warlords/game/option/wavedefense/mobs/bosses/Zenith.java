@@ -23,6 +23,8 @@ import org.bukkit.entity.Player;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
+    private final int stormRadius = 10;
+
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
                 "Zenith",
@@ -34,8 +36,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         Weapons.VORPAL_SWORD.getItem()
                 ),
-                28000,
-                0.4f,
+                26000,
+                0.36f,
                 25,
                 1500,
                 2000
@@ -62,16 +64,23 @@ public class Zenith extends AbstractZombie implements BossMob {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 240 == 0) {
-            EffectUtils.strikeLightningInCylinder(loc, 8, false, 10, warlordsNPC.getGame());
-            shockwave(loc, 8, 10, playerCount);
-            EffectUtils.strikeLightningInCylinder(loc, 16, false, 15, warlordsNPC.getGame());
-            shockwave(loc, 15, 15, playerCount);
-            EffectUtils.strikeLightningInCylinder(loc, 24, false, 20, warlordsNPC.getGame());
-            shockwave(loc, 20, 20, playerCount);
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
+            warlordsNPC.getSpeed().addSpeedModifier("Armageddon Slowness", -99, 90);
+            new GameRunnable(warlordsNPC.getGame()) {
+                @Override
+                public void run() {
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius, 12, playerCount);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 24, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius + 5, 24, playerCount);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius + 10, 36, playerCount);
+                }
+            }.runTaskLater(40);
         }
 
-        if (ticksElapsed % 40 == 0) {
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
+        if (ticksElapsed % 80 == 0) {
             EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(loc, 4, 4, 4)
@@ -82,22 +91,9 @@ public class Zenith extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 800 == 0) {
+        if (ticksElapsed % 600 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new EnvoyLegionnaire(warlordsNPC.getLocation()));
-            }
-        }
-
-        if (ticksElapsed % 1000 == 0) {
-            option.spawnNewMob(new MagmaCube(warlordsNPC.getLocation()));
-        }
-
-        if (ticksElapsed % 10 == 0) {
-            for (WarlordsEntity legionair : PlayerFilter
-                    .entitiesAround(warlordsNPC, 15, 15, 15)
-                    .aliveTeammatesOf(warlordsNPC)
-            ) {
-                EffectUtils.playParticleLinkAnimation(loc, legionair.getLocation(), ParticleEffect.SPELL_WITCH);
+                option.spawnNewMob(new EnvoyLegionnaire(loc));
             }
         }
     }
@@ -105,9 +101,9 @@ public class Zenith extends AbstractZombie implements BossMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
-        Utils.addKnockback(attacker.getLocation(), receiver, -3, 0.3);
+        Utils.addKnockback(attacker.getLocation(), receiver, -2, 0.3);
 
-        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon"))) {
+        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon") || event.getAbility().equals("Intervene"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
 
@@ -156,8 +152,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, 0, 100, false);
-                        Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
+                        we.addDamageInstance(warlordsNPC, "Armageddon", 550 * playerCount, 700 * playerCount, 0, 100, false);
+                        Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.2);
                     }
                 }
             }

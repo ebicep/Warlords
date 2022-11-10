@@ -87,8 +87,8 @@ public class Berserk extends AbstractAbility {
                         return currentCritChance;
                     }
                     float critBoost = (0.2f * multiplier);
-                    if (critBoost > 30) {
-                        critBoost = 30;
+                    if (critBoost > 50) {
+                        critBoost = 50;
                     }
                     return currentCritChance + critBoost;
                 }
@@ -102,8 +102,8 @@ public class Berserk extends AbstractAbility {
                         return currentCritMultiplier;
                     }
                     float critBoost = (0.2f * multiplier);
-                    if (critBoost > 30) {
-                        critBoost = 30;
+                    if (critBoost > 50) {
+                        critBoost = 50;
                     }
                     return currentCritMultiplier + critBoost;
                 }

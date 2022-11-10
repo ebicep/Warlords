@@ -15,8 +15,7 @@ public class PlayerLeaderboardInfo {
     private int gameHologram = 0;
     @Nonnull
     private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;
-    @Nonnull
-    private StatsLeaderboardManager.Category statsCategory = StatsLeaderboardManager.Category.ALL;
+    private int statsCategory = 0;
     @Nonnull
     private PlayersCollections statsTime = PlayersCollections.LIFETIME;
     private List<Hologram> holograms = new ArrayList<>();
@@ -43,12 +42,11 @@ public class PlayerLeaderboardInfo {
         this.statsGameType = statsGameType;
     }
 
-    @Nonnull
-    public StatsLeaderboardManager.Category getStatsCategory() {
+    public int getStatsCategory() {
         return statsCategory;
     }
 
-    public void setStatsCategory(@Nonnull StatsLeaderboardManager.Category statsCategory) {
+    public void setStatsCategory(int statsCategory) {
         this.statsCategory = statsCategory;
     }
 

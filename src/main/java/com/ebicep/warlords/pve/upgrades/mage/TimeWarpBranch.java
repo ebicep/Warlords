@@ -14,7 +14,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+3% Healing",
+                "+5% Healing",
                 5000,
                 () -> {
                     ability.setWarpHealPercentage(healing + 3);
@@ -22,7 +22,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+6% Healing",
+                "+10% Healing",
                 10000,
                 () -> {
                     ability.setWarpHealPercentage(healing + 6);
@@ -30,7 +30,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+9% Healing",
+                "+15% Healing",
                 15000,
                 () -> {
                     ability.setWarpHealPercentage(healing + 9);
@@ -38,7 +38,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+12% Healing",
+                "+20% Healing",
                 20000,
                 () -> {
                     ability.setWarpHealPercentage(healing + 12);

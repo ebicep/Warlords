@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -55,6 +56,10 @@ public class Witch extends AbstractWitch implements EliteMob {
         ) {
             EffectUtils.playRandomHitEffect(ally.getLocation(), 0, 150, 0, 2);
             ally.addSpeedModifier("Witch Speed Buff", 20, 3 * 20);
+            if (option.getDifficulty() == DifficultyIndex.HARD) {
+                ally.getCooldownManager().removeDebuffCooldowns();
+                ally.getSpeed().removeSlownessModifiers();
+            }
         }
     }
 

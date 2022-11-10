@@ -1,14 +1,21 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryDivine extends AbstractLegendaryWeapon {
+
     public static final int MELEE_DAMAGE_MIN = 100;
     public static final int MELEE_DAMAGE_MAX = 120;
     public static final int CRIT_CHANCE = 25;
@@ -16,11 +23,11 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 5;
     public static final int ENERGY_PER_SECOND_BONUS = 7;
-    public static final int ENERGY_PER_HIT_BONUS = -10;
+    public static final int ENERGY_PER_HIT_BONUS = -13;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
 
-    public static final float DAMAGE_INCREASE_PER_HIT = .02f;
-    public static final int SECONDS_TO_CHECK = 1;
+    public static final int TARGETS_TO_HIT = 40;
+    public static final int COOLDOWN = 30;
 
     public LegendaryDivine() {
     }
@@ -41,19 +48,57 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
+
+
         player.getGame().registerEvents(new Listener() {
 
+            final AtomicInteger targetsHit = new AtomicInteger(0);
+            final AtomicInteger cooldown = new AtomicInteger(0);
+
             @EventHandler
-            public void onDamageHealing(WarlordsDamageHealingEvent event) {
+            public void onDamageHealing(WarlordsDamageHealingFinalEvent event) {
                 if (!event.getAttacker().equals(player)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
-                int attacks = player.getSecondStats().getEventsAsAttackerFromLastSecond(SECONDS_TO_CHECK).size();
-                event.setMin(event.getMin() * (1 + attacks * DAMAGE_INCREASE_PER_HIT));
-                event.setMax(event.getMax() * (1 + attacks * DAMAGE_INCREASE_PER_HIT));
+                if (cooldown.get() != 0) {
+                    return;
+                }
+                if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
+                    player.sendMessage(ChatColor.GREEN + "Divine Passive Activated!");
+
+                    player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            "Divine",
+                            "DIV",
+                            LegendaryDivine.class,
+                            null,
+                            player,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                                player.sendMessage(ChatColor.RED + "Divine Passive Deactivated!");
+                            },
+                            10 * 20
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * 1.15f;
+                        }
+                    });
+
+                    cooldown.set(COOLDOWN);
+
+                    new GameRunnable(player.getGame()) {
+
+                        @Override
+                        public void run() {
+                            targetsHit.set(0);
+                            cooldown.set(0);
+                        }
+                    }.runTaskLater(COOLDOWN * 20);
+
+                }
             }
 
         });
@@ -61,7 +106,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase the next ability damage by 2% per targets hit.";
+        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets for 10 seconds. Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override

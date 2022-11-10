@@ -15,7 +15,8 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 200;
     public static final int HEALTH_BONUS = 300;
     public static final int SPEED_BONUS = 14;
-    public static final int ENERGY_PER_SECOND_BONUS = -5;
+    public static final int ENERGY_PER_SECOND_BONUS = -3;
+    public static final int ENERGY_PER_HIT_BONUS = 7;
 
     public LegendaryVorpal() {
     }
@@ -67,6 +68,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         this.healthBonus = HEALTH_BONUS;
         this.speedBonus = SPEED_BONUS;
         this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
+        this.energyPerHitBonus = ENERGY_PER_HIT_BONUS;
     }
 
     @Override

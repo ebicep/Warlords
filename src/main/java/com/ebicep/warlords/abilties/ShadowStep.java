@@ -134,7 +134,8 @@ public class ShadowStep extends AbstractAbility {
     }
 
     private void buffOnLanding(WarlordsEntity we) {
-        we.addSpeedModifier(name, 20, 3 * 20);
+        we.addSpeedModifier(name, 80, 5 * 20);
+        we.getCooldownManager().removeCooldown(ShadowStep.class);
         we.getCooldownManager().addCooldown(new RegularCooldown<ShadowStep>(
                 "STEP KB",
                 "STEP KB",
@@ -144,11 +145,11 @@ public class ShadowStep extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                3 * 20
+                5 * 20
         ) {
             @Override
             public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0.8);
+                currentVector.multiply(0.2);
             }
         });
     }

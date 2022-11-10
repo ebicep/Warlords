@@ -90,7 +90,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                 "Loamliving Weapon",
                 "Earthliving Weapon - Master Upgrade",
                 "Each additional Earthliving Weapon proc on an enemy stuns them for 2 seconds. After 2 seconds they will emit a shockwave that heals all " +
-                        "nearby allies for 5% of their missing health and restore energy equal to the same amount.",
+                        "nearby allies for 10% of their missing health and restore energy equal to the same amount.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

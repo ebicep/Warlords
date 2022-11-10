@@ -166,7 +166,7 @@ public class Earthliving extends AbstractAbility {
                             .aliveTeammatesOf(giver)
                             .closestFirst(target)
                     ) {
-                        float missingHealth = (ally.getMaxHealth() - ally.getHealth()) * 0.05f;
+                        float missingHealth = (ally.getMaxHealth() - ally.getHealth()) * 0.1f;
                         ally.addHealingInstance(
                                 giver,
                                 "Loamliving Weapon",
@@ -177,7 +177,7 @@ public class Earthliving extends AbstractAbility {
                                 false,
                                 false
                         );
-                        ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 40);
+                        ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 20);
                     }
                 },
                 2 * 20,

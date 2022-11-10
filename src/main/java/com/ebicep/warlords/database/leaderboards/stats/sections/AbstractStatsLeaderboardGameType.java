@@ -1,15 +1,14 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
@@ -20,20 +19,16 @@ import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLo
  */
 public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabaseStatInformation> {
 
-    protected final StatsLeaderboardCategory<T> general;
-    protected final StatsLeaderboardCategory<T> comps;
-    protected final StatsLeaderboardCategory<T> pubs;
+    protected final List<StatsLeaderboardCategory<T>> gameTypeCategories;
 
-    public AbstractStatsLeaderboardGameType(StatsLeaderboardCategory<T> general, StatsLeaderboardCategory<T> comps, StatsLeaderboardCategory<T> pubs) {
-        this.general = general;
-        this.comps = comps;
-        this.pubs = pubs;
+    protected AbstractStatsLeaderboardGameType(List<StatsLeaderboardCategory<T>> gameTypeCategories) {
+        this.gameTypeCategories = gameTypeCategories;
     }
 
     public void addLeaderboards() {
-        addBaseLeaderboards(general);
-        addBaseLeaderboards(comps);
-        addBaseLeaderboards(pubs);
+        for (StatsLeaderboardCategory<T> category : gameTypeCategories) {
+            addBaseLeaderboards(category);
+        }
     }
 
     public abstract String getSubTitle();
@@ -50,9 +45,9 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
                 break;
         }
         String subTitle = getSubTitle();
-        general.resetLeaderboards(collection, databasePlayers, subTitle);
-        comps.resetLeaderboards(collection, databasePlayers, subTitle);
-        pubs.resetLeaderboards(collection, databasePlayers, subTitle);
+        for (StatsLeaderboardCategory<T> category : gameTypeCategories) {
+            category.resetLeaderboards(collection, databasePlayers, subTitle);
+        }
     }
 
     public void addBaseLeaderboards(StatsLeaderboardCategory<T> statsLeaderboardCategory) {
@@ -86,18 +81,7 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
 
 
     public List<StatsLeaderboardCategory<T>> getCategories() {
-        return Arrays.asList(general, comps, pubs);
+        return gameTypeCategories;
     }
 
-    public StatsLeaderboardCategory<T> getGeneral() {
-        return general;
-    }
-
-    public StatsLeaderboardCategory<T> getComps() {
-        return comps;
-    }
-
-    public StatsLeaderboardCategory<T> getPubs() {
-        return pubs;
-    }
 }

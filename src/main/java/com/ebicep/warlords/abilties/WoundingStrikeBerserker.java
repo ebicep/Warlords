@@ -54,8 +54,8 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * (lustDamageBoost ? 1.5f : 1),
-                maxDamageHeal * (lustDamageBoost ? 1.5f : 1),
+                minDamageHeal * (lustDamageBoost ? 1.8f : 1),
+                maxDamageHeal * (lustDamageBoost ? 1.8f : 1),
                 critChance,
                 critMultiplier,
                 false
@@ -90,10 +90,6 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 }
             });
         }
-//            return true;
-//        } else {
-//            return false;
-//        }
         return true;
     }
 
@@ -111,7 +107,13 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 woundingDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
-                        float healthDamage = hit.getMaxHealth() * 0.0025f;
+                        float healthDamage = hit.getMaxHealth() * 0.005f;
+                        if (healthDamage > 800) {
+                            healthDamage = 800;
+                        }
+                        if (healthDamage < 100) {
+                            healthDamage = 100;
+                        }
                         hit.addDamageInstance(
                                 giver,
                                 "Bleed",
@@ -126,7 +128,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         ) {
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .3f;
+                return currentHealValue * .2f;
             }
         });
     }

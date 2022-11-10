@@ -145,7 +145,6 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                             );
 
                             wp.setOrangeCurrentCooldown(getCurrentCooldown() / 2);
-                            wp.updateOrangeItem();
                             wp.addEnergy(wp, name, energyCost);
                         }
                     }.runTaskLater(2);
@@ -163,8 +162,6 @@ public class PveOrderOfEviscerate extends AbstractAbility {
 
                             wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
                             wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
-                            wp.updatePurpleItem();
-                            wp.updateOrangeItem();
                             wp.addEnergy(wp, name, energyCost / 2f);
                         }
                     }.runTaskLater(2);

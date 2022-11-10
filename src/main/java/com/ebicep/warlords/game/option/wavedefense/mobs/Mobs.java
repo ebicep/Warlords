@@ -36,6 +36,7 @@ public enum Mobs {
 
     // Elite Tier 1 - Elite
     ELITE_ZOMBIE(EliteZombie::new),
+    GHOST_ZOMBIE(GhostZombie::new),
     ELITE_BERSERK_ZOMBIE(EliteBerserkZombie::new),
     ELITE_SKELETON(EliteSkeleton::new),
     ELITE_PIG_ZOMBIE(ElitePigZombie::new),
