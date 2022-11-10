@@ -101,7 +101,6 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
                             return currentDamageValue * 1.2f;
                         }
                     });
-                    player.setPurpleCurrentCooldown(0);
 
                     cooldown.set(COOLDOWN);
 
