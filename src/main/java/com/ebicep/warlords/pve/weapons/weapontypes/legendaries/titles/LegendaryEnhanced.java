@@ -21,6 +21,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 180;
     public static final int HEALTH_BONUS = 400;
     public static final int SPEED_BONUS = 8;
+    public static final int ENERGY_PER_SECOND_BONUS = 3;
 
     private static final List<String> EFFECTED_ABILITIES = new ArrayList<>() {{
         add("BRN");
@@ -90,6 +91,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
         this.critMultiplier = CRIT_MULTIPLIER;
         this.healthBonus = HEALTH_BONUS;
         this.speedBonus = SPEED_BONUS;
+        this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
     }
 
     @Override
