@@ -38,7 +38,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = -50;
     public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 8;
-    public static final int ENERGY_PER_HIT_BONUS = 5;
+    public static final int ENERGY_PER_HIT_BONUS = 10;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
     public static final int SKILL_CRIT_MULTIPLIER_BONUS = 15;
 
