@@ -15,6 +15,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -71,17 +72,17 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
+        for (int i = 0; i < (multiplier * option.getGame().warlordsPlayers().count()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
             option.spawnNewMob(acolyte);
             acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
             acolytes.add(acolyte.getWarlordsNPC());
         }
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new BasicZombie(warlordsNPC.getLocation()));
         }
-
 
         listener = new Listener() {
 
@@ -130,12 +131,13 @@ public class Narmer extends AbstractZombie implements BossMob {
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
                                 .aliveEnemiesOf(warlordsNPC)
                                 .toList();
+                        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 16 : 8;
                         for (WarlordsEntity enemy : warlordsEntities) {
                             enemy.addDamageInstance(
                                     warlordsNPC,
                                     "Death Wish",
-                                    965 * 8,
-                                    1138 * 8,
+                                    965 * multiplier,
+                                    1138 * multiplier,
                                     0,
                                     100,
                                     false
@@ -165,7 +167,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     if (acolyteDeathTickWindow <= 0) {
-                        acolyteDeathTickWindow = 20;
+                        acolyteDeathTickWindow = option.getDifficulty() == DifficultyIndex.HARD ? 60 : 20;
                     }
 
                     ticksUntilNewAcolyte = 300;
@@ -178,8 +180,9 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         Location loc = warlordsNPC.getLocation();
+        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
 
-        if (acolytes.size() < option.getGame().warlordsPlayers().count() && ticksUntilNewAcolyte <= 0) {
+        if (acolytes.size() < multiplier * option.getGame().warlordsPlayers().count() && ticksUntilNewAcolyte <= 0) {
             //Bukkit.broadcastMessage("spawned new acolyte");
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
             option.spawnNewMob(acolyte);
@@ -187,14 +190,23 @@ public class Narmer extends AbstractZombie implements BossMob {
             ticksUntilNewAcolyte = 300;
         }
 
-        //Bukkit.broadcastMessage("ticks until new acolyte: " + timeUntilNewAcolyte);
         if (ticksUntilNewAcolyte > 0) {
             ticksUntilNewAcolyte--;
         }
 
-        //Bukkit.broadcastMessage("ticks: " + acolyteDeathWindow);
         if (acolyteDeathTickWindow > 0) {
             acolyteDeathTickWindow--;
+
+            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                if (we.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle(
+                            (Player) we.getEntity(),
+                            ChatColor.RED + "Death Wish",
+                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
+                            0, acolyteDeathTickWindow, 0
+                    );
+                }
+            }
         }
 
         if (ticksElapsed % 15 == 0) {

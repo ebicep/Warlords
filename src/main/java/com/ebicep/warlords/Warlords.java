@@ -654,8 +654,8 @@ public class Warlords extends JavaPlugin {
                                                         enemy.addDamageInstance(
                                                                 wp,
                                                                 "Undying Army",
-                                                                68 + (enemy.getMaxHealth() * .005f),
-                                                                102 + (enemy.getMaxHealth() * .005f),
+                                                                458 + (enemy.getMaxHealth() * .02f),
+                                                                612 + (enemy.getMaxHealth() * .02f),
                                                                 0,
                                                                 100,
                                                                 false
@@ -763,6 +763,7 @@ public class Warlords extends JavaPlugin {
                             for (WarlordsEntity nearPlayer : PlayerFilter
                                     .entitiesAround(wp, 6, 6, 6)
                                     .aliveTeammatesOfExcludingSelf(wp)
+                                    .leastAliveFirst()
                                     .limit(2)
                             ) {
                                 nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);

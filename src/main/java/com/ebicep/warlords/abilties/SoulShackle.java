@@ -66,7 +66,7 @@ public class SoulShackle extends AbstractAbility {
                     .entitiesAroundRectangle(wp, shackleRange, shackleRange + 2, shackleRange)
                     .aliveEnemiesOf(wp)
                     .closestFirst(wp)
-                    .limit(5)
+                    .limit(8)
             ) {
                 Vector direction = shackleTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
                 if (viewDirection.dot(direction) > .6) {

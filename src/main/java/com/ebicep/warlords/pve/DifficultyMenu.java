@@ -48,12 +48,15 @@ public class DifficultyMenu {
                         GameMap map = null;
                         switch (finalI) {
                             case 0:
-                                map = GameMap.ILLUSION_RIFT;
+                                map = GameMap.ILLUSION_APERTURE;
                                 break;
                             case 1:
-                                player.sendMessage(ChatColor.RED + "Hard Mode is not available right now, check back later!");
+                                map = GameMap.ILLUSION_RIFT;
                                 break;
                             case 2:
+                                map = GameMap.ILLUSION_VALLEY;
+                                break;
+                            case 3:
                                 map = GameMap.ILLUSION_CROSSFIRE;
                                 break;
                         }

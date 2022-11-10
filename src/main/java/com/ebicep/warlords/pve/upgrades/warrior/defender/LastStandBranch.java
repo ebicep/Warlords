@@ -92,7 +92,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
         masterUpgrade = new Upgrade(
                 "Final Stand",
                 "Last Stand - Master Upgrade",
-                "Enemies within the Last Stand radius get pushed outwards with heavy force on cast. Reduce cooldown by 25%.",
+                "Enemies within the Last Stand radius get pushed outwards with heavy force for the remaining duration. Reduce cooldown by 25%.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

@@ -155,7 +155,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         @Override
                         public void run() {
                             if (pveUpgrade) {
-                                int reduction = masterUpgrade ? 11 : 8;
+                                int reduction = masterUpgrade ? 12 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You killed your mark," +
                                         ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
@@ -182,7 +182,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         @Override
                         public void run() {
                             if (pveUpgrade) {
-                                float reduction = masterUpgrade ? 4.5f : 4f;
+                                int reduction = masterUpgrade ? 6 : 4;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You assisted in killing your mark," +
                                         ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +

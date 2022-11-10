@@ -6,28 +6,36 @@ import javax.annotation.Nonnull;
 
 public enum DifficultyIndex {
 
+    EASY("Easy",
+            "For those seeking a lighter challenge,\nrecommended for solo players." +
+                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage\n-25% Mob Spawns",
+            ChatColor.GREEN,
+            25,
+            24,
+            2
+    ),
     NORMAL("Normal",
             "Fight off 25 waves of monsters to\nearn rewards." +
                     "\n\nModifiers:\n§aNone",
             ChatColor.YELLOW,
             25,
-            16 * 3,
+            48,
             4
     ),
-    HARD("Hard §c[COMING SOON]",
-            "Fight off 25 waves of monsters to\nearn greater rewards." +
-                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n+Tougher Mobs",
+    HARD("Hard",
+            "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
+                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n\nExtreme scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
             ChatColor.GOLD,
             25,
-            32 * 3,
+            96,
             8
     ),
     ENDLESS("Endless",
-            "Fight to the death against endless\nwaves of monsters to prove your worth\nagainst the Vanguard." +
-                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Mob Spawns",
+            "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
+                    "\n\nModifiers:\n§c+25% Mob Spawns",
             ChatColor.RED,
             10000,
-            24 * 3,
+            72,
             4
     );
 

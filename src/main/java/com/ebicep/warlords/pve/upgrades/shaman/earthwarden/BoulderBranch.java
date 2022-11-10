@@ -89,15 +89,15 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         masterUpgrade = new Upgrade(
                 "Terrestrial Meteor",
                 "Boulder - Master Upgrade",
-                "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher energy cost, cooldown and reduced knockback",
+                "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher energy cost, cooldown and reduced knockback.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.setCooldown(ability.getCooldown() * 3);
-                    ability.setEnergyCost(ability.getEnergyCost() + 80);
-                    ability.setMinDamageHeal(minDamage * 4);
-                    ability.setMaxDamageHeal(maxDamage * 4);
+                    ability.setEnergyCost(ability.getEnergyCost() + ability.getEnergyCost());
+                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 4);
+                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 4);
                     ability.setHitbox(hitbox + 3);
                 }
         );

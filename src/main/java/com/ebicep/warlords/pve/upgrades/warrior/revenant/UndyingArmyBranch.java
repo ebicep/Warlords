@@ -82,7 +82,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
         masterUpgrade = new Upgrade(
                 "Relentless Army",
                 "Undying Army - Master Upgrade",
-                "While dead, gain 40% speed and deal 68-102 + 0.5% of the " +
+                "While dead, gain 40% speed and deal 458-612 + 2% of the " +
                         "enemy’s maximum health to all enemies within a 6 block radius. " +
                         "Each enemy hit this way can also proc Orbs of Life.",
                 50000,

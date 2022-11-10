@@ -57,34 +57,34 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+75 Healing on strike kill.",
+                "+100 Healing on strike kill.",
                 5000,
                 () -> {
-                    ability.setStrikeHeal(75);
+                    ability.setStrikeHeal(100);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+150 Healing on strike kill.",
+                "+200 Healing on strike kill.",
                 10000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 150);
+                    ability.setStrikeHeal(strikeHeal + 200);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+225 Healing on strike kill.",
+                "+300 Healing on strike kill.",
                 15000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 225);
+                    ability.setStrikeHeal(strikeHeal + 300);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+300 Healing on strike kill.",
+                "+400 Healing on strike kill.",
                 20000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 300);
+                    ability.setStrikeHeal(strikeHeal + 400);
                 }
         ));
 

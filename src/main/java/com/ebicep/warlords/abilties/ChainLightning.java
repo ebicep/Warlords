@@ -185,7 +185,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         ArmorStand totem = capacitorTotem.getTotem();
         capacitorTotem.pulseDamage();
         if (capacitorTotem.isPveUpgrade()) {
-            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.25);
+            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
         }
 
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);

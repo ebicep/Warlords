@@ -48,34 +48,34 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+2s Duration",
+                "+1s Duration",
                 5000,
+                () -> {
+                    ability.setDuration(duration + 1);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "+2s Duration",
+                10000,
                 () -> {
                     ability.setDuration(duration + 2);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+4s Duration",
-                10000,
-                () -> {
-                    ability.setDuration(duration + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+6s Duration",
+                "+3s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 6);
+                    ability.setDuration(duration + 3);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+8s Duration\n+20% Slowness on melee hit.",
+                "+4s Duration\n+20% Slowness on melee hit.",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 8);
+                    ability.setDuration(duration + 4);
                     ability.setSlownessOnMeleeHit(ability.getSlownessOnMeleeHit() + 20);
                 }
         ));

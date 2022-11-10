@@ -23,7 +23,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 5;
     public static final int ENERGY_PER_SECOND_BONUS = 7;
-    public static final int ENERGY_PER_HIT_BONUS = -10;
+    public static final int ENERGY_PER_HIT_BONUS = -13;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
 
     public static final int TARGETS_TO_HIT = 40;
@@ -83,7 +83,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                     ) {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.1f;
+                            return currentDamageValue * 1.15f;
                         }
                     });
 
@@ -106,7 +106,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a 10% damage boost after hitting " + TARGETS_TO_HIT + " targets. Can be triggered every " + COOLDOWN + " seconds.";
+        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets for 10 seconds. Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override

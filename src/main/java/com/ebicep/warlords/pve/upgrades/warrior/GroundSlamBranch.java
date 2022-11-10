@@ -9,39 +9,49 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
 
     int slamSize = ability.getSlamSize();
     float cooldown = ability.getCooldown();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
 
     public GroundSlamBranch(AbilityTree abilityTree, GroundSlam ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-2.5% Cooldown reduction",
+                "Impair - Tier I",
+                "+7.5% Damage\n-2.5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.975f);
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-5% Cooldown reduction",
+                "Impair - Tier II",
+                "+15% Damage\n-5% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-7.5% Cooldown reduction",
+                "Impair - Tier III",
+                "+22.5% Damage\n-7.5% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.925f);
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-10% Cooldown reduction",
+                "Impair - Tier IV",
+                "+30% Damage\n-10% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
 
@@ -81,7 +91,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
         masterUpgrade = new Upgrade(
                 "Earthen Tremor",
                 "Ground Slam - Master Upgrade",
-                "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 200% of the original damage.",
+                "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 150% of the original damage.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

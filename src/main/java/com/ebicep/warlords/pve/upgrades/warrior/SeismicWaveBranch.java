@@ -15,38 +15,38 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+3.75% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.0375f);
-                    ability.setMaxDamageHeal(maxDamage * 1.0375f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
                 "+7.5% Damage",
-                10000,
+                5000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.075f);
                     ability.setMaxDamageHeal(maxDamage * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+15% Damage",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+11.25% Damage",
+                "+22.5% Damage",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1125f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1125f);
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+15% Damage",
+                "+30% Damage",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
 

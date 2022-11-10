@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -16,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 
 public class TormentedSoul extends AbstractZombie implements BossMob {
+
+    private float reduceCooldown = 0.2f;
 
     public TormentedSoul(Location spawnLocation) {
         super(spawnLocation,
@@ -38,7 +41,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-
+        reduceCooldown = option.getDifficulty() == DifficultyIndex.HARD ? 0.4f : 0.2f;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 200, 200, 200, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.AMBIENCE_CAVE, 2, 2);
         if (!event.getAbility().isEmpty()) {
-            attacker.getSpec().increaseAllCooldownTimersBy(0.2f);
+            attacker.getSpec().increaseAllCooldownTimersBy(reduceCooldown);
         }
     }
 }

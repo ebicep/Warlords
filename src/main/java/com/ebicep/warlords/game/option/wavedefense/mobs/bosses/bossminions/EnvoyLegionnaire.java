@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
@@ -27,11 +29,11 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
-                6500,
-                0.3f,
+                5000,
+                0.25f,
                 10,
-                300,
-                500
+                1000,
+                1500
         );
     }
 
@@ -42,7 +44,30 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        WarlordsEntity zenith = PlayerFilter
+                .playingGame(warlordsNPC.getGame())
+                .filter(we -> we.getName()
+                .equals("Zenith"))
+                .findFirstOrNull();
 
+        if (ticksElapsed % 100 == 0) {
+            if (zenith != null) {
+                zenith.addHealingInstance(
+                        warlordsNPC,
+                        "Remedy",
+                        500,
+                        500,
+                        -1,
+                        100,
+                        false,
+                        false
+                );
+
+                Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
+                EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+            }
+            warlordsNPC.getMob().removeTarget();
+        }
     }
 
     @Override

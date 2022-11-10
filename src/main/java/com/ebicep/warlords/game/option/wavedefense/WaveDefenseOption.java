@@ -47,6 +47,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -309,6 +310,13 @@ public class WaveDefenseOption implements Option {
                         });
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
+
+                    if (difficulty == DifficultyIndex.ENDLESS && (waveCounter == 50 || waveCounter == 100)) {
+                        getGame().forEachOnlineWarlordsPlayer(wp -> {
+                            wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                            wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                        });
+                    }
                 }
 
                 for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
@@ -421,16 +429,14 @@ public class WaveDefenseOption implements Option {
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
-                int playerCount = (int) game.warlordsPlayers().count();
+                int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
                 switch (playerCount) {
                     case 2:
-                        spawnCount *= 1.06f;
-                        break;
-                    case 3:
                         spawnCount *= 1.1f;
                         break;
+                    case 3:
                     case 4:
-                        spawnCount *= 1.16f;
+                        spawnCount *= 1.15f;
                         break;
                 }
 
@@ -462,19 +468,19 @@ public class WaveDefenseOption implements Option {
                 soundPitch = 0.4f;
                 wavePrefix = "§d§lWave ";
             }
-            if (waveCounter >= 150) {
+            if (waveCounter >= 110) {
                 soundPitch = 0.3f;
                 wavePrefix = "§5§lWave ";
             }
-            if (waveCounter >= 200) {
+            if (waveCounter >= 120) {
                 soundPitch = 0.2f;
                 wavePrefix = "§5W§5§k§la§5§lve ";
             }
-            if (waveCounter >= 250) {
+            if (waveCounter >= 130) {
                 soundPitch = 0.1f;
                 wavePrefix = "§4W§4§k§la§4§lve ";
             }
-            if (waveCounter >= 300) {
+            if (waveCounter >= 150) {
                 wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 
@@ -494,18 +500,15 @@ public class WaveDefenseOption implements Option {
             return;
         }
 
-        // temp
         if (currentWave.getMessage() == null) {
-            int playerCount = (int) game.warlordsPlayers().count();
+            int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.06f;
-                    break;
-                case 3:
                     spawnCount *= 1.1f;
                     break;
+                case 3:
                 case 4:
-                    spawnCount *= 1.16f;
+                    spawnCount *= 1.15f;
                     break;
             }
         }

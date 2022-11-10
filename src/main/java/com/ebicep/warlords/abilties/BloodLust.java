@@ -79,7 +79,7 @@ public class BloodLust extends AbstractAbility {
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveUpgrade) {
                     if (event.getPlayer().getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
-                        return currentDamageValue * 1.2f;
+                        return currentDamageValue * 1.4f;
                     }
                 }
                 return currentDamageValue;

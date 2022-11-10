@@ -29,6 +29,7 @@ public class Vindicate extends AbstractAbility {
     private int vindicateDuration = 12;
     private int vindicateSelfDuration = 8;
     private float vindicateDamageReduction = 30;
+    private static int knockbackResistance = 50;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25);
@@ -37,7 +38,7 @@ public class Vindicate extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "All allies within an §e" + radius + " §7block radius gain the status §6VIND§7, which clears all de-buffs. In addition, the status " +
-                "§6VIND §7prevents allies from being affected by de-buffs and grants §650% §7knockback resistance for §6" + vindicateDuration +
+                "§6VIND §7prevents allies from being affected by de-buffs and grants §6" + knockbackResistance + "% §7knockback resistance for §6" + vindicateDuration +
                 " §7seconds. You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
     }
 
@@ -107,15 +108,18 @@ public class Vindicate extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity we = event.getAttacker();
                 if (pveUpgrade) {
-                    if (Utils.isLineOfSightVindicator(event.getPlayer().getEntity(), we.getEntity())) {
-                        Utils.addKnockback(wp.getLocation(), event.getAttacker(), -1.25, 0.3);
-                        we.addDamageInstance(event.getPlayer(), name, currentDamageValue, currentDamageValue, 0, 100, false);
-                        return currentDamageValue * 0;
-                    } else {
-                        return currentDamageValue * getVindicateDamageReduction();
-                    }
+                    Utils.addKnockback(wp.getLocation(), event.getAttacker(), -1.25, 0.3);
+                    event.getAttacker().addDamageInstance(
+                            event.getPlayer(),
+                            name,
+                            currentDamageValue,
+                            currentDamageValue,
+                            0,
+                            100,
+                            false
+                    );
+                    return currentDamageValue * 0;
                 } else {
                     return currentDamageValue * getVindicateDamageReduction();
                 }
@@ -145,7 +149,7 @@ public class Vindicate extends AbstractAbility {
         ) {
             @Override
             public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0.5);
+                currentVector.multiply(knockbackResistance / 100f);
             }
         });
     }

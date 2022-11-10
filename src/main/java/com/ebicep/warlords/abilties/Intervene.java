@@ -26,6 +26,7 @@ public class Intervene extends AbstractAbility {
     private final int duration = 5;
     private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
+    private int damageReduction = 50;
     private int radius = 10;
     private int breakRadius = 15;
     private WarlordsEntity caster;
@@ -35,16 +36,17 @@ public class Intervene extends AbstractAbility {
         super("Intervene", 0, 0, 14.09f, 20);
     }
 
-    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target) {
+    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target, int damageReduction) {
         super("Intervene", 0, 0, 14.09f, 20);
         this.maxDamagePrevented = maxDamagePrevented;
         this.caster = caster;
         this.target = target;
+        this.damageReduction = damageReduction;
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "Protect the target ally, reducing the damage they take by §e100% §7and redirecting §e50% §7of the damage they would " +
+        description = "Protect the target ally, reducing the damage they take by §e100% §7and redirecting §e" + damageReduction + "% §7of the damage they would " +
                 "have taken back to you. You can protect the target for a maximum of §c" + format(maxDamagePrevented) +
                 " §7damage. You must remain within §e" + breakRadius + " §7blocks of each other. Lasts §6" + duration + " §7seconds." +
                 "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
@@ -81,7 +83,7 @@ public class Intervene extends AbstractAbility {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
-            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget);
+            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);
 
             // Removing all other intervenes
             wp.getCooldownManager().getCooldowns().removeIf(cd ->
@@ -213,5 +215,13 @@ public class Intervene extends AbstractAbility {
 
     public WarlordsEntity getTarget() {
         return target;
+    }
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
     }
 }

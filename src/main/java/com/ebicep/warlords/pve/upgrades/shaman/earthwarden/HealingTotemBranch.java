@@ -17,34 +17,34 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+1 Block totem radius",
+                "+2 Block totem radius",
                 5000,
-                () -> {
-                    ability.setRadius(radius + 1);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+2 Blocks totem radius",
-                10000,
                 () -> {
                     ability.setRadius(radius + 2);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+4 Blocks totem radius",
+                10000,
+                () -> {
+                    ability.setRadius(radius + 4);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+3 Blocks totem radius",
+                "+6 Blocks totem radius",
                 15000,
                 () -> {
-                    ability.setRadius(radius + 3);
+                    ability.setRadius(radius + 6);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+4 Blocks totem radius\n+20% Healing",
+                "+8 Blocks totem radius\n+20% Healing",
                 20000,
                 () -> {
-                    ability.setRadius(radius + 4);
+                    ability.setRadius(radius + 8);
                     ability.setMinDamageHeal(minHealing * 1.2f);
                     ability.setMaxDamageHeal(maxHealing * 1.2f);
                 }

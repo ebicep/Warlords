@@ -40,6 +40,7 @@ public class Physira extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+
     }
 
     @Override

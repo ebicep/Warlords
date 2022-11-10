@@ -98,7 +98,7 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
                     ) {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.1f;
+                            return currentDamageValue * 1.2f;
                         }
                     });
                     player.setPurpleCurrentCooldown(0);
@@ -121,7 +121,7 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a 10% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
+        return "Gain a 20% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
                 " damage. Can be triggered every " + COOLDOWN + " seconds.";
     }
 }

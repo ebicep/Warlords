@@ -99,7 +99,7 @@ public class SoulSwitch extends AbstractAbility {
                     decoy.setLeggings(player.getInventory().getLeggings());
                     decoy.setBoots(player.getInventory().getBoots());
 
-                    PlayerFilter.entitiesAround(ownLocation, 10, 10, 10)
+                    PlayerFilter.entitiesAround(ownLocation, 15, 15, 15)
                             .aliveEnemiesOf(wp)
                             .forEach(warlordsEntity -> {
                                 if (warlordsEntity instanceof WarlordsNPC) {

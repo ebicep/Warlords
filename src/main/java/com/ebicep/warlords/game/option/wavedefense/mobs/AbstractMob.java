@@ -106,27 +106,49 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 this
         );
 
-        Optional<Option> waveDefenseOptional = game.getOptions()
+        Optional<Option> optional = game.getOptions()
                 .stream()
                 .filter(option -> option instanceof WaveDefenseOption)
                 .findFirst();
-        if (waveDefenseOptional.isPresent()) {
-            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) waveDefenseOptional.get();
+        if (optional.isPresent()) {
+            WaveDefenseOption option = (WaveDefenseOption) optional.get();
 
-            onSpawn(waveDefenseOption);
+            onSpawn(option);
             game.addNPC(warlordsNPC);
 
             double scale = 600.0;
             long playerCount = game.warlordsPlayers().count();
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
-            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
-            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-                warlordsNPC.setMaxBaseHealth(health * (1 + (0.25f * playerCount)));
-                warlordsNPC.setHealth(health * (1 + (0.25f * playerCount)));
-            } else {
-                warlordsNPC.setMaxBaseHealth(health);
-                warlordsNPC.setHealth(health);
+
+            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), option.getWaveCounter() / modifiedScale + 1);
+            float bossMultiplier = 1 + (0.25f * playerCount);
+            float difficultyMultiplier;
+
+            switch (option.getDifficulty()) {
+                case EASY:
+                    difficultyMultiplier = 0.75f;
+                    break;
+                case HARD:
+                    difficultyMultiplier = 1.5f;
+                    break;
+                default:
+                    difficultyMultiplier = 1;
+                    break;
             }
+            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
+                warlordsNPC.setMaxBaseHealth((health * difficultyMultiplier)  * bossMultiplier);
+                warlordsNPC.setMaxHealth((health * difficultyMultiplier) * bossMultiplier);
+                warlordsNPC.setHealth((health * difficultyMultiplier) * bossMultiplier);
+            } else {
+                warlordsNPC.setMaxBaseHealth(health * difficultyMultiplier);
+                warlordsNPC.setMaxHealth(health * difficultyMultiplier);
+                warlordsNPC.setHealth(health * difficultyMultiplier);
+            }
+
+            warlordsNPC.setMinMeleeDamage((int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier));
+            warlordsNPC.setMaxMeleeDamage((int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier));
+
+            warlordsNPC.setRegenTimer(999999999);
         }
 
         return warlordsNPC;

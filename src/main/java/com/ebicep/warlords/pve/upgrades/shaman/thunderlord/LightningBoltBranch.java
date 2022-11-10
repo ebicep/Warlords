@@ -32,7 +32,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 10000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                     ability.setProjectileSpeed(projectileSpeed * 1.4);
                 }
         ));
