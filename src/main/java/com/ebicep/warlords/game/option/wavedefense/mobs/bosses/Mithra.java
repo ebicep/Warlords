@@ -145,15 +145,15 @@ public class Mithra extends AbstractZombie implements BossMob {
                         flameTarget.addDamageInstance(
                                 warlordsNPC,
                                 "Immolation",
-                                150,
-                                150,
+                                200,
+                                200,
                                 0,
                                 100,
                                 false
                         );
                     }
 
-                    if (counter == 40) {
+                    if (counter == 50) {
                         this.cancel();
                         warlordsNPC.getSpeed().addBaseModifier(70);
                     }
