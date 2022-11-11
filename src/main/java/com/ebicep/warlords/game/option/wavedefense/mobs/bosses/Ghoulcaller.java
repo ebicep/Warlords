@@ -71,7 +71,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 );
             }
         }
-        spawnTormentedSouls(option, 10);
+        spawnTormentedSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -38,8 +39,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                 26000,
                 0.36f,
                 25,
-                1500,
-                2000
+                1800,
+                2500
         );
     }
 
@@ -75,6 +76,12 @@ public class Zenith extends AbstractZombie implements BossMob {
                     shockwave(loc, stormRadius + 5, 24, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
                     shockwave(loc, stormRadius + 10, 36, playerCount);
+                    if (option.getDifficulty() == DifficultyIndex.HARD) {
+                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, warlordsNPC.getGame());
+                        shockwave(loc, stormRadius + 15, 48, playerCount);
+                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, warlordsNPC.getGame());
+                        shockwave(loc, stormRadius + 15, 60, playerCount);
+                    }
                 }
             }.runTaskLater(40);
         }

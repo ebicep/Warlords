@@ -90,7 +90,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 210 == 0) {
+        if (ticksElapsed % 310 == 0) {
             int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 7 : 10;
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
@@ -125,25 +125,37 @@ public class Mithra extends AbstractZombie implements BossMob {
                 }
             }
 
-            float multiplier = option.getDifficulty() == DifficultyIndex.EASY ? 0.5f : 1;
+            float damage;
+            switch (option.getDifficulty()) {
+                case HARD:
+                    damage = 200;
+                    break;
+                case EASY:
+                    damage = 50;
+                    break;
+                default:
+                    damage = 150;
+                    break;
+            }
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
                 @Override
                 public void run() {
                     counter++;
+                    double radius = (1.25 * counter);
                     Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
                     Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
-                    EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), counter, ParticleEffect.FLAME, 2, counter);
+                    EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
                     for (WarlordsEntity flameTarget : PlayerFilter
-                            .entitiesAround(warlordsNPC, counter, counter, counter)
+                            .entitiesAround(warlordsNPC, radius, radius, radius)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
                         flameTarget.addDamageInstance(
                                 warlordsNPC,
                                 "Immolation",
-                                200 * multiplier,
-                                200 * multiplier,
+                                damage,
+                                damage,
                                 0,
                                 100,
                                 false
@@ -155,7 +167,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         warlordsNPC.getSpeed().addBaseModifier(70);
                     }
                 }
-            }.runTaskTimer(20, 5);
+            }.runTaskTimer(40, 5);
         }
     }
 
