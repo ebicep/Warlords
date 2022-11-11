@@ -131,7 +131,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
     @Override
     protected float getEnergyPerHitBonusValue() {
-        return 10;
+        return 20;
     }
 
     @Override
