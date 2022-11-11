@@ -30,7 +30,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
                 5000,
-                0.25f,
+                0.32f,
                 10,
                 1000,
                 1500

@@ -428,17 +428,6 @@ public class WaveDefenseOption implements Option {
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
-                int playerCount = (int) game.warlordsPlayers().count();
-                switch (playerCount) {
-                    case 2:
-                        spawnCount *= 1.1f;
-                        break;
-                    case 3:
-                    case 4:
-                        spawnCount *= 1.15f;
-                        break;
-                }
-
                 sendMessage(entry.getKey(),
                         false,
                         ChatColor.YELLOW + "A wave of §c§l" + spawnCount + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
@@ -503,11 +492,11 @@ public class WaveDefenseOption implements Option {
             int playerCount = (int) game.warlordsPlayers().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.1f;
+                    spawnCount *= 1.25f;
                     break;
                 case 3:
                 case 4:
-                    spawnCount *= 1.15f;
+                    spawnCount *= 1.5f;
                     break;
             }
         }

@@ -33,7 +33,7 @@ import java.util.List;
 public class Narmer extends AbstractZombie implements BossMob {
 
     private final int earthQuakeRadius = 12;
-    private final int executeRadius = 40;
+    private final int executeRadius = 80;
     private final List<WarlordsEntity> acolytes = new ArrayList<>();
     private int timesMegaEarthQuakeActivated = 0;
     private Listener listener;
@@ -124,7 +124,6 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
-                    int hardModifier = isHard ? 280 : 300;
                     if (acolyteDeathTickWindow > 0) {
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
@@ -172,7 +171,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         acolyteDeathTickWindow = option.getDifficulty() == DifficultyIndex.HARD ? 60 : 20;
                     }
 
-                    ticksUntilNewAcolyte = hardModifier;
+                    ticksUntilNewAcolyte = 300;
                 }
             }
         };
@@ -181,8 +180,6 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
-        int hardModifier = isHard ? 280 : 300;
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
@@ -191,7 +188,7 @@ public class Narmer extends AbstractZombie implements BossMob {
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
             option.spawnNewMob(acolyte);
             acolytes.add(acolyte.getWarlordsNPC());
-            ticksUntilNewAcolyte = hardModifier;
+            ticksUntilNewAcolyte = 300;
         }
 
         if (ticksUntilNewAcolyte > 0) {
