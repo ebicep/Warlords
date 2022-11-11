@@ -161,11 +161,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BALL)
-                .build());
+
     }
 
     @Override
