@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
 
     int slamSize = ability.getSlamSize();
-    float cooldown = ability.getCooldown();
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
@@ -16,40 +15,36 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+7.5% Damage\n-2.5% Cooldown reduction",
+                "+7.5% Damage",
                 5000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.975f);
                     ability.setMinDamageHeal(minDamage * 1.075f);
                     ability.setMaxDamageHeal(maxDamage * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+15% Damage\n-5% Cooldown reduction",
+                "+15% Damage",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.95f);
                     ability.setMinDamageHeal(minDamage * 1.15f);
                     ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+22.5% Damage\n-7.5% Cooldown reduction",
+                "+22.5% Damage",
                 15000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.925f);
                     ability.setMinDamageHeal(minDamage * 1.225f);
                     ability.setMaxDamageHeal(maxDamage * 1.225f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+30% Damage\n-10% Cooldown reduction",
+                "+30% Damage",
                 20000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.9f);
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
