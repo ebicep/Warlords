@@ -95,7 +95,7 @@ public class Mithra extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 210 == 0) {
-            int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 6 : 10;
+            int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 7 : 10;
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             new GameRunnable(warlordsNPC.getGame()) {
@@ -129,6 +129,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                 }
             }
 
+            float multiplier = option.getDifficulty() == DifficultyIndex.EASY ? 0.5f : 1;
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
                 @Override
@@ -141,12 +142,12 @@ public class Mithra extends AbstractZombie implements BossMob {
                             .entitiesAround(warlordsNPC, counter, counter, counter)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
-                        Utils.addKnockback(warlordsNPC.getLocation(), flameTarget, -1.1, 0.2f);
+                        Utils.addKnockback(warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
                         flameTarget.addDamageInstance(
                                 warlordsNPC,
                                 "Immolation",
-                                200,
-                                200,
+                                200 * multiplier,
+                                200 * multiplier,
                                 0,
                                 100,
                                 false
