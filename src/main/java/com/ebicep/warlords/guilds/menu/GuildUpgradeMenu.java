@@ -119,7 +119,7 @@ public class GuildUpgradeMenu {
                                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
                                         guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
                                         guild.addUpgrade(upgradesTemporary.createUpgrade(tier));
-                                        guild.log(new GuildLogUpgradeTemporary(upgradesTemporary, tier));
+                                        guild.log(new GuildLogUpgradeTemporary(player.getUniqueId(), upgradesTemporary, tier));
                                         guild.queueUpdate();
 
                                         Instant now = Instant.now();
@@ -175,7 +175,7 @@ public class GuildUpgradeMenu {
                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
                         guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
                         guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));
-                        guild.log(new GuildLogUpgradePermanent(upgradesPermanent, nextTier));
+                        guild.log(new GuildLogUpgradePermanent(player.getUniqueId(), upgradesPermanent, nextTier));
                         upgradesPermanent.onPurchase(guild, nextTier);
                         guild.queueUpdate();
 
