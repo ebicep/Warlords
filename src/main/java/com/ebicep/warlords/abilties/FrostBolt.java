@@ -148,7 +148,7 @@ public class FrostBolt extends AbstractProjectileBase {
                     new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE, (byte) 0).play();
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.GLASS, 2, 0.1f);
-                    freezeTarget.addDamageInstance(giver, name, 409, 554, critChance, critMultiplier, false);
+                    freezeTarget.addDamageInstance(giver, name, 409, 554, -1, 100, false);
                 }
             }
         }.runTaskLater(30);
