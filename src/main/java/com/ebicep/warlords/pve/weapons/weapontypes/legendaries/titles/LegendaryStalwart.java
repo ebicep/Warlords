@@ -30,6 +30,8 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
+        player.getSpec().setDamageResistance(player.getSpec().getDamageResistance() + 15);
+
         player.getCooldownManager().addCooldown(
                 new PermanentCooldown<>(
                         "Stalwart",
