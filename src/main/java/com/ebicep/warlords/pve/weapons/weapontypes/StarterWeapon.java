@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class StarterWeapon extends AbstractWeapon {
+public class StarterWeapon extends AbstractTierOneWeapon {
 
     public static final int MELEE_DAMAGE_MIN = 76;
     public static final int MELEE_DAMAGE_MAX = 103;

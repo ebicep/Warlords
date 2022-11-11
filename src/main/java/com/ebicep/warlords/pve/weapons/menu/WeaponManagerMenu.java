@@ -10,13 +10,13 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.StarPieces;
-import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -300,7 +300,7 @@ public class WeaponManagerMenu {
         //salvage common/rare/epic
         if (weapon instanceof Salvageable) {
             weaponOptions.add(new Pair<>(
-                    !(weapon instanceof AbstractTierTwoWeapon) ?
+                    !(weapon instanceof EpicWeapon) ?
                             new ItemBuilder(Material.FURNACE)
                                     .name(ChatColor.GREEN + "Salvage Weapon")
                                     .lore(
@@ -338,7 +338,7 @@ public class WeaponManagerMenu {
                             return;
                         }
 
-                        if (!(weapon instanceof AbstractTierTwoWeapon) && e.isShiftClick()) {
+                        if (!(weapon instanceof EpicWeapon) && e.isShiftClick()) {
                             WeaponSalvageMenu.salvageWeapon(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
                             openWeaponInventoryFromInternal(player, databasePlayer);
                         } else {

@@ -14,13 +14,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
-    public static final int MELEE_DAMAGE_MIN = 140;
-    public static final int MELEE_DAMAGE_MAX = 170;
-    public static final int CRIT_CHANCE = 20;
-    public static final int CRIT_MULTIPLIER = 180;
-    public static final int HEALTH_BONUS = 600;
-    public static final int SPEED_BONUS = 10;
-    public static final int ENERGY_PER_SECOND_BONUS = 4;
 
     private static final int PASSIVE_EFFECT_DURATION = 10;
     private static final int PASSIVE_EFFECT_COOLDOWN = 20;
@@ -99,17 +92,38 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
-        this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
+    protected float getSpeedBonusValue() {
+        return 10;
     }
 
     @Override
-    public int getMeleeDamageRange() {
-        return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 600;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 4;
     }
 }
+

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class LegendarySuspicious extends AbstractLegendaryWeapon {
-    public static final List<Pair<Note, Integer>> noteDelay = new ArrayList<Pair<Note, Integer>>() {{
+    public static final List<Pair<Note, Integer>> noteDelay = new ArrayList<>() {{
         add(new Pair<>(new Note(0, Note.Tone.G, false), 7));
         add(new Pair<>(new Note(1, Note.Tone.C, false), 4));
         add(new Pair<>(new Note(1, Note.Tone.D, true), 4));
@@ -32,15 +32,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
         add(new Pair<>(new Note(1, Note.Tone.D, false), 4));
         add(new Pair<>(new Note(1, Note.Tone.C, false), 4));
     }};
-    public static final int MELEE_DAMAGE_MIN = 180;
-    public static final int MELEE_DAMAGE_MAX = 200;
-    public static final int CRIT_CHANCE = 50;
-    public static final int CRIT_MULTIPLIER = -50;
-    public static final int HEALTH_BONUS = 500;
-    public static final int SPEED_BONUS = 8;
-    public static final int ENERGY_PER_HIT_BONUS = 10;
-    public static final int SKILL_CRIT_CHANCE_BONUS = 5;
-    public static final int SKILL_CRIT_MULTIPLIER_BONUS = 15;
 
     public LegendarySuspicious() {
     }
@@ -109,19 +100,47 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
-        this.energyPerHitBonus = ENERGY_PER_HIT_BONUS;
-        this.skillCritChanceBonus = SKILL_CRIT_CHANCE_BONUS;
-        this.skillCritMultiplierBonus = SKILL_CRIT_MULTIPLIER_BONUS;
+    protected float getSpeedBonusValue() {
+        return 8;
     }
 
     @Override
-    public int getMeleeDamageRange() {
-        return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
+    protected float getMeleeDamageMinValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 50;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return -50;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
     }
 }

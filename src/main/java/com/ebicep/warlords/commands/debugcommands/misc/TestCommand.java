@@ -10,8 +10,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -60,16 +58,26 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
-        });
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
+//        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//        pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+//            databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
+//            databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
+//            databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
+//            databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
+//        });
+//        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
+//        List<DatabasePlayer> all = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+//        for (DatabasePlayer databasePlayer : all) {
+//            for (AbstractWeapon weapon : databasePlayer.getPveStats().getWeaponInventory()) {
+//                if(weapon instanceof Upgradeable) {
+//                    System.out.println(databasePlayer.getName());
+//                    System.out.println(weapon.getUUID());
+//                    System.out.println(((Upgradeable) weapon).getUpgradeLevel());
+//                }
+//            }
+//        }
 //
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP);
 //        for (DatabasePlayer databasePlayer : databasePlayers) {

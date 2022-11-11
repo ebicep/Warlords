@@ -19,7 +19,7 @@ public interface Upgradeable {
     }
 
     default float getUpgradeMultiplierNegative() {
-        return 0.9f;
+        return 1;
     }
 
     default ItemStack getUpgradeItem() {

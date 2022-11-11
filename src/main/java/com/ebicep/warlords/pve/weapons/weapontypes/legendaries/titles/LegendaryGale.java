@@ -9,12 +9,6 @@ import org.bukkit.ChatColor;
 import java.util.UUID;
 
 public class LegendaryGale extends AbstractLegendaryWeapon {
-    public static final int MELEE_DAMAGE_MIN = 150;
-    public static final int MELEE_DAMAGE_MAX = 170;
-    public static final int CRIT_CHANCE = 20;
-    public static final int CRIT_MULTIPLIER = 185;
-    public static final int HEALTH_BONUS = 500;
-    public static final int SPEED_BONUS = 20;
 
     public static final int BLOCKS_TO_MOVE = 100;
     public static final int COOLDOWN = 30;
@@ -85,16 +79,33 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
+    protected float getSpeedBonusValue() {
+        return 20;
     }
 
     @Override
-    public int getMeleeDamageRange() {
-        return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
+    protected float getMeleeDamageMinValue() {
+        return 150;
     }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 185;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
 }
