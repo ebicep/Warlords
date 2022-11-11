@@ -18,7 +18,7 @@ public enum PlayersCollections {
             return true;
         }
     },
-    SEASON_7("Season 6", "Players_Information_Season_7", "playersSeason7") {
+    SEASON_7("Season 7", "Players_Information_Season_7", "playersSeason7") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);

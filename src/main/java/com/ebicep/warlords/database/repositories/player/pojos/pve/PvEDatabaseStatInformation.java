@@ -38,7 +38,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     protected long mostDamageInRound;
     @Field("most_damage_in_wave")
     protected long mostDamageInWave;
-    @Field("fastest_normal_game_finished")
+    @Field("fastest_game_finished")
     protected long fastestGameFinished = 0;
 
     public PvEDatabaseStatInformation() {

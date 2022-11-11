@@ -56,12 +56,16 @@ public class WaveDefenseStats {
             if ((i - 1) / 5 >= WaveDefenseStats.COINS_PER_5_WAVES.length) {
                 break;
             }
-            cachedBaseCoinSummary.merge("Waves Cleared", WaveDefenseStats.COINS_PER_5_WAVES[(i - 1) / 5], Long::sum);
+            cachedBaseCoinSummary.merge("Waves Cleared",
+                    (long) (WaveDefenseStats.COINS_PER_5_WAVES[(i - 1) / 5] * waveDefenseOption.getDifficulty().getRewardsMultiplier()),
+                    Long::sum
+            );
         }
         for (Map.Entry<String, Long> stringLongEntry : WaveDefenseStats.BOSS_COIN_VALUES.entrySet()) {
             if (bossesKilled.containsKey(stringLongEntry.getKey())) {
                 cachedBaseCoinSummary.merge("Bosses Killed",
-                        bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue(),
+                        (long) (bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * waveDefenseOption.getDifficulty()
+                                .getRewardsMultiplier()),
                         Long::sum
                 );
             }
@@ -72,10 +76,16 @@ public class WaveDefenseStats {
                 .forEach(warlordsPlayer -> {
                     if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() && waveDefenseOption.getDifficulty() != DifficultyIndex.ENDLESS) {
                         long coinsConverted = warlordsPlayer.getCurrency() / 100;
-                        cachedBaseCoinSummary.put("Excess Insignia Converted", Math.min(coinsConverted, 1000L));
+                        cachedBaseCoinSummary.put("Excess Insignia Converted",
+                                Math.min(coinsConverted, waveDefenseOption.getDifficulty().getMaxInsigniaConverted())
+                        );
                     }
                     getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary);
                 });
+    }
+
+    public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {
+        return playerWaveDefenseStats.computeIfAbsent(uuid, k -> new PlayerWaveDefenseStats());
     }
 
     public void storeWeaponFragmentGain(WaveDefenseOption waveDefenseOption) {
@@ -88,17 +98,14 @@ public class WaveDefenseStats {
                         UUID uuid = warlordsPlayer.getUuid();
                         DatabaseManager.getPlayer(uuid, databasePlayer -> {
                             long legendFragmentGain = won || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS ?
-                                    wavesCleared :
-                                    (long) (wavesCleared * 0.5);
+                                    wavesCleared : (long) (wavesCleared * 0.5);
                             legendFragmentGain += databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige() * 5L * wavesCleared / 25;
+                            legendFragmentGain *= waveDefenseOption.getDifficulty() == DifficultyIndex.EASY ?
+                                    .5 : waveDefenseOption.getDifficulty().getRewardsMultiplier();
                             getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain);
                         });
                     }
                 });
-    }
-
-    public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {
-        return playerWaveDefenseStats.computeIfAbsent(uuid, k -> new PlayerWaveDefenseStats());
     }
 
     public HashMap<String, Long> getBossesKilled() {
@@ -106,9 +113,9 @@ public class WaveDefenseStats {
     }
 
     public static class PlayerWaveDefenseStats {
+        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
         private final HashMap<Integer, Long> waveDamage = new HashMap<>();
-        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         private long legendFragmentGain = 0;
 
         public List<AbstractWeapon> getWeaponsFound() {

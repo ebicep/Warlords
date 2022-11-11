@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent {
     private static final HandlerList handlers = new HandlerList();
 
     private final WarlordsDamageHealingEvent warlordsDamageHealingEvent;

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  *
  */
-public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
+public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private WarlordsEntity attacker;

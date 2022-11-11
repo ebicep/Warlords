@@ -1,17 +1,17 @@
 package com.ebicep.warlords.events.player.ingame.pve;
 
-import com.ebicep.warlords.events.player.ingame.AbstractWarlordsPlayerEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
 import java.util.LinkedHashMap;
 
-public class WarlordsPlayerCoinSummaryEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsCoinSummaryEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final LinkedHashMap<String, Long> coinSummary;
 
-    public WarlordsPlayerCoinSummaryEvent(WarlordsEntity player, LinkedHashMap<String, Long> coinSummary) {
+    public WarlordsCoinSummaryEvent(WarlordsEntity player, LinkedHashMap<String, Long> coinSummary) {
         super(player);
         this.coinSummary = coinSummary;
     }

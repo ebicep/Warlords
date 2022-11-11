@@ -100,6 +100,7 @@ public enum Quests {
 
     public static List<Quests> getQuestsFromGameStats(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption, boolean recalculate) {
         if (!QuestCommand.isQuestsEnabled) {
+            CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), new ArrayList<>());
             return new ArrayList<>();
         }
         if (!recalculate && CACHED_PLAYER_QUESTS.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_QUESTS.get(
@@ -110,6 +111,7 @@ public enum Quests {
 
         PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
         if (total.getDamage() + total.getHealing() + total.getAbsorbed() < 100_000) {
+            CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), questsCompleted);
             return questsCompleted;
         }
 

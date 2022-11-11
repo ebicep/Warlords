@@ -107,6 +107,17 @@ public class EditStatsCommand extends BaseCommand {
             PvEDatabaseStatInformation databaseBasePvE = difficultyStats.getSpec(value);
             wipe(databaseBasePvE);
         }
+        difficultyStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+            wipe(databasePlayerPvEPlayerCountStats);
+            for (Classes value : Classes.VALUES) {
+                PvEDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getClass(value);
+                wipe(databaseBasePvE);
+            }
+            for (Specializations value : Specializations.VALUES) {
+                PvEDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getSpec(value);
+                wipe(databaseBasePvE);
+            }
+        });
     }
 
     private void wipe(PvEDatabaseStatInformation statInformation) {

@@ -74,7 +74,7 @@ public class FrostBolt extends AbstractProjectileBase {
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.addSpeedModifier("Frostbolt", -slowness, 2 * 20);
+            hit.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
             hit.addDamageInstance(
                     shooter,
                     name,
@@ -100,7 +100,7 @@ public class FrostBolt extends AbstractProjectileBase {
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            nearEntity.addSpeedModifier("Frostbolt", -slowness, 2 * 20);
+            nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
             nearEntity.addDamageInstance(
                     shooter,
                     name,

@@ -60,16 +60,29 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
-            databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
-        });
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME)) {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
+                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
+                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
+                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
+            });
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        }
+        //DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
 
+
+//        List<DatabasePlayer> all = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+//        for (DatabasePlayer databasePlayer : all) {
+//            for (AbstractWeapon weapon : databasePlayer.getPveStats().getWeaponInventory()) {
+//                if(weapon instanceof Upgradeable) {
+//                    System.out.println(databasePlayer.getName());
+//                    System.out.println(weapon.getUUID());
+//                    System.out.println(((Upgradeable) weapon).getUpgradeLevel());
+//                }
+//            }
+//        }
 //
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP);
 //        for (DatabasePlayer databasePlayer : databasePlayers) {

@@ -109,7 +109,7 @@ public class SoulShackle extends AbstractAbility {
                 .with(FireworkEffect.Type.BALL)
                 .build());
 
-        wp.addSpeedModifier("Shackle Speed", 40, 30, "BASE");
+        wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
 
         int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
         if (silenceDuration > maxSilenceDurationInTicks) {

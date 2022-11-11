@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerUpgradeUnlockEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
@@ -148,7 +148,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
 
-                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradeUnlockEvent(player, upgrade));
+                        Bukkit.getPluginManager().callEvent(new WarlordsUpgradeUnlockEvent(player, upgrade));
                         globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
                         openUpgradeBranchMenu();

@@ -6,12 +6,12 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 
-public class WarlordsPlayerGiveExperienceEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsGiveExperienceEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final LinkedHashMap<String, Long> experienceSummary;
 
-    public WarlordsPlayerGiveExperienceEvent(@Nonnull WarlordsEntity player, LinkedHashMap<String, Long> experienceSummary) {
+    public WarlordsGiveExperienceEvent(@Nonnull WarlordsEntity player, LinkedHashMap<String, Long> experienceSummary) {
         super(player);
         this.experienceSummary = experienceSummary;
     }

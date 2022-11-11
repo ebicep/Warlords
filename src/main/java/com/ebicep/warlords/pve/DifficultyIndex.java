@@ -12,7 +12,9 @@ public enum DifficultyIndex {
             ChatColor.GREEN,
             25,
             24,
-            2
+            2,
+            750,
+            .75f
     ),
     NORMAL("Normal",
             "Fight off 25 waves of monsters to\nearn rewards." +
@@ -20,7 +22,9 @@ public enum DifficultyIndex {
             ChatColor.YELLOW,
             25,
             48,
-            4
+            4,
+            1000,
+            1
     ),
     HARD("Hard",
             "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
@@ -28,7 +32,9 @@ public enum DifficultyIndex {
             ChatColor.GOLD,
             25,
             96,
-            8
+            8,
+            2000,
+            2
     ),
     ENDLESS("Endless",
             "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
@@ -36,7 +42,9 @@ public enum DifficultyIndex {
             ChatColor.RED,
             10000,
             72,
-            4
+            4,
+            1000,
+            1
     );
 
     private final String name;
@@ -45,6 +53,8 @@ public enum DifficultyIndex {
     private final int maxWaves;
     private final int waveExperienceMultiplier;
     private final int waveGuildExperienceMultiplier;
+    private final int maxInsigniaConverted;
+    private final float rewardsMultiplier;
 
     DifficultyIndex(
             @Nonnull String name,
@@ -52,7 +62,8 @@ public enum DifficultyIndex {
             ChatColor difficultyColor,
             int maxWaves,
             int waveExperienceMultiplier,
-            int waveGuildExperienceMultiplier
+            int waveGuildExperienceMultiplier,
+            int maxInsigniaConverted, float rewardsMultiplier
     ) {
         this.name = name;
         this.description = description;
@@ -60,6 +71,8 @@ public enum DifficultyIndex {
         this.maxWaves = maxWaves;
         this.waveExperienceMultiplier = waveExperienceMultiplier;
         this.waveGuildExperienceMultiplier = waveGuildExperienceMultiplier;
+        this.maxInsigniaConverted = maxInsigniaConverted;
+        this.rewardsMultiplier = rewardsMultiplier;
     }
 
     public String getName() {
@@ -84,5 +97,13 @@ public enum DifficultyIndex {
 
     public int getWaveGuildExperienceMultiplier() {
         return waveGuildExperienceMultiplier;
+    }
+
+    public int getMaxInsigniaConverted() {
+        return maxInsigniaConverted;
+    }
+
+    public float getRewardsMultiplier() {
+        return rewardsMultiplier;
     }
 }

@@ -1,26 +1,23 @@
 package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ebicep.warlords.util.java.NumberFormat.formatOptionalTenths;
-
 /**
- * Abstract class for weapons that are above starter/common/rare
+ * Abstract class for weapons that are above starter. Has StarPieceBonus
  */
-public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implements Upgradeable {
+public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon {
 
-    @Field("speed_bonus")
-    protected float speedBonus;
-    @Field("upgrade_level")
-    protected int upgradeLevel = 0;
+    @Field("crit_chance_bonus")
+    protected float critChance;
+    @Field("crit_multiplier_bonus")
+    protected float critMultiplier;
 
     public AbstractTierTwoWeapon() {
     }
@@ -34,56 +31,40 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-        player.getSpeed().addBaseModifier(getSpeedBonus());
-    }
-
-    @Override
-    public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%");
-    }
-
-    @Override
-    public List<String> getLoreAddons() {
-        return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
-    }
-
-    public float getSpeedBonus() {
-        return speedBonus;
-    }
-
-    @Override
-    public void upgrade() {
-        this.upgradeLevel++;
-        this.meleeDamage *= meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.healthBonus *= healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.speedBonus *= speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-    }
-
-    @Override
-    public List<String> getUpgradeLore() {
-        float upgradedMeleeDamage = meleeDamage * (meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier());
+    public List<String> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED +
-                        formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(meleeDamage + getMeleeDamageRange()) +
-                        ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(upgradedMeleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(
-                        upgradedMeleeDamage + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critChance) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critMultiplier) + "%",
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " +
+                        NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%",
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
-                        format(healthBonus * (healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " +
-                        format(speedBonus * (speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%"
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus())
         );
     }
 
     @Override
-    public int getUpgradeLevel() {
-        return upgradeLevel;
+    public float getMeleeDamageMin() {
+        return meleeDamage;
     }
+
+    @Override
+    public float getMeleeDamageMax() {
+        return meleeDamage + getMeleeDamageRange();
+    }
+
+    @Override
+    public float getCritChance() {
+        return critChance;
+    }
+
+    @Override
+    public float getCritMultiplier() {
+        return critMultiplier;
+    }
+
+    @Override
+    public float getHealthBonus() {
+        return healthBonus;
+    }
+
 }

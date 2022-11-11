@@ -305,7 +305,7 @@ public class DebugMenuPlayerOptions {
                                             },
                                             amountNumber * 20);
                                     if (cooldown == StatusEffectCooldowns.SPEED) {
-                                        target.addSpeedModifier("Speed Powerup", 40, amountNumber * 20, "BASE");
+                                        target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
                                     }
                                     sendDebugMessage(player, ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name, true);
                                 } catch (NumberFormatException exception) {

@@ -82,7 +82,7 @@ public class ArcaneShield extends AbstractAbility {
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
                         ) {
-                            we.addSpeedModifier("Arcane Aegis", -99, 6 * 20);
+                            we.addSpeedModifier(wp, "Arcane Aegis", -99, 6 * 20);
                         }
                     }
                 },

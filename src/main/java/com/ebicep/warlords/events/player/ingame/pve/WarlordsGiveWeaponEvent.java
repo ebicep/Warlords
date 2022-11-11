@@ -1,16 +1,16 @@
 package com.ebicep.warlords.events.player.ingame.pve;
 
-import com.ebicep.warlords.events.player.ingame.AbstractWarlordsPlayerEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsPlayerGiveWeaponEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsGiveWeaponEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final AbstractWeapon weapon;
 
-    public WarlordsPlayerGiveWeaponEvent(WarlordsEntity player, AbstractWeapon weapon) {
+    public WarlordsGiveWeaponEvent(WarlordsEntity player, AbstractWeapon weapon) {
         super(player);
         this.weapon = weapon;
     }

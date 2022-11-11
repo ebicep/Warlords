@@ -56,7 +56,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 wp.addDamageInstance(warlordsNPC, "Void Shred", 200, 300, 0, 100, true);
-                wp.addSpeedModifier("Void Slowness", -70, 10);
+                wp.addSpeedModifier(warlordsNPC, "Void Slowness", -70, 10);
             }
         }
 
@@ -75,7 +75,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
-        receiver.addSpeedModifier("Envoy Slowness", -20, 2 * 20);
+        receiver.addSpeedModifier(attacker, "Envoy Slowness", -20, 2 * 20);
     }
 
     @Override

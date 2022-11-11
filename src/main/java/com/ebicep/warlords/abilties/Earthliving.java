@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -99,8 +100,13 @@ public class Earthliving extends AbstractAbility {
                         if (pveUpgrade) {
                             energyPulseOnHit(attacker, victim);
                         }
+
                         new GameRunnable(victim.getGame()) {
                             int counter = 0;
+                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMin() : 132;
+                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMax() : 179;
 
                             @Override
                             public void run() {
@@ -110,8 +116,8 @@ public class Earthliving extends AbstractAbility {
                                 attacker.addHealingInstance(
                                         attacker,
                                         name,
-                                        132 * (weaponDamage / 100f),
-                                        179 * (weaponDamage / 100f),
+                                        minDamage * (weaponDamage / 100f),
+                                        maxDamage * (weaponDamage / 100f),
                                         critChance,
                                         critMultiplier,
                                         false,
@@ -127,8 +133,8 @@ public class Earthliving extends AbstractAbility {
                                     nearPlayer.addHealingInstance(
                                             attacker,
                                             name,
-                                            132 * (weaponDamage / 100f),
-                                            179 * (weaponDamage / 100f),
+                                            minDamage * (weaponDamage / 100f),
+                                            maxDamage * (weaponDamage / 100f),
                                             critChance,
                                             critMultiplier,
                                             false,
@@ -182,7 +188,7 @@ public class Earthliving extends AbstractAbility {
                 },
                 2 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    target.addSpeedModifier("Earthliving Slow", -99, 1, "BASE");
+                    target.addSpeedModifier(giver, "Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);

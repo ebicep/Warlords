@@ -4,13 +4,6 @@ import java.util.UUID;
 
 public class LegendaryWeapon extends AbstractLegendaryWeapon {
 
-    public static final int MELEE_DAMAGE_MIN = 160;
-    public static final int MELEE_DAMAGE_MAX = 180;
-    public static final int CRIT_CHANCE = 20;
-    public static final int CRIT_MULTIPLIER = 200;
-    public static final int HEALTH_BONUS = 600;
-    public static final int SPEED_BONUS = 10;
-
     public LegendaryWeapon() {
     }
 
@@ -29,17 +22,32 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
+    protected float getMeleeDamageMinValue() {
+        return 160;
     }
 
     @Override
-    public int getMeleeDamageRange() {
+    protected float getMeleeDamageMaxValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
         return 20;
     }
 
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 600;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
 }

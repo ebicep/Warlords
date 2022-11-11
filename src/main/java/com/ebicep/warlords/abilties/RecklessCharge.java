@@ -118,7 +118,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
                                 if (otherPlayer instanceof WarlordsNPC) {
-                                    otherPlayer.addSpeedModifier("Charge Stun", -99, getStunTimeInTicks(), "BASE");
+                                    otherPlayer.addSpeedModifier(wp, "Charge Stun", -99, getStunTimeInTicks(), "BASE");
                                 } else {
                                     STUNNED_PLAYERS.add(otherPlayer.getUuid());
                                     new GameRunnable(wp.getGame()) {

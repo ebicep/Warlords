@@ -65,7 +65,7 @@ public class JudgementStrike extends AbstractStrikeBase {
                 false
         ).ifPresent(finalEvent -> {
             if (finalEvent.isCrit()) {
-                wp.addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
+                wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
             if (pveUpgrade) {
                 if (

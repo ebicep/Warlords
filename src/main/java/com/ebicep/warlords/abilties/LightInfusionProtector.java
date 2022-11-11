@@ -43,7 +43,7 @@ public class LightInfusionProtector extends AbstractAbility {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
-        Runnable cancelSpeed = wp.addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusionProtector tempLightInfusion = new LightInfusionProtector(cooldown);
         wp.getCooldownManager().addRegularCooldown(

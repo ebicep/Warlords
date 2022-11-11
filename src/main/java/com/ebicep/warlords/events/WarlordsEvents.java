@@ -385,7 +385,7 @@ public class WarlordsEvents implements Listener {
         wpVictim.updateHealth();
 
         if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
-            wpAttacker.addSpeedModifier("Ice Barrier", -20, 2 * 20);
+            wpAttacker.addSpeedModifier(wpVictim, "Ice Barrier", -20, 2 * 20);
         }
     }
 
