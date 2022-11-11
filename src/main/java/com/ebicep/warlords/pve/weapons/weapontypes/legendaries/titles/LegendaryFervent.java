@@ -15,25 +15,25 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LegendaryWarmonger extends AbstractLegendaryWeapon {
+public class LegendaryFervent extends AbstractLegendaryWeapon {
 
     public static final int DAMAGE_TO_TAKE = 10000;
     public static final int COOLDOWN = 30;
 
-    public LegendaryWarmonger() {
+    public LegendaryFervent() {
     }
 
-    public LegendaryWarmonger(UUID uuid) {
+    public LegendaryFervent(UUID uuid) {
         super(uuid);
     }
 
-    public LegendaryWarmonger(AbstractLegendaryWeapon legendaryWeapon) {
+    public LegendaryFervent(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
     }
 
     @Override
     public String getTitle() {
-        return "Warmonger";
+        return "Fervent";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
                     player.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Warmonger",
                             "WAR",
-                            LegendaryWarmonger.class,
+                            LegendaryFervent.class,
                             null,
                             player,
                             CooldownTypes.BUFF,
