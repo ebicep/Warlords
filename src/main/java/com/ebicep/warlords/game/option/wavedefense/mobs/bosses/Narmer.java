@@ -124,7 +124,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
-                    int hardModifier = isHard ? 260 : 300;
+                    int hardModifier = isHard ? 280 : 300;
                     if (acolyteDeathTickWindow > 0) {
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
@@ -182,7 +182,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
-        int hardModifier = isHard ? 260 : 300;
+        int hardModifier = isHard ? 280 : 300;
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
