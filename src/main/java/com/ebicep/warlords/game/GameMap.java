@@ -6,7 +6,6 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
@@ -1107,7 +1106,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionValley",
-            1,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1444,7 +1443,7 @@ public enum GameMap {
             1,
             60 * SECOND,
             "IllusionAperture",
-            1,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1596,7 +1595,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionCrossfire",
-            8,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -2199,7 +2198,7 @@ public enum GameMap {
             1,
             10 * SECOND,
             "Tutorial",
-            5,
+            3,
             GameMode.TUTORIAL
     ) {
         @Override
