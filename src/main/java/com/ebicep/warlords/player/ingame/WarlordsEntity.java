@@ -61,6 +61,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -157,10 +158,10 @@ public abstract class WarlordsEntity {
         this.health = this.maxHealth;
         this.maxBaseHealth = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
-        this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed,
+        this.speed = isInPve() ? new CalculateSpeed(this, this::setWalkSpeed,
                 13,
                 true
-        ) : new CalculateSpeed(this::setWalkSpeed, 13);
+        ) : new CalculateSpeed(this, this::setWalkSpeed, 13);
         if (specClass == Specializations.APOTHECARY) {
             this.speed.addBaseModifier(10);
         }
@@ -1774,8 +1775,15 @@ public abstract class WarlordsEntity {
         return this.game;
     }
 
-    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
-        return this.speed.addSpeedModifier(name, modifier, duration, toDisable);
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+        AtomicReference<String> nameRef = new AtomicReference<>(name);
+        AtomicInteger modifierRef = new AtomicInteger(modifier);
+        AtomicInteger durationRef = new AtomicInteger(duration);
+        AtomicReference<String[]> toDisableRef = new AtomicReference<>(toDisable);
+
+        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, from, nameRef, modifierRef, durationRef, toDisableRef));
+
+        return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
     }
 
     public CalculateSpeed getSpeed() {

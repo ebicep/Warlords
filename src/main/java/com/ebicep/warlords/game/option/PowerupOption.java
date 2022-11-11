@@ -260,7 +260,7 @@ public class PowerupOption implements Option {
                         option.getDuration() * 20
                 );
                 we.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
-                we.addSpeedModifier("Speed Powerup", 40, option.getDuration() * 20, "BASE");
+                we.addSpeedModifier(wp, "Speed Powerup", 40, option.getDuration() * 20, "BASE");
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 

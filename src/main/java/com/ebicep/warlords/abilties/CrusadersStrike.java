@@ -96,7 +96,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 .limit(energyMaxAllies)
         ) {
             if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
-                energyTarget.addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
+                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
             }
 
             energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven);

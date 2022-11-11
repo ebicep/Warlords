@@ -3,8 +3,6 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.effects.circle.CircleEffect;
-import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -22,8 +20,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class Mithra extends AbstractZombie implements BossMob {
@@ -101,7 +97,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
                 public void run() {
-                    warlordsNPC.addSpeedModifier("Mithra Slowness", -99, 100);
+                    warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
                     flameBurstBarrage(multiplier, 10);
 
                     if (warlordsNPC.isDead()) {
@@ -113,7 +109,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.5f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
-            warlordsNPC.addSpeedModifier("Mithra Slowness", -99, 200);
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 200);
             for (int i = 0; i < 3; i++) {
                 Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
             }

@@ -69,7 +69,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         critChance,
                         critMultiplier
                 );
-                markTarget.addSpeedModifier("Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
+                markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
                 markTarget.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceCrusader>(
                         name,
                         "CRUS MARK",

@@ -97,7 +97,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
-        this.speed = new CalculateSpeed(this::setWalkSpeed, 13, true);
+        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
@@ -218,7 +218,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
         if (getMobTier() == MobTier.BOSS) {
             if (modifier < 0) {
                 modifier *= .4;
@@ -228,7 +228,7 @@ public final class WarlordsNPC extends WarlordsEntity {
                 modifier *= .7;
             }
         }
-        return super.addSpeedModifier(name, modifier, duration, toDisable);
+        return super.addSpeedModifier(from, name, modifier, duration, toDisable);
     }
 
     public float getMinMeleeDamage() {
