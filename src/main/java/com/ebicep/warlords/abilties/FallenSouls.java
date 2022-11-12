@@ -28,6 +28,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
     public FallenSouls() {
         super("Fallen Souls", 164f, 212f, 0, 55, 20, 180, 2, 35, false);
+        this.shotsFiredAtATime = 3;
         this.maxAngleOfShots = 54;
         this.forwardTeleportAmount = 1.6f;
     }
