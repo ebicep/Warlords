@@ -186,12 +186,12 @@ public class WaveDefenseOption implements Option {
                     return;
                 }
                 if (entityLiving instanceof EntityInsentient) {
-//                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS)) {
-//                        event.setCancelled(true);
-//                        return;
-//                    }
                     LivingEntity newTarget = event.getTarget();
                     EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
+                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (newTarget == null) {
                         if (oldTarget instanceof EntityPlayer) {
                             //setting target to player zombie
