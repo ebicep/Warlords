@@ -37,7 +37,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -46,7 +46,7 @@ import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame
 
 public class DatabaseManager {
 
-    private static final AtomicBoolean UPDATING = new AtomicBoolean(false);
+    private static final AtomicInteger UPDATE_COOLDOWN = new AtomicInteger(0);
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<>() {{
         for (PlayersCollections value : PlayersCollections.VALUES) {
             put(value, new HashSet<>());
@@ -125,18 +125,15 @@ public class DatabaseManager {
 
             @Override
             public void run() {
-                PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> PLAYERS_TO_UPDATE.get(playersCollections).addAll(databasePlayers));
-                PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
-                UPDATING.set(true);
-                Warlords.newChain()
-                        .async(DatabaseManager::updateQueue)
-                        .sync(() -> {
-                            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
-                            UPDATING.set(false);
-                        })
-                        .execute();
+                UPDATE_COOLDOWN.incrementAndGet();
+                if (UPDATE_COOLDOWN.get() % 200 == 0) {
+                    UPDATE_COOLDOWN.set(1);
+                    PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> PLAYERS_TO_UPDATE.get(playersCollections).addAll(databasePlayers));
+                    PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
+                    updateQueue();
+                }
             }
-        }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
+        }.runTaskTimer(Warlords.getInstance(), 20, 0);
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
@@ -188,9 +185,14 @@ public class DatabaseManager {
 
     public static void updateQueue() {
         synchronized (PLAYERS_TO_UPDATE) {
-            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
-                    playersCollections
-            )));
+            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> {
+                databasePlayers.forEach(databasePlayer -> {
+                    Warlords.newChain()
+                            .async(() -> playerService.update(databasePlayer, playersCollections))
+                            .execute();
+                });
+                databasePlayers.clear();
+            });
         }
     }
 
@@ -266,7 +268,7 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
-        if (UPDATING.get()) {
+        if (UPDATE_COOLDOWN.get() < 100) {
             PLAYERS_TO_UPDATE_2.get(PlayersCollections.LIFETIME).add(databasePlayer);
         } else {
             PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
@@ -319,7 +321,7 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
-        if (UPDATING.get()) {
+        if (UPDATE_COOLDOWN.get() < 100) {
             PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
         } else {
             PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
