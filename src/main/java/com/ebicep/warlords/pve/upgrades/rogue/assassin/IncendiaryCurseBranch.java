@@ -14,7 +14,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
 
     public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
         super(abilityTree, ability);
-        ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() * 2);
+        ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() * 4);
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
