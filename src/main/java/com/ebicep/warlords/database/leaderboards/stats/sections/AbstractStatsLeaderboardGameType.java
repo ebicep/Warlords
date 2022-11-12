@@ -1,14 +1,14 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
@@ -38,10 +38,10 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers) {
         switch (collection) {
             case LIFETIME:
-                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 50);
+                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 50);
                 break;
             case WEEKLY:
-                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 10);
+                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10);
                 break;
         }
         String subTitle = getSubTitle();
