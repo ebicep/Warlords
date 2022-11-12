@@ -26,9 +26,9 @@ public class NarmerAcolyte extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
                         Weapons.DEMONBLADE.getItem()
                 ),
-                5400,
+                5000,
                 0.35f,
-                10,
+                0,
                 540,
                 765
         );

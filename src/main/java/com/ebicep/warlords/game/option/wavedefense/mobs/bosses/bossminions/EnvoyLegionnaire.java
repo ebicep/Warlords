@@ -29,7 +29,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
-                5000,
+                4000,
                 0.32f,
                 10,
                 1000,
@@ -50,7 +50,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                 .equals("Zenith"))
                 .findFirstOrNull();
 
-        if (ticksElapsed % 100 == 0) {
+        if (ticksElapsed % 200 == 0) {
             if (zenith != null) {
                 zenith.addHealingInstance(
                         warlordsNPC,

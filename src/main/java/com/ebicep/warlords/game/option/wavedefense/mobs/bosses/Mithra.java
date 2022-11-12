@@ -98,7 +98,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                 @Override
                 public void run() {
                     warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
-                    flameBurstBarrage(multiplier, 10);
+                    flameBurstBarrage(multiplier, 8);
 
                     if (warlordsNPC.isDead()) {
                         this.cancel();

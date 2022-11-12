@@ -254,7 +254,7 @@ public class WarlordsEvents implements Listener {
             wp.updatePlayerReference(null);
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
-            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
+            e.setQuitMessage(Permissions.getPrefixWithColor(e.getPlayer()) + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
