@@ -97,12 +97,12 @@ public class Mithra extends AbstractZombie implements BossMob {
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
                 public void run() {
-                    warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
-                    flameBurstBarrage(multiplier, 8);
-
                     if (warlordsNPC.isDead()) {
                         this.cancel();
                     }
+
+                    warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
+                    flameBurstBarrage(multiplier, 8);
                 }
             }.runTaskLater(40);
         }
@@ -139,8 +139,14 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                        return;
+                    }
+
                     counter++;
                     double radius = (1.25 * counter);
                     Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
@@ -194,6 +200,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     private void flameBurstBarrage(int delayBetweenShots, int amountOfShots) {
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
+
             @Override
             public void run() {
                 counter++;
