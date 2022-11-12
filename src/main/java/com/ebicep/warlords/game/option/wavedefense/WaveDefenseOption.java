@@ -515,11 +515,6 @@ public class WaveDefenseOption implements Option {
                 counter++;
                 if (lastSpawn == null) {
                     lastSpawn = spawn(lastLocation);
-//                    if (lastSpawn != null) {
-//                        Location newLoc = getSpawnLocation(lastSpawn);
-//                        lastSpawn.teleport(newLoc);
-//                        lastSpawn.getLocation(lastLocation);
-//                    }
                 } else {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
                     lastSpawn.getLocation(lastLocation);

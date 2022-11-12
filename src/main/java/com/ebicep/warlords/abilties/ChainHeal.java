@@ -90,6 +90,29 @@ public class ChainHeal extends AbstractChainBase {
                             false
                     );
 
+                    if (pveUpgrade) {
+                        for (WarlordsEntity bounceTargetTwo : PlayerFilter
+                                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                                .aliveTeammatesOf(wp)
+                                .excluding(wp, chainTarget, bounceTarget)
+                        ) {
+                            chain(bounceTarget.getLocation(), bounceTargetTwo.getLocation());
+                            bounceTargetTwo.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false
+                            );
+
+                            hitCounter++;
+                            break;
+                        }
+                    }
+
                     hitCounter++;
                     break;
                 }

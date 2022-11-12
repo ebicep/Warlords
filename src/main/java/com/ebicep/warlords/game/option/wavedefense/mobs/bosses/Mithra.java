@@ -25,6 +25,7 @@ import org.bukkit.util.Vector;
 public class Mithra extends AbstractZombie implements BossMob {
 
     private boolean flamePhaseTrigger = false;
+    private boolean preventBarrage = false;
 
     public Mithra(Location spawnLocation) {
         super(spawnLocation,
@@ -90,7 +91,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 310 == 0) {
+        if (ticksElapsed % 310 == 0 && !preventBarrage) {
             int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 7 : 10;
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
@@ -109,6 +110,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.5f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
+            preventBarrage = true;
             warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 200);
             for (int i = 0; i < 3; i++) {
                 Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
@@ -148,7 +150,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     }
 
                     counter++;
-                    double radius = (1.25 * counter);
+                    double radius = (1.5 * counter);
                     Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
                     Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
                     EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);

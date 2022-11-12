@@ -114,7 +114,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
             if (pveUpgrade) {
                 for (WarlordsEntity ally : PlayerFilter
                         .entitiesAround(wp, 10, 10, 10)
-                        .aliveTeammatesOf(wp)
+                        .aliveTeammatesOfExcludingSelf(wp)
                         .limit(maxAllies)
                         .leastAliveFirst()
                 ) {

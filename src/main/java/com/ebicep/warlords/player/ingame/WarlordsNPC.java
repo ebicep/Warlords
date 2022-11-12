@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
@@ -211,6 +212,8 @@ public final class WarlordsNPC extends WarlordsEntity {
         boolean applied = super.addPotionEffect(potionEffect);
         if (applied) {
             if (potionEffect.getType() == PotionEffectType.BLINDNESS) {
+                SoulShackle.shacklePlayer(mob.getWarlordsNPC(), mob.getWarlordsNPC(), 1);
+                mob.getWarlordsNPC().getSpeed().addSpeedModifier(mob.getWarlordsNPC(), "Blindness", -99, 1, "BASE");
                 mob.removeTarget();
             }
         }
@@ -219,13 +222,15 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
-        if (getMobTier() == MobTier.BOSS) {
-            if (modifier < 0) {
-                modifier *= .4;
-            }
-        } else {
-            if (modifier < 0) {
-                modifier *= .7;
+        if (modifier != -99) {
+            if (getMobTier() == MobTier.BOSS) {
+                if (modifier < 0) {
+                    modifier *= .4;
+                }
+            } else {
+                if (modifier < 0) {
+                    modifier *= .7;
+                }
             }
         }
         return super.addSpeedModifier(from, name, modifier, duration, toDisable);
