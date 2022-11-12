@@ -48,7 +48,7 @@ public class DifficultyMenu {
                         GameMap map = null;
                         switch (finalI) {
                             case 0:
-                                map = GameMap.ILLUSION_APERTURE;
+                                player.sendMessage(ChatColor.RED + "Easy Mode is temporarily disabled!");
                                 break;
                             case 1:
                                 map = GameMap.ILLUSION_RIFT;

@@ -212,9 +212,9 @@ public final class WarlordsNPC extends WarlordsEntity {
         boolean applied = super.addPotionEffect(potionEffect);
         if (applied) {
             if (potionEffect.getType() == PotionEffectType.BLINDNESS) {
-                SoulShackle.shacklePlayer(mob.getWarlordsNPC(), mob.getWarlordsNPC(), 1);
-                mob.getWarlordsNPC().getSpeed().addSpeedModifier(mob.getWarlordsNPC(), "Blindness", -99, 1, "BASE");
-                mob.removeTarget();
+//                SoulShackle.shacklePlayer(mob.getWarlordsNPC(), mob.getWarlordsNPC(), 50);
+//                mob.getWarlordsNPC().getSpeed().addSpeedModifier(mob.getWarlordsNPC(), "Blindness", -99, 50, "BASE");
+//                mob.removeTarget();
             }
         }
         return applied;

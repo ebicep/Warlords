@@ -136,7 +136,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     damage = 50;
                     break;
                 default:
-                    damage = 150;
+                    damage = 100;
                     break;
             }
             new GameRunnable(warlordsNPC.getGame()) {
@@ -171,6 +171,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     }
 
                     if (counter == 50) {
+                        preventBarrage = false;
                         this.cancel();
                         warlordsNPC.getSpeed().addBaseModifier(70);
                     }
