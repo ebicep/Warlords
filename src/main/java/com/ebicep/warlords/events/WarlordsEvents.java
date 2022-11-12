@@ -254,7 +254,7 @@ public class WarlordsEvents implements Listener {
             wp.updatePlayerReference(null);
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
-            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
+            e.setQuitMessage(Permissions.getPrefixWithColor(e.getPlayer()) + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -385,7 +385,7 @@ public class WarlordsEvents implements Listener {
         wpVictim.updateHealth();
 
         if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
-            wpAttacker.addSpeedModifier("Ice Barrier", -20, 2 * 20);
+            wpAttacker.addSpeedModifier(wpVictim, "Ice Barrier", -20, 2 * 20);
         }
     }
 

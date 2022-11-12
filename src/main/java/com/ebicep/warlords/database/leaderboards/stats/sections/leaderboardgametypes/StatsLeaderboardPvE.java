@@ -81,7 +81,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
         statsLeaderboards.add(new StatsLeaderboard("Fastest Win", UPPER_CENTER_1,
                 databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() / 20),
-                databasePlayer -> databasePlayer.getPveStats().getNormalStats().getFastestGameFinished() == 0
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() == 0
         ));
         statsLeaderboards.add(new StatsLeaderboard("Highest Wave Cleared", UPPER_CENTER_2,
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHighestWaveCleared(),

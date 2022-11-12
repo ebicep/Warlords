@@ -33,7 +33,7 @@ import java.util.List;
 public class Narmer extends AbstractZombie implements BossMob {
 
     private final int earthQuakeRadius = 12;
-    private final int executeRadius = 40;
+    private final int executeRadius = 80;
     private final List<WarlordsEntity> acolytes = new ArrayList<>();
     private int timesMegaEarthQuakeActivated = 0;
     private Listener listener;
@@ -123,6 +123,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                             60
                     );
 
+                    boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
                     if (acolyteDeathTickWindow > 0) {
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
@@ -131,7 +132,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
                                 .aliveEnemiesOf(warlordsNPC)
                                 .toList();
-                        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 16 : 8;
+                        float multiplier = isHard ? 16 : 8;
                         for (WarlordsEntity enemy : warlordsEntities) {
                             enemy.addDamageInstance(
                                     warlordsNPC,
@@ -180,10 +181,10 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         Location loc = warlordsNPC.getLocation();
+        long playerCount = option.getGame().warlordsPlayers().count();
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
 
-        if (acolytes.size() < multiplier * option.getGame().warlordsPlayers().count() && ticksUntilNewAcolyte <= 0) {
-            //Bukkit.broadcastMessage("spawned new acolyte");
+        if (acolytes.size() < multiplier * playerCount && ticksUntilNewAcolyte <= 0) {
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
             option.spawnNewMob(acolyte);
             acolytes.add(acolyte.getWarlordsNPC());

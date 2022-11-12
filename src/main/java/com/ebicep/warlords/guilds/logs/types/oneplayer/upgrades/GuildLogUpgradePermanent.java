@@ -1,12 +1,13 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades;
 
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
-import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
+
+import java.util.UUID;
 
 public class GuildLogUpgradePermanent extends AbstractGuildLogUpgrade<GuildUpgradesPermanent> {
 
-    public GuildLogUpgradePermanent(GuildUpgradesPermanent upgrade, int tier) {
-        super(upgrade, tier);
+    public GuildLogUpgradePermanent(UUID sender, GuildUpgradesPermanent upgrade, int tier) {
+        super(sender, upgrade, tier);
     }
 
     @Override

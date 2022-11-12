@@ -536,14 +536,22 @@ public class GuildCommand extends BaseCommand {
 
         @Subcommand("experience|EXP|exp")
         public void experience(CommandIssuer issuer, @Default("DAILY") Timing timing) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.get(
-                    timing), timing.name + " Experience"));
+            Guild.sendGuildMessage(issuer.getIssuer(), GuildLeaderboardManager.getLeaderboardList(
+                            GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.get(timing),
+                            timing.name + " Experience",
+                            guild -> guild.getExperience(timing)
+                    )
+            );
         }
 
         @Subcommand("coins")
         public void coins(CommandIssuer issuer, @Default("DAILY") Timing timing) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.COINS_LEADERBOARD.get(
-                    timing), timing.name + " Coins"));
+            Guild.sendGuildMessage(issuer.getIssuer(), GuildLeaderboardManager.getLeaderboardList(
+                            GuildLeaderboardManager.COINS_LEADERBOARD.get(timing),
+                            timing.name + " Coins",
+                            guild -> guild.getCoins(timing)
+                    )
+            );
         }
 
         @Subcommand("refresh")

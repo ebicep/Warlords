@@ -5,7 +5,7 @@ import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.events.player.ingame.WarlordsPlayerAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -149,7 +149,7 @@ public abstract class AbstractPlayerClass {
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
                     if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                        WarlordsPlayerAbilityActivateEvent event = new WarlordsPlayerAbilityActivateEvent(wp, ability);
+                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return;
@@ -208,7 +208,7 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsPlayerAbilityActivateEvent event = new WarlordsPlayerAbilityActivateEvent(wp, ability);
+            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;

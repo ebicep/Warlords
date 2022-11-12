@@ -15,50 +15,25 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LegendaryWarmonger extends AbstractLegendaryWeapon {
-
-    public static final int MELEE_DAMAGE_MIN = 170;
-    public static final int MELEE_DAMAGE_MAX = 190;
-    public static final int CRIT_CHANCE = 15;
-    public static final int CRIT_MULTIPLIER = 200;
-    public static final int HEALTH_BONUS = 800;
-    public static final int SPEED_BONUS = 10;
-    public static final float SKILL_CRIT_CHANCE_BONUS = 2.5f;
-    public static final float SKILL_CRIT_MULTIPLIER_BONUS = 5f;
+public class LegendaryFervent extends AbstractLegendaryWeapon {
 
     public static final int DAMAGE_TO_TAKE = 10000;
     public static final int COOLDOWN = 30;
 
-    public LegendaryWarmonger() {
+    public LegendaryFervent() {
     }
 
-    public LegendaryWarmonger(UUID uuid) {
+    public LegendaryFervent(UUID uuid) {
         super(uuid);
     }
 
-    public LegendaryWarmonger(AbstractLegendaryWeapon legendaryWeapon) {
+    public LegendaryFervent(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
-        this.skillCritChanceBonus = SKILL_CRIT_CHANCE_BONUS;
-        this.skillCritMultiplierBonus = SKILL_CRIT_MULTIPLIER_BONUS;
-    }
-
-    @Override
-    public int getMeleeDamageRange() {
-        return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
-    }
-
-    @Override
     public String getTitle() {
-        return "Warmonger";
+        return "Fervent";
     }
 
     @Override
@@ -87,7 +62,7 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
                     player.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Warmonger",
                             "WAR",
-                            LegendaryWarmonger.class,
+                            LegendaryFervent.class,
                             null,
                             player,
                             CooldownTypes.BUFF,
@@ -101,7 +76,6 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
                             return currentDamageValue * 1.2f;
                         }
                     });
-                    player.setPurpleCurrentCooldown(0);
 
                     cooldown.set(COOLDOWN);
 
@@ -123,5 +97,46 @@ public class LegendaryWarmonger extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return "Gain a 20% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
                 " damage. Can be triggered every " + COOLDOWN + " seconds.";
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 190;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 15;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 800;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 10;
     }
 }

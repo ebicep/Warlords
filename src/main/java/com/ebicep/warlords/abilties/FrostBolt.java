@@ -74,7 +74,7 @@ public class FrostBolt extends AbstractProjectileBase {
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.addSpeedModifier("Frostbolt", -slowness, 2 * 20);
+            hit.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
             hit.addDamageInstance(
                     shooter,
                     name,
@@ -100,7 +100,7 @@ public class FrostBolt extends AbstractProjectileBase {
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            nearEntity.addSpeedModifier("Frostbolt", -slowness, 2 * 20);
+            nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
             nearEntity.addDamageInstance(
                     shooter,
                     name,
@@ -148,7 +148,7 @@ public class FrostBolt extends AbstractProjectileBase {
                     new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE, (byte) 0).play();
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.GLASS, 2, 0.1f);
-                    freezeTarget.addDamageInstance(giver, name, 409, 554, critChance, critMultiplier, false);
+                    freezeTarget.addDamageInstance(giver, name, 409, 554, -1, 100, false);
                 }
             }
         }.runTaskLater(30);

@@ -40,8 +40,8 @@ public class StatsLeaderboardLocations {
     public static final Location CIRCULAR_2_OUTER_3 = new Location(MAIN_LOBBY, -2619.5, 66.5, 721.5);
     public static final Location CIRCULAR_2_OUTER_4 = new Location(MAIN_LOBBY, -2608.5, 67, 719.5);
     //three upper middle
-    public static final Location UPPER_CENTER_1 = new Location(MAIN_LOBBY, -2528.5, 71.5, 738.5);
-    public static final Location UPPER_CENTER_2 = new Location(MAIN_LOBBY, -2528.5, 71.5, 744.5);
+    public static final Location UPPER_CENTER_1 = new Location(MAIN_LOBBY, -2528.5, 71.5, 740.5);
+    public static final Location UPPER_CENTER_2 = new Location(MAIN_LOBBY, -2528.5, 71.5, 748.5);
     public static final Location UPPER_CENTER_3 = new Location(MAIN_LOBBY, -2528.5, 71.5, 750.5);
 
 }

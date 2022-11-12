@@ -55,7 +55,7 @@ public class Witch extends AbstractWitch implements EliteMob {
                 .aliveTeammatesOfExcludingSelf(warlordsNPC)
         ) {
             EffectUtils.playRandomHitEffect(ally.getLocation(), 0, 150, 0, 2);
-            ally.addSpeedModifier("Witch Speed Buff", 20, 3 * 20);
+            ally.addSpeedModifier(warlordsNPC, "Witch Speed Buff", 20, 3 * 20);
             if (option.getDifficulty() == DifficultyIndex.HARD) {
                 ally.getCooldownManager().removeDebuffCooldowns();
                 ally.getSpeed().removeSlownessModifiers();

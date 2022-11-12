@@ -8,12 +8,12 @@ import javax.annotation.Nonnull;
 /**
  * Base event for all warlord player based events
  */
-public abstract class AbstractWarlordsPlayerEvent extends AbstractWarlordsGameEvent {
+public abstract class AbstractWarlordsEntityEvent extends AbstractWarlordsGameEvent {
 
     @Nonnull
     protected final WarlordsEntity player;
 
-    public AbstractWarlordsPlayerEvent(@Nonnull WarlordsEntity player) {
+    public AbstractWarlordsEntityEvent(@Nonnull WarlordsEntity player) {
         super(player.getGame());
         this.player = player;
     }

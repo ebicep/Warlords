@@ -94,8 +94,8 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 () -> {
                     ability.setPveUpgrade(true);
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
-                    ability.setCooldown(ability.getCooldown() * 3);
-                    ability.setEnergyCost(ability.getEnergyCost() + ability.getEnergyCost());
+                    ability.setCooldown(ability.getCooldown() * 2);
+                    ability.setEnergyCost(ability.getEnergyCost() * 1.5f);
                     ability.setMinDamageHeal(ability.getMinDamageHeal() * 4);
                     ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 4);
                     ability.setHitbox(hitbox + 3);

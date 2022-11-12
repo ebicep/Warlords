@@ -16,16 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryDivine extends AbstractLegendaryWeapon {
 
-    public static final int MELEE_DAMAGE_MIN = 100;
-    public static final int MELEE_DAMAGE_MAX = 120;
-    public static final int CRIT_CHANCE = 25;
-    public static final int CRIT_MULTIPLIER = 175;
-    public static final int HEALTH_BONUS = 500;
-    public static final int SPEED_BONUS = 5;
-    public static final int ENERGY_PER_SECOND_BONUS = 7;
-    public static final int ENERGY_PER_HIT_BONUS = -13;
-    public static final int SKILL_CRIT_CHANCE_BONUS = 5;
-
     public static final int TARGETS_TO_HIT = 40;
     public static final int COOLDOWN = 30;
 
@@ -110,19 +100,49 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE_MIN;
-        this.critChance = CRIT_CHANCE;
-        this.critMultiplier = CRIT_MULTIPLIER;
-        this.healthBonus = HEALTH_BONUS;
-        this.speedBonus = SPEED_BONUS;
-        this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
-        this.energyPerHitBonus = ENERGY_PER_HIT_BONUS;
-        this.skillCritChanceBonus = SKILL_CRIT_CHANCE_BONUS;
+    protected float getSpeedBonusValue() {
+        return 5;
     }
 
     @Override
-    public int getMeleeDamageRange() {
-        return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
+    protected float getMeleeDamageMinValue() {
+        return 100;
     }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 120;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 25;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 175;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return -13;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 7;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+
 }

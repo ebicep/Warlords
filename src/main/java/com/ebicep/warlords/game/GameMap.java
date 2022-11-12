@@ -7,7 +7,6 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.raid.RaidOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
@@ -1108,7 +1107,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionValley",
-            1,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1157,7 +1156,7 @@ public enum GameMap {
                     .add(5, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
-                    .add(6, new SimpleWave(15, 10 * SECOND, null)
+                    .add(6, new SimpleWave(16, 10 * SECOND, null)
                             //basic
                             .add(0.5, Mobs.GHOST_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
@@ -1329,7 +1328,7 @@ public enum GameMap {
                     .add(5, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
-                    .add(6, new SimpleWave(15, 10 * SECOND, null)
+                    .add(6, new SimpleWave(16, 10 * SECOND, null)
                             //basic
                             .add(0.8, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
@@ -1356,8 +1355,8 @@ public enum GameMap {
                             //basic
                             .add(0.7, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
-                            .add(0.25, Mobs.BASIC_PIG_ZOMBIE)
-                            .add(0.25, Mobs.BASIC_SLIME)
+                            .add(0.05, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.15, Mobs.BASIC_SLIME)
                             .add(0.25, Mobs.SPIDER)
                             //elite
                             .add(0.2, Mobs.ELITE_ZOMBIE)
@@ -1445,7 +1444,7 @@ public enum GameMap {
             1,
             60 * SECOND,
             "IllusionAperture",
-            1,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1455,13 +1454,13 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 18, 227.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 18, 240.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(608, 17, 250.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 17, 255.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(584.5, 18, 235.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(593.5, 19, 242.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 19, 232.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 19, 227.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 19, 240.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(608, 18, 250.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 18, 255.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(586.5, 19, 235.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 20, 242.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 20, 232.5), Team.RED));
 
             options.add(new GraveOption());
 
@@ -1469,7 +1468,7 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
 
             options.add(new RespawnWaveOption(1, 20, 20));
-            options.add(new CurrencyOnEventOption(750));
+            options.add(new CurrencyOnEventOption(1000));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(8, 10 * SECOND, null)
                             //basic
@@ -1597,7 +1596,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionCrossfire",
-            8,
+            7,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -2230,7 +2229,7 @@ public enum GameMap {
             1,
             10 * SECOND,
             "Tutorial",
-            5,
+            3,
             GameMode.TUTORIAL
     ) {
         @Override

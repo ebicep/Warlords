@@ -3,15 +3,19 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 import com.ebicep.warlords.abilties.Intervene;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
-import org.bukkit.util.Vector;
+import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -44,28 +48,28 @@ public class CooldownManager {
     }
 
     public void reduceCooldowns() {
-        List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
-        synchronized (cooldowns) {
-//            for (int i = 0; i < abstractCooldowns.size(); i++) {
-//                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-//                abstractCooldown.onTick(warlordsEntity);
-//
-//                if (abstractCooldown.removeCheck()) {
-//                    abstractCooldown.getOnRemove().accept(this);
-//                    abstractCooldowns.remove(i);
-//                    i--;
-//                }
-//            }
-            Iterator<AbstractCooldown<?>> iterator = cooldowns.iterator();
-            while (iterator.hasNext()) {
-                AbstractCooldown<?> abstractCooldown = iterator.next();
+        //List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
+        synchronized (abstractCooldowns) {
+            for (int i = 0; i < abstractCooldowns.size(); i++) {
+                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
                 abstractCooldown.onTick(warlordsEntity);
 
                 if (abstractCooldown.removeCheck()) {
                     abstractCooldown.getOnRemove().accept(this);
-                    iterator.remove();
+                    abstractCooldowns.remove(i);
+                    i--;
                 }
             }
+//            Iterator<AbstractCooldown<?>> iterator = cooldowns.iterator();
+//            while (iterator.hasNext()) {
+//                AbstractCooldown<?> abstractCooldown = iterator.next();
+//                abstractCooldown.onTick(warlordsEntity);
+//
+//                if (abstractCooldown.removeCheck()) {
+//                    abstractCooldown.getOnRemove().accept(this);
+//                    iterator.remove();
+//                }
+//            }
         }
 
     }
@@ -205,6 +209,7 @@ public class CooldownManager {
         if (hasCooldownFromName("Vindicate Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
             return;
         }
+        Bukkit.getPluginManager().callEvent(new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown));
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
     }
@@ -338,25 +343,25 @@ public class CooldownManager {
                 counter++;
             }
         }
-        incrementCooldown(
-                new RegularCooldown<Void>("KB Resistance",
-                        "KB",
-                        null,
-                        null,
-                        this.warlordsEntity,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        counter * 20
-                ) {
-                    @Override
-                    public void multiplyKB(Vector currentVector) {
-                        currentVector.multiply(0.75);
-                    }
-                },
-                (int) (counter * 1.2 * 20),
-                (int) (3.6 * 20)
-        );
+//        incrementCooldown(
+//                new RegularCooldown<Void>("KB Resistance",
+//                        "KB",
+//                        null,
+//                        null,
+//                        this.warlordsEntity,
+//                        CooldownTypes.BUFF,
+//                        cooldownManager -> {
+//                        },
+//                        counter * 20
+//                ) {
+//                    @Override
+//                    public void multiplyKB(Vector currentVector) {
+//                        currentVector.multiply(0.75);
+//                    }
+//                },
+//                (int) (counter * 1.2 * 20),
+//                (int) (3.6 * 20)
+//        );
         return counter;
     }
 

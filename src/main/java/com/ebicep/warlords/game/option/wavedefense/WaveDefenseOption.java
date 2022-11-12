@@ -7,8 +7,8 @@ import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
@@ -47,7 +47,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
-import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -164,7 +163,7 @@ public class WaveDefenseOption implements Option {
             }
 
             @EventHandler
-            public void onWeaponDrop(WarlordsPlayerGiveWeaponEvent event) {
+            public void onWeaponDrop(WarlordsGiveWeaponEvent event) {
                 waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
                         .getWeaponsFound()
                         .add(event.getWeapon());
@@ -304,7 +303,7 @@ public class WaveDefenseOption implements Option {
                             } else {
                                 currency.set(1000);
                             }
-                            Bukkit.getPluginManager().callEvent(new WarlordsPlayerAddCurrencyEvent(wp, currency));
+                            Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(wp, currency));
                             wp.addCurrency(currency.get());
                             wp.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
                         });
@@ -422,24 +421,13 @@ public class WaveDefenseOption implements Option {
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
 
-        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
             if (currentWave.getMessage() != null) {
                 sendMessage(entry.getKey(),
                         false,
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
-                int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
-                switch (playerCount) {
-                    case 2:
-                        spawnCount *= 1.1f;
-                        break;
-                    case 3:
-                    case 4:
-                        spawnCount *= 1.15f;
-                        break;
-                }
-
                 sendMessage(entry.getKey(),
                         false,
                         ChatColor.YELLOW + "A wave of §c§l" + spawnCount + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
@@ -501,14 +489,14 @@ public class WaveDefenseOption implements Option {
         }
 
         if (currentWave.getMessage() == null) {
-            int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
+            int playerCount = (int) game.warlordsPlayers().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.1f;
+                    spawnCount *= 1.25f;
                     break;
                 case 3:
                 case 4:
-                    spawnCount *= 1.15f;
+                    spawnCount *= 1.5f;
                     break;
             }
         }
@@ -575,7 +563,7 @@ public class WaveDefenseOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(currentWave.getDelay(), 13);
+        }.runTaskTimer(currentWave.getDelay(), 10);
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {

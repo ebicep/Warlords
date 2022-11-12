@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class WarlordsRespawnEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
+public class WarlordsRespawnEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     protected Location respawnLocation;

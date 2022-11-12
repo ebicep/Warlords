@@ -48,7 +48,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
         if (ticksElapsed % 200 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.2f);
-            warlordsNPC.addSpeedModifier("Rift Speed", 100, 2 * 20);
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Rift Speed", 100, 2 * 20);
         }
     }
 
@@ -59,7 +59,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        self.addSpeedModifier("Rift Speed On Damage", 40, 5);
+        self.addSpeedModifier(self, "Rift Speed On Damage", 40, 5);
     }
 
     @Override

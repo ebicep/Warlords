@@ -3,8 +3,8 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerDropWeaponEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -183,10 +183,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
         AtomicDouble dropRate = new AtomicDouble(dropRate());
-        Bukkit.getPluginManager().callEvent(new WarlordsPlayerDropWeaponEvent(killer, dropRate));
+        Bukkit.getPluginManager().callEvent(new WarlordsDropWeaponEvent(killer, dropRate));
         if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
-            Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveWeaponEvent(killer, weapon));
+            Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
                 player.spigot().sendMessage(new ComponentBuilder(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found ")

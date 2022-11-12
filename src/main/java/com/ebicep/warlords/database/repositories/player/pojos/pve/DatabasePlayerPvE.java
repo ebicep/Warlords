@@ -162,6 +162,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
         //UPDATE GAME MODE STATS
         switch (((DatabaseGamePvE) databaseGame).getDifficulty()) {
+            case EASY:
+                easyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                break;
             case NORMAL:
                 normalStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;

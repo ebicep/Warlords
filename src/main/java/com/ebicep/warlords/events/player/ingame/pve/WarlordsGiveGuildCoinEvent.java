@@ -1,16 +1,16 @@
 package com.ebicep.warlords.events.player.ingame.pve;
 
-import com.ebicep.warlords.events.player.ingame.AbstractWarlordsPlayerEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsPlayerGiveGuildCoinEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsGiveGuildCoinEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final AtomicDouble coinConversionRate;
 
-    public WarlordsPlayerGiveGuildCoinEvent(WarlordsEntity warlordsEntity, AtomicDouble coinConversionRate) {
+    public WarlordsGiveGuildCoinEvent(WarlordsEntity warlordsEntity, AtomicDouble coinConversionRate) {
         super(warlordsEntity);
         this.coinConversionRate = coinConversionRate;
     }

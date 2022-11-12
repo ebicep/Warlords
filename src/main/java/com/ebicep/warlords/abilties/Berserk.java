@@ -50,7 +50,7 @@ public class Berserk extends AbstractAbility {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
 
-        Runnable cancelSpeed = wp.addSpeedModifier(name, speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, duration * 20, "BASE");
 
         Berserk tempBerserk = new Berserk();
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(

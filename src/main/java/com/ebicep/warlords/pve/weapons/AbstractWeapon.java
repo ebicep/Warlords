@@ -35,10 +35,6 @@ public abstract class AbstractWeapon {
     protected UUID uuid = UUID.randomUUID();
     @Field("obtain_date")
     protected Instant date = Instant.now();
-    @Field("melee_damage")
-    protected float meleeDamage;
-    @Field("health_bonus")
-    protected float healthBonus;
     @Field("weapon_skin")
     protected Weapons selectedWeaponSkin = Weapons.STEEL_SWORD;
     @Field("unlocked_weapon_skins")

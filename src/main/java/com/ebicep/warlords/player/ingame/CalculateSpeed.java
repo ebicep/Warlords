@@ -16,20 +16,20 @@ public class CalculateSpeed {
     private boolean hasPendingTimers = false;
     private boolean hasEffectAlteringEffects = false;
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifierValue) {
+    public CalculateSpeed(WarlordsEntity from, Consumer<Float> updateWalkingSpeed, float baseModifierValue) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
         this.minSpeed = BASE_SPEED * (1 + baseModifierValue / 100f) * (1 - .35f);
         this.maxSpeed = BASE_SPEED * 1.40f;
         this.updateWalkingSpeed = updateWalkingSpeed;
-        this.baseModifier = new Modifier("BASE", baseModifierValue, 0, Collections.emptyList(), false);
+        this.baseModifier = new Modifier(from, "BASE", baseModifierValue, 0, Collections.emptyList(), false);
         this.modifiers.add(this.baseModifier);
     }
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifierValue, boolean isPve) {
+    public CalculateSpeed(WarlordsEntity from, Consumer<Float> updateWalkingSpeed, float baseModifierValue, boolean isPve) {
         this.minSpeed = BASE_SPEED * (1 + baseModifierValue / 100f) * (1 - 0.99f);
         this.maxSpeed = BASE_SPEED * 2;
         this.updateWalkingSpeed = updateWalkingSpeed;
-        this.baseModifier = new Modifier("BASE", baseModifierValue, 0, Collections.emptyList(), false);
+        this.baseModifier = new Modifier(from, "BASE", baseModifierValue, 0, Collections.emptyList(), false);
         this.modifiers.add(this.baseModifier);
     }
 
@@ -125,22 +125,24 @@ public class CalculateSpeed {
     /**
      * Add a speed change object
      *
+     * @param from
      * @param name      Unique name of the effect source
      * @param modifier  a value like +30 or -20, in percent
      * @param duration  The duration of this speedchange, 0 means no duration
      * @param toDisable The modifiers this should override for as long as it is active
      * @return A runnable that can be used to manually remove this entry
      */
-    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
-        return addSpeedModifier(name, modifier, duration, Arrays.asList(toDisable));
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+        return addSpeedModifier(from, name, modifier, duration, Arrays.asList(toDisable));
     }
 
-    public Runnable addSpeedModifier(String name, int modifier, int duration, Collection<String> toDisable) {
-        return addSpeedModifier(name, modifier, duration, false, toDisable);
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, Collection<String> toDisable) {
+        return addSpeedModifier(from, name, modifier, duration, false, toDisable);
     }
 
-    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
-        Modifier mod = new Modifier(name,
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
+        Modifier mod = new Modifier(from,
+                name,
                 modifier,
                 duration == 0 ? 0 : duration + 1,
                 toDisable,
@@ -162,8 +164,8 @@ public class CalculateSpeed {
         };
     }
 
-    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, String... toDisable) {
-        return addSpeedModifier(name, modifier, duration, afterLimit, Arrays.asList(toDisable));
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(from, name, modifier, duration, afterLimit, Arrays.asList(toDisable));
     }
 
     // Removes negative speed effects.
@@ -181,7 +183,8 @@ public class CalculateSpeed {
         this.baseSpeedToWalkingSpeed = baseSpeedToWalkingSpeed / 113 * 100 / BASE_SPEED;
     }
 
-    private static class Modifier {
+    public static class Modifier {
+        public final WarlordsEntity from;
         public final String name;
         public final boolean afterLimit;
         public final Collection<String> toDisable;
@@ -189,7 +192,8 @@ public class CalculateSpeed {
         public float calculatedModifier;
         public int duration;
 
-        public Modifier(String name, float modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
+        public Modifier(WarlordsEntity from, String name, float modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
+            this.from = from;
             this.name = name;
             this.modifier = modifier;
             this.calculatedModifier = 1 + modifier / 100f;

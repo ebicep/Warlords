@@ -1,9 +1,9 @@
 package com.ebicep.warlords.guilds.upgrades.temporary;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerDropWeaponEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -41,7 +41,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerCoinSummaryEvent event) {
+                public void onEvent(WarlordsCoinSummaryEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }
@@ -73,7 +73,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerAddCurrencyEvent event) {
+                public void onEvent(WarlordsAddCurrencyEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }
@@ -104,7 +104,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerDropWeaponEvent event) {
+                public void onEvent(WarlordsDropWeaponEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }
@@ -135,7 +135,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsPlayerGiveRespawnEvent event) {
+                public void onEvent(WarlordsGiveRespawnEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
                         return;
                     }

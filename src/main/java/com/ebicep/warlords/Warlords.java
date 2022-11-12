@@ -623,7 +623,7 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 if (undyingArmy.isPveUpgrade()) {
-                                    wp.addSpeedModifier("ARMY", 40, 16 * 20, "BASE");
+                                    wp.addSpeedModifier(wp, "ARMY", 40, 16 * 20, "BASE");
                                 }
 
                                 undyingArmyCooldown.setNameAbbreviation("POPPED");

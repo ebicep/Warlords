@@ -155,19 +155,20 @@ public class EndState implements State, TimerDebugAble {
                     .create()
             );
 
-            List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS)));
+            boolean hoverable = game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE;
+            List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS)));
+            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DEATHS)));
+            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DEATHS, hoverable)));
             ChatUtils.sendCenteredMessageWithEvents(player, baseComponents.toArray(new BaseComponent[0]));
 
             baseComponents.clear();
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DAMAGE)));
+            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DAMAGE, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.HEALING)));
+            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.HEALING, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED)));
+            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED, hoverable)));
             ChatUtils.sendCenteredMessageWithEvents(player, baseComponents.toArray(new BaseComponent[0]));
 
             ChatUtils.sendMessage(player, false, "");
