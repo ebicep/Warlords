@@ -1682,67 +1682,74 @@ public abstract class WarlordsEntity {
      * Point of reference: 300 minutes with 500K damage/healing/absorbed PER minute did not produce an error
      *
      * @param minuteStatsType The type of minute stats to get the hoverable text for
+     * @param hoverable       if the text should be hoverable
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
-    public BaseComponent[] getAllMinuteHoverableStats(MinuteStats minuteStatsType) {
-        ComponentBuilder componentBuilder = new ComponentBuilder();
-        StringBuilder stringBuilder = new StringBuilder();
-        String minuteStatsTypeName = minuteStatsType.name;
+    public BaseComponent[] getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
+        if (!hoverable) {
+            return new ComponentBuilder(ChatColor.WHITE + minuteStatsType.name + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(
+                    minuteStats.total())))
+                    .create();
+        } else {
+            ComponentBuilder componentBuilder = new ComponentBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
+            String minuteStatsTypeName = minuteStatsType.name;
 
-        List<PlayerStatisticsMinute.Entry> entries = minuteStats.getEntries();
-        int size = entries.size();
-        if (size > MINUTE_STATS_SPLITS) {
-            int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
-            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": " + NumberFormat.addCommaAndRound(
-                    minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
-            int stringLength = 0;
-            for (int i = 0; i < splitString.length; i++) {
-                for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
-                    int index = i * MINUTE_STATS_SPLITS + j;
-                    if (index >= size) {
-                        break;
+            List<PlayerStatisticsMinute.Entry> entries = minuteStats.getEntries();
+            int size = entries.size();
+            if (size > MINUTE_STATS_SPLITS) {
+                int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
+                String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": " + NumberFormat.addCommaAndRound(
+                        minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
+                int stringLength = 0;
+                for (int i = 0; i < splitString.length; i++) {
+                    for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
+                        int index = i * MINUTE_STATS_SPLITS + j;
+                        if (index >= size) {
+                            break;
+                        }
+                        PlayerStatisticsMinute.Entry entry = entries.get(index);
+                        stringBuilder.append(ChatColor.WHITE)
+                                .append("Minute ")
+                                .append(index)
+                                .append(": ")
+                                .append(ChatColor.GOLD);
+                        stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
+                        stringBuilder.append("\n");
                     }
-                    PlayerStatisticsMinute.Entry entry = entries.get(index);
+                    stringBuilder.setLength(stringBuilder.length() - 1);
+                    stringLength += stringBuilder.length();
+                    componentBuilder.appendHoverText((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i],
+                            stringBuilder.toString()
+                    );
+                    stringBuilder.setLength(0);
+                }
+                //this will never happen in reality
+                if (stringLength >= 8000) {
+                    for (BaseComponent baseComponent : componentBuilder.create()) {
+                        if (baseComponent instanceof TextComponent) {
+                            ((TextComponent) baseComponent).setText(((TextComponent) baseComponent).getText().replace("Minute", "Min."));
+                        }
+                    }
+                }
+            } else {
+                stringBuilder.append(ChatColor.AQUA).append("Stat Breakdown (").append(name).append("):");
+                for (int i = 0; i < size; i++) {
+                    PlayerStatisticsMinute.Entry entry = entries.get(i);
+                    stringBuilder.append("\n");
                     stringBuilder.append(ChatColor.WHITE)
                             .append("Minute ")
-                            .append(index)
+                            .append(i + 1)
                             .append(": ")
                             .append(ChatColor.GOLD);
                     stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
-                    stringBuilder.append("\n");
                 }
-                stringBuilder.setLength(stringBuilder.length() - 1);
-                stringLength += stringBuilder.length();
-                componentBuilder.appendHoverText((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i],
-                        stringBuilder.toString()
-                );
-                stringBuilder.setLength(0);
+                componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
+                        minuteStatsType.getValue.apply(minuteStats.total())), stringBuilder.toString());
             }
-            //this will never happen in reality
-            if (stringLength >= 8000) {
-                for (BaseComponent baseComponent : componentBuilder.create()) {
-                    if (baseComponent instanceof TextComponent) {
-                        ((TextComponent) baseComponent).setText(((TextComponent) baseComponent).getText().replace("Minute", "Min."));
-                    }
-                }
-            }
-        } else {
-            stringBuilder.append(ChatColor.AQUA).append("Stat Breakdown (").append(name).append("):");
-            for (int i = 0; i < size; i++) {
-                PlayerStatisticsMinute.Entry entry = entries.get(i);
-                stringBuilder.append("\n");
-                stringBuilder.append(ChatColor.WHITE)
-                        .append("Minute ")
-                        .append(i + 1)
-                        .append(": ")
-                        .append(ChatColor.GOLD);
-                stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
-            }
-            componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
-                    minuteStatsType.getValue.apply(minuteStats.total())), stringBuilder.toString());
-        }
 
-        return componentBuilder.create();
+            return componentBuilder.create();
+        }
     }
 
     public void toggleTeamFlagCompass() {
