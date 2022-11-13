@@ -138,6 +138,7 @@ public abstract class DatabaseGameBase {
                 previousGames.remove(0);
             }
             previousGames.add(databaseGame);
+            StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
             databaseGame.createHolograms();
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
