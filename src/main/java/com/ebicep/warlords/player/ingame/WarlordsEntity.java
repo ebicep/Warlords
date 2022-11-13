@@ -27,6 +27,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -243,7 +244,7 @@ public abstract class WarlordsEntity {
                 ignoreReduction,
                 false,
                 true,
-                Collections.emptyList()
+                EnumSet.noneOf(InstanceFlags.class)
         ));
     }
 
@@ -255,7 +256,7 @@ public abstract class WarlordsEntity {
             float critChance,
             float critMultiplier,
             boolean ignoreReduction,
-            List<String> flags
+            EnumSet<InstanceFlags> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
                 attacker,
@@ -289,6 +290,7 @@ public abstract class WarlordsEntity {
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
+        EnumSet<InstanceFlags> flags = event.getFlags();
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -320,7 +322,9 @@ public abstract class WarlordsEntity {
             damageValue *= critMultiplier / 100f;
         }
         final float damageHealValueBeforeAllReduction = damageValue;
-        addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
+        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
+            addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
+        }
 
         if (attacker == this && (isFallDamage || isMeleeHit)) {
             if (isMeleeHit) {
@@ -510,7 +514,7 @@ public abstract class WarlordsEntity {
                             false,
                             true,
                             true,
-                            new ArrayList<>(0)
+                            EnumSet.noneOf(InstanceFlags.class)
                     ));
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
@@ -724,7 +728,7 @@ public abstract class WarlordsEntity {
                         ignoreReduction,
                         isLastStandFromShield,
                         false,
-                        Collections.emptyList()
+                EnumSet.noneOf(InstanceFlags.class)
                 )
         );
     }
@@ -738,7 +742,7 @@ public abstract class WarlordsEntity {
             float critMultiplier,
             boolean ignoreReduction,
             boolean isLastStandFromShield,
-            List<String> flags
+            EnumSet<InstanceFlags> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
                         this,

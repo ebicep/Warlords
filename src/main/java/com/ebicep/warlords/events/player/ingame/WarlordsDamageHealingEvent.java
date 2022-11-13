@@ -2,10 +2,11 @@
 package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-import java.util.List;
+import java.util.EnumSet;
 
 /**
  *
@@ -23,7 +24,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private boolean isLastStandFromShield;
     private boolean isDamageInstance;
 
-    private List<String> flags;
+    private final EnumSet<InstanceFlags> flags;
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
@@ -37,7 +38,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             boolean ignoreReduction,
             boolean isLastStandFromShield,
             boolean isDamageInstance,
-            List<String> flags
+            EnumSet<InstanceFlags> flags
     ) {
         super(player);
         this.attacker = attacker;
@@ -132,7 +133,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.isDamageInstance = !isHealingInstance;
     }
 
-    public List<String> getFlags() {
+    public EnumSet<InstanceFlags> getFlags() {
         return flags;
     }
 
