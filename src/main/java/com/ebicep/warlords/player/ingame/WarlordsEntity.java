@@ -788,6 +788,10 @@ public abstract class WarlordsEntity {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
         }
+        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+            healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
+        }
+
         // Self Healing
         if (this == attacker) {
 
