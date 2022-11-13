@@ -29,7 +29,7 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCacheNames(Arrays.stream(values()).map(collections -> collections.cacheName).collect(Collectors.toList()));
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterAccess(200, TimeUnit.MINUTES)
+                .expireAfterAccess(30, TimeUnit.MINUTES)
                 .recordStats()
         );
         cacheManager.setAllowNullValues(false);

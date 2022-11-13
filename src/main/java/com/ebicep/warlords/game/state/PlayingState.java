@@ -118,7 +118,7 @@ public class PlayingState implements State, TimerDebugAble {
                         }
                     });
                 }
-            }.runTaskLater(Warlords.getInstance(), 40);
+            }.runTaskLaterAsynchronously(Warlords.getInstance(), 40);
         } else {
             System.out.println("ATTENTION - playerService is null");
         }

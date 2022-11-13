@@ -132,6 +132,11 @@ public class DatabaseManager {
                     PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
                     updateQueue();
                 }
+                //updating all online players every 10 minutes, so they remained cached
+                if (UPDATE_COOLDOWN.get() % 12000 == 0) {
+                    Bukkit.getOnlinePlayers().forEach(player -> updatePlayer(player.getUniqueId(), databasePlayer -> {
+                    }));
+                }
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 0);
 
@@ -194,6 +199,10 @@ public class DatabaseManager {
                 databasePlayers.clear();
             });
         }
+    }
+
+    public static void updatePlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        updatePlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer);
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
@@ -264,6 +273,16 @@ public class DatabaseManager {
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
     }
 
+    public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        getPlayer(uuid, playersCollections, databasePlayer -> {
+            databasePlayerConsumer.accept(databasePlayer);
+            queueUpdatePlayerAsync(databasePlayer, playersCollections);
+        });
+    }
+
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
         if (playerService == null || !enabled) {
             return;
@@ -273,6 +292,23 @@ public class DatabaseManager {
         } else {
             PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         }
+    }
+
+    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        if (UPDATE_COOLDOWN.get() < 100) {
+            PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
+        } else {
+            PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
+        }
+        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void checkUpdatePlayerName(Player player, DatabasePlayer databasePlayer) {
@@ -296,37 +332,6 @@ public class DatabaseManager {
 
     public static void updatePlayer(Player player, Consumer<DatabasePlayer> databasePlayerConsumer) {
         updatePlayer(player.getUniqueId(), databasePlayerConsumer);
-    }
-
-    public static void updatePlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        updatePlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer);
-    }
-
-    public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        getPlayer(uuid, playersCollections, databasePlayer -> {
-            databasePlayerConsumer.accept(databasePlayer);
-            queueUpdatePlayerAsync(databasePlayer, playersCollections);
-        });
-    }
-
-    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
-        });
-    }
-
-    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        if (UPDATE_COOLDOWN.get() < 100) {
-            PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
-        } else {
-            PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
-        }
-        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
