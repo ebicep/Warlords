@@ -15,7 +15,6 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -89,7 +88,9 @@ public class Boltaro extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < 6000) {
             split = true;
             if (mobsKilledBeforeSplit == 0) {
-                option.getGame().warlordsPlayers().forEach(warlordsPlayer -> warlordsPlayer.unlockAchievement(ChallengeAchievements.SIRE));
+                option.getGame()
+                        .warlordsPlayers()
+                        .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.SIRE));
             }
             HandlerList.unregisterAll(listener);
 
