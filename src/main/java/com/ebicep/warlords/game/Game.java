@@ -30,6 +30,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
@@ -51,6 +52,7 @@ public final class Game implements Runnable, AutoCloseable {
     public static final String KEY_UPDATED_FROZEN = "frozen";
 
     private final UUID gameId = UUID.randomUUID();
+    private final Instant startTime = Instant.now();
 
     private final Map<UUID, Team> players = new HashMap<>();
     private final long createdAt = System.currentTimeMillis();
@@ -221,6 +223,10 @@ public final class Game implements Runnable, AutoCloseable {
      */
     public UUID getGameId() {
         return gameId;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
     }
 
     @Nonnull
