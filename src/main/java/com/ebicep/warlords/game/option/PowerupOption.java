@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -136,9 +137,11 @@ public class PowerupOption implements Option {
                     PlayerFilter.entitiesAround(location, 1.4, 1.4, 1.4)
                             .isAlive()
                             .first((nearPlayer) -> {
-                                type.onPickUp(PowerupOption.this, nearPlayer);
-                                remove();
-                                cooldown = maxCooldown * 4;
+                                if (nearPlayer instanceof WarlordsPlayer) {
+                                    type.onPickUp(PowerupOption.this, nearPlayer);
+                                    remove();
+                                    cooldown = maxCooldown * 4;
+                                }
                             });
                 } else {
                     cooldown--;

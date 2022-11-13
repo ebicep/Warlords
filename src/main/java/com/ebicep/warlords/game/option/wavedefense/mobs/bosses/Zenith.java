@@ -66,7 +66,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         float multiplier;
         switch (option.getDifficulty()) {
             case EASY:
-                multiplier = 0.25f;
+                multiplier = 0.5f;
                 break;
             case HARD:
                 multiplier = 1;
