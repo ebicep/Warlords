@@ -116,7 +116,18 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds)
                 );
 
-                float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 1.5f : 1;
+                float multiplier;
+                switch (option.getDifficulty()) {
+                    case EASY:
+                        multiplier = 0.5f;
+                        break;
+                    case HARD:
+                        multiplier = 1.5f;
+                        break;
+                    default:
+                        multiplier = 1;
+                        break;
+                }
                 Location loc = warlordsNPC.getLocation();
                 Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
                 EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 20);

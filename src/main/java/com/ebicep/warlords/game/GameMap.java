@@ -1450,17 +1450,16 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(697.5, 13, 177.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(697.5, 13, 177.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(697.5, 13, 177.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(697.5, 13, 177.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(694.5, 13, 165.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(703.5, 12, 158.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(721.5, 12, 159.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 13, 175.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(718.5, 11, 190.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(705.5, 11, 189.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 19, 227.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 19, 240.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(608, 18, 250.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 18, 255.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(586.5, 19, 235.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 20, 242.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 20, 232.5), Team.RED));
 
             options.add(new GraveOption());
 
