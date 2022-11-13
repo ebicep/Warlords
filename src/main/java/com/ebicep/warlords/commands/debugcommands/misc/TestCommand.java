@@ -26,16 +26,12 @@ import java.util.Comparator;
 public class TestCommand extends BaseCommand {
 
     public static void printCache() {
-        for (PlayersCollections value : PlayersCollections.VALUES) {
+        for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
             System.out.println(value.name);
             Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
-            cache.asMap().forEach((o, o2) -> {
-                System.out.println(o.getClass());
-                System.out.println(o2.getClass());
-            });
+
             System.out.println("CACHE - " + cache.asMap());
             System.out.println(cache.stats());
-            break;
         }
 
     }
