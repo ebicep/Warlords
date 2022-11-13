@@ -206,6 +206,10 @@ public class Mithra extends AbstractZombie implements BossMob {
 
             @Override
             public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                }
+
                 counter++;
                 warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
 
