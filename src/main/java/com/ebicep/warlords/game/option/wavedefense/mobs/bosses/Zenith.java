@@ -70,6 +70,10 @@ public class Zenith extends AbstractZombie implements BossMob {
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                    }
+
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
                     shockwave(loc, stormRadius, 12, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 24, warlordsNPC.getGame());
@@ -115,6 +119,10 @@ public class Zenith extends AbstractZombie implements BossMob {
 
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                    }
+
                     counter++;
                     FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
                             .withColor(Color.WHITE)
@@ -151,6 +159,10 @@ public class Zenith extends AbstractZombie implements BossMob {
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
             public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                }
+
                 Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
                 for (WarlordsEntity we : PlayerFilter
