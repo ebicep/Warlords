@@ -244,6 +244,8 @@ public class ChatUtils {
         TIMINGS("Timings", ChatColor.DARK_GRAY),
         MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
 
+        GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
+
         ;
 
         public final String name;
