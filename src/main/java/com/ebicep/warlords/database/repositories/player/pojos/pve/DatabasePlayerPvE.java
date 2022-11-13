@@ -215,8 +215,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     }
 
     public void addSupplyDropEntry(SupplyDropEntry entry) {
-        if (supplyDropEntries.size() > 20) {
-            this.supplyDropEntries = supplyDropEntries.subList(Math.max(supplyDropEntries.size() - 20, 0), supplyDropEntries.size());
+        if (supplyDropEntries.size() > 25) {
+            this.supplyDropEntries = supplyDropEntries.subList(Math.max(supplyDropEntries.size() - 25, 0), supplyDropEntries.size());
         }
         this.supplyDropEntries.add(entry);
     }
