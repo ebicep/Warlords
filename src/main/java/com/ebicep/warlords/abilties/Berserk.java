@@ -81,6 +81,19 @@ public class Berserk extends AbstractAbility {
             int multiplier = 0;
 
             @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsTakenAmplified++;
+                return currentDamageValue * (1 + damageTakenIncrease / 100);
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsDoneAmplified++;
+                multiplier++;
+                return currentDamageValue * (1 + damageIncrease / 100);
+            }
+
+            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (pveUpgrade) {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
@@ -108,19 +121,6 @@ public class Berserk extends AbstractAbility {
                     return currentCritMultiplier + critBoost;
                 }
                 return currentCritMultiplier;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsTakenAmplified++;
-                return currentDamageValue * (1 + damageTakenIncrease / 100);
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsDoneAmplified++;
-                multiplier++;
-                return currentDamageValue * (1 + damageIncrease / 100);
             }
         });
 

@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,8 +63,8 @@ public class WeaponLegendaryCraftMenu {
                                 Location loc = player.getLocation();
                                 player.playSound(loc, Sound.NOTE_PLING, 500, 2);
                                 player.playSound(loc, Sound.AMBIENCE_THUNDER, 500, 0.1f);
-                                player.playSound(loc, "legendaryfind", 500, 1);
-                                EffectUtils.strikeLightning(loc, false, 2);
+                                Utils.playGlobalSound(loc, "legendaryfind", 500, 1);
+                                EffectUtils.strikeLightning(loc, false, 3);
                                 player.getPlayer().spigot().sendMessage(
                                         new ComponentBuilder(ChatColor.GRAY + "Crafted Legendary Weapon: ")
                                                 .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
