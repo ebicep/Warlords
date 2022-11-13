@@ -134,12 +134,21 @@ public class OrbsOfLife extends AbstractAbility {
                         );
 
                         //setting target player to move towards (includes self)
-                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                .aliveTeammatesOf(wp)
-                                .closestFirst(orb.getArmorStand().getLocation())
-                                .findFirstOrNull()
-                        ));
+                        if (wp.isInPve()) {
+                            tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                    .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                    .aliveTeammatesOf(wp)
+                                    .leastAliveFirst()
+                                    .findFirstOrNull()
+                            ));
+                        } else {
+                            tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                    .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                    .aliveTeammatesOf(wp)
+                                    .closestFirst(orb.getArmorStand().getLocation())
+                                    .findFirstOrNull()
+                            ));
+                        }
                         //moving orb
                         new GameRunnable(wp.getGame()) {
                             @Override

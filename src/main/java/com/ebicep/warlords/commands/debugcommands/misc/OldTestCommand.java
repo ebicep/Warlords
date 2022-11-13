@@ -11,6 +11,10 @@ public class OldTestCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
 
+        if (!player.isOp()) {
+            return true;
+        }
+
 //        Quests quest = Quests.DAILY_300_KA;
 //        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
 //                .appendHoverText(ChatColor.GREEN + quest.name, quest.getHoverText())
