@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
+import com.ebicep.warlords.abilties.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -47,6 +48,9 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 60 == 0) {
+            FlameBurst flameBurst = new FlameBurst();
+            flameBurst.setCritChance(-1);
+            warlordsNPC.getSpec().setRed(flameBurst);
             warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
         }
 

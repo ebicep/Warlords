@@ -56,6 +56,7 @@ public enum Mobs {
 
     // Elite Tier 4 - Exiled
     EXILED_ZOMBIE(ExiledZombie::new),
+    EXILED_VOID_LANCER(NetheriteZombie::new),
     EXILED_ZOMBIE_RIFT(RiftZombie::new),
     EXILED_ZOMBIE_LAVA(LavaZombie::new),
 
@@ -65,6 +66,7 @@ public enum Mobs {
     NARMER(Narmer::new),
     MITHRA(Mithra::new),
     PHYSIRA(Physira::new),
+    VANGUARD(Vanguard::new),
     ZENITH(Zenith::new),
 
     ;
