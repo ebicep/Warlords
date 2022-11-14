@@ -92,8 +92,8 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
-                    ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 60);
-                    ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 60);
+                    ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 80);
+                    ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 80);
                 }
         );
     }
