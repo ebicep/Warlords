@@ -24,6 +24,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandAlias("test")
@@ -44,6 +45,10 @@ public class TestCommand extends BaseCommand {
         System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
         printCache();
         System.out.println("--------------");
+    }
+
+    public static boolean inCache(UUID uuid, PlayersCollections collection) {
+        return ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(collection.cacheName)).getNativeCache().asMap().containsKey(uuid);
     }
 
     public static void printCache() {

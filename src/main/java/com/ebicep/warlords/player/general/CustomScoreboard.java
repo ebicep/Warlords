@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
@@ -248,7 +249,13 @@ public class CustomScoreboard {
 
         updateLobbyPlayerNamesInternal();
 
-        if (loaded) {
+
+        if (!StatsLeaderboardManager.enabled) {
+            givePvEScoreboard();
+            return;
+        }
+
+        if (StatsLeaderboardManager.loaded) {
             StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
             if (statsLeaderboardCategory == null) {
                 return;

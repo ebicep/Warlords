@@ -232,6 +232,20 @@ public class WarlordsEvents implements Listener {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
+
+            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                if (activeCollection == PlayersCollections.LIFETIME) {
+                    continue;
+                }
+                Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
+                if (!loadedPlayers.containsKey(uuid)) {
+                    Warlords.newChain()
+                            .async(() -> {
+                                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                                });
+                            }).execute();
+                }
+            }
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
