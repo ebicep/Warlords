@@ -1461,6 +1461,9 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 20, 242.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 20, 232.5), Team.RED));
 
+            options.add(new PowerupOption(loc.addXYZ(618.5, 19.5, 223.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(581.5, 19.5, 250.5), PowerupType.HEALING, 5, 90, 30));
+
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
