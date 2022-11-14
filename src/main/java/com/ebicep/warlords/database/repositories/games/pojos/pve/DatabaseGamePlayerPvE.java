@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -50,6 +51,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
         super(warlordsPlayer);
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
                 .getPlayerWaveDefenseStats(uuid);
@@ -74,6 +76,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
     }
 
     public int getLongestTimeInCombat() {

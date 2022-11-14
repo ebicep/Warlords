@@ -83,7 +83,7 @@ public class MobCommand extends BaseCommand {
                             EntityInsentient entity = abstractMob.getEntityInsentient();
                             return abstractMob.getWarlordsNPC().getColoredName() +
                                     ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
-                                    ChatColor.GRAY + " | " + entity.locX + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
+                                    ChatColor.GRAY + " | " + ChatColor.GREEN + entity.locX + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
                         })
                         .collect(Collectors.joining("\n"));
                 ChatChannels.sendDebugMessage(issuer, message, true);

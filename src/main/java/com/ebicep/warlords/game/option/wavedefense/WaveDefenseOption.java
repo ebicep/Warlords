@@ -326,6 +326,19 @@ public class WaveDefenseOption implements Option {
                     mob.whileAlive(mobSpawnTimes.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
                 }
 
+                //check every 20 seconds for mobs in void
+                if (ticksElapsed.get() % 400 == 0) {
+                    for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+                        Location location = marker.getLocation();
+                        for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
+                            if (mob.getWarlordsNPC().getLocation().getY() < -100) {
+                                mob.getWarlordsNPC().teleport(location);
+                            }
+                        }
+                        break;
+                    }
+                }
+
                 ticksElapsed.getAndIncrement();
             }
         }.runTaskTimer(20, 0);
