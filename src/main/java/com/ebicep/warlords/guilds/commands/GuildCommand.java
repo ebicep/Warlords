@@ -354,7 +354,7 @@ public class GuildCommand extends BaseCommand {
     ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
-        if (newName.length() > 15) {
+        if (newName.length() > 15 && !player.isOp()) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
             return;
         }
