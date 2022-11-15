@@ -225,6 +225,9 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+                playersCollections
+        ));
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);
         if (databasePlayer != null) {
             databasePlayerConsumer.accept(databasePlayer);
