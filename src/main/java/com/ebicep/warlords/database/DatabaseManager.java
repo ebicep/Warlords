@@ -31,8 +31,10 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -141,20 +143,17 @@ public class DatabaseManager {
                     Warlords.getGameManager().getGames().stream()
                             .map(GameManager.GameHolder::getGame)
                             .filter(Objects::nonNull)
-                            .map(Game::getPlayers)
-                            .map(Map::keySet)
-                            .forEach(toUpdate::addAll);
+                            .flatMap(Game::offlinePlayersWithoutSpectators)
+                            .map(Map.Entry::getKey)
+                            .filter(Objects::nonNull)
+                            .map(OfflinePlayer::getUniqueId)
+                            .forEach(toUpdate::add);
                     Bukkit.getOnlinePlayers().forEach(player -> toUpdate.add(player.getUniqueId()));
                     toUpdate.forEach(uuid -> {
                         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                             Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(activeCollection.cacheName)).getNativeCache();
-                            cache.asMap().forEach((o, o2) -> {
-                                if (Objects.equals(o, uuid)) {
-                                    updatePlayer(uuid, activeCollection, databasePlayer -> {
-                                    });
-                                }
-                            });
-
+                            ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
+                            map.forEach((o, o2) -> map.get(o));
                         }
                     });
                 }
@@ -192,9 +191,9 @@ public class DatabaseManager {
                                 .sync(() -> {
                                     loadPlayerInfo(uuid, databasePlayer);
                                     callback.accept(databasePlayer);
-                                    ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
                                 }).execute();
                     }
+                    ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
                 },
                 () -> {
                     Warlords.newChain()
@@ -220,16 +219,6 @@ public class DatabaseManager {
                 databasePlayers.clear();
             });
         }
-    }
-
-    public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        getPlayer(uuid, playersCollections, databasePlayer -> {
-            databasePlayerConsumer.accept(databasePlayer);
-            queueUpdatePlayerAsync(databasePlayer, playersCollections);
-        });
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
@@ -300,21 +289,8 @@ public class DatabaseManager {
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
     }
 
-    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
-        });
-    }
-
-    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
-        if (playerService == null || !enabled) {
-            return;
-        }
-        if (UPDATE_COOLDOWN.get() < 100) {
-            PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
-        } else {
-            PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
-        }
-        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
+    public static boolean inCache(UUID uuid, PlayersCollections collection) {
+        return ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(collection.cacheName)).getNativeCache().asMap().containsKey(uuid);
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
@@ -355,6 +331,33 @@ public class DatabaseManager {
         updatePlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer);
     }
 
+    public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        getPlayer(uuid, playersCollections, databasePlayer -> {
+            databasePlayerConsumer.accept(databasePlayer);
+            queueUpdatePlayerAsync(databasePlayer, playersCollections);
+        });
+    }
+
+    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        if (UPDATE_COOLDOWN.get() < 100) {
+            PLAYERS_TO_UPDATE_2.get(collections).add(databasePlayer);
+        } else {
+            PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
+        }
+        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
+    }
+
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
         });
@@ -370,5 +373,4 @@ public class DatabaseManager {
                 .stream()
                 .collect(Collectors.toMap(entry -> (UUID) entry.getKey(), entry -> (DatabasePlayer) entry.getValue()));
     }
-
 }

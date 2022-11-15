@@ -69,25 +69,32 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        if (Bukkit.hasWhitelist() && Bukkit.getWhitelistedPlayers().stream().noneMatch(p -> p.getUniqueId().equals(event.getUniqueId()))) {
+            return;
+        }
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
         } else {
             UUID uuid = event.getUniqueId();
-            Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME);
-            if (loadedPlayers == null) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
-                return;
-            }
-            if (!loadedPlayers.containsKey(uuid)) {
-                DatabaseManager.loadPlayer(uuid, PlayersCollections.LIFETIME, (databasePlayer) -> {
-                    //TODO DISCORD
-                });
+            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
+                if (loadedPlayers == null) {
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+                    return;
+                }
+                if (!loadedPlayers.containsKey(uuid)) {
+                    DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                    });
+                }
             }
         }
     }
 
     @EventHandler
     public static void onPlayerLogin(PlayerLoginEvent event) {
+        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+            return;
+        }
         if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
             return;
         }
@@ -232,20 +239,6 @@ public class WarlordsEvents implements Listener {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
-
-            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                if (activeCollection == PlayersCollections.LIFETIME) {
-                    continue;
-                }
-                Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
-                if (!loadedPlayers.containsKey(uuid)) {
-                    Warlords.newChain()
-                            .async(() -> {
-                                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                                });
-                            }).execute();
-                }
-            }
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
