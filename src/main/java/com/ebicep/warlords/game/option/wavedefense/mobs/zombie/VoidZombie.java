@@ -70,6 +70,11 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                     new DoubleLineEffect(ParticleEffect.SPELL)
             ).playEffects();
         }
+
+        if (ticksElapsed % 40 == 0) {
+            float healthDamage = warlordsNPC.getMaxHealth() * 0.02f;
+            warlordsNPC.addDamageInstance(warlordsNPC, "Void Shred", healthDamage, healthDamage, 0, 100, true);
+        }
     }
 
     @Override

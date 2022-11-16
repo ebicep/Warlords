@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -116,10 +117,13 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             onSpawn(option);
             game.addNPC(warlordsNPC);
 
-            double scale = 600.0;
-            long playerCount = game.warlordsPlayers().count();
+            boolean isEndless = option.getDifficulty() == DifficultyIndex.ENDLESS;
+            double scale = isEndless ? 1200.0 : 600.0;
+            long playerCount = 4;//game.warlordsPlayers().count();
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
 
+            int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), option.getWaveCounter() / modifiedScale + 1);
+            int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), option.getWaveCounter() / modifiedScale + 1);
             float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), option.getWaveCounter() / modifiedScale + 1);
             float bossMultiplier = 1 + (0.25f * playerCount);
             float difficultyMultiplier;
@@ -135,20 +139,24 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     difficultyMultiplier = 1;
                     break;
             }
-            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-                warlordsNPC.setMaxBaseHealth((health * difficultyMultiplier)  * bossMultiplier);
-                warlordsNPC.setMaxHealth((health * difficultyMultiplier) * bossMultiplier);
-                warlordsNPC.setHealth((health * difficultyMultiplier) * bossMultiplier);
-            } else {
-                warlordsNPC.setMaxBaseHealth(health * difficultyMultiplier);
-                warlordsNPC.setMaxHealth(health * difficultyMultiplier);
-                warlordsNPC.setHealth(health * difficultyMultiplier);
-            }
 
-            warlordsNPC.setMinMeleeDamage((int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier));
-            warlordsNPC.setMaxMeleeDamage((int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier));
+            boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+            float finalHealthBoss = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+            warlordsNPC.setMaxBaseHealth(finalHealthBoss);
+            warlordsNPC.setMaxHealth(finalHealthBoss);
+            warlordsNPC.setHealth(finalHealthBoss);
 
-            warlordsNPC.setRegenTimer(999999999);
+            int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
+            int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
+            warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
+            warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
+
+            Bukkit.broadcastMessage(
+                    "\nMobName: " + warlordsNPC.getName() +
+                    "\n\nHealth: " + finalHealthBoss +
+                    "\nMinDamage: " + endlessFlagCheckMin +
+                    "\nMaxDamage: " + endlessFlagCheckMax
+            );
         }
 
         return warlordsNPC;

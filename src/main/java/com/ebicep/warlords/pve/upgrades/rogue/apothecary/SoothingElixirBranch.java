@@ -15,7 +15,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Alleviate - Tier I",
                 "+7.5% Healing",
                 5000,
                 () -> {
@@ -24,7 +24,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Alleviate - Tier II",
                 "+15% Healing",
                 10000,
                 () -> {
@@ -33,7 +33,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Alleviate - Tier III",
                 "+22.5% Healing",
                 15000,
                 () -> {
@@ -42,7 +42,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Alleviate - Tier IV",
                 "+30% Healing",
                 20000,
                 () -> {
