@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.abilties.LastStand;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -26,6 +28,8 @@ public class Vanguard extends AbstractZombie implements BossMob {
     private boolean phaseTwoTriggered = false;
     private boolean phaseThreeTriggered = false;
     private boolean phaseFourTriggered = false;
+
+    private int damageToDeal = 15000;
 
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
@@ -68,36 +72,59 @@ public class Vanguard extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f)) {
-            phaseOneTriggered = true;
+        if (!phaseOneTriggered) {
+
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f)) {
-            phaseOneTriggered = false;
-            phaseTwoTriggered = true;
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseTwoTriggered) {
+
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f)) {
-            phaseTwoTriggered = false;
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-        }
 
-        if (ticksElapsed % 60 == 0 && phaseOneTriggered) {
-
-        }
-
-        if (ticksElapsed % 60 == 0 && phaseTwoTriggered) {
-
-        }
-
-        if (ticksElapsed % 20 == 0 && phaseThreeTriggered) {
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 100, 100, 100)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 3);
-                we.addDamageInstance(warlordsNPC, "Vampiric Leash", 250, 250, -1, 100, true);
+            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                if (we.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle(
+                            (Player) we.getEntity(),
+                            "",
+                            ChatColor.RED + "Keep attacking Vanguard to avoid getting drained!",
+                            10, 40, 10
+                    );
+                }
             }
+
+            new GameRunnable(warlordsNPC.getGame()) {
+                int counter = 0;
+                @Override
+                public void run() {
+                    if (warlordsNPC.isDead() || damageToDeal <= 0) {
+                        this.cancel();
+                        return;
+                    }
+
+                    if (counter++ % 20 == 0) {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(warlordsNPC, 100, 100, 100)
+                                .aliveEnemiesOf(warlordsNPC)
+                        ) {
+                            EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 3);
+                            we.addDamageInstance(warlordsNPC, "Vampiric Leash", 250, 250, -1, 100, true);
+                        }
+                    }
+
+                    for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                        if (we.getEntity() instanceof Player) {
+                            PacketUtils.sendTitle(
+                                    (Player) we.getEntity(),
+                                    "",
+                                    ChatColor.RED.toString() + damageToDeal,
+                                    0, 2, 0
+                            );
+                        }
+                    }
+                }
+            }.runTaskTimer(40, 0);
         }
     }
 
@@ -112,7 +139,9 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        if (phaseThreeTriggered) {
+            // TODO
+        }
     }
 
     @Override
