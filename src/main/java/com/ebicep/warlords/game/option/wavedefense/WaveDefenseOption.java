@@ -30,6 +30,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -314,11 +315,25 @@ public class WaveDefenseOption implements Option {
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
 
-                    if (difficulty == DifficultyIndex.ENDLESS && (waveCounter == 50 || waveCounter == 100)) {
-                        getGame().forEachOnlineWarlordsPlayer(wp -> {
-                            wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                            wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                        });
+                    if (difficulty == DifficultyIndex.ENDLESS) {
+                        switch (waveCounter) {
+                            case 25:
+                            case 75:
+                                getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                    for (AbstractUpgradeBranch<?> branch : wp.getAbilityTree().getUpgradeBranches()) {
+                                        branch.setMaxUpgrades(branch.getMaxUpgrades() + 1);
+                                    }
+                                    wp.sendMessage(ChatColor.GOLD.toString() + ChatColor.BOLD + "+1 Tier Upgrade");
+                                });
+                                break;
+                            case 50:
+                            case 100:
+                                getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                                });
+                                break;
+                        }
                     }
                 }
 
