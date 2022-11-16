@@ -118,16 +118,28 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             game.addNPC(warlordsNPC);
 
             boolean isEndless = option.getDifficulty() == DifficultyIndex.ENDLESS;
+            /*
+             * Base scale of 600
+             *
+             * The higher the scale is the longer it takes to increase per interval.
+             */
             double scale = isEndless ? 1200.0 : 600.0;
-            long playerCount = 4;//game.warlordsPlayers().count();
+            long playerCount = game.warlordsPlayers().count();
+            // Flag check whether mob is a boss.
+            boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+            // Reduce base scale by 75 for each player after 2 or more players in game instance.
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
+            double modifier = option.getWaveCounter() / modifiedScale + 1;
 
-            int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), option.getWaveCounter() / modifiedScale + 1);
-            int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), option.getWaveCounter() / modifiedScale + 1);
-            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), option.getWaveCounter() / modifiedScale + 1);
+            // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+            int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+            int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+            // Increase boss health by 25% for each player in game instance.
             float bossMultiplier = 1 + (0.25f * playerCount);
-            float difficultyMultiplier;
 
+            // Multiply damage/health by given difficulty.
+            float difficultyMultiplier;
             switch (option.getDifficulty()) {
                 case EASY:
                     difficultyMultiplier = 0.75f;
@@ -140,11 +152,11 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     break;
             }
 
-            boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
-            float finalHealthBoss = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
-            warlordsNPC.setMaxBaseHealth(finalHealthBoss);
-            warlordsNPC.setMaxHealth(finalHealthBoss);
-            warlordsNPC.setHealth(finalHealthBoss);
+            // Final health value after applying all modifiers.
+            float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+            warlordsNPC.setMaxBaseHealth(finalHealth);
+            warlordsNPC.setMaxHealth(finalHealth);
+            warlordsNPC.setHealth(finalHealth);
 
             int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
             int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
@@ -153,7 +165,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
             Bukkit.broadcastMessage(
                     "\nMobName: " + warlordsNPC.getName() +
-                    "\n\nHealth: " + finalHealthBoss +
+                    "\n\nHealth: " + finalHealth +
                     "\nMinDamage: " + endlessFlagCheckMin +
                     "\nMaxDamage: " + endlessFlagCheckMax
             );
