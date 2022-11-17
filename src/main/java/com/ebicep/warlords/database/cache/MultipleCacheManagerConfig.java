@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.cache;
 
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -29,7 +30,8 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCacheNames(Arrays.stream(values()).map(collections -> collections.cacheName).collect(Collectors.toList()));
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterAccess(30, TimeUnit.MINUTES)
+                .expireAfterAccess(1, TimeUnit.HOURS)
+                .removalListener((o, o2, removalCause) -> ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Removed: " + o + " from cache - " + removalCause))
                 .recordStats()
         );
         cacheManager.setAllowNullValues(false);
