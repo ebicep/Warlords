@@ -29,6 +29,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -366,8 +367,8 @@ public class WarlordsEvents implements Listener {
                 wpAttacker.setHitCooldown(20);
             }
         } else {
-            if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getAbstractWeapon() != null) {
-                AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getAbstractWeapon();
+            if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getWeapon() != null) {
+                AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getWeapon();
                 wpVictim.addDamageInstance(
                         wpAttacker,
                         "",
@@ -545,12 +546,27 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
-        WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+        Player player = e.getPlayer();
+        WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp != null) {
-            if (PlayerSettings.getPlayerSettings(wp.getUuid())
-                    .getHotkeyMode() == Settings.HotkeyMode.NEW_MODE && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-                wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
-                e.setCancelled(true);
+            boolean hotkeyMode = PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.NEW_MODE;
+            if (hotkeyMode) {
+                if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
+                    wp.getSpec().onRightClick(wp, player, slot, true);
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            if (slot == 9 && wp instanceof WarlordsPlayer) {
+                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                if (weapon instanceof AbstractLegendaryWeapon && ((AbstractLegendaryWeapon) weapon).hasAbility()) {
+                    ((AbstractLegendaryWeapon) weapon).onAbilityActivate();
+                    if (hotkeyMode) {
+                        player.getInventory().setHeldItemSlot(0);
+                        e.setCancelled(true);
+                    }
+                }
             }
         }
     }

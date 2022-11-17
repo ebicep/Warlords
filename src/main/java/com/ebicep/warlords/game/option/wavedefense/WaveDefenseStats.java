@@ -94,7 +94,7 @@ public class WaveDefenseStats {
         waveDefenseOption.getGame()
                 .warlordsPlayers()
                 .forEach(warlordsPlayer -> {
-                    if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
+                    if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
                         UUID uuid = warlordsPlayer.getUuid();
                         DatabaseManager.getPlayer(uuid, databasePlayer -> {
                             long legendFragmentGain = won || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS ?

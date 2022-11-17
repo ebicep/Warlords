@@ -373,7 +373,7 @@ public class WaveDefenseOption implements Option {
 
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getAbstractWeapon();
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
         if (weapon == null) {
             WeaponOption.showWeaponStats(warlordsPlayer, player);
         } else {

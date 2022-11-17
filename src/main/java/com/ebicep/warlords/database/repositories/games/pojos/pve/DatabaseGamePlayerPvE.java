@@ -62,7 +62,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });
         this.level = ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass());
-        this.weapon = warlordsPlayer.getAbstractWeapon();
+        this.weapon = warlordsPlayer.getWeapon();
         this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
         this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
         this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();

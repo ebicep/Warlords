@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -269,6 +270,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 break;
             }
         }
+    }
+
+    public boolean hasAbility() {
+        return false;
+    }
+
+    public ItemStack getAbilityItem() {
+        return null;
+    }
+
+    public void onAbilityActivate() {
+
     }
 
     @Override
