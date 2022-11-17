@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -24,38 +25,13 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Benevolent";
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-
-        player.getGame().registerEvents(new Listener() {
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isHealingInstance() && event.getAttacker().equals(player)) {
-                    event.setMin(event.getMin() * (1 + HEALING_INCREASE / 100f));
-                    event.setMax(event.getMax() * (1 + HEALING_INCREASE / 100f));
-                }
-            }
-        });
+    protected float getMeleeDamageMinValue() {
+        return 120;
     }
 
     @Override
     public String getPassiveEffect() {
         return "Increase healing provided by " + HEALING_INCREASE + "%.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 120;
     }
 
     @Override
@@ -79,6 +55,11 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
     protected float getSkillCritChanceBonusValue() {
         return 5;
     }
@@ -88,4 +69,23 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
         return 5;
     }
 
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.BENEVOLENT;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                if (event.isHealingInstance() && event.getAttacker().equals(player)) {
+                    event.setMin(event.getMin() * (1 + HEALING_INCREASE / 100f));
+                    event.setMax(event.getMax() * (1 + HEALING_INCREASE / 100f));
+                }
+            }
+        });
+    }
 }

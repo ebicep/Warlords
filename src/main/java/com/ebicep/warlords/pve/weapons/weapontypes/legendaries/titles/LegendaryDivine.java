@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -31,8 +32,58 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Divine";
+    protected float getMeleeDamageMinValue() {
+        return 100;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets for 10 seconds. Can be triggered every " + COOLDOWN + " seconds.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 120;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 25;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 175;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 7;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return -13;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.DIVINE;
     }
 
     @Override
@@ -93,56 +144,4 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
         });
     }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets for 10 seconds. Can be triggered every " + COOLDOWN + " seconds.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 100;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 120;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 25;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 175;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return -13;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-
 }

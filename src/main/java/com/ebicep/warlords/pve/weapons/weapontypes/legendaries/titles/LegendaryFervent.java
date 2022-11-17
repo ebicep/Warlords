@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
@@ -32,8 +33,54 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Fervent";
+    protected float getMeleeDamageMinValue() {
+        return 170;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Gain a 20% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
+                " damage. Can be triggered every " + COOLDOWN + " seconds.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 190;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 15;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 800;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 10;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.FERVENT;
     }
 
     @Override
@@ -91,52 +138,5 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
             }
 
         });
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Gain a 20% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
-                " damage. Can be triggered every " + COOLDOWN + " seconds.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 170;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 190;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 15;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 200;
-    }
-
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 800;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 10;
     }
 }

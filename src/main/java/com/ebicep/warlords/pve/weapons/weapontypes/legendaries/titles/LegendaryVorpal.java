@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -22,8 +23,53 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Vorpal";
+    protected float getMeleeDamageMinValue() {
+        return 180;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 35;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 300;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 14;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return -3;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 7;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.VORPAL;
     }
 
     @Override
@@ -52,50 +98,5 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
                 }
             }
         });
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 14;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 35;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 200;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 300;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return -3;
     }
 }

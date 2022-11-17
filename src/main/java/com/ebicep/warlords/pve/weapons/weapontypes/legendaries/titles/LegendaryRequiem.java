@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
@@ -30,8 +31,43 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Requiem";
+    protected float getMeleeDamageMinValue() {
+        return 160;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Gain a 20% Damage and Healing bonus for 60s whenever a teammate dies (Max 3 stacks)";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 175;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 800;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.REQUIEM;
     }
 
     @Override
@@ -82,40 +118,5 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
         });
 
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Gain a 20% Damage and Healing bonus for 60s whenever a teammate dies (Max 3 stacks)";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 160;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 175;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 800;
     }
 }

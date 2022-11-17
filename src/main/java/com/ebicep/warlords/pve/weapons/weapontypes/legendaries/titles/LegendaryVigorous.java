@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
@@ -30,8 +31,48 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Vigorous";
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "+10 Energy per Second for 10 seconds after using 400 energy. Can be triggered every " + (PASSIVE_EFFECT_COOLDOWN + PASSIVE_EFFECT_DURATION) + " seconds.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 600;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 4;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.VIGOROUS;
     }
 
     @Override
@@ -84,46 +125,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                 }
             }
         }.runTaskTimer(0, 20);
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "+10 Energy per Second for 10 seconds after using 400 energy. Can be triggered every " + (PASSIVE_EFFECT_COOLDOWN + PASSIVE_EFFECT_DURATION) + " seconds.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 140;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 600;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 4;
     }
 }
 

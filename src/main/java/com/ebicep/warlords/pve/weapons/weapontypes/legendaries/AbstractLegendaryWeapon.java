@@ -30,10 +30,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     protected WeaponStats starPieceBonus;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
-    @Field("unlocked_skill_boosts")
+    @Field("unlocked_skill_boosts") //TODO REMOVE
     protected List<SkillBoosts> unlockedSkillBoosts = new ArrayList<>();
     @Field("unlocked_titles")
     protected List<LegendaryTitles> unlockedTitles = new ArrayList<>();
+    @Field("titles")
+    protected Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = new HashMap<>();
     @Field("upgrade_level")
     protected int upgradeLevel = 0;
 
@@ -131,7 +133,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         if (!passiveEffect.isEmpty()) {
             upgradeLore.addAll(Arrays.asList(
                     "",
-                    ChatColor.GREEN + "Passive Effect (" + getTitle() + "):",
+                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
                     ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
             ));
         }
@@ -177,15 +179,66 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return cost;
     }
 
-    protected abstract float getMeleeDamageMinValue();
+    public StarPieces getStarPiece() {
+        return starPiece;
+    }
+
+    public WeaponStats getStarPieceBonus() {
+        return starPieceBonus;
+    }
+
+    public float getSpeedBonus() {
+        float speedBonus = getSpeedBonusValue();
+        speedBonus *= Math.pow(speedBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (getStarPieceStat() == WeaponStats.SPEED_BONUS) {
+            speedBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return speedBonus;
+    }
+
+    public float getEnergyPerSecondBonus() {
+        float energyPerSecondBonus = getEnergyPerSecondBonusValue();
+        if (energyPerSecondBonus > 0) {
+            energyPerSecondBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.ENERGY_PER_SECOND_BONUS) {
+            energyPerSecondBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return energyPerSecondBonus;
+    }
+
+    public float getEnergyPerHitBonus() {
+        float energyPerHitBonus = getEnergyPerHitBonusValue();
+        if (energyPerHitBonus > 0) {
+            energyPerHitBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
+        }
+        if (getStarPieceStat() == WeaponStats.ENERGY_PER_HIT_BONUS) {
+            energyPerHitBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return energyPerHitBonus;
+    }
+
+    public float getSkillCritChanceBonus() {
+        float skillCritChanceBonus = getSkillCritChanceBonusValue();
+        skillCritChanceBonus *= Math.pow(skillCritChanceBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
+            skillCritChanceBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return skillCritChanceBonus;
+    }
+
+    public float getSkillCritMultiplierBonus() {
+        float skillCritMultiplierBonus = getSkillCritMultiplierBonusValue();
+        skillCritMultiplierBonus *= Math.pow(skillCritMultiplierBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
+        if (getStarPieceStat() == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
+            skillCritMultiplierBonus *= getStarPieceBonusMultiplicativeValue();
+        }
+        return skillCritMultiplierBonus;
+    }
+
+    public abstract String getPassiveEffect();
 
     protected abstract float getMeleeDamageMaxValue();
-
-    protected abstract float getCritChanceValue();
-
-    protected abstract float getCritMultiplierValue();
-
-    protected abstract float getHealthBonusValue();
 
     @Override
     public void generateStats() {
@@ -218,80 +271,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
     }
 
-    public float getSpeedBonus() {
-        float speedBonus = getSpeedBonusValue();
-        speedBonus *= Math.pow(speedBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.SPEED_BONUS) {
-            speedBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return speedBonus;
-    }
-
-    public float getEnergyPerHitBonus() {
-        float energyPerHitBonus = getEnergyPerHitBonusValue();
-        if (energyPerHitBonus > 0) {
-            energyPerHitBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
-        }
-        if (starPieceBonus == WeaponStats.ENERGY_PER_HIT_BONUS) {
-            energyPerHitBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return energyPerHitBonus;
-    }
-
-    public float getEnergyPerSecondBonus() {
-        float energyPerSecondBonus = getEnergyPerSecondBonusValue();
-        if (energyPerSecondBonus > 0) {
-            energyPerSecondBonus *= Math.pow(getUpgradeMultiplier(), upgradeLevel);
-        }
-        if (starPieceBonus == WeaponStats.ENERGY_PER_SECOND_BONUS) {
-            energyPerSecondBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return energyPerSecondBonus;
-    }
-
-    public float getSkillCritChanceBonus() {
-        float skillCritChanceBonus = getSkillCritChanceBonusValue();
-        skillCritChanceBonus *= Math.pow(skillCritChanceBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
-            skillCritChanceBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return skillCritChanceBonus;
-    }
-
-    public float getSkillCritMultiplierBonus() {
-        float skillCritMultiplierBonus = getSkillCritMultiplierBonusValue();
-        skillCritMultiplierBonus *= Math.pow(skillCritMultiplierBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
-            skillCritMultiplierBonus *= getStarPieceBonusMultiplicativeValue();
-        }
-        return skillCritMultiplierBonus;
-    }
-
-    protected float getSpeedBonusValue() {
-        return 0;
-    }
-
-    protected float getEnergyPerHitBonusValue() {
-        return 0;
-    }
-
-    protected float getEnergyPerSecondBonusValue() {
-        return 0;
-    }
-
-    protected float getSkillCritChanceBonusValue() {
-        return 0;
-    }
-
-    protected float getSkillCritMultiplierBonusValue() {
-        return 0;
-    }
-
     @Override
     public float getHealthBonus() {
         float healthBonus = getHealthBonusValue();
         healthBonus *= Math.pow(healthBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.HEALTH_BONUS) {
+        if (getStarPieceStat() == WeaponStats.HEALTH_BONUS) {
             healthBonus *= getStarPieceBonusMultiplicativeValue();
         }
         return healthBonus;
@@ -311,7 +295,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public float getMeleeDamageMin() {
         float meleeDamageMin = getMeleeDamageMinValue();
         meleeDamageMin *= Math.pow(meleeDamageMin > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.MELEE_DAMAGE) {
+        if (getStarPieceStat() == WeaponStats.MELEE_DAMAGE) {
             meleeDamageMin *= getStarPieceBonusMultiplicativeValue();
         }
         return meleeDamageMin;
@@ -326,7 +310,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public float getCritChance() {
         float critChance = getCritChanceValue();
         //critChance *= Math.pow(critChance > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.CRIT_CHANCE) {
+        if (getStarPieceStat() == WeaponStats.CRIT_CHANCE) {
             critChance *= getStarPieceBonusMultiplicativeValue();
         }
         return critChance;
@@ -336,7 +320,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public float getCritMultiplier() {
         float critMultiplier = getCritMultiplierValue();
         //critMultiplier *= Math.pow(critMultiplier > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
-        if (starPieceBonus == WeaponStats.CRIT_MULTIPLIER) {
+        if (getStarPieceStat() == WeaponStats.CRIT_MULTIPLIER) {
             critMultiplier *= getStarPieceBonusMultiplicativeValue();
         }
         return critMultiplier;
@@ -384,7 +368,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         if (!passiveEffect.isEmpty()) {
             lore.addAll(Arrays.asList(
                     "",
-                    ChatColor.GREEN + "Passive Effect (" + getTitle() + "):",
+                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
                     ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
             ));
         }
@@ -399,11 +383,19 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public String getName() {
-        if (getTitle().isEmpty()) {
+        if (getTitleName().isEmpty()) {
             return super.getName();
         } else {
-            return ChatColor.GOLD + getTitle() + " " + super.getName();
+            return ChatColor.GOLD + getTitleName() + " " + super.getName();
         }
+    }
+
+    public String getTitleName() {
+        return this.getTitle().name;
+    }
+
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.NONE;
     }
 
     @Override
@@ -411,16 +403,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return ChatColor.GOLD;
     }
 
-    public abstract String getTitle();
-
     public String getStarPieceBonusString(WeaponStats weaponStats) {
-        return starPieceBonus == weaponStats ? getStarPieceBonusString() : "";
-    }
-
-    public abstract String getPassiveEffect();
-
-    public WeaponStats getStarPieceBonus() {
-        return starPieceBonus;
+        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : "";
     }
 
     @Override
@@ -456,13 +440,44 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return randomStatBonus;
     }
 
+    protected abstract float getMeleeDamageMinValue();
+
+    protected abstract float getCritChanceValue();
+
+    protected abstract float getCritMultiplierValue();
+
+    protected abstract float getHealthBonusValue();
+
+    protected float getSpeedBonusValue() {
+        return 0;
+    }
+
+    protected float getEnergyPerSecondBonusValue() {
+        return 0;
+    }
+
+    protected float getEnergyPerHitBonusValue() {
+        return 0;
+    }
+
+    protected float getSkillCritChanceBonusValue() {
+        return 0;
+    }
+
+    protected float getSkillCritMultiplierBonusValue() {
+        return 0;
+    }
+
     @Override
     public int getStarPieceBonusValue() {
-        return starPiece.starPieceBonusValue;
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
+    }
+
+    public WeaponStats getStarPieceStat() {
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPieceStat();
     }
 
     public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
-        this.starPiece = starPiece;
-        this.starPieceBonus = starPieceBonus;
+        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setStarPieceInfo(starPiece, starPieceBonus);
     }
 }

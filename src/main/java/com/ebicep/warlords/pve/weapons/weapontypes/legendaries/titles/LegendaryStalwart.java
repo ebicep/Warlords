@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 
 import java.util.UUID;
 
@@ -22,8 +23,43 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Stalwart";
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "For every 10% of HP under 80%, gain an additional 7.5% damage reduction. Maximum 30% Damage Reduction";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 160;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 160;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1000;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 7;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.STALWART;
     }
 
     @Override
@@ -60,40 +96,5 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                 }
         );
 
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "For every 10% of HP under 80%, gain an additional 7.5% damage reduction. Maximum 30% Damage Reduction";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 7;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 140;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 160;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 160;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 1000;
     }
 }

@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -45,6 +46,11 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Increase the duration of negative effects to enemies by 2s.";
+    }
+
+    @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
     }
@@ -62,6 +68,21 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getHealthBonusValue() {
         return 400;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 3;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.ENHANCED;
     }
 
     @Override
@@ -110,25 +131,5 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
             }
 
         });
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 3;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Enhanced";
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Increase the duration of negative effects to enemies by 2s.";
     }
 }

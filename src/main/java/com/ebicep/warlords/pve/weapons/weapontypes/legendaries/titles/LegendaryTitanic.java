@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -24,43 +25,13 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Titanic";
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-
-        player.getGame().registerEvents(new Listener() {
-            float baseMaxHealth = -1;
-            int upgradeCount = 0;
-
-            @EventHandler
-            public void onEvent(WarlordsUpgradeUnlockEvent event) {
-                if (event.getPlayer() == player) {
-                    if (baseMaxHealth == -1) {
-                        baseMaxHealth = player.getMaxBaseHealth();
-                    }
-                    player.setMaxBaseHealth(baseMaxHealth * (1 + (++upgradeCount * HEALTH_INCREASE_PER_UPGRADE)));
-                }
-            }
-        });
+    protected float getMeleeDamageMinValue() {
+        return 130;
     }
 
     @Override
     public String getPassiveEffect() {
         return "Increase maximum health by 1% per upgrade purchased.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 130;
     }
 
     @Override
@@ -81,5 +52,35 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     @Override
     protected float getHealthBonusValue() {
         return 1500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.TITANIC;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+            float baseMaxHealth = -1;
+            int upgradeCount = 0;
+
+            @EventHandler
+            public void onEvent(WarlordsUpgradeUnlockEvent event) {
+                if (event.getPlayer() == player) {
+                    if (baseMaxHealth == -1) {
+                        baseMaxHealth = player.getMaxBaseHealth();
+                    }
+                    player.setMaxBaseHealth(baseMaxHealth * (1 + (++upgradeCount * HEALTH_INCREASE_PER_UPGRADE)));
+                }
+            }
+        });
     }
 }

@@ -246,17 +246,22 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
-        for (AbstractWeapon abstractWeapon : weaponInventory) {
-            if (abstractWeapon instanceof AbstractLegendaryWeapon) {
-                if (((AbstractLegendaryWeapon) abstractWeapon).getUnlockedTitles().isEmpty()) {
+        for (AbstractWeapon weapon : weaponInventory) {
+            if (weapon instanceof AbstractLegendaryWeapon) {
+                AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
+                if (legendaryWeapon.getUnlockedTitles().isEmpty()) {
                     for (LegendaryTitles value : LegendaryTitles.VALUES) {
-                        if (value.clazz.equals(abstractWeapon.getClass())) {
-                            ((AbstractLegendaryWeapon) abstractWeapon).getUnlockedTitles().add(value);
+                        if (value.clazz.equals(weapon.getClass())) {
+                            legendaryWeapon.getUnlockedTitles().add(value);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             break;
                         }
                     }
                 }
+                //if (legendaryWeapon.getStarPiece() != null) {
+                legendaryWeapon.setStarPiece(legendaryWeapon.getStarPiece(), legendaryWeapon.getStarPieceBonus());
+                System.out.println("Migrated star piece for " + uuid);
+                //}
             }
         }
 

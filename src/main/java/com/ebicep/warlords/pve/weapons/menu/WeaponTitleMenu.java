@@ -71,7 +71,7 @@ public class WeaponTitleMenu {
                 Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
                 List<String> loreCost = title.getCostLore();
 
-                boolean equals = weapon.getClass().equals(title.clazz);
+                boolean equals = Objects.equals(weapon.getTitle(), title);
                 boolean titleIsLocked = !weapon.getUnlockedTitles().contains(title);
                 if (equals) {
                     itemBuilder.addLore("", ChatColor.GREEN + "Selected");
@@ -126,7 +126,7 @@ public class WeaponTitleMenu {
                                 }
                             }
                             List<String> confirmLore = new ArrayList<>();
-                            confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + titledWeapon.getTitle() + ChatColor.GRAY + " title");
+                            confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + titledWeapon.getTitleName() + ChatColor.GRAY + " title");
                             if (titleIsLocked) {
                                 confirmLore.addAll(loreCost);
                             }

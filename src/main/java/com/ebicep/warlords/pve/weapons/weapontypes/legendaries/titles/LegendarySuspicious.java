@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Instrument;
@@ -45,8 +46,58 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Suspicious";
+    protected float getMeleeDamageMinValue() {
+        return 180;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Plays an Amogus sound whenever you land a melee crit.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 50;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return -50;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.SUSPICIOUS;
     }
 
     @Override
@@ -92,55 +143,5 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
             }
         });
 
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Plays an Amogus sound whenever you land a melee crit.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
-    }
-
-    @Override
-    protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 50;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return -50;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 15;
     }
 }

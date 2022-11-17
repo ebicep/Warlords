@@ -11,9 +11,8 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
         super(uuid);
     }
 
-    @Override
-    public String getTitle() {
-        return "";
+    public LegendaryWeapon(AbstractLegendaryWeapon legendaryWeapon) {
+        super(legendaryWeapon);
     }
 
     @Override
