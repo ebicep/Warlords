@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 public class ExiledZombie extends AbstractZombie implements EliteMob {
 
@@ -28,7 +27,7 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
                         Weapons.ABBADON.getItem()
                 ),
-                16000,
+                12000,
                 0.22f,
                 0,
                 4200,

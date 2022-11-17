@@ -10,13 +10,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 public class VoidZombie extends AbstractZombie implements EliteMob {
 
@@ -32,9 +32,9 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        new ItemStack(Material.GOLDEN_CARROT)
+                        Weapons.VOID_EDGE.getItem()
                 ),
-                9000,
+                10000,
                 0.1f,
                 0,
                 1500,
@@ -72,7 +72,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
         }
 
         if (ticksElapsed % 40 == 0) {
-            float healthDamage = warlordsNPC.getMaxHealth() * 0.02f;
+            float healthDamage = warlordsNPC.getMaxHealth() * 0.01f;
             warlordsNPC.addDamageInstance(warlordsNPC, "Void Shred", healthDamage, healthDamage, 0, 100, true);
         }
     }
