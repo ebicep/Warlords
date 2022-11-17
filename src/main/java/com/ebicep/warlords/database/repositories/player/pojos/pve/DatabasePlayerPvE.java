@@ -178,23 +178,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     }
 
-    public void addCurrency(Currencies currency, Long amount) {
-        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
-            return;
-        }
-        if (!currencies.containsKey(currency)) {
-            currencies.put(currency, 0L);
-        }
-        this.currencies.put(currency, this.currencies.get(currency) + amount);
-        CustomScoreboard.reloadPvEScoreboard(this);
-    }
-
     public void subtractCurrency(Currencies currency, int amount) {
         this.subtractCurrency(currency, (long) amount);
-    }
-
-    public void subtractCurrency(Currencies currency, Long amount) {
-        this.addCurrency(currency, -amount);
     }
 
     public DatabasePlayerPvEDifficultyStats getEasyStats() {
@@ -230,6 +215,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     }
 
     public void addSupplyDropEntry(SupplyDropEntry entry) {
+        if (supplyDropEntries.size() > 25) {
+            this.supplyDropEntries = supplyDropEntries.subList(Math.max(supplyDropEntries.size() - 25, 0), supplyDropEntries.size());
+        }
         this.supplyDropEntries.add(entry);
     }
 
@@ -252,12 +240,27 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.addCurrency(currency, (long) amount);
     }
 
+    public void addCurrency(Currencies currency, Long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        if (!currencies.containsKey(currency)) {
+            currencies.put(currency, 0L);
+        }
+        this.currencies.put(currency, this.currencies.get(currency) + amount);
+        CustomScoreboard.reloadPvEScoreboard(this);
+    }
+
     public void addOneCurrency(Currencies currency) {
         this.addCurrency(currency, 1L);
     }
 
     public void subtractOneCurrency(Currencies currency) {
         this.subtractCurrency(currency, 1L);
+    }
+
+    public void subtractCurrency(Currencies currency, Long amount) {
+        this.addCurrency(currency, -amount);
     }
 
     public boolean isCompletedTutorial() {

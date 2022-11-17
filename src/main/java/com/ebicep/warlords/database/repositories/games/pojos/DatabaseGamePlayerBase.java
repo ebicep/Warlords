@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -18,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
-    @Id
-    private String id;
     protected UUID uuid;
     protected String name;
     protected Specializations spec;
@@ -53,6 +52,8 @@ public class DatabaseGamePlayerBase {
     protected long experienceEarnedSpec;
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
+    @Id
+    private String id;
 
     public DatabaseGamePlayerBase() {
     }
@@ -84,12 +85,14 @@ public class DatabaseGamePlayerBase {
         this.totalDamage = warlordsPlayer.getMinuteStats().total().getDamage();
         this.totalHealing = warlordsPlayer.getMinuteStats().total().getHealing();
         this.totalAbsorbed = warlordsPlayer.getMinuteStats().total().getAbsorbed();
-        this.kills = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getKills).collect(Collectors.toList());
-        this.assists = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAssists).collect(Collectors.toList());
-        this.deaths = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDeaths).collect(Collectors.toList());
-        this.damage = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamage).collect(Collectors.toList());
-        this.healing = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealing).collect(Collectors.toList());
-        this.absorbed = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAbsorbed).collect(Collectors.toList());
+        if (!(this instanceof DatabaseGamePlayerPvE)) {
+            this.kills = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getKills).collect(Collectors.toList());
+            this.assists = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAssists).collect(Collectors.toList());
+            this.deaths = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDeaths).collect(Collectors.toList());
+            this.damage = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamage).collect(Collectors.toList());
+            this.healing = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealing).collect(Collectors.toList());
+            this.absorbed = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAbsorbed).collect(Collectors.toList());
+        }
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;
     }

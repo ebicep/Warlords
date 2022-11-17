@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
@@ -29,10 +30,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,10 +43,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,13 +64,16 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding game options");
         for (Option option : game.getOptions()) {
             option.start(game);
         }
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
 
         List<UUID> toRemove = new ArrayList<>();
         this.game.forEachOfflinePlayer((player, team) -> {
@@ -106,19 +104,22 @@ public class PlayingState implements State, TimerDebugAble {
 
                 @Override
                 public void run() {
-                    game.forEachOfflineWarlordsPlayer((player, team) -> {
+                    ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Loading players in active collections");
+                    List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators().collect(Collectors.toList());
+                    for (Map.Entry<OfflinePlayer, Team> player : players) {
                         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                             if (activeCollection == PlayersCollections.LIFETIME) {
-                                DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+                                DatabaseManager.updatePlayer(player.getKey().getUniqueId(), databasePlayer -> {
                                 });
                                 continue;
                             }
-                            DatabaseManager.loadPlayer(player.getUniqueId(), activeCollection, (dp) -> {
+                            DatabaseManager.loadPlayer(player.getKey().getUniqueId(), activeCollection, (dp) -> {
                             });
                         }
-                    });
+                    }
+                    ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Loaded players in active collections");
                 }
-            }.runTaskLater(Warlords.getInstance(), 40);
+            }.runTaskLaterAsynchronously(Warlords.getInstance(), 40);
         } else {
             System.out.println("ATTENTION - playerService is null");
         }
@@ -138,6 +139,9 @@ public class PlayingState implements State, TimerDebugAble {
                 });
             }
         }.runTaskTimer(0, 10);
+
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Started recording timed stats");
+
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -163,6 +167,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         Warlords.getInstance().hideAndUnhidePeople();
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game start done");
     }
 
     @Nonnull
@@ -326,14 +331,18 @@ public class PlayingState implements State, TimerDebugAble {
                     timer >= 6000;
             //comps
             if (isCompGame) {
+                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding comp game");
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames));
+                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding comp game");
             }
             //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
-                gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
+                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding pub game");
                 if (DatabaseManager.playerService == null) {
                     return;
                 }
+                gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
+                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
                 if (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
 //                    Warlords.newChain()
 //                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))

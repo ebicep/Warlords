@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -13,6 +14,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -20,24 +23,18 @@ import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
 public class TestCommand extends BaseCommand {
 
-    public static void printCache() {
-        for (PlayersCollections value : PlayersCollections.VALUES) {
-            System.out.println(value.name);
-            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
-            cache.asMap().forEach((o, o2) -> {
-                System.out.println(o.getClass());
-                System.out.println(o2.getClass());
-            });
-            System.out.println("CACHE - " + cache.asMap());
-            System.out.println(cache.stats());
-            break;
-        }
-
+    @Default
+    @Description("Universal test command")
+    public void test(CommandIssuer issuer) {
+        doTest(issuer);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }
 
     public static void doTest(CommandIssuer issuer) {
@@ -49,27 +46,52 @@ public class TestCommand extends BaseCommand {
         System.out.println("--------------");
     }
 
-    @Default
-    @Description("Universal test command")
-    public void test(CommandIssuer issuer) {
-        doTest(issuer);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
+    public static void printCache() {
+        for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
+            System.out.println(value.name);
+            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
+
+            System.out.println("CACHE - " + cache.asMap());
+            System.out.println(cache.stats());
+        }
+
     }
 
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
-        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME)) {
-            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
-                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
-                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
-                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
-            });
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        }
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
+                .asyncLast(databasePlayers -> {
+                    for (DatabasePlayer databasePlayer : databasePlayers) {
+                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
+//                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
+//                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
+//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
+//            });
+                        for (WeaponsPvE value : WeaponsPvE.VALUES) {
+                            if (value.getPlayerEntries == null) {
+                                continue;
+                            }
+                            List<MasterworksFairEntry> entries = pveStats.getMasterworksFairEntries()
+                                    .stream()
+                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
+                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                                    .collect(Collectors.toList());
+                            if (entries.size() > 1) {
+                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
+                                System.out.println("Removed duplicate for " + databasePlayer.getName());
+                            }
+                        }
+                        databasePlayer.getAchievements()
+                                .removeIf(abstractAchievementRecord -> abstractAchievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord && abstractAchievementRecord.getAchievement() == ChallengeAchievements.SERIAL_KILLER || abstractAchievementRecord.getAchievement() == ChallengeAchievements.LIFELEECHER);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    }
+                }).execute();
+
         //DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
 
 

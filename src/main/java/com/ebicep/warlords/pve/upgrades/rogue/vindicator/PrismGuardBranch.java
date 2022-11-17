@@ -52,7 +52,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+5% Damage reduction\n+10% Projectile Damage reduction",
+                "+10% Projectile Damage reduction",
                 5000,
                 () -> {
                     ability.setProjectileDamageReduction(projectileDamageReduction + 10);
@@ -60,26 +60,26 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+10% Damage reduction\n+20% Projectile Damage reduction",
+                "+15% Projectile Damage reduction",
                 10000,
+                () -> {
+                    ability.setProjectileDamageReduction(projectileDamageReduction + 15);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "+20% Projectile Damage reduction",
+                15000,
                 () -> {
                     ability.setProjectileDamageReduction(projectileDamageReduction + 20);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+15% Damage reduction\n+30% Projectile Damage reduction",
-                15000,
-                () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 30);
-                }
-        ));
-        treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+20% Damage reduction\n+40% Projectile Damage reduction",
+                "+25% Projectile Damage reduction",
                 20000,
                 () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 40);
+                    ability.setProjectileDamageReduction(projectileDamageReduction + 25);
                 }
         ));
 

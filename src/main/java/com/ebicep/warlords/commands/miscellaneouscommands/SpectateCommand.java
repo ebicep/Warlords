@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class SpectateCommand extends BaseCommand {
         List<Game> games = Warlords.getGameManager().getGames().stream()
                 .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
                 .map(GameHolder::getGame)
+                .sorted(Comparator.comparing(Game::getStartTime))
                 .collect(Collectors.toList());
         //1-7 = 3
         //8-14 = 4

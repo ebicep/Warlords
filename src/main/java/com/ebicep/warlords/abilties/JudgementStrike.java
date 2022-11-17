@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
@@ -80,7 +82,8 @@ public class JudgementStrike extends AbstractStrikeBase {
                             nearPlayer.getHealth() + 1,
                             0,
                             100,
-                            true
+                            true,
+                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
                     ).ifPresent(finalEvent2 -> {
                         if (strikeHeal != 0 && finalEvent2.isDead()) {
                             wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100, false, false);

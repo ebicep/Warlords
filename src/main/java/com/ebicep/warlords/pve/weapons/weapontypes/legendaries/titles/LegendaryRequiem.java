@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -45,7 +46,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                if (event.getPlayer().isTeammate(player)) {
+                WarlordsEntity warlordsEntity = event.getPlayer();
+                if (warlordsEntity.isTeammate(player) && !warlordsEntity.equals(player)) {
                     damageHealBonus = (float) Math.min(.6, damageHealBonus + .20);
                     if (cooldown == null) {
                         player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
@@ -65,6 +67,12 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                 return currentDamageValue * (1 + damageHealBonus);
                             }
+
+                            @Override
+                            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                return currentHealValue * (1 + damageHealBonus);
+                            }
+
                         });
                     } else {
                         cooldown.setTicksLeft(60 * 20);

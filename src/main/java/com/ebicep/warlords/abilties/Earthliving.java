@@ -173,6 +173,9 @@ public class Earthliving extends AbstractAbility {
                             .closestFirst(target)
                     ) {
                         float missingHealth = (ally.getMaxHealth() - ally.getHealth()) * 0.1f;
+                        if (missingHealth <= 0) {
+                            continue;
+                        }
                         ally.addHealingInstance(
                                 giver,
                                 "Loamliving Weapon",

@@ -85,7 +85,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     removeCloak(wp, true);
                     if (pveUpgrade) {
                         if (tempOrderOfEviscerate.damageDoneWithOrder >= 15000 && tempOrderOfEviscerate.mobsKilledWithOrder >= 6) {
-                            wp.unlockAchievement(ChallengeAchievements.SERIAL_KILLER);
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
                         }
                     }
                 },

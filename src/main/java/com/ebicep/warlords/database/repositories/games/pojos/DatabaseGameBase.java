@@ -22,6 +22,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.TriFunction;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -127,17 +128,19 @@ public abstract class DatabaseGameBase {
                 }
             }
 
-            DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
-            if (databaseGame == null) {
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
+            if (createDatabaseGame == null) {
                 ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
             }
+            DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
 
             if (previousGames.size() >= 10) {
                 previousGames.get(0).deleteHolograms();
                 previousGames.remove(0);
             }
             previousGames.add(databaseGame);
+            StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
             databaseGame.createHolograms();
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
@@ -268,11 +271,13 @@ public abstract class DatabaseGameBase {
     }
 
     protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
+        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team");
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
             if (!activeCollection.shouldUpdate(databaseGame.getExactDate())) {
                 return; //Can return because if game is not in the same week then it will not be in the same day
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
+                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
                 if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),

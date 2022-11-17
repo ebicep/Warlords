@@ -86,7 +86,7 @@ public class DrainingMiasma extends AbstractAbility {
                     cooldownManager -> {
                         cancelSlowness.run();
                         if (tempDrainingMiasma.numberOfLeechProcd >= 150) {
-                            wp.unlockAchievement(ChallengeAchievements.LIFELEECHER);
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
                         }
                     },
                     duration * 20,

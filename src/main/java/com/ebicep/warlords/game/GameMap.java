@@ -1275,7 +1275,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRift",
-            8,
+            10,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1444,7 +1444,7 @@ public enum GameMap {
             1,
             60 * SECOND,
             "IllusionAperture",
-            7,
+            10,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1461,6 +1461,9 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(586.5, 19, 235.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 20, 242.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 20, 232.5), Team.RED));
+
+            options.add(new PowerupOption(loc.addXYZ(618.5, 19.5, 223.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(581.5, 19.5, 250.5), PowerupType.HEALING, 5, 90, 30));
 
             options.add(new GraveOption());
 

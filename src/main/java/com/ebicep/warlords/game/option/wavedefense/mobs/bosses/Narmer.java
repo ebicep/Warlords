@@ -123,7 +123,18 @@ public class Narmer extends AbstractZombie implements BossMob {
                             60
                     );
 
-                    boolean isHard = option.getDifficulty() == DifficultyIndex.HARD;
+                    float multiplier;
+                    switch (option.getDifficulty()) {
+                        case EASY:
+                            multiplier = 2;
+                            break;
+                        case HARD:
+                            multiplier = 16;
+                            break;
+                        default:
+                            multiplier = 8;
+                            break;
+                    }
                     if (acolyteDeathTickWindow > 0) {
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
@@ -132,7 +143,6 @@ public class Narmer extends AbstractZombie implements BossMob {
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
                                 .aliveEnemiesOf(warlordsNPC)
                                 .toList();
-                        float multiplier = isHard ? 16 : 8;
                         for (WarlordsEntity enemy : warlordsEntities) {
                             enemy.addDamageInstance(
                                     warlordsNPC,

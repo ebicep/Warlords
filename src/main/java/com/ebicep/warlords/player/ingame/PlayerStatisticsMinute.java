@@ -26,7 +26,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
      * Cache variable to prevent repeated total computations.
      */
     @CheckForNull
-    private transient Entry total = null;
+    private transient Entry total = new Entry();
 
     public PlayerStatisticsMinute() {
         this(16);

@@ -7,20 +7,16 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class AvengersWrath extends AbstractAbility {
-
-    private static final String WRATH_SKIP = "wrath_skip";
 
     public int extraPlayersStruck = 0;
     public int playersStruckDuringWrath = 0;
@@ -82,7 +78,7 @@ public class AvengersWrath extends AbstractAbility {
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(WRATH_SKIP)) {
+                if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                     tempAvengersWrath.addPlayersStruckDuringWrath();
                     for (WarlordsEntity wrathTarget : PlayerFilter
                             .entitiesAround(event.getPlayer(), hitRadius, hitRadius, hitRadius)
@@ -105,7 +101,7 @@ public class AvengersWrath extends AbstractAbility {
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
                                     false,
-                                    Collections.singletonList(WRATH_SKIP)
+                                    EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE)
                             );
                         } else {
                             wrathTarget.addDamageInstance(
@@ -116,7 +112,7 @@ public class AvengersWrath extends AbstractAbility {
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
                                     false,
-                                    Collections.singletonList(WRATH_SKIP)
+                                    EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE)
                             );
                         }
                         wrathTarget.subtractEnergy(10, true);

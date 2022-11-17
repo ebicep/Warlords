@@ -188,6 +188,10 @@ public class WaveDefenseOption implements Option {
                 if (entityLiving instanceof EntityInsentient) {
                     LivingEntity newTarget = event.getTarget();
                     EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
+                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (newTarget == null) {
                         if (oldTarget instanceof EntityPlayer) {
                             //setting target to player zombie
@@ -320,6 +324,19 @@ public class WaveDefenseOption implements Option {
 
                 for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
                     mob.whileAlive(mobSpawnTimes.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
+                }
+
+                //check every 20 seconds for mobs in void
+                if (ticksElapsed.get() % 400 == 0) {
+                    for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+                        Location location = marker.getLocation();
+                        for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
+                            if (mob.getWarlordsNPC().getLocation().getY() < -100) {
+                                mob.getWarlordsNPC().teleport(location);
+                            }
+                        }
+                        break;
+                    }
                 }
 
                 ticksElapsed.getAndIncrement();
@@ -514,16 +531,11 @@ public class WaveDefenseOption implements Option {
 
                 counter++;
                 if (lastSpawn == null) {
-                    lastSpawn = spawn(lastLocation);
-                    if (lastSpawn != null) {
-                        Location newLoc = getSpawnLocation(lastSpawn);
-                        lastSpawn.teleport(newLoc);
-                        lastSpawn.getLocation(lastLocation);
-                    }
+                    lastSpawn = spawn(getSpawnLocation(null));
                 } else {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
-                    lastSpawn.getLocation(lastLocation);
                 }
+                lastSpawn.getLocation(lastLocation);
 
                 spawnCount--;
                 if (spawnCount <= 0) {
@@ -543,6 +555,9 @@ public class WaveDefenseOption implements Option {
                 List<Location> candidates = new ArrayList<>();
                 double priority = Double.NEGATIVE_INFINITY;
                 for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+                    if (entity == null) {
+                        return marker.getLocation();
+                    }
                     if (candidates.isEmpty()) {
                         candidates.add(marker.getLocation());
                         priority = marker.getPriority(entity);

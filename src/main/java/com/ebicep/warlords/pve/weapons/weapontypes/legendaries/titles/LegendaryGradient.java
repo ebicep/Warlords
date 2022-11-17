@@ -35,7 +35,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
                 if (player.isDead()) {
                     return;
                 }
-                float healValue = player.getMaxHealth() * .03f;
+                float healValue = player.getMaxHealth() * .05f;
                 player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
             }
         }.runTaskTimer(0, 5 * 20);
@@ -43,7 +43,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Perpetually regenerate 3% of your health every 5 seconds.";
+        return "Perpetually regenerate 5% of your health every 5 seconds.";
     }
 
 
