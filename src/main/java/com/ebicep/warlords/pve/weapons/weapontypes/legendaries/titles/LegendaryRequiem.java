@@ -1,20 +1,29 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryRequiem extends AbstractLegendaryWeapon {
+
+    public static final int DAMAGE_HEAL_BOOST = 20;
+    public static final int DURATION = 60;
+    public static final int MAX_STACKS = 5;
 
     public LegendaryRequiem() {
     }
@@ -29,7 +38,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a 20% Damage and Healing bonus for 60s whenever a teammate dies (Max 3 stacks)";
+        return "Gain a " + DAMAGE_HEAL_BOOST + "% damage and healing bonus whenever a teammate dies and whenever Undying Army is cast/popped on teammates.";
     }
 
     @Override
@@ -44,43 +53,77 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
         player.getGame().registerEvents(new Listener() {
 
-            final AtomicDouble damageHealBonus = new AtomicDouble(0);
+            final AtomicInteger damageHealBonus = new AtomicInteger(0);
             RegularCooldown<LegendaryRequiem> cooldown = null;
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
                 WarlordsEntity warlordsEntity = event.getPlayer();
-                if (warlordsEntity.isTeammate(player) && !warlordsEntity.equals(player)) {
-                    damageHealBonus.set(Math.min(.6, damageHealBonus.get() + .20));
-                    if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
-                        player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
-                                "Requiem",
-                                "REQ",
-                                LegendaryRequiem.class,
-                                null,
-                                player,
-                                CooldownTypes.BUFF,
-                                cooldownManager -> {
-                                    cooldown = null;
-                                    damageHealBonus.set(0);
-                                },
-                                60 * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return (float) (currentDamageValue * (1 + damageHealBonus.get()));
-                            }
-
-                            @Override
-                            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return (float) (currentHealValue * (1 + damageHealBonus.get()));
-                            }
-
-                        });
-                    } else {
-                        cooldown.setTicksLeft(60 * 20);
-                    }
+                if (!warlordsEntity.isTeammate(player) || warlordsEntity.equals(player)) {
+                    return;
                 }
+                resetCooldown();
+            }
+
+            private void resetCooldown() {
+                damageHealBonus.set(Math.min(MAX_STACKS, damageHealBonus.get() + 1));
+                if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
+                    player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
+                            "Requiem",
+                            "REQ",
+                            LegendaryRequiem.class,
+                            null,
+                            player,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                                cooldown = null;
+                                damageHealBonus.set(0);
+                            },
+                            DURATION * 20
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * (1 + damageHealBonus.get() * DAMAGE_HEAL_BOOST / 100f);
+                        }
+
+                        @Override
+                        public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                            return currentHealValue * (1 + damageHealBonus.get() * DAMAGE_HEAL_BOOST / 100f);
+                        }
+
+                    });
+                } else {
+                    cooldown.setTicksLeft(DURATION * 20);
+                    cooldown.setName("Requiem " + damageHealBonus.get());
+                    cooldown.setNameAbbreviation("REQ " + damageHealBonus.get());
+                }
+            }
+
+            @EventHandler
+            public void onAddCooldown(WarlordsAddCooldownEvent event) {
+                AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                if (!(cooldown.getCooldownObject() instanceof UndyingArmy)) {
+                    return;
+                }
+                if (Objects.equals(event.getPlayer(), player)) {
+                    return;
+                }
+                if (cooldown.getFrom() == null || cooldown.getFrom().isEnemy(player)) {
+                    return;
+                }
+                resetCooldown();
+            }
+
+            @EventHandler
+            public void onUndyingArmyPop(WarlordsUndyingArmyPopEvent event) {
+                WarlordsEntity warlordsEntity = event.getPlayer();
+                if (Objects.equals(warlordsEntity, player)) {
+                    return;
+                }
+                if (warlordsEntity.isEnemy(player)) {
+                    return;
+                }
+                resetCooldown();
             }
 
         });

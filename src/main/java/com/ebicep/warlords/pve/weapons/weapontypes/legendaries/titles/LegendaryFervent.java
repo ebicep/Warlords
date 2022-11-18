@@ -20,6 +20,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     public static final int DAMAGE_BOOST = 20;
     public static final int DAMAGE_TO_TAKE = 5000;
     public static final int DURATION = 30;
+    public static final int MAX_STACKS = 3;
 
     public LegendaryFervent() {
     }
@@ -63,7 +64,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                 }
                 if (damageTaken.addAndGet(event.getValue()) >= DAMAGE_TO_TAKE) {
                     damageTaken.set(0);
-                    damageBoost.set(Math.min(3, damageBoost.get() + 1));
+                    damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
 
                     if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
                         player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(

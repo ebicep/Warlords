@@ -18,6 +18,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int DAMAGE_BOOST = 20;
     public static final int TARGETS_TO_HIT = 40;
     public static final int DURATION = 30;
+    public static final int MAX_STACKS = 3;
 
     public LegendaryDivine() {
     }
@@ -61,7 +62,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                 }
                 if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
                     targetsHit.set(0);
-                    damageBoost.set(Math.min(3, damageBoost.get() + 1));
+                    damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
                     if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
                         player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
                                 "Divine",
