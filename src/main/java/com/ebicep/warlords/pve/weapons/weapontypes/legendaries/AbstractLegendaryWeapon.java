@@ -30,16 +30,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     private static final ItemStack ABILITY_ITEM = new ItemStack(Material.NETHER_STAR);
 
-    @Field("star_piece")
-    protected StarPieces starPiece;
-    @Field("star_piece_bonus")
-    protected WeaponStats starPieceBonus;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
-    @Field("unlocked_skill_boosts") //TODO REMOVE
+    @Field("unlocked_skill_boosts")
     protected List<SkillBoosts> unlockedSkillBoosts = new ArrayList<>();
-    @Field("unlocked_titles")
-    protected List<LegendaryTitles> unlockedTitles = new ArrayList<>();
     @Field("titles")
     protected Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = new HashMap<>();
     @Field("upgrade_level")
@@ -68,11 +62,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
         this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
-        this.unlockedTitles = legendaryWeapon.getUnlockedTitles();
         this.titles = legendaryWeapon.getTitles();
-        for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
-            upgrade();
-        }
+        this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
     }
 
     public SkillBoosts getSelectedSkillBoost() {
@@ -85,10 +76,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public List<SkillBoosts> getUnlockedSkillBoosts() {
         return unlockedSkillBoosts;
-    }
-
-    public List<LegendaryTitles> getUnlockedTitles() {
-        return unlockedTitles;
     }
 
     public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
@@ -188,14 +175,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 break;
         }
         return cost;
-    }
-
-    public StarPieces getStarPiece() {
-        return starPiece;
-    }
-
-    public WeaponStats getStarPieceBonus() {
-        return starPieceBonus;
     }
 
     public float getSpeedBonus() {

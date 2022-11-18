@@ -45,7 +45,7 @@ public class GuildMenu {
                                 ChatColor.GRAY + "Created: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guild.getCreationDate()),
                                 ChatColor.GRAY + "Level: " + ChatColor.YELLOW + guildLevel,
                                 ChatColor.GRAY + "Experience: " + ChatColor.YELLOW + NumberFormat.addCommas(guild.getExperience(Timing.LIFETIME)),
-                                ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCoins(Timing.LIFETIME)),
+                                ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCurrentCoins()),
                                 ChatColor.GRAY + "Members: " + ChatColor.YELLOW + guild.getPlayers()
                                         .size() + ChatColor.AQUA + "/" + ChatColor.YELLOW + guild.getPlayerLimit(),
                                 ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + guild.getRoleOfPlayer(player.getUniqueId()).getRoleName()
@@ -228,7 +228,7 @@ public class GuildMenu {
                                     ),
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
-                                        guild.addCoins(guildCoinsGained);
+                                        guild.addCurrentCoins(guildCoinsGained);
                                         guildPlayer.addDailyCoinsConverted(guildCoinsGained);
                                         guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
                                         guild.queueUpdate();

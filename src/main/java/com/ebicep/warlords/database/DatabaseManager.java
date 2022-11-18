@@ -24,8 +24,6 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoClient;
@@ -244,24 +242,6 @@ public class DatabaseManager {
             if (count == 0) {
                 weaponInventory.add(new StarterWeapon(uuid, value));
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            }
-        }
-        for (AbstractWeapon weapon : weaponInventory) {
-            if (weapon instanceof AbstractLegendaryWeapon) {
-                AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
-                if (legendaryWeapon.getUnlockedTitles().isEmpty()) {
-                    for (LegendaryTitles value : LegendaryTitles.VALUES) {
-                        if (value.clazz.equals(weapon.getClass())) {
-                            legendaryWeapon.getUnlockedTitles().add(value);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            break;
-                        }
-                    }
-                }
-                //if (legendaryWeapon.getStarPiece() != null) {
-                legendaryWeapon.setStarPiece(legendaryWeapon.getStarPiece(), legendaryWeapon.getStarPieceBonus());
-                System.out.println("Migrated star piece for " + uuid);
-                //}
             }
         }
 

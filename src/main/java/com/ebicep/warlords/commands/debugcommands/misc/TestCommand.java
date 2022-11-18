@@ -13,9 +13,14 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -56,6 +61,18 @@ public class TestCommand extends BaseCommand {
 
     }
 
+    @CommandAlias("testguild")
+    @Description("Database test command")
+    public void testGuild(CommandIssuer issuer) {
+        for (Guild guild : GuildManager.GUILDS) {
+            guild.setCurrentCoins(guild.getCoins(Timing.LIFETIME));
+            guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.DAILY));
+            guild.queueUpdate();
+        }
+
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed", true);
+    }
+
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
@@ -70,8 +87,10 @@ public class TestCommand extends BaseCommand {
                             AbstractWeapon weapon = weaponInventory.get(i);
                             if (weapon instanceof AbstractLegendaryWeapon) {
                                 AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
-                                legendaryWeapon.setStarPiece(legendaryWeapon.getStarPiece(), legendaryWeapon.getStarPieceBonus());
-                                System.out.println("Migrated star piece - " + i + " - " + databasePlayer.getName());
+                                if (!legendaryWeapon.getTitles().containsKey(LegendaryTitles.NONE)) {
+                                    legendaryWeapon.getTitles().put(LegendaryTitles.NONE, new LegendaryWeaponTitleInfo());
+                                    System.out.println("Added NONE to " + i + " " + databasePlayer.getName());
+                                }
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             }
                         }

@@ -87,6 +87,8 @@ public class Guild {
     private List<GuildPlayer> players = new ArrayList<>();
     @Field("player_limit")
     private int playerLimit = 10;
+    @Field("current_coins")
+    private long currentCoins = 0;
     private Map<Timing, Long> coins = new HashMap<>() {{
         for (Timing value : Timing.VALUES) {
             put(value, 0L);
@@ -457,20 +459,27 @@ public class Guild {
         this.playerLimit = playerLimit;
     }
 
+    public long getCurrentCoins() {
+        return currentCoins;
+    }
+
+    public void addCurrentCoins(long coins) {
+        this.currentCoins += coins;
+        if (coins > 0) {
+            this.coins.forEach((timing, amount) -> this.coins.put(timing, Math.max(amount + coins, 0)));
+        }
+    }
+
+    public void setCurrentCoins(long currentCoins) {
+        this.currentCoins = currentCoins;
+    }
+
     public long getCoins(Timing timing) {
         return coins.getOrDefault(timing, 0L);
     }
 
     public void setCoins(Timing timing, long coins) {
         this.coins.put(timing, coins);
-    }
-
-    public void addCoins(long coins) {
-        this.coins.forEach((timing, amount) -> this.coins.put(timing, Math.max(amount + coins, 0)));
-    }
-
-    public void addCoins(Timing timing, long coins) {
-        this.coins.put(timing, this.coins.getOrDefault(timing, 0L) + coins);
     }
 
     public void setExperience(Timing timing, long experience) {
