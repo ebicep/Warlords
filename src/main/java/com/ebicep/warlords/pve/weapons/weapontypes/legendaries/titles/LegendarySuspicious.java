@@ -46,11 +46,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
     public String getPassiveEffect() {
         return "Play an among us sound and gain 20 energy whenever you land a melee crit.";
     }
@@ -58,46 +53,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMaxValue() {
         return 200;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 50;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return -50;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
-    }
-
-    @Override
-    protected float getEnergyPerHitBonusValue() {
-        return 3;
-    }
-
-    @Override
-    protected float getSkillCritChanceBonusValue() {
-        return 5;
-    }
-
-    @Override
-    protected float getSkillCritMultiplierBonusValue() {
-        return 15;
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.SUSPICIOUS;
     }
 
     @Override
@@ -144,5 +99,50 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
             }
         });
 
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.SUSPICIOUS;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 50;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return -50;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 3;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
+    }
+
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 15;
     }
 }

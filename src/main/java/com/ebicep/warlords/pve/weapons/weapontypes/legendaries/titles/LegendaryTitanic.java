@@ -25,11 +25,6 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 130;
-    }
-
-    @Override
     public String getPassiveEffect() {
         return "Increase maximum health by 1% per upgrade purchased.";
     }
@@ -37,31 +32,6 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMaxValue() {
         return 150;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 15;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 160;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 1500;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 5;
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.TITANIC;
     }
 
     @Override
@@ -82,5 +52,35 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
                 }
             }
         });
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.TITANIC;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 130;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 15;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 160;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 1500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
     }
 }

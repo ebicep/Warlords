@@ -25,11 +25,6 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 120;
-    }
-
-    @Override
     public String getPassiveEffect() {
         return "Increase healing provided by " + HEALING_INCREASE + "%.";
     }
@@ -37,6 +32,31 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMaxValue() {
         return 140;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                if (event.isHealingInstance() && event.getAttacker().equals(player)) {
+                    event.setMin(event.getMin() * (1 + HEALING_INCREASE / 100f));
+                    event.setMax(event.getMax() * (1 + HEALING_INCREASE / 100f));
+                }
+            }
+        });
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.BENEVOLENT;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 120;
     }
 
     @Override
@@ -67,25 +87,5 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     @Override
     protected float getSkillCritMultiplierBonusValue() {
         return 5;
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.BENEVOLENT;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-
-        player.getGame().registerEvents(new Listener() {
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isHealingInstance() && event.getAttacker().equals(player)) {
-                    event.setMin(event.getMin() * (1 + HEALING_INCREASE / 100f));
-                    event.setMax(event.getMax() * (1 + HEALING_INCREASE / 100f));
-                }
-            }
-        });
     }
 }

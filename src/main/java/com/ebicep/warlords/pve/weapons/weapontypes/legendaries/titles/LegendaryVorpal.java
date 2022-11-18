@@ -23,17 +23,50 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
     public String getPassiveEffect() {
         return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
     }
 
     @Override
     protected float getMeleeDamageMaxValue() {
+        return 220;
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+        player.getGame().registerEvents(new Listener() {
+            int meleeCounter = 0;
+
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                if (event.getAttacker() != player) {
+                    return;
+                }
+                String ability = event.getAbility();
+                if (!ability.isEmpty() && !ability.equals("Windfury Weapon") && !ability.equals("Earthliving Weapon")) {
+                    return;
+                }
+                if (event.isHealingInstance() && !ability.equals("Earthliving Weapon")) {
+                    return;
+                }
+                meleeCounter++;
+                if (meleeCounter % 5 == 0) {
+                    event.setMin(event.getMin() * 7);
+                    event.setMax(event.getMax() * 7);
+                    event.setIgnoreReduction(true);
+                }
+            }
+        });
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.VORPAL;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
         return 200;
     }
 
@@ -64,39 +97,6 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
 
     @Override
     protected float getEnergyPerHitBonusValue() {
-        return 7;
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.VORPAL;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-        player.getGame().registerEvents(new Listener() {
-            int meleeCounter = 0;
-
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.getAttacker() != player) {
-                    return;
-                }
-                String ability = event.getAbility();
-                if (!ability.isEmpty() && !ability.equals("Windfury Weapon") && !ability.equals("Earthliving Weapon")) {
-                    return;
-                }
-                if (event.isHealingInstance() && !ability.equals("Earthliving Weapon")) {
-                    return;
-                }
-                meleeCounter++;
-                if (meleeCounter % 5 == 0) {
-                    event.setMin(event.getMin() * 7);
-                    event.setMax(event.getMax() * 7);
-                    event.setIgnoreReduction(true);
-                }
-            }
-        });
+        return 4;
     }
 }
