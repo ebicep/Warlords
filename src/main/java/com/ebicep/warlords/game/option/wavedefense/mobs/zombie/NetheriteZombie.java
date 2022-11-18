@@ -35,8 +35,8 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
                 7000,
                 0.3f,
                 10,
-                2700,
-                3300
+                1000,
+                1300
         );
     }
 
