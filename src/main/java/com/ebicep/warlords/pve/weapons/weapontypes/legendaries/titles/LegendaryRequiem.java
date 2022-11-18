@@ -52,7 +52,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 WarlordsEntity warlordsEntity = event.getPlayer();
                 if (warlordsEntity.isTeammate(player) && !warlordsEntity.equals(player)) {
                     damageHealBonus.set(Math.min(.6, damageHealBonus.get() + .20));
-                    if (cooldown == null) {
+                    if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
                         player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
                                 "Requiem",
                                 "REQ",

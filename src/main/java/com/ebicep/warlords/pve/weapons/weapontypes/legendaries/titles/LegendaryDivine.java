@@ -32,7 +32,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_BOOST + "% Damage Boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times. Maximum 3 stacks.";
+        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
+                " Maximum 3 stacks.";
     }
 
     @Override
@@ -61,7 +62,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                 if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
                     targetsHit.set(0);
                     damageBoost.set(Math.min(3, damageBoost.get() + 1));
-                    if (cooldown == null) {
+                    if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
                         player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
                                 "Divine",
                                 "DIV 1",
