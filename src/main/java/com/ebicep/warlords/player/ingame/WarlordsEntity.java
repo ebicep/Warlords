@@ -578,6 +578,10 @@ public abstract class WarlordsEntity {
                 }
             } else {
 
+                for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                    damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
+                }
+
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);

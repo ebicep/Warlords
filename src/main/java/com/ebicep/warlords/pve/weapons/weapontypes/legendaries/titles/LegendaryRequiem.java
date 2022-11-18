@@ -38,7 +38,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_HEAL_BOOST + "% damage and healing bonus whenever a teammate dies and whenever Undying Army is cast/popped on teammates.";
+        return "Gain a " + DAMAGE_HEAL_BOOST + "% damage and healing bonus whenever a teammate dies or Undying Army is cast/popped on teammates " +
+                "(Only applicable to caster).";
     }
 
     @Override
@@ -105,7 +106,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (!(cooldown.getCooldownObject() instanceof UndyingArmy)) {
                     return;
                 }
-                if (Objects.equals(event.getPlayer(), player)) {
+                if (!Objects.equals(cooldown.getFrom(), player)) {
                     return;
                 }
                 if (cooldown.getFrom() == null || cooldown.getFrom().isEnemy(player)) {
