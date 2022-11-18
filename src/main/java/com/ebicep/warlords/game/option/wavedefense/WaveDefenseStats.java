@@ -1,12 +1,16 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import org.bukkit.Bukkit;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class WaveDefenseStats {
     public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
@@ -91,18 +95,35 @@ public class WaveDefenseStats {
     public void storeWeaponFragmentGain(WaveDefenseOption waveDefenseOption) {
         int wavesCleared = waveDefenseOption.getWavesCleared();
         boolean won = waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
+        DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
         waveDefenseOption.getGame()
                 .warlordsPlayers()
                 .forEach(warlordsPlayer -> {
                     if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
                         UUID uuid = warlordsPlayer.getUuid();
+                        Specializations currentSpec = warlordsPlayer.getSpecClass();
                         DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                            long legendFragmentGain = won || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS ?
-                                    wavesCleared : (long) (wavesCleared * 0.5);
-                            legendFragmentGain += databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige() * 5L * wavesCleared / 25;
-                            legendFragmentGain *= waveDefenseOption.getDifficulty() == DifficultyIndex.EASY ?
-                                    .5 : waveDefenseOption.getDifficulty().getRewardsMultiplier();
-                            getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain);
+                            AtomicLong legendFragmentGain = new AtomicLong();
+                            if (won || difficulty == DifficultyIndex.ENDLESS) {
+                                legendFragmentGain.set(wavesCleared);
+                            } else {
+                                legendFragmentGain.set((long) (wavesCleared * 0.5));
+                            }
+                            //warlordsPlayer.sendMessage("Legend Fragment Gain: " + legendFragmentGain.get());
+                            legendFragmentGain.updateAndGet(v -> (long) (v * difficulty.getRewardsMultiplier()));
+                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Rewards Multiplier: " + legendFragmentGain.get());
+                            int specPrestigeBonus = databasePlayer.getSpec(currentSpec).getPrestige() * 5;
+                            int otherSpecPrestigeBonus = 0;
+                            for (Specializations value : Specializations.VALUES) {
+                                if (value != currentSpec) {
+                                    otherSpecPrestigeBonus += databasePlayer.getSpec(value).getPrestige() * 2;
+                                }
+                            }
+                            legendFragmentGain.addAndGet((long) ((specPrestigeBonus + otherSpecPrestigeBonus) * difficulty.getRewardsMultiplier() * (wavesCleared / 25)));
+                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Prestiges: " + legendFragmentGain.get());
+                            Bukkit.getPluginManager().callEvent(new WarlordsLegendFragmentGainEvent(warlordsPlayer, legendFragmentGain, waveDefenseOption));
+                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Guild: " + legendFragmentGain.get());
+                            getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain.get());
                         });
                     }
                 });

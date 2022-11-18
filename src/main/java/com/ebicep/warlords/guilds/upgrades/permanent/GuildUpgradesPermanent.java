@@ -2,9 +2,11 @@ package com.ebicep.warlords.guilds.upgrades.permanent;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -97,7 +99,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             "Increases the member capacity of the guild",
             Material.CHEST
     ) {
-        final int[] values = new int[]{2, 2, 3, 3, 5, 5, 10, 10, 10, 0};
+        final int[] values = new int[]{12, 14, 17, 20, 25, 30, 40, 50, 60, 60};
 
         @Override
         public double getValueFromTier(int tier) {
@@ -106,12 +108,46 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
         @Override
         public String getEffectBonusFromTier(int tier) {
-            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Player Limit";
+            return NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Player Limit";
         }
 
         @Override
         public void onPurchase(Guild guild, int tier) {
-            guild.setPlayerLimit(guild.getPlayerLimit() + (int) getValueFromTier(tier));
+            guild.setPlayerLimit((int) getValueFromTier(tier));
+        }
+    },
+    LEGEND_FRAGMENT_BONUS(
+            "Legend Fragment Bonus",
+            "Increases the legend fragments gained at the end of the game",
+            Material.BLAZE_POWDER
+    ) {
+        final int[] values = new int[]{4, 6, 8, 10, 12, 14, 16, 20};
+
+        @Override
+        public double getValueFromTier(int tier) {
+            return values[tier - 1];
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Legend Fragments";
+        }
+
+        @Override
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
+
+                @EventHandler
+                public void onEvent(WarlordsLegendFragmentGainEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+
+                    event.getLegendFragments()
+                            .addAndGet((int) getValueFromTier(tier) * (event.getWaveDefenseOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1));
+                }
+
+            });
         }
     },
 
