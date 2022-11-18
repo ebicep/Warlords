@@ -63,6 +63,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
         this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
         this.unlockedTitles = legendaryWeapon.getUnlockedTitles();
+        this.titles = legendaryWeapon.getTitles();
         for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
             upgrade();
         }
@@ -479,5 +480,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
         this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setStarPieceInfo(starPiece, starPieceBonus);
+    }
+
+    public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
+        return titles;
     }
 }
