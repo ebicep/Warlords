@@ -52,7 +52,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Plays an Amogus sound whenever you land a melee crit.";
+        return "Play an among us sound and gain 20 energy whenever you land a melee crit.";
     }
 
     @Override
@@ -82,7 +82,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
     @Override
     protected float getEnergyPerHitBonusValue() {
-        return 20;
+        return 3;
     }
 
     @Override
@@ -112,6 +112,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                     return;
                 }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
+                    player.addEnergy(player, "Suspicious Weapon", 20);
                     if (player.getEntity() instanceof Player) {
                         Player p = (Player) player.getEntity();
                         if (sound != null) {
