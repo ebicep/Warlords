@@ -62,7 +62,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
         this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
-        this.titles = legendaryWeapon.getTitles();
+        this.titles = new HashMap<>(legendaryWeapon.getTitles());
         this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
     }
 
