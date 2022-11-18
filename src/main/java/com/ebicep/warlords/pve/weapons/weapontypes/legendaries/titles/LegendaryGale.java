@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class LegendaryGale extends AbstractLegendaryWeapon {
-
-    public static final int COOLDOWN = 30;
 
     @Transient
     private LegendaryGaleAbility ability;
@@ -36,17 +33,12 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Increase movement speed by 40% and decrease energy consumption of all abilities by 10. " +
-                "Can be triggered every " + COOLDOWN + " seconds.";
+                "Can be triggered every 30 seconds.";
     }
 
     @Override
     protected float getMeleeDamageMaxValue() {
         return 170;
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
     }
 
     @Override
