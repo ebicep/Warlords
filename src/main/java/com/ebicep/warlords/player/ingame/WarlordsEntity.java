@@ -578,6 +578,10 @@ public abstract class WarlordsEntity {
                 }
             } else {
 
+                for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                    damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
+                }
+
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
@@ -728,7 +732,7 @@ public abstract class WarlordsEntity {
                         ignoreReduction,
                         isLastStandFromShield,
                         false,
-                EnumSet.noneOf(InstanceFlags.class)
+                        EnumSet.noneOf(InstanceFlags.class)
                 )
         );
     }
@@ -1538,10 +1542,10 @@ public abstract class WarlordsEntity {
         }
         if ((int) energyGiven != 0) {
             if (this == giver) {
-                sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
+                sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
             } else {
-                sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
-                giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
+                sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
+                giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
             }
         }
 

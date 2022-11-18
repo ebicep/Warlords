@@ -55,12 +55,13 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        List<WarlordsEntity> teammatesNear = PlayerFilter
+        Set<WarlordsEntity> teammatesNear = PlayerFilter
                 .entitiesAround(player, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(alliesAffected)
-                .stream().collect(Collectors.toList());
+                .stream()
+                .collect(Collectors.toSet());
 
         if (teammatesNear.size() < 1) {
             wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
@@ -144,9 +145,9 @@ public class RemedicChains extends AbstractAbility {
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    List<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
-                    for (int i = 0; i < linkedEntities.size(); i++) {
-                        WarlordsEntity linked = linkedEntities.get(i);
+                    Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
+                    Set<WarlordsEntity> toRemove = new HashSet<>();
+                    for (WarlordsEntity linked : linkedEntities) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
                         if (outOfRange) {
                             linked.getCooldownManager().removeCooldown(cooldown);
@@ -177,14 +178,13 @@ public class RemedicChains extends AbstractAbility {
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
                         if (outOfRange || linked.isDead()) {
-                            linkedEntities.remove(i);
-                            i--;
+                            toRemove.add(linked);
                             if (pveUpgrade) {
                                 linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
                             }
                         }
                     }
-
+                    linkedEntities.removeAll(toRemove);
                 }),
                 teammatesNear
         ) {

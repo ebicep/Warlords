@@ -31,11 +31,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 140;
-    }
-
-    @Override
     public String getPassiveEffect() {
         return "+10 Energy per Second for 10 seconds after using 400 energy. Can be triggered every " + (PASSIVE_EFFECT_COOLDOWN + PASSIVE_EFFECT_DURATION) + " seconds.";
     }
@@ -43,36 +38,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMaxValue() {
         return 170;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 600;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
-    }
-
-    @Override
-    protected float getEnergyPerSecondBonusValue() {
-        return 4;
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.VIGOROUS;
     }
 
     @Override
@@ -125,6 +90,41 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                 }
             }
         }.runTaskTimer(0, 20);
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.VIGOROUS;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 140;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 600;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
+    }
+
+    @Override
+    protected float getEnergyPerSecondBonusValue() {
+        return 4;
     }
 }
 
