@@ -15,7 +15,10 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -24,6 +27,8 @@ import java.util.*;
 import static com.ebicep.warlords.util.java.NumberFormat.formatOptionalTenths;
 
 public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements StarPieceBonus, Upgradeable {
+
+    private static final ItemStack ABILITY_ITEM = new ItemStack(Material.NETHER_STAR);
 
     @Field("star_piece")
     protected StarPieces starPiece;
@@ -84,6 +89,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public List<LegendaryTitles> getUnlockedTitles() {
         return unlockedTitles;
+    }
+
+    public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
+        return titles;
     }
 
     @Override
@@ -271,18 +280,24 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 break;
             }
         }
-    }
 
-    public boolean hasAbility() {
-        return false;
-    }
+        resetAbility();
+        AbstractAbility ability = getAbility();
+        if (ability != null) {
+            ability.updateDescription(null);
+            new GameRunnable(player.getGame()) {
 
-    public ItemStack getAbilityItem() {
-        return null;
-    }
-
-    public void onAbilityActivate() {
-
+                @Override
+                public void run() {
+                    if (ability.getCurrentCooldown() > 0) {
+                        ability.subtractCooldown(.05f);
+                        if (player.getEntity() instanceof Player) {
+                            updateAbilityItem(player, (Player) player.getEntity());
+                        }
+                    }
+                }
+            }.runTaskTimer(20, 0);
+        }
     }
 
     @Override
@@ -417,6 +432,39 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return ChatColor.GOLD;
     }
 
+    public void activateAbility(WarlordsPlayer wp, Player player, boolean hotkeyMode) {
+        if (getAbility() == null) {
+            return;
+        }
+        if (!wp.isActive()) {
+            return;
+        }
+
+        if (wp.isDead()) {
+            return;
+        }
+        if (!wp.getGame().isFrozen()) {
+            wp.getSpec().onRightClickAbility(getAbility(), wp, player);
+        }
+        if (hotkeyMode) {
+            player.getInventory().setHeldItemSlot(0);
+        }
+    }
+
+    public AbstractAbility getAbility() {
+        return null;
+    }
+
+    public void resetAbility() {
+
+    }
+
+    public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
+        if (getAbility() != null) {
+            warlordsPlayer.updateItem(player, 8, getAbility(), ABILITY_ITEM);
+        }
+    }
+
     public String getStarPieceBonusString(WeaponStats weaponStats) {
         return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : "";
     }
@@ -493,9 +541,5 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
         this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setStarPieceInfo(starPiece, starPieceBonus);
-    }
-
-    public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
-        return titles;
     }
 }
