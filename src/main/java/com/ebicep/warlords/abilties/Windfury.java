@@ -100,19 +100,22 @@ public class Windfury extends AbstractAbility {
                             @Override
                             public void run() {
                                 Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                                float healthDamage = victim.getMaxHealth() * 0.005f;
+                                if (healthDamage > 1000) {
+                                    healthDamage = 1000;
+                                }
+                                if (healthDamage < 100) {
+                                    healthDamage = 100;
+                                }
                                 victim.addDamageInstance(
                                         attacker,
                                         name,
-                                        minDamage * (weaponDamage / 100f),
-                                        maxDamage * (weaponDamage / 100f),
+                                        minDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
+                                        maxDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
                                         critChance,
                                         critMultiplier,
                                         false
                                 );
-
-                                if (pveUpgrade) {
-                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 2);
-                                }
 
                                 counter++;
                                 if (counter == maxHits) {

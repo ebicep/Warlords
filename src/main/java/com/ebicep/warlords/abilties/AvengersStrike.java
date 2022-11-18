@@ -59,6 +59,13 @@ public class AvengersStrike extends AbstractStrikeBase {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
+        float healthDamage = nearPlayer.getMaxHealth() * 0.005f;
+        if (healthDamage > 1000) {
+            healthDamage = 1000;
+        }
+        if (healthDamage < 100) {
+            healthDamage = 100;
+        }
         if (nearPlayer instanceof WarlordsNPC) {
             if (pveUpgrade) {
                 switch (((WarlordsNPC) nearPlayer).getMobTier()) {
@@ -81,8 +88,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamage.get() * multiplier,
-                maxDamage.get() * multiplier,
+                (minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
                 critChance,
                 critMultiplier,
                 false
