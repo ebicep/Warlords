@@ -91,6 +91,13 @@ public interface DamageInstance extends Instance {
     }
 
     /**
+     * Called just before the player takes damage - based on self cooldowns
+     */
+    default float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+        return currentDamageValue;
+    }
+
+    /**
      * Called after all damage modifications and after the damage has been applied - based on self cooldowns
      */
     default void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

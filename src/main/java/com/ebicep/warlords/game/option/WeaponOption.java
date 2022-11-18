@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 public class WeaponOption implements Option {
 
     public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
-        AbstractWeapon weapon = wp.getAbstractWeapon();
+        AbstractWeapon weapon = wp.getWeapon();
         if (weapon == null) {
             return;
         }

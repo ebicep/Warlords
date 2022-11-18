@@ -199,7 +199,7 @@ public abstract class AbstractPlayerClass {
         }.runTaskLater(1);
     }
 
-    private void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
+    public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
                 ability.runSecondAbilities();

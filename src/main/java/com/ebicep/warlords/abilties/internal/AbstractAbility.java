@@ -39,7 +39,7 @@ public abstract class AbstractAbility {
     protected float energyCost;
     protected float critChance;
     protected float critMultiplier;
-    protected String description;
+    protected String description = "";
     protected boolean boosted;
     //pve
     protected boolean pveUpgrade = false;

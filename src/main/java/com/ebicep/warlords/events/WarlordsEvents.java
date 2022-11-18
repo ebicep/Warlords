@@ -2,6 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -29,6 +30,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -366,8 +368,8 @@ public class WarlordsEvents implements Listener {
                 wpAttacker.setHitCooldown(20);
             }
         } else {
-            if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getAbstractWeapon() != null) {
-                AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getAbstractWeapon();
+            if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getWeapon() != null) {
+                AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getWeapon();
                 wpVictim.addDamageInstance(
                         wpAttacker,
                         "",
@@ -407,10 +409,11 @@ public class WarlordsEvents implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
+            int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
                 switch (itemHeld.getType()) {
                     case GOLD_BARDING:
-                        if (player.getInventory().getHeldItemSlot() == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
+                        if (heldItemSlot == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
                             if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                                 player.sendMessage(ChatColor.RED + "You can't mount here!");
                             } else {
@@ -463,16 +466,25 @@ public class WarlordsEvents implements Listener {
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                         break;
                     default:
-                        if (player.getInventory().getHeldItemSlot() == 0 || PlayerSettings.getPlayerSettings(wp.getUuid())
-                                .getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
-                            wp.getSpec().onRightClick(wp, player, player.getInventory().getHeldItemSlot(), false);
+                        if (heldItemSlot == 0 ||
+                                PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE
+                        ) {
+                            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer) {
+                                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                                if (weapon instanceof AbstractLegendaryWeapon) {
+                                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                                }
+                            } else {
+                                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
+                            }
                         }
                         break;
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
                         .flatMap(g -> g.getState(PreLobbyState.class))
-                        .ifPresent(state -> state.interactEvent(player, player.getInventory().getHeldItemSlot()));
+                        .ifPresent(state -> state.interactEvent(player, heldItemSlot));
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {
@@ -545,12 +557,25 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
-        WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+        Player player = e.getPlayer();
+        WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp != null) {
-            if (PlayerSettings.getPlayerSettings(wp.getUuid())
-                    .getHotkeyMode() == Settings.HotkeyMode.NEW_MODE && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-                wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
-                e.setCancelled(true);
+            boolean hotkeyMode = PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.NEW_MODE;
+            if (hotkeyMode) {
+                if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
+                    wp.getSpec().onRightClick(wp, player, slot, true);
+                    e.setCancelled(true);
+                } else if (slot == 8 && wp instanceof WarlordsPlayer) {
+                    WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                    AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                    if (weapon instanceof AbstractLegendaryWeapon) {
+                        AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
+                        if (ability != null) {
+                            ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, true);
+                            e.setCancelled(true);
+                        }
+                    }
+                }
             }
         }
     }

@@ -26,6 +26,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     private int minConvert = 75; // %
     private int maxConvert = 100; // %
     private int maxAllies = 2;
+    private double strikeRadius = 10;
 
     public ProtectorsStrike() {
         super("Protector's Strike", 261, 352, 0, 90, 20, 175);
@@ -113,13 +114,13 @@ public class ProtectorsStrike extends AbstractStrikeBase {
             // Ally Heal
             if (pveUpgrade) {
                 for (WarlordsEntity ally : PlayerFilter
-                        .entitiesAround(wp, 10, 10, 10)
+                        .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
                         .limit(maxAllies)
                         .leastAliveFirst()
                 ) {
-                    boolean isLeastAlive = ally.getHealth() < ally.getHealth();
-                    float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.7f : 1);
+                    boolean isLeastAlive = ally.getHealth() < ally.getMaxHealth();
+                    float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.5f : 1);
                     ally.addHealingInstance(
                             wp,
                             name,
@@ -138,7 +139,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 }
             } else {
                 for (WarlordsEntity ally : PlayerFilter
-                        .entitiesAround(wp, 10, 10, 10)
+                        .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
                         .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
                                 .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
@@ -206,5 +207,13 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     public void setMaxAllies(int maxAllies) {
         this.maxAllies = maxAllies;
+    }
+
+    public double getStrikeRadius() {
+        return strikeRadius;
+    }
+
+    public void setStrikeRadius(double strikeRadius) {
+        this.strikeRadius = strikeRadius;
     }
 }

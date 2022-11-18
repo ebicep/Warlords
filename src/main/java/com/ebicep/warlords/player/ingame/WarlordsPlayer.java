@@ -338,7 +338,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         this.spec.setUpgradeBranches(this);
     }
 
-    public AbstractWeapon getAbstractWeapon() {
+    public AbstractWeapon getWeapon() {
         return weapon;
     }
 

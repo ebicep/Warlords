@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class ChainHeal extends AbstractChainBase {
@@ -40,8 +42,8 @@ public class ChainHeal extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsEntity wp, Player p) {
-        int hitCounter = 0;
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player p) {
+        Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity chainTarget : PlayerFilter
                 .entitiesAround(p, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -71,7 +73,7 @@ public class ChainHeal extends AbstractChainBase {
                 );
 
                 chain(p.getLocation(), chainTarget.getLocation());
-                hitCounter++;
+                hitCounter.add(chainTarget);
 
                 for (WarlordsEntity bounceTarget : PlayerFilter
                         .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
@@ -108,12 +110,12 @@ public class ChainHeal extends AbstractChainBase {
                                     false
                             );
 
-                            hitCounter++;
+                            hitCounter.add(bounceTargetTwo);
                             break;
                         }
                     }
 
-                    hitCounter++;
+                    hitCounter.add(bounceTarget);
                     break;
                 }
 

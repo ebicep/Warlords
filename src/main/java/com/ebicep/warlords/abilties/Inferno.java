@@ -50,6 +50,9 @@ public class Inferno extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "mage.inferno.activation", 2, 1);
 
         Inferno tempInferno = new Inferno();
+        if (pveUpgrade) {
+            wp.getCooldownManager().removeCooldown(Inferno.class);
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<Inferno>(
                 name,
                 "INFR",

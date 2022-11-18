@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -51,7 +50,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
         super(warlordsPlayer);
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
                 .getPlayerWaveDefenseStats(uuid);
@@ -63,7 +62,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });
         this.level = ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass());
-        this.weapon = warlordsPlayer.getAbstractWeapon();
+        this.weapon = warlordsPlayer.getWeapon();
         this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
         this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
         this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
@@ -76,7 +75,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
     }
 
     public int getLongestTimeInCombat() {

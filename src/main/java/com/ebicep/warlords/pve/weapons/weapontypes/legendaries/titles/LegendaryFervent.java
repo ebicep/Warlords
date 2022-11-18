@@ -6,9 +6,9 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.google.common.util.concurrent.AtomicDouble;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -17,8 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryFervent extends AbstractLegendaryWeapon {
 
-    public static final int DAMAGE_TO_TAKE = 10000;
-    public static final int COOLDOWN = 30;
+    public static final int DAMAGE_BOOST = 20;
+    public static final int DAMAGE_TO_TAKE = 5000;
+    public static final int DURATION = 30;
+    public static final int MAX_STACKS = 3;
 
     public LegendaryFervent() {
     }
@@ -32,8 +34,14 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Fervent";
+    public String getPassiveEffect() {
+        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
+                " health (Post damage reduction). Maximum 3 stacks.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 190;
     }
 
     @Override
@@ -43,7 +51,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
         player.getGame().registerEvents(new Listener() {
 
             final AtomicDouble damageTaken = new AtomicDouble(0);
-            final AtomicInteger cooldown = new AtomicInteger(0);
+            final AtomicInteger damageBoost = new AtomicInteger(0);
+            RegularCooldown<LegendaryFervent> cooldown = null;
 
             @EventHandler
             public void onDamageHealing(WarlordsDamageHealingFinalEvent event) {
@@ -53,40 +62,34 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (cooldown.get() != 0) {
-                    return;
-                }
                 if (damageTaken.addAndGet(event.getValue()) >= DAMAGE_TO_TAKE) {
-                    player.sendMessage(ChatColor.GREEN + "Warmonger Passive Activated");
+                    damageTaken.set(0);
+                    damageBoost.set(Math.min(MAX_STACKS, damageBoost.get() + 1));
 
-                    player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Warmonger",
-                            "WAR",
-                            LegendaryFervent.class,
-                            null,
-                            player,
-                            CooldownTypes.BUFF,
-                            cooldownManager -> {
-                                player.sendMessage(ChatColor.RED + "Warmonger Passive Deactivated");
-                            },
-                            10 * 20
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.2f;
-                        }
-                    });
-
-                    cooldown.set(COOLDOWN);
-
-                    new GameRunnable(player.getGame()) {
-
-                        @Override
-                        public void run() {
-                            damageTaken.set(0);
-                            cooldown.set(0);
-                        }
-                    }.runTaskLater(COOLDOWN * 20);
+                    if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
+                        player.getCooldownManager().addCooldown(cooldown = new RegularCooldown<>(
+                                "Fervent 1",
+                                "FER 1",
+                                LegendaryFervent.class,
+                                null,
+                                player,
+                                CooldownTypes.BUFF,
+                                cooldownManager -> {
+                                    cooldown = null;
+                                    damageBoost.set(0);
+                                },
+                                DURATION * 20
+                        ) {
+                            @Override
+                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * (1 + damageBoost.get() * DAMAGE_BOOST / 100f);
+                            }
+                        });
+                    } else {
+                        cooldown.setTicksLeft(DURATION * 20);
+                        cooldown.setName("Fervent " + damageBoost.get());
+                        cooldown.setNameAbbreviation("FER " + damageBoost.get());
+                    }
                 }
             }
 
@@ -94,24 +97,13 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a 20% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
-                " damage. Can be triggered every " + COOLDOWN + " seconds.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 10;
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.FERVENT;
     }
 
     @Override
     protected float getMeleeDamageMinValue() {
         return 170;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 190;
     }
 
     @Override
@@ -124,10 +116,14 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
         return 200;
     }
 
-
     @Override
     protected float getHealthBonusValue() {
         return 800;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 10;
     }
 
     @Override

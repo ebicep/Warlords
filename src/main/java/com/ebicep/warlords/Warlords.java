@@ -26,6 +26,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.Option;
@@ -665,6 +666,8 @@ public class Warlords extends JavaPlugin {
                                         }
                                     }
                                 });
+
+                                Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(wp, undyingArmy));
 
                                 break;
                             }

@@ -14,8 +14,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -24,7 +24,6 @@ import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
@@ -66,31 +65,50 @@ public class TestCommand extends BaseCommand {
                 .asyncLast(databasePlayers -> {
                     for (DatabasePlayer databasePlayer : databasePlayers) {
                         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-//            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
-//            });
-                        for (WeaponsPvE value : WeaponsPvE.VALUES) {
-                            if (value.getPlayerEntries == null) {
-                                continue;
-                            }
-                            List<MasterworksFairEntry> entries = pveStats.getMasterworksFairEntries()
-                                    .stream()
-                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
-                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                    .collect(Collectors.toList());
-                            if (entries.size() > 1) {
-                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
-                                System.out.println("Removed duplicate for " + databasePlayer.getName());
+                        List<AbstractWeapon> weaponInventory = pveStats.getWeaponInventory();
+                        for (int i = 0; i < weaponInventory.size(); i++) {
+                            AbstractWeapon weapon = weaponInventory.get(i);
+                            if (weapon instanceof AbstractLegendaryWeapon) {
+                                AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
+                                legendaryWeapon.setStarPiece(legendaryWeapon.getStarPiece(), legendaryWeapon.getStarPieceBonus());
+                                System.out.println("Migrated star piece - " + i + " - " + databasePlayer.getName());
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             }
                         }
-                        databasePlayer.getAchievements()
-                                .removeIf(abstractAchievementRecord -> abstractAchievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord && abstractAchievementRecord.getAchievement() == ChallengeAchievements.SERIAL_KILLER || abstractAchievementRecord.getAchievement() == ChallengeAchievements.LIFELEECHER);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
                 }).execute();
+
+
+//        Warlords.newChain()
+//                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
+//                .asyncLast(databasePlayers -> {
+//                    for (DatabasePlayer databasePlayer : databasePlayers) {
+//                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+////            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
+////            });
+//                        for (WeaponsPvE value : WeaponsPvE.VALUES) {
+//                            if (value.getPlayerEntries == null) {
+//                                continue;
+//                            }
+//                            List<MasterworksFairEntry> entries = pveStats.getMasterworksFairEntries()
+//                                    .stream()
+//                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
+//                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+//                                    .collect(Collectors.toList());
+//                            if (entries.size() > 1) {
+//                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
+//                                System.out.println("Removed duplicate for " + databasePlayer.getName());
+//                            }
+//                        }
+//                        databasePlayer.getAchievements()
+//                                .removeIf(abstractAchievementRecord -> abstractAchievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord && abstractAchievementRecord.getAchievement() == ChallengeAchievements.SERIAL_KILLER || abstractAchievementRecord.getAchievement() == ChallengeAchievements.LIFELEECHER);
+//                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//                    }
+//                }).execute();
 
         //DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
 
