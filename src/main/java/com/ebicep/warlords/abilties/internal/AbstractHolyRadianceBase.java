@@ -3,11 +3,13 @@ package com.ebicep.warlords.abilties.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.HammerOfLight;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
@@ -15,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
@@ -46,10 +50,12 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
             playersMarked++;
         }
 
-        for (WarlordsEntity radianceTarget : PlayerFilter
+        Set<WarlordsEntity> warlordsEntities = PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
-        ) {
+                .stream()
+                .collect(Collectors.toSet());
+        for (WarlordsEntity radianceTarget : warlordsEntities) {
             wp.getGame().registerGameTask(
                     new FlyingArmorStand(
                             wp.getLocation(),
@@ -61,6 +67,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
+        Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, warlordsEntities));
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);

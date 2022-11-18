@@ -94,7 +94,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
-                    float healMultiplier = 1 + (.35f * ((cooldownCounter.get() / 20f) + 1));
+                    float healMultiplier = Math.min(1 + (.35f * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {

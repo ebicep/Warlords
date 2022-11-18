@@ -3,12 +3,14 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -166,6 +168,8 @@ public class Intervene extends AbstractAbility {
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);
 
             wp.updateBlueItem();
+
+            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, veneTarget));
 
             return true;
         }
