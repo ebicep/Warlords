@@ -42,6 +42,11 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.GALE;
+    }
+
+    @Override
     public LegendaryGaleAbility getAbility() {
         return ability;
     }
@@ -49,11 +54,6 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     @Override
     public void resetAbility() {
         ability = new LegendaryGaleAbility();
-    }
-
-    @Override
-    public LegendaryTitles getTitle() {
-        return LegendaryTitles.GALE;
     }
 
     @Override

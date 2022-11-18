@@ -21,13 +21,13 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 160;
+    protected float getMeleeDamageMaxValue() {
+        return 180;
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 180;
+    protected float getMeleeDamageMinValue() {
+        return 160;
     }
 
     @Override
