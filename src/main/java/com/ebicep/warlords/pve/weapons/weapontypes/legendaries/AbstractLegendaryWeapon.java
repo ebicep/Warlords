@@ -454,12 +454,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         if (getMeleeDamageMinValue() > 0) {
             randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
         }
-        if (getCritChanceValue() > 0) {
-            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
-        }
-        if (getCritMultiplierValue() > 0) {
-            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
-        }
+//        if (getCritChanceValue() > 0) {
+//            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
+//        }
+//        if (getCritMultiplierValue() > 0) {
+//            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
+//        }
         if (getHealthBonusValue() > 0) {
             randomStatBonus.add(WeaponStats.HEALTH_BONUS);
         }
