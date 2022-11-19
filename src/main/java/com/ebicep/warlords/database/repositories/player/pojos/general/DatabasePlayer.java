@@ -19,7 +19,6 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.quests.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -27,7 +26,11 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
@@ -38,6 +41,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Indexed(unique = true)
     private UUID uuid;
     private String name;
+    @Field("last_login")
+    private Instant lastLogin;
     @Field("skin_base_64")
     private String skinBase64;
     @Field("discord_id")
@@ -229,6 +234,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public Instant getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Instant lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     public String getSkinBase64() {
