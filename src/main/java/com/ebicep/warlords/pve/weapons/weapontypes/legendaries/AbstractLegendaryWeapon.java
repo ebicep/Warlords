@@ -451,7 +451,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>();
-        if (getMeleeDamageMinValue() > 0) {
+        if (getMeleeDamageMinValue() > 0 && getStarPieceStat() != WeaponStats.MELEE_DAMAGE) {
             randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
         }
 //        if (getCritChanceValue() > 0) {
@@ -460,22 +460,22 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 //        if (getCritMultiplierValue() > 0) {
 //            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
 //        }
-        if (getHealthBonusValue() > 0) {
+        if (getHealthBonusValue() > 0 && getStarPieceStat() != WeaponStats.HEALTH_BONUS) {
             randomStatBonus.add(WeaponStats.HEALTH_BONUS);
         }
-        if (getSpeedBonusValue() > 0) {
+        if (getSpeedBonusValue() > 0 && getStarPieceStat() != WeaponStats.SPEED_BONUS) {
             randomStatBonus.add(WeaponStats.SPEED_BONUS);
         }
-        if (getEnergyPerSecondBonusValue() > 0) {
+        if (getEnergyPerSecondBonusValue() > 0 && getStarPieceStat() != WeaponStats.ENERGY_PER_SECOND_BONUS) {
             randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
         }
-        if (getEnergyPerHitBonusValue() > 0) {
+        if (getEnergyPerHitBonusValue() > 0 && getStarPieceStat() != WeaponStats.ENERGY_PER_HIT_BONUS) {
             randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
         }
-        if (getSkillCritChanceBonusValue() > 0) {
+        if (getSkillCritChanceBonusValue() > 0 && getStarPieceStat() != WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
             randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
         }
-        if (getSkillCritMultiplierBonusValue() > 0) {
+        if (getSkillCritMultiplierBonusValue() > 0 && getStarPieceStat() != WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
             randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
         }
         return randomStatBonus;
