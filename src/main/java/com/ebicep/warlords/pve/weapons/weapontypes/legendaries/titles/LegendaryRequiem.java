@@ -112,6 +112,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (cooldown.getFrom() == null || cooldown.getFrom().isEnemy(player)) {
                     return;
                 }
+                if (Objects.equals(event.getPlayer(), player)) {
+                    return;
+                }
                 resetCooldown();
             }
 
