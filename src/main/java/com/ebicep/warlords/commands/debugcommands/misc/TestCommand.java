@@ -5,22 +5,15 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -28,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
-import java.util.List;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
@@ -77,25 +69,58 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
-        Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
-                .asyncLast(databasePlayers -> {
-                    for (DatabasePlayer databasePlayer : databasePlayers) {
-                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                        List<AbstractWeapon> weaponInventory = pveStats.getWeaponInventory();
-                        for (int i = 0; i < weaponInventory.size(); i++) {
-                            AbstractWeapon weapon = weaponInventory.get(i);
-                            if (weapon instanceof AbstractLegendaryWeapon) {
-                                AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
-                                if (!legendaryWeapon.getTitles().containsKey(LegendaryTitles.NONE)) {
-                                    legendaryWeapon.getTitles().put(LegendaryTitles.NONE, new LegendaryWeaponTitleInfo());
-                                    System.out.println("Added NONE to " + i + " " + databasePlayer.getName());
-                                }
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            }
-                        }
-                    }
-                }).execute();
+//        Warlords.newChain()
+//                .async(() -> {
+//                    List<DatabasePlayer> lifeTimePlayers = new ArrayList<>(DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME));
+//                    List<DatabasePlayer> oldPlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP);
+//                    for (DatabasePlayer oldPlayer : oldPlayers) {
+//                        DatabasePlayerPvE pveStats = oldPlayer.getPveStats();
+//                        for (DatabasePlayer lifeTimePlayer : lifeTimePlayers) {
+//                            if(lifeTimePlayer.getUuid().equals(oldPlayer.getUuid())) {
+//                                lifeTimePlayers.remove(lifeTimePlayer);
+//                                List<AbstractWeapon> weaponInventory = pveStats.getWeaponInventory();
+//                                for (int i = 0, weaponInventorySize = weaponInventory.size(); i < weaponInventorySize; i++) {
+//                                    AbstractWeapon oldWeapon = weaponInventory.get(i);
+//                                    if (oldWeapon instanceof AbstractLegendaryWeapon) {
+//                                        for (AbstractWeapon newWeapon : lifeTimePlayer.getPveStats().getWeaponInventory()) {
+//                                            if(newWeapon.getUUID().equals(oldWeapon.getUUID())) {
+//                                                Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = ((AbstractLegendaryWeapon) newWeapon).getTitles();
+//                                                for (LegendaryTitles unlockedTitle : ((AbstractLegendaryWeapon) oldWeapon).getUnlockedTitles()) {
+//                                                    if (!titles.containsKey(unlockedTitle)) {
+//                                                        titles.put(unlockedTitle, new LegendaryWeaponTitleInfo());
+//                                                        DatabaseManager.queueUpdatePlayerAsync(lifeTimePlayer);
+//                                                        System.out.println("Added " + unlockedTitle.name() + " to " + i + " for " + oldPlayer.getName());
+//                                                    }
+//                                                }
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                List<AbstractWeapon> inventory = lifeTimePlayer.getPveStats().getWeaponInventory();
+//                                for (int i = 0; i < inventory.size(); i++) {
+//                                    AbstractWeapon weapon = inventory.get(i);
+//                                    if (weapon instanceof AbstractLegendaryWeapon) {
+//                                        AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
+//                                        int finalI = i;
+//                                        legendaryWeapon.getTitles().forEach((titles, legendaryWeaponTitleInfo) -> {
+//                                            WeaponStats starPieceStat = legendaryWeaponTitleInfo.getStarPieceStat();
+//                                            if (starPieceStat == WeaponStats.CRIT_CHANCE || starPieceStat == WeaponStats.CRIT_MULTIPLIER) {
+//                                                legendaryWeapon.getTitles().put(titles, null);
+//                                                lifeTimePlayer.getPveStats().addCurrency(legendaryWeaponTitleInfo.getStarPiece().currency, 1);
+//                                                System.out.println("Reset star piece for " + finalI + " for " + oldPlayer.getName() + " - " + legendaryWeaponTitleInfo.getStarPiece().currency);
+//                                                DatabaseManager.queueUpdatePlayerAsync(lifeTimePlayer);
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//
+//                                break;
+//                            }
+//                        }
+//
+//                    }
+//                }).execute();
 
 
 //        Warlords.newChain()

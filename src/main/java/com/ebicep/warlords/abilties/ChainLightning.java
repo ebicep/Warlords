@@ -107,6 +107,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? maxBounces - 1 : maxBounces)) {
+            if (hasHitTotem) {
+                playersHit.add(null);
+            }
             return playersHit;
         }
         /**
@@ -120,6 +123,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     ArmorStand totem = optionalTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(wp, optionalTotem.get());
+                    playersHit.add(null);
                     return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             } else {
