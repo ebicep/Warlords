@@ -224,6 +224,7 @@ public class StatsLeaderboardManager {
             return;
         }
         removePlayerSpecificHolograms(player);
+        DatabaseGameBase.setGameHologramVisibility(player);
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
         //GAME TYPE
