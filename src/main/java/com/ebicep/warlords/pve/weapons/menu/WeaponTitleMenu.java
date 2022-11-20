@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -61,6 +62,7 @@ public class WeaponTitleMenu {
 //            }
 //        }
 
+        Map<LegendaryTitles, LegendaryWeaponTitleInfo> unlockedTitles = weapon.getTitles();
         for (int i = 0; i < 3; i++) {
             int titleIndex = ((page - 1) * 3) + i;
             if (titleIndex < LegendaryTitles.VALUES.length) {
@@ -72,7 +74,7 @@ public class WeaponTitleMenu {
                 List<String> loreCost = title.getCostLore();
 
                 boolean equals = Objects.equals(weapon.getTitle(), title);
-                boolean titleIsLocked = !weapon.getUnlockedTitles().contains(title);
+                boolean titleIsLocked = !unlockedTitles.containsKey(title);
                 if (equals) {
                     itemBuilder.addLore("", ChatColor.GREEN + "Selected");
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -126,12 +128,15 @@ public class WeaponTitleMenu {
                                 }
                             }
                             List<String> confirmLore = new ArrayList<>();
-                            confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + titledWeapon.getTitleName() + ChatColor.GRAY + " title");
+                            String titleName = titledWeapon.getTitleName();
+                            if (titleName.isEmpty()) {
+                                confirmLore.add(ChatColor.GRAY + "Remove " + ChatColor.GREEN + weapon.getTitleName() + ChatColor.GRAY + " title");
+                            } else {
+                                confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + titleName + ChatColor.GRAY + " title");
+                            }
                             if (titleIsLocked) {
                                 confirmLore.addAll(loreCost);
                             }
-                            confirmLore.add("");
-                            confirmLore.add(ChatColor.YELLOW + "NOTE: " + ChatColor.GRAY + "This will remove your current star piece.");
                             Menu.openConfirmationMenu(
                                     player,
                                     "Apply Title",
@@ -177,10 +182,10 @@ public class WeaponTitleMenu {
 
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-        if (!weapon.getUnlockedTitles().contains(title)) {
+        if (!weapon.getTitles().containsKey(title)) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             title.getCost().forEach(pveStats::subtractCurrency);
-            weapon.getUnlockedTitles().add(title);
+            weapon.getTitles().put(title, new LegendaryWeaponTitleInfo());
         }
         AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         weaponInventory.remove(weapon);

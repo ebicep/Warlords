@@ -30,16 +30,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     private static final ItemStack ABILITY_ITEM = new ItemStack(Material.NETHER_STAR);
 
-    @Field("star_piece")
-    protected StarPieces starPiece;
-    @Field("star_piece_bonus")
-    protected WeaponStats starPieceBonus;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
-    @Field("unlocked_skill_boosts") //TODO REMOVE
+    @Field("unlocked_skill_boosts")
     protected List<SkillBoosts> unlockedSkillBoosts = new ArrayList<>();
-    @Field("unlocked_titles")
-    protected List<LegendaryTitles> unlockedTitles = new ArrayList<>();
     @Field("titles")
     protected Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = new HashMap<>();
     @Field("upgrade_level")
@@ -68,11 +62,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
         this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
-        this.unlockedTitles = legendaryWeapon.getUnlockedTitles();
-        this.titles = legendaryWeapon.getTitles();
-        for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
-            upgrade();
-        }
+        this.titles = new HashMap<>(legendaryWeapon.getTitles());
+        this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
     }
 
     public SkillBoosts getSelectedSkillBoost() {
@@ -85,10 +76,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public List<SkillBoosts> getUnlockedSkillBoosts() {
         return unlockedSkillBoosts;
-    }
-
-    public List<LegendaryTitles> getUnlockedTitles() {
-        return unlockedTitles;
     }
 
     public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
@@ -188,14 +175,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 break;
         }
         return cost;
-    }
-
-    public StarPieces getStarPiece() {
-        return starPiece;
-    }
-
-    public WeaponStats getStarPieceBonus() {
-        return starPieceBonus;
     }
 
     public float getSpeedBonus() {
@@ -472,31 +451,31 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>();
-        if (getMeleeDamageMinValue() > 0) {
+        if (getMeleeDamageMinValue() > 0 && getStarPieceStat() != WeaponStats.MELEE_DAMAGE) {
             randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
         }
-        if (getCritChanceValue() > 0) {
-            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
-        }
-        if (getCritMultiplierValue() > 0) {
-            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
-        }
-        if (getHealthBonusValue() > 0) {
+//        if (getCritChanceValue() > 0) {
+//            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
+//        }
+//        if (getCritMultiplierValue() > 0) {
+//            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
+//        }
+        if (getHealthBonusValue() > 0 && getStarPieceStat() != WeaponStats.HEALTH_BONUS) {
             randomStatBonus.add(WeaponStats.HEALTH_BONUS);
         }
-        if (getSpeedBonusValue() > 0) {
+        if (getSpeedBonusValue() > 0 && getStarPieceStat() != WeaponStats.SPEED_BONUS) {
             randomStatBonus.add(WeaponStats.SPEED_BONUS);
         }
-        if (getEnergyPerSecondBonusValue() > 0) {
+        if (getEnergyPerSecondBonusValue() > 0 && getStarPieceStat() != WeaponStats.ENERGY_PER_SECOND_BONUS) {
             randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
         }
-        if (getEnergyPerHitBonusValue() > 0) {
+        if (getEnergyPerHitBonusValue() > 0 && getStarPieceStat() != WeaponStats.ENERGY_PER_HIT_BONUS) {
             randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
         }
-        if (getSkillCritChanceBonusValue() > 0) {
+        if (getSkillCritChanceBonusValue() > 0 && getStarPieceStat() != WeaponStats.SKILL_CRIT_CHANCE_BONUS) {
             randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
         }
-        if (getSkillCritMultiplierBonusValue() > 0) {
+        if (getSkillCritMultiplierBonusValue() > 0 && getStarPieceStat() != WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS) {
             randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
         }
         return randomStatBonus;

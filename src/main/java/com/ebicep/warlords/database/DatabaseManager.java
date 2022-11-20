@@ -24,8 +24,6 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoClient;
@@ -131,15 +129,14 @@ public class DatabaseManager {
             @Override
             public void run() {
                 UPDATE_COOLDOWN.incrementAndGet();
-                if (UPDATE_COOLDOWN.get() % 200 == 0) {
-                    UPDATE_COOLDOWN.set(1);
+                if (UPDATE_COOLDOWN.get() % 10 == 0) {
                     PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> PLAYERS_TO_UPDATE.get(playersCollections).addAll(databasePlayers));
                     PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
                     updateQueue();
                 }
-                //updating all online players every 10 minutes, so they remained cached
-                if (UPDATE_COOLDOWN.get() % 12000 == 0) {
-                    Set<UUID> toUpdate = new HashSet<>();
+                //removing all players that are not online from cache every 30 minutes
+                if (UPDATE_COOLDOWN.get() % 1800 == 0) {
+                    Set<UUID> toRetain = new HashSet<>();
                     Warlords.getGameManager().getGames().stream()
                             .map(GameManager.GameHolder::getGame)
                             .filter(Objects::nonNull)
@@ -147,18 +144,24 @@ public class DatabaseManager {
                             .map(Map.Entry::getKey)
                             .filter(Objects::nonNull)
                             .map(OfflinePlayer::getUniqueId)
-                            .forEach(toUpdate::add);
-                    Bukkit.getOnlinePlayers().forEach(player -> toUpdate.add(player.getUniqueId()));
-                    toUpdate.forEach(uuid -> {
-                        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(activeCollection.cacheName)).getNativeCache();
-                            ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
-                            map.forEach((o, o2) -> map.get(o));
-                        }
-                    });
+                            .forEach(toRetain::add);
+                    Bukkit.getOnlinePlayers().forEach(player -> toRetain.add(player.getUniqueId()));
+                    for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(activeCollection.cacheName)).getNativeCache();
+                        ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
+                        Set<UUID> toEvict = new HashSet<>();
+                        map.forEach((o, o2) -> {
+                            if (o instanceof UUID) {
+                                if (!toRetain.contains(o)) {
+                                    toEvict.add((UUID) o);
+                                }
+                            }
+                        });
+                        toEvict.forEach(cache::invalidate);
+                    }
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 20, 0);
+        }.runTaskTimer(Warlords.getInstance(), 20, 20);
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
@@ -244,24 +247,6 @@ public class DatabaseManager {
             if (count == 0) {
                 weaponInventory.add(new StarterWeapon(uuid, value));
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            }
-        }
-        for (AbstractWeapon weapon : weaponInventory) {
-            if (weapon instanceof AbstractLegendaryWeapon) {
-                AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
-                if (legendaryWeapon.getUnlockedTitles().isEmpty()) {
-                    for (LegendaryTitles value : LegendaryTitles.VALUES) {
-                        if (value.clazz.equals(weapon.getClass())) {
-                            legendaryWeapon.getUnlockedTitles().add(value);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            break;
-                        }
-                    }
-                }
-                //if (legendaryWeapon.getStarPiece() != null) {
-                legendaryWeapon.setStarPiece(legendaryWeapon.getStarPiece(), legendaryWeapon.getStarPieceBonus());
-                System.out.println("Migrated star piece for " + uuid);
-                //}
             }
         }
 

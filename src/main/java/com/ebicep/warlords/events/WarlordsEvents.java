@@ -59,6 +59,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.*;
 
 public class WarlordsEvents implements Listener {
@@ -214,6 +215,7 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 } else {
+                    databasePlayer.setLastLogin(Instant.now());
                     DatabaseManager.checkUpdatePlayerName(player, databasePlayer);
                     HeadUtils.updateHead(player);
                     //future messages
@@ -227,6 +229,7 @@ public class WarlordsEvents implements Listener {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }
                             }).execute();
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                 }
                 CustomScoreboard.updateLobbyPlayerNames();

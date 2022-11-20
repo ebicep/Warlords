@@ -45,11 +45,11 @@ public class GuildDebugCommand extends BaseCommand {
             Timing timing,
             Integer amount
     ) {
-        guildPlayerWrapper.getGuild().setCoins(timing, amount);
+        guildPlayerWrapper.getGuild().setCurrentCoins(amount);
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
                 ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                        .getName() + " coins to " + ChatColor.YELLOW + amount,
+                        .getName() + " current coins to " + ChatColor.YELLOW + amount,
                 true
         );
     }

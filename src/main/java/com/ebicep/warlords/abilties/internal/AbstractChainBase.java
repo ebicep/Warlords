@@ -37,6 +37,8 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
             onHit(warlordsPlayer, player, hitCounter);
 
+            entitiesHit.remove(null);
+
             Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(warlordsPlayer, entitiesHit));
 
             return true;

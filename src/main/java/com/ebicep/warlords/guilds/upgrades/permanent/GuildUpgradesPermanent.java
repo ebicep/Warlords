@@ -121,7 +121,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             "Increases the legend fragments gained at the end of the game",
             Material.BLAZE_POWDER
     ) {
-        final int[] values = new int[]{4, 6, 8, 10, 12, 14, 16, 20};
+        final int[] values = new int[]{2, 4, 6, 8, 10, 12, 14, 16, 20};
 
         @Override
         public double getValueFromTier(int tier) {

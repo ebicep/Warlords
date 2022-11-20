@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.repositories.player.PlayersCollections.values;
@@ -30,7 +29,6 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCacheNames(Arrays.stream(values()).map(collections -> collections.cacheName).collect(Collectors.toList()));
         cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterAccess(1, TimeUnit.HOURS)
                 .removalListener((o, o2, removalCause) -> ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Removed: " + o + " from cache - " + removalCause))
                 .recordStats()
         );

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.guilds.menu;
 
-import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -116,8 +115,8 @@ public class GuildUpgradeMenu {
                                 ChatColor.RED + "Cancel",
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
-                                        guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
+                                    if (guild.getCurrentCoins() >= upgradeCost) {
+                                        guild.addCurrentCoins(-upgradeCost);
                                         guild.addUpgrade(upgradesTemporary.createUpgrade(tier));
                                         guild.log(new GuildLogUpgradeTemporary(player.getUniqueId(), upgradesTemporary, tier));
                                         guild.queueUpdate();
@@ -172,8 +171,8 @@ public class GuildUpgradeMenu {
                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                 (m2, e2) -> {
                     long upgradeCost = upgradesPermanent.getCost(nextTier);
-                    if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
-                        guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
+                    if (guild.getCurrentCoins() >= upgradeCost) {
+                        guild.addCurrentCoins(-upgradeCost);
                         guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));
                         guild.log(new GuildLogUpgradePermanent(player.getUniqueId(), upgradesPermanent, nextTier));
                         upgradesPermanent.onPurchase(guild, nextTier);

@@ -98,7 +98,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             Guild guild = guildGuildPlayerPair.getA();
             GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
 
-            guild.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
+            guild.addCurrentCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
             guildPlayer.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
