@@ -41,6 +41,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+        super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
                 "Berserk",
                 "BERS",

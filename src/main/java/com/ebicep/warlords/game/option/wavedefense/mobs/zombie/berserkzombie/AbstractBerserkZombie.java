@@ -29,7 +29,13 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
             float maxMeleeDamage
     ) {
         super(spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
-        woundingStrike.setHitbox(woundingStrike.getHitbox() - 1);
+    }
+
+    @Override
+    public void onSpawn(WaveDefenseOption option) {
+        if (option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
+            woundingStrike.setHitbox(woundingStrike.getHitbox() - 1);
+        }
     }
 
     @Override
