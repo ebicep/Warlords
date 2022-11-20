@@ -26,9 +26,8 @@ public class BasicBerserkZombie extends AbstractBerserkZombie {
                 0.38f,
                 0,
                 200,
-                300,
-                woundingStrikeBerserker -> {
-                });
+                300
+        );
     }
 
     @Override
