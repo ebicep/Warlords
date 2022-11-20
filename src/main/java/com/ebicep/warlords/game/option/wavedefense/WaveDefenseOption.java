@@ -457,7 +457,7 @@ public class WaveDefenseOption implements Option {
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
 
-        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
+        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
                 sendMessage(entry.getKey(),
                         false,

@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -22,7 +23,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                         new ItemStack(Material.DIAMOND_HELMET),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.DIAMOND_PICKAXE)
+                        Weapons.VOID_TWIG.getItem()
                 ),
                 3000,
                 0.05f,

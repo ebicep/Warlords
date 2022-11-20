@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
@@ -59,13 +60,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
-        float healthDamage = nearPlayer.getMaxHealth() * 0.005f;
-        if (healthDamage > 1000) {
-            healthDamage = 1000;
-        }
-        if (healthDamage < 100) {
-            healthDamage = 100;
-        }
+        float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC) {
             if (pveUpgrade) {
                 switch (((WarlordsNPC) nearPlayer).getMobTier()) {
@@ -76,7 +71,17 @@ public class AvengersStrike extends AbstractStrikeBase {
                         multiplier = 1.2f;
                         break;
                 }
+
+                if (((WarlordsNPC) nearPlayer).getMob().getMobTier() == MobTier.ELITE) {
+                    healthDamage = nearPlayer.getMaxHealth() * 0.005f;
+                }
             }
+        }
+        if (healthDamage > 1000) {
+            healthDamage = 1000;
+        }
+        if (healthDamage < 100) {
+            healthDamage = 100;
         }
         AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);

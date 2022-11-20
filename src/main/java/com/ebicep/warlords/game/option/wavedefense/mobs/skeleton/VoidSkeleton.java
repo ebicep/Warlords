@@ -43,14 +43,15 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
+
+        FlameBurst flameBurst = new FlameBurst();
+        flameBurst.setCritChance(-1);
+        warlordsNPC.getSpec().setRed(flameBurst);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 60 == 0) {
-            FlameBurst flameBurst = new FlameBurst();
-            flameBurst.setCritChance(-1);
-            warlordsNPC.getSpec().setRed(flameBurst);
             warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
         }
 
@@ -60,7 +61,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 150, 300, 0, 100, true);
+                wp.addDamageInstance(warlordsNPC, "Void Shred", 450, 900, 0, 100, true);
                 wp.addSpeedModifier(warlordsNPC, "Void Slowness", -30, 10, "BASE");
             }
         }

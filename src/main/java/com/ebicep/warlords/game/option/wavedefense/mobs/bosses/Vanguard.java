@@ -1,18 +1,15 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
-import com.ebicep.warlords.abilties.LastStand;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.ExiledZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -108,7 +105,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                                 .entitiesAround(warlordsNPC, 100, 100, 100)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
-                            EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 3);
+                            EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 2);
                             we.addDamageInstance(warlordsNPC, "Vampiric Leash", 250, 250, -1, 100, true);
                         }
                     }
