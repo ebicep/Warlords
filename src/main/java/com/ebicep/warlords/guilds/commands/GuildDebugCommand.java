@@ -9,12 +9,15 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @CommandAlias("gdebug")
 @CommandPermission("group.administrator")
@@ -71,6 +74,21 @@ public class GuildDebugCommand extends BaseCommand {
                 ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(),
                 true
         );
+    }
+
+    @Subcommand("getlog")
+    @Description("Gets audit log of a guild")
+    public void getLog(Player player, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            ChatUtils.sendMessageToPlayer(
+                    player,
+                    guild.getAuditLog().stream()
+                            .map(AbstractGuildLog::getFormattedLog)
+                            .collect(Collectors.joining("\n")),
+                    ChatColor.GREEN,
+                    false
+            );
+        });
     }
 
     @HelpCommand

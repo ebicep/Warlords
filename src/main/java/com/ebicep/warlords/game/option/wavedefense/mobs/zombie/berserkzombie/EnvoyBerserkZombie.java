@@ -33,15 +33,15 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 0.43f,
                 20,
                 450,
-                600,
-                woundingStrikeBerserker -> {
-                    woundingStrikeBerserker.setMinDamageHeal(woundingStrikeBerserker.getMinDamageHeal() * 1.5f);
-                    woundingStrikeBerserker.setMaxDamageHeal(woundingStrikeBerserker.getMaxDamageHeal() * 1.5f);
-                });
+                600
+        );
+        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.5f);
+        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.5f);
     }
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+        super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
                 "Berserk",
                 "BERS",

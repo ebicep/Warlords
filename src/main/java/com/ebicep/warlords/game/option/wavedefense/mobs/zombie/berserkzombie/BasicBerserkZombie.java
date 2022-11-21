@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -26,13 +25,8 @@ public class BasicBerserkZombie extends AbstractBerserkZombie {
                 0.38f,
                 0,
                 200,
-                300,
-                woundingStrikeBerserker -> {
-                });
+                300
+        );
     }
 
-    @Override
-    public void onSpawn(WaveDefenseOption option) {
-
-    }
 }

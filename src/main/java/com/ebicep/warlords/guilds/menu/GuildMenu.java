@@ -228,6 +228,8 @@ public class GuildMenu {
                                     ),
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
+                                        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, playerCoinsToConvert);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                         guild.addCurrentCoins(guildCoinsGained);
                                         guildPlayer.addDailyCoinsConverted(guildCoinsGained);
                                         guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));

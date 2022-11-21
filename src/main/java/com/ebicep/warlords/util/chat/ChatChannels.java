@@ -70,7 +70,9 @@ public enum ChatChannels {
                         ChatColor.GOLD + wp.getSpec().getClassNameShort() +
                         ChatColor.DARK_GRAY + "][" +
                         ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                        ChatColor.DARK_GRAY + "][" +
+                        ChatColor.DARK_GRAY + "]" +
+                        ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
+                        ChatColor.DARK_GRAY + "[" +
                         playerSettings.getSelectedSpec().specType.getColoredSymbol() +
                         ChatColor.DARK_GRAY + "] " +
                         (wp.isDead() ? ChatColor.GRAY + "[SPECTATOR] " : "") +

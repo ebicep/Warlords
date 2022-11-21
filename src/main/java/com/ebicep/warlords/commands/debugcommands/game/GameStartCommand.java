@@ -59,10 +59,10 @@ public class GameStartCommand {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
         if (partyPlayerPair != null) {
             if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(uuid)) {
-                sendDebugMessage(player, ChatColor.RED + "You are not the party leader", false);
+                player.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
             } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
-                sendDebugMessage(player, ChatColor.RED + "All party members must be online or not afk", false);
+                player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }
             people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
