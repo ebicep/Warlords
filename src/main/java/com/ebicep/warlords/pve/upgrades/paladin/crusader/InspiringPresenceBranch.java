@@ -86,7 +86,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
         masterUpgrade = new Upgrade(
                 "Transcendent Presence",
                 "Inspiring Presence - Master Upgrade",
-                "-20% Cooldown reduction\n\nReset the cooldown on all caster's and nearby allies' abilities (other than Inspiring " +
+                "-20% Cooldown reduction\n\nHalve the cooldown on all caster's and nearby allies' abilities (other than Inspiring " +
                         "Presence.)",
                 50000,
                 () -> {

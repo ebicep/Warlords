@@ -73,10 +73,6 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseTwoTriggered) {
-
-        }
-
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
 
@@ -122,6 +118,12 @@ public class Vanguard extends AbstractZombie implements BossMob {
                     }
                 }
             }.runTaskTimer(40, 0);
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !phaseFourTriggered) {
+            phaseFourTriggered = true;
+
+
         }
     }
 

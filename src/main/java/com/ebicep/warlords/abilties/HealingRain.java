@@ -173,8 +173,11 @@ public class HealingRain extends AbstractAbility {
         ) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            if (healthDamage > 200) {
-                healthDamage = 200;
+            if (healthDamage > 1000) {
+                healthDamage = 1000;
+            }
+            if (healthDamage < 100) {
+                healthDamage = 100;
             }
             strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, critChance, critMultiplier, false);
         }

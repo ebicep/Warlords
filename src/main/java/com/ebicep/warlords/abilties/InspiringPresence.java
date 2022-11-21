@@ -134,11 +134,11 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     private void resetCooldowns(WarlordsEntity we) {
-        we.setRedCurrentCooldown(0);
-        we.setPurpleCurrentCooldown(0);
-        we.setBlueCurrentCooldown(0);
+        we.getRedAbility().subtractCooldown(we.getRedAbility().getCurrentCooldown() * 0.5f);
+        we.getPurpleAbility().subtractCooldown(we.getPurpleAbility().getCurrentCooldown() * 0.5f);
+        we.getBlueAbility().subtractCooldown(we.getBlueAbility().getCurrentCooldown() * 0.5f);
         if (!we.getOrangeAbility().getName().equals("Inspiring Presence")) {
-            we.setOrangeCurrentCooldown(0);
+            we.getOrangeAbility().subtractCooldown(we.getOrangeAbility().getCurrentCooldown() * 0.5f);
         }
         we.updateItems();
     }

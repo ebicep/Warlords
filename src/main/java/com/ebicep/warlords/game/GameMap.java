@@ -1175,6 +1175,8 @@ public enum GameMap {
                             //void
                             .add(0.03, Mobs.VOID_SKELETON)
                             .add(0.03, Mobs.VOID_ZOMBIE)
+                            .add(0.03, Mobs.EXILED_VOID_LANCER)
+                            .add(0.03, Mobs.EXILED_ZOMBIE_RIFT)
                     )
                     .add(10, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.GHOULCALLER)
@@ -1201,6 +1203,7 @@ public enum GameMap {
                             //void
                             .add(0.04, Mobs.VOID_ZOMBIE)
                             .add(0.04, Mobs.VOID_SKELETON)
+                            .add(0.04, Mobs.EXILED_VOID_LANCER)
                     )
                     .add(15, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.NARMER)
@@ -1225,8 +1228,9 @@ public enum GameMap {
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.02, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //void
-                            .add(0.06, Mobs.VOID_ZOMBIE)
+                            .add(0.03, Mobs.VOID_ZOMBIE)
                             .add(0.06, Mobs.VOID_SKELETON)
+                            .add(0.04, Mobs.EXILED_VOID_LANCER)
                             .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
                             .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
                     )
@@ -1253,10 +1257,11 @@ public enum GameMap {
                             .add(0.05, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.04, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //elite
-                            .add(0.04, Mobs.VOID_ZOMBIE)
+                            .add(0.02, Mobs.VOID_ZOMBIE)
+                            .add(0.04, Mobs.EXILED_VOID_LANCER)
                             .add(0.1, Mobs.VOID_SKELETON)
                             .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
-                            .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                     )
                     .add(25, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
