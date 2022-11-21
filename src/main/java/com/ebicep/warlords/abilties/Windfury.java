@@ -53,6 +53,7 @@ public class Windfury extends AbstractAbility {
 
         Windfury tempWindfury = new Windfury();
         final boolean[] firstProc = {true};
+        wp.getCooldownManager().removeCooldown(Windfury.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<Windfury>(
                 name,
                 "FURY",

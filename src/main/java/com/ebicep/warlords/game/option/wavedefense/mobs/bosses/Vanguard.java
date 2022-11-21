@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -10,6 +11,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.ExiledZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -63,6 +66,27 @@ public class Vanguard extends AbstractZombie implements BossMob {
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new ExiledZombie(spawnLocation));
         }
+
+        new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (phaseThreeTriggered) {
+                    damageToDeal -= currentDamageValue;
+                }
+
+                return currentDamageValue;
+            }
+        };
     }
 
     @Override
@@ -92,8 +116,13 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 @Override
                 public void run() {
                     if (warlordsNPC.isDead() || damageToDeal <= 0) {
+                        FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                                .withColor(Color.WHITE)
+                                .with(FireworkEffect.Type.BALL)
+                                .build());
                         this.cancel();
                         return;
+
                     }
 
                     if (counter++ % 20 == 0) {
@@ -102,7 +131,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 2);
-                            we.addDamageInstance(warlordsNPC, "Vampiric Leash", 250, 250, -1, 100, true);
+                            we.addDamageInstance(warlordsNPC, "Vampiric Leash", 300, 300, -1, 100, true);
                         }
                     }
 
@@ -138,9 +167,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (phaseThreeTriggered) {
-            // TODO
-        }
+
     }
 
     @Override
