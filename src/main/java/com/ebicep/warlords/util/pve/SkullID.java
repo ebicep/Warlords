@@ -3,7 +3,23 @@ package com.ebicep.warlords.util.pve;
 import javax.annotation.Nonnull;
 
 // https://minecraft-heads.com/
+//
 public enum SkullID {
+    // https://prnt.sc/yoyTcYEz37zz
+    DEEP_DARK_WORM(
+            "05e0d5e6-7bd0-4741-90c3-0ca105f67166",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg1NDRlNTQzMWRmMGZhMzM5MTkxYjMwY2Q1MGI3ZDJlZmRjNmU3NDQ1OTJhMWRmZjMwZTA1MjM0NzhiZTc1MSJ9fX0="
+    ),
+    // https://prnt.sc/dcDIDCrDmpfW
+    WHITE_SHEKEL(
+            "5ed2d133-c718-4017-ab7b-91aa7d38c1b4",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjk5ZDdmN2JhNTk2MWY3NmFlMmNlY2E5MmU2OTYxZGY3NjVjNzFiZmEwY2VjYzVhZmM0ZWZjOTNiZDczN2RlZSJ9fX0="
+    ),
+    // https://prnt.sc/EMu8m5b3jvs6
+    SHADOW_DEMON(
+            "532a3e28-b73c-4603-b639-752cb46e54ac",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODE4NDMwY2I2YTE1MDZkMDdlY2I3Y2M0OTgzODJjMWZkN2U3YWNiZTk4YmMwNTQzNDhlNzg1ZjA4YzIyMzJmOCJ9fX0="
+    ),
     // https://prnt.sc/h0fCnAMwuAop
     NETHERITE_HELMET(
             "de510138-9236-46d8-ba76-733bdac5b53a",

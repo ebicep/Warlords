@@ -66,27 +66,6 @@ public class Vanguard extends AbstractZombie implements BossMob {
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new ExiledZombie(spawnLocation));
         }
-
-        new PermanentCooldown<>(
-                "Damage Check",
-                null,
-                DamageCheck.class,
-                null,
-                warlordsNPC,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (phaseThreeTriggered) {
-                    damageToDeal -= currentDamageValue;
-                }
-
-                return currentDamageValue;
-            }
-        };
     }
 
     @Override
@@ -111,6 +90,27 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 }
             }
 
+            new PermanentCooldown<>(
+                    "Damage Check",
+                    null,
+                    DamageCheck.class,
+                    null,
+                    warlordsNPC,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    true
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (phaseThreeTriggered) {
+                        damageToDeal -= currentDamageValue;
+                    }
+
+                    return currentDamageValue;
+                }
+            };
+
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
                 @Override
@@ -122,7 +122,6 @@ public class Vanguard extends AbstractZombie implements BossMob {
                                 .build());
                         this.cancel();
                         return;
-
                     }
 
                     if (counter++ % 20 == 0) {
@@ -167,7 +166,6 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

@@ -7,10 +7,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
 import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.BasicPigZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.ElitePigZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.EnvoyPigZombie;
-import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.BasicSkeleton;
-import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.EliteSkeleton;
-import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.EnvoySkeleton;
-import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.VoidSkeleton;
+import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.*;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.BasicSlime;
 import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.witch.Witch;
@@ -56,9 +53,13 @@ public enum Mobs {
 
     // Elite Tier 4 - Exiled
     EXILED_ZOMBIE(ExiledZombie::new),
+    EXILED_SKELETON(ExiledSkeleton::new),
     EXILED_VOID_LANCER(NetheriteZombie::new),
     EXILED_ZOMBIE_RIFT(RiftZombie::new),
     EXILED_ZOMBIE_LAVA(LavaZombie::new),
+
+    // Elite Tier 5 - Forgotten
+    FORGOTTEN_ZOMBIE(ForgottenZombie::new),
 
     // Boss
     BOLTARO(Boltaro::new),

@@ -8,30 +8,31 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class ExiledZombie extends AbstractZombie implements EliteMob {
+public class ForgottenZombie extends AbstractZombie implements EliteMob {
 
-    public ExiledZombie(Location spawnLocation) {
+    public ForgottenZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Scrupulous",
+                "Forgotten Nightmare",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
-                        Weapons.AMARANTH.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 50, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
+                        Weapons.ABBADON.getItem()
                 ),
-                12000,
-                0.22f,
+                3200,
+                0.6f,
                 0,
-                4200,
-                4800
+                1000,
+                1500
         );
     }
 
@@ -47,12 +48,15 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
+        receiver.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.BUFF, 60);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SKELETON_DEATH, 2, 0.4f);
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        if (Utils.isProjectile(event.getAbility())) {
+            event.setCancelled(true);
+        }
     }
 
     @Override
