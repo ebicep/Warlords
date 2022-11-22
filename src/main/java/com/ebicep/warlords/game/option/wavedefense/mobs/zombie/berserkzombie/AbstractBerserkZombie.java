@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -33,7 +34,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        if (option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
+        if (option.getDifficulty() != DifficultyIndex.EASY && option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
             woundingStrike.setHitbox(woundingStrike.getHitbox() - 1);
         }
     }
