@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -102,11 +103,11 @@ public class Windfury extends AbstractAbility {
                             public void run() {
                                 Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                                 float healthDamage = victim.getMaxHealth() * 0.005f;
-                                if (healthDamage > 1000) {
-                                    healthDamage = 1000;
+                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
                                 }
-                                if (healthDamage < 100) {
-                                    healthDamage = 100;
+                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
                                 }
                                 victim.addDamageInstance(
                                         attacker,

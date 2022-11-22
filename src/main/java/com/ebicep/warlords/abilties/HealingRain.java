@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -173,11 +174,11 @@ public class HealingRain extends AbstractAbility {
         ) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            if (healthDamage > 1000) {
-                healthDamage = 1000;
+            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                healthDamage = DamageCheck.MINIMUM_DAMAGE;
             }
-            if (healthDamage < 100) {
-                healthDamage = 100;
+            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
             }
             strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, critChance, critMultiplier, false);
         }

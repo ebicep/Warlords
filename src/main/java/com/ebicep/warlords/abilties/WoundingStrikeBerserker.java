@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -108,11 +109,11 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
-                        if (healthDamage > 800) {
-                            healthDamage = 800;
+                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
                         }
-                        if (healthDamage < 100) {
-                            healthDamage = 100;
+                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
                         }
                         hit.addDamageInstance(
                                 giver,
