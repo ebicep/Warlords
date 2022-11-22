@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -77,11 +78,11 @@ public class AvengersStrike extends AbstractStrikeBase {
                 }
             }
         }
-        if (healthDamage > 1000) {
-            healthDamage = 1000;
+        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+            healthDamage = DamageCheck.MINIMUM_DAMAGE;
         }
-        if (healthDamage < 100) {
-            healthDamage = 100;
+        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
         }
         AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);

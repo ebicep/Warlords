@@ -5,15 +5,8 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.AbstractSlime;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 public class Chessking extends AbstractSlime implements BossMob {
 
@@ -32,7 +25,7 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-
+        this.entity.get().setSize(15);
     }
 
     @Override

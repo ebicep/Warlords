@@ -82,15 +82,6 @@ public class LastStand extends AbstractAbility {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksLeft % 15 == 0) {
                         for (WarlordsEntity we : PlayerFilter
-                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
-                                .aliveEnemiesOf(wp)
-                                .closestFirst(wp)
-                        ) {
-                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
-                            Utils.addKnockback(wp.getLocation(), we, -2, 0.2f);
-                        }
-
-                        for (WarlordsEntity we : PlayerFilter
                                 .entitiesAround(wp, 15, 15, 15)
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
@@ -205,6 +196,23 @@ public class LastStand extends AbstractAbility {
                         matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
                 );
             }
+        }
+
+        if (pveUpgrade) {
+            addSecondaryAbility(
+                    () -> {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
+                            Utils.addKnockback(wp.getLocation(), we, -2, 0.25f);
+                        }
+                    },
+                    true,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(tempLastStand)
+            );
         }
 
         return true;
