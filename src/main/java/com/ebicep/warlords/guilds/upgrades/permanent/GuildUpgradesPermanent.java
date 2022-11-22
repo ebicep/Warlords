@@ -118,7 +118,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     },
     LEGEND_FRAGMENT_BONUS(
             "Legend Fragment Bonus",
-            "Increases the legend fragments gained at the end of the game",
+            "Increases the legend fragments gained at the end of the game, added every 25 waves cleared",
             Material.BLAZE_POWDER
     ) {
         final int[] values = new int[]{2, 4, 6, 8, 10, 12, 14, 16, 20};
@@ -143,8 +143,10 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
                         return;
                     }
 
-                    event.getLegendFragments()
-                            .addAndGet((int) getValueFromTier(tier) * (event.getWaveDefenseOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1));
+                    event.getLegendFragments().addAndGet((int) getValueFromTier(tier) *
+                            (event.getWaveDefenseOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
+                            (event.getWaveDefenseOption().getWavesCleared() / 25)
+                    );
                 }
 
             });

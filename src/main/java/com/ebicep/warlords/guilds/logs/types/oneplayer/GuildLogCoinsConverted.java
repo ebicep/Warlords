@@ -28,4 +28,8 @@ public class GuildLogCoinsConverted extends AbstractGuildLogOnePlayer {
         return ChatColor.GREEN.toString() + coinsConverted + ChatColor.GRAY + " player coins -> " + ChatColor.GREEN + coinsGained + ChatColor.GRAY +
                 " guild coins";
     }
+
+    public long getCoinsGained() {
+        return coinsGained;
+    }
 }

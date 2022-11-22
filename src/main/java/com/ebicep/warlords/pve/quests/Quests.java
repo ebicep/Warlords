@@ -79,7 +79,7 @@ public enum Quests {
         }
     },
     WEEKLY_30_ENDLESS("Conquest",
-            "Reach Wave 30 in a game of Endless",
+            "Clear Wave 30 in a game of Endless",
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
