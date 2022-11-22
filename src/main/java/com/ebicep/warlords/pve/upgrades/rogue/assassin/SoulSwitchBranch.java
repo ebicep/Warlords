@@ -8,10 +8,12 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
     int radius = ability.getRadius();
-    float cooldown = ability.getCooldown();
+    float cooldown;
 
     public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
         super(abilityTree, ability);
+        ability.setCooldown(ability.getCooldown() * 0.5f);
+        cooldown = ability.getCooldown();
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
