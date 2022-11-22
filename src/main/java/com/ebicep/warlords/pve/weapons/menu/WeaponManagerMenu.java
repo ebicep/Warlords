@@ -449,17 +449,8 @@ public class WeaponManagerMenu {
                                             "Change the skill boost of this weapon.",
                                     180
                             ))
-                            .addLore(WeaponSkillBoostMenu.costLore)
                             .get(),
                     (m, e) -> {
-                        for (Map.Entry<Currencies, Long> currenciesLongEntry : WeaponSkillBoostMenu.cost.entrySet()) {
-                            Currencies currency = currenciesLongEntry.getKey();
-                            Long cost = currenciesLongEntry.getValue();
-                            if (pveStats.getCurrencyValue(currency) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to change the skill boost of this weapon!");
-                                return;
-                            }
-                        }
                         WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, legendaryWeapon);
                     }
             ));
