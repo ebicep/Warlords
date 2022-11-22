@@ -355,4 +355,11 @@ public abstract class AbstractPlayerClass {
         this.blue.addCooldown(amount);
         this.orange.addCooldown(amount);
     }
+
+    public void decreaseAllCooldownTimersBy(float amount) {
+        this.red.subtractCooldown(amount);
+        this.purple.subtractCooldown(amount);
+        this.blue.subtractCooldown(amount);
+        this.orange.subtractCooldown(amount);
+    }
 }

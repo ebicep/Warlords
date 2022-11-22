@@ -177,6 +177,7 @@ public class WaterBreath extends AbstractAbility {
                     }
                 })
         );
+        hit.getSpec().decreaseAllCooldownTimersBy(4);
     }
 
     public double getVelocity() {
