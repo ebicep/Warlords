@@ -163,7 +163,7 @@ public class WaterBreath extends AbstractAbility {
                 5 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
-                        float healing = hit.getMaxHealth() * 0.01f;
+                        float healing = hit.getMaxHealth() * 0.02f;
                         hit.addHealingInstance(
                                 giver,
                                 name,

@@ -72,7 +72,7 @@ public class JudgementStrike extends AbstractStrikeBase {
             if (pveUpgrade) {
                 if (
                         nearPlayer instanceof WarlordsNPC &&
-                        finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
+                        finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .35) &&
                         ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
                 ) {
                     nearPlayer.addDamageInstance(
