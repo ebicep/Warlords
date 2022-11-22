@@ -22,6 +22,6 @@ public class GuildLogDailyCoinBonus extends AbstractGuildLogOnePlayer {
 
     @Override
     public String append() {
-        return ChatColor.GREEN.toString() + coinsGained + ChatColor.GRAY + " guild coins from daily bonus";
+        return ChatColor.GREEN.toString() + coinsGained + ChatColor.GRAY + " player coins from daily bonus";
     }
 }

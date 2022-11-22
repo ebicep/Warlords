@@ -10,9 +10,10 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -57,9 +58,16 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testGuild(CommandIssuer issuer) {
         for (Guild guild : GuildManager.GUILDS) {
-            guild.setCurrentCoins(guild.getCoins(Timing.LIFETIME));
-            guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.DAILY));
+            System.out.println(guild.getName() + " - " + guild.getCurrentCoins() + " coins");
+            for (AbstractGuildLog abstractGuildLog : guild.getAuditLog()) {
+                if (abstractGuildLog instanceof GuildLogCoinsConverted) {
+                    long coinsGained = ((GuildLogCoinsConverted) abstractGuildLog).getCoinsGained();
+                    guild.addCurrentCoins(-coinsGained);
+                    System.out.println("Removed " + coinsGained + " coins from " + guild.getName());
+                }
+            }
             guild.queueUpdate();
+            System.out.println(guild.getName() + " - " + guild.getCurrentCoins() + " coins");
         }
 
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed", true);
