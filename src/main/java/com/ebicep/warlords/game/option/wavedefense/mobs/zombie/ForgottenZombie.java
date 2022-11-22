@@ -22,13 +22,13 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
                 "Forgotten Nightmare",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
+                        SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 50, 20),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
-                        Weapons.ABBADON.getItem()
+                        Weapons.FABLED_HEROICS_SWORD.getItem()
                 ),
-                3200,
+                2800,
                 0.6f,
                 0,
                 1000,
