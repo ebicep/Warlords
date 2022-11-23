@@ -69,7 +69,7 @@ public class Soulbinding extends AbstractAbility {
             List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
                     .filterCooldownClass(Soulbinding.class)
                     .stream().collect(Collectors.toList());
-            if (currentSoulBindings.size() >= 2) {
+            if (currentSoulBindings.size() >= 3) {
                 wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
             }
         }

@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,7 +62,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
 
         finalEvent.ifPresent(event -> {
             if (event.isCrit() && pveUpgrade) {
-                damageReductionOnCrit(wp);
+                damageReductionOnCrit(wp, nearPlayer);
             }
         });
 
@@ -95,9 +96,8 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         return true;
     }
 
-    private void damageReductionOnCrit(WarlordsEntity we) {
-        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+    private void damageReductionOnCrit(WarlordsEntity we, WarlordsEntity nearPlayer) {
+        RegularCooldown<?> cooldown = new RegularCooldown<>(
                 name,
                 "STRIKE RES",
                 WoundingStrikeDefender.class,
@@ -112,7 +112,17 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * 0.7f;
             }
-        });
+        };
+
+        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+        we.getCooldownManager().addCooldown(cooldown);
+        for (WarlordsEntity target : PlayerFilter
+                .entitiesAround(nearPlayer, 6, 6, 6)
+                .aliveTeammatesOfExcludingSelf(we)
+        ) {
+            target.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+            target.getCooldownManager().addCooldown(cooldown);
+        }
     }
 
     public int getWounding() {

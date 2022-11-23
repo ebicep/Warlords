@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -65,9 +66,9 @@ public class WarlordsShopMenu {
             .name(ChatColor.GREEN + "Class Information")
             .lore("§7Preview of your ability \ndescriptions and specialization \nstats.")
             .get();
-    private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
-            .name(ChatColor.GREEN + "Mini Games")
-            .lore("§7Try your luck in rerolling or\nopening skin shards here!\n")
+    private static final ItemStack MENU_PVE = new ItemBuilder(Material.GOLD_BLOCK)
+            .name(ChatColor.GREEN + "PvE Upgrade Information")
+            .lore("§7Here you can view your currently\nequipped class' PvE upgrades.")
             .get();
 
     public static void openMainMenu(Player player) {
@@ -110,6 +111,7 @@ public class WarlordsShopMenu {
         menu.setItem(7, 3, MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
+        menu.setItem(4, 4, MENU_PVE, (m, e) -> openPvEUpgradeMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -614,5 +616,13 @@ public class WarlordsShopMenu {
         menu.setItem(8, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);
+    }
+
+    public static void openPvEUpgradeMenu(Player player) {
+        Menu menu = new Menu("PvE Information", 9);
+        WarlordsPlayer wp = (WarlordsPlayer) Warlords.getPlayer(player);
+        if (wp != null) {
+            wp.getAbilityTree().openAbilityTree();
+        }
     }
 }

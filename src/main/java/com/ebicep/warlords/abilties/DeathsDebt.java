@@ -24,6 +24,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -214,6 +215,13 @@ public class DeathsDebt extends AbstractTotemBase {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 tempDeathsDebt.addDelayedDamage(currentDamageValue);
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveUpgrade) {
+                    currentVector.multiply(0.1);
+                }
             }
         });
     }
