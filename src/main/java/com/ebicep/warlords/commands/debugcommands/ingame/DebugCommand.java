@@ -137,6 +137,18 @@ public class DebugCommand extends BaseCommand {
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!", true);
     }
 
+    @Subcommand("debugmessage")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Toggle debug messages for a player or sender if there is no target")
+    public void damage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean enable = option.equals("enable");
+        target.setShowDebugMessage(enable);
+        sendDebugMessage(issuer,
+                target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer see" : "start seeing") + " debug messages!",
+                true
+        );
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
