@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -98,6 +99,13 @@ public class LastStand extends AbstractAbility {
                 float afterValue = currentDamageValue * (100 - selfDamageReductionPercent) / 100f;
                 tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
                 return afterValue;
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveUpgrade) {
+                    currentVector.multiply(0.5);
+                }
             }
         });
 
