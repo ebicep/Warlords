@@ -55,7 +55,7 @@ public class GroundSlam extends AbstractAbility {
         activateAbility(wp, player, 1);
 
         if (pveUpgrade) {
-            wp.setVelocity(new Vector(0, 1.2, 0), false);
+            wp.setVelocity(new Vector(0, 1.2, 0), true);
             new GameRunnable(wp.getGame()) {
                 boolean wasOnGround = true;
                 int counter = 0;

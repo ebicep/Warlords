@@ -1995,6 +1995,12 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                     )
+                    .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.ILLUMINA)
+                    )
+                    .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.CHESSKING)
+                    )
                     .add(101, new SimpleWave(80, 5 * SECOND, null)
                             //basic
                             .add(0, Mobs.BASIC_ZOMBIE)

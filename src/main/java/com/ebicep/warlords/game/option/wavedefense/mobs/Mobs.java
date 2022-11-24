@@ -68,6 +68,7 @@ public enum Mobs {
     MITHRA(Mithra::new),
     PHYSIRA(Physira::new),
     ILLUMINA(Illumina::new),
+    CHESSKING(Chessking::new),
     ZENITH(Zenith::new),
 
     ;
