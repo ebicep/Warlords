@@ -93,7 +93,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 }
             }
 
-            new PermanentCooldown<>(
+            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     "Damage Check",
                     null,
                     DamageCheck.class,
@@ -107,13 +107,12 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     if (phaseThreeTriggered) {
-                        Bukkit.broadcastMessage("subtracting damage");
                         damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
                     }
 
                     return currentDamageValue;
                 }
-            };
+            });
 
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
