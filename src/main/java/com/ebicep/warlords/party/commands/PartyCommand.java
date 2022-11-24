@@ -27,6 +27,13 @@ import java.util.*;
 @CommandAlias("party|p")
 public class PartyCommand extends BaseCommand {
 
+    @CommandAlias("pl")
+    @Subcommand("list")
+    @Description("Lists the players in your party")
+    public void list(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
+        player.sendMessage(partyPlayerWrapper.getParty().getPartyList());
+    }
+
     @Subcommand("create")
     @Description("Creates a party")
     public void create(@Conditions("party:false") Player player) {
@@ -127,13 +134,6 @@ public class PartyCommand extends BaseCommand {
         } else {
             Party.sendPartyMessage(player, ChatColor.RED + "You are not the party leader!");
         }
-    }
-
-    @CommandAlias("pl")
-    @Subcommand("list")
-    @Description("Lists the players in your party")
-    public void list(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
-        player.sendMessage(partyPlayerWrapper.getParty().getPartyList());
     }
 
     @Subcommand("promote")
