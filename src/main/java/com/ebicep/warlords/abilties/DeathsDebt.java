@@ -220,7 +220,7 @@ public class DeathsDebt extends AbstractTotemBase {
             @Override
             public void multiplyKB(Vector currentVector) {
                 if (pveUpgrade) {
-                    currentVector.multiply(0.1);
+                    currentVector.multiply(0.2);
                 }
             }
         });

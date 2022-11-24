@@ -1964,7 +1964,7 @@ public enum GameMap {
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     )
-                    .add(51, new SimpleWave(40, 10 * SECOND, null)
+                    .add(51, new SimpleWave(40, 5 * SECOND, null)
                             //basic
                             .add(0, Mobs.BASIC_ZOMBIE)
                             .add(0, Mobs.GHOST_ZOMBIE)
@@ -1994,6 +1994,37 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                    )
+                    .add(101, new SimpleWave(80, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            .add(0.3, Mobs.ENVOY_ZOMBIE)
+                            .add(0.02, Mobs.ENVOY_SKELETON)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(0.5, Mobs.VOID_SKELETON)
+                            // exiled
+                            .add(0.5, Mobs.EXILED_VOID_LANCER)
+                            .add(0.3, Mobs.EXILED_ZOMBIE)
+                            .add(0.5, Mobs.EXILED_SKELETON)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.5, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.1, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     ,
                     DifficultyIndex.ENDLESS

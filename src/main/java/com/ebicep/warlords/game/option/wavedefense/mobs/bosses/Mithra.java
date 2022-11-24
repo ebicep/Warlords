@@ -148,7 +148,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
             @Override
             public void run() {
-                if (warlordsNPC.isDead()) {
+                if (warlordsNPC.isDead() || preventBarrage) {
                     this.cancel();
                 }
 
@@ -163,7 +163,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     }
 
     private void immolation(WaveDefenseOption option, Location loc) {
-        warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 240);
+        warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
         }
@@ -182,13 +182,13 @@ public class Mithra extends AbstractZombie implements BossMob {
         float damage;
         switch (option.getDifficulty()) {
             case HARD:
-                damage = 250;
+                damage = 200;
                 break;
             case EASY:
                 damage = 50;
                 break;
             default:
-                damage = 125;
+                damage = 100;
                 break;
         }
         new GameRunnable(warlordsNPC.getGame()) {
@@ -217,6 +217,17 @@ public class Mithra extends AbstractZombie implements BossMob {
                             damage,
                             0,
                             100,
+                            false
+                    );
+
+                    warlordsNPC.addHealingInstance(
+                            warlordsNPC,
+                            "Immolation",
+                            damage * 0.25f,
+                            damage * 0.25f,
+                            0,
+                            100,
+                            false,
                             false
                     );
                 }
