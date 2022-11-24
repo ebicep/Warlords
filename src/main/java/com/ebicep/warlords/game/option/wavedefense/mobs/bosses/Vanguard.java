@@ -35,7 +35,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
-                "Vanguard",
+                "Illumina",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
@@ -58,8 +58,8 @@ public class Vanguard extends AbstractZombie implements BossMob {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Vanguard",
-                        ChatColor.BLACK + "General of the Illusion Legion",
+                        ChatColor.LIGHT_PURPLE + "Illumina",
+                        ChatColor.DARK_GRAY + "General of the Illusion Legion",
                         20, 30, 20
                 );
             }
@@ -78,7 +78,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseThreeTriggered) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
             damageToDeal.set((int) (5000 * playerCount));
 
@@ -87,7 +87,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                     PacketUtils.sendTitle(
                             (Player) we.getEntity(),
                             "",
-                            ChatColor.RED + "Keep attacking Vanguard to avoid getting drained!",
+                            ChatColor.RED + "Keep attacking Vanguard to stop the draining!",
                             10, 40, 10
                     );
                 }
@@ -114,6 +114,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 }
             });
 
+            AtomicInteger countdown = new AtomicInteger(10);
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
                 @Override
@@ -121,29 +122,63 @@ public class Vanguard extends AbstractZombie implements BossMob {
                     if (warlordsNPC.isDead() || damageToDeal.get() <= 0) {
                         FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                                 .withColor(Color.WHITE)
-                                .with(FireworkEffect.Type.BALL)
+                                .with(FireworkEffect.Type.BALL_LARGE)
                                 .build());
                         this.cancel();
                         return;
                     }
 
                     if (counter++ % 20 == 0) {
+                        countdown.getAndDecrement();
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.8f);
                         for (WarlordsEntity we : PlayerFilter
                                 .entitiesAround(warlordsNPC, 100, 100, 100)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 255, 255, 255, 2);
-                            we.addDamageInstance(warlordsNPC, "Vampiric Leash", 300, 300, -1, 100, true);
+                            we.addDamageInstance(
+                                    warlordsNPC,
+                                    "Vampiric Leash",
+                                    300,
+                                    300,
+                                    -1,
+                                    100,
+                                    true
+                            );
                         }
+                    }
+
+                    if (countdown.get() <= 0 && damageToDeal.get() > 0) {
+                        FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                                .withColor(Color.WHITE)
+                                .with(FireworkEffect.Type.BALL_LARGE)
+                                .build());
+                        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
+
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(warlordsNPC, 100, 100, 100)
+                                .aliveEnemiesOf(warlordsNPC)
+                        ) {
+                            we.addDamageInstance(
+                                    warlordsNPC,
+                                    "Vampiric Leash",
+                                    300,
+                                    300,
+                                    -1,
+                                    100,
+                                    true
+                            );
+                        }
+                        this.cancel();
                     }
 
                     for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
                         if (we.getEntity() instanceof Player) {
                             PacketUtils.sendTitle(
                                     (Player) we.getEntity(),
-                                    "",
+                                    ChatColor.YELLOW.toString() + countdown.get(),
                                     ChatColor.RED.toString() + damageToDeal.get(),
-                                    0, 2, 0
+                                    0, 4, 0
                             );
                         }
                     }
@@ -151,7 +186,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
             }.runTaskTimer(40, 0);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !phaseFourTriggered) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
 
 
@@ -162,7 +197,6 @@ public class Vanguard extends AbstractZombie implements BossMob {
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
                 .withColor(Color.BLACK)
-                .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BALL)
                 .build());
     }
