@@ -13,6 +13,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
 
     public DeathsDebtBranch(AbilityTree abilityTree, DeathsDebt ability) {
         super(abilityTree, ability);
+        ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
@@ -87,9 +88,10 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
         masterUpgrade = new Upgrade(
                 "Ghoul’s Gamble",
                 "Death's Debt - Master Upgrade",
-                "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, reduce damage taken by 50%",
+                "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, gain 90% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 25%",
                 50000,
                 () -> {
+                    ability.setPveUpgrade(true);
                     ability.setDamagePercent(ability.getDamagePercent() * 2);
                     ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
                 }
