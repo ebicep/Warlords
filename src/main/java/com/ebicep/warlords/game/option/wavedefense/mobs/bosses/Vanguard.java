@@ -22,6 +22,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Vanguard extends AbstractZombie implements BossMob {
 
     private boolean phaseOneTriggered = false;
@@ -29,14 +31,14 @@ public class Vanguard extends AbstractZombie implements BossMob {
     private boolean phaseThreeTriggered = false;
     private boolean phaseFourTriggered = false;
 
-    private int damageToDeal;
+    private AtomicInteger damageToDeal = new AtomicInteger(0);
 
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
                 "Vanguard",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
+                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
@@ -78,7 +80,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            damageToDeal = (int) (5000 * playerCount);
+            damageToDeal.set((int) (5000 * playerCount));
 
             for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
                 if (we.getEntity() instanceof Player) {
@@ -105,7 +107,8 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     if (phaseThreeTriggered) {
-                        damageToDeal -= currentDamageValue;
+                        Bukkit.broadcastMessage("subtracting damage");
+                        damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
                     }
 
                     return currentDamageValue;
@@ -116,7 +119,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                 int counter = 0;
                 @Override
                 public void run() {
-                    if (warlordsNPC.isDead() || damageToDeal <= 0) {
+                    if (warlordsNPC.isDead() || damageToDeal.get() <= 0) {
                         FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                                 .withColor(Color.WHITE)
                                 .with(FireworkEffect.Type.BALL)
@@ -140,7 +143,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                             PacketUtils.sendTitle(
                                     (Player) we.getEntity(),
                                     "",
-                                    ChatColor.RED.toString() + damageToDeal,
+                                    ChatColor.RED.toString() + damageToDeal.get(),
                                     0, 2, 0
                             );
                         }
