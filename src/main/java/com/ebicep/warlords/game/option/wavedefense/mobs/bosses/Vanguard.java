@@ -29,7 +29,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
     private boolean phaseThreeTriggered = false;
     private boolean phaseFourTriggered = false;
 
-    private int damageToDeal = 15000;
+    private int damageToDeal;
 
     public Vanguard(Location spawnLocation) {
         super(spawnLocation,
@@ -78,6 +78,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
+            damageToDeal = (int) (5000 * playerCount);
 
             for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
                 if (we.getEntity() instanceof Player) {
@@ -94,7 +95,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
                     "Damage Check",
                     null,
                     DamageCheck.class,
-                    null,
+                    DamageCheck.DAMAGE_CHECK,
                     warlordsNPC,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {

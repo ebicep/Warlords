@@ -100,9 +100,6 @@ public class WaterBreath extends AbstractAbility {
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-        if (pveUpgrade) {
-            regenOnHit(wp, wp);
-        }
 
         Location playerEyeLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
@@ -204,7 +201,6 @@ public class WaterBreath extends AbstractAbility {
     public void setHitbox(float hitbox) {
         this.hitbox = hitbox;
     }
-
 
     public int getMaxAnimationEffects() {
         return maxAnimationEffects;

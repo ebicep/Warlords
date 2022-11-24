@@ -150,6 +150,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             public void run() {
                 if (warlordsNPC.isDead() || preventBarrage) {
                     this.cancel();
+                    return;
                 }
 
                 counter++;
