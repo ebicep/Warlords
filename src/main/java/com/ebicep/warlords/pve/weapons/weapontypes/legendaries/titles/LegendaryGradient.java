@@ -58,6 +58,11 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 20;
     }

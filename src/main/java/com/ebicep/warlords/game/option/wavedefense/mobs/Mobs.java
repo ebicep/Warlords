@@ -67,7 +67,7 @@ public enum Mobs {
     NARMER(Narmer::new),
     MITHRA(Mithra::new),
     PHYSIRA(Physira::new),
-    VANGUARD(Vanguard::new),
+    ILLUMINA(Illumina::new),
     ZENITH(Zenith::new),
 
     ;

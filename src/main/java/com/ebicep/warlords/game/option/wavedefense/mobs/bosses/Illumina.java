@@ -7,9 +7,9 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.ExiledZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Vanguard extends AbstractZombie implements BossMob {
+public class Illumina extends AbstractZombie implements BossMob {
 
     private boolean phaseOneTriggered = false;
     private boolean phaseTwoTriggered = false;
@@ -34,7 +34,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
 
     private AtomicInteger damageToDeal = new AtomicInteger(0);
 
-    public Vanguard(Location spawnLocation) {
+    public Illumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
                 MobTier.BOSS,
@@ -67,7 +67,7 @@ public class Vanguard extends AbstractZombie implements BossMob {
         }
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new ExiledZombie(spawnLocation));
+            option.spawnNewMob(new IronGolem(spawnLocation));
         }
     }
 
@@ -127,7 +127,10 @@ public class Vanguard extends AbstractZombie implements BossMob {
     private void timedDamage(long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+        for (WarlordsEntity we : PlayerFilter
+                .playingGame(getWarlordsNPC().getGame())
+                .aliveEnemiesOf(warlordsNPC)
+        ) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
