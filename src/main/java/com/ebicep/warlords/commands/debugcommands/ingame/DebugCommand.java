@@ -25,7 +25,7 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 public class DebugCommand extends BaseCommand {
 
     @Default
-    @CommandPermission("group.administrator")
+    @CommandPermission("warlords.game.debug")
     public void openDebugMenu(Player player) {
         DebugMenu.openDebugMenu(player);
     }
