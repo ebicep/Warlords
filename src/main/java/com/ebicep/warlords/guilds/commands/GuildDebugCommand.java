@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @CommandAlias("gdebug")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class GuildDebugCommand extends BaseCommand {
 
     @Subcommand("experience")

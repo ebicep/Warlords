@@ -13,6 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class QuestsMenu {
 
     public static void openQuestMenu(Player player) {
+        if (!QuestCommand.isQuestsEnabled) {
+            player.sendMessage(ChatColor.RED + "Quests are currently disabled.");
+            return;
+        }
         Menu menu = new Menu("Quests", 9 * 6);
 
         AtomicInteger row = new AtomicInteger(0);

@@ -24,7 +24,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import java.util.Comparator;
 
 @CommandAlias("test")
-@CommandPermission("warlords.game.test")
+@CommandPermission("minecraft.command.op|warlords.game.test")
 public class TestCommand extends BaseCommand {
 
     @Default

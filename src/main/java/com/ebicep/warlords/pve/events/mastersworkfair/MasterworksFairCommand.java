@@ -32,7 +32,7 @@ import static com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairMana
 import static com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager.resetFair;
 
 @CommandAlias("masterworksfair")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class MasterworksFairCommand extends BaseCommand {
 
     @Subcommand("end")

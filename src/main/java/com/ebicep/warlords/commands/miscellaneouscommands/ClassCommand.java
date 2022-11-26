@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("class")
-@CommandPermission("warlords.game.changeclass")
+@CommandPermission("minecraft.command.op|warlords.game.changeclass")
 public class ClassCommand extends BaseCommand {
 
     @Default

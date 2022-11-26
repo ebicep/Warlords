@@ -3,11 +3,14 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
@@ -52,47 +55,6 @@ public class GameFreezeOption implements Option, Listener {
         }
     }
 
-    private Game game;
-
-    @Override
-    public void register(Game game) {
-        this.game = game;
-
-        game.registerEvents(this);
-        if (GLOBAL_LISTENER != null) {
-            Bukkit.getPluginManager().registerEvents(GLOBAL_LISTENER, Warlords.getInstance());
-            GLOBAL_LISTENER = null;
-        }
-    }
-
-    private void freeze() {
-        if (game.getFrozenCauses().isEmpty()) {
-            throw new IllegalStateException("Game is not marked as frozen");
-        }
-        String message = game.getFrozenCauses().get(0);
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
-    }
-
-    private void freezePlayer(Player p, String message) {
-        if (p.getVehicle() instanceof Horse) {
-            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-        }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
-    }
-
-    private void unfreeze() {
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
-    }
-
-    private void unfreezePlayer(Player p) {
-        if (p.getVehicle() instanceof Horse) {
-            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-        }
-        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-        p.removePotionEffect(PotionEffectType.BLINDNESS);
-    }
-
     private void resume() {
         //Do nothing while the game is being resumed
         if (game.isUnfreezeCooldown()) {
@@ -105,15 +67,45 @@ public class GameFreezeOption implements Option, Listener {
 
             @Override
             public void run() {
-                game.forEachOnlinePlayerWithoutSpectators((p, team) -> PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + timer, "", 0, 40, 0));
+                game.forEachOnlinePlayerWithoutSpectators((p, team) -> PacketUtils.sendTitle(p,
+                        ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + timer,
+                        "",
+                        0,
+                        40,
+                        0
+                ));
                 if (timer == 0) {
                     game.clearFrozenCauses();
                     game.setUnfreezeCooldown(false);
+                    for (Option option : game.getOptions()) {
+                        if (option instanceof WaveDefenseOption) {
+                            ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
+                                EntityInsentient entityInsentient = abstractMob.getEntity().get();
+                                NBTTagCompound compound = new NBTTagCompound();
+                                entityInsentient.c(compound);
+                                compound.setByte("NoAI", (byte) 0);
+                                entityInsentient.f(compound);
+                            });
+                        }
+                    }
                     this.cancel();
                 }
                 timer--;
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
+    }
+
+    private Game game;
+
+    @Override
+    public void register(Game game) {
+        this.game = game;
+
+        game.registerEvents(this);
+        if (GLOBAL_LISTENER != null) {
+            Bukkit.getPluginManager().registerEvents(GLOBAL_LISTENER, Warlords.getInstance());
+            GLOBAL_LISTENER = null;
+        }
     }
 
     @EventHandler
@@ -131,6 +123,45 @@ public class GameFreezeOption implements Option, Listener {
                 }
                 break;
         }
+    }
+
+    private void freeze() {
+        if (game.getFrozenCauses().isEmpty()) {
+            throw new IllegalStateException("Game is not marked as frozen");
+        }
+        for (Option option : game.getOptions()) {
+            if (option instanceof WaveDefenseOption) {
+                ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
+                    EntityInsentient entityInsentient = abstractMob.getEntity().get();
+                    NBTTagCompound compound = new NBTTagCompound();
+                    entityInsentient.c(compound);
+                    compound.setByte("NoAI", (byte) 1);
+                    entityInsentient.f(compound);
+                });
+            }
+        }
+        String message = game.getFrozenCauses().get(0);
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
+    }
+
+    private void unfreeze() {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
+    }
+
+    private void freezePlayer(Player p, String message) {
+        if (p.getVehicle() instanceof Horse) {
+            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
+        }
+        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
+    }
+
+    private void unfreezePlayer(Player p) {
+        if (p.getVehicle() instanceof Horse) {
+            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+        }
+        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+        p.removePotionEffect(PotionEffectType.BLINDNESS);
     }
 
     @EventHandler

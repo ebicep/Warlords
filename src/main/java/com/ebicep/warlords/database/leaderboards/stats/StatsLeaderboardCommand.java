@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("leaderboard|lb")
-@CommandPermission("warlords.leaderboard.interaction")
+@CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
 public class StatsLeaderboardCommand extends BaseCommand {
 
     @Subcommand("toggle")
