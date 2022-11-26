@@ -6,7 +6,11 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class Chessking extends AbstractSlime implements BossMob {
 
@@ -15,17 +19,27 @@ public class Chessking extends AbstractSlime implements BossMob {
                 "Chessking",
                 MobTier.BOSS,
                 null,
-                12500,
-                0.475f,
+                40000,
+                0.3f,
                 20,
-                350,
-                500
+                0,
+                0
         );
     }
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
         this.entity.get().setSize(15);
+        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        ChatColor.GREEN + getWarlordsNPC().getName(),
+                        ChatColor.GRAY + "Goblin from the local basement",
+                        20, 30, 20
+                );
+            }
+        }
     }
 
     @Override

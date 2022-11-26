@@ -141,6 +141,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 );
             }
             Utils.addKnockback(warlordsNPC.getLocation(), we, -2.5, 0.4);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.5f);
         }
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class);
@@ -178,6 +179,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
                 if (counter++ % 20 == 0) {
                     countdown.getAndDecrement();
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
                     Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
