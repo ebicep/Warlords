@@ -1185,20 +1185,20 @@ public enum GameMap {
                     )
                     .add(11, new SimpleWave(18, 10 * SECOND, null)
                             //basic
-                            .add(0.45, Mobs.GHOST_ZOMBIE)
+                            .add(0.35, Mobs.GHOST_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
                             .add(0.0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.15, Mobs.BASIC_SLIME)
                             .add(0.0, Mobs.SPIDER)
                             //elite
-                            .add(0.35, Mobs.ELITE_ZOMBIE)
+                            .add(0.25, Mobs.ELITE_ZOMBIE)
                             .add(0.05, Mobs.ELITE_SKELETON)
                             .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
                             .add(0.1, Mobs.IRON_GOLEM)
                             .add(0.01, Mobs.WITCH)
                             //envoy
-                            .add(0.01, Mobs.ENVOY_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.01, Mobs.ENVOY_BERSERKER_ZOMBIE)

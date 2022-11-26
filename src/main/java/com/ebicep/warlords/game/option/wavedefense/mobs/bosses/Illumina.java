@@ -46,9 +46,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                35000,
+                40000,
                 0.15f,
-                10,
+                20,
                 2000,
                 3000
         );
@@ -95,14 +95,27 @@ public class Illumina extends AbstractZombie implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseThreeTriggered) {
-            phaseThreeTriggered = true;
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
+            phaseOneTriggered = true;
+            timedDamage(playerCount, 8000, 11);
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
+            phaseTwoTriggered = true;
             timedDamage(playerCount, 10000, 11);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !phaseFourTriggered) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
+            phaseThreeTriggered = true;
+            timedDamage(playerCount, 12000, 11);
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .05f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(playerCount, 15000, 16);
+            timedDamage(playerCount, (int) warlordsNPC.getHealth(), 11);
+            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                option.spawnNewMob(new IronGolem(spawnLocation));
+            }
         }
     }
 
@@ -113,6 +126,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
     }
 
     @Override
@@ -225,8 +239,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         warlordsNPC.addHealingInstance(
                                 warlordsNPC,
                                 "Death Ray Healing",
-                                we.getMaxHealth() * 0.05f,
-                                we.getMaxHealth() * 0.05f,
+                                we.getMaxHealth() * 0.2f,
+                                we.getMaxHealth() * 0.2f,
                                 -1,
                                 100,
                                 false,
