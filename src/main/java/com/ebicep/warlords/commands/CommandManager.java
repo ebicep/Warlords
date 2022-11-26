@@ -536,7 +536,7 @@ public class CommandManager {
 
         manager.registerCommand(new StatsLeaderboardCommand());
 
-        manager.registerCommand(new PartyCommand());
+        manager.registerCommand(new PartyCommand(), true);
         manager.registerCommand(new StreamCommand());
 
         manager.registerCommand(new PollCommand());

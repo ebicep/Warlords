@@ -1129,7 +1129,7 @@ public abstract class WarlordsEntity {
         if (receiver.showDebugMessage) {
             receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
         } else {
-            receiver.sendMessage(ownFeed.toString());
+            receiver.sendMessage(allyFeed.toString());
         }
     }
 

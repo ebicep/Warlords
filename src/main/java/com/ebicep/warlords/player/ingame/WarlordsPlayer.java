@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
+import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -113,6 +114,10 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
         updatePlayerReference(player.getPlayer());
         updateEntity();
+
+        if (player.getPlayer() != null && PermissionHandler.isAdmin(player.getPlayer())) {
+            this.setShowDebugMessage(true);
+        }
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
@@ -178,6 +183,28 @@ public final class WarlordsPlayer extends WarlordsEntity {
     }
 
     @Override
+    public void updateInventory(boolean closeInventory) {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+
+            player.getInventory().clear();
+
+            for (Option option : game.getOptions()) {
+                option.updateInventory(this, player);
+            }
+            for (AbstractAbility ability : this.spec.getAbilities()) {
+                ability.updateDescription(player);
+            }
+            updateItems();
+            resetPlayerAddons();
+
+            if (closeInventory) {
+                player.closeInventory();
+            }
+        }
+    }
+
+    @Override
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         super.setSpec(spec, skillBoost);
         this.specClass = spec;
@@ -231,28 +258,6 @@ public final class WarlordsPlayer extends WarlordsEntity {
                         .setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
             } else {
                 ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
-            }
-        }
-    }
-
-    @Override
-    public void updateInventory(boolean closeInventory) {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-
-            player.getInventory().clear();
-
-            for (Option option : game.getOptions()) {
-                option.updateInventory(this, player);
-            }
-            for (AbstractAbility ability : this.spec.getAbilities()) {
-                ability.updateDescription(player);
-            }
-            updateItems();
-            resetPlayerAddons();
-
-            if (closeInventory) {
-                player.closeInventory();
             }
         }
     }
