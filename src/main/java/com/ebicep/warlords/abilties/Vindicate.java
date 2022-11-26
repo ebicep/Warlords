@@ -121,7 +121,7 @@ public class Vindicate extends AbstractAbility {
                     );
                     return currentDamageValue * 0;
                 } else {
-                    return currentDamageValue * getVindicateDamageReduction();
+                    return currentDamageValue * getCalculatedVindicateDamageReduction();
                 }
             }
         });
@@ -154,8 +154,12 @@ public class Vindicate extends AbstractAbility {
         });
     }
 
-    public float getVindicateDamageReduction() {
+    public float getCalculatedVindicateDamageReduction() {
         return (100 - vindicateDamageReduction) / 100f;
+    }
+
+    public float getVindicateDamageReduction() {
+        return vindicateDamageReduction;
     }
 
     public void setVindicateDamageReduction(float vindicateDamageReduction) {
