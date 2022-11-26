@@ -165,6 +165,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                 .entitiesAround(warlordsNPC, 15, 15, 15)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
+                            Utils.addKnockback(warlordsNPC.getLocation(), enemy, -2.5, 0.25);
                             enemy.addDamageInstance(
                                     warlordsNPC,
                                     "Acolyte Revenge",
@@ -236,6 +237,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
+                Utils.addKnockback(loc, enemy, -2.5, 0.25);
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
@@ -256,7 +258,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(attacker.getLocation(), receiver, -2.5, 0.25);
+
     }
 
     @Override

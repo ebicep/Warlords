@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.ExiledSkeleton;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -46,7 +47,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                40000,
+                45000,
                 0.15f,
                 20,
                 2000,
@@ -77,9 +78,10 @@ public class Illumina extends AbstractZombie implements BossMob {
         long playerCount = option.getGame().warlordsPlayers().count();
 
         if (ticksElapsed % 100 == 0) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.DIG_GRASS, 500, 0.4f);
             new FallingBlockWaveEffect(warlordsNPC.getLocation().add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 10, 10, 10)
+                    .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
@@ -97,22 +99,25 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
-            timedDamage(playerCount, 8000, 11);
+            timedDamage(option, playerCount, 8000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(playerCount, 10000, 11);
+            timedDamage(option, playerCount, 10000, 11);
+            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                option.spawnNewMob(new ExiledSkeleton(spawnLocation));
+            }
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(playerCount, 12000, 11);
+            timedDamage(option, playerCount, 12000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .05f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(playerCount, (int) warlordsNPC.getHealth(), 11);
+            timedDamage(option, playerCount, (int) warlordsNPC.getHealth(), 11);
             for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
                 option.spawnNewMob(new IronGolem(spawnLocation));
             }
@@ -139,7 +144,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
-    private void timedDamage(long playerCount, int damageValue, int timeToDealDamage) {
+    private void timedDamage(WaveDefenseOption option, long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
         for (WarlordsEntity we : PlayerFilter
@@ -203,8 +208,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Vampiric Leash",
-                                300,
-                                300,
+                                400,
+                                400,
                                 -1,
                                 100,
                                 true
@@ -213,6 +218,10 @@ public class Illumina extends AbstractZombie implements BossMob {
                 }
 
                 if (countdown.get() <= 0 && damageToDeal.get() > 0) {
+                    for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                        option.spawnNewMob(new IronGolem(spawnLocation));
+                    }
+
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                             .withColor(Color.WHITE)
                             .with(FireworkEffect.Type.BALL_LARGE)

@@ -4,7 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -17,7 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class Void extends AbstractZombie implements BossMob {
+public class Void extends AbstractSkeleton implements BossMob {
 
     public Void(Location spawnLocation) {
         super(
@@ -25,13 +25,13 @@ public class Void extends AbstractZombie implements BossMob {
                 "Void",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
+                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
                         Weapons.VOID_EDGE.getItem()
                 ),
-                80000,
+                100000,
                 0.2f,
                 20,
                 7000,
