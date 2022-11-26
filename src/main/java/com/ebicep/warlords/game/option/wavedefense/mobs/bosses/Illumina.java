@@ -97,12 +97,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(playerCount, 5000, 11);
+            timedDamage(playerCount, 10000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(playerCount, 7500, 11);
+            timedDamage(playerCount, 15000, 16);
         }
     }
 

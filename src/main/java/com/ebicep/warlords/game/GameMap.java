@@ -2001,6 +2001,9 @@ public enum GameMap {
                     .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.CHESSKING)
                     )
+                    .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.VOID)
+                    )
                     .add(101, new SimpleWave(80, 5 * SECOND, null)
                             //basic
                             .add(0, Mobs.BASIC_ZOMBIE)

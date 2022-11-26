@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.warlords.game.option.wavedefense.mobs.blaze.Blaze;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Void;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.*;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
@@ -66,10 +67,13 @@ public enum Mobs {
     GHOULCALLER(Ghoulcaller::new),
     NARMER(Narmer::new),
     MITHRA(Mithra::new),
-    PHYSIRA(Physira::new),
+    ZENITH(Zenith::new),
     ILLUMINA(Illumina::new),
     CHESSKING(Chessking::new),
-    ZENITH(Zenith::new),
+    VOID(Void::new),
+
+    // Raid Boss
+    PHYSIRA(Physira::new),
 
     ;
 

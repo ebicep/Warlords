@@ -472,39 +472,39 @@ public class WaveDefenseOption implements Option {
 
             float soundPitch = 0.8f;
             String wavePrefix = "§eWave ";
-            if (waveCounter >= 20) {
+            if (waveCounter >= 10) {
                 soundPitch = 0.75f;
                 wavePrefix = "§eWave ";
             }
-            if (waveCounter >= 40) {
+            if (waveCounter >= 25) {
                 soundPitch = 0.7f;
                 wavePrefix = "§6Wave ";
             }
-            if (waveCounter >= 60) {
+            if (waveCounter >= 50) {
                 soundPitch = 0.65f;
                 wavePrefix = "§7Wave ";
             }
-            if (waveCounter >= 80) {
+            if (waveCounter >= 60) {
                 soundPitch = 0.5f;
                 wavePrefix = "§8§lWave ";
             }
-            if (waveCounter >= 100) {
+            if (waveCounter >= 70) {
                 soundPitch = 0.4f;
                 wavePrefix = "§d§lWave ";
             }
-            if (waveCounter >= 110) {
+            if (waveCounter >= 80) {
                 soundPitch = 0.3f;
                 wavePrefix = "§5§lWave ";
             }
-            if (waveCounter >= 120) {
+            if (waveCounter >= 90) {
                 soundPitch = 0.2f;
                 wavePrefix = "§5W§5§k§la§5§lve ";
             }
-            if (waveCounter >= 130) {
+            if (waveCounter >= 100) {
                 soundPitch = 0.1f;
                 wavePrefix = "§4W§4§k§la§4§lve ";
             }
-            if (waveCounter >= 150) {
+            if (waveCounter >= 101) {
                 wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 
