@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -40,9 +41,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
                 35000,
@@ -59,7 +60,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Illumina",
+                        ChatColor.BLUE + "Illumina",
                         ChatColor.DARK_GRAY + "General of the Illusion Legion",
                         20, 30, 20
                 );
@@ -96,12 +97,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .75f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(playerCount, 5000, 10);
+            timedDamage(playerCount, 5000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(playerCount, 7500, 10);
+            timedDamage(playerCount, 7500, 11);
         }
     }
 
@@ -136,7 +137,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         (Player) we.getEntity(),
                         "",
                         ChatColor.RED + "Keep attacking Illumina to stop the draining!",
-                        10, 40, 0
+                        10, 35, 0
                 );
             }
             Utils.addKnockback(warlordsNPC.getLocation(), we, -2.5, 0.4);
@@ -201,12 +202,14 @@ public class Illumina extends AbstractZombie implements BossMob {
                             .with(FireworkEffect.Type.BALL_LARGE)
                             .build());
                     EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), "shaman.earthlivingweapon.impact", 500, 0.5f);
 
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.4);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
@@ -216,7 +219,19 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 100,
                                 true
                         );
+
+                        warlordsNPC.addHealingInstance(
+                                warlordsNPC,
+                                "Death Ray Healing",
+                                we.getMaxHealth() * 0.05f,
+                                we.getMaxHealth() * 0.05f,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
                     }
+
                     this.cancel();
                 }
 

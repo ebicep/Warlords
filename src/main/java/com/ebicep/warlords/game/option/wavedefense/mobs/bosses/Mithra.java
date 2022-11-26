@@ -109,13 +109,13 @@ public class Mithra extends AbstractZombie implements BossMob {
             }.runTaskLater(40);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.5f) && !flamePhaseTrigger) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.7f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
             preventBarrage = true;
             immolation(option, loc);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.25f) && !flamePhaseTriggerTwo) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
             flamePhaseTriggerTwo = true;
             preventBarrage = true;
             immolation(option, loc);
