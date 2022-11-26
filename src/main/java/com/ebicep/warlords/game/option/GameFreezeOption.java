@@ -81,10 +81,13 @@ public class GameFreezeOption implements Option, Listener {
                         if (option instanceof WaveDefenseOption) {
                             ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
                                 EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                                NBTTagCompound compound = new NBTTagCompound();
-                                entityInsentient.c(compound);
-                                compound.setByte("NoAI", (byte) 0);
-                                entityInsentient.f(compound);
+                                NBTTagCompound tag = entityInsentient.getNBTTag();
+                                if (tag == null) {
+                                    tag = new NBTTagCompound();
+                                }
+                                entityInsentient.c(tag);
+                                tag.setByte("NoAI", (byte) 0);
+                                entityInsentient.f(tag);
                             });
                         }
                     }
@@ -133,10 +136,13 @@ public class GameFreezeOption implements Option, Listener {
             if (option instanceof WaveDefenseOption) {
                 ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
                     EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                    NBTTagCompound compound = new NBTTagCompound();
-                    entityInsentient.c(compound);
-                    compound.setByte("NoAI", (byte) 1);
-                    entityInsentient.f(compound);
+                    NBTTagCompound tag = entityInsentient.getNBTTag();
+                    if (tag == null) {
+                        tag = new NBTTagCompound();
+                    }
+                    entityInsentient.c(tag);
+                    tag.setByte("NoAI", (byte) 1);
+                    entityInsentient.f(tag);
                 });
             }
         }

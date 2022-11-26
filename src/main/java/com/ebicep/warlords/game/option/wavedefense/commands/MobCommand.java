@@ -116,10 +116,13 @@ public class MobCommand extends BaseCommand {
             if (option instanceof WaveDefenseOption) {
                 ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
                     EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                    NBTTagCompound compound = new NBTTagCompound();
-                    entityInsentient.c(compound);
-                    compound.setByte("NoAI", ai.byteValue());
-                    entityInsentient.f(compound);
+                    NBTTagCompound tag = entityInsentient.getNBTTag();
+                    if (tag == null) {
+                        tag = new NBTTagCompound();
+                    }
+                    entityInsentient.c(tag);
+                    tag.setByte("NoAI", ai.byteValue());
+                    entityInsentient.f(tag);
                 });
                 ChatChannels.sendDebugMessage(player,
                         ChatColor.GREEN + "Set All Mob NoAI to " + ChatColor.YELLOW + ai + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
