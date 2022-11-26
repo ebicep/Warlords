@@ -111,7 +111,7 @@ public class MobCommand extends BaseCommand {
     }
 
     @Subcommand("ai")
-    public void ai(@Conditions("requireGame:gamemode=WAVE_DEFENSE") Player player, Integer ai) {
+    public void ai(@Conditions("requireGame:gamemode=WAVE_DEFENSE") Player player, @Conditions("limits:min=0,max=1") Integer ai) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
