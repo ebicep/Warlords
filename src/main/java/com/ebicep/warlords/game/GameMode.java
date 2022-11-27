@@ -258,6 +258,7 @@ public enum GameMode {
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WinByAllDeathOption());
             options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
             return options;
         }
     },

@@ -45,7 +45,7 @@ public class StatsLeaderboardManager {
     }};
     public static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> CACHED_PLAYERS = new ConcurrentHashMap<>();
 
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -124,7 +124,7 @@ public class StatsLeaderboardManager {
         if (!Warlords.holographicDisplaysEnabled) {
             return;
         }
-        if (!DatabaseManager.enabled) {
+        if (!DatabaseManager.enabled || !enabled) {
             return;
         }
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {

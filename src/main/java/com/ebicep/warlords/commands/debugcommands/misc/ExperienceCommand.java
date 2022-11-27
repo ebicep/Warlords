@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.concurrent.CompletionStage;
 
 @CommandAlias("experience|exp")
-@CommandPermission("warlords.exp.give")
+@CommandPermission("minecraft.command.op|warlords.exp.give")
 @Conditions("database:player")
 public class ExperienceCommand extends BaseCommand {
 

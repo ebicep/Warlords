@@ -32,7 +32,7 @@ import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 @CommandAlias("compensate")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class CompensateCommand extends BaseCommand {
 
     private static final Set<UUID> LOADING = new HashSet<>();

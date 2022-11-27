@@ -21,7 +21,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @CommandAlias("editstats")
-@CommandPermission("group.adminisrator")
+@CommandPermission("minecraft.command.op|group.adminisrator")
 @Conditions("database:player")
 public class EditStatsCommand extends BaseCommand {
 
