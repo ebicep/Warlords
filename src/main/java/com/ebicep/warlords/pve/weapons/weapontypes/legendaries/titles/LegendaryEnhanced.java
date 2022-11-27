@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -70,6 +71,11 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 }
                 if (!(cooldown instanceof RegularCooldown)) {
                     return;
+                }
+                if (cooldown instanceof LinkedCooldown) {
+                    if (!Objects.equals(cooldown.getFrom(), eventPlayer)) {
+                        return;
+                    }
                 }
                 if (EFFECTED_ABILITIES.contains(cooldown.getNameAbbreviation())) {
                     ((RegularCooldown<?>) cooldown).setTicksLeft(((RegularCooldown<?>) cooldown).getTicksLeft() + 40);
