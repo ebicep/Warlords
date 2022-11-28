@@ -66,7 +66,7 @@ public abstract class AbstractAbility {
     /**
      * @return whether the ability has to go on cooldown after activation.
      */
-    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player);
+    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
 
     public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {

@@ -1607,7 +1607,7 @@ public enum GameMap {
     },
     ILLUSION_CROSSFIRE(
             "Illusion Crossfire",
-            4,
+            6,
             1,
             120 * SECOND,
             "IllusionCrossfire",
@@ -1619,17 +1619,19 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 39, 77.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 39, 77.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 7, 52.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(101.5, 8, 59.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(118.5, 8, 54.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(124.5, 7, 63.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(124.5, 7, 72.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(113.5, 8, 73.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(88.5, 6, 75.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(116.5, 6, 44.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 39, 77.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 39, 71.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 39, 62.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 39, 53.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 39, 47.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(120.5, 39, 53.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 40, 45.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 40, 79.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 40, 79.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 40, 45.5), Team.RED));
 
             options.add(new RespawnWaveOption(1, 20, 30));
             options.add(new GraveOption());
@@ -1996,15 +1998,15 @@ public enum GameMap {
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.ILLUMINA)
+                            .add(Mobs.CHESSKING)
                     )
                     .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.CHESSKING)
+                            .add(Mobs.ILLUMINA)
                     )
                     .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.VOID)
                     )
-                    .add(101, new SimpleWave(80, 5 * SECOND, null)
+                    .add(101, new SimpleWave(80, 2 * SECOND, null)
                             //basic
                             .add(0, Mobs.BASIC_ZOMBIE)
                             .add(0, Mobs.GHOST_ZOMBIE)

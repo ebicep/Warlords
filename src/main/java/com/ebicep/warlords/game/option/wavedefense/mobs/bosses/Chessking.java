@@ -19,7 +19,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                 "Chessking",
                 MobTier.BOSS,
                 null,
-                40000,
+                45000,
                 0.3f,
                 20,
                 0,

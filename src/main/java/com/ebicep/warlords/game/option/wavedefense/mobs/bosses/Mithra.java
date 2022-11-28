@@ -224,8 +224,8 @@ public class Mithra extends AbstractZombie implements BossMob {
                     warlordsNPC.addHealingInstance(
                             warlordsNPC,
                             "Immolation",
-                            damage * 0.25f,
-                            damage * 0.25f,
+                            damage * 0.5f,
+                            damage * 0.5f,
                             0,
                             100,
                             false,
