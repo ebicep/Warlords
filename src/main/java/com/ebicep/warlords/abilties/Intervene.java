@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Intervene extends AbstractAbility {
@@ -129,6 +130,9 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                        if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                            return;
+                        }
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
                                 ChatColor.GRAY + wp.getName() + "'s " +
                                 ChatColor.YELLOW + "Intervene " +
