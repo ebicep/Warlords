@@ -54,7 +54,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return tier == 9 ? .004 : .0035 * tier;
+            return tier == 9 ? .06 : .005 * tier;
         }
 
         @Override
