@@ -5,6 +5,15 @@ import javax.annotation.Nonnull;
 // https://minecraft-heads.com/
 //
 public enum SkullID {
+    SLIME_BLOCK(
+            "fbd1a375-3fdd-47c9-8c8d-fb3b3f071841",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjNmYmVhMjg3YjNhNjcyZWUzMjRjNzIwZTc3YWY4ZjczMGY4NTFkMjBkYWQ5ZmYxZmExYzA1MWVkZTViYzgxMyJ9fX0="
+    ),
+    // https://prnt.sc/GrnNWh_RjmbP
+    GREEN_LANCER(
+            "2ac0010e-e222-4005-be95-fd8a13762fa5",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGUxMDg3YzBjNTE5YTlhMWRjZWU0MzI1NDEwYjE5YTFiZTQ4NTVlYWM1YTY2MmFlMWI1MjMzMjlmOTBmYWVjZCJ9fX0="
+    ),
     // https://prnt.sc/yoyTcYEz37zz
     DEEP_DARK_WORM(
             "05e0d5e6-7bd0-4741-90c3-0ca105f67166",

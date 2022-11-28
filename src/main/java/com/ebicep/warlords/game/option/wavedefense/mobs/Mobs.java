@@ -61,6 +61,7 @@ public enum Mobs {
 
     // Elite Tier 5 - Forgotten
     FORGOTTEN_ZOMBIE(ForgottenZombie::new),
+    FORGOTTEN_LANCER(OvergrownZombie::new),
 
     // Boss
     BOLTARO(Boltaro::new),
