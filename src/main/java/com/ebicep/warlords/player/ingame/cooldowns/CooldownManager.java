@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
-import com.ebicep.warlords.abilties.Intervene;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -56,20 +55,12 @@ public class CooldownManager {
 
                 if (abstractCooldown.removeCheck()) {
                     abstractCooldown.getOnRemove().accept(this);
-                    abstractCooldowns.remove(i);
-                    i--;
+                    if (abstractCooldowns.contains(abstractCooldown)) {
+                        abstractCooldowns.remove(i);
+                        i--;
+                    }
                 }
             }
-//            Iterator<AbstractCooldown<?>> iterator = cooldowns.iterator();
-//            while (iterator.hasNext()) {
-//                AbstractCooldown<?> abstractCooldown = iterator.next();
-//                abstractCooldown.onTick(warlordsEntity);
-//
-//                if (abstractCooldown.removeCheck()) {
-//                    abstractCooldown.getOnRemove().accept(this);
-//                    iterator.remove();
-//                }
-//            }
         }
 
     }
@@ -103,26 +94,7 @@ public class CooldownManager {
         abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
                 .filter(RegularCooldown.class::isInstance)
                 .map(RegularCooldown.class::cast)
-                .forEachOrdered(regularCooldown -> {
-                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks);
-                    if (Objects.equals(regularCooldown.getCooldownClass(), Intervene.class)) {
-                        Intervene intervene = (Intervene) regularCooldown.getCooldownObject();
-                        //player is defender that vened, then reduce vened target cooldown
-                        if (regularCooldown.getFrom() == warlordsEntity) {
-                            new CooldownFilter<>(intervene.getTarget(), RegularCooldown.class)
-                                    .filterCooldownObject(intervene)
-                                    .findFirst()
-                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() + ticks));
-                        }
-                        //player with vene from defender, then reduce defender vene cooldown
-                        else {
-                            new CooldownFilter<>(intervene.getCaster(), RegularCooldown.class)
-                                    .filterCooldownObject(intervene)
-                                    .findFirst()
-                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() + ticks));
-                        }
-                    }
-                });
+                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
     }
 
     public List<AbstractCooldown<?>> getBuffCooldowns() {

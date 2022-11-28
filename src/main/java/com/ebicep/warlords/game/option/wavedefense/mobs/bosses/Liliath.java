@@ -17,12 +17,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class Lucilla extends AbstractZombie implements BossMob {
+public class Liliath extends AbstractZombie implements BossMob {
 
-    public Lucilla(Location spawnLocation) {
+    public Liliath(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Lucilla",
+                "Liliath",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
@@ -31,11 +31,11 @@ public class Lucilla extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 90, 0, 90),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                50000,
+                60000,
                 0.2f,
                 20,
-                3600,
-                4800
+                2000,
+                3000
         );
     }
 

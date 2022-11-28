@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.UUID;
 
 @CommandAlias("spawntestdummy")
-@CommandPermission("warlords.game.spawndummy")
+@CommandPermission("minecraft.command.op|warlords.game.spawndummy")
 public class SpawnTestDummyCommand extends BaseCommand {
 
     @Default

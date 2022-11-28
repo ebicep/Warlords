@@ -9,7 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 
 @CommandAlias("recordaveragedamagedone")
-@CommandPermission("warlords.game.recordaverage")
+@CommandPermission("minecraft.command.op|warlords.game.recordaverage")
 public class RecordAverageDamageCommand extends BaseCommand {
 
     @Default

@@ -1568,6 +1568,13 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void subtractRedCooldown(float cooldown) {
+        if (!isDisableCooldowns()) {
+            this.getRedAbility().subtractCooldown(cooldown);
+            updateRedItem();
+        }
+    }
+
     public boolean isDisableCooldowns() {
         return disableCooldowns;
     }
@@ -1593,6 +1600,13 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void subtractPurpleCooldown(float cooldown) {
+        if (!isDisableCooldowns()) {
+            this.getPurpleAbility().subtractCooldown(cooldown);
+            updatePurpleItem();
+        }
+    }
+
     public AbstractAbility getPurpleAbility() {
         return spec.getPurple();
     }
@@ -1610,6 +1624,13 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void subtractBlueCooldown(float cooldown) {
+        if (!isDisableCooldowns()) {
+            this.getBlueAbility().subtractCooldown(cooldown);
+            updateBlueItem();
+        }
+    }
+
     public AbstractAbility getBlueAbility() {
         return spec.getBlue();
     }
@@ -1623,6 +1644,13 @@ public abstract class WarlordsEntity {
     public void setOrangeCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getOrangeAbility().setCurrentCooldown(currentCooldown);
+            updateOrangeItem();
+        }
+    }
+
+    public void subtractOrangeCooldown(float cooldown) {
+        if (!isDisableCooldowns()) {
+            this.getOrangeAbility().subtractCooldown(cooldown);
             updateOrangeItem();
         }
     }

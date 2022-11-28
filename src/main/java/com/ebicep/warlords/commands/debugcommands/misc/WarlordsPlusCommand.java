@@ -15,14 +15,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @CommandAlias("wps")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class WarlordsPlusCommand extends BaseCommand {
 
     public static final Set<UUID> UUIDS = new HashSet<>();
     public static boolean enabled = true;
 
     @Subcommand("add")
-    public void add(CommandIssuer issuer, @Flags("@other") Player player) {
+    public void add(CommandIssuer issuer, @Flags("other") Player player) {
         if (UUIDS.contains(player.getUniqueId())) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player already has access", true);
             return;
@@ -32,7 +32,7 @@ public class WarlordsPlusCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
-    public void remove(CommandIssuer issuer, @Flags("@other") Player player) {
+    public void remove(CommandIssuer issuer, @Flags("other") Player player) {
         if (!UUIDS.contains(player.getUniqueId())) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player does not have access", true);
             return;

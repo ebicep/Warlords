@@ -453,6 +453,7 @@ public class GuildCommand extends BaseCommand {
                 Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
                 return;
             }
+            message = message.replaceAll("&", "§");
             motd.add(message);
             guild.queueUpdate();
             Guild.sendGuildMessage(player, ChatColor.GRAY + "Appended " + ChatColor.RESET + message + ChatColor.GRAY + " to the MOTD.");
@@ -482,6 +483,7 @@ public class GuildCommand extends BaseCommand {
                 Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
                 return;
             }
+            message = message.replaceAll("&", "§");
             if (line == motd.size() + 1) {
                 motd.add(message);
             } else {
@@ -555,7 +557,7 @@ public class GuildCommand extends BaseCommand {
         }
 
         @Subcommand("refresh")
-        @CommandPermission("warlords.leaderboard.interaction")
+        @CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);

@@ -82,8 +82,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
             //reducing chain cooldown
             if (!(wp.isInPve() && maxReductions >= 2)) {
-                wp.getRedAbility().subtractCooldown(2);
-                wp.updateRedItem();
+                wp.subtractRedCooldown(2);
             }
         }
 
@@ -117,8 +116,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
             //reducing chain cooldown
             if (!(wp.isInPve() && maxReductions >= 2)) {
-                wp.getRedAbility().subtractCooldown(2);
-                wp.updateRedItem();
+                wp.subtractRedCooldown(2);
             }
         }
     }

@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 @CommandAlias("abilitystats")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class GetPlayerLastAbilityStatsCommand extends BaseCommand {
 
     public static final HashMap<UUID, List<BaseComponent[]>> PLAYER_LAST_ABILITY_STATS = new HashMap<>();

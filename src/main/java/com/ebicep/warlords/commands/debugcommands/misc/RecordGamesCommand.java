@@ -10,7 +10,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("recordgames|countgames")
-@CommandPermission("warlords.game.recordgames")
+@CommandPermission("minecraft.command.op|warlords.game.recordgames")
 public class RecordGamesCommand extends BaseCommand {
 
     public static boolean recordGames = true;
