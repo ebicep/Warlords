@@ -25,6 +25,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,9 +47,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
-                70000,
+                90000,
                 0.2f,
                 20,
                 2000,
@@ -76,11 +77,38 @@ public class Illumina extends AbstractZombie implements BossMob {
         PrismGuard prismGuard = new PrismGuard();
         prismGuard.setDuration(10);
         warlordsNPC.getSpec().setBlue(prismGuard);
+
+        warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class);
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                DamageCheck.DAMAGE_CHECK,
+                warlordsNPC,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
+                return currentDamageValue;
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                // immune to KB
+                currentVector.multiply(0);
+            }
+        });
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
+        // immune to slowness
+        warlordsNPC.getSpeed().removeSlownessModifiers();
 
         if (ticksElapsed % 100 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.DIG_GRASS, 500, 0.4f);
@@ -109,7 +137,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(warlordsNPC.getLocation(), we, -1.8, 0.3);
+                Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.3);
             }
         }
 
@@ -122,7 +150,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, 10000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(spawnLocation));
+                option.spawnNewMob(new ExiledSkeleton(warlordsNPC.getLocation()));
             }
         }
 
@@ -133,9 +161,9 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(option, playerCount, (int) warlordsNPC.getHealth(), 11);
+            timedDamage(option, playerCount, 4000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new IronGolem(spawnLocation));
+                option.spawnNewMob(new IronGolem(warlordsNPC.getLocation()));
             }
         }
     }
@@ -178,25 +206,6 @@ public class Illumina extends AbstractZombie implements BossMob {
             Utils.addKnockback(warlordsNPC.getLocation(), we, -2.5, 0.4);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.5f);
         }
-
-        warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class);
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Damage Check",
-                null,
-                DamageCheck.class,
-                DamageCheck.DAMAGE_CHECK,
-                warlordsNPC,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                damageToDeal.set((int) (damageToDeal.get() - currentDamageValue));
-                return currentDamageValue;
-            }
-        });
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
         new GameRunnable(warlordsNPC.getGame()) {
