@@ -48,8 +48,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                50000,
-                0.15f,
+                70000,
+                0.2f,
                 20,
                 2000,
                 3000
@@ -102,6 +102,17 @@ public class Illumina extends AbstractZombie implements BossMob {
             }
         }
 
+        if (ticksElapsed % 220 == 0) {
+            EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 6,false);
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(warlordsNPC, 6, 6, 6)
+                    .aliveEnemiesOf(warlordsNPC)
+            ) {
+                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                Utils.addKnockback(warlordsNPC.getLocation(), we, -1.8, 0.3);
+            }
+        }
+
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
             timedDamage(option, playerCount, 8000, 11);
@@ -120,7 +131,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             timedDamage(option, playerCount, 12000, 11);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .05f) && !phaseFourTriggered) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, (int) warlordsNPC.getHealth(), 11);
             for (int i = 0; i < (2 * playerCount); i++) {
@@ -192,7 +203,12 @@ public class Illumina extends AbstractZombie implements BossMob {
             int counter = 0;
             @Override
             public void run() {
-                if (warlordsNPC.isDead() || damageToDeal.get() <= 0) {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                    return;
+                }
+
+                if (damageToDeal.get() <= 0) {
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                             .withColor(Color.WHITE)
                             .with(FireworkEffect.Type.BALL_LARGE)
