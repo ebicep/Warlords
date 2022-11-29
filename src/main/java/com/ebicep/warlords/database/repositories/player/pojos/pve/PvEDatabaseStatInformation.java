@@ -79,6 +79,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         }
 
         this.totalWavesCleared += databaseGamePvE.getWavesCleared() * multiplier;
+        this.totalTimePlayed += (long) databaseGamePvE.getTimeElapsed() * multiplier;
         databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
@@ -141,6 +142,10 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public long getTotalTimePlayed() {
         return totalTimePlayed;
+    }
+
+    public void addTimePlayed(long time) {
+        this.totalTimePlayed += time;
     }
 
     public long getFastestGameFinished() {

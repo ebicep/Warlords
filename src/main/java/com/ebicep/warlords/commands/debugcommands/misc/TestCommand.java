@@ -5,15 +5,23 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -21,7 +29,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-import java.util.Comparator;
+import java.util.*;
 
 @CommandAlias("test")
 @CommandPermission("minecraft.command.op|warlords.game.test")
@@ -76,6 +84,44 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
+
+        Warlords.newChain()
+                .async(() -> {
+                    List<DatabaseGameBase> games = DatabaseManager.gameService.findAll(GamesCollections.ALL);
+                    List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+
+                    HashMap<UUID, DatabasePlayer> playerMap = new HashMap<>();
+                    for (DatabasePlayer databasePlayer : databasePlayers) {
+                        playerMap.put(databasePlayer.getUuid(), databasePlayer);
+                    }
+                    Set<DatabasePlayer> toUpdate = new HashSet<>();
+                    int myPlays = 0;
+
+                    for (DatabaseGameBase game : games) {
+                        if (game instanceof DatabaseGamePvE) {
+                            DatabaseGamePvE gamePvE = (DatabaseGamePvE) game;
+                            for (DatabaseGamePlayerPvE player : gamePvE.getPlayers()) {
+                                DatabasePlayer databasePlayer = playerMap.get(player.getUuid());
+                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                pveStats.addTimePlayed(gamePvE.getTimeElapsed());
+                                pveStats.getClass(Specializations.getClass(player.getSpec())).addTimePlayed(gamePvE.getTimeElapsed());
+                                pveStats.getSpec(player.getSpec()).addTimePlayed(gamePvE.getTimeElapsed());
+                                toUpdate.add(databasePlayer);
+                                if (player.getName().equalsIgnoreCase("sumSmash")) {
+                                    myPlays++;
+                                }
+                            }
+                        }
+                    }
+
+                    for (DatabasePlayer databasePlayer : toUpdate) {
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    }
+
+                    System.out.println("My plays: " + myPlays);
+
+                })
+                .execute();
 
 //        Warlords.newChain()
 //                .async(() -> {
