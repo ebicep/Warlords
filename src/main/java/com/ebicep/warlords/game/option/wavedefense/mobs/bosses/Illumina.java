@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.ExiledSkeleton;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.ForgottenZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -50,7 +51,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
                 90000,
-                0.2f,
+                0.3f,
                 20,
                 2000,
                 3000
@@ -71,7 +72,9 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new IronGolem(spawnLocation));
+            IronGolem ironGolem = new IronGolem(warlordsNPC.getLocation());
+            ironGolem.getWarlordsNPC().getSpeed().addBaseModifier(40);
+            option.spawnNewMob(ironGolem);
         }
 
         PrismGuard prismGuard = new PrismGuard();
@@ -99,7 +102,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             @Override
             public void multiplyKB(Vector currentVector) {
                 // immune to KB
-                currentVector.multiply(0);
+                currentVector.multiply(0.05);
             }
         });
     }
@@ -148,22 +151,27 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 10000, 11);
-            for (int i = 0; i < (2 * playerCount); i++) {
+            timedDamage(option, playerCount, 11000, 11);
+            for (int i = 0; i < (3 * playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(warlordsNPC.getLocation()));
             }
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 12000, 11);
+            timedDamage(option, playerCount, 13000, 11);
+            for (int i = 0; i < playerCount; i++) {
+                option.spawnNewMob(new ForgottenZombie(warlordsNPC.getLocation()));
+            }
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(option, playerCount, 4000, 11);
+            timedDamage(option, playerCount, 5000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new IronGolem(warlordsNPC.getLocation()));
+                IronGolem ironGolem = new IronGolem(warlordsNPC.getLocation());
+                ironGolem.getWarlordsNPC().getSpeed().addBaseModifier(40);
+                option.spawnNewMob(ironGolem);
             }
         }
     }
@@ -203,7 +211,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         10, 35, 0
                 );
             }
-            Utils.addKnockback(warlordsNPC.getLocation(), we, -2.5, 0.4);
+            Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.4);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.5f);
         }
 
@@ -247,8 +255,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Vampiric Leash",
-                                400,
-                                400,
+                                500,
+                                500,
                                 -1,
                                 100,
                                 true
