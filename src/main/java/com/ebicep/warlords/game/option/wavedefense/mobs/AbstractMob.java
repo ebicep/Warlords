@@ -163,13 +163,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
             warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
             warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
-
-            Bukkit.broadcastMessage(
-                    "\nMobName: " + warlordsNPC.getName() +
-                    "\n\nHealth: " + finalHealth +
-                    "\nMinDamage: " + endlessFlagCheckMin +
-                    "\nMaxDamage: " + endlessFlagCheckMax
-            );
         }
 
         return warlordsNPC;

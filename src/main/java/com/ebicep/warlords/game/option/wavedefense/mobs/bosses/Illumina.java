@@ -113,9 +113,10 @@ public class Illumina extends AbstractZombie implements BossMob {
         // immune to slowness
         warlordsNPC.getSpeed().removeSlownessModifiers();
 
+        Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.DIG_GRASS, 500, 0.4f);
-            new FallingBlockWaveEffect(warlordsNPC.getLocation().add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
+            Utils.playGlobalSound(loc, Sound.DIG_GRASS, 500, 0.4f);
+            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
@@ -134,13 +135,13 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 220 == 0) {
-            EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), 6,false);
+            EffectUtils.strikeLightningInCylinder(loc, 6,false);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.3);
+                Utils.addKnockback(loc, we, -2, 0.3);
             }
         }
 
@@ -153,7 +154,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, 11000, 11);
             for (int i = 0; i < (3 * playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(warlordsNPC.getLocation()));
+                option.spawnNewMob(new ExiledSkeleton(loc));
             }
         }
 
@@ -161,7 +162,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseThreeTriggered = true;
             timedDamage(option, playerCount, 13000, 11);
             for (int i = 0; i < playerCount; i++) {
-                option.spawnNewMob(new ForgottenZombie(warlordsNPC.getLocation()));
+                option.spawnNewMob(new ForgottenZombie(loc));
             }
         }
 
@@ -169,7 +170,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, 5000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                IronGolem ironGolem = new IronGolem(warlordsNPC.getLocation());
+                IronGolem ironGolem = new IronGolem(loc);
                 ironGolem.getWarlordsNPC().getSpeed().addBaseModifier(40);
                 option.spawnNewMob(ironGolem);
             }

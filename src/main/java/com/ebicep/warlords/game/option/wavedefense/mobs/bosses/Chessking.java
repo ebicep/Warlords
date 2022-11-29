@@ -19,9 +19,9 @@ public class Chessking extends AbstractSlime implements BossMob {
                 "Chessking",
                 MobTier.BOSS,
                 null,
-                45000,
+                100000,
                 0.3f,
-                20,
+                30,
                 0,
                 0
         );
@@ -29,7 +29,7 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        this.entity.get().setSize(15);
+        this.entity.get().setSize(17);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
