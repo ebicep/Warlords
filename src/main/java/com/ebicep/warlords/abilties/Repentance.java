@@ -20,6 +20,7 @@ public class Repentance extends AbstractAbility {
     private int duration = 12;
     private int poolDecay = 60;
     private int damageConvertPercent = 10;
+    private float energyConvertPercent = 3.5f;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20);
@@ -67,7 +68,7 @@ public class Repentance extends AbstractAbility {
 
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
                 attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, 0, 100, false, false);
-                attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
+                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
                 pool *= .5;
             }
         });
@@ -117,5 +118,13 @@ public class Repentance extends AbstractAbility {
 
     public void setPoolDecay(int poolDecay) {
         this.poolDecay = poolDecay;
+    }
+
+    public float getEnergyConvertPercent() {
+        return energyConvertPercent;
+    }
+
+    public void setEnergyConvertPercent(float energyConvertPercent) {
+        this.energyConvertPercent = energyConvertPercent;
     }
 }

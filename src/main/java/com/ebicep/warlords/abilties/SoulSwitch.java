@@ -3,8 +3,11 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -87,7 +90,7 @@ public class SoulSwitch extends AbstractAbility {
                         ownLocation.getPitch()
                 ));
 
-                if (pveUpgrade && swapTarget instanceof WarlordsNPC) {
+                if (swapTarget instanceof WarlordsNPC) {
                     ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
                     decoy.setVisible(false);
                     decoy.setGravity(false);
@@ -106,16 +109,55 @@ public class SoulSwitch extends AbstractAbility {
                                     ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
                                 }
                             });
-                    new GameRunnable(wp.getGame()) {
 
+                    if (pveUpgrade) {
+                        float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                healing,
+                                healing,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
+                    }
+                    new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
                             decoy.remove();
                             PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
                                     .aliveEnemiesOf(wp)
-                                    .forEach(warlordsEntity -> {
-                                        warlordsEntity.addDamageInstance(wp, name, 1004, 1218, 0, 100, false);
+                                    .forEach(hit -> {
+                                        hit.addDamageInstance(
+                                                wp,
+                                                name,
+                                                1004 * (pveUpgrade ? 2 : 1),
+                                                1218 * (pveUpgrade ? 2 : 1),
+                                                0,
+                                                100,
+                                                false
+                                        );
+
+                                        hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
+                                                "Totem Crippling",
+                                                "CRIP",
+                                                SoulSwitch.class,
+                                                new SoulSwitch(),
+                                                wp,
+                                                CooldownTypes.DEBUFF,
+                                                cooldownManager -> {
+                                                },
+                                                20 * 5
+                                        ) {
+                                            @Override
+                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                return currentDamageValue * .5f;
+                                            }
+                                        });
                                     });
+
                             ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
                         }
                     }.runTaskLater(60);

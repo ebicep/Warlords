@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
 
@@ -74,8 +73,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.25).setY(0.5);
-        receiver.setVelocity(v, false);
+
     }
 
     @Override
