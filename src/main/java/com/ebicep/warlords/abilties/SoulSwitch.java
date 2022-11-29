@@ -139,23 +139,24 @@ public class SoulSwitch extends AbstractAbility {
                                                 100,
                                                 false
                                         );
-
-                                        hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
-                                                "Totem Crippling",
-                                                "CRIP",
-                                                SoulSwitch.class,
-                                                new SoulSwitch(),
-                                                wp,
-                                                CooldownTypes.DEBUFF,
-                                                cooldownManager -> {
-                                                },
-                                                20 * 5
-                                        ) {
-                                            @Override
-                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                return currentDamageValue * .5f;
-                                            }
-                                        });
+                                        if (pveUpgrade) {
+                                            hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
+                                                    "Switch Crippling",
+                                                    "CRIP",
+                                                    SoulSwitch.class,
+                                                    new SoulSwitch(),
+                                                    wp,
+                                                    CooldownTypes.DEBUFF,
+                                                    cooldownManager -> {
+                                                    },
+                                                    20 * 5
+                                            ) {
+                                                @Override
+                                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                    return currentDamageValue * .5f;
+                                                }
+                                            });
+                                        }
                                     });
 
                             ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);

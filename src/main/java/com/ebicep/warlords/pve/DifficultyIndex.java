@@ -41,10 +41,10 @@ public enum DifficultyIndex {
                     "\n\nModifiers:\n§c+25% Mob Spawns",
             ChatColor.RED,
             10000,
-            72,
-            4,
-            1000,
-            1
+            80,
+            5,
+            1500,
+            1.25f
     );
 
     private final String name;
