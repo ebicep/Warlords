@@ -104,9 +104,13 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
-                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
-            });
+            for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                loadPlayer(player.getUniqueId(), collection, (databasePlayer) -> {
+                    if (collection == PlayersCollections.LIFETIME) {
+                        PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
+                    }
+                });
+            }
         });
 
         ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Storing all guilds");

@@ -193,8 +193,8 @@ public class MasterworksFair {
                 }
             }
         }
-        if (fairNumber != 0 && fairNumber % 10 == 0) {
-            rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
+        if (fairNumber != 0 && fairNumber % 5 == 0) {
+            rewards.forEach((currency, amount) -> rewards.put(currency, amount * 2));
         }
         return rewards;
     }

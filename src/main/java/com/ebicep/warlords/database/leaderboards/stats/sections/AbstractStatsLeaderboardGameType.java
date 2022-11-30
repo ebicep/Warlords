@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -36,13 +37,24 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
     public abstract void addExtraLeaderboards(StatsLeaderboardCategory<T> statsLeaderboardCategory);
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers) {
-        switch (collection) {
-            case LIFETIME:
-                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 50);
-                break;
-            case WEEKLY:
-                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10);
-                break;
+        if (this instanceof StatsLeaderboardPvE) {
+            switch (collection) {
+                case LIFETIME:
+                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPveStats().getPlays() < 50);
+                    break;
+                case WEEKLY:
+                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPveStats().getPlays() < 10);
+                    break;
+            }
+        } else {
+            switch (collection) {
+                case LIFETIME:
+                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 50);
+                    break;
+                case WEEKLY:
+                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 10);
+                    break;
+            }
         }
         String subTitle = getSubTitle();
         for (StatsLeaderboardCategory<T> category : gameTypeCategories) {

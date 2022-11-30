@@ -40,7 +40,7 @@ public class QuestsMenu {
             }
             DatabaseManager.getPlayer(player.getUniqueId(), quest.time, databasePlayer -> {
                 menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
+                        quest.getItemStack(databasePlayer, databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
                         (m, e) -> {
                         }
                 );
@@ -51,7 +51,7 @@ public class QuestsMenu {
                 }
             }, () -> {
                 menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(false),
+                        quest.getItemStack(null, false),
                         (m, e) -> {
                         }
                 );
