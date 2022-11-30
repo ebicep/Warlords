@@ -119,7 +119,7 @@ public class WeaponOption implements Option {
                     Player player = (Player) e.getWhoClicked();
                     WarlordsEntity wp = Warlords.getPlayer(player);
                     if (wp instanceof WarlordsPlayer) {
-                        if (wp.getGame().equals(game)) {
+                        if (!wp.getGame().equals(game)) {
                             return;
                         }
                         if (e.isLeftClick()) {
