@@ -7,87 +7,64 @@ import com.ebicep.warlords.database.repositories.items.pojos.Item;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveDamageCooldown;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
 public enum Items {
 
-    SPEED_1(ItemAttribute.ALPHA,
-            ItemFamily.SPEED_BASIC,
-            WeaponsRarity.COMMON
-    ) {
+    SPEED_1() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpeed().addBaseModifier(10);
         }
     },
-    SPEED_2(ItemAttribute.ALPHA,
-            ItemFamily.SPEED_BASIC,
-            WeaponsRarity.RARE
-    ) {
+    SPEED_2() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpeed().addBaseModifier(20);
         }
     },
-    SPEED_3(ItemAttribute.ALPHA,
-            ItemFamily.SPEED_BASIC,
-            WeaponsRarity.EPIC
-    ) {
+    SPEED_3() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpeed().addBaseModifier(30);
         }
     },
-    ENERGY_1(ItemAttribute.BETA,
-            ItemFamily.ENERGY_BASIC,
-            WeaponsRarity.COMMON
-    ) {
+    ENERGY_1() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpec().setEnergyPerSec(warlordsPlayer.getSpec().getEnergyPerSec() + 5);
         }
     },
-    ENERGY_2(ItemAttribute.BETA,
-            ItemFamily.ENERGY_BASIC,
-            WeaponsRarity.RARE
-    ) {
+    ENERGY_2() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpec().setEnergyPerSec(warlordsPlayer.getSpec().getEnergyPerSec() + 10);
         }
     },
-    ENERGY_3(ItemAttribute.BETA,
-            ItemFamily.ENERGY_BASIC,
-            WeaponsRarity.EPIC
-    ) {
+    ENERGY_3() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getSpec().setEnergyPerSec(warlordsPlayer.getSpec().getEnergyPerSec() + 15);
         }
     },
-    POWER_1(ItemAttribute.GAMMA,
-            ItemFamily.POWER_BASIC,
-            WeaponsRarity.COMMON
-    ) {
+    POWER_1() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             ItemAdditiveDamageCooldown.applyToPlayer(warlordsPlayer, 10);
         }
     },
-    POWER_2(ItemAttribute.GAMMA,
-            ItemFamily.POWER_BASIC,
-            WeaponsRarity.RARE
-    ) {
+    POWER_2() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             ItemAdditiveDamageCooldown.applyToPlayer(warlordsPlayer, 20);
         }
     },
-    POWER_3(ItemAttribute.GAMMA,
-            ItemFamily.POWER_BASIC,
-            WeaponsRarity.EPIC
-    ) {
+    POWER_3() {
         @Override
         public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
             ItemAdditiveDamageCooldown.applyToPlayer(warlordsPlayer, 30);
@@ -166,23 +143,52 @@ public enum Items {
         this.family = family;
     }
 
+    public String getSkullID() {
+        return skullID;
+    }
+
+    public void setSkullID(String skullID) {
+        this.skullID = skullID;
+    }
+
+    public String getSkullTextureID() {
+        return skullTextureID;
+    }
+
+    public void setSkullTextureID(String skullTextureID) {
+        this.skullTextureID = skullTextureID;
+    }
+
     private String name;
     private int weight;
     private ItemAttribute attribute;
     private ItemFamily family;
     private WeaponsRarity rarity;
     private String description;
+    private String skullID;
+    private String skullTextureID;
 
     Items() {
     }
 
-    Items(ItemAttribute attribute, ItemFamily family, WeaponsRarity rarity) {
-        this.attribute = attribute;
-        this.family = family;
-        this.rarity = rarity;
-    }
-
     public void applyToPlayer(WarlordsPlayer warlordsPlayer) {
 
+    }
+
+    public ItemStack generateItemStack() {
+        return generateItemBuilder().get();
+    }
+
+    public ItemBuilder generateItemBuilder() {
+        return new ItemBuilder(SkullUtils.getSkullFrom(skullID, skullTextureID))
+                .name(ChatColor.GREEN + name)
+                .lore(
+                        ChatColor.GRAY + "Weight: " + ChatColor.GREEN + weight,
+                        ChatColor.GRAY + "Attribute: " + ChatColor.GREEN + attribute.name,
+                        ChatColor.GRAY + "Family: " + ChatColor.GREEN + family.name,
+                        ChatColor.GRAY + "Rarity: " + rarity.coloredName(),
+                        "",
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + description, 150)
+                );
     }
 }

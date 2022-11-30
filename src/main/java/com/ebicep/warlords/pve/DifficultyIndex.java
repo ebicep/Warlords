@@ -47,6 +47,8 @@ public enum DifficultyIndex {
             1
     );
 
+    public static final DifficultyIndex[] VALUES = values();
+
     private final String name;
     private final String description;
     private final ChatColor difficultyColor;
@@ -73,6 +75,10 @@ public enum DifficultyIndex {
         this.waveGuildExperienceMultiplier = waveGuildExperienceMultiplier;
         this.maxInsigniaConverted = maxInsigniaConverted;
         this.rewardsMultiplier = rewardsMultiplier;
+    }
+
+    public DifficultyIndex next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
     public String getName() {
