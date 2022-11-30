@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -19,6 +20,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
@@ -117,7 +119,8 @@ public class Vindicate extends AbstractAbility {
                             currentDamageValue,
                             0,
                             100,
-                            false
+                            true,
+                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
                     );
                     return currentDamageValue * 0;
                 } else {

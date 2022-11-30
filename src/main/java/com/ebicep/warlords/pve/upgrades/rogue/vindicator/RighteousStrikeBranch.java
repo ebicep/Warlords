@@ -92,7 +92,8 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
         masterUpgrade = new Upgrade(
                 "Righteous Slash",
                 "Righteous Strike - Master Upgrade",
-                "Righteous Strike hits 4 additional enemies, knocks all hit targets back and silences them for 4 seconds.",
+                "Righteous Strike hits 4 additional enemies. Additionally, your initial strike target will be silenced for 10 seconds" +
+                        " when struck, additional targets will be silenced for 4 seconds instead.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

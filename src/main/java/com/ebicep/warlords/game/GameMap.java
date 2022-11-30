@@ -1896,7 +1896,7 @@ public enum GameMap {
                             .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.02, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     .add(40, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
@@ -1930,7 +1930,7 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.02, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     .add(45, new SimpleWave(35, 10 * SECOND, null)
                             //basic
@@ -1961,7 +1961,7 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.01, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.02, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)

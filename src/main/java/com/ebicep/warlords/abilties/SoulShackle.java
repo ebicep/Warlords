@@ -68,13 +68,16 @@ public class SoulShackle extends AbstractAbility {
                     .closestFirst(wp)
                     .limit(8)
             ) {
+                wp.subtractEnergy(energyCost, false);
                 Vector direction = shackleTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
                 if (viewDirection.dot(direction) > .6) {
                     activateAbility(wp, shackleTarget);
                 }
+
+                return true;
             }
 
-            return true;
+            return false;
         } else {
             for (WarlordsEntity shackleTarget : PlayerFilter
                     .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
