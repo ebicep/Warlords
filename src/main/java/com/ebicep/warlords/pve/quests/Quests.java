@@ -188,9 +188,7 @@ public enum Quests {
                         ChatColor.GRAY + "Rewards:"
                 );
         rewards.forEach((currencies, aLong) -> itemBuilder.addLore(ChatColor.DARK_GRAY + " +" + currencies.getCostColoredName(aLong)));
-        if (completed) {
-            itemBuilder.addLore("", ChatColor.GREEN + "Completed!");
-        } else {
+        if (!completed) {
             itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
         }
