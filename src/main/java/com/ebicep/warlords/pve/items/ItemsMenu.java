@@ -305,7 +305,7 @@ public class ItemsMenu {
                     }
             );
             lore.clear();
-            lore.add((itemLoadout.getDifficulty() == null ? ChatColor.GREEN : ChatColor.GRAY) + "All");
+            lore.add((itemLoadout.getDifficulty() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
             DifficultyIndex[] difficulties = DifficultyIndex.VALUES;
             for (DifficultyIndex value : difficulties) {
                 lore.add((itemLoadout.getDifficulty() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.getName());
@@ -328,7 +328,7 @@ public class ItemsMenu {
                     }
             );
             lore.clear();
-            lore.add((itemLoadout.getSpec() == null ? ChatColor.GREEN : ChatColor.GRAY) + "All");
+            lore.add((itemLoadout.getSpec() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
             Specializations[] specializations = Specializations.VALUES;
             for (Specializations value : specializations) {
                 lore.add((itemLoadout.getSpec() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.name);
