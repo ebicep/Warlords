@@ -76,7 +76,7 @@ public class ExperienceManager {
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
     }};
-    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
+    public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(2, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
         put(Classes.PALADIN, new Pair<>(6, 1));
@@ -155,7 +155,9 @@ public class ExperienceManager {
                         menuLocation.getA(),
                         menuLocation.getB(),
                         itemBuilder.get(),
-                        (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
+                        (m, e) -> {
+                            openLevelingRewardsMenuForClass(player, databasePlayer, value);
+                        }
                 );
             }
 
