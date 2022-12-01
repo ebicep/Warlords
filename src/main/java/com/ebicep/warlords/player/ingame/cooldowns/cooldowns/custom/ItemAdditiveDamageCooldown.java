@@ -20,21 +20,30 @@ public class ItemAdditiveDamageCooldown extends PermanentCooldown<Items> {
         warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveDamageCooldown(warlordsPlayer, damageBoost));
     }
 
+    public void addDamageBoost(int damageBoost) {
+        this.damageBoost += damageBoost;
+    }
+
     private int damageBoost;
 
     public ItemAdditiveDamageCooldown(WarlordsEntity from, int damageBoost) {
-        super("ItemDamage", "", Items.class, null, from, CooldownTypes.BUFF, cooldownManager -> {
-        }, false);
+        super(
+                "ItemDamage",
+                null,
+                Items.class,
+                null,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                false
+        );
         this.damageBoost = damageBoost;
     }
 
     @Override
     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
         return currentDamageValue * (1 + damageBoost / 100f);
-    }
-
-    public void addDamageBoost(int damageBoost) {
-        this.damageBoost += damageBoost;
     }
 
 }
