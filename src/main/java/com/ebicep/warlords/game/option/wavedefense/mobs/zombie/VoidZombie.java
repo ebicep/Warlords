@@ -34,7 +34,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
                         Weapons.VOID_EDGE.getItem()
                 ),
-                10000,
+                11000,
                 0.1f,
                 0,
                 1500,
