@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.EnvoyPigZombie
 import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.VoidPigZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.*;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.BasicSlime;
+import com.ebicep.warlords.game.option.wavedefense.mobs.slime.VoidSlime;
 import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.witch.Witch;
 import com.ebicep.warlords.game.option.wavedefense.mobs.wolf.Wolf;
@@ -54,6 +55,7 @@ public enum Mobs {
     VOID_ZOMBIE(VoidZombie::new),
     VOID_SKELETON(VoidSkeleton::new),
     VOID_PIG_ZOMBIE(VoidPigZombie::new),
+    VOID_SLIME(VoidSlime::new),
 
     // Elite Tier 4 - Exiled
     EXILED_ZOMBIE(ExiledZombie::new),
