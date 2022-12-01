@@ -1619,19 +1619,19 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 39, 77.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 39, 77.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(112.5, 11, 77.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 39, 77.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 39, 71.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 39, 62.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 39, 53.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 39, 47.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(120.5, 39, 53.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 40, 45.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 40, 79.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 40, 79.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 40, 45.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 77.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 71.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 11, 62.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(104.5, 11, 53.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(112.5, 11, 47.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(120.5, 11, 53.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 12, 45.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 12, 79.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(129.5, 12, 79.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(95.5, 12, 45.5), Team.RED));
 
             options.add(new RespawnWaveOption(1, 20, 30));
             options.add(new GraveOption());
@@ -1983,11 +1983,12 @@ public enum GameMap {
                             .add(0.05, Mobs.WITCH)
                             //envoy
                             .add(0.3, Mobs.ENVOY_ZOMBIE)
-                            .add(0.02, Mobs.ENVOY_SKELETON)
-                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             //void
                             .add(0.08, Mobs.VOID_ZOMBIE)
                             .add(0.12, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
                             // exiled
                             .add(0.2, Mobs.EXILED_VOID_LANCER)
                             .add(0.2, Mobs.EXILED_ZOMBIE)
@@ -1997,14 +1998,216 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                     )
+                    .add(55, new SimpleWave(40, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0.2, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.16, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.2, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.05, Mobs.FORGOTTEN_LANCER)
+                    )
                     .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.CHESSKING)
+                    )
+                    .add(61, new SimpleWave(50, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.16, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.2, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.07, Mobs.FORGOTTEN_LANCER)
+                    )
+                    .add(65, new SimpleWave(50, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.05, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.16, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.15, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.12, Mobs.EXILED_SKELETON)
+                            .add(0.12, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.12, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.1, Mobs.FORGOTTEN_LANCER)
                     )
                     .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ILLUMINA)
                     )
+                    .add(71, new SimpleWave(55, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.2, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.2, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.1, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.4, Mobs.FORGOTTEN_LANCER)
+                    )
+                    .add(75, new SimpleWave(55, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.3, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.3, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.25, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.5, Mobs.FORGOTTEN_LANCER)
+                    )
                     .add(80, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
+                    )
+                    .add(81, new SimpleWave(60, 5 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.5, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(0.2, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.3, Mobs.EXILED_SKELETON)
+                            .add(0.25, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.5, Mobs.FORGOTTEN_LANCER)
                     )
                     .add(90, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
@@ -2024,24 +2227,92 @@ public enum GameMap {
                             .add(0, Mobs.ELITE_ZOMBIE)
                             .add(0, Mobs.ELITE_SKELETON)
                             .add(0, Mobs.ELITE_PIG_ZOMBIE)
-                            .add(0.1, Mobs.MAGMA_CUBE)
-                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0, Mobs.MAGMA_CUBE)
+                            .add(0, Mobs.IRON_GOLEM)
                             .add(0.1, Mobs.WITCH)
                             //envoy
-                            .add(0.3, Mobs.ENVOY_ZOMBIE)
-                            .add(0.02, Mobs.ENVOY_SKELETON)
-                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             //void
-                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(1, Mobs.VOID_ZOMBIE)
                             .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.05, Mobs.VOID_PIG_ZOMBIE)
                             // exiled
-                            .add(0.5, Mobs.EXILED_VOID_LANCER)
-                            .add(0.3, Mobs.EXILED_ZOMBIE)
-                            .add(0.5, Mobs.EXILED_SKELETON)
-                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
-                            .add(0.5, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(1, Mobs.EXILED_VOID_LANCER)
+                            .add(0, Mobs.EXILED_ZOMBIE)
+                            .add(0, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
                             .add(0.1, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0, Mobs.FORGOTTEN_LANCER)
+                    )
+                    .add(102, new SimpleWave(80, 2 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(1, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                            .add(0, Mobs.VOID_SKELETON)
+                            .add(0, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0, Mobs.EXILED_VOID_LANCER)
+                            .add(0, Mobs.EXILED_ZOMBIE)
+                            .add(0, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0, Mobs.FORGOTTEN_LANCER)
+                    )
+                    .add(103, new SimpleWave(80, 2 * SECOND, null)
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0.2, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0, Mobs.MAGMA_CUBE)
+                            .add(0, Mobs.IRON_GOLEM)
+                            .add(0, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                            .add(1, Mobs.VOID_SKELETON)
+                            .add(0, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0, Mobs.EXILED_VOID_LANCER)
+                            .add(0, Mobs.EXILED_ZOMBIE)
+                            .add(0, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0, Mobs.FORGOTTEN_LANCER)
                     )
                     ,
                     DifficultyIndex.ENDLESS
