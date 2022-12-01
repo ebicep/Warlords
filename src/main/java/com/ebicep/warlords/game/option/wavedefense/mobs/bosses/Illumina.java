@@ -72,9 +72,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            IronGolem ironGolem = new IronGolem(warlordsNPC.getLocation());
-            ironGolem.getWarlordsNPC().getSpeed().addBaseModifier(40);
-            option.spawnNewMob(ironGolem);
+            option.spawnNewMob(new IronGolem(spawnLocation));
         }
 
         PrismGuard prismGuard = new PrismGuard();
@@ -152,7 +150,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 11000, 11);
+            timedDamage(option, playerCount, 10500, 11);
             for (int i = 0; i < (3 * playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(loc));
             }
@@ -170,9 +168,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, 5000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                IronGolem ironGolem = new IronGolem(loc);
-                ironGolem.getWarlordsNPC().getSpeed().addBaseModifier(40);
-                option.spawnNewMob(ironGolem);
+                option.spawnNewMob(new IronGolem(loc));
             }
         }
     }
@@ -190,8 +186,7 @@ public class Illumina extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .withColor(Color.WHITE)
+                .withColor(Color.BLUE)
                 .with(FireworkEffect.Type.BALL_LARGE)
                 .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
@@ -212,8 +207,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         10, 35, 0
                 );
             }
-            Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.4);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.5f);
+            Utils.addKnockback(warlordsNPC.getLocation(), we, -4, 0.3);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
         }
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);

@@ -31,11 +31,11 @@ public class Void extends AbstractSkeleton implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
                         Weapons.VOID_EDGE.getItem()
                 ),
-                100000,
+                150000,
                 0.2f,
                 20,
-                7000,
-                8500
+                3000,
+                4000
         );
     }
 
@@ -45,7 +45,7 @@ public class Void extends AbstractSkeleton implements BossMob {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
-                        ChatColor.BLACK + getWarlordsNPC().getName(),
+                        ChatColor.DARK_GRAY + getWarlordsNPC().getName(),
                         ChatColor.BLACK + "?????",
                         20, 30, 20
                 );

@@ -56,7 +56,7 @@ public class RemedicChains extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(player, castRange, castRange, castRange)
+                .entitiesAround(wp, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(alliesAffected)
@@ -69,7 +69,7 @@ public class RemedicChains extends AbstractAbility {
         }
 
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
         HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
