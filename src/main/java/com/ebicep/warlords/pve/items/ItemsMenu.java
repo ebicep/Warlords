@@ -30,18 +30,13 @@ public class ItemsMenu {
             List<ItemLoadout> loadouts = itemsManager.getLoadouts();
             for (int i = 0, loadoutsSize = loadouts.size(); i < loadoutsSize; i++) {
                 ItemLoadout loadout = loadouts.get(i);
-                List<ItemEntry> equippedItems = itemInventory.stream()
-                        .filter(itemEntry -> loadout.getItems().contains(itemEntry.getUUID()))
-                        .collect(Collectors.toList());
                 menu.addItem(new ItemBuilder(loadout.getName().equals("Default") ? Material.IRON_DOOR : Material.WOOD_DOOR)
                                 .name(ChatColor.GREEN + "Loadout #" + (i + 1) + ": " + ChatColor.GOLD + loadout.getName())
                                 .lore(
-                                        ChatColor.GRAY + "Weight: " + ChatColor.GOLD + equippedItems.stream()
-                                                .mapToInt(itemEntry -> itemEntry.getItem().getWeight())
-                                                .sum(),
-                                        ChatColor.GRAY + "Difficulty: " + ChatColor.GOLD + (loadout.getDifficulty() == null ? "All" : loadout.getDifficulty()
+                                        ChatColor.GRAY + "Weight: " + ChatColor.GOLD + loadout.getWeight(itemsManager),
+                                        ChatColor.GRAY + "Difficulty: " + ChatColor.GOLD + (loadout.getDifficulty() == null ? "Any" : loadout.getDifficulty()
                                                 .getName()),
-                                        ChatColor.GRAY + "Specialization: " + ChatColor.GOLD + (loadout.getSpec() == null ? "All" : loadout.getSpec().name)
+                                        ChatColor.GRAY + "Specialization: " + ChatColor.GOLD + (loadout.getSpec() == null ? "Any" : loadout.getSpec().name)
                                 )
                                 .get(),
                         (m, e) -> openItemLoadoutMenu(player, loadout, 1)
