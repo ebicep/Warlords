@@ -207,7 +207,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         10, 35, 0
                 );
             }
-            Utils.addKnockback(warlordsNPC.getLocation(), we, -4, 0.3);
+            Utils.addKnockback(warlordsNPC.getLocation(), we, -4, 0.35);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
         }
 
@@ -291,8 +291,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         warlordsNPC.addHealingInstance(
                                 warlordsNPC,
                                 "Death Ray Healing",
-                                we.getMaxHealth() * 0.3f,
-                                we.getMaxHealth() * 0.3f,
+                                we.getMaxHealth() * 2,
+                                we.getMaxHealth() * 2,
                                 -1,
                                 100,
                                 false,

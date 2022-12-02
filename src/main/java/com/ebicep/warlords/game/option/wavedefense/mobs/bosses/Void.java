@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.AbstractSkeleton;
@@ -32,6 +33,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     private boolean flamePhaseTriggerTwo = false;
     private boolean timedDamageTrigger = false;
     private boolean preventArmageddon = false;
+    private boolean boltaroPhaseTrigger = false;
     private final int stormRadius = 10;
     private final int earthQuakeRadius = 10;
 
@@ -104,11 +106,6 @@ public class Void extends AbstractSkeleton implements BossMob {
             immolation(option, loc);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.15f) && !flamePhaseTriggerTwo) {
-            flamePhaseTriggerTwo = true;
-            immolation(option, loc);
-        }
-
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
             timedDamageTrigger = true;
             preventArmageddon = true;
@@ -118,8 +115,19 @@ public class Void extends AbstractSkeleton implements BossMob {
             }
         }
 
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.25f) && !flamePhaseTriggerTwo) {
+            flamePhaseTriggerTwo = true;
+            immolation(option, loc);
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
+            boltaroPhaseTrigger = true;
+            for (int i = 0; i < playerCount; i++) {
+                option.spawnNewMob(new Boltaro(loc));
+            }
+        }
+
         if (ticksElapsed % 160 == 0) {
-            //Bukkit.broadcastMessage("earthquake");
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
@@ -141,7 +149,7 @@ public class Void extends AbstractSkeleton implements BossMob {
             }
         }
 
-        if (ticksElapsed % 300 == 0 && !preventArmageddon) {
+        if (ticksElapsed % 320 == 0 && !preventArmageddon) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 90);
@@ -165,6 +173,12 @@ public class Void extends AbstractSkeleton implements BossMob {
                     shockwave(loc, stormRadius + 25, 50, playerCount, 1);
                 }
             }.runTaskLater(60);
+        }
+
+        if (ticksElapsed % 400 == 0) {
+            for (int i = 0; i < (2 * playerCount); i++) {
+                option.spawnNewMob(new TormentedSoul(warlordsNPC.getLocation()));
+            }
         }
     }
 
@@ -198,13 +212,13 @@ public class Void extends AbstractSkeleton implements BossMob {
         float damage;
         switch (option.getDifficulty()) {
             case HARD:
-                damage = 300;
+                damage = 400;
                 break;
             case EASY:
                 damage = 100;
                 break;
             default:
-                damage = 250;
+                damage = 300;
                 break;
         }
         new GameRunnable(warlordsNPC.getGame()) {
@@ -291,7 +305,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
                         "",
-                        ChatColor.RED + "Keep attacking Illumina to stop the draining!",
+                        ChatColor.RED + "Keep attacking Void to stop the draining!",
                         10, 35, 0
                 );
             }
@@ -340,8 +354,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Vampiric Leash",
-                                500,
-                                500,
+                                700,
+                                700,
                                 -1,
                                 100,
                                 true
