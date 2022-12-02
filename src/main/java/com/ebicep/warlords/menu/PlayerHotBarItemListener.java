@@ -2,20 +2,14 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
-import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.rewards.RewardInventory;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
-import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
@@ -30,28 +24,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openGamemodeMenu;
-import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public class PlayerHotBarItemListener implements Listener {
 
-
-    private static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
-    private static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
-    private static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
-    private static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD).name("§aWeapons").get();
-    private static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST).name("§aReward Inventory").get();
-    private static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
+    public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
+    public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND).name("§aPvP Menu").get();
+    public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT).name("§aPvE Menu").get();
+    public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
+    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
+    public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
+    public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK).name("§aSettings Menu").get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
     static {
-        SLOT_HOTBAR_LISTENER.put(1, e -> {
-        });
-        SLOT_HOTBAR_LISTENER.put(2, e -> {
+        SLOT_HOTBAR_LISTENER.put(0, e -> {
             Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
             if (p != null) {
                 List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getA().getRegularGamesMenu().getRegularGamePlayers();
@@ -70,6 +60,11 @@ public class PlayerHotBarItemListener implements Listener {
                 }
             }
         });
+        SLOT_HOTBAR_LISTENER.put(1, e -> {
+        });
+        SLOT_HOTBAR_LISTENER.put(2, e -> {
+            WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(e.getPlayer());
+        });
         SLOT_HOTBAR_LISTENER.put(3, e -> {
             if (e.getPlayer().hasPermission("warlords.game.debug")) {
                 Bukkit.getServer().dispatchCommand(e.getPlayer(), "wl");
@@ -77,11 +72,10 @@ public class PlayerHotBarItemListener implements Listener {
                 openGamemodeMenu(e.getPlayer());
             }
         });
-        SLOT_HOTBAR_LISTENER.put(4, e -> openMainMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openSelectionMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
-        SLOT_HOTBAR_LISTENER.put(6, e -> WeaponManagerMenu.openWeaponInventoryFromExternal(e.getPlayer()));
-        SLOT_HOTBAR_LISTENER.put(7, e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer()));
-        SLOT_HOTBAR_LISTENER.put(8, e -> RewardInventory.openRewardInventory(e.getPlayer(), 1));
+        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
     }
 
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
@@ -90,12 +84,6 @@ public class PlayerHotBarItemListener implements Listener {
         Specializations selectedSpec = playerSettings.getSelectedSpec();
         AbstractPlayerClass apc = selectedSpec.create.get();
 
-        setItem(player,
-                1,
-                new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                        .name("§aWeapon Skin Preview")
-                        .get()
-        );
         if (!fromGame) {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
             if (partyPlayerPair != null) {
@@ -104,10 +92,19 @@ public class PlayerHotBarItemListener implements Listener {
                     playerList.stream()
                             .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
                             .findFirst()
-                            .ifPresent(regularGamePlayer -> setItem(player, 2, new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get()));
+                            .ifPresent(regularGamePlayer -> setItem(player, 0, new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get()));
                 }
             }
         }
+        setItem(player,
+                1,
+                new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                        .name("§aWeapon Skin Preview")
+                        .lore("")
+                        .get()
+        );
+
+        setItem(player, 2, PVP_MENU);
 
         if (player.hasPermission("warlords.game.debug")) {
             setItem(player, 3, DEBUG_MENU);
@@ -116,46 +113,13 @@ public class PlayerHotBarItemListener implements Listener {
         }
         setItem(player, 4, SELECTION_MENU);
         setItem(player, 5, SPECTATE_MENU);
+        setItem(player, 6, PVE_MENU);
+        setItem(player, 8, SETTINGS_MENU);
 
-        if (fromGame) {
-            giveLobbyHotBarDatabase(player);
-        } else if (DatabaseManager.enabled) {
-            setItem(player, 7, new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get());
-            setItem(player, 8, REWARD_INVENTORY_MENU);
-        }
     }
 
     public static void setItem(Player player, int slot, ItemStack itemStack) {
         player.getInventory().setItem(slot, itemStack);
-    }
-
-    public static void giveLobbyHotBarDatabase(Player player) {
-        if (DatabaseManager.enabled) {
-            updateWeaponManagerItem(player);
-            setItem(player, 7, new ItemBuilder(HeadUtils.getHead(player.getUniqueId())).name("§aLevel Rewards").get());
-            setItem(player, 8, REWARD_INVENTORY_MENU);
-        }
-    }
-
-    public static void updateWeaponManagerItem(Player player) {
-        UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid,
-                databasePlayer -> updateWeaponManagerItem(player, databasePlayer),
-                () -> setItem(player, 6, WEAPONS_MENU)
-        );
-    }
-
-    public static void updateWeaponManagerItem(Player player, DatabasePlayer databasePlayer) {
-        List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-        Optional<AbstractWeapon> optionalWeapon = weapons.stream()
-                .filter(AbstractWeapon::isBound)
-                .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
-                .findFirst();
-        if (optionalWeapon.isPresent()) {
-            setItem(player, 6, optionalWeapon.get().generateItemStack(false));
-            return;
-        }
-        setItem(player, 6, WEAPONS_MENU);
     }
 
     @EventHandler

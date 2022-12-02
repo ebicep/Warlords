@@ -234,10 +234,11 @@ public class WarlordsEvents implements Listener {
                 }
                 CustomScoreboard.updateLobbyPlayerNames();
                 ExperienceManager.giveExperienceBar(player);
-                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
                 if (StatsLeaderboardManager.loaded) {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
+                } else {
+                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 }
             }, () -> {
                 if (!fromGame) {

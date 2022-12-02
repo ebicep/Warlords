@@ -4,21 +4,15 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
@@ -26,17 +20,10 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
-import static com.ebicep.warlords.menu.Menu.*;
 
 public class ExperienceManager {
 
@@ -76,14 +63,13 @@ public class ExperienceManager {
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
     }};
-    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
+    public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(2, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
         put(Classes.PALADIN, new Pair<>(6, 1));
         put(Classes.SHAMAN, new Pair<>(3, 3));
         put(Classes.ROGUE, new Pair<>(5, 3));
     }};
-    private static final int LEVELS_PER_PAGE = 25;
 
     static {
         //caching all levels/experience
@@ -99,275 +85,6 @@ public class ExperienceManager {
         EXPERIENCE_TO_LEVEL = Collections.unmodifiableMap(experienceLevelNew);
 
         EXPERIENCE_DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
-    }
-
-    public static void openLevelingRewardsMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Rewards Menu", 9 * 6);
-
-            for (Classes value : Classes.VALUES) {
-                Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
-
-                List<String> specLore = new ArrayList<>();
-                boolean hasRewards = false;
-                for (Specializations spec : value.subclasses) {
-                    DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
-                    int prestige = databasePlayerSpec.getPrestige();
-                    int level = getLevelFromExp(databasePlayerSpec.getExperience());
-                    long experience = databasePlayerSpec.getExperience();
-
-                    specLore.add(ChatColor.GOLD + spec.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(
-                            level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige));
-                    specLore.add(getProgressStringWithPrestige(experience, level + 1, prestige));
-                    specLore.add("");
-
-                    for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                        if (prestigeCheck == prestige) {
-                            for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
-                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
-                                    hasRewards = true;
-                                    break;
-                                }
-                            }
-                        } else {
-                            for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
-                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                                    hasRewards = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (hasRewards) {
-                            break;
-                        }
-                    }
-                }
-
-                ItemBuilder itemBuilder = new ItemBuilder(value.item)
-                        .name(ChatColor.GREEN + value.name)
-                        .lore(specLore);
-                if (hasRewards) {
-                    itemBuilder.addLore(ChatColor.GREEN + "You have unclaimed rewards!");
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
-                }
-                menu.setItem(
-                        menuLocation.getA(),
-                        menuLocation.getB(),
-                        itemBuilder.get(),
-                        (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
-                );
-            }
-
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        });
-    }
-
-    public static void openLevelingRewardsMenuForClass(Player player, DatabasePlayer databasePlayer, Classes classes) {
-        Menu menu = new Menu(classes.name, 9 * 4);
-
-        List<Specializations> values = classes.subclasses;
-        for (int i = 0; i < values.size(); i++) {
-            Specializations spec = values.get(i);
-            DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
-            int prestige = databasePlayerSpec.getPrestige();
-            int level = getLevelFromExp(databasePlayerSpec.getExperience());
-            long experience = databasePlayerSpec.getExperience();
-
-            boolean hasRewards = false;
-            for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                if (prestigeCheck == prestige) {
-                    for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
-                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
-                            hasRewards = true;
-                            break;
-                        }
-                    }
-                } else {
-                    for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
-                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                            hasRewards = true;
-                            break;
-                        }
-                    }
-                }
-                if (hasRewards) {
-                    break;
-                }
-            }
-
-            ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
-                    .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" +
-                            ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
-                            getPrestigeLevelString(prestige)
-                    )
-                    .lore(getProgressStringWithPrestige(experience, level + 1, prestige));
-            if (hasRewards) {
-                itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
-            }
-            menu.setItem(
-                    9 / 2 - values.size() / 2 + i * 2 - 1,
-                    1,
-                    itemBuilder
-                            .get(),
-                    (m, e) -> openLevelingRewardsMenuForSpec(player,
-                            databasePlayer, spec,
-                            1,
-                            databasePlayerSpec.getPrestige()
-                    )
-            );
-        }
-
-        menu.setItem(3, 3, MENU_BACK, (m, e) -> openLevelingRewardsMenu(player));
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openLevelingRewardsMenuForSpec(
-            Player player,
-            DatabasePlayer databasePlayer,
-            Specializations spec,
-            int page,
-            int selectedPrestige
-    ) {
-        Menu menu = new Menu(spec.name, 9 * 6);
-
-        DatabaseSpecialization databaseSpecialization = databasePlayer.getSpec(spec);
-        int currentPrestige = databasePlayer.getSpec(spec).getPrestige();
-        int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
-        long experience = databasePlayer.getSpec(spec).getExperience();
-
-        menu.setItem(
-                4,
-                0,
-                new ItemBuilder(spec.specType.itemStack)
-                        .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(
-                                level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(currentPrestige))
-                        .lore(getProgressStringWithPrestige(experience, level + 1, currentPrestige))
-                        .get(),
-                (m, e) -> {
-                }
-        );
-
-        for (int i = 0; i <= LEVELS_PER_PAGE; i++) {
-            int section = i * page;
-            if (section == 0) {
-                continue;
-            }
-            int column = (i - 1) % 9;
-            int row = (i - 1) / 9 + 1;
-
-            if (i >= 19) {
-                column++;
-            }
-
-            int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
-            LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
-            List<String> lore = rewardForLevel.entrySet()
-                    .stream()
-                    .map(currenciesLongEntry -> {
-                        Currencies currency = currenciesLongEntry.getKey();
-                        Long value = currenciesLongEntry.getValue();
-                        return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
-                    }).collect(Collectors.toList());
-            lore.add(0, "");
-            lore.add("");
-            AtomicBoolean claimed = new AtomicBoolean(false);
-            boolean currentPrestigeSelected = selectedPrestige != currentPrestige;
-            if (menuLevel <= level || currentPrestigeSelected) {
-                claimed.set(databaseSpecialization.hasLevelUpReward(menuLevel, selectedPrestige));
-                if (claimed.get()) {
-                    lore.add(ChatColor.GREEN + "Claimed!");
-                } else {
-                    lore.add(ChatColor.YELLOW + "Click to claim!");
-                }
-            } else {
-                lore.add(ChatColor.RED + "You can't claim this yet!");
-            }
-            menu.setItem(
-                    column,
-                    row,
-                    new ItemBuilder(Material.STAINED_GLASS_PANE,
-                            1,
-                            menuLevel <= level || currentPrestigeSelected ? claimed.get() ? (short) 5 : (short) 4 : (short) 15
-                    )
-                            .name((menuLevel <= level ? ChatColor.GREEN : ChatColor.RED) + "Level Reward " + menuLevel)
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        if (menuLevel <= level || currentPrestigeSelected) {
-                            if (claimed.get()) {
-                                player.sendMessage(ChatColor.RED + "You already claimed this reward!");
-                            } else {
-                                DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-                                rewardForLevel.forEach(databasePlayerPvE::addCurrency);
-                                databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
-                                player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
-                            }
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You can't claim this reward yet!");
-                        }
-                    }
-            );
-        }
-
-        if (currentPrestige != 0) {
-            ItemBuilder itemBuilder = new ItemBuilder(Material.HOPPER)
-                    .name(ChatColor.GREEN + "Click to Cycle Between Prestige Rewards");
-            List<String> lore = new ArrayList<>();
-            for (int i = 0; i <= currentPrestige; i++) {
-                lore.add((i == selectedPrestige ? ChatColor.AQUA : ChatColor.GRAY) + "Prestige " + i);
-            }
-            itemBuilder.lore(lore);
-            menu.setItem(5, 5,
-                    itemBuilder.get(),
-                    (m, e) -> {
-                        if (selectedPrestige == currentPrestige) {
-                            openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, 0);
-                        } else {
-                            openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige + 1);
-                        }
-                    }
-            );
-        }
-
-        if (page - 1 > 0) {
-            menu.setItem(
-                    0,
-                    3,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                            .get(),
-                    (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
-            );
-        }
-        if (page + 1 < 5) {
-            menu.setItem(
-                    8,
-                    3,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                            .get(),
-                    (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
-            );
-
-        }
-
-
-        menu.setItem(3,
-                5,
-                MENU_BACK,
-                (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, Specializations.getClass(spec))
-        );
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
     }
 
     public static void awardWeeklyExperience(Document weeklyDocument) {

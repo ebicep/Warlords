@@ -20,7 +20,6 @@ import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
@@ -106,9 +105,6 @@ public class DatabaseManager {
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 loadPlayer(player.getUniqueId(), collection, (databasePlayer) -> {
-                    if (collection == PlayersCollections.LIFETIME) {
-                        PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
-                    }
                 });
             }
         });

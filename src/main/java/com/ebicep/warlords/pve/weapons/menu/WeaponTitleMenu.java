@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -146,7 +145,7 @@ public class WeaponTitleMenu {
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
                                         openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, page);
-                                        PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
+
                                     },
                                     (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, page),
                                     (m2) -> {
