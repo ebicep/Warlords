@@ -14,7 +14,7 @@ public class WeaponMangerTrait extends WarlordsTrait {
     @Override
     public void rightClick(NPCRightClickEvent event) {
         Player player = event.getClicker();
-        WeaponManagerMenu.openWeaponInventoryFromExternal(player);
+        WeaponManagerMenu.openWeaponInventoryFromExternal(player, true);
     }
 
 }

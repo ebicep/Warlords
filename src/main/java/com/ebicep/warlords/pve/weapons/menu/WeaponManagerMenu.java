@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.menu.PlayerHotBarItemListener;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
@@ -40,13 +40,14 @@ public class WeaponManagerMenu {
 
     public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
-    public static void openWeaponInventoryFromExternal(Player player) {
+    public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
 
             PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
             PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+            menuSettings.setOpenedFromNPC(fromNPC);
             menuSettings.setWeaponInventory(weaponInventory);
             menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
 
@@ -174,7 +175,7 @@ public class WeaponManagerMenu {
                                 for (AbstractWeapon weapon : weaponsToSalvage) {
                                     WeaponSalvageMenu.salvageWeapon(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
                                 }
-                                openWeaponInventoryFromExternal(player);
+                                openWeaponInventoryFromExternal(player, true);
                             },
                             (m2, e2) -> openWeaponInventoryFromInternal(player, databasePlayer),
                             (m2) -> {
@@ -267,7 +268,11 @@ public class WeaponManagerMenu {
                 }
         );
 
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        if (menuSettings.isOpenedFromNPC()) {
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        } else {
+            menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
+        }
         menu.openForPlayer(player);
     }
 
@@ -455,7 +460,7 @@ public class WeaponManagerMenu {
                     }
             ));
 
-            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
+
         }
 
         boolean bigMenu = weaponOptions.size() > 3;
@@ -550,6 +555,7 @@ public class WeaponManagerMenu {
     }
 
     static class PlayerMenuSettings {
+        private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
@@ -584,6 +590,14 @@ public class WeaponManagerMenu {
             if (!ascending) {
                 Collections.reverse(sortedWeaponInventory);
             }
+        }
+
+        public boolean isOpenedFromNPC() {
+            return openedFromNPC;
+        }
+
+        public void setOpenedFromNPC(boolean openedFromNPC) {
+            this.openedFromNPC = openedFromNPC;
         }
 
         public int getPage() {

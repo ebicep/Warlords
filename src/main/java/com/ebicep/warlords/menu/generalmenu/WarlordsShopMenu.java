@@ -9,7 +9,6 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -32,38 +31,10 @@ import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public class WarlordsShopMenu {
+
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
             .name(ChatColor.GREEN + "Back")
             .lore(ChatColor.GRAY + "To Pre-game Menu")
-            .get();
-    private static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
-            .name(ChatColor.GREEN + "Weapon Skin Selector")
-            .lore("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
-            .get();
-    private static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
-            .name(ChatColor.AQUA + "Armor Sets " + ChatColor.GRAY + "& " + ChatColor.AQUA + "Helmets " + ChatColor.GOLD + "(Cosmetic)")
-            .lore("§7Equip your favorite armor\n§7sets or class helmets")
-            .get();
-    private static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
-            .name(ChatColor.AQUA + "Weapon Skill Boost")
-            .lore("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
-                    "",
-                    "§cWARNING: §7This does not apply to PvE.",
-                    "",
-                    "§eClick to change skill boost!"
-            )
-            .get();
-    private static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
-            .name(ChatColor.AQUA + "Settings")
-            .lore("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
-            .get();
-    private static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
-            .name(ChatColor.GREEN + "Particle Quality")
-            .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
-            .get();
-    private static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
-            .name(ChatColor.GREEN + "Class Information")
-            .lore("§7Preview of your ability \ndescriptions and specialization \nstats.")
             .get();
     private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
             .name(ChatColor.GREEN + "Mini Games")
@@ -78,7 +49,7 @@ public class WarlordsShopMenu {
         for (int i = 0; i < values.length; i++) {
             Classes group = values[i];
             List<String> lore = new ArrayList<>();
-            lore.add(group.description);
+            lore.add(WordWrap.wrapWithNewline(ChatColor.GRAY + group.description, 150));
             lore.add("");
             lore.add(ChatColor.GOLD + "Specializations:");
             for (Specializations subClass : group.subclasses) {
@@ -104,14 +75,15 @@ public class WarlordsShopMenu {
                     }
             );
         }
-        menu.setItem(1, 3, MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
-        menu.setItem(3, 3, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
-        menu.setItem(5, 3, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
-        menu.setItem(7, 3, MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
+        menu.setItem(1, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
+        menu.setItem(3, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
+        menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
+        menu.setItem(7, 3, WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
+        menu.setItem(4, 2, WarlordsNewHotbarMenu.PvPMenu.MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
         menu.openForPlayer(player);
     }
+
 
     public static void openClassMenu(Player player, Classes selectedGroup) {
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
@@ -159,7 +131,7 @@ public class WarlordsShopMenu {
                         openClassMenu(player, selectedGroup);
                         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
                             databasePlayer.setLastSpec(spec);
-                            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
+
                         });
                     }
             );
@@ -168,6 +140,7 @@ public class WarlordsShopMenu {
 
         menu.openForPlayer(player);
     }
+
 
     public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
         SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
@@ -252,6 +225,7 @@ public class WarlordsShopMenu {
         menu.openForPlayer(player);
     }
 
+
     public static void openWeaponMenu(Player player, int pageNumber) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
@@ -331,6 +305,7 @@ public class WarlordsShopMenu {
         menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
+
 
     public static void openArmorMenu(Player player, int pageNumber) {
         boolean onBlueTeam = Warlords.getGameManager()
@@ -446,6 +421,7 @@ public class WarlordsShopMenu {
         menu.openForPlayer(player);
     }
 
+
     public static void openSettingsMenu(Player player) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
 
@@ -453,7 +429,7 @@ public class WarlordsShopMenu {
         menu.setItem(
                 1,
                 1,
-                MENU_SETTINGS_PARTICLE_QUALITY,
+                WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS_PARTICLE_QUALITY,
                 (m, e) -> openParticleQualityMenu(player)
         );
         menu.setItem(
@@ -478,6 +454,7 @@ public class WarlordsShopMenu {
         menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
+
 
     public static void openParticleQualityMenu(Player player) {
         ParticleQuality selectedParticleQuality = PlayerSettings.getPlayerSettings(player.getUniqueId()).getParticleQuality();
@@ -561,6 +538,7 @@ public class WarlordsShopMenu {
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
+
 
     public static void openLobbyAbilityMenu(Player player) {
         Menu menu = new Menu("Class Information", 9);

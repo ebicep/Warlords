@@ -245,7 +245,7 @@ public enum GameMode {
                             return null;
                         }
                     },
-                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
+                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p, true)
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
