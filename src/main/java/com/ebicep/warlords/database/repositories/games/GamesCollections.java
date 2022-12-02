@@ -10,6 +10,8 @@ public enum GamesCollections {
     PVE("PvE", "Games_Information_PvE"),
 //    TEMP("TEMP1", "TEMP1"),
 //    TEMP2("TEMP2", "TEMP2"),
+//    TEMP3("TEMP3", "TEMP3"),
+//    TEMP4("TEMP4", "TEMP4"),
 
 
     ;

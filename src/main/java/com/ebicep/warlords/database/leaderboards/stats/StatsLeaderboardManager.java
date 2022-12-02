@@ -45,7 +45,7 @@ public class StatsLeaderboardManager {
     }};
     public static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> CACHED_PLAYERS = new ConcurrentHashMap<>();
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
