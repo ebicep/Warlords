@@ -31,14 +31,13 @@ import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.
 
 public class PlayerHotBarItemListener implements Listener {
 
-
-    private static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
-    private static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND).name("§aPvP Menu").get();
-    private static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT).name("§aPvE Menu").get();
-    private static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
-    private static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
-    private static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
-    private static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK).name("§aSettings Menu").get();
+    public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
+    public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND).name("§aPvP Menu").get();
+    public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT).name("§aPvE Menu").get();
+    public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
+    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
+    public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
+    public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK).name("§aSettings Menu").get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
     static {
