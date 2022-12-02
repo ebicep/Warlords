@@ -84,6 +84,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 public void run() {
                     if (warlordsNPC.isDead()) {
                         this.cancel();
+                        return;
                     }
 
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
