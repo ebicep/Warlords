@@ -78,8 +78,8 @@ public class WarlordsNewHotbarMenu {
                         specLore.add((databasePlayer.getLastSpec() == spec ? ChatColor.GREEN : ChatColor.GRAY) + spec.name +
                                 ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
                                 ExperienceManager.getPrestigeLevelString(prestige));
-                        specLore.add(" " + ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige).replace("\n", "\n "));
-                        //specLore.add("");
+                        specLore.add(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
+                        specLore.add("");
 
                         for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                             if (prestigeCheck == prestige) {
