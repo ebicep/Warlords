@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
@@ -240,6 +241,7 @@ public class GuildMenu {
                                                         ChatColor.GREEN + guildCoinsGained + ChatColor.GRAY + " guild coins.",
                                                 true
                                         );
+                                        GuildLeaderboardManager.recalculateAllLeaderboards();
                                         openGuildMenu(guild, player, 1);
                                     },
                                     (m2, e2) -> openGuildMenu(guild, player, 1),
