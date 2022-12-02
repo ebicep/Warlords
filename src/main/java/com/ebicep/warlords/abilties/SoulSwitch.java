@@ -133,8 +133,8 @@ public class SoulSwitch extends AbstractAbility {
                                         hit.addDamageInstance(
                                                 wp,
                                                 name,
-                                                1004 * (pveUpgrade ? 2 : 1),
-                                                1218 * (pveUpgrade ? 2 : 1),
+                                                782 * (pveUpgrade ? 2 : 1),
+                                                1034 * (pveUpgrade ? 2 : 1),
                                                 0,
                                                 100,
                                                 false

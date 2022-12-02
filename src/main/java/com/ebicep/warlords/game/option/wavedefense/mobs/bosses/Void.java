@@ -394,8 +394,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                         warlordsNPC.addHealingInstance(
                                 warlordsNPC,
                                 "Death Ray Healing",
-                                we.getMaxHealth() * 0.3f,
-                                we.getMaxHealth() * 0.3f,
+                                we.getMaxHealth() * 2,
+                                we.getMaxHealth() * 2,
                                 -1,
                                 100,
                                 false,

@@ -11,7 +11,6 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
     float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
     int duration = ability.getDuration();
-    double radius = ability.getRadius();
 
     public CapacitorTotemBranch(AbilityTree abilityTree, CapacitorTotem ability) {
         super(abilityTree, ability);
@@ -54,7 +53,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Chronos - Tier I",
                 "+1s Duration\n-5% Cooldown reduction",
                 5000,
                 () -> {
@@ -63,7 +62,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Chronos - Tier II",
                 "+2s Duration\n-10% Cooldown reduction",
                 10000,
                 () -> {
@@ -72,7 +71,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Chronos - Tier III",
                 "+3s Duration\n-15% Cooldown reduction",
                 15000,
                 () -> {
@@ -81,7 +80,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Chronos - Tier IV",
                 "+4s Duration\n-20% Cooldown reduction",
                 20000,
                 () -> {
