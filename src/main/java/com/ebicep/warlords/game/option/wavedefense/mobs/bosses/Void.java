@@ -163,8 +163,6 @@ public class Void extends AbstractSkeleton implements BossMob {
                     shockwave(loc, stormRadius + 20, 40, playerCount, 1);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 25, false, 50, warlordsNPC.getGame());
                     shockwave(loc, stormRadius + 25, 50, playerCount, 1);
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 30, false, 60, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 30, 60, playerCount, 1);
                 }
             }.runTaskLater(60);
         }
@@ -222,8 +220,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                 counter++;
                 double radius = (4 * counter);
                 Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.1f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.1f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.SMOKE_NORMAL, 2, counter);
+                Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.2f);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.SMOKE_LARGE, 1, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -255,15 +253,16 @@ public class Void extends AbstractSkeleton implements BossMob {
                     warlordsNPC.getSpeed().addBaseModifier(40);
                 }
             }
-        }.runTaskTimer(40, 3);
+        }.runTaskTimer(40, 4);
     }
 
     private void shockwave(Location loc, double radius, int tickDelay, long playerCount, float damageMultiplier) {
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
             public void run() {
-                if (warlordsNPC.isDead()) {
+                if (warlordsNPC.isDead() || preventArmageddon) {
                     this.cancel();
+                    return;
                 }
 
                 Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);

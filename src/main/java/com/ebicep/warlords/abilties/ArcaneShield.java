@@ -55,7 +55,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
@@ -97,7 +97,10 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 })
         );
-        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+
+        if (player != null) {
+            ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+        }
 
         return true;
     }
