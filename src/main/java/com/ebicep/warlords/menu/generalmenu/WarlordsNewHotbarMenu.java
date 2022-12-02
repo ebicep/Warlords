@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
@@ -18,7 +19,6 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -45,12 +45,13 @@ public class WarlordsNewHotbarMenu {
 
         public static final int LEVELS_PER_PAGE = 25;
 
-        public static void openSelectionMenu(Player player) {
+        public static void openWarlordsMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                Menu menu = new Menu("Class Menu", 9 * 6);
+                Menu menu = new Menu("Warlords Menu", 9 * 6);
 
-                for (Classes value : Classes.VALUES) {
-                    Pair<Integer, Integer> menuLocation = ExperienceManager.CLASSES_MENU_LOCATION.get(value);
+                Classes[] classes = Classes.VALUES;
+                for (int i = 0, classesLength = classes.length; i < classesLength; i++) {
+                    Classes value = classes[i];
 
                     long classExperience = ExperienceManager.getExperienceForClass(player.getUniqueId(), value);
                     int classLevel = (int) ExperienceManager.calculateLevelFromExp(classExperience);
@@ -105,7 +106,6 @@ public class WarlordsNewHotbarMenu {
 
                     itemBuilder.addLore(specLore);
                     itemBuilder.addLore(
-                            "",
                             WordWrap.wrapWithNewline(ChatColor.YELLOW + "Click here to select a " + value.name + ChatColor.YELLOW + " specialization or claim rewards",
                                     170
                             )
@@ -116,13 +116,16 @@ public class WarlordsNewHotbarMenu {
                         itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                     }
                     menu.setItem(
-                            menuLocation.getA(),
-                            menuLocation.getB(),
+                            9 / 2 - classes.length / 2 + i * 2 - 2,
+                            1,
                             itemBuilder.get(),
                             (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
                     );
                 }
 
+                menu.setItem(2, 3, PlayerHotBarItemListener.PVP_MENU, (m, e) -> PvPMenu.openPvPMenu(player));
+                menu.setItem(4, 3, PlayerHotBarItemListener.SETTINGS_MENU, (m, e) -> SettingsMenu.openSettingsMenu(player));
+                menu.setItem(6, 3, PlayerHotBarItemListener.PVE_MENU, (m, e) -> PvEMenu.openPvEMenu(player));
                 menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
                 menu.openForPlayer(player);
             });
@@ -213,7 +216,7 @@ public class WarlordsNewHotbarMenu {
                 );
             }
 
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> openSelectionMenu(player));
+            menu.setItem(3, 3, MENU_BACK, (m, e) -> openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
@@ -367,7 +370,11 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
                 .name(ChatColor.AQUA + "Armor Sets " + ChatColor.GRAY + "& " + ChatColor.AQUA + "Helmets " + ChatColor.GOLD + "(Cosmetic)")
-                .lore("§7Equip your favorite armor\n§7sets or class helmets")
+                .lore(
+                        "§7Equip your favorite armor\n§7sets or class helmets",
+                        "",
+                        ChatColor.YELLOW + "Click to equip!"
+                )
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
                 .name(ChatColor.AQUA + "Weapon Skill Boost")
@@ -384,7 +391,11 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
                 .name(ChatColor.GREEN + "Class Information")
-                .lore("§7Preview of your ability \ndescriptions and specialization \nstats.")
+                .lore(
+                        "§7Preview of your ability \ndescriptions and specialization \nstats.",
+                        "",
+                        ChatColor.YELLOW + "Click to preview!"
+                )
                 .get();
 
         public static void openPvPMenu(Player player) {
@@ -397,6 +408,7 @@ public class WarlordsNewHotbarMenu {
 
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 
+            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.openForPlayer(player);
         }
 
@@ -742,8 +754,22 @@ public class WarlordsNewHotbarMenu {
                 .name(ChatColor.GREEN + "Back")
                 .lore(ChatColor.GRAY + "To PvE Menu")
                 .get();
-        public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD).name("§aWeapons").get();
-        public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST).name("§aReward Inventory").get();
+        public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
+                .name("§aWeapons")
+                .lore(
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and modify all your weapons, also accessible through The Weaponsmith.", 160),
+                        "",
+                        ChatColor.YELLOW + "Click to view!"
+                )
+                .get();
+        public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
+                .name("§aReward Inventory")
+                .lore(
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and claim all your rewards.", 160),
+                        "",
+                        ChatColor.YELLOW + "Click to view!"
+                )
+                .get();
 
         public static void openPvEMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
@@ -762,6 +788,7 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(1, 1, itemStack, (m, e) -> WeaponManagerMenu.openWeaponInventoryFromExternal(player, false));
                 menu.setItem(2, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
 
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 
                 menu.openForPlayer(player);
@@ -810,6 +837,7 @@ public class WarlordsNewHotbarMenu {
                     }
             );
 
+            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }

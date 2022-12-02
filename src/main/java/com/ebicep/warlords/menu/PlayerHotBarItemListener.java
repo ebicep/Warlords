@@ -11,8 +11,10 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,13 +33,52 @@ import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.
 
 public class PlayerHotBarItemListener implements Listener {
 
-    public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
-    public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND).name("§aPvP Menu").get();
-    public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT).name("§aPvE Menu").get();
-    public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
-    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
-    public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
-    public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK).name("§aSettings Menu").get();
+    public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD)
+            .name("§aDebug Menu")
+            .get();
+    public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND)
+            .name("§aPvP Menu")
+            .lore(
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvP.", 160),
+                    "",
+                    ChatColor.YELLOW + "Click to view!"
+            )
+            .get();
+    public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
+            .name("§aPvE Menu")
+            .lore(
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvE.", 160),
+                    "",
+                    ChatColor.YELLOW + "Click to view!"
+            )
+            .get();
+    public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
+            .name("§aStart Menu")
+            .get();
+    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER)
+            .name("§aSpectate")
+            .lore(
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
+                    "",
+                    ChatColor.YELLOW + "Click to open!"
+            )
+            .get();
+    public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR)
+            .name("§aWarlords Menu")
+            .lore(
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View your specializations, settings, PvP/PvE stats, and more!", 160),
+                    "",
+                    ChatColor.YELLOW + "Click to open!"
+            )
+            .get();
+    public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK)
+            .name("§aSettings Menu")
+            .lore(
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all your in game settings.", 160),
+                    "",
+                    ChatColor.YELLOW + "Click to view!"
+            )
+            .get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
     static {
@@ -63,7 +104,7 @@ public class PlayerHotBarItemListener implements Listener {
         SLOT_HOTBAR_LISTENER.put(1, e -> {
         });
         SLOT_HOTBAR_LISTENER.put(2, e -> {
-            WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(e.getPlayer());
+//            WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(e.getPlayer());
         });
         SLOT_HOTBAR_LISTENER.put(3, e -> {
             if (e.getPlayer().hasPermission("warlords.game.debug")) {
@@ -72,10 +113,10 @@ public class PlayerHotBarItemListener implements Listener {
                 openGamemodeMenu(e.getPlayer());
             }
         });
-        SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openSelectionMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
-        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
-        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
+//        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
+//        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
     }
 
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
@@ -104,7 +145,7 @@ public class PlayerHotBarItemListener implements Listener {
                         .get()
         );
 
-        setItem(player, 2, PVP_MENU);
+//        setItem(player, 2, PVP_MENU);
 
         if (player.hasPermission("warlords.game.debug")) {
             setItem(player, 3, DEBUG_MENU);
@@ -113,8 +154,8 @@ public class PlayerHotBarItemListener implements Listener {
         }
         setItem(player, 4, SELECTION_MENU);
         setItem(player, 5, SPECTATE_MENU);
-        setItem(player, 6, PVE_MENU);
-        setItem(player, 8, SETTINGS_MENU);
+//        setItem(player, 6, PVE_MENU);
+//        setItem(player, 8, SETTINGS_MENU);
 
     }
 
