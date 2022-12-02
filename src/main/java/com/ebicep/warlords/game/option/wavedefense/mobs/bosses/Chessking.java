@@ -5,11 +5,14 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.AbstractSlime;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.SlimeZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class Chessking extends AbstractSlime implements BossMob {
@@ -44,7 +47,22 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        if (ticksElapsed % 400 == 0) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(warlordsNPC, 12, 12, 12)
+                    .aliveEnemiesOf(warlordsNPC)
+            ) {
+                we.sendMessage(ChatColor.RED + "Your active abilities have been removed by Chessking's Blob Ability.");
+                we.addDamageInstance(warlordsNPC, "Blob", 1000, 1000, -1, 100, false);
+                we.getCooldownManager().removeAbilityCooldowns();
+            }
+        }
 
+        if (ticksElapsed % 300 == 0) {
+            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+                option.spawnNewMob(new SlimeZombie(warlordsNPC.getLocation()));
+            }
+        }
     }
 
     @Override
@@ -54,6 +72,11 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        if (Utils.isProjectile(event.getAbility())) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ARROW_HIT, 2, 0.1f);
+            warlordsNPC.addHealingInstance(warlordsNPC, "Blob Heal", 500, 500, -1, 100, false, false);
+        } else {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SLIME_ATTACK, 2, 0.2f);
+        }
     }
 }
