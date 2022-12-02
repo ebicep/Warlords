@@ -227,9 +227,9 @@ public enum GameMode {
                     color + "monsters!",
                     ""
             ));
-            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openSelectionMenu(p)));
-            options.add(new PreGameItemOption(6, PlayerHotBarItemListener.PVE_MENU, (g, p) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(p)));
-            options.add(new PreGameItemOption(8, PlayerHotBarItemListener.SETTINGS_MENU, (g, p) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(p)));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+//            options.add(new PreGameItemOption(6, PlayerHotBarItemListener.PVE_MENU, (g, p) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(p)));
+//            options.add(new PreGameItemOption(8, PlayerHotBarItemListener.SETTINGS_MENU, (g, p) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(p)));
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
