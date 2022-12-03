@@ -21,6 +21,7 @@ public class BloodLust extends AbstractAbility {
 
     private int duration = 15;
     private int damageConvertPercent = 65;
+    private float maxConversionAmount = 400;
 
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20);
@@ -88,6 +89,9 @@ public class BloodLust extends AbstractAbility {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getAttacker();
+                if (currentDamageValue > maxConversionAmount && attacker.isInPve()) {
+                    currentDamageValue = maxConversionAmount;
+                }
                 attacker.addHealingInstance(
                         attacker,
                         name,
@@ -129,5 +133,13 @@ public class BloodLust extends AbstractAbility {
 
     public float getAmountHealed() {
         return amountHealed;
+    }
+
+    public float getMaxConversionAmount() {
+        return maxConversionAmount;
+    }
+
+    public void setMaxConversionAmount(float maxConversionAmount) {
+        this.maxConversionAmount = maxConversionAmount;
     }
 }

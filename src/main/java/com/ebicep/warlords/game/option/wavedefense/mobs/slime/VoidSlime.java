@@ -32,7 +32,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 10 == 0) {
+        if (ticksElapsed % 20 == 0) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 10, 10, 10)
                     .aliveEnemiesOf(warlordsNPC)
@@ -47,7 +47,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
                     .limit(1)
             ) {
                 EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
-                we.subtractEnergy(5, false);
+                we.subtractEnergy(10, false);
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 10);
             }
         }

@@ -182,6 +182,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
         float damage;
         switch (option.getDifficulty()) {
+            case ENDLESS:
             case HARD:
                 damage = 200;
                 break;
@@ -211,6 +212,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
+                    Utils.addKnockback(warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
                     flameTarget.addDamageInstance(
                             warlordsNPC,
                             "Immolation",

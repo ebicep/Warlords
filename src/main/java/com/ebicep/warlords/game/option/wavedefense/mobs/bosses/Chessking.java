@@ -47,7 +47,7 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 200 == 0) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 12, 12, 12)
                     .aliveEnemiesOf(warlordsNPC)
