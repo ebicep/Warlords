@@ -25,8 +25,8 @@ public class Chessking extends AbstractSlime implements BossMob {
                 100000,
                 0.3f,
                 30,
-                0,
-                0
+                1000,
+                2000
         );
     }
 
@@ -49,7 +49,7 @@ public class Chessking extends AbstractSlime implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 200 == 0) {
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 12, 12, 12)
+                    .entitiesAround(warlordsNPC, 15, 15, 15)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.sendMessage(ChatColor.RED + "Your active abilities have been removed by Chessking's Blob Ability.");
