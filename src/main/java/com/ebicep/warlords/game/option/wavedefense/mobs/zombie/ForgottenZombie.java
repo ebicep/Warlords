@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,10 +10,12 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+import org.bukkit.util.Vector;
 
 public class ForgottenZombie extends AbstractZombie implements EliteMob {
 
@@ -31,14 +34,32 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
                 2800,
                 0.6f,
                 0,
-                1000,
-                1500
+                1200,
+                1800
         );
     }
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
+
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Check",
+                null,
+                DamageCheck.class,
+                DamageCheck.DAMAGE_CHECK,
+                warlordsNPC,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                true
+        ) {
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                // immune to KB
+                currentVector.multiply(0.05);
+            }
+        });
     }
 
     @Override

@@ -30,8 +30,8 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
                 12000,
                 0.22f,
                 0,
-                4200,
-                4800
+                2200,
+                2600
         );
     }
 

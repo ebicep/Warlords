@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.slime;
 
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -32,10 +34,21 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 10 == 0) {
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 7, 7, 7)
+                    .entitiesAround(warlordsNPC, 10, 10, 10)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.subtractEnergy(10, false);
+            }
+
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(warlordsNPC, 100, 100, 100)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .closestFirst(warlordsNPC)
+                    .limit(1)
+            ) {
+                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
+                we.subtractEnergy(5, false);
+                we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 10);
             }
         }
     }
@@ -47,6 +60,6 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        attacker.getSpec().increaseAllCooldownTimersBy(0.2f);
+        attacker.getSpec().increaseAllCooldownTimersBy(1);
     }
 }

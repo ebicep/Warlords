@@ -180,7 +180,7 @@ public class HealingRain extends AbstractAbility {
             if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
                 healthDamage = DamageCheck.MAXIMUM_DAMAGE;
             }
-            strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, critChance, critMultiplier, false);
+            strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, -1, 100, false);
         }
 
     }

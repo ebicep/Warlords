@@ -56,7 +56,7 @@ public class Witch extends AbstractWitch implements EliteMob {
         ) {
             EffectUtils.playRandomHitEffect(ally.getLocation(), 0, 150, 0, 2);
             ally.addSpeedModifier(warlordsNPC, "Witch Speed Buff", 20, 3 * 20);
-            if (option.getDifficulty() == DifficultyIndex.HARD) {
+            if (option.getDifficulty() == DifficultyIndex.HARD || option.getDifficulty() == DifficultyIndex.ENDLESS) {
                 ally.getCooldownManager().removeDebuffCooldowns();
                 ally.getSpeed().removeSlownessModifiers();
             }
