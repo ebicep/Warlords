@@ -89,14 +89,15 @@ public class BloodLust extends AbstractAbility {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getAttacker();
-                if (currentDamageValue > maxConversionAmount && attacker.isInPve()) {
-                    currentDamageValue = maxConversionAmount;
+                float finalDamageValue = currentDamageValue * (getDamageConvertPercent() / 100f);
+                if (finalDamageValue > maxConversionAmount && attacker.isInPve()) {
+                    finalDamageValue = maxConversionAmount;
                 }
                 attacker.addHealingInstance(
                         attacker,
                         name,
-                        currentDamageValue * (getDamageConvertPercent() / 100f),
-                        currentDamageValue * (getDamageConvertPercent() / 100f),
+                        finalDamageValue,
+                        finalDamageValue,
                         0,
                         100,
                         false,
