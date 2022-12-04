@@ -145,6 +145,8 @@ public class HammerOfLight extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     hammer.remove();
                     particleTask.cancel();
                 },

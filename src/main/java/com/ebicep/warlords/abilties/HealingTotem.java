@@ -87,8 +87,6 @@ public class HealingTotem extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    totemStand.remove();
-
                     Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                     Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
 
@@ -115,6 +113,9 @@ public class HealingTotem extends AbstractTotemBase {
                     if (tempHealingTotem.getAmountHealed() >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
+                },
+                cooldownManager -> {
+                    totemStand.remove();
                 },
                 false,
                 duration * 20,

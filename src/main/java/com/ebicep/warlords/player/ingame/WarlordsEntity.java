@@ -588,18 +588,19 @@ public abstract class WarlordsEntity {
 
             final float damageHealValueBeforeShieldReduction = damageValue;
             // Arcane Shield
-            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
-                    .collect(Collectors.toList());
-            if (!arcaneShields.isEmpty() && isEnemy(attacker) && !HammerOfLight.isStandingInHammer(attacker, this)) {
+            Optional<RegularCooldown> arcaneShieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClass(ArcaneShield.class)
+                    .findFirst();
+            if (arcaneShieldCooldown.isPresent() && isEnemy(attacker) && !HammerOfLight.isStandingInHammer(attacker, this)) {
                 debugMessage.append("\n").append(ChatColor.AQUA).append("Arcane Shield:");
 
-                ArcaneShield arcaneShield = arcaneShields.get(0);
+                RegularCooldown cooldown = arcaneShieldCooldown.get();
+                ArcaneShield arcaneShield = (ArcaneShield) cooldown.getCooldownObject();
                 //adding dmg to shield
                 arcaneShield.addShieldHealth(-damageValue);
                 //check if broken
                 if (arcaneShield.getShieldHealth() <= 0) {
-                    cooldownManager.removeCooldownByObject(arcaneShield, true);
+                    cooldown.setTicksLeft(0);
                     addDamageInstance(new StringBuilder(), new WarlordsDamageHealingEvent(
                             this,
                             attacker,

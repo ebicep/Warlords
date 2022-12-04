@@ -72,6 +72,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                                 player,
                                 CooldownTypes.BUFF,
                                 cooldownManager -> {
+                                },
+                                cooldownManager -> {
                                     cooldown = null;
                                     damageBoost.set(0);
                                 },

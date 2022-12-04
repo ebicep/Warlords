@@ -81,6 +81,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                     removeCloak(wp, true);
                     if (pveUpgrade) {
@@ -216,6 +218,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                     null,
                     wp,
                     CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
                     cooldownManager -> {
                         wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
 

@@ -130,6 +130,8 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                             return;
                         }

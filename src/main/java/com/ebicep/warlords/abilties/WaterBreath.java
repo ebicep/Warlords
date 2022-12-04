@@ -116,7 +116,7 @@ public class WaterBreath extends AbstractAbility {
                     debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
                     breathTarget.getSpeed().removeSlownessModifiers();
                     breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                    breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
+                    breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     breathTarget.getCooldownManager().addRegularCooldown(
                             "Overheal",
                             "OVERHEAL",

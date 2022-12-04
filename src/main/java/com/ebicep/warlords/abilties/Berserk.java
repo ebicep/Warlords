@@ -62,6 +62,8 @@ public class Berserk extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                 },
                 duration * 20,

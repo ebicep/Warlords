@@ -259,7 +259,11 @@ public class PowerupOption implements Option {
                         SpeedPowerup.SPEED_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.YELLOW + ChatColor.BOLD + "SPEED" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.YELLOW + ChatColor.BOLD + "SPEED" + ChatColor.GOLD + " powerup has worn off.");
+                        },
                         option.getDuration() * 20
                 );
                 we.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
@@ -285,7 +289,11 @@ public class PowerupOption implements Option {
                         HealingPowerup.HEALING_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "HEALING" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "HEALING" + ChatColor.GOLD + " powerup has worn off.");
+                        },
                         option.getDuration() * 20
                 );
                 we.sendMessage(String.format("§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!",
@@ -311,7 +319,11 @@ public class PowerupOption implements Option {
                         EnergyPowerup.ENERGY_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GOLD + ChatColor.BOLD + "ENERGY" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GOLD + ChatColor.BOLD + "ENERGY" + ChatColor.GOLD + " powerup has worn off.");
+                        },
                         option.getDuration() * 20
                 ) {
                     @Override
@@ -340,7 +352,11 @@ public class PowerupOption implements Option {
                         DamagePowerup.DAMAGE_POWERUP,
                         we,
                         CooldownTypes.BUFF,
-                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off.");
+                        },
                         option.getDuration() * 20
                 ) {
                     @Override
@@ -370,6 +386,9 @@ public class PowerupOption implements Option {
                         CooldownPowerup.COOLDOWN_POWERUP,
                         null,
                         CooldownTypes.BUFF,
+                        cooldownManager -> {
+
+                        },
                         cooldownManager -> {
                             we.setCooldownModifier(1);
                             we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.AQUA + ChatColor.BOLD + "COOLDOWN" + ChatColor.GOLD + " powerup has worn off.");

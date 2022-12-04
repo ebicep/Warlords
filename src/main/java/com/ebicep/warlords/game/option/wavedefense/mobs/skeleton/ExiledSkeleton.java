@@ -119,6 +119,8 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                 attacker,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
                         receiver.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                     }

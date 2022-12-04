@@ -68,12 +68,6 @@ public class ArcaneShield extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
-                        if (wp.getEntity() instanceof Player) {
-                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
-                        }
-                    }
-
                     if (pveUpgrade) {
                         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
                         EffectUtils.strikeLightning(wp.getLocation(), false);
@@ -83,6 +77,13 @@ public class ArcaneShield extends AbstractAbility {
                                 .closestFirst(wp)
                         ) {
                             we.addSpeedModifier(wp, "Arcane Aegis", -99, 6 * 20);
+                        }
+                    }
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
+                        if (wp.getEntity() instanceof Player) {
+                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
                         }
                     }
                 },

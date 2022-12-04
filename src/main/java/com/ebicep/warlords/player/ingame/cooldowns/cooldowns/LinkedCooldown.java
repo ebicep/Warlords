@@ -29,44 +29,27 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
             WarlordsEntity from,
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove,
-            int ticksLeft
-    ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, new ArrayList<>());
-    }
-
-    public LinkedCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
-            int ticksLeft,
-            List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
-            WarlordsEntity... linkedEntities
-    ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, triConsumers, Set.of(linkedEntities));
-    }
-
-    public LinkedCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
             int ticksLeft,
             List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
             Set<WarlordsEntity> linkedEntities
 
     ) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft);
+        super(
+                name,
+                nameAbbreviation,
+                cooldownClass,
+                cooldownObject,
+                from,
+                cooldownType,
+                onRemove,
+                onRemoveForce,
+                ticksLeft
+        );
         this.consumers.addAll(triConsumers);
         this.linkedEntities = new HashSet<>(linkedEntities);
-        setOnRemove(cooldownManager -> {
-            onRemove.accept(cooldownManager);
+        setOnRemoveForce(cooldownManager -> {
+            onRemoveForce.accept(cooldownManager);
             this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldown(this));
             this.linkedEntities.removeIf(WarlordsEntity::isDead);
         });
@@ -79,7 +62,26 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
             T cooldownObject,
             WarlordsEntity from,
             CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            int ticksLeft,
+            List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
+            WarlordsEntity... linkedEntities
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, ticksLeft, triConsumers,
+                Set.of(linkedEntities)
+        );
+    }
+
+    public LinkedCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
             BiConsumer<CooldownManager, LinkedCooldown<T>> onRemove,
+            BiConsumer<CooldownManager, LinkedCooldown<T>> onRemoveForce,
             int ticksLeft,
             List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
             Set<WarlordsEntity> linkedEntities
@@ -91,6 +93,9 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         this.linkedEntities = new HashSet<>(linkedEntities);
         setOnRemove(cooldownManager -> {
             onRemove.accept(cooldownManager, this);
+        });
+        setOnRemoveForce(cooldownManager -> {
+            onRemoveForce.accept(cooldownManager, this);
             this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldown(this));
             this.linkedEntities.removeIf(WarlordsEntity::isDead);
         });

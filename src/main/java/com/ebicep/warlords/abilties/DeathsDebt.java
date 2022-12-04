@@ -143,8 +143,6 @@ public class DeathsDebt extends AbstractTotemBase {
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManagerDebt -> {
-                                totemStand.remove();
-                                effectTask.cancel();
                                 if (wp.isDead()) {
                                     return;
                                 }
@@ -174,6 +172,10 @@ public class DeathsDebt extends AbstractTotemBase {
                                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.RETRIBUTION_OF_THE_DEAD);
                                 }
                             },
+                            cooldownManager -> {
+                                totemStand.remove();
+                                effectTask.cancel();
+                            },
                             6 * 20,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                 //6 self damage ticks
@@ -187,6 +189,13 @@ public class DeathsDebt extends AbstractTotemBase {
 
                     //blue to purple totem
                     totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
+                },
+                cooldownManager -> {
+                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld()) {
+                        totemStand.remove();
+                        effectTask.cancel();
+                        return;
+                    }
                 },
                 duration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

@@ -79,6 +79,8 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
                             nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                         }

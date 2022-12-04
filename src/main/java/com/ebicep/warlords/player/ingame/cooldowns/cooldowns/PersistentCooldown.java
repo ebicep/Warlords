@@ -28,10 +28,26 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
             WarlordsEntity from,
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove,
+            boolean removeOnDeath,
             int ticksLeft,
-            Predicate<T> objectCheck
+            Predicate<T> objectCheck,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
     ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, objectCheck, new ArrayList<>());
+        this(
+                name,
+                nameAbbreviation,
+                cooldownClass,
+                cooldownObject,
+                from,
+                cooldownType,
+                onRemove,
+                cooldownManager -> {
+                },
+                removeOnDeath,
+                ticksLeft,
+                objectCheck,
+                triConsumers
+        );
     }
 
     public PersistentCooldown(
@@ -42,11 +58,30 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
             WarlordsEntity from,
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            boolean removeOnDeath,
             int ticksLeft,
             Predicate<T> objectCheck,
             List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
     ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, true, ticksLeft, objectCheck, triConsumers);
+        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, removeOnDeath, ticksLeft, triConsumers);
+        this.objectCheck = objectCheck;
+    }
+
+    public PersistentCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            int ticksLeft,
+            Predicate<T> objectCheck,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true, ticksLeft, objectCheck, triConsumers);
     }
 
     public PersistentCooldown(
@@ -61,25 +96,7 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
             int ticksLeft,
             Predicate<T> objectCheck
     ) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath, ticksLeft, new ArrayList<>());
-        this.objectCheck = objectCheck;
-    }
-
-    public PersistentCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
-            boolean removeOnDeath,
-            int ticksLeft,
-            Predicate<T> objectCheck,
-            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
-    ) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath, ticksLeft, triConsumers);
-        this.objectCheck = objectCheck;
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath, ticksLeft, objectCheck, new ArrayList<>());
     }
 
     @Override

@@ -111,9 +111,6 @@ public class RemedicChains extends AbstractAbility {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                         return;
                     }
-                    if (pveUpgrade) {
-                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
-                    }
                     if (wp.isDead()) {
                         return;
                     }
@@ -138,6 +135,14 @@ public class RemedicChains extends AbstractAbility {
                                 false,
                                 false
                         );
+                    }
+                },
+                (cooldownManager, linkedCooldown) -> {
+                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                        return;
+                    }
+                    if (pveUpgrade) {
+                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
                     }
                 },
                 duration * 20,

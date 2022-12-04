@@ -77,6 +77,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                             player,
                             CooldownTypes.BUFF,
                             cooldownManager -> {
+                            },
+                            cooldownManager -> {
                                 cooldown = null;
                                 damageHealBonus.set(0);
                             },

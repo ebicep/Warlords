@@ -77,6 +77,8 @@ public class LastStand extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
                 selfDuration * 20,

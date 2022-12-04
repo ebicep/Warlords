@@ -66,6 +66,8 @@ public class InspiringPresence extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
                 },
@@ -113,6 +115,8 @@ public class InspiringPresence extends AbstractAbility {
                     tempPresence,
                     wp,
                     CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
                     cooldownManager -> {
                         cancelAllySpeed.run();
                     },

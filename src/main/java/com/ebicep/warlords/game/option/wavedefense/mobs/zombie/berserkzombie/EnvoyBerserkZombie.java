@@ -79,7 +79,8 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 warlordsNPC,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                }, false,
+                },
+                false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         ParticleEffect.REDSTONE.display(

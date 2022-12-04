@@ -61,12 +61,13 @@ public class LightInfusionAvenger extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    cancelSpeed.run();
-
                     if (pveUpgrade) {
                         wp.addEnergy(wp, name, 30 * strikesUsed);
                         wp.playSound(wp.getLocation(), Sound.LEVEL_UP, 1, 0.9f);
                     }
+                },
+                cooldownManager -> {
+                    cancelSpeed.run();
                 },
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
