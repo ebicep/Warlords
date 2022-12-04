@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
-    int conversion = ability.getDamageConvertPercent();
+    float conversion = ability.getMaxConversionAmount();
     float cooldown = ability.getCooldown();
 
     public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
@@ -15,34 +15,34 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+3% Damage conversion to healing",
+                "+75 Max converted healing",
                 5000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 3);
+                    ability.setMaxConversionAmount(conversion + 75);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+6% Damage conversion to healing",
+                "+150 Max converted healing",
                 10000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 6);
+                    ability.setMaxConversionAmount(conversion + 150);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+9% Damage conversion to healing",
+                "+225 Max converted healing",
                 15000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 9);
+                    ability.setMaxConversionAmount(conversion + 225);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+12% Damage conversion to healing",
+                "+300 Max converted healing",
                 20000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 12);
+                    ability.setMaxConversionAmount(conversion + 300);
                 }
         ));
 

@@ -33,6 +33,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     protected Upgrade masterUpgrade;
 
     private int maxUpgrades = 6;
+    private int upgradesRequiredForMaster = 6;
     private int freeUpgrades = 0;
 
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
@@ -67,7 +68,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         return;
                     }
 
-                    if (maxUpgrades <= 0) {
+                    if (upgradesRequiredForMaster <= 0) {
                         masterUpgrade.getOnUpgrade().run();
                         masterUpgrade.setUnlocked(true);
 
@@ -77,8 +78,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
                         globalAnnouncement(player.getGame(), masterUpgrade, ability);
                     } else {
-                        String s = maxUpgrades == 1 ? "" : "s";
-                        player.sendMessage(ChatColor.RED + "You need to unlock " + maxUpgrades + " more upgrade" + s + " before unlocking the master upgrade!");
+                        String s = upgradesRequiredForMaster == 1 ? "" : "s";
+                        player.sendMessage(ChatColor.RED + "You need to unlock " + upgradesRequiredForMaster + " more upgrade" + s + " before unlocking the master upgrade!");
                         return;
                     }
 
@@ -140,6 +141,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         upgrade.getOnUpgrade().run();
                         upgrade.setUnlocked(true);
                         maxUpgrades--;
+                        upgradesRequiredForMaster--;
 
                         if (freeUpgrades > 0) {
                             freeUpgrades--;
