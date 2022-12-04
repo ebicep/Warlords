@@ -119,6 +119,10 @@ public class Windfury extends AbstractAbility {
                                         false
                                 );
 
+                                if (pveUpgrade) {
+                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 2);
+                                }
+
                                 counter++;
                                 if (counter == maxHits) {
                                     this.cancel();
