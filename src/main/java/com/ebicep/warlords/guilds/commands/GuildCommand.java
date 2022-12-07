@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -78,6 +79,7 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.removeGuildInvite(player, guild);
         guild.join(player);
+        CustomScoreboard.updateLobbyPlayerNames();
     }
 
     @Subcommand("menu")
