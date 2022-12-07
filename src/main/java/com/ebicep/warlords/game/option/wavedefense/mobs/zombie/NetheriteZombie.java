@@ -47,14 +47,14 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 100 == 0) {
+        if (ticksElapsed % 120 == 0) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 5, 5, 5)
                     .aliveEnemiesOf(warlordsNPC)
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 0, 0, 0, 1);
-                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.BUFF, 20);
+                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.BUFF, 10);
             }
 
             FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
