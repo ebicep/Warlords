@@ -35,7 +35,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     public ArcaneShield(int shieldHealth) {
-        super("Arcane Shield", 0, 0, 31.32f, 40);
+        this();
         this.shieldHealth = shieldHealth;
     }
 
@@ -106,10 +106,12 @@ public class ArcaneShield extends AbstractAbility {
         return true;
     }
 
-    public void updateShieldHealth(AbstractPlayerClass apc) {
+    @Override
+    public void updateCustomStats(AbstractPlayerClass apc) {
         if (apc != null) {
             ArcaneShield arcaneShield = (this);
             arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
+            updateDescription(null);
         }
     }
 

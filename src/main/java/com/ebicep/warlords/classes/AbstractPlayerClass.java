@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
@@ -65,10 +64,12 @@ public abstract class AbstractPlayerClass {
         this.orange = orange;
         this.name = name;
 
-        if (blue instanceof ArcaneShield) {
-            ArcaneShield arcaneShield = ((ArcaneShield) blue);
-            arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
-            blue.updateDescription(null); // Arcaneshield does not use the player in its description
+        updateCustomStats();
+    }
+
+    public void updateCustomStats() {
+        for (AbstractAbility ability : getAbilities()) {
+            ability.updateCustomStats(this);
         }
     }
 

@@ -1686,11 +1686,11 @@ public abstract class WarlordsEntity {
         return spec;
     }
 
-    public void resetAbilities() {
+    public void resetAbilities(boolean closeInventory) {
         for (AbstractAbility ability : spec.getAbilities()) {
             ability.setCurrentCooldown(0);
         }
-        updateInventory(true);
+        updateInventory(closeInventory);
     }
 
     public void updateInventory(boolean closeInventory) {
@@ -1734,6 +1734,8 @@ public abstract class WarlordsEntity {
         if (maxHealth < maxBaseHealth) {
             maxHealth = maxBaseHealth;
         }
+        //TODO change this
+        spec.setMaxHealth((int) maxBaseHealth);
     }
 
     public void showDeathAnimation() {

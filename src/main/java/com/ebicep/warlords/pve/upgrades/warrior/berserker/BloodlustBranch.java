@@ -7,7 +7,6 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
-    float conversion = ability.getMaxConversionAmount();
     float cooldown = ability.getCooldown();
 
     public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
@@ -15,34 +14,38 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+75 Max converted healing",
+                "+10% Max converted health",
                 5000,
                 () -> {
-                    ability.setMaxConversionAmount(conversion + 75);
+                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 10);
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+150 Max converted healing",
+                "+20% Max converted health",
                 10000,
                 () -> {
-                    ability.setMaxConversionAmount(conversion + 150);
+                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 20);
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+225 Max converted healing",
+                "+30% Max converted health",
                 15000,
                 () -> {
-                    ability.setMaxConversionAmount(conversion + 225);
+                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 30);
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+300 Max converted healing",
+                "+40% Max converted health",
                 20000,
                 () -> {
-                    ability.setMaxConversionAmount(conversion + 300);
+                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 40);
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
 

@@ -122,7 +122,7 @@ public class TutorialOption implements Option {
 
                                         @Override
                                         public void run() {
-                                            warlordsPlayer.resetAbilities();
+                                            warlordsPlayer.resetAbilities(true);
                                             nextStageSection();
                                         }
                                     }.runTaskLater(20 * 4);
@@ -135,7 +135,7 @@ public class TutorialOption implements Option {
 
                                         @Override
                                         public void run() {
-                                            warlordsPlayer.resetAbilities();
+                                            warlordsPlayer.resetAbilities(true);
                                             nextStageSection();
                                         }
                                     }.runTaskLater(20 * 4);
@@ -153,7 +153,7 @@ public class TutorialOption implements Option {
                 if (event.getPlayer().equals(warlordsPlayer)) {
                     if (stage.get() == 3 && stageSection.get() == 4) {
                         warlordsPlayer.respawn();
-                        warlordsPlayer.resetAbilities();
+                        warlordsPlayer.resetAbilities(true);
                         if (warlordsPlayer.getEntity() instanceof Player) {
                             sendTutorialMessage((Player) warlordsPlayer.getEntity(), "RIGHT CLICK TO PERFORM A POWERFUL ATTACK");
                         }

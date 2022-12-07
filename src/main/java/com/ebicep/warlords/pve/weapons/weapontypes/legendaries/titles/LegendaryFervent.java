@@ -19,7 +19,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
 
     public static final int DAMAGE_BOOST = 20;
     public static final int DAMAGE_TO_TAKE = 5000;
-    public static final int DURATION = 30;
+    public static final int DURATION = 60;
     public static final int MAX_STACKS = 3;
 
     public LegendaryFervent() {

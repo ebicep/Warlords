@@ -382,6 +382,7 @@ public class WaveDefenseOption implements Option {
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
                     player.updateEntity();
+                    player.getSpec().updateCustomStats();
                 });
             });
         }

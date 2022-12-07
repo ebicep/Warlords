@@ -96,7 +96,7 @@ public class DebugCommand extends BaseCommand {
         boolean disable = option.equals("disable");
         target.setDisableCooldowns(disable);
         if (disable) {
-            target.resetAbilities();
+            target.resetAbilities(false);
         }
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!", true);
     }
