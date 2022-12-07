@@ -27,7 +27,7 @@ public class CalculateSpeed {
 
     public CalculateSpeed(WarlordsEntity from, Consumer<Float> updateWalkingSpeed, float baseModifierValue, boolean isPve) {
         this.minSpeed = BASE_SPEED * (1 + baseModifierValue / 100f) * (1 - 0.99f);
-        this.maxSpeed = BASE_SPEED * 2;
+        this.maxSpeed = BASE_SPEED * 2.5f;
         this.updateWalkingSpeed = updateWalkingSpeed;
         this.baseModifier = new Modifier(from, "BASE", baseModifierValue, 0, Collections.emptyList(), false);
         this.modifiers.add(this.baseModifier);

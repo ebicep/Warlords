@@ -52,5 +52,4 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
-
 }
