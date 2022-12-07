@@ -12,24 +12,24 @@ import java.util.function.Function;
 
 public class SRCalculator {
 
-    public static final HashMap<Function<DatabasePlayer, Double>, Double> totalValues = new HashMap<>();
-    public static final HashMap<DatabasePlayer, Integer> playersSR = new HashMap<>();
-    public static Set<DatabasePlayer> databasePlayerCache = new HashSet<>();
+    public static final HashMap<Function<DatabasePlayer, Double>, Double> TOTAL_VALUES = new HashMap<>();
+    public static final HashMap<DatabasePlayer, Integer> PLAYERS_SR = new HashMap<>();
+    public static final Set<DatabasePlayer> DATABASE_PLAYER_CACHE = new HashSet<>();
     public static int numberOfActualPlayers = 40;
 
     public static void recalculateSR() {
-        totalValues.clear();
-        playersSR.clear();
+        TOTAL_VALUES.clear();
+        PLAYERS_SR.clear();
         numberOfActualPlayers = 40;
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculating player SR PUBS");
         Warlords.newChain()
                 .async(() -> {
-                    numberOfActualPlayers = (int) databasePlayerCache.stream().filter(databasePlayer -> databasePlayer.getPubStats().getPlays() > 5).count();
-                    for (DatabasePlayer databasePlayer : databasePlayerCache) {
+                    numberOfActualPlayers = (int) DATABASE_PLAYER_CACHE.stream().filter(databasePlayer -> databasePlayer.getPubStats().getPlays() > 5).count();
+                    for (DatabasePlayer databasePlayer : DATABASE_PLAYER_CACHE) {
                         if (databasePlayer.getPubStats().getPlays() > 5) {
-                            playersSR.put(databasePlayer, SRCalculator.getSR(databasePlayer, DatabasePlayer::getPubStats));
+                            PLAYERS_SR.put(databasePlayer, SRCalculator.getSR(databasePlayer, DatabasePlayer::getPubStats));
                         } else {
-                            playersSR.put(databasePlayer, 500);
+                            PLAYERS_SR.put(databasePlayer, 500);
                         }
                     }
 //                    SRCalculator.playersSR.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(databasePlayerIntegerEntry -> {
@@ -56,9 +56,11 @@ public class SRCalculator {
     }
 
     private static double getPlayerTotal(Function<DatabasePlayer, Double> function) {
-        if (totalValues.containsKey(function)) return totalValues.get(function);
-        double total = databasePlayerCache.stream().mapToDouble(function::apply).sum();
-        totalValues.put(function, total);
+        if (TOTAL_VALUES.containsKey(function)) {
+            return TOTAL_VALUES.get(function);
+        }
+        double total = DATABASE_PLAYER_CACHE.stream().mapToDouble(function::apply).sum();
+        TOTAL_VALUES.put(function, total);
         return total;
     }
 

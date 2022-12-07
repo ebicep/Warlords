@@ -54,6 +54,7 @@ import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
+import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -105,14 +106,6 @@ public class Warlords extends JavaPlugin {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
-    }
-
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
-    }
-
-    public static Warlords getInstance() {
-        return instance;
     }
 
     public static <T> TaskChain<T> newSharedChain(String name) {
@@ -177,6 +170,10 @@ public class Warlords extends JavaPlugin {
         }
     }
 
+    public static Warlords getInstance() {
+        return instance;
+    }
+
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
         return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
@@ -189,7 +186,6 @@ public class Warlords extends JavaPlugin {
             player.teleport(value);
         }
     }
-
     private GameManager gameManager;
 
     @Override
@@ -300,6 +296,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
+        getServer().getPluginManager().registerEvents(new MemoryManager(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
@@ -421,6 +418,8 @@ public class Warlords extends JavaPlugin {
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
+
+        MemoryManager.init();
 
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is enabled");
     }
@@ -922,6 +921,10 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
+    }
+
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
     }
 
     public static boolean hasPlayer(@Nonnull UUID player) {

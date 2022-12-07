@@ -15,10 +15,9 @@ import java.util.UUID;
 
 public class GuildExperienceUtils {
 
-    public static final long EXP_PER_WAVE = 4;
     public static final HashMap<Integer, Long> LEVEL_EXP_COST = new HashMap<>();
     public static final HashMap<Integer, Long> LEVEL_TO_EXP = new HashMap<>();
-    private static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
+    public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
 
     static {
         //level 1-5 5000 per level

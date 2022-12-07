@@ -19,7 +19,7 @@ import java.util.*;
 
 public class MessageCommand extends BaseCommand {
 
-    public static final LinkedHashMap<PlayerMessage, Instant> lastPlayerMessages = new LinkedHashMap<>();
+    public static final LinkedHashMap<PlayerMessage, Instant> LAST_PLAYER_MESSAGES = new LinkedHashMap<>();
 
     @CommandAlias("msg|tell")
     @Description("Privately message a player")
@@ -35,24 +35,24 @@ public class MessageCommand extends BaseCommand {
         player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
         target.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
         PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), target.getUniqueId());
-        lastPlayerMessages.put(newPlayerMessage, Instant.now());
+        LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
     }
 
     @CommandAlias("r")
     @Description("Reply to a player")
     public void reply(Player player, String message) {
-        Optional<PlayerMessage> playerMessage = lastPlayerMessages.entrySet().stream()
+        Optional<PlayerMessage> playerMessage = LAST_PLAYER_MESSAGES.entrySet().stream()
                 .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
                 .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
                 .map(Map.Entry::getKey)
                 .findFirst();
-        if (playerMessage.isPresent() && Instant.now().isBefore(lastPlayerMessages.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
+        if (playerMessage.isPresent() && Instant.now().isBefore(LAST_PLAYER_MESSAGES.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
             Player otherPlayer = Bukkit.getPlayer(playerMessage.get().getFrom());
             if (otherPlayer != null) {
                 player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                 otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                 PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
-                lastPlayerMessages.put(newPlayerMessage, Instant.now());
+                LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
             } else {
                 player.sendMessage(ChatColor.RED + "That player is no longer online!");
             }

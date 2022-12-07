@@ -19,7 +19,7 @@ import java.util.UUID;
 public class UnstuckCommand extends BaseCommand {
 
     private static int UNSTUCK_COOLDOWN = 20;
-    private static HashMap<UUID, Instant> STUCK_COOLDOWNS = new HashMap<>();
+    public static HashMap<UUID, Instant> STUCK_COOLDOWNS = new HashMap<>();
 
     @Default
     @Description("Unstuck yourself")

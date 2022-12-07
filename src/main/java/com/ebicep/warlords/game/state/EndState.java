@@ -247,8 +247,8 @@ public class EndState implements State, TimerDebugAble {
 
         if (winEvent != null) {
             this.game.forEachOfflineWarlordsPlayer(wp -> {
-                if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
-                    List<StreamChaptersCommand.GameTime> gameTimes = StreamChaptersCommand.gameTimes.get(wp.getUuid());
+                if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
+                    List<StreamChaptersCommand.GameTime> gameTimes = StreamChaptersCommand.GAME_TIMES.get(wp.getUuid());
                     gameTimes.get(gameTimes.size() - 1).setEnd(Instant.now());
                 }
             });

@@ -17,21 +17,16 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
-import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -133,32 +128,6 @@ public class DatabaseManager {
                     PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> PLAYERS_TO_UPDATE.get(playersCollections).addAll(databasePlayers));
                     PLAYERS_TO_UPDATE_2.forEach((playersCollections, databasePlayers) -> databasePlayers.clear());
                     updateQueue();
-                }
-                //removing all players that are not online from cache every 30 minutes
-                if (UPDATE_COOLDOWN.get() % 1800 == 0) {
-                    Set<UUID> toRetain = new HashSet<>();
-                    Warlords.getGameManager().getGames().stream()
-                            .map(GameManager.GameHolder::getGame)
-                            .filter(Objects::nonNull)
-                            .flatMap(Game::offlinePlayersWithoutSpectators)
-                            .map(Map.Entry::getKey)
-                            .filter(Objects::nonNull)
-                            .map(OfflinePlayer::getUniqueId)
-                            .forEach(toRetain::add);
-                    Bukkit.getOnlinePlayers().forEach(player -> toRetain.add(player.getUniqueId()));
-                    for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(activeCollection.cacheName)).getNativeCache();
-                        ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
-                        Set<UUID> toEvict = new HashSet<>();
-                        map.forEach((o, o2) -> {
-                            if (o instanceof UUID) {
-                                if (!toRetain.contains(o)) {
-                                    toEvict.add((UUID) o);
-                                }
-                            }
-                        });
-                        toEvict.forEach(cache::invalidate);
-                    }
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20);
