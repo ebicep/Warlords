@@ -76,6 +76,61 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
+        /*
+        Warlords.newChain()
+                .asyncFirst(() -> {
+                    return DatabaseManager.gameService.findAll(GamesCollections.TEMP);
+                }).syncLast(games -> {
+                    HashMap<String, String> mobTiers = new HashMap<>();
+                    for (Mobs value : Mobs.values()) {
+                        AbstractMob<?> mob = value.createMob.apply(Bukkit.getWorlds().get(0).getSpawnLocation());
+                        double dropRate = mob.dropRate();
+                        switch ((int) dropRate) {
+                            case 1:
+                                mobTiers.put(mob.getName(), "Basic");
+                                break;
+                            case 5:
+                                mobTiers.put(mob.getName(), "Elite");
+                                break;
+                            case 50:
+                                mobTiers.put(mob.getName(), "Boss");
+                                break;
+                        }
+                    }
+                    Bukkit.getWorlds().get(0).getEntities().forEach(Entity::remove);
+
+                    HashMap<String, Long> mobKills = new HashMap<>();
+
+                    int totalGames = 0;
+                    for (DatabaseGameBase game : games) {
+                        if (game instanceof DatabaseGamePvE) {
+                            DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) game;
+                            if (!game.isCounted() || databaseGamePvE.getDifficulty() != DifficultyIndex.NORMAL || databaseGamePvE.getWavesCleared() != 25) {
+                                continue;
+                            }
+                            totalGames++;
+                            for (DatabaseGamePlayerPvE player : databaseGamePvE.getPlayers()) {
+                                for (String mobName : player.getMobKills().keySet()) {
+                                    mobKills.merge(mobName, player.getMobKills().get(mobName), Long::sum);
+                                }
+                            }
+                        }
+                    }
+                    AtomicLong sum = new AtomicLong(0L);
+                    mobKills.values().forEach(sum::addAndGet);
+                    System.out.println("Total Games: " + totalGames);
+                    System.out.println("Total Kills: " + sum.get());
+                    mobKills.forEach((s, aLong) -> {
+                        String s1 = mobTiers.get(s);
+                        if (s1 == null) {
+                            return;
+                        }
+                        System.out.println(s + " - " + aLong + "(" + (Math.round((aLong * 100 / sum.doubleValue()) * 1000) / 1000.0) + ") - " + s1);
+                    });
+
+                }).execute();
+
+         */
 
 //        Warlords.newChain()
 //                .async(() -> {
