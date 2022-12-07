@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
-import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
@@ -23,7 +22,6 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @CommandAlias("guild|g")
@@ -374,17 +372,14 @@ public class GuildCommand extends BaseCommand {
 
     @Subcommand("log")
     @Description("View the audit log of your guild")
-    public void log(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+    public void log(
+            @Conditions("guild:true") Player player,
+            @Flags("master") GuildPlayerWrapper guildPlayerWrapper,
+            @co.aikar.commands.annotation.Optional Integer page
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
-        ChatUtils.sendMessageToPlayer(
-                player,
-                guild.getAuditLog().stream()
-                        .map(AbstractGuildLog::getFormattedLog)
-                        .collect(Collectors.joining("\n")),
-                ChatColor.GREEN,
-                false
-        );
+        guild.printAuditLog(player, page == null ? Integer.MAX_VALUE : page);
     }
 
     @Subcommand("open")

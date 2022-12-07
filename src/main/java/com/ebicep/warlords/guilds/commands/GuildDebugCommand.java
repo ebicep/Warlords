@@ -9,15 +9,13 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildTag;
-import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
+import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 @CommandAlias("gdebug")
 @CommandPermission("minecraft.command.op|group.administrator")
@@ -80,14 +78,23 @@ public class GuildDebugCommand extends BaseCommand {
     @Description("Gets audit log of a guild")
     public void getLog(Player player, String guildName) {
         GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
-            ChatUtils.sendMessageToPlayer(
-                    player,
-                    guild.getAuditLog().stream()
-                            .map(AbstractGuildLog::getFormattedLog)
-                            .collect(Collectors.joining("\n")),
-                    ChatColor.GREEN,
-                    false
-            );
+            guild.printAuditLog(player, Integer.MAX_VALUE);
+        });
+    }
+
+    @Subcommand("getlogpaged")
+    @Description("Gets audit log of a guild at page")
+    public void getLogPaged(Player player, Integer page, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            guild.printAuditLog(player, page);
+        });
+    }
+
+    @Subcommand("openmenu")
+    @Description("Opens guild menu of any guild")
+    public void openMenu(Player player, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            GuildMenu.openGuildMenu(guild, player, 1);
         });
     }
 

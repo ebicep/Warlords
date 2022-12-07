@@ -3,10 +3,7 @@ package com.ebicep.warlords.guilds.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
-import com.ebicep.warlords.guilds.Guild;
-import com.ebicep.warlords.guilds.GuildExperienceUtils;
-import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
@@ -38,6 +35,7 @@ public class GuildMenu {
         Menu menu = new Menu("Guild Settings: " + guild.getName(), 9 * rows);
 
         int guildLevel = GuildExperienceUtils.getLevelFromExp(guild.getExperience(Timing.LIFETIME));
+        GuildRole roleOfPlayer = guild.getRoleOfPlayer(player.getUniqueId());
         menu.setItem(0, 0,
                 new ItemBuilder(Material.SIGN)
                         .name(ChatColor.GREEN + "Guild Information")
@@ -49,7 +47,7 @@ public class GuildMenu {
                                 ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCurrentCoins()),
                                 ChatColor.GRAY + "Members: " + ChatColor.YELLOW + guild.getPlayers()
                                         .size() + ChatColor.AQUA + "/" + ChatColor.YELLOW + guild.getPlayerLimit(),
-                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + guild.getRoleOfPlayer(player.getUniqueId()).getRoleName()
+                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + (roleOfPlayer != null ? roleOfPlayer.getRoleName() : "None")
                         )
                         .get(),
                 (m, e) -> {
@@ -137,6 +135,9 @@ public class GuildMenu {
                                         ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
                                         ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.WEEKLY)),
                                         ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.DAILY)),
+                                        ChatColor.GRAY + "Coins Converted: ",
+                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoinsConverted()),
+                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getDailyCoinsConverted()),
                                         ChatColor.GRAY + "Experience: ",
                                         ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME)),
                                         ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.WEEKLY)),

@@ -33,6 +33,7 @@ import static com.ebicep.warlords.guilds.GuildManager.queueUpdateGuild;
 @Document(collection = "Guilds")
 public class Guild {
 
+    public static final int LOG_PER_PAGE = 30;
     public static final int CREATE_COIN_COST = 500000;
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -158,10 +159,6 @@ public class Guild {
         }
     }
 
-    public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
-    }
-
     public void log(AbstractGuildLog guildLog) {
         auditLog.add(guildLog);
     }
@@ -178,6 +175,10 @@ public class Guild {
 
     public void setDefaultRole(String defaultRole) {
         this.defaultRole = defaultRole;
+    }
+
+    public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
     }
 
     public void leave(Player player) {
@@ -221,6 +222,15 @@ public class Guild {
         sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.RED + " was kicked from the guild!", true);
         log(new GuildLogKick(sender.getUUID(), target.getUUID()));
         queueUpdate();
+    }
+
+    public GuildRole getRoleOfPlayer(UUID uuid) {
+        for (GuildRole role : roles) {
+            if (role.getPlayers().contains(uuid)) {
+                return role;
+            }
+        }
+        return null;
     }
 
     public void promote(GuildPlayer sender, GuildPlayer target) {
@@ -316,15 +326,6 @@ public class Guild {
             }
         }
         return false;
-    }
-
-    public GuildRole getRoleOfPlayer(UUID uuid) {
-        for (GuildRole role : roles) {
-            if (role.getPlayers().contains(uuid)) {
-                return role;
-            }
-        }
-        return null;
     }
 
     public boolean hasUUID(UUID uuid) {
@@ -463,15 +464,15 @@ public class Guild {
         return currentCoins;
     }
 
+    public void setCurrentCoins(long currentCoins) {
+        this.currentCoins = currentCoins;
+    }
+
     public void addCurrentCoins(long coins) {
         this.currentCoins += coins;
         if (coins > 0) {
             this.coins.forEach((timing, amount) -> this.coins.put(timing, Math.max(amount + coins, 0)));
         }
-    }
-
-    public void setCurrentCoins(long currentCoins) {
-        this.currentCoins = currentCoins;
     }
 
     public long getCoins(Timing timing) {
@@ -499,8 +500,28 @@ public class Guild {
         this.upgrades.add(upgrade);
     }
 
-    public List<AbstractGuildLog> getAuditLog() {
-        return auditLog;
+    public void printAuditLog(Player player, int page) {
+        int maxLogPage = auditLog.size() / LOG_PER_PAGE + 1;
+        if (page < 1) {
+            page = 1;
+        } else if (page > maxLogPage) {
+            page = maxLogPage;
+
+        }
+        StringBuilder log = new StringBuilder(ChatColor.GOLD + "Guild Log (" + page + "/" + maxLogPage + ")\n");
+        auditLog.stream()
+                .skip((page - 1) * LOG_PER_PAGE)
+                .limit(LOG_PER_PAGE)
+                .forEach(guildLog -> log.append(ChatColor.GRAY).append(guildLog.getFormattedLog()).append("\n"));
+        if (log.length() > 0) {
+            log.setLength(log.length() - 1);
+        }
+        ChatUtils.sendMessageToPlayer(
+                player,
+                log.toString(),
+                ChatColor.GREEN,
+                false
+        );
     }
 
     public List<String> getMotd() {
