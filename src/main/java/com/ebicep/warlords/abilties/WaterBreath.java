@@ -147,7 +147,7 @@ public class WaterBreath extends AbstractAbility {
     }
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        hit.getCooldownManager().removeCooldown(WaterBreath.class);
+        boolean hasPreviousCooldown = hit.getCooldownManager().removeCooldown(WaterBreath.class);
         hit.getCooldownManager().addRegularCooldown(
                 name,
                 "BREATH RGN",
@@ -174,8 +174,10 @@ public class WaterBreath extends AbstractAbility {
                     }
                 })
         );
-        hit.getSpec().decreaseAllCooldownTimersBy(3);
-        hit.updateItems();
+        if (!hasPreviousCooldown) {
+            hit.getSpec().decreaseAllCooldownTimersBy(3);
+            hit.updateItems();
+        }
     }
 
     public double getVelocity() {
