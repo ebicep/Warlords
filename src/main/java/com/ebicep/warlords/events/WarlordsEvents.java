@@ -216,7 +216,6 @@ public class WarlordsEvents implements Listener {
                     }
                 } else {
                     databasePlayer.setLastLogin(Instant.now());
-                    DatabaseManager.checkUpdatePlayerName(player, databasePlayer);
                     HeadUtils.updateHead(player);
                     //future messages
                     Warlords.newChain()
@@ -245,6 +244,7 @@ public class WarlordsEvents implements Listener {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
+            DatabaseManager.checkUpdatePlayerName(player);
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);

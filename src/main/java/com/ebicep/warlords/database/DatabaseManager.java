@@ -266,10 +266,17 @@ public class DatabaseManager {
         }
     }
 
-    public static void checkUpdatePlayerName(Player player, DatabasePlayer databasePlayer) {
-        if (!Objects.equals(databasePlayer.getName(), player.getName())) {
-            databasePlayer.setName(player.getName());
-            queueUpdatePlayerAsync(databasePlayer);
+    public static void checkUpdatePlayerName(Player player) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            getPlayer(player.getUniqueId(), activeCollection, databasePlayer -> {
+                if (!Objects.equals(databasePlayer.getName(), player.getName())) {
+                    databasePlayer.setName(player.getName());
+                    queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                }
+            });
         }
     }
 
