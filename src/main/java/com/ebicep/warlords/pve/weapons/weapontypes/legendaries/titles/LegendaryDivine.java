@@ -70,7 +70,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                                 LegendaryDivine.class,
                                 null,
                                 player,
-                                CooldownTypes.BUFF,
+                                CooldownTypes.WEAPON,
                                 cooldownManager -> {
                                 },
                                 cooldownManager -> {

@@ -55,7 +55,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                         LegendaryStalwart.class,
                         null,
                         player,
-                        CooldownTypes.BUFF,
+                        CooldownTypes.WEAPON,
                         cooldownManager -> {
 
                         },
@@ -94,7 +94,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                                 LegendaryDivine.class,
                                 null,
                                 player,
-                                CooldownTypes.BUFF,
+                                CooldownTypes.WEAPON,
                                 cooldownManager -> {
                                 },
                                 REDUCTION_DURATION * 20

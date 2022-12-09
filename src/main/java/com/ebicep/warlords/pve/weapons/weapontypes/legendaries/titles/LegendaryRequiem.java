@@ -75,7 +75,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                             LegendaryRequiem.class,
                             null,
                             player,
-                            CooldownTypes.BUFF,
+                            CooldownTypes.WEAPON,
                             cooldownManager -> {
                             },
                             cooldownManager -> {

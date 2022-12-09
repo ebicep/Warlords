@@ -73,7 +73,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                                 LegendaryFervent.class,
                                 null,
                                 player,
-                                CooldownTypes.BUFF,
+                                CooldownTypes.WEAPON,
                                 cooldownManager -> {
                                 },
                                 cooldownManager -> {
