@@ -132,7 +132,7 @@ public class GuildManager {
 
     public static boolean hasInviteFromGuild(Player invited, Guild guild) {
         Instant instant = INVITES.get(new GuildInvite(invited.getUniqueId(), guild));
-        return instant != null && Instant.now().isAfter(instant);
+        return instant != null && Instant.now().isBefore(instant);
     }
 
     public static void removeGuildInvite(Player player, Guild guild) {
