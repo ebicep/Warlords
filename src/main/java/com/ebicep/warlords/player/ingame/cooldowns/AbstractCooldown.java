@@ -17,7 +17,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected WarlordsEntity from;
     protected CooldownTypes cooldownType;
     protected Consumer<CooldownManager> onRemove;
-    protected Consumer<CooldownManager> onRemoveForce;
+    protected Consumer<CooldownManager> onRemoveForce = cooldownManager -> {
+    };
     protected boolean removeOnDeath = true;
 
     public AbstractCooldown(

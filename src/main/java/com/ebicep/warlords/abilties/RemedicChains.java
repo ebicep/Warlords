@@ -155,7 +155,7 @@ public class RemedicChains extends AbstractAbility {
                     for (WarlordsEntity linked : linkedEntities) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
                         if (outOfRange) {
-                            linked.getCooldownManager().removeCooldown(cooldown);
+                            linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             ParticleEffect.VILLAGER_HAPPY.display(
                                     0.5f,
