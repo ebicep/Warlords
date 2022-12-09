@@ -341,7 +341,7 @@ public class CooldownManager {
 
     public boolean removeCooldown(Class<?> cooldownClass) {
         return abstractCooldowns.removeIf(cd -> {
-            if (cd.getClass() == cooldownClass) {
+            if (Objects.equals(cd.getCooldownClass(), cooldownClass)) {
                 cd.getOnRemoveForce().accept(this);
                 return true;
             }
