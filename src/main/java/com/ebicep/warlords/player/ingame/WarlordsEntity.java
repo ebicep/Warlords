@@ -590,8 +590,12 @@ public abstract class WarlordsEntity {
             // Arcane Shield
             Optional<RegularCooldown> arcaneShieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
                     .filterCooldownClass(ArcaneShield.class)
+                    .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
-            if (arcaneShieldCooldown.isPresent() && isEnemy(attacker) && !HammerOfLight.isStandingInHammer(attacker, this)) {
+            if (arcaneShieldCooldown.isPresent() &&
+                    isEnemy(attacker) &&
+                    !HammerOfLight.isStandingInHammer(attacker, this)
+            ) {
                 debugMessage.append("\n").append(ChatColor.AQUA).append("Arcane Shield:");
 
                 RegularCooldown cooldown = arcaneShieldCooldown.get();
@@ -1569,13 +1573,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void subtractRedCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().subtractCooldown(cooldown);
-            updateRedItem();
-        }
-    }
-
     public boolean isDisableCooldowns() {
         return disableCooldowns;
     }
@@ -1594,16 +1591,16 @@ public abstract class WarlordsEntity {
         this.disableCooldowns = disableCooldowns;
     }
 
-    public void setPurpleCurrentCooldown(float currentCooldown) {
+    public void subtractRedCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
-            updatePurpleItem();
+            this.getRedAbility().subtractCooldown(cooldown);
+            updateRedItem();
         }
     }
 
-    public void subtractPurpleCooldown(float cooldown) {
+    public void setPurpleCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
-            this.getPurpleAbility().subtractCooldown(cooldown);
+            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
             updatePurpleItem();
         }
     }
@@ -1618,16 +1615,16 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void setBlueCurrentCooldown(float currentCooldown) {
+    public void subtractPurpleCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getBlueAbility().setCurrentCooldown(currentCooldown);
-            updateBlueItem();
+            this.getPurpleAbility().subtractCooldown(cooldown);
+            updatePurpleItem();
         }
     }
 
-    public void subtractBlueCooldown(float cooldown) {
+    public void setBlueCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
-            this.getBlueAbility().subtractCooldown(cooldown);
+            this.getBlueAbility().setCurrentCooldown(currentCooldown);
             updateBlueItem();
         }
     }
@@ -1642,16 +1639,16 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void setOrangeCurrentCooldown(float currentCooldown) {
+    public void subtractBlueCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
-            updateOrangeItem();
+            this.getBlueAbility().subtractCooldown(cooldown);
+            updateBlueItem();
         }
     }
 
-    public void subtractOrangeCooldown(float cooldown) {
+    public void setOrangeCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
-            this.getOrangeAbility().subtractCooldown(cooldown);
+            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
             updateOrangeItem();
         }
     }
@@ -1663,6 +1660,13 @@ public abstract class WarlordsEntity {
     public void updateOrangeItem() {
         if (entity instanceof Player) {
             updateOrangeItem((Player) entity);
+        }
+    }
+
+    public void subtractOrangeCooldown(float cooldown) {
+        if (!isDisableCooldowns()) {
+            this.getOrangeAbility().subtractCooldown(cooldown);
+            updateOrangeItem();
         }
     }
 
