@@ -133,7 +133,9 @@ public class StatsLeaderboardManager {
 
         Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
 
-        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections, databasePlayers));
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) ->
+                statsLeaderboardGameType.resetLeaderboards(playersCollections, new HashSet<>(databasePlayers)
+                ));
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
