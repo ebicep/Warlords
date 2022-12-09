@@ -19,6 +19,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -182,6 +184,10 @@ public class GuildMenu {
             return;
         }
         GuildPlayer guildPlayer = guildPlayerPair.getB();
+        if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
+            player.sendMessage(ChatColor.RED + "You must be in the guild for at least 2 days to convert coins.");
+            return;
+        }
         long dailyCoinsConverted = guildPlayer.getDailyCoinsConverted();
         if (dailyCoinsConverted >= 10000) {
             player.sendMessage(ChatColor.RED + "You can only covert up to 10,000 guild coins per day.");
