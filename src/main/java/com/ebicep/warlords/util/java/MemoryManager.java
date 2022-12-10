@@ -18,6 +18,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -86,7 +87,7 @@ public class MemoryManager implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerQuitEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         PLAYER_LOGOUT_TIMES.remove(event.getPlayer().getUniqueId());
     }
 
