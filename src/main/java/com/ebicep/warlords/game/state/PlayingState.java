@@ -18,10 +18,13 @@ import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -143,6 +146,11 @@ public class PlayingState implements State, TimerDebugAble {
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Started recording timed stats");
 
         new GameRunnable(game) {
+
+            final boolean endless = game.getOptions()
+                    .stream()
+                    .anyMatch(option -> option instanceof WaveDefenseOption && ((WaveDefenseOption) option).getDifficulty() == DifficultyIndex.ENDLESS);
+
             @Override
             public void run() {
                 counter++;
@@ -151,7 +159,14 @@ public class PlayingState implements State, TimerDebugAble {
                     counter -= 60;
                     PlayerFilter.playingGame(game).forEach(wp -> wp.getMinuteStats().advanceMinute());
                 }
-                PlayerFilter.playingGame(game).forEach(wp -> wp.getSecondStats().advanceSecond());
+                PlayerFilter.playingGame(game).forEach(wp -> {
+                    PlayerStatisticsSecond secondStats = wp.getSecondStats();
+                    secondStats.advanceSecond();
+                    //remove second stats if over 10 minutes in endless for memory
+                    if (endless && secondStats.getEntries().size() > 60 * 10) {
+                        secondStats.getEntries().remove(0);
+                    }
+                });
             }
         }.runTaskTimer(0, GameRunnable.SECOND);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
