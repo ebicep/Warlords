@@ -137,7 +137,7 @@ public class CooldownManager {
 
     public void removeAbilityCooldowns() {
         abstractCooldowns.removeIf(cd -> {
-            if (cd.getCooldownType() == CooldownTypes.ABILITY) {
+            if (cd != null && cd.getCooldownType() == CooldownTypes.ABILITY) {
                 cd.getOnRemoveForce().accept(this);
                 return true;
             }

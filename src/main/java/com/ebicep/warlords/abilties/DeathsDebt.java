@@ -29,6 +29,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeathsDebt extends AbstractTotemBase {
@@ -118,9 +119,10 @@ public class DeathsDebt extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManagerRespite -> {
-                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld()) {
-                        totemStand.remove();
-                        effectTask.cancel();
+                    Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManagerRespite, RegularCooldown.class)
+                            .filterCooldownObject(tempDeathsDebt)
+                            .findAny();
+                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
                         return;
                     }
 
@@ -191,10 +193,12 @@ public class DeathsDebt extends AbstractTotemBase {
                     totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
                 },
                 cooldownManager -> {
-                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld()) {
+                    Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            .filterCooldownObject(tempDeathsDebt)
+                            .findAny();
+                    if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
                         totemStand.remove();
                         effectTask.cancel();
-                        return;
                     }
                 },
                 duration,
