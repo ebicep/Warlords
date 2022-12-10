@@ -568,6 +568,7 @@ public class WeaponManagerMenu {
         private int weaponScoreSalvage = 70;
 
         public void reset() {
+            this.page = 1;
             this.rarityFilter = WeaponsPvE.NONE;
             this.bindFilterOption = BindFilterOptions.ALL;
             this.selectedSpecFilter = false;
