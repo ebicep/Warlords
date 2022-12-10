@@ -87,6 +87,10 @@ public class WarlordsEvents implements Listener {
                 }
                 if (!loadedPlayers.containsKey(uuid)) {
                     DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                        if (!Objects.equals(databasePlayer.getName(), event.getName())) {
+                            databasePlayer.setName(event.getName());
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                        }
                     });
                 }
             }
@@ -244,7 +248,6 @@ public class WarlordsEvents implements Listener {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
-            DatabaseManager.checkUpdatePlayerName(player);
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
