@@ -319,7 +319,7 @@ public class WarlordsEvents implements Listener {
         }
 
         wpAttacker.setHitCooldown(12);
-        wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit(), true);
+        wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit(), false);
         wpAttacker.getMinuteStats().addMeleeHits();
 
         if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
