@@ -54,7 +54,7 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 0, 0, 0, 1);
-                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.BUFF, 10);
+                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.WEAPON, 20);
             }
 
             FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()

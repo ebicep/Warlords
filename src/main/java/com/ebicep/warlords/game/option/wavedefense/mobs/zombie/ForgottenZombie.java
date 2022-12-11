@@ -31,7 +31,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
                         Weapons.FABLED_HEROICS_SWORD.getItem()
                 ),
-                2400,
+                2000,
                 0.6f,
                 0,
                 1200,
