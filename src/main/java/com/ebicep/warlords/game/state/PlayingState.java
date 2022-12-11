@@ -7,11 +7,9 @@ import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
@@ -33,12 +31,14 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -46,7 +46,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -102,30 +105,6 @@ public class PlayingState implements State, TimerDebugAble {
             updateBasedOnGameState(customScoreboard, wp);
         });
 
-        if (DatabaseManager.playerService != null) {
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Loading players in active collections");
-                    List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators().collect(Collectors.toList());
-                    for (Map.Entry<OfflinePlayer, Team> player : players) {
-                        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                            if (activeCollection == PlayersCollections.LIFETIME) {
-                                DatabaseManager.updatePlayer(player.getKey().getUniqueId(), databasePlayer -> {
-                                });
-                                continue;
-                            }
-                            DatabaseManager.loadPlayer(player.getKey().getUniqueId(), activeCollection, (dp) -> {
-                            });
-                        }
-                    }
-                    ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Loaded players in active collections");
-                }
-            }.runTaskLaterAsynchronously(Warlords.getInstance(), 40);
-        } else {
-            System.out.println("ATTENTION - playerService is null");
-        }
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
