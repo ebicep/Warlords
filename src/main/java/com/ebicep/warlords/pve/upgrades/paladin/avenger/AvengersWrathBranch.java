@@ -87,7 +87,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 50000,
                 () -> {
                     ability.setHitRadius(ability.getHitRadius() * 2);
-                    ability.setMaxTargets(ability.getMaxTargets() + 5);
+                    ability.setMaxTargets(ability.getMaxTargets() + 3);
                     ability.setCooldown(ability.getCooldown() * 0.9f);
                 }
         );

@@ -26,6 +26,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.Option;
@@ -36,7 +37,6 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -53,6 +53,7 @@ import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
+import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -104,14 +105,6 @@ public class Warlords extends JavaPlugin {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
-    }
-
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
-    }
-
-    public static Warlords getInstance() {
-        return instance;
     }
 
     public static <T> TaskChain<T> newSharedChain(String name) {
@@ -176,6 +169,10 @@ public class Warlords extends JavaPlugin {
         }
     }
 
+    public static Warlords getInstance() {
+        return instance;
+    }
+
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
         return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
@@ -188,7 +185,6 @@ public class Warlords extends JavaPlugin {
             player.teleport(value);
         }
     }
-
     private GameManager gameManager;
 
     @Override
@@ -299,6 +295,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
+        getServer().getPluginManager().registerEvents(new MemoryManager(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
@@ -420,6 +417,8 @@ public class Warlords extends JavaPlugin {
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
+
+        MemoryManager.init();
 
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is enabled");
     }
@@ -552,7 +551,7 @@ public class Warlords extends JavaPlugin {
                     boolean hasTooMuchHealth = wp.getHealth() > wp.getMaxHealth();
 
                     if (hasOverhealCooldown && !hasTooMuchHealth) {
-                        wp.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
+                        wp.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     }
 
                     if (!hasOverhealCooldown && hasTooMuchHealth) {
@@ -666,6 +665,8 @@ public class Warlords extends JavaPlugin {
                                     }
                                 });
 
+                                Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(wp, undyingArmy));
+
                                 break;
                             }
                         }
@@ -739,13 +740,8 @@ public class Warlords extends JavaPlugin {
                             orb.remove();
                             itr.remove();
 
-                            float orbHeal = OrbsOfLife.ORB_HEALING;
+                            float orbHeal = orb.getCooldown().getCooldownObject().getMinDamageHeal();
                             WarlordsEntity owner = orb.getOwner();
-                            if (owner.getGame().getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE &&
-                                    PlayerSettings.getPlayerSettings(owner.getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE
-                            ) {
-                                orbHeal *= 1.2;
-                            }
 
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
@@ -919,6 +915,10 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
+    }
+
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
     }
 
     public static boolean hasPlayer(@Nonnull UUID player) {

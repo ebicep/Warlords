@@ -20,12 +20,12 @@ import java.util.Comparator;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 @CommandAlias("wl")
-@CommandPermission("group.administrator")
-//@CommandPermission("warlords.game.debug")
+@CommandPermission("minecraft.command.op|group.administrator")
+//@CommandPermission("minecraft.command.op|warlords.game.debug")
 public class DebugCommand extends BaseCommand {
 
     @Default
-    @CommandPermission("group.administrator")
+    @CommandPermission("minecraft.command.op|warlords.game.debug")
     public void openDebugMenu(Player player) {
         DebugMenu.openDebugMenu(player);
     }
@@ -96,7 +96,7 @@ public class DebugCommand extends BaseCommand {
         boolean disable = option.equals("disable");
         target.setDisableCooldowns(disable);
         if (disable) {
-            target.resetAbilities();
+            target.resetAbilities(false);
         }
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!", true);
     }
@@ -135,6 +135,18 @@ public class DebugCommand extends BaseCommand {
         target.addDamageInstance(target, "God", amount, amount, 0, 100, false);
         target.setRegenTimer(10);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!", true);
+    }
+
+    @Subcommand("debugmessage")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Toggle debug messages for a player or sender if there is no target")
+    public void damage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean enable = option.equals("enable");
+        target.setShowDebugMessage(enable);
+        sendDebugMessage(issuer,
+                target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer see" : "start seeing") + " debug messages!",
+                true
+        );
     }
 
     @HelpCommand

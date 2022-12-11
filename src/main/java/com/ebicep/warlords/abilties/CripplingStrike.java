@@ -87,6 +87,8 @@ public class CripplingStrike extends AbstractStrikeBase {
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
                             nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
@@ -109,10 +111,13 @@ public class CripplingStrike extends AbstractStrikeBase {
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
                             nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
-                    }, crippleDuration * 20
+                    },
+                    crippleDuration * 20
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

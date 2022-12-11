@@ -107,8 +107,8 @@ public class MasterworksFairTrait extends WarlordsTrait {
                         true
                 ) + ChatColor.BOLD + " left"
         );
-        if (fairNumber != 0 && fairNumber % 10 == 0) {
-            hologramTrait.setLine(3, ChatColor.RED + "10x REWARDS!");
+        if (fairNumber != 0 && fairNumber % 5 == 0) {
+            hologramTrait.setLine(3, ChatColor.RED + "2x REWARDS!");
         }
     }
 

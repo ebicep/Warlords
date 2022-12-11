@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
@@ -17,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("gdebug")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class GuildDebugCommand extends BaseCommand {
 
     @Subcommand("experience")
@@ -45,11 +46,11 @@ public class GuildDebugCommand extends BaseCommand {
             Timing timing,
             Integer amount
     ) {
-        guildPlayerWrapper.getGuild().setCoins(timing, amount);
+        guildPlayerWrapper.getGuild().setCurrentCoins(amount);
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
                 ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                        .getName() + " coins to " + ChatColor.YELLOW + amount,
+                        .getName() + " current coins to " + ChatColor.YELLOW + amount,
                 true
         );
     }
@@ -71,6 +72,30 @@ public class GuildDebugCommand extends BaseCommand {
                 ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(),
                 true
         );
+    }
+
+    @Subcommand("getlog")
+    @Description("Gets audit log of a guild")
+    public void getLog(Player player, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            guild.printAuditLog(player, Integer.MAX_VALUE);
+        });
+    }
+
+    @Subcommand("getlogpaged")
+    @Description("Gets audit log of a guild at page")
+    public void getLogPaged(Player player, Integer page, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            guild.printAuditLog(player, page);
+        });
+    }
+
+    @Subcommand("openmenu")
+    @Description("Opens guild menu of any guild")
+    public void openMenu(Player player, String guildName) {
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
+            GuildMenu.openGuildMenu(guild, player, 1);
+        });
     }
 
     @HelpCommand

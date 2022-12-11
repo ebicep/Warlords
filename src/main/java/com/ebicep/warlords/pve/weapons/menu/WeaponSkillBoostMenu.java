@@ -59,6 +59,9 @@ public class WeaponSkillBoostMenu {
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
                 lore.add(ChatColor.YELLOW + "Click to select!");
+                if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
+                    lore.addAll(WeaponSkillBoostMenu.costLore);
+                }
             }
             builder.lore(lore);
             menu.setItem(

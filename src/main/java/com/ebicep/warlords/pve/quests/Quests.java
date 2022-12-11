@@ -48,6 +48,16 @@ public enum Quests {
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getPlays() + 1 >= 2;
         }
+
+        @Override
+        public String getProgress(DatabasePlayer databasePlayer) {
+            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getPlays() + ChatColor.AQUA + "/" + ChatColor.GOLD + "2";
+        }
+
+        @Override
+        public String getNoProgress() {
+            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "2";
+        }
     },
     DAILY_WIN("Triumphant",
             "Win a game",
@@ -77,9 +87,19 @@ public enum Quests {
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getPlays() + 1 >= 20;
         }
+
+        @Override
+        public String getProgress(DatabasePlayer databasePlayer) {
+            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getPlays() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        }
+
+        @Override
+        public String getNoProgress() {
+            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        }
     },
     WEEKLY_30_ENDLESS("Conquest",
-            "Reach Wave 30 in a game of Endless",
+            "Clear wave 30 in a game of Endless",
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
@@ -108,12 +128,6 @@ public enum Quests {
             return CACHED_PLAYER_QUESTS.get(warlordsPlayer.getUuid());
         }
         List<Quests> questsCompleted = new ArrayList<>();
-
-        PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
-        if (total.getDamage() + total.getHealing() + total.getAbsorbed() < 100_000) {
-            CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), questsCompleted);
-            return questsCompleted;
-        }
 
         for (Quests quest : VALUES) {
             if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
@@ -153,19 +167,28 @@ public enum Quests {
         this.rewards = rewards;
     }
 
-    public ItemStack getItemStack(boolean completed) {
+    public String getProgress(DatabasePlayer databasePlayer) {
+        return ChatColor.GREEN + "Started";
+    }
+
+    public String getNoProgress() {
+        return ChatColor.GREEN + "Started";
+    }
+
+    public ItemStack getItemStack(DatabasePlayer databasePlayer, boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
                 .name(ChatColor.GREEN + time.name + ": " + name)
                 //.name(ChatColor.GREEN + name)
                 .lore(
                         ChatColor.GRAY + description,
                         "",
+                        ChatColor.GRAY + "Progress: " + (completed ? ChatColor.GREEN + "Completed" :
+                                databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
+                        "",
                         ChatColor.GRAY + "Rewards:"
                 );
         rewards.forEach((currencies, aLong) -> itemBuilder.addLore(ChatColor.DARK_GRAY + " +" + currencies.getCostColoredName(aLong)));
-        if (completed) {
-            itemBuilder.addLore("", ChatColor.GREEN + "Completed!");
-        } else {
+        if (!completed) {
             itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
         }

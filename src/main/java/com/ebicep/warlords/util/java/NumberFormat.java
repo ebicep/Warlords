@@ -9,19 +9,22 @@ import java.util.TreeMap;
 public class NumberFormat {
 
     private static final DecimalFormat FORMAT_COMMAS = new DecimalFormat("#,###");
-    private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS = new DecimalFormat("#.##");
-    private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_TENTHS = new DecimalFormat("#.#");
     private static final DecimalFormat DECIMAL_FORMAT_TENTHS = new DecimalFormat("0.0");
+    private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_TENTHS = new DecimalFormat("#.#");
+    private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS = new DecimalFormat("#.##");
+    private static final DecimalFormat DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS = new DecimalFormat("#,###.##");
     private static final NavigableMap<Long, String> SUFFIXES = new TreeMap<>();
 
     static {
-        DECIMAL_FORMAT_OPTIONAL_TENTHS.setDecimalSeparatorAlwaysShown(false);
         DECIMAL_FORMAT_TENTHS.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS.setDecimalSeparatorAlwaysShown(false);
         DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS.setDecimalSeparatorAlwaysShown(false);
 
-        DECIMAL_FORMAT_OPTIONAL_TENTHS.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT_TENTHS.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS.setRoundingMode(RoundingMode.HALF_UP);
 
         SUFFIXES.put(1_000L, "k");
         SUFFIXES.put(1_000_000L, "m");
@@ -45,9 +48,15 @@ public class NumberFormat {
 
     public static String getSimplifiedNumber(long value) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) return getSimplifiedNumber(Long.MIN_VALUE + 1);
-        if (value < 0) return "-" + getSimplifiedNumber(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
+        if (value == Long.MIN_VALUE) {
+            return getSimplifiedNumber(Long.MIN_VALUE + 1);
+        }
+        if (value < 0) {
+            return "-" + getSimplifiedNumber(-value);
+        }
+        if (value < 1000) {
+            return Long.toString(value); //deal with easy case
+        }
 
         Map.Entry<Long, String> e = SUFFIXES.floorEntry(value);
         Long divideBy = e.getKey();
@@ -61,6 +70,10 @@ public class NumberFormat {
     public static String addCommaAndRound(double amount) {
         amount = Math.round(amount);
         return FORMAT_COMMAS.format(amount);
+    }
+
+    public static String addCommaAndRoundHundredths(double amount) {
+        return DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS.format(amount);
     }
 
     public static String addCommas(double amount) {

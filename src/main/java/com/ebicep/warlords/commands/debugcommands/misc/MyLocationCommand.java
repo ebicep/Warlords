@@ -13,7 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 @CommandAlias("mylocation")
-@CommandPermission("warlords.game.location")
+@CommandPermission("minecraft.command.op|warlords.game.location")
 public class MyLocationCommand extends BaseCommand {
 
     public static double roundToHalf(double d) {

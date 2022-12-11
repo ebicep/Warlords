@@ -3,12 +3,14 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,6 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Intervene extends AbstractAbility {
@@ -127,6 +130,11 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                        if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                            return;
+                        }
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
                                 ChatColor.GRAY + wp.getName() + "'s " +
                                 ChatColor.YELLOW + "Intervene " +
@@ -166,6 +174,8 @@ public class Intervene extends AbstractAbility {
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);
 
             wp.updateBlueItem();
+
+            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, veneTarget));
 
             return true;
         }

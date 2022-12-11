@@ -2,7 +2,6 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
@@ -10,18 +9,17 @@ import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDu
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
@@ -31,7 +29,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -226,27 +227,9 @@ public enum GameMode {
                     color + "monsters!",
                     ""
             ));
-            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                    .name(ChatColor.AQUA + "Pre-game Menu ")
-                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
-                    .get(), (g, p) -> openMainMenu(p)));
-            options.add(new PreGameItemOption(
-                    6,
-                    (game, player) -> {
-                        if (DatabaseManager.playerService != null) {
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-                            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
-                                    .filter(AbstractWeapon::isBound)
-                                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
-                                    .findFirst();
-                            return optionalWeapon.map(abstractWeapon -> abstractWeapon.generateItemStack(false)).orElse(null);
-                        } else {
-                            return null;
-                        }
-                    },
-                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
-            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+//            options.add(new PreGameItemOption(6, PlayerHotBarItemListener.PVE_MENU, (g, p) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(p)));
+//            options.add(new PreGameItemOption(8, PlayerHotBarItemListener.SETTINGS_MENU, (g, p) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(p)));
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
@@ -258,6 +241,7 @@ public enum GameMode {
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WinByAllDeathOption());
             options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
             return options;
         }
     },

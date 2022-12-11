@@ -87,14 +87,12 @@ public class HealingTotem extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    totemStand.remove();
-
                     Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                     Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
-                    float healMultiplier = 1 + (.35f * ((cooldownCounter.get() / 20f) + 1));
+                    float healMultiplier = Math.min(1 + (.35f * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -115,6 +113,9 @@ public class HealingTotem extends AbstractTotemBase {
                     if (tempHealingTotem.getAmountHealed() >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
+                },
+                cooldownManager -> {
+                    totemStand.remove();
                 },
                 false,
                 duration * 20,

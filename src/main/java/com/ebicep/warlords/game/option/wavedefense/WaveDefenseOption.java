@@ -30,7 +30,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -314,11 +316,25 @@ public class WaveDefenseOption implements Option {
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
 
-                    if (difficulty == DifficultyIndex.ENDLESS && (waveCounter == 50 || waveCounter == 100)) {
-                        getGame().forEachOnlineWarlordsPlayer(wp -> {
-                            wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                            wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                        });
+                    if (difficulty == DifficultyIndex.ENDLESS) {
+                        switch (waveCounter) {
+                            case 25:
+                            case 75:
+                                getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                    for (AbstractUpgradeBranch<?> branch : wp.getAbilityTree().getUpgradeBranches()) {
+                                        branch.setMaxUpgrades(branch.getMaxUpgrades() + 1);
+                                    }
+                                    wp.sendMessage(ChatColor.GOLD.toString() + ChatColor.BOLD + "+1 Tier Upgrade");
+                                });
+                                break;
+                            case 50:
+                            case 100:
+                                getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                                });
+                                break;
+                        }
                     }
                 }
 
@@ -326,8 +342,8 @@ public class WaveDefenseOption implements Option {
                     mob.whileAlive(mobSpawnTimes.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
                 }
 
-                //check every 20 seconds for mobs in void
-                if (ticksElapsed.get() % 400 == 0) {
+                //check every 10 seconds for mobs in void
+                if (ticksElapsed.get() % 200 == 0) {
                     for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
                         Location location = marker.getLocation();
                         for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
@@ -366,6 +382,7 @@ public class WaveDefenseOption implements Option {
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
                     player.updateEntity();
+                    player.getSpec().updateCustomStats();
                 });
             });
         }
@@ -373,7 +390,7 @@ public class WaveDefenseOption implements Option {
 
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getAbstractWeapon();
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
         if (weapon == null) {
             WeaponOption.showWeaponStats(warlordsPlayer, player);
         } else {
@@ -381,6 +398,9 @@ public class WaveDefenseOption implements Option {
         }
 
         player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
+        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        }
     }
 
     @Override
@@ -438,7 +458,7 @@ public class WaveDefenseOption implements Option {
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
 
-        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
+        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
                 sendMessage(entry.getKey(),
                         false,
@@ -453,39 +473,39 @@ public class WaveDefenseOption implements Option {
 
             float soundPitch = 0.8f;
             String wavePrefix = "§eWave ";
-            if (waveCounter >= 20) {
+            if (waveCounter >= 10) {
                 soundPitch = 0.75f;
                 wavePrefix = "§eWave ";
             }
-            if (waveCounter >= 40) {
+            if (waveCounter >= 25) {
                 soundPitch = 0.7f;
                 wavePrefix = "§6Wave ";
             }
-            if (waveCounter >= 60) {
+            if (waveCounter >= 50) {
                 soundPitch = 0.65f;
                 wavePrefix = "§7Wave ";
             }
-            if (waveCounter >= 80) {
+            if (waveCounter >= 60) {
                 soundPitch = 0.5f;
                 wavePrefix = "§8§lWave ";
             }
-            if (waveCounter >= 100) {
+            if (waveCounter >= 70) {
                 soundPitch = 0.4f;
                 wavePrefix = "§d§lWave ";
             }
-            if (waveCounter >= 110) {
+            if (waveCounter >= 80) {
                 soundPitch = 0.3f;
                 wavePrefix = "§5§lWave ";
             }
-            if (waveCounter >= 120) {
+            if (waveCounter >= 90) {
                 soundPitch = 0.2f;
                 wavePrefix = "§5W§5§k§la§5§lve ";
             }
-            if (waveCounter >= 130) {
+            if (waveCounter >= 100) {
                 soundPitch = 0.1f;
                 wavePrefix = "§4W§4§k§la§4§lve ";
             }
-            if (waveCounter >= 150) {
+            if (waveCounter >= 101) {
                 wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 

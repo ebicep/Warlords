@@ -52,6 +52,7 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        boolean hasShackled = false;
         if (pveUpgrade) {
             Location playerLoc = new LocationBuilder(wp.getLocation())
                     .pitch(0)
@@ -72,9 +73,9 @@ public class SoulShackle extends AbstractAbility {
                 if (viewDirection.dot(direction) > .6) {
                     activateAbility(wp, shackleTarget);
                 }
-            }
 
-            return true;
+                hasShackled = true;
+            }
         } else {
             for (WarlordsEntity shackleTarget : PlayerFilter
                     .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
@@ -83,7 +84,6 @@ public class SoulShackle extends AbstractAbility {
                     .closestFirst(wp)
                     .limit(maxShackleTargets)
             ) {
-                wp.subtractEnergy(energyCost, false);
                 wp.sendMessage(
                         WarlordsEntity.GIVE_ARROW_GREEN +
                                 ChatColor.GRAY + " You shackled " +
@@ -95,11 +95,15 @@ public class SoulShackle extends AbstractAbility {
                 activateAbility(wp, shackleTarget);
                 shacklePool = 0;
 
-                return true;
+                hasShackled = true;
             }
         }
 
-        return false;
+        if (hasShackled) {
+            wp.subtractEnergy(energyCost, false);
+        }
+
+        return hasShackled;
     }
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {

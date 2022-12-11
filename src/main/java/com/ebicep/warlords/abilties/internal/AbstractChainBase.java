@@ -2,7 +2,9 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.bukkit.util.EulerAngle;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractChainBase extends AbstractAbility {
 
@@ -24,7 +27,8 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull Player player) {
-        int hitCounter = getHitCounterAndActivate(warlordsPlayer, player);
+        Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer, player);
+        int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
             playersHit += hitCounter;
 
@@ -33,13 +37,17 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
             onHit(warlordsPlayer, player, hitCounter);
 
+            entitiesHit.remove(null);
+
+            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(warlordsPlayer, entitiesHit));
+
             return true;
         }
 
         return false;
     }
 
-    protected abstract int getHitCounterAndActivate(WarlordsEntity warlordsPlayer, Player player);
+    protected abstract Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity warlordsPlayer, Player player);
 
     protected abstract void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter);
 

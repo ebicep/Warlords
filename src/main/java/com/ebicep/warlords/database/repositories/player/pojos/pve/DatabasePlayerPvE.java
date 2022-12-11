@@ -17,6 +17,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -98,7 +99,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             Guild guild = guildGuildPlayerPair.getA();
             GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
 
-            guild.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
+            guild.addCurrentCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
             guildPlayer.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
@@ -176,6 +177,20 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 break;
         }
 
+    }
+
+    public DatabasePlayerPvEDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {
+        switch (difficultyIndex) {
+            case EASY:
+                return easyStats;
+            case NORMAL:
+                return normalStats;
+            case HARD:
+                return hardStats;
+            case ENDLESS:
+                return endlessStats;
+        }
+        return null;
     }
 
     public void subtractCurrency(Currencies currency, int amount) {

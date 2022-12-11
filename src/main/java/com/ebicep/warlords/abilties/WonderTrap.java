@@ -134,9 +134,17 @@ public class WonderTrap extends AbstractAbility {
 
                             WonderTrap tempTrap = new WonderTrap();
 
-                            trapTarget.getCooldownManager()
-                                    .addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
-                                    }, 30 * 20);
+                            trapTarget.getCooldownManager().addRegularCooldown(
+                                    "KB Increase",
+                                    "KB",
+                                    WonderTrap.class,
+                                    tempTrap,
+                                    trapOwner,
+                                    CooldownTypes.DEBUFF,
+                                    cooldownManager -> {
+                                    },
+                                    30 * 20
+                            );
                         });
                 this.cancel();
             }

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties.internal;
 
-import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -39,7 +38,7 @@ public abstract class AbstractAbility {
     protected float energyCost;
     protected float critChance;
     protected float critMultiplier;
-    protected String description;
+    protected String description = "";
     protected boolean boosted;
     //pve
     protected boolean pveUpgrade = false;
@@ -66,16 +65,17 @@ public abstract class AbstractAbility {
     /**
      * @return whether the ability has to go on cooldown after activation.
      */
-    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player);
+    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
+
+    public void updateCustomStats(AbstractPlayerClass apc) {
+
+    }
 
     public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {
             boosted = true;
             skillBoost.applyBoost.accept(this);
-            if (abstractPlayerClass != null && this instanceof ArcaneShield) {
-                ArcaneShield arcaneShield = ((ArcaneShield) this);
-                arcaneShield.setMaxShieldHealth((int) (abstractPlayerClass.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
-            }
+            updateCustomStats(abstractPlayerClass);
         }
     }
 

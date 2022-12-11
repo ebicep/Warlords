@@ -175,7 +175,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param location         what location should the cylinder be around.
+     * @param location       what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param effect         which particle effect should be displayed.
      * @param particleCount  the amount of particles that should be displayed.

@@ -103,10 +103,10 @@ public class Earthliving extends AbstractAbility {
 
                         new GameRunnable(victim.getGame()) {
                             int counter = 0;
-                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMin() : 132;
-                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMax() : 179;
+                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
+                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
 
                             @Override
                             public void run() {

@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -170,7 +169,6 @@ public class WeaponSkinSelectorMenu {
             );
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
 
-            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
 
             openWeaponSkinSelectorMenu(player, databasePlayer, weapon, page);
         }

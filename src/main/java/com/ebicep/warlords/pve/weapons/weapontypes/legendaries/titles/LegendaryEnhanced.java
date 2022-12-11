@@ -2,19 +2,19 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
@@ -40,28 +40,13 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
-        return 155;
+    public String getPassiveEffect() {
+        return "Increase the duration of negative effects to enemies by 2s and active abilities of allies by 2s whenever you target an ally with a blue rune (Slot 4).";
     }
 
     @Override
     protected float getMeleeDamageMaxValue() {
         return 180;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getHealthBonusValue() {
-        return 400;
     }
 
     @Override
@@ -109,7 +94,44 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 event.getDuration().set(event.getDuration().get() + 40);
             }
 
+            @EventHandler
+            public void onBlueAbilityTarget(WarlordsBlueAbilityTargetEvent event) {
+                if (!event.getPlayer().equals(player)) {
+                    return;
+                }
+                HashSet<WarlordsEntity> warlordsEntities = new HashSet<>(event.getTargets());
+                warlordsEntities.add(player);
+                warlordsEntities.stream()
+                        .filter(warlordsEntity -> warlordsEntity.isTeammate(player))
+                        .forEach(warlordsEntity -> warlordsEntity.getCooldownManager().addTicksToRegularCooldowns(CooldownTypes.ABILITY, 40));
+            }
+
         });
+    }
+
+    @Override
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.ENHANCED;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 155;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    protected float getHealthBonusValue() {
+        return 400;
     }
 
     @Override
@@ -120,15 +142,5 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerSecondBonusValue() {
         return 3;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Enhanced";
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Increase the duration of negative effects to enemies by 2s.";
     }
 }

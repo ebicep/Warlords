@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 
 import java.util.UUID;
@@ -20,8 +21,13 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Gradient";
+    public String getPassiveEffect() {
+        return "Perpetually regenerate 5% of your health every 5 seconds.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
     }
 
     @Override
@@ -42,10 +48,9 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Perpetually regenerate 5% of your health every 5 seconds.";
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.GRADIENT;
     }
-
 
     @Override
     protected float getMeleeDamageMinValue() {
@@ -53,8 +58,8 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
+    protected float getSpeedBonusValue() {
+        return 8;
     }
 
     @Override
@@ -73,12 +78,12 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getEnergyPerHitBonusValue() {
+    protected float getEnergyPerSecondBonusValue() {
         return 3;
     }
 
     @Override
-    protected float getEnergyPerSecondBonusValue() {
+    protected float getEnergyPerHitBonusValue() {
         return 3;
     }
 

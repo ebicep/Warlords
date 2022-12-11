@@ -16,38 +16,38 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+7.5% Damage",
+                "+10% Damage",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+15% Damage",
+                "+20% Damage",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+22.5% Damage",
+                "+30% Damage",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+30% Damage",
+                "+40% Damage",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
+                    ability.setMinDamageHeal(minDamage * 1.4f);
+                    ability.setMaxDamageHeal(maxDamage * 1.4f);
                 }
         ));
 

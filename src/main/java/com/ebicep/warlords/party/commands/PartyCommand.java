@@ -27,6 +27,13 @@ import java.util.*;
 @CommandAlias("party|p")
 public class PartyCommand extends BaseCommand {
 
+    @CommandAlias("pl")
+    @Subcommand("list")
+    @Description("Lists the players in your party")
+    public void list(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
+        player.sendMessage(partyPlayerWrapper.getParty().getPartyList());
+    }
+
     @Subcommand("create")
     @Description("Creates a party")
     public void create(@Conditions("party:false") Player player) {
@@ -129,13 +136,6 @@ public class PartyCommand extends BaseCommand {
         }
     }
 
-    @CommandAlias("pl")
-    @Subcommand("list")
-    @Description("Lists the players in your party")
-    public void list(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
-        player.sendMessage(partyPlayerWrapper.getParty().getPartyList());
-    }
-
     @Subcommand("promote")
     @CommandCompletion("@partymembers")
     @Description("Promotes a player in your party")
@@ -230,7 +230,7 @@ public class PartyCommand extends BaseCommand {
     }
 
     @Subcommand("leader")
-    @CommandPermission("warlords.party.forceleader")
+    @CommandPermission("minecraft.command.op|warlords.party.forceleader")
     @Description("Forces you to be the party leader")
     public void leader(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
         partyPlayerWrapper.getParty().transfer(player.getUniqueId());
@@ -247,7 +247,7 @@ public class PartyCommand extends BaseCommand {
     }
 
     @Subcommand("forcejoin")
-    @CommandPermission("warlords.party.forcejoin")
+    @CommandPermission("minecraft.command.op|warlords.party.forcejoin")
     @Description("Forces a player to join the party")
     public void forceJoin(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, String target) {
         Party party = partyPlayerWrapper.getParty();

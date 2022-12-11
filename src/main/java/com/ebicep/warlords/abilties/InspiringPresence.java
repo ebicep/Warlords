@@ -66,6 +66,8 @@ public class InspiringPresence extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
                 },
@@ -114,6 +116,8 @@ public class InspiringPresence extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         cancelAllySpeed.run();
                     },
                     duration * 20
@@ -134,11 +138,11 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     private void resetCooldowns(WarlordsEntity we) {
-        we.setRedCurrentCooldown(0);
-        we.setPurpleCurrentCooldown(0);
-        we.setBlueCurrentCooldown(0);
+        we.getRedAbility().subtractCooldown(30);
+        we.getPurpleAbility().subtractCooldown(30);
+        we.getBlueAbility().subtractCooldown(30);
         if (!we.getOrangeAbility().getName().equals("Inspiring Presence")) {
-            we.setOrangeCurrentCooldown(0);
+            we.getOrangeAbility().subtractCooldown(30);
         }
         we.updateItems();
     }

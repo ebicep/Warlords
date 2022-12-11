@@ -9,8 +9,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
-import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @CommandAlias("guild|g")
@@ -78,6 +77,7 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.removeGuildInvite(player, guild);
         guild.join(player);
+        CustomScoreboard.updateLobbyPlayerNames();
     }
 
     @Subcommand("menu")
@@ -372,17 +372,14 @@ public class GuildCommand extends BaseCommand {
 
     @Subcommand("log")
     @Description("View the audit log of your guild")
-    public void log(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+    public void log(
+            @Conditions("guild:true") Player player,
+            @Flags("master") GuildPlayerWrapper guildPlayerWrapper,
+            @co.aikar.commands.annotation.Optional Integer page
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
-        ChatUtils.sendMessageToPlayer(
-                player,
-                guild.getAuditLog().stream()
-                        .map(AbstractGuildLog::getFormattedLog)
-                        .collect(Collectors.joining("\n")),
-                ChatColor.GREEN,
-                false
-        );
+        guild.printAuditLog(player, page == null ? Integer.MAX_VALUE : page);
     }
 
     @Subcommand("open")
@@ -453,6 +450,7 @@ public class GuildCommand extends BaseCommand {
                 Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
                 return;
             }
+            message = message.replaceAll("&", "§");
             motd.add(message);
             guild.queueUpdate();
             Guild.sendGuildMessage(player, ChatColor.GRAY + "Appended " + ChatColor.RESET + message + ChatColor.GRAY + " to the MOTD.");
@@ -482,6 +480,7 @@ public class GuildCommand extends BaseCommand {
                 Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
                 return;
             }
+            message = message.replaceAll("&", "§");
             if (line == motd.size() + 1) {
                 motd.add(message);
             } else {
@@ -555,7 +554,7 @@ public class GuildCommand extends BaseCommand {
         }
 
         @Subcommand("refresh")
-        @CommandPermission("warlords.leaderboard.interaction")
+        @CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);

@@ -93,10 +93,17 @@ public class WaterBolt extends AbstractProjectileBase {
                         false, false
                 );
                 if (hit != shooter) {
-                    hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
-                    hit.getCooldownManager().addRegularCooldown("Overheal",
-                            "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Overheal.OVERHEAL_DURATION * 20
+                    hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+                    hit.getCooldownManager().addRegularCooldown(
+                            "Overheal",
+                            "OVERHEAL",
+                            Overheal.class,
+                            Overheal.OVERHEAL_MARKER,
+                            shooter,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                            },
+                            Overheal.OVERHEAL_DURATION * 20
                     );
                 }
                 if (pveUpgrade) {
@@ -138,10 +145,17 @@ public class WaterBolt extends AbstractProjectileBase {
                         false, false
                 );
                 if (nearEntity != shooter) {
-                    nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
-                    nearEntity.getCooldownManager().addRegularCooldown("Overheal",
-                            "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Overheal.OVERHEAL_DURATION * 20
+                    nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+                    nearEntity.getCooldownManager().addRegularCooldown(
+                            "Overheal",
+                            "OVERHEAL",
+                            Overheal.class,
+                            Overheal.OVERHEAL_MARKER,
+                            shooter,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                            },
+                            Overheal.OVERHEAL_DURATION * 20
                     );
                 }
                 if (pveUpgrade) {

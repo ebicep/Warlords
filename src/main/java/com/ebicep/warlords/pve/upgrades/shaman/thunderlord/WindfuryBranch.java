@@ -53,7 +53,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+4% Proc chance\n",
+                "+4% Proc chance",
                 5000,
                 () -> {
                     ability.setProcChance(procChance + 4);
@@ -88,12 +88,11 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         masterUpgrade = new Upgrade(
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
-                "+100% Additional weapon damage\n\nHits on an enemy will permanently reduce their damage reduction by 2% for each " +
-                        "Windfury additional proc.",
+                "Each hit deals 0.5% of the target's max health as bonus damage.\n\nHits on an enemy will permanently reduce their damage reduction by 2% for each " +
+                        "additional Windfury proc.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
-                    ability.setWeaponDamage(ability.getWeaponDamage() + 100);
                 }
         );
     }

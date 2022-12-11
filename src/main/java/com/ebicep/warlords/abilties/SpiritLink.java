@@ -14,7 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class SpiritLink extends AbstractChainBase {
@@ -47,8 +49,8 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsEntity wp, Player player) {
-        int hitCounter = 0;
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
+        Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(player, 20, 18, 20)
                 .aliveEnemiesOf(wp)
@@ -62,7 +64,7 @@ public class SpiritLink extends AbstractChainBase {
                 }
                 chain(player.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                hitCounter++;
+                hitCounter.add(nearPlayer);
 
                 int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
                 for (int i = 0; i < numberOfHeals; i++) {
@@ -81,7 +83,7 @@ public class SpiritLink extends AbstractChainBase {
                     }
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
                     chainPlayerOne.addDamageInstance(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
-                    hitCounter++;
+                    hitCounter.add(chainPlayerOne);
 
                     numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
                     for (int i = 0; i < numberOfHeals; i++) {
@@ -100,7 +102,7 @@ public class SpiritLink extends AbstractChainBase {
                         }
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
                         chainPlayerTwo.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
-                        hitCounter++;
+                        hitCounter.add(chainPlayerTwo);
 
                         numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
                         for (int i = 0; i < numberOfHeals; i++) {

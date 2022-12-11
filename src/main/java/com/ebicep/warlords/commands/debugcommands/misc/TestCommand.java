@@ -5,17 +5,12 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -23,11 +18,9 @@ import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @CommandAlias("test")
-@CommandPermission("warlords.game.test")
+@CommandPermission("minecraft.command.op|warlords.game.test")
 public class TestCommand extends BaseCommand {
 
     @Default
@@ -57,40 +50,231 @@ public class TestCommand extends BaseCommand {
 
     }
 
+    @CommandAlias("testguild")
+    @Description("Database test command")
+    public void testGuild(CommandIssuer issuer) {
+        /*
+        for (Guild guild : GuildManager.GUILDS) {
+            System.out.println(guild.getName() + " - " + guild.getCurrentCoins() + " coins");
+            for (AbstractGuildLog abstractGuildLog : guild.getAuditLog()) {
+                if (abstractGuildLog instanceof GuildLogCoinsConverted) {
+                    long coinsGained = ((GuildLogCoinsConverted) abstractGuildLog).getCoinsGained();
+                    guild.addCurrentCoins(-coinsGained);
+                    System.out.println("Removed " + coinsGained + " coins from " + guild.getName());
+                }
+            }
+            guild.queueUpdate();
+            System.out.println(guild.getName() + " - " + guild.getCurrentCoins() + " coins");
+        }
+
+         */
+
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed", true);
+    }
+
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
-
+        /*
         Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
-                .asyncLast(databasePlayers -> {
-                    for (DatabasePlayer databasePlayer : databasePlayers) {
-                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-//            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
-//                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
-//            });
-                        for (WeaponsPvE value : WeaponsPvE.VALUES) {
-                            if (value.getPlayerEntries == null) {
+                .asyncFirst(() -> {
+                    return DatabaseManager.gameService.findAll(GamesCollections.TEMP);
+                }).syncLast(games -> {
+                    HashMap<String, String> mobTiers = new HashMap<>();
+                    for (Mobs value : Mobs.values()) {
+                        AbstractMob<?> mob = value.createMob.apply(Bukkit.getWorlds().get(0).getSpawnLocation());
+                        double dropRate = mob.dropRate();
+                        switch ((int) dropRate) {
+                            case 1:
+                                mobTiers.put(mob.getName(), "Basic");
+                                break;
+                            case 5:
+                                mobTiers.put(mob.getName(), "Elite");
+                                break;
+                            case 50:
+                                mobTiers.put(mob.getName(), "Boss");
+                                break;
+                        }
+                    }
+                    Bukkit.getWorlds().get(0).getEntities().forEach(Entity::remove);
+
+                    HashMap<String, Long> mobKills = new HashMap<>();
+
+                    int totalGames = 0;
+                    for (DatabaseGameBase game : games) {
+                        if (game instanceof DatabaseGamePvE) {
+                            DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) game;
+                            if (!game.isCounted() || databaseGamePvE.getDifficulty() != DifficultyIndex.NORMAL || databaseGamePvE.getWavesCleared() != 25) {
                                 continue;
                             }
-                            List<MasterworksFairEntry> entries = pveStats.getMasterworksFairEntries()
-                                    .stream()
-                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
-                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                    .collect(Collectors.toList());
-                            if (entries.size() > 1) {
-                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
-                                System.out.println("Removed duplicate for " + databasePlayer.getName());
+                            totalGames++;
+                            for (DatabaseGamePlayerPvE player : databaseGamePvE.getPlayers()) {
+                                for (String mobName : player.getMobKills().keySet()) {
+                                    mobKills.merge(mobName, player.getMobKills().get(mobName), Long::sum);
+                                }
                             }
                         }
-                        databasePlayer.getAchievements()
-                                .removeIf(abstractAchievementRecord -> abstractAchievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord && abstractAchievementRecord.getAchievement() == ChallengeAchievements.SERIAL_KILLER || abstractAchievementRecord.getAchievement() == ChallengeAchievements.LIFELEECHER);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
+                    AtomicLong sum = new AtomicLong(0L);
+                    mobKills.values().forEach(sum::addAndGet);
+                    System.out.println("Total Games: " + totalGames);
+                    System.out.println("Total Kills: " + sum.get());
+                    mobKills.forEach((s, aLong) -> {
+                        String s1 = mobTiers.get(s);
+                        if (s1 == null) {
+                            return;
+                        }
+                        System.out.println(s + " - " + aLong + "(" + (Math.round((aLong * 100 / sum.doubleValue()) * 1000) / 1000.0) + ") - " + s1);
+                    });
+
                 }).execute();
+
+         */
+
+//        Warlords.newChain()
+//                .async(() -> {
+//                    List<DatabaseGameBase> games = DatabaseManager.gameService.findAll(GamesCollections.TEMP2);
+//                    List<DatabaseGameBase> games2 = DatabaseManager.gameService.findAll(GamesCollections.TEMP);
+//                    games.addAll(games2);
+//                    games.removeIf(gameBase -> !gameBase.isCounted());
+//
+//                    List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+//
+//                    HashMap<UUID, DatabasePlayer> playerMap = new HashMap<>();
+//                    for (DatabasePlayer databasePlayer : databasePlayers) {
+//                        playerMap.put(databasePlayer.getUuid(), databasePlayer);
+//                    }
+//                    Set<DatabasePlayer> toUpdate = new HashSet<>();
+//                    int myPlays = 0;
+//
+//                    for (DatabaseGameBase game : games) {
+//                        if (game instanceof DatabaseGamePvE) {
+//                            DatabaseGamePvE gamePvE = (DatabaseGamePvE) game;
+//                            for (DatabaseGamePlayerPvE player : gamePvE.getPlayers()) {
+//                                DatabasePlayer databasePlayer = playerMap.get(player.getUuid());
+//                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//                                pveStats.addTimePlayed(gamePvE.getTimeElapsed());
+//                                pveStats.getClass(Specializations.getClass(player.getSpec())).addTimePlayed(gamePvE.getTimeElapsed());
+//                                pveStats.getSpec(player.getSpec()).addTimePlayed(gamePvE.getTimeElapsed());
+//                                DatabasePlayerPvEPlayerCountStats playerCountStats = pveStats.getPlayerCountStats(gamePvE.getPlayers().size());
+//                                playerCountStats.addTimePlayed(gamePvE.getTimeElapsed());
+//                                playerCountStats.getClass(Specializations.getClass(player.getSpec())).addTimePlayed(gamePvE.getTimeElapsed());
+//                                playerCountStats.getSpec(player.getSpec()).addTimePlayed(gamePvE.getTimeElapsed());
+//
+//                                DatabasePlayerPvEDifficultyStats difficultyStats = pveStats.getDifficultyStats(gamePvE.getDifficulty());
+//                                difficultyStats.addTimePlayed(gamePvE.getTimeElapsed());
+//                                difficultyStats.getClass(Specializations.getClass(player.getSpec())).addTimePlayed(gamePvE.getTimeElapsed());
+//                                difficultyStats.getSpec(player.getSpec()).addTimePlayed(gamePvE.getTimeElapsed());
+//                                DatabasePlayerPvEPlayerCountStats difficultyStatsPlayerCountStats = difficultyStats.getPlayerCountStats(gamePvE.getPlayers().size());
+//                                difficultyStatsPlayerCountStats.addTimePlayed(gamePvE.getTimeElapsed());
+//                                difficultyStatsPlayerCountStats.getClass(Specializations.getClass(player.getSpec())).addTimePlayed(gamePvE.getTimeElapsed());
+//                                difficultyStatsPlayerCountStats.getSpec(player.getSpec()).addTimePlayed(gamePvE.getTimeElapsed());
+//
+//                                toUpdate.add(databasePlayer);
+//                                if (player.getName().equalsIgnoreCase("sumSmash")) {
+//                                    myPlays++;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    for (DatabasePlayer databasePlayer : toUpdate) {
+//                        EditStatsCommand.wipeTopStats(databasePlayer);
+//                        Warlords.newChain()
+//                                .async(() -> {
+//                                    DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
+//                                }).execute();
+//                    }
+//
+//                    System.out.println("My plays: " + myPlays);
+//
+//                })
+//                .execute();
+
+//        Warlords.newChain()
+//                .async(() -> {
+//                    List<DatabasePlayer> lifeTimePlayers = new ArrayList<>(DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME));
+//                    List<DatabasePlayer> oldPlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP);
+//                    for (DatabasePlayer oldPlayer : oldPlayers) {
+//                        DatabasePlayerPvE pveStats = oldPlayer.getPveStats();
+//                        for (DatabasePlayer lifeTimePlayer : lifeTimePlayers) {
+//                            if(lifeTimePlayer.getUuid().equals(oldPlayer.getUuid())) {
+//                                lifeTimePlayers.remove(lifeTimePlayer);
+//                                List<AbstractWeapon> weaponInventory = pveStats.getWeaponInventory();
+//                                for (int i = 0, weaponInventorySize = weaponInventory.size(); i < weaponInventorySize; i++) {
+//                                    AbstractWeapon oldWeapon = weaponInventory.get(i);
+//                                    if (oldWeapon instanceof AbstractLegendaryWeapon) {
+//                                        for (AbstractWeapon newWeapon : lifeTimePlayer.getPveStats().getWeaponInventory()) {
+//                                            if(newWeapon.getUUID().equals(oldWeapon.getUUID())) {
+//                                                Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = ((AbstractLegendaryWeapon) newWeapon).getTitles();
+//                                                for (LegendaryTitles unlockedTitle : ((AbstractLegendaryWeapon) oldWeapon).getUnlockedTitles()) {
+//                                                    if (!titles.containsKey(unlockedTitle)) {
+//                                                        titles.put(unlockedTitle, new LegendaryWeaponTitleInfo());
+//                                                        DatabaseManager.queueUpdatePlayerAsync(lifeTimePlayer);
+//                                                        System.out.println("Added " + unlockedTitle.name() + " to " + i + " for " + oldPlayer.getName());
+//                                                    }
+//                                                }
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                List<AbstractWeapon> inventory = lifeTimePlayer.getPveStats().getWeaponInventory();
+//                                for (int i = 0; i < inventory.size(); i++) {
+//                                    AbstractWeapon weapon = inventory.get(i);
+//                                    if (weapon instanceof AbstractLegendaryWeapon) {
+//                                        AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
+//                                        int finalI = i;
+//                                        legendaryWeapon.getTitles().forEach((titles, legendaryWeaponTitleInfo) -> {
+//                                            WeaponStats starPieceStat = legendaryWeaponTitleInfo.getStarPieceStat();
+//                                            if (starPieceStat == WeaponStats.CRIT_CHANCE || starPieceStat == WeaponStats.CRIT_MULTIPLIER) {
+//                                                legendaryWeapon.getTitles().put(titles, null);
+//                                                lifeTimePlayer.getPveStats().addCurrency(legendaryWeaponTitleInfo.getStarPiece().currency, 1);
+//                                                System.out.println("Reset star piece for " + finalI + " for " + oldPlayer.getName() + " - " + legendaryWeaponTitleInfo.getStarPiece().currency);
+//                                                DatabaseManager.queueUpdatePlayerAsync(lifeTimePlayer);
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//
+//                                break;
+//                            }
+//                        }
+//
+//                    }
+//                }).execute();
+
+
+//        Warlords.newChain()
+//                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
+//                .asyncLast(databasePlayers -> {
+//                    for (DatabasePlayer databasePlayer : databasePlayers) {
+//                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+////            pveStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getEasyStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getNormalStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getHardStats().getPlayerCountStats().get(integer));
+////                databasePlayerPvEPlayerCountStats.merge(pveStats.getEndlessStats().getPlayerCountStats().get(integer));
+////            });
+//                        for (WeaponsPvE value : WeaponsPvE.VALUES) {
+//                            if (value.getPlayerEntries == null) {
+//                                continue;
+//                            }
+//                            List<MasterworksFairEntry> entries = pveStats.getMasterworksFairEntries()
+//                                    .stream()
+//                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
+//                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+//                                    .collect(Collectors.toList());
+//                            if (entries.size() > 1) {
+//                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
+//                                System.out.println("Removed duplicate for " + databasePlayer.getName());
+//                            }
+//                        }
+//                        databasePlayer.getAchievements()
+//                                .removeIf(abstractAchievementRecord -> abstractAchievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord && abstractAchievementRecord.getAchievement() == ChallengeAchievements.SERIAL_KILLER || abstractAchievementRecord.getAchievement() == ChallengeAchievements.LIFELEECHER);
+//                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//                    }
+//                }).execute();
 
         //DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(issuer.getUniqueId());
 

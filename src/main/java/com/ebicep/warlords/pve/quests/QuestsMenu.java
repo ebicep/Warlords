@@ -13,6 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class QuestsMenu {
 
     public static void openQuestMenu(Player player) {
+        if (!QuestCommand.isQuestsEnabled) {
+            player.sendMessage(ChatColor.RED + "Quests are currently disabled.");
+            return;
+        }
         Menu menu = new Menu("Quests", 9 * 6);
 
         AtomicInteger row = new AtomicInteger(0);
@@ -36,7 +40,7 @@ public class QuestsMenu {
             }
             DatabaseManager.getPlayer(player.getUniqueId(), quest.time, databasePlayer -> {
                 menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
+                        quest.getItemStack(databasePlayer, databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)),
                         (m, e) -> {
                         }
                 );
@@ -47,7 +51,7 @@ public class QuestsMenu {
                 }
             }, () -> {
                 menu.setItem(col.get(), row.get(),
-                        quest.getItemStack(false),
+                        quest.getItemStack(null, false),
                         (m, e) -> {
                         }
                 );

@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandAlias("mute")
-@CommandPermission("warlords.player.mute")
+@CommandPermission("minecraft.command.op|warlords.player.mute")
 public class MuteCommand extends BaseCommand {
 
     public static final HashMap<UUID, Boolean> MUTED_PLAYERS = new HashMap<>();
@@ -25,7 +25,7 @@ public class MuteCommand extends BaseCommand {
     @Default
     @CommandCompletion("@players")
     @Description("Mutes a player")
-    public void mute(CommandIssuer issuer, @Values("@players") @Flags("@other") Player player) {
+    public void mute(CommandIssuer issuer, @Values("@players") @Flags("other") Player player) {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (MUTED_PLAYERS.getOrDefault(uuid, false)) {
@@ -39,7 +39,7 @@ public class MuteCommand extends BaseCommand {
     @CommandAlias("unmute")
     @CommandCompletion("@players")
     @Description("Unmutes a player")
-    public void unmute(CommandIssuer issuer, @Values("@players") @Flags("@other") Player player) {
+    public void unmute(CommandIssuer issuer, @Values("@players") @Flags("other") Player player) {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (!MUTED_PLAYERS.getOrDefault(uuid, false)) {

@@ -98,6 +98,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
+        we.getCooldownManager().removeCooldown(LightningRod.class);
         we.getCooldownManager().addCooldown(new RegularCooldown<LightningRod>(
                 name,
                 "ROD DMG",

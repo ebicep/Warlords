@@ -1,8 +1,10 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
@@ -59,6 +61,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
+        float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC) {
             if (pveUpgrade) {
                 switch (((WarlordsNPC) nearPlayer).getMobTier()) {
@@ -69,7 +72,17 @@ public class AvengersStrike extends AbstractStrikeBase {
                         multiplier = 1.2f;
                         break;
                 }
+
+                if (((WarlordsNPC) nearPlayer).getMob().getMobTier() == MobTier.ELITE) {
+                    healthDamage = nearPlayer.getMaxHealth() * 0.005f;
+                }
             }
+        }
+        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+        }
+        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
         }
         AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
@@ -81,8 +94,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamage.get() * multiplier,
-                maxDamage.get() * multiplier,
+                (minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
                 critChance,
                 critMultiplier,
                 false

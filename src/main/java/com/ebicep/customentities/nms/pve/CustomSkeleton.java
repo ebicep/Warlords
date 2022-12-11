@@ -127,6 +127,9 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
             if (oldVectorToSubtract == null) {
                 return location;
             }
+            if (!self.getWorld().equals(target.getWorld())) {
+                return location;
+            }
             Vector vector = target.getCurrentVector().clone();
 
             List<Location> locations = target.getLocations();

@@ -16,11 +16,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @CommandAlias("streamchapters")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class StreamChaptersCommand extends BaseCommand {
 
-    public static final HashMap<UUID, Instant> playerTimeStart = new HashMap<>();
-    public static final HashMap<UUID, List<GameTime>> gameTimes = new HashMap<>();
+    public static final HashMap<UUID, Instant> PLAYER_TIME_START = new HashMap<>();
+    public static final HashMap<UUID, List<GameTime>> GAME_TIMES = new HashMap<>();
 
     public static void appendTime(StringBuilder chapters, Instant start, Instant end) {
         long hours = ChronoUnit.HOURS.between(start, end) % 24;
@@ -44,8 +44,8 @@ public class StreamChaptersCommand extends BaseCommand {
     @Subcommand("start")
     @Description("Mark start of stream")
     public void start(Player player) {
-        playerTimeStart.put(player.getUniqueId(), Instant.now());
-        gameTimes.put(player.getUniqueId(), new ArrayList<>());
+        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now());
+        GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
         player.sendMessage(ChatColor.GREEN + "Began recording game time");
     }
 
@@ -53,13 +53,19 @@ public class StreamChaptersCommand extends BaseCommand {
     @Description("Prints stream chapters")
     public void get(Player player) {
         StringBuilder chapters = new StringBuilder("00:00:00 - Lobby");
-        Instant startTime = playerTimeStart.get(player.getUniqueId());
-        gameTimes.get(player.getUniqueId()).forEach(gameTime -> {
+        Instant startTime = PLAYER_TIME_START.get(player.getUniqueId());
+        GAME_TIMES.get(player.getUniqueId()).forEach(gameTime -> {
             Instant gameStartTime = gameTime.getStart();
             Instant gameEndTime = gameTime.getEnd();
             if (gameEndTime != null && ChronoUnit.SECONDS.between(gameStartTime, gameEndTime) > 10) {
                 appendTime(chapters, startTime, gameStartTime);
-                chapters.append(" - ").append(gameTime.getMap().getMapName()).append(" - ").append(gameTime.getSpec().name).append(" - ").append(gameTime.getPlayerCount()).append(" players");
+                chapters.append(" - ")
+                        .append(gameTime.getMap().getMapName())
+                        .append(" - ")
+                        .append(gameTime.getSpec().name)
+                        .append(" - ")
+                        .append(gameTime.getPlayerCount())
+                        .append(" players");
                 appendTime(chapters, startTime, gameEndTime);
                 chapters.append(" - Lobby");
             }

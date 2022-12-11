@@ -47,6 +47,7 @@ import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.commands.CompensateCommand;
 import com.ebicep.warlords.pve.commands.MyPositionCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
+import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
@@ -517,6 +518,7 @@ public class CommandManager {
         manager.registerCommand(new RecordGamesCommand());
         manager.registerCommand(new SeeAllChatsCommand());
         manager.registerCommand(new ServerStatusCommand());
+        manager.registerCommand(new SudoCommand());
         manager.registerCommand(new TestCommand());
         manager.registerCommand(new WarlordsPlusCommand());
 
@@ -536,7 +538,7 @@ public class CommandManager {
 
         manager.registerCommand(new StatsLeaderboardCommand());
 
-        manager.registerCommand(new PartyCommand());
+        manager.registerCommand(new PartyCommand(), true);
         manager.registerCommand(new StreamCommand());
 
         manager.registerCommand(new PollCommand());
@@ -553,6 +555,8 @@ public class CommandManager {
 
         manager.registerCommand(new MyPositionCommand());
         manager.registerCommand(new CompensateCommand());
+
+        manager.registerCommand(new QuestCommand());
 
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());

@@ -79,9 +79,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
             }
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            wp.getRedAbility().subtractCooldown(2);
-            wp.updateRedItem();
-
+            wp.subtractRedCooldown(2);
         }
 
         return playersHit;
@@ -110,8 +108,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            wp.getRedAbility().subtractCooldown(2);
-            wp.updateRedItem();
+            wp.subtractRedCooldown(2);
 
             reduceCooldowns(wp, hit);
         }
@@ -174,12 +171,10 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                 .forEachOrdered(soulbinding -> {
                     wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
-                    wp.getRedAbility().subtractCooldown(1.5F);
-                    wp.getPurpleAbility().subtractCooldown(1.5F);
-                    wp.getBlueAbility().subtractCooldown(1.5F);
-                    wp.getOrangeAbility().subtractCooldown(1.5F);
-
-                    wp.updateItems();
+                    wp.subtractRedCooldown(1.5F);
+                    wp.subtractPurpleCooldown(1.5F);
+                    wp.subtractBlueCooldown(1.5F);
+                    wp.subtractOrangeCooldown(1.5F);
 
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
@@ -190,12 +185,10 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
-                        teammate.getRedAbility().subtractCooldown(pveCheck);
-                        teammate.getPurpleAbility().subtractCooldown(pveCheck);
-                        teammate.getBlueAbility().subtractCooldown(pveCheck);
-                        teammate.getOrangeAbility().subtractCooldown(pveCheck);
-
-                        teammate.updateItems();
+                        teammate.subtractRedCooldown(pveCheck);
+                        teammate.subtractPurpleCooldown(pveCheck);
+                        teammate.subtractBlueCooldown(pveCheck);
+                        teammate.subtractOrangeCooldown(pveCheck);
                     }
                 });
     }

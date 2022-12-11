@@ -84,6 +84,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 public void run() {
                     if (warlordsNPC.isDead()) {
                         this.cancel();
+                        return;
                     }
 
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
@@ -108,6 +109,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     .entitiesAround(loc, 4, 4, 4)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
+                Utils.addKnockback(warlordsNPC.getLocation(), we, -1.5, 0.3);
                 we.addDamageInstance(warlordsNPC, "Cleanse", (300 * playerCount) * multiplier, (400 * playerCount) * multiplier, 0, 100, false);
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
@@ -123,7 +125,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
-        Utils.addKnockback(attacker.getLocation(), receiver, -2, 0.3);
 
         if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon") || event.getAbility().equals("Intervene"))) {
             new GameRunnable(attacker.getGame()) {
@@ -140,6 +141,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                             .withColor(Color.WHITE)
                             .with(FireworkEffect.Type.BURST)
                             .build());
+                    Utils.addKnockback(attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {

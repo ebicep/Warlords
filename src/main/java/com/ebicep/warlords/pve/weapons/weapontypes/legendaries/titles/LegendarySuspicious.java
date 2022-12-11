@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Instrument;
@@ -45,8 +46,13 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Suspicious";
+    public String getPassiveEffect() {
+        return "Play an among us sound and gain 20 energy whenever you land a melee crit.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
     }
 
     @Override
@@ -61,6 +67,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                     return;
                 }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
+                    player.addEnergy(player, "Suspicious Weapon", 20);
                     if (player.getEntity() instanceof Player) {
                         Player p = (Player) player.getEntity();
                         if (sound != null) {
@@ -95,23 +102,13 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Plays an Amogus sound whenever you land a melee crit.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.SUSPICIOUS;
     }
 
     @Override
     protected float getMeleeDamageMinValue() {
         return 180;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
     }
 
     @Override
@@ -130,8 +127,13 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
     protected float getEnergyPerHitBonusValue() {
-        return 20;
+        return 3;
     }
 
     @Override

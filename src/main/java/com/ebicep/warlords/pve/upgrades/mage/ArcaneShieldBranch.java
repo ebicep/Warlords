@@ -18,7 +18,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 5000,
                 () -> {
                     ability.setShieldPercentage(shieldPercentage + 5);
-                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
@@ -27,7 +27,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 10000,
                 () -> {
                     ability.setShieldPercentage(shieldPercentage + 10);
-                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
@@ -36,7 +36,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 15000,
                 () -> {
                     ability.setShieldPercentage(shieldPercentage + 15);
-                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
@@ -45,7 +45,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 20000,
                 () -> {
                     ability.setShieldPercentage(shieldPercentage + 20);
-                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
+                    ability.updateCustomStats(abilityTree.getPlayer().getSpec());
                 }
         ));
 

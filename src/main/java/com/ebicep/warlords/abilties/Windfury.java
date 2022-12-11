@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -53,6 +54,7 @@ public class Windfury extends AbstractAbility {
 
         Windfury tempWindfury = new Windfury();
         final boolean[] firstProc = {true};
+        wp.getCooldownManager().removeCooldown(Windfury.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<Windfury>(
                 name,
                 "FURY",
@@ -92,19 +94,26 @@ public class Windfury extends AbstractAbility {
                         timesProcd++;
                         new GameRunnable(victim.getGame()) {
                             int counter = 0;
-                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMin() : 132;
-                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getAbstractWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getAbstractWeapon().getMeleeDamageMax() : 179;
+                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
+                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
 
                             @Override
                             public void run() {
                                 Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                                float healthDamage = victim.getMaxHealth() * 0.005f;
+                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                }
+                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                }
                                 victim.addDamageInstance(
                                         attacker,
                                         name,
-                                        minDamage * (weaponDamage / 100f),
-                                        maxDamage * (weaponDamage / 100f),
+                                        minDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
+                                        maxDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
                                         critChance,
                                         critMultiplier,
                                         false

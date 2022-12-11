@@ -1,11 +1,9 @@
 package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
-import com.ebicep.warlords.guilds.Guild;
-import com.ebicep.warlords.guilds.GuildExperienceUtils;
-import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
@@ -21,6 +19,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +37,7 @@ public class GuildMenu {
         Menu menu = new Menu("Guild Settings: " + guild.getName(), 9 * rows);
 
         int guildLevel = GuildExperienceUtils.getLevelFromExp(guild.getExperience(Timing.LIFETIME));
+        GuildRole roleOfPlayer = guild.getRoleOfPlayer(player.getUniqueId());
         menu.setItem(0, 0,
                 new ItemBuilder(Material.SIGN)
                         .name(ChatColor.GREEN + "Guild Information")
@@ -45,10 +46,10 @@ public class GuildMenu {
                                 ChatColor.GRAY + "Created: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guild.getCreationDate()),
                                 ChatColor.GRAY + "Level: " + ChatColor.YELLOW + guildLevel,
                                 ChatColor.GRAY + "Experience: " + ChatColor.YELLOW + NumberFormat.addCommas(guild.getExperience(Timing.LIFETIME)),
-                                ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCoins(Timing.LIFETIME)),
+                                ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCurrentCoins()),
                                 ChatColor.GRAY + "Members: " + ChatColor.YELLOW + guild.getPlayers()
                                         .size() + ChatColor.AQUA + "/" + ChatColor.YELLOW + guild.getPlayerLimit(),
-                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + guild.getRoleOfPlayer(player.getUniqueId()).getRoleName()
+                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + (roleOfPlayer != null ? roleOfPlayer.getRoleName() : "None")
                         )
                         .get(),
                 (m, e) -> {
@@ -136,6 +137,9 @@ public class GuildMenu {
                                         ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
                                         ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.WEEKLY)),
                                         ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.DAILY)),
+                                        ChatColor.GRAY + "Coins Converted: ",
+                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoinsConverted()),
+                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getDailyCoinsConverted()),
                                         ChatColor.GRAY + "Experience: ",
                                         ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME)),
                                         ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.WEEKLY)),
@@ -180,6 +184,10 @@ public class GuildMenu {
             return;
         }
         GuildPlayer guildPlayer = guildPlayerPair.getB();
+        if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
+            player.sendMessage(ChatColor.RED + "You must be in the guild for at least 2 days to convert coins.");
+            return;
+        }
         long dailyCoinsConverted = guildPlayer.getDailyCoinsConverted();
         if (dailyCoinsConverted >= 10000) {
             player.sendMessage(ChatColor.RED + "You can only covert up to 10,000 guild coins per day.");
@@ -228,7 +236,9 @@ public class GuildMenu {
                                     ),
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
-                                        guild.addCoins(guildCoinsGained);
+                                        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, playerCoinsToConvert);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        guild.addCurrentCoins(guildCoinsGained);
                                         guildPlayer.addDailyCoinsConverted(guildCoinsGained);
                                         guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
                                         guild.queueUpdate();
@@ -238,6 +248,7 @@ public class GuildMenu {
                                                         ChatColor.GREEN + guildCoinsGained + ChatColor.GRAY + " guild coins.",
                                                 true
                                         );
+                                        GuildLeaderboardManager.recalculateAllLeaderboards();
                                         openGuildMenu(guild, player, 1);
                                     },
                                     (m2, e2) -> openGuildMenu(guild, player, 1),

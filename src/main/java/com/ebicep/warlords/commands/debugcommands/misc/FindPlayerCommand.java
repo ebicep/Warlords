@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.stream.Collectors;
 
 @CommandAlias("findplayer")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class FindPlayerCommand extends BaseCommand {
 
     @Default

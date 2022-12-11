@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -24,8 +25,13 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getTitle() {
-        return "Titanic";
+    public String getPassiveEffect() {
+        return "Increase maximum health by 1% per upgrade purchased.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 150;
     }
 
     @Override
@@ -49,23 +55,13 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Increase maximum health by 1% per upgrade purchased.";
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 5;
+    public LegendaryTitles getTitle() {
+        return LegendaryTitles.TITANIC;
     }
 
     @Override
     protected float getMeleeDamageMinValue() {
         return 130;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 150;
     }
 
     @Override
@@ -81,5 +77,10 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     @Override
     protected float getHealthBonusValue() {
         return 1500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 5;
     }
 }

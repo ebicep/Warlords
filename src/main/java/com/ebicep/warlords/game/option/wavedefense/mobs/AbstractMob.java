@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -116,14 +117,30 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             onSpawn(option);
             game.addNPC(warlordsNPC);
 
-            double scale = 600.0;
+            boolean isEndless = option.getDifficulty() == DifficultyIndex.ENDLESS;
+            /*
+             * Base scale of 600
+             *
+             * The higher the scale is the longer it takes to increase per interval.
+             */
+            double scale = isEndless ? 1200.0 : 600.0;
             long playerCount = game.warlordsPlayers().count();
+            // Flag check whether mob is a boss.
+            boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+            // Reduce base scale by 75 for each player after 2 or more players in game instance.
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
+            // Divide scale based on wave count.
+            double modifier = option.getWaveCounter() / modifiedScale + 1;
 
-            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), option.getWaveCounter() / modifiedScale + 1);
+            // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+            int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+            int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+            // Increase boss health by 25% for each player in game instance.
             float bossMultiplier = 1 + (0.25f * playerCount);
-            float difficultyMultiplier;
 
+            // Multiply damage/health by given difficulty.
+            float difficultyMultiplier;
             switch (option.getDifficulty()) {
                 case EASY:
                     difficultyMultiplier = 0.75f;
@@ -135,20 +152,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     difficultyMultiplier = 1;
                     break;
             }
-            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-                warlordsNPC.setMaxBaseHealth((health * difficultyMultiplier)  * bossMultiplier);
-                warlordsNPC.setMaxHealth((health * difficultyMultiplier) * bossMultiplier);
-                warlordsNPC.setHealth((health * difficultyMultiplier) * bossMultiplier);
-            } else {
-                warlordsNPC.setMaxBaseHealth(health * difficultyMultiplier);
-                warlordsNPC.setMaxHealth(health * difficultyMultiplier);
-                warlordsNPC.setHealth(health * difficultyMultiplier);
-            }
 
-            warlordsNPC.setMinMeleeDamage((int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier));
-            warlordsNPC.setMaxMeleeDamage((int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier));
+            // Final health value after applying all modifiers.
+            float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+            warlordsNPC.setMaxBaseHealth(finalHealth);
+            warlordsNPC.setMaxHealth(finalHealth);
+            warlordsNPC.setHealth(finalHealth);
 
-            warlordsNPC.setRegenTimer(999999999);
+            int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
+            int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
+            warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
+            warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
         }
 
         return warlordsNPC;

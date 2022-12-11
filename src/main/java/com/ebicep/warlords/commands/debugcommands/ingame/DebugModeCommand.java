@@ -12,23 +12,24 @@ import org.bukkit.ChatColor;
 
 
 @CommandAlias("debugmode")
-@CommandPermission("group.administrator")
-//@CommandPermission("warlords.game.debugmode")
+@CommandPermission("minecraft.command.op|group.administrator")
+//@CommandPermission("minecraft.command.op|warlords.game.debugmode")
 public class DebugModeCommand extends BaseCommand {
 
     @Default
-    @Description("Disables energy consumption, Disables cooldowns, and Prevents damage from being taken")
+    @Description("Disables energy consumption, Disables cooldowns, Prevents damage from being taken, and shows debug messages on attacks")
     public void debugMode(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
+        warlordsPlayer.setShowDebugMessage(true);
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.setCurrentCooldown(0);
         }
         warlordsPlayer.updateItems();
         warlordsPlayer.setHorseCooldown(0);
         ChatChannels.sendDebugMessage(warlordsPlayer,
-                ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!",
+                ChatColor.GREEN + "You now have infinite energy, no cooldowns, will take no damage, and have debug messages!",
                 true
         );
     }

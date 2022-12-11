@@ -63,7 +63,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsEntity wp, Player player) {
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
         return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
     }
 
@@ -104,10 +104,13 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         return new ItemStack(Material.STAINED_GLASS, 1, (byte) 7);
     }
 
-    private int partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
+    private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? maxBounces - 1 : maxBounces)) {
-            return playersSize + (hasHitTotem ? 1 : 0);
+            if (hasHitTotem) {
+                playersHit.add(null);
+            }
+            return playersHit;
         }
         /**
          * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
@@ -120,6 +123,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     ArmorStand totem = optionalTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(wp, optionalTotem.get());
+                    playersHit.add(null);
                     return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             } else {
@@ -177,7 +181,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
-            return playersSize + (hasHitTotem ? 1 : 0);
+            return playersHit;
         }
     }
 

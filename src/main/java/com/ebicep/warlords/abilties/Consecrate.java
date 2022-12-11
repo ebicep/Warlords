@@ -95,6 +95,8 @@ public class Consecrate extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     effectTask.cancel();
                 },
                 false,

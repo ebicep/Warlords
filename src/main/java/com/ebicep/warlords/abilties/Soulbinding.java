@@ -69,7 +69,7 @@ public class Soulbinding extends AbstractAbility {
             List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
                     .filterCooldownClass(Soulbinding.class)
                     .stream().collect(Collectors.toList());
-            if (currentSoulBindings.size() >= 2) {
+            if (currentSoulBindings.size() >= 3) {
                 wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
             }
         }
@@ -80,6 +80,8 @@ public class Soulbinding extends AbstractAbility {
                 tempSoulBinding,
                 wp,
                 CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {

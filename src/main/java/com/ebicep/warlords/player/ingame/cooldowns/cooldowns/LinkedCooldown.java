@@ -6,7 +6,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.TriConsumer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -17,7 +19,7 @@ import java.util.function.Consumer;
 public class LinkedCooldown<T> extends RegularCooldown<T> {
 
     protected final List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> consumers = new ArrayList<>();
-    private final List<WarlordsEntity> linkedEntities;
+    private final Set<WarlordsEntity> linkedEntities;
 
     public LinkedCooldown(
             String name,
@@ -27,45 +29,28 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
             WarlordsEntity from,
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove,
-            int ticksLeft
-    ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, new ArrayList<>());
-    }
-
-    public LinkedCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
             int ticksLeft,
             List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
-            WarlordsEntity... linkedEntities
-    ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, triConsumers, List.of(linkedEntities));
-    }
-
-    public LinkedCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
-            int ticksLeft,
-            List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
-            List<WarlordsEntity> linkedEntities
+            Set<WarlordsEntity> linkedEntities
 
     ) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft);
+        super(
+                name,
+                nameAbbreviation,
+                cooldownClass,
+                cooldownObject,
+                from,
+                cooldownType,
+                onRemove,
+                onRemoveForce,
+                ticksLeft
+        );
         this.consumers.addAll(triConsumers);
-        this.linkedEntities = new ArrayList<>(linkedEntities);
-        setOnRemove(cooldownManager -> {
-            onRemove.accept(cooldownManager);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldown(this));
+        this.linkedEntities = new HashSet<>(linkedEntities);
+        setOnRemoveForce(cooldownManager -> {
+            onRemoveForce.accept(cooldownManager);
+            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
             this.linkedEntities.removeIf(WarlordsEntity::isDead);
         });
     }
@@ -77,19 +62,41 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
             T cooldownObject,
             WarlordsEntity from,
             CooldownTypes cooldownType,
-            BiConsumer<CooldownManager, LinkedCooldown<T>> onRemove,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
             int ticksLeft,
             List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
-            List<WarlordsEntity> linkedEntities
+            WarlordsEntity... linkedEntities
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, ticksLeft, triConsumers,
+                Set.of(linkedEntities)
+        );
+    }
+
+    public LinkedCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            BiConsumer<CooldownManager, LinkedCooldown<T>> onRemove,
+            BiConsumer<CooldownManager, LinkedCooldown<T>> onRemoveForce,
+            int ticksLeft,
+            List<TriConsumer<LinkedCooldown<T>, Integer, Integer>> triConsumers,
+            Set<WarlordsEntity> linkedEntities
 
     ) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, cooldownManager -> {
         }, ticksLeft);
         this.consumers.addAll(triConsumers);
-        this.linkedEntities = new ArrayList<>(linkedEntities);
+        this.linkedEntities = new HashSet<>(linkedEntities);
         setOnRemove(cooldownManager -> {
             onRemove.accept(cooldownManager, this);
-            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldown(this));
+        });
+        setOnRemoveForce(cooldownManager -> {
+            onRemoveForce.accept(cooldownManager, this);
+            this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
             this.linkedEntities.removeIf(WarlordsEntity::isDead);
         });
     }
@@ -108,7 +115,7 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         return super.removeCheck() || !from.getCooldownManager().hasCooldown(this);
     }
 
-    public List<WarlordsEntity> getLinkedEntities() {
+    public Set<WarlordsEntity> getLinkedEntities() {
         return linkedEntities;
     }
 }

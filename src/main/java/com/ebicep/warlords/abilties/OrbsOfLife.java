@@ -5,7 +5,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -50,6 +49,11 @@ public class OrbsOfLife extends AbstractAbility {
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);
     }
 
+    public OrbsOfLife(float minDamage, float maxDamage) {
+        super("Orbs of Life", minDamage, maxDamage, 19.57f, 20);
+    }
+
+
     @Override
     public void updateDescription(Player player) {
         description = "Spawn §e2 §7initial orbs on cast." +
@@ -74,7 +78,7 @@ public class OrbsOfLife extends AbstractAbility {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
-        OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
+        OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal, maxDamageHeal);
         PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<OrbsOfLife>(
                 name,
                 "ORBS",
@@ -83,6 +87,10 @@ public class OrbsOfLife extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    List<Orb> orbs = new ArrayList<>(tempOrbsOfLight.getSpawnedOrbs());
+                    orbs.forEach(Orb::remove);
                 },
                 false,
                 duration * 20,
@@ -215,7 +223,7 @@ public class OrbsOfLife extends AbstractAbility {
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom(), orbTickMultiplier);
+        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown, cooldown.getFrom(), orbTickMultiplier);
         orbsOfLife.getSpawnedOrbs().add(orb);
 
         orbsOfLife.addOrbProduced(1);
@@ -268,14 +276,14 @@ public class OrbsOfLife extends AbstractAbility {
     public static class Orb extends EntityExperienceOrb {
 
         private final ArmorStand armorStand;
-        private final WarlordsEntity owner;
+        private final PersistentCooldown<OrbsOfLife> cooldown;
         private int ticksLived = 0;
         private int tickMultiplier = 1;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public Orb(World world, Location location, WarlordsEntity owner, int tickMultiplier) {
+        public Orb(World world, Location location, PersistentCooldown<OrbsOfLife> cooldown, WarlordsEntity owner, int tickMultiplier) {
             super(world, location.getX(), location.getY() + 2, location.getZ(), 2500);
-            this.owner = owner;
+            this.cooldown = cooldown;
             ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
             orbStand.setVisible(false);
             orbStand.setGravity(true);
@@ -307,15 +315,6 @@ public class OrbsOfLife extends AbstractAbility {
             return this;
         }
 
-        @Override
-        public String toString() {
-            return "Orb{" +
-                    "owner=" + owner +
-                    ", ticksLived=" + ticksLived +
-                    ", playerToMoveTowards=" + playerToMoveTowards +
-                    '}';
-        }
-
         // Makes it so they cannot be picked up
         @Override
         public void d(EntityHuman entityHuman) {
@@ -325,17 +324,19 @@ public class OrbsOfLife extends AbstractAbility {
         public void remove() {
             armorStand.remove();
             getBukkitEntity().remove();
-            new CooldownFilter<>(owner, PersistentCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(OrbsOfLife.class)
-                    .forEachOrdered(orbsOfLife -> orbsOfLife.getSpawnedOrbs().remove(this));
+            cooldown.getCooldownObject().getSpawnedOrbs().remove(this);
         }
 
         public ArmorStand getArmorStand() {
             return armorStand;
         }
 
+        public PersistentCooldown<OrbsOfLife> getCooldown() {
+            return cooldown;
+        }
+
         public WarlordsEntity getOwner() {
-            return owner;
+            return cooldown.getFrom();
         }
 
         public int getTicksLived() {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -84,6 +85,8 @@ public class DrainingMiasma extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                    },
+                    cooldownManager -> {
                         cancelSlowness.run();
                         if (tempDrainingMiasma.numberOfLeechProcd >= 150) {
                             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
@@ -107,8 +110,11 @@ public class DrainingMiasma extends AbstractAbility {
                             }
 
                             float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                            if (healthDamage > 500) {
-                                healthDamage = 500;
+                            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                            }
+                            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
                             }
                             // 4% current health damage.
                             miasmaTarget.addDamageInstance(

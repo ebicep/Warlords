@@ -100,9 +100,6 @@ public class WaterBreath extends AbstractAbility {
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-        if (pveUpgrade) {
-            regenOnHit(wp, wp);
-        }
 
         Location playerEyeLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
@@ -119,7 +116,7 @@ public class WaterBreath extends AbstractAbility {
                     debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
                     breathTarget.getSpeed().removeSlownessModifiers();
                     breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                    breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
+                    breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     breathTarget.getCooldownManager().addRegularCooldown(
                             "Overheal",
                             "OVERHEAL",
@@ -150,7 +147,7 @@ public class WaterBreath extends AbstractAbility {
     }
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        hit.getCooldownManager().removeCooldown(WaterBreath.class);
+        boolean hasPreviousCooldown = hit.getCooldownManager().removeCooldown(WaterBreath.class);
         hit.getCooldownManager().addRegularCooldown(
                 name,
                 "BREATH RGN",
@@ -163,7 +160,7 @@ public class WaterBreath extends AbstractAbility {
                 5 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
-                        float healing = hit.getMaxHealth() * 0.01f;
+                        float healing = hit.getMaxHealth() * 0.02f;
                         hit.addHealingInstance(
                                 giver,
                                 name,
@@ -177,6 +174,10 @@ public class WaterBreath extends AbstractAbility {
                     }
                 })
         );
+        if (!hasPreviousCooldown) {
+            hit.getSpec().decreaseAllCooldownTimersBy(3);
+            hit.updateItems();
+        }
     }
 
     public double getVelocity() {
@@ -202,7 +203,6 @@ public class WaterBreath extends AbstractAbility {
     public void setHitbox(float hitbox) {
         this.hitbox = hitbox;
     }
-
 
     public int getMaxAnimationEffects() {
         return maxAnimationEffects;

@@ -271,13 +271,13 @@ public abstract class DatabaseGameBase {
     }
 
     protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team");
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team");
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
             if (!activeCollection.shouldUpdate(databaseGame.getExactDate())) {
                 return; //Can return because if game is not in the same week then it will not be in the same day
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
+                //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
                 if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),

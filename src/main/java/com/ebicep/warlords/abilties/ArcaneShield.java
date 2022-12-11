@@ -35,7 +35,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     public ArcaneShield(int shieldHealth) {
-        super("Arcane Shield", 0, 0, 31.32f, 40);
+        this();
         this.shieldHealth = shieldHealth;
     }
 
@@ -55,7 +55,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
@@ -68,12 +68,6 @@ public class ArcaneShield extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
-                        if (wp.getEntity() instanceof Player) {
-                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
-                        }
-                    }
-
                     if (pveUpgrade) {
                         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
                         EffectUtils.strikeLightning(wp.getLocation(), false);
@@ -83,6 +77,13 @@ public class ArcaneShield extends AbstractAbility {
                                 .closestFirst(wp)
                         ) {
                             we.addSpeedModifier(wp, "Arcane Aegis", -99, 6 * 20);
+                        }
+                    }
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
+                        if (wp.getEntity() instanceof Player) {
+                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
                         }
                     }
                 },
@@ -97,15 +98,20 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 })
         );
-        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+
+        if (player != null) {
+            ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+        }
 
         return true;
     }
 
-    public void updateShieldHealth(AbstractPlayerClass apc) {
+    @Override
+    public void updateCustomStats(AbstractPlayerClass apc) {
         if (apc != null) {
             ArcaneShield arcaneShield = (this);
             arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
+            updateDescription(null);
         }
     }
 

@@ -55,6 +55,8 @@ public class LightInfusionCrusader extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                 },
                 duration * 20,
@@ -86,6 +88,8 @@ public class LightInfusionCrusader extends AbstractAbility {
                         tempLightInfusion,
                         wp,
                         CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
                         cooldownManager -> {
                             cancelSpeed.run();
                         },

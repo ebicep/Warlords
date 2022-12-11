@@ -81,6 +81,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     cancelSpeed.run();
                     removeCloak(wp, true);
                     if (pveUpgrade) {
@@ -161,8 +163,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                                         ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
                                         ChatColor.GRAY + "!"
                                 );
-                                wp.getPurpleAbility().subtractCooldown(2);
-                                wp.getOrangeAbility().subtractCooldown(reduction);
+                                wp.subtractPurpleCooldown(2);
+                                wp.subtractOrangeCooldown(reduction);
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You killed your mark," +
@@ -189,7 +191,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                         ChatColor.GRAY + "!"
                                 );
                                 //wp.getPurpleAbility().subtractCooldown(reduction);
-                                wp.getOrangeAbility().subtractCooldown(reduction);
+                                wp.subtractOrangeCooldown(reduction);
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You assisted in killing your mark," +
@@ -216,6 +218,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                     null,
                     wp,
                     CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
                     cooldownManager -> {
                         wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
 

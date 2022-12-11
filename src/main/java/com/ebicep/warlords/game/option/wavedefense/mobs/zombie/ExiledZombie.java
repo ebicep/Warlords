@@ -6,12 +6,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 public class ExiledZombie extends AbstractZombie implements EliteMob {
 
@@ -21,17 +21,17 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
                 "Exiled Scrupulous",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        new ItemStack(Material.GOLDEN_CARROT)
+                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 50, 130),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
+                        Weapons.AMARANTH.getItem()
                 ),
-                16000,
-                0.42f,
-                10,
-                2200,
-                2800
+                10000,
+                0.22f,
+                0,
+                2000,
+                2400
         );
     }
 

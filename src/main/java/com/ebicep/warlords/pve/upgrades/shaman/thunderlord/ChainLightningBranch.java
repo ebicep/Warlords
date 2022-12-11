@@ -72,11 +72,10 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10 Energy cost\n+1 Chain Bounce",
+                "-10 Energy cost",
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
-                    ability.setMaxBounces(maxBounces + 1);
                 }
         ));
         treeB.add(new Upgrade(
@@ -89,11 +88,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20 Energy cost\n+2 Chain Bounces",
+                "-20 Energy cost\n+1 Chain Bounce",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 20);
-                    ability.setMaxBounces(maxBounces + 2);
+                    ability.setMaxBounces(maxBounces + 1);
                 }
         ));
 

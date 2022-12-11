@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -21,9 +22,16 @@ public class BloodLust extends AbstractAbility {
 
     private int duration = 15;
     private int damageConvertPercent = 65;
+    private float maxConversionAmount = 400;
+    private int maxConversionPercent = 100;
 
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20);
+    }
+
+    public BloodLust(float maxConversionAmount) {
+        this();
+        this.maxConversionAmount = maxConversionAmount;
     }
 
     @Override
@@ -44,7 +52,7 @@ public class BloodLust extends AbstractAbility {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
-        BloodLust tempBloodLust = new BloodLust();
+        BloodLust tempBloodLust = new BloodLust(maxConversionAmount);
         wp.getCooldownManager().addCooldown(new RegularCooldown<BloodLust>(
                 name,
                 "LUST",
@@ -88,11 +96,15 @@ public class BloodLust extends AbstractAbility {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getAttacker();
+                if (attacker.isInPve() && tempBloodLust.getAmountHealed() > tempBloodLust.getMaxConversionAmount()) {
+                    return;
+                }
+                float healAmount = currentDamageValue * (getDamageConvertPercent() / 100f);
                 attacker.addHealingInstance(
                         attacker,
                         name,
-                        currentDamageValue * (getDamageConvertPercent() / 100f),
-                        currentDamageValue * (getDamageConvertPercent() / 100f),
+                        Math.min(healAmount, tempBloodLust.getMaxConversionAmount() - tempBloodLust.getAmountHealed()),
+                        Math.min(healAmount, tempBloodLust.getMaxConversionAmount() - tempBloodLust.getAmountHealed()),
                         0,
                         100,
                         false,
@@ -104,6 +116,10 @@ public class BloodLust extends AbstractAbility {
         });
 
         return true;
+    }
+
+    public float getAmountHealed() {
+        return amountHealed;
     }
 
     public int getDamageConvertPercent() {
@@ -118,7 +134,6 @@ public class BloodLust extends AbstractAbility {
         this.amountHealed += amountHealed;
     }
 
-
     public int getDuration() {
         return duration;
     }
@@ -127,7 +142,27 @@ public class BloodLust extends AbstractAbility {
         this.duration = duration;
     }
 
-    public float getAmountHealed() {
-        return amountHealed;
+    @Override
+    public void updateCustomStats(AbstractPlayerClass apc) {
+        if (apc != null) {
+            setMaxConversionAmount(apc.getMaxHealth() * (getMaxConversionPercent() / 100f));
+            updateDescription(null);
+        }
+    }
+
+    public int getMaxConversionPercent() {
+        return maxConversionPercent;
+    }
+
+    public void setMaxConversionPercent(int maxConversionPercent) {
+        this.maxConversionPercent = maxConversionPercent;
+    }
+
+    public float getMaxConversionAmount() {
+        return maxConversionAmount;
+    }
+
+    public void setMaxConversionAmount(float maxConversionAmount) {
+        this.maxConversionAmount = maxConversionAmount;
     }
 }

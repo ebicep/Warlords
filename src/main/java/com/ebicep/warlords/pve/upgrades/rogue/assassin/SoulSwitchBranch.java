@@ -8,10 +8,12 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
     int radius = ability.getRadius();
-    float cooldown = ability.getCooldown();
+    float cooldown;
 
     public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
         super(abilityTree, ability);
+        ability.setCooldown(ability.getCooldown() * 0.75f);
+        cooldown = ability.getCooldown();
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
@@ -82,8 +84,8 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
         masterUpgrade = new Upgrade(
                 "Soul Burst",
                 "Soul Switch - Master Upgrade",
-                "Be able to swap with an enemy, leave a decoy on your original position that explodes after 3 seconds for 1004-1248 damage, nearby enemies are " +
-                        "drawn to the decoy.",
+                "Double the damage you deal with the decoy and cripple all enemies hit by the decoy's explosion for 5 seconds," +
+                        " reducing their damage dealt by 50%. Additionally, heal for 10% of your missing health when swapping.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

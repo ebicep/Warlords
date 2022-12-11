@@ -11,26 +11,35 @@ import org.bukkit.ChatColor;
 import java.util.Comparator;
 
 @CommandAlias("currency")
-@CommandPermission("group.administrator")
+@CommandPermission("minecraft.command.op|group.administrator")
 public class EditCurrencyCommand extends BaseCommand {
 
     @Subcommand("add")
     @Description("Adds currency to yourself")
-    public void add(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer amount) {
+    public void add(CommandIssuer issuer, Integer amount, @Optional @Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.addCurrency(amount);
         warlordsPlayer.sendMessage(ChatColor.AQUA + "You gained " + amount + " currency");
     }
 
+    @Subcommand("addall")
+    @Description("Adds currency to everyone")
+    public void addAll(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer amount) {
+        warlordsPlayer.getGame().warlordsPlayers().forEach(wp -> {
+            wp.addCurrency(amount);
+            wp.sendMessage(ChatColor.AQUA + "You gained " + amount + " currency");
+        });
+    }
+
     @Subcommand("remove")
     @Description("Removes your currency")
-    public void remove(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer amount) {
+    public void remove(CommandIssuer issuer, Integer amount, @Optional @Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.subtractCurrency(amount);
         warlordsPlayer.sendMessage(ChatColor.AQUA + "You lost " + amount + " currency");
     }
 
     @Subcommand("set")
     @Description("Sets your currency to a specific amount")
-    public void set(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer amount) {
+    public void set(CommandIssuer issuer, Integer amount, @Optional @Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.setCurrency(amount);
         warlordsPlayer.sendMessage(ChatColor.AQUA + "You set your currency to " + amount);
     }

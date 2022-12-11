@@ -6,6 +6,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -19,17 +21,17 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
                 "Envoy Vanguard",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.WOOD_STEP, 1, (short) 4),
+                        ArmorManager.Helmets.LEGENDARY_PALADIN_HELMET.itemRed,
                         new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.COOKED_FISH, 1, (short) 1)
+                        Weapons.FELFLAME_BLADE.getItem()
                 ),
                 7000,
                 0.4f,
                 20,
-                450,
-                600
+                500,
+                700
         );
     }
 

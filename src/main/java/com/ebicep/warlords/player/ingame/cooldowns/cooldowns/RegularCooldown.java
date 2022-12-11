@@ -39,7 +39,6 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, new ArrayList<>());
     }
 
-    //(cooldown, ticksLeft, ticksElapsed)
     public RegularCooldown(
             String name,
             String nameAbbreviation,
@@ -66,10 +65,68 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
             int ticksLeft,
             List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
     ) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath);
+        this(
+                name,
+                nameAbbreviation,
+                cooldownClass,
+                cooldownObject,
+                from,
+                cooldownType,
+                onRemove,
+                cooldownManager -> {
+                },
+                removeOnDeath,
+                ticksLeft,
+                triConsumers
+        );
+    }
+
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            boolean removeOnDeath,
+            int ticksLeft,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
+    ) {
+        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, removeOnDeath);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
         this.consumers.addAll(triConsumers);
+    }
+
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            int ticksLeft
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, ticksLeft, new ArrayList<>());
+    }
+
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            int ticksLeft,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true, ticksLeft, triConsumers);
     }
 
     @Override

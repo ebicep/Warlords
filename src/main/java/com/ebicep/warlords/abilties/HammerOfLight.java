@@ -145,6 +145,8 @@ public class HammerOfLight extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     hammer.remove();
                     particleTask.cancel();
                 },
@@ -321,8 +323,8 @@ public class HammerOfLight extends AbstractAbility {
                             "Hammer of Illusion",
                             minDamageHeal * 5,
                             maxDamageHeal * 5,
-                            critChance,
-                            critMultiplier,
+                            -1,
+                            100,
                             false,
                             false
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
@@ -339,8 +341,8 @@ public class HammerOfLight extends AbstractAbility {
                             "Hammer of Illusion",
                             minDamage * 5,
                             maxDamage * 5,
-                            critChance,
-                            critMultiplier,
+                            -1,
+                            100,
                             false
                     );
                 }

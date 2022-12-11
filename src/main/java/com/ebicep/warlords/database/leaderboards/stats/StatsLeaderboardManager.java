@@ -124,7 +124,7 @@ public class StatsLeaderboardManager {
         if (!Warlords.holographicDisplaysEnabled) {
             return;
         }
-        if (!DatabaseManager.enabled) {
+        if (!DatabaseManager.enabled || !enabled) {
             return;
         }
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
@@ -133,7 +133,9 @@ public class StatsLeaderboardManager {
 
         Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
 
-        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections, databasePlayers));
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) ->
+                statsLeaderboardGameType.resetLeaderboards(playersCollections, new HashSet<>(databasePlayers)
+                ));
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
@@ -224,6 +226,7 @@ public class StatsLeaderboardManager {
             return;
         }
         removePlayerSpecificHolograms(player);
+        DatabaseGameBase.setGameHologramVisibility(player);
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
         //GAME TYPE

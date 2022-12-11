@@ -17,10 +17,17 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected WarlordsEntity from;
     protected CooldownTypes cooldownType;
     protected Consumer<CooldownManager> onRemove;
+    protected Consumer<CooldownManager> onRemoveForce = cooldownManager -> {
+    };
     protected boolean removeOnDeath = true;
 
     public AbstractCooldown(
-            String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType,
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove
     ) {
         this.name = name;
@@ -33,8 +40,14 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     }
 
     public AbstractCooldown(
-            String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove, boolean removeOnDeath
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce
     ) {
         this.name = name;
         this.nameAbbreviation = nameAbbreviation;
@@ -43,6 +56,48 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.from = from;
         this.cooldownType = cooldownType;
         this.onRemove = onRemove;
+        this.onRemoveForce = onRemoveForce;
+    }
+
+    public AbstractCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            boolean removeOnDeath
+    ) {
+        this.name = name;
+        this.nameAbbreviation = nameAbbreviation;
+        this.cooldownClass = cooldownClass;
+        this.cooldownObject = cooldownObject;
+        this.from = from;
+        this.cooldownType = cooldownType;
+        this.onRemove = onRemove;
+        this.removeOnDeath = removeOnDeath;
+    }
+
+    public AbstractCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
+            boolean removeOnDeath
+    ) {
+        this.name = name;
+        this.nameAbbreviation = nameAbbreviation;
+        this.cooldownClass = cooldownClass;
+        this.cooldownObject = cooldownObject;
+        this.from = from;
+        this.cooldownType = cooldownType;
+        this.onRemove = onRemove;
+        this.onRemoveForce = onRemoveForce;
         this.removeOnDeath = removeOnDeath;
     }
 
@@ -98,5 +153,13 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public void setRemoveOnDeath(boolean removeOnDeath) {
         this.removeOnDeath = removeOnDeath;
+    }
+
+    public Consumer<CooldownManager> getOnRemoveForce() {
+        return onRemoveForce;
+    }
+
+    public void setOnRemoveForce(Consumer<CooldownManager> onRemoveForce) {
+        this.onRemoveForce = onRemoveForce;
     }
 }

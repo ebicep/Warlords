@@ -55,12 +55,13 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        List<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(player, castRange, castRange, castRange)
+        Set<WarlordsEntity> teammatesNear = PlayerFilter
+                .entitiesAround(wp, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(alliesAffected)
-                .stream().collect(Collectors.toList());
+                .stream()
+                .collect(Collectors.toSet());
 
         if (teammatesNear.size() < 1) {
             wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
@@ -68,7 +69,7 @@ public class RemedicChains extends AbstractAbility {
         }
 
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
         HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
@@ -110,9 +111,6 @@ public class RemedicChains extends AbstractAbility {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                         return;
                     }
-                    if (pveUpgrade) {
-                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
-                    }
                     if (wp.isDead()) {
                         return;
                     }
@@ -139,17 +137,25 @@ public class RemedicChains extends AbstractAbility {
                         );
                     }
                 },
+                (cooldownManager, linkedCooldown) -> {
+                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                        return;
+                    }
+                    if (pveUpgrade) {
+                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
+                    }
+                },
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 8 != 0) {
                         return;
                     }
-                    List<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
-                    for (int i = 0; i < linkedEntities.size(); i++) {
-                        WarlordsEntity linked = linkedEntities.get(i);
+                    Set<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
+                    Set<WarlordsEntity> toRemove = new HashSet<>();
+                    for (WarlordsEntity linked : linkedEntities) {
                         boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
                         if (outOfRange) {
-                            linked.getCooldownManager().removeCooldown(cooldown);
+                            linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             ParticleEffect.VILLAGER_HAPPY.display(
                                     0.5f,
@@ -177,14 +183,13 @@ public class RemedicChains extends AbstractAbility {
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
                         if (outOfRange || linked.isDead()) {
-                            linkedEntities.remove(i);
-                            i--;
+                            toRemove.add(linked);
                             if (pveUpgrade) {
                                 linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
                             }
                         }
                     }
-
+                    linkedEntities.removeAll(toRemove);
                 }),
                 teammatesNear
         ) {

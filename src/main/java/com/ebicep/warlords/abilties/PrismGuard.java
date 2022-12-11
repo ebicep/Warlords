@@ -5,6 +5,7 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -79,8 +81,9 @@ public class PrismGuard extends AbstractAbility {
         }.runTaskLater(3);
 
         Set<WarlordsEntity> isInsideBubble = new HashSet<>();
-        PrismGuard tempPrismGuard = new PrismGuard();
+        Set<WarlordsEntity> playersHit = new HashSet<>();
         AtomicInteger hits = new AtomicInteger(0);
+        PrismGuard tempPrismGuard = new PrismGuard();
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",
@@ -110,8 +113,7 @@ public class PrismGuard extends AbstractAbility {
                             .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
-                        float healingValue = bubbleHealing +
-                                (entity.getMaxHealth() - entity.getHealth()) * (hits.get() * (convertToPercent(bubbleMissingHealing)));
+                        float healingValue = bubbleHealing + (entity.getMaxHealth() - entity.getHealth()) * (hits.get() * (convertToPercent(bubbleMissingHealing)));
                         entity.addHealingInstance(
                                 wp,
                                 name,
@@ -177,6 +179,10 @@ public class PrismGuard extends AbstractAbility {
                                 .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
                                 .aliveTeammatesOfExcludingSelf(wp)
                         ) {
+                            if (!playersHit.contains(bubblePlayer)) {
+                                Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, Set.of(bubblePlayer)));
+                            }
+                            playersHit.add(bubblePlayer);
                             bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
                             bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                     "Prism Guard",

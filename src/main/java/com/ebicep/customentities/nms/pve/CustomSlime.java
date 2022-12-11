@@ -6,8 +6,6 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime> {
 
-    private final int shimmerHitbox = 6;
-
     public CustomSlime(World world) {
         super(world);
         setSize(5);

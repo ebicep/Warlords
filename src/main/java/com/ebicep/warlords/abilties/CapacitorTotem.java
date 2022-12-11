@@ -114,6 +114,8 @@ public class CapacitorTotem extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     totemStand.remove();
                 },
                 duration * 20,

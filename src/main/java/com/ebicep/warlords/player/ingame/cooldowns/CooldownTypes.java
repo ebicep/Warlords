@@ -5,6 +5,7 @@ public enum CooldownTypes {
     BUFF("BUFF"),
     DEBUFF("DEBUFF"),
     ABILITY("ABILITY"),
+    WEAPON("WEAPON"),
 
     ;
 

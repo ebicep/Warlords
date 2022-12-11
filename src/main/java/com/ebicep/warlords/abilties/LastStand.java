@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -76,20 +77,13 @@ public class LastStand extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
                 selfDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksLeft % 15 == 0) {
-                        for (WarlordsEntity we : PlayerFilter
-                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
-                                .aliveEnemiesOf(wp)
-                                .closestFirst(wp)
-                        ) {
-                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
-                            Utils.addKnockback(wp.getLocation(), we, -2, 0.2f);
-                        }
-
                         for (WarlordsEntity we : PlayerFilter
                                 .entitiesAround(wp, 15, 15, 15)
                                 .aliveEnemiesOf(wp)
@@ -107,6 +101,13 @@ public class LastStand extends AbstractAbility {
                 float afterValue = currentDamageValue * (100 - selfDamageReductionPercent) / 100f;
                 tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
                 return afterValue;
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveUpgrade) {
+                    currentVector.multiply(0.5);
+                }
             }
         });
 
@@ -205,6 +206,23 @@ public class LastStand extends AbstractAbility {
                         matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
                 );
             }
+        }
+
+        if (pveUpgrade) {
+            addSecondaryAbility(
+                    () -> {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
+                            Utils.addKnockback(wp.getLocation(), we, -2, 0.25f);
+                        }
+                    },
+                    true,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(tempLastStand)
+            );
         }
 
         return true;

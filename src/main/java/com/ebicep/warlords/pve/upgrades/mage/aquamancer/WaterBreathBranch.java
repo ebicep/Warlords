@@ -59,8 +59,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 5000,
                 () -> {
                     ability.setVelocity(velocity * 1.15);
-                    ability.setHitbox(hitbox + 2);
-                    ability.setMaxAnimationTime(coneRange + 4);
+                    ability.setHitbox(ability.getHitbox() + 2);
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -69,8 +69,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 10000,
                 () -> {
                     ability.setVelocity(velocity * 1.3);
-                    ability.setHitbox(hitbox + 3);
-                    ability.setMaxAnimationTime(coneRange + 8);
+                    ability.setHitbox(ability.getHitbox() + 2);
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,8 +79,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 15000,
                 () -> {
                     ability.setVelocity(velocity * 1.45);
-                    ability.setHitbox(hitbox + 4);
-                    ability.setMaxAnimationTime(coneRange + 12);
+                    ability.setHitbox(ability.getHitbox() + 2);
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -89,15 +89,15 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 20000,
                 () -> {
                     ability.setVelocity(velocity * 1.6);
-                    ability.setHitbox(hitbox + 5);
-                    ability.setMaxAnimationTime(coneRange + 16);
+                    ability.setHitbox(ability.getHitbox() + 2);
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Typhoon",
                 "Water Breath - Master Upgrade",
-                "+100% Additional cone range\n\nAll allies hit by Water Breath are healed for 1% of their max health per second for 5 seconds.",
+                "+100% Additional cone range\n\nAll allies hit by Water Breath have their cooldowns reduced by 3 seconds and are healed for 2% of their max health per second for 5 seconds.",
                 50000,
                 () -> {
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
