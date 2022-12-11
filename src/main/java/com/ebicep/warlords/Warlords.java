@@ -37,7 +37,6 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -741,13 +740,8 @@ public class Warlords extends JavaPlugin {
                             orb.remove();
                             itr.remove();
 
-                            float orbHeal = OrbsOfLife.ORB_HEALING;
+                            float orbHeal = orb.getCooldown().getCooldownObject().getMinDamageHeal();
                             WarlordsEntity owner = orb.getOwner();
-                            if (owner.getGame().getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE &&
-                                    PlayerSettings.getPlayerSettings(owner.getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE
-                            ) {
-                                orbHeal *= 1.2;
-                            }
 
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
