@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 public class GhostZombie extends AbstractZombie implements EliteMob {
 
@@ -48,7 +47,7 @@ public class GhostZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.subtractEnergy(10, false);
+        receiver.subtractEnergy(5, false);
     }
 
     @Override

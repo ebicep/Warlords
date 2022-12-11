@@ -12,7 +12,7 @@ public class BasicBerserkZombie extends AbstractBerserkZombie {
     public BasicBerserkZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Basic Berserker Zombie",
+                "Berserker",
                 MobTier.BASE,
                 new Utils.SimpleEntityEquipment(
                         ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET.itemRed,
