@@ -88,6 +88,10 @@ public class OrbsOfLife extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
+                cooldownManager -> {
+                    List<Orb> orbs = new ArrayList<>(tempOrbsOfLight.getSpawnedOrbs());
+                    orbs.forEach(Orb::remove);
+                },
                 false,
                 duration * 20,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()

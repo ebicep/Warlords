@@ -92,11 +92,25 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
             WarlordsEntity from,
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce,
             boolean removeOnDeath,
             int ticksLeft,
             Predicate<T> objectCheck
     ) {
-        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath, ticksLeft, objectCheck, new ArrayList<>());
+        this(
+                name,
+                nameAbbreviation,
+                cooldownClass,
+                cooldownObject,
+                from,
+                cooldownType,
+                onRemove,
+                onRemoveForce,
+                removeOnDeath,
+                ticksLeft,
+                objectCheck,
+                new ArrayList<>()
+        );
     }
 
     @Override
