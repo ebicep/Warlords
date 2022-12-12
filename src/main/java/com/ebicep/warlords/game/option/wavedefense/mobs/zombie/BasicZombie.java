@@ -37,10 +37,12 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+
     }
 
     @Override
