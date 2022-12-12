@@ -163,6 +163,13 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     }
 
     @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return players.values().stream()
+                      .flatMap(Collection::stream)
+                      .collect(Collectors.toSet());
+    }
+
+    @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
         assert player instanceof DatabaseGamePlayerCTF;
 

@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -214,7 +213,7 @@ public abstract class DatabaseGameBase {
                         .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
                         .sync(() -> {
                             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                                StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
+                                StatsLeaderboardManager.resetLeaderboards(activeCollection, false);
                             }
                             StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
                         })
@@ -266,6 +265,8 @@ public abstract class DatabaseGameBase {
 
     public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier);
 
+    public abstract Set<DatabaseGamePlayerBase> getBasePlayers();
+
     public void setCounted(boolean counted) {
         this.counted = counted;
     }
@@ -301,9 +302,6 @@ public abstract class DatabaseGameBase {
                                     .collect(Collectors.toList())
                     );
                 }
-                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(activeCollection, v -> new HashSet<>());
-                databasePlayers.remove(databasePlayer);
-                databasePlayers.add(databasePlayer);
             });
         }
     }

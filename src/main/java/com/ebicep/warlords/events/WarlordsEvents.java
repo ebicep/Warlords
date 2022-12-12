@@ -61,6 +61,7 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WarlordsEvents implements Listener {
 
@@ -78,13 +79,12 @@ public class WarlordsEvents implements Listener {
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
         } else {
+            if (!DatabaseManager.enabled) {
+                return;
+            }
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
-                if (loadedPlayers == null) {
-                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
-                    return;
-                }
+                ConcurrentHashMap<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
                 if (!loadedPlayers.containsKey(uuid)) {
                     DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
                         if (!Objects.equals(databasePlayer.getName(), event.getName())) {
@@ -105,9 +105,7 @@ public class WarlordsEvents implements Listener {
         if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
             return;
         }
-        Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME);
-        DatabasePlayer databasePlayer = loadedPlayers.get(event.getPlayer().getUniqueId());
-        if (databasePlayer == null) {
+        if (!DatabaseManager.inCache(event.getPlayer().getUniqueId(), PlayersCollections.LIFETIME)) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Unable to load player data. Report this if this issue persists.");
         }
     }
@@ -198,16 +196,18 @@ public class WarlordsEvents implements Listener {
                             databasePlayer.getSpec(value).addPrestige();
                             int prestige = databasePlayer.getSpec(value).getPrestige();
                             FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                    .with(FireworkEffect.Type.BALL)
-                                    .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
-                                    .build()
+                                                                                                  .with(FireworkEffect.Type.BALL)
+                                                                                                  .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige)
+                                                                                                                                              .getB())
+                                                                                                  .build()
                             );
                             PacketUtils.sendTitle(player,
                                     ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
                                     ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
-                                            .getA()
-                                            .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige)
-                                            .getA() + prestige,
+                                                                     .getA()
+                                                                     .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(
+                                                                                                                                                      prestige)
+                                                                                                                                                              .getA() + prestige,
                                     20,
                                     140,
                                     20
@@ -331,12 +331,12 @@ public class WarlordsEvents implements Listener {
                         wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
                         if (soulbinding.hasBoundPlayer(wpVictim)) {
                             soulbinding.getSoulBindedPlayers().stream()
-                                    .filter(p -> p.getBoundPlayer() == wpVictim)
-                                    .forEach(boundPlayer -> {
-                                        boundPlayer.setHitWithSoul(false);
-                                        boundPlayer.setHitWithLink(false);
-                                        boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
-                                    });
+                                       .filter(p -> p.getBoundPlayer() == wpVictim)
+                                       .forEach(boundPlayer -> {
+                                           boundPlayer.setHitWithSoul(false);
+                                           boundPlayer.setHitWithLink(false);
+                                           boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
+                                       });
                         } else {
                             wpVictim.sendMessage(
                                     WarlordsEntity.RECEIVE_ARROW_RED +

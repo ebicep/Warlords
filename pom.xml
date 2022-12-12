@@ -220,13 +220,6 @@
             <version>2.6.3</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Caffeine cache -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>2.9.3</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- ACF -->
         <dependency>
             <groupId>co.aikar</groupId>

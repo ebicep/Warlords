@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_Duel")
 public class DatabaseGameDuel extends DatabaseGameBase {
@@ -44,6 +45,13 @@ public class DatabaseGameDuel extends DatabaseGameBase {
                 DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier);
             }
         }
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return players.values().stream()
+                      .flatMap(Collection::stream)
+                      .collect(Collectors.toSet());
     }
 
     @Override

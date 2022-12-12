@@ -9,8 +9,8 @@ import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -31,9 +31,9 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
         this.shortName = shortName;
     }
 
-    public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
+    public void resetLeaderboards(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String subTitle) {
         for (StatsLeaderboard statsLeaderboard : getStatsLeaderboards()) {
-            statsLeaderboard.resetHolograms(collection, databasePlayers, getShortName(), subTitle);
+            statsLeaderboard.resetHolograms(collection, externalFilter, getShortName(), subTitle);
         }
     }
 

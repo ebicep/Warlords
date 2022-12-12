@@ -9,7 +9,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import java.util.List;
-import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
@@ -36,29 +36,30 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
 
     public abstract void addExtraLeaderboards(StatsLeaderboardCategory<T> statsLeaderboardCategory);
 
-    public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers) {
+    public void resetLeaderboards(PlayersCollections collection) {
+        Predicate<DatabasePlayer> externalFilter = null;
         if (this instanceof StatsLeaderboardPvE) {
             switch (collection) {
                 case LIFETIME:
-                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPveStats().getPlays() < 50);
+                    externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 50;
                     break;
                 case WEEKLY:
-                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPveStats().getPlays() < 10);
+                    externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 10;
                     break;
             }
         } else {
             switch (collection) {
                 case LIFETIME:
-                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 50);
+                    externalFilter = databasePlayer -> databasePlayer.getPlays() < 50;
                     break;
                 case WEEKLY:
-                    databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 10);
+                    externalFilter = databasePlayer -> databasePlayer.getPlays() < 10;
                     break;
             }
         }
         String subTitle = getSubTitle();
         for (StatsLeaderboardCategory<T> category : gameTypeCategories) {
-            category.resetLeaderboards(collection, databasePlayers, subTitle);
+            category.resetLeaderboards(collection, externalFilter, subTitle);
         }
     }
 

@@ -170,8 +170,8 @@ public class DatabaseTiming {
                 ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing weekly collection");
             }
             //reloading boards
-            StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-            StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+            StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false);
         }
         if (resetDaily.get()) {
             resetDaily.set(false);
@@ -193,8 +193,8 @@ public class DatabaseTiming {
                 ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing daily collection");
             }
             //reloading boards
-            StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-            StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+            StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, false);
         }
     }
 
