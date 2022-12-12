@@ -287,6 +287,12 @@ public class Warlords extends JavaPlugin {
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                entity.remove();
+            }
+        }
+
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
