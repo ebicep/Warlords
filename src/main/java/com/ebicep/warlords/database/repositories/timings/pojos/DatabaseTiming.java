@@ -13,6 +13,8 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -171,7 +173,12 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-            StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false);
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.WEEKLY, databasePlayer -> {});
+            }
+            Warlords.newChain()
+                    .delay(10 * 20)
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false)).execute();
         }
         if (resetDaily.get()) {
             resetDaily.set(false);
@@ -194,15 +201,20 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-            StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, false);
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.DAILY, databasePlayer -> {});
+            }
+            Warlords.newChain()
+                    .delay(10 * 20)
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, false)).execute();
         }
     }
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
         List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.CTF)
-                .getCategories()
-                .get(1)
-                .getLeaderboards();
+                                                                                             .getCategories()
+                                                                                             .get(1)
+                                                                                             .getLeaderboards();
         org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players",
                 statsLeaderboards.get(0).getSortedPlayers(PlayersCollections.WEEKLY).size()
         );
