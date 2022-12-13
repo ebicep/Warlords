@@ -32,12 +32,13 @@ public class WinAfterTimeoutOption implements Option {
 
     public static final int DEFAULT_TIME_REMAINING = 900;
     public static final Team DEFAULT_WINNER = null;
-    private static final int SCOREBOARD_PRIORITY = 10;
+    private int scoreboardPriority = 10;
+    private String scoreboardGroup = "timeout";
 
     private int timeRemaining;
     private int timeInitial;
     private SimpleScoreboardHandler scoreboard;
-    private BukkitTask runTaskTimer; 
+    private BukkitTask runTaskTimer;
     private Team winner;
 
     public WinAfterTimeoutOption() {
@@ -46,6 +47,12 @@ public class WinAfterTimeoutOption implements Option {
 
     public WinAfterTimeoutOption(int timeRemaining) {
         this(timeRemaining, DEFAULT_WINNER);
+    }
+
+    public WinAfterTimeoutOption(int timeRemaining, int scoreboardPriority, String scoreboardGroup) {
+        this(timeRemaining, DEFAULT_WINNER);
+        this.scoreboardPriority = scoreboardPriority;
+        this.scoreboardGroup = scoreboardGroup;
     }
 
     public WinAfterTimeoutOption(Team winner) {
@@ -106,7 +113,7 @@ public class WinAfterTimeoutOption implements Option {
             }
             
         }.register(game);
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(scoreboardPriority, scoreboardGroup) {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {

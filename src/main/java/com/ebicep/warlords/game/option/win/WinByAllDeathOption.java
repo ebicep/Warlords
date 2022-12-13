@@ -31,19 +31,18 @@ public class WinByAllDeathOption implements Option {
                 if (event.getPlayer() instanceof WarlordsPlayer) {
                     teams.removeIf(team -> {
                         List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                .matchingTeam(team)
-                                .toList();
-                                if (warlordsPlayers.isEmpty()) {
-                                    return false;
-                                }
-                                for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                                    if (warlordsPlayer.isAlive()) {
-                                        return false;
-                                    }
-                                }
-                                return true;
+                                                                                  .matchingTeam(team)
+                                                                                  .toList();
+                        if (warlordsPlayers.isEmpty()) {
+                            return false;
+                        }
+                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                            if (warlordsPlayer.isAlive()) {
+                                return false;
                             }
-                    );
+                        }
+                        return true;
+                    });
                     if (teams.size() == 1) {
                         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
                     }

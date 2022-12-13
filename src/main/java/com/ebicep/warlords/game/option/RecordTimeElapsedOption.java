@@ -16,8 +16,38 @@ import java.util.List;
 
 public class RecordTimeElapsedOption implements Option {
 
-    private int ticksElapsed;
     private static final int SCOREBOARD_PRIORITY = 50;
+
+    public static int getTicksElapsed(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof RecordTimeElapsedOption) {
+                RecordTimeElapsedOption recordTimeElapsedOption = (RecordTimeElapsedOption) option;
+                return recordTimeElapsedOption.getTicksElapsed();
+            }
+        }
+        return 0;
+    }
+
+    public int getTicksElapsed() {
+        return ticksElapsed;
+    }
+
+    private int ticksElapsed;
+    private boolean disabled = false;
+
+    @Override
+    public void register(@Nonnull Game game) {
+        if (disabled) {
+            return;
+        }
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
+            @Nonnull
+            @Override
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(ticksElapsed / 20));
+            }
+        });
+    }
 
     @Override
     public void start(@Nonnull Game game) {
@@ -33,28 +63,7 @@ public class RecordTimeElapsedOption implements Option {
         }.runTaskTimer(0, 0);
     }
 
-    @Override
-    public void register(@Nonnull Game game) {
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
-            @Nonnull
-            @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(ticksElapsed / 20));
-            }
-        });
-    }
-
-    public int getTicksElapsed() {
-        return ticksElapsed;
-    }
-
-    public static int getTicksElapsed(@Nonnull Game game) {
-        for (Option option : game.getOptions()) {
-            if (option instanceof RecordTimeElapsedOption) {
-                RecordTimeElapsedOption recordTimeElapsedOption = (RecordTimeElapsedOption) option;
-                return recordTimeElapsedOption.getTicksElapsed();
-            }
-        }
-        return 0;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }
