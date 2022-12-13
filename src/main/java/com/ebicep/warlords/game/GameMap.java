@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
+import com.ebicep.warlords.game.option.wavedefense.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
@@ -2732,6 +2733,7 @@ public enum GameMap {
                     DifficultyIndex.NORMAL
             ));
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
+            options.add(new SafeZoneOption());
 
             return options;
         }

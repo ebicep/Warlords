@@ -28,12 +28,12 @@ import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility {
 
-    protected float damageDoneWithOrder = 0;
-    protected int mobsKilledWithOrder = 0;
-
     public int numberOfFullResets = 0;
     public int numberOfHalfResets = 0;
     public int numberOfBackstabs = 0;
+
+    protected float damageDoneWithOrder = 0;
+    protected int mobsKilledWithOrder = 0;
 
     private boolean masterUpgrade = false;
     private int duration = 8;
@@ -211,46 +211,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         });
 
         if (!FlagHolder.isPlayerHolderFlag(wp)) {
-            wp.getCooldownManager().removeCooldownByName("Cloaked");
-            wp.getCooldownManager().addRegularCooldown("Cloaked",
-                    "INVIS",
-                    OrderOfEviscerate.class,
-                    null,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
-
-                        LivingEntity wpEntity = wp.getEntity();
-                        if (wpEntity instanceof Player) {
-                            PlayerFilter.playingGame(wp.getGame())
-                                    .enemiesOf(wp)
-                                    .stream().map(WarlordsEntity::getEntity)
-                                    .filter(Player.class::isInstance)
-                                    .map(Player.class::cast)
-                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
-                        }
-                    },
-                    duration * 20,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 5 == 0) {
-                            wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
-
-                            LivingEntity wpEntity = wp.getEntity();
-                            if (wpEntity instanceof Player) {
-                                ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-                                PlayerFilter.playingGame(wp.getGame())
-                                        .enemiesOf(wp)
-                                        .stream().map(WarlordsEntity::getEntity)
-                                        .filter(Player.class::isInstance)
-                                        .map(Player.class::cast)
-                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
-                            }
-                        }
-                    })
-            );
+            giveCloak(wp, duration);
         }
 
         return true;
@@ -275,12 +236,61 @@ public class OrderOfEviscerate extends AbstractAbility {
         }
     }
 
+    private static void giveCloak(@Nonnull WarlordsEntity wp, int duration) {
+        giveCloak(wp, duration, "INVIS");
+    }
+
     public void addToDamageThreshold(float damageThreshold) {
         this.damageThreshold += damageThreshold;
     }
 
     public float getDamageThreshold() {
         return damageThreshold;
+    }
+
+    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int duration, String actionBarName) {
+        wp.getCooldownManager().removeCooldownByName("Cloaked");
+        RegularCooldown<OrderOfEviscerate> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
+                actionBarName,
+                OrderOfEviscerate.class,
+                null,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+
+                    LivingEntity wpEntity = wp.getEntity();
+                    if (wpEntity instanceof Player) {
+                        PlayerFilter.playingGame(wp.getGame())
+                                    .enemiesOf(wp)
+                                    .stream().map(WarlordsEntity::getEntity)
+                                    .filter(Player.class::isInstance)
+                                    .map(Player.class::cast)
+                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
+                    }
+                },
+                duration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 5 == 0) {
+                        wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
+
+                        LivingEntity wpEntity = wp.getEntity();
+                        if (wpEntity instanceof Player) {
+                            ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+                            PlayerFilter.playingGame(wp.getGame())
+                                        .enemiesOf(wp)
+                                        .stream().map(WarlordsEntity::getEntity)
+                                        .filter(Player.class::isInstance)
+                                        .map(Player.class::cast)
+                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                        }
+                    }
+                })
+        );
+        wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
+        return orderOfEviscerateCooldown;
     }
 
     public void setMarkedPlayer(WarlordsEntity markedPlayer) {

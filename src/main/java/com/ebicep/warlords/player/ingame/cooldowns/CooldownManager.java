@@ -240,6 +240,10 @@ public class CooldownManager {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
 
+    public boolean hasCooldownFromActionBarName(String name) {
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getActionBarName() != null && cooldown.getActionBarName().equalsIgnoreCase(name));
+    }
+
     public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
