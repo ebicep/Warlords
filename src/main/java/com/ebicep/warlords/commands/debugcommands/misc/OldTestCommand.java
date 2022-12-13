@@ -1,5 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.GameManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,6 +15,10 @@ public class OldTestCommand implements CommandExecutor {
 
         if (!player.isOp()) {
             return true;
+        }
+
+        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
+            System.out.println(game.getMap() + " - " + game.getGame());
         }
 
 //        Quests quest = Quests.DAILY_300_KA;

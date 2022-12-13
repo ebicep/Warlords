@@ -376,11 +376,15 @@ public class GameManager implements AutoCloseable {
             }
         }
 
+        public void setGame(@Nullable Game game) {
+            this.game = game;
+        }
+
         @Nonnull
         private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable GameMode category) {
             if (game == null) {
                 GameMode newCategory = category != null ? category
-                        : map.getGameModes().get((int) (Math.random() * map.getGameModes().size()));
+                                                        : map.getGameModes().get((int) (Math.random() * map.getGameModes().size()));
                 game = new Game(requestedGameAddons, map, newCategory, locations);
                 game.start();
             }

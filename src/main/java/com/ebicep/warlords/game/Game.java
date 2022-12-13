@@ -793,6 +793,12 @@ public final class Game implements Runnable, AutoCloseable {
             }
             throw e;
         }
+        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
+            if (game.getGame() == this) {
+                game.setGame(null);
+                break;
+            }
+        }
     }
 
     @Override
