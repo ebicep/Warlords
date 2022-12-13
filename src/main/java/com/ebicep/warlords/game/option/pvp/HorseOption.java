@@ -1,6 +1,7 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;

@@ -1,7 +1,8 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
+import com.ebicep.warlords.game.option.TeleportOnEventOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;

@@ -1,8 +1,9 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.freeze;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;

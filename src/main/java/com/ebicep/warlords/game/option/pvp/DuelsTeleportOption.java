@@ -1,7 +1,8 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
+import com.ebicep.warlords.game.option.TeleportOnEventOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;

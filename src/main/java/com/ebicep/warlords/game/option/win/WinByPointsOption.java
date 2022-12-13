@@ -1,8 +1,9 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.win;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;

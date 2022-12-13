@@ -1,8 +1,9 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.win;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;

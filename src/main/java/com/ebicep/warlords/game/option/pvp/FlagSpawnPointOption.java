@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;

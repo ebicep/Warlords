@@ -1,7 +1,8 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.cuboid;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.bukkit.LocationFactory;

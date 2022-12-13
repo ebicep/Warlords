@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;

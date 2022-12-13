@@ -7,7 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.GameFreezeOption;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;

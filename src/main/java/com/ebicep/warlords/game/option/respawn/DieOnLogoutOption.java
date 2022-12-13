@@ -1,6 +1,7 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.respawn;
 
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;

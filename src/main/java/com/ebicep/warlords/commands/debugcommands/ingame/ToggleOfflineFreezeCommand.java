@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
 import org.bukkit.ChatColor;
 
 @CommandAlias("offlinefreeze")

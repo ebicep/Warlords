@@ -10,7 +10,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager.GameHolder;
-import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 

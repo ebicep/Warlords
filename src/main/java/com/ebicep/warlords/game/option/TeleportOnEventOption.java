@@ -14,8 +14,8 @@ import javax.annotation.Nonnull;
 
 public class TeleportOnEventOption implements Option, Listener {
 
-    boolean preventPlayerMovement = false;
-    Game game;
+    protected boolean preventPlayerMovement = false;
+    protected Game game;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -25,7 +25,7 @@ public class TeleportOnEventOption implements Option, Listener {
             public void cancelMovement(PlayerMoveEvent e) {
                 WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
                 if (
-                    wp != null &&
+                        wp != null &&
                     wp.getGame() == game &&
                     preventPlayerMovement &&
                     (e.getFrom().getX() != e.getTo().getX() || e.getFrom().getZ() != e.getTo().getZ()) &&

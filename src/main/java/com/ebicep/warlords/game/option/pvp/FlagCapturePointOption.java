@@ -1,17 +1,17 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.marker.FlagCaptureMarker;
+import com.ebicep.warlords.game.option.MarkerOption;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
-
-import static com.ebicep.warlords.game.option.marker.FlagCaptureMarker.DEFAULT_CAPTURE_RADIUS;
-
-import java.util.Arrays;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-
+import com.ebicep.warlords.game.option.marker.FlagCaptureMarker;
 import org.bukkit.Location;
 import org.bukkit.Material;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+
+import static com.ebicep.warlords.game.option.marker.FlagCaptureMarker.DEFAULT_CAPTURE_RADIUS;
 
 public class FlagCapturePointOption extends MarkerOption {
 

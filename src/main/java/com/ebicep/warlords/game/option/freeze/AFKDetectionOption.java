@@ -1,9 +1,10 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.freeze;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

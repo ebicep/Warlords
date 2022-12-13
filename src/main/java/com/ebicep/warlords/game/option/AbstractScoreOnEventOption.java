@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.flags.SpawnFlagLocation;
 import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;

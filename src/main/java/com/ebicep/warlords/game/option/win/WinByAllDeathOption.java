@@ -1,9 +1,10 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.win;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
