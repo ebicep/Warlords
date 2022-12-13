@@ -129,9 +129,9 @@ public class Warlords extends JavaPlugin {
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
             Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
-                    .stream()
-                    .filter(e -> e.value() instanceof WarlordsEntity)
-                    .findAny();
+                                                     .stream()
+                                                     .filter(e -> e.value() instanceof WarlordsEntity)
+                                                     .findAny();
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
@@ -185,6 +185,11 @@ public class Warlords extends JavaPlugin {
             player.teleport(value);
         }
     }
+
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
+    }
+
     private GameManager gameManager;
 
     @Override
@@ -289,6 +294,9 @@ public class Warlords extends JavaPlugin {
 
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
+                if (entity instanceof Player) {
+                    continue;
+                }
                 entity.remove();
             }
         }
@@ -610,9 +618,9 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                        .withColor(Color.LIME)
-                                        .with(FireworkEffect.Type.BALL)
-                                        .build());
+                                                                                                  .withColor(Color.LIME)
+                                                                                                  .with(FireworkEffect.Type.BALL)
+                                                                                                  .build());
 
                                 wp.heal();
 
@@ -654,18 +662,18 @@ public class Warlords extends JavaPlugin {
 
                                         if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
                                             PlayerFilter.entitiesAround(wp, 6, 6, 6)
-                                                    .aliveEnemiesOf(wp)
-                                                    .forEach(enemy -> {
-                                                        enemy.addDamageInstance(
-                                                                wp,
-                                                                "Undying Army",
-                                                                458 + (enemy.getMaxHealth() * .02f),
-                                                                612 + (enemy.getMaxHealth() * .02f),
-                                                                0,
-                                                                100,
-                                                                false
-                                                        );
-                                                    });
+                                                        .aliveEnemiesOf(wp)
+                                                        .forEach(enemy -> {
+                                                            enemy.addDamageInstance(
+                                                                    wp,
+                                                                    "Undying Army",
+                                                                    458 + (enemy.getMaxHealth() * .02f),
+                                                                    612 + (enemy.getMaxHealth() * .02f),
+                                                                    0,
+                                                                    100,
+                                                                    false
+                                                            );
+                                                        });
 
                                         }
                                     }
@@ -795,7 +803,7 @@ public class Warlords extends JavaPlugin {
                         new CooldownFilter<>(wps, PersistentCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                                 .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers()
-                                        .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
+                                                                          .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
                     }
                 }
 
@@ -895,8 +903,8 @@ public class Warlords extends JavaPlugin {
         new BukkitRunnable() {
 
             final Instant nextReset = Instant.now().isAfter(DateUtil.getNextResetDate()) ?
-                    DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
-                    DateUtil.getNextResetDate();
+                                      DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
+                                      DateUtil.getNextResetDate();
 
             @Override
             public void run() {
@@ -921,10 +929,6 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
-    }
-
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
     }
 
     public static boolean hasPlayer(@Nonnull UUID player) {
