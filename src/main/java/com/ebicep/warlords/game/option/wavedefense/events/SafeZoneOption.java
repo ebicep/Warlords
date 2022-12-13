@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.events;
 
 import com.ebicep.warlords.abilties.OrderOfEviscerate;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -136,7 +136,9 @@ public class SafeZoneOption implements Option {
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 WarlordsEntity player = event.getPlayer();
-                if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE")) {
+                if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE") ||
+                        event.getAttacker().getCooldownManager().hasCooldownFromActionBarName("SAFE")
+                ) {
                     event.setCancelled(true);
                 }
             }

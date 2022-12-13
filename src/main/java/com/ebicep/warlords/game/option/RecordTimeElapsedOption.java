@@ -33,11 +33,11 @@ public class RecordTimeElapsedOption implements Option {
     }
 
     private int ticksElapsed;
-    private boolean disabled = false;
+    private boolean hidden = false;
 
     @Override
     public void register(@Nonnull Game game) {
-        if (disabled) {
+        if (hidden) {
             return;
         }
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
@@ -63,7 +63,7 @@ public class RecordTimeElapsedOption implements Option {
         }.runTaskTimer(0, 0);
     }
 
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 }

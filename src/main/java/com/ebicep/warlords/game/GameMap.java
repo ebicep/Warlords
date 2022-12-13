@@ -10,8 +10,9 @@ import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.wavedefense.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
@@ -23,6 +24,7 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
@@ -2687,7 +2689,7 @@ public enum GameMap {
     ILLUSION_RIFT_EVENT(
             "Illusion Rift Event",
             4,
-            1,
+            1, //TODO 2
             120 * SECOND,
             "IllusionRiftEvent",
             1,
@@ -2697,11 +2699,29 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
+            options.removeIf(option -> option instanceof TextOption);
             options.forEach(option -> {
                 if (option instanceof RecordTimeElapsedOption) {
-                    ((RecordTimeElapsedOption) option).setDisabled(true);
+                    ((RecordTimeElapsedOption) option).setHidden(true);
                 }
             });
+
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Boltaro Bonanza",
+                    "",
+                    color + "Shadow Boltaros split into two Shadow Bolatros.",
+                    color + "Every Boltaro kill grants you",
+                    color + "100 points and 10,000 insignia.",
+                    color + "You lose 30% of your score if everyone",
+                    color + "dies before 200 seconds!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Kill as many Boltaros as possible!"
+            ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
@@ -2725,15 +2745,20 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
-            options.add(new CurrencyOnEventOption(500));
+            options.add(new CurrencyOnEventOption(10000));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(12, 10 * SECOND, null)
-                            .add(0.9, Mobs.BASIC_ZOMBIE)
+                    .add(1, new SimpleWave(1, 10 * SECOND, ChatColor.GREEN + "Event")
+                            .add(Mobs.EVENT_BOLTARO_BONANZA)
                     ),
-                    DifficultyIndex.NORMAL
+                    DifficultyIndex.NORMAL,
+                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza")
             ));
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
             options.add(new SafeZoneOption());
+            options.add(new EventPointsOption()
+                    .addPointsOnKill(100)
+                    .reduceScoreOnAllDeath(30)
+            );
 
             return options;
         }

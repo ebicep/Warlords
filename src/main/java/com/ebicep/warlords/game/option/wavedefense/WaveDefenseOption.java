@@ -56,6 +56,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
@@ -81,12 +82,26 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
+    private BiFunction<WaveDefenseOption, WarlordsPlayer, List<String>> waveSidebarOverride = null;
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this.team = team;
         this.waves = waves;
         this.difficulty = difficulty;
         this.maxWave = difficulty.getMaxWaves();
+    }
+
+    public WaveDefenseOption(
+            Team team,
+            WaveList waves,
+            DifficultyIndex difficulty,
+            BiFunction<WaveDefenseOption, WarlordsPlayer, List<String>> waveSidebarOverride
+    ) {
+        this.team = team;
+        this.waves = waves;
+        this.difficulty = difficulty;
+        this.maxWave = difficulty.getMaxWaves();
+        this.waveSidebarOverride = waveSidebarOverride;
     }
 
     @Override
@@ -235,6 +250,9 @@ public class WaveDefenseOption implements Option {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
+                if (waveSidebarOverride != null) {
+                    return waveSidebarOverride.apply(WaveDefenseOption.this, player);
+                }
                 return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave < 10000 ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
             }
         });

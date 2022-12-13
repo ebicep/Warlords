@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
-    private static final int SCOREBOARD_PRIORITY = 15;
+    public static final int SCOREBOARD_PRIORITY = 15;
     private static final int BASE_CURRENCY_ON_KILL = 100;
     private int baseCurrencyToAdd;
 

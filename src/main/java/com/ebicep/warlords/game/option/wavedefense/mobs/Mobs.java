@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 import com.ebicep.warlords.game.option.wavedefense.mobs.blaze.Blaze;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Void;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.*;
+import com.ebicep.warlords.game.option.wavedefense.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
 import com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie.BasicPigZombie;
@@ -80,6 +81,9 @@ public enum Mobs {
 
     // Raid Boss
     PHYSIRA(Physira::new),
+
+    //EVENTS
+    EVENT_BOLTARO_BONANZA(EventBoltaro::new),
 
     ;
 
