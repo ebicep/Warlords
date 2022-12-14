@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.player.general.Weapons;
@@ -16,7 +17,9 @@ import org.bukkit.*;
 
 public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
 
-    public EventBoltaroShadow(Location spawnLocation) {
+    private int split;
+
+    public EventBoltaroShadow(Location spawnLocation, int split) {
         super(spawnLocation,
                 "Shadow Boltaro",
                 MobTier.BOSS,
@@ -27,12 +30,13 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
                         Weapons.DEMONBLADE.getItem()
                 ),
-                6000,
+                (int) (6000 * (1 + split * .025)),
                 0.42f,
                 10,
-                200,
-                400
+                200 * (1 + split * .025f),
+                400 * (1 + split * .025f)
         );
+        this.split = split;
     }
 
     @Override
@@ -64,7 +68,10 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
         Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
 
         for (int i = 0; i < 2; i++) {
-            option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation()));
+            option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), split + 1));
+        }
+        for (int i = 0; i < option.getGame().warlordsPlayers().count() * 2; i++) {
+            option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
         }
     }
 }
