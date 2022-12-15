@@ -26,6 +26,7 @@ public class CurrencyOnEventOption implements Option, Listener {
     public static final int SCOREBOARD_PRIORITY = 15;
     private static final int BASE_CURRENCY_ON_KILL = 100;
     private int baseCurrencyToAdd;
+    private int startingCurrency = 0;
 
     public CurrencyOnEventOption() {
         this(BASE_CURRENCY_ON_KILL);
@@ -33,6 +34,11 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     public CurrencyOnEventOption(int baseCurrencyToAdd) {
         this.baseCurrencyToAdd = baseCurrencyToAdd;
+    }
+
+    public CurrencyOnEventOption(int baseCurrencyToAdd, int startingCurrency) {
+        this.baseCurrencyToAdd = baseCurrencyToAdd;
+        this.startingCurrency = startingCurrency;
     }
 
     @Override
@@ -46,6 +52,11 @@ public class CurrencyOnEventOption implements Option, Listener {
                 return Collections.singletonList(player != null ? "Insignia: " + ChatColor.GOLD + "❂ " + NumberFormat.addCommas(player.getCurrency()) : "");
             }
         });
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        player.addCurrency(startingCurrency);
     }
 
     @EventHandler

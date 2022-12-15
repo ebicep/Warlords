@@ -2745,7 +2745,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
-            options.add(new CurrencyOnEventOption(10000));
+            options.add(new CurrencyOnEventOption(10000, 120000));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 10 * SECOND, ChatColor.GREEN + "Event")
                             .add(Mobs.EVENT_BOLTARO_BONANZA)
