@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
-import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.player.general.Weapons;
@@ -15,8 +14,11 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
 
+    private boolean forceSplit = false;
     private int split;
 
     public EventBoltaroShadow(Location spawnLocation, int split) {
@@ -67,11 +69,14 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
                                                                        .build());
         Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
 
-        for (int i = 0; i < 2; i++) {
-            option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), split + 1));
+        int nextSplit = split + 1;
+        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (1.0 / nextSplit)) {
+            for (int i = 0; i < 2; i++) {
+                option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
+            }
         }
-        for (int i = 0; i < option.getGame().warlordsPlayers().count() * 2; i++) {
-            option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
-        }
+//        for (int i = 0; i < option.getGame().warlordsPlayers().count() * 2; i++) {
+//            option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
+//        }
     }
 }
