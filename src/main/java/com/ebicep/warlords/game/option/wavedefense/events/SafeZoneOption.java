@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +27,6 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 
 public class SafeZoneOption implements Option {
 
@@ -62,6 +60,9 @@ public class SafeZoneOption implements Option {
             @Override
             public void run() {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
+                    if (warlordsPlayer.isDead()) {
+                        return;
+                    }
                     if (!(warlordsPlayer.getEntity() instanceof Player)) {
                         return;
                     }
@@ -103,22 +104,6 @@ public class SafeZoneOption implements Option {
                                 });
                     }
                 });
-                teams.removeIf(team -> {
-                    List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                                                              .matchingTeam(team)
-                                                                              .toList();
-                    if (warlordsPlayers.isEmpty()) {
-                        return false;
-                    }
-
-                    return warlordsPlayers.stream()
-                                          .allMatch(warlordsPlayer -> warlordsPlayer.isDead() ||
-                                                  warlordsPlayer.getCooldownManager().hasCooldownFromActionBarName("SAFE"));
-                });
-                if (teams.size() == 1) {
-                    //Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, SafeZoneOption.this, teams.iterator().next()));
-                }
-
             }
         }.runTaskTimer(10 * 20, 10);
 
