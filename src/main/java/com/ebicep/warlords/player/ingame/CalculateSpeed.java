@@ -1,7 +1,5 @@
 package com.ebicep.warlords.player.ingame;
 
-import org.bukkit.Bukkit;
-
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -114,10 +112,10 @@ public class CalculateSpeed {
 
             if (speed != lastSpeed) {
                 float walkSpeed = speed * baseSpeedToWalkingSpeed;
-                Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
-                for (Modifier mod : appliedEffects.values()) {
-                    Bukkit.broadcastMessage(String.valueOf(mod));
-                }
+                //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
+//                for (Modifier mod : appliedEffects.values()) {
+//                    Bukkit.broadcastMessage(String.valueOf(mod));
+//                }
                 lastSpeed = speed;
                 this.updateWalkingSpeed.accept(walkSpeed);
             }
