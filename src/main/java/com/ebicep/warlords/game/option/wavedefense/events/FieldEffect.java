@@ -70,9 +70,9 @@ public class FieldEffect implements Option {
         WARRIORS_TRIUMPH("Warrior's Triumph",
                 "Every 10 seconds, the active ability timers of all non-warrior specializations will be halved.",
                 (game, integer) -> {
-                    if (integer % 10 == 0) {
+                    if (integer % 200 == 0) {
                         game.warlordsPlayers().forEach(warlordsPlayer -> {
-                            if (Specializations.getClass(warlordsPlayer.getSpecClass()) != Classes.WARRIOR) {
+                            if (Specializations.getClass(warlordsPlayer.getSpecClass()) == Classes.WARRIOR) {
                                 return;
                             }
                             for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
