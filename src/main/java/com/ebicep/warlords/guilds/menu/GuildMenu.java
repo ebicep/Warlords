@@ -220,6 +220,11 @@ public class GuildMenu {
                                 openGuildMenu(guild, player, 1);
                                 return;
                             }
+                            if (playerCoinsToConvert < coinConversionRatio) {
+                                player.sendMessage(ChatColor.RED + "You must enter a number greater than or equal to " + coinConversionRatio + ".");
+                                openGuildMenu(guild, player, 1);
+                                return;
+                            }
                             if (playerCoinsToConvert > maxCoinsCanConvert) {
                                 player.sendMessage(ChatColor.RED + "You cannot exceed the max convertable amount.");
                                 openGuildMenu(guild, player, 1);
