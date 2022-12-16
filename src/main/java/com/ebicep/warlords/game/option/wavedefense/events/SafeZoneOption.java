@@ -1,16 +1,14 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
-import com.ebicep.warlords.abilties.OrderOfEviscerate;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -23,9 +21,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class SafeZoneOption implements Option {
@@ -35,7 +36,6 @@ public class SafeZoneOption implements Option {
     private final int safeDuration = 15;
     private final int maxEnterableTimes = 3;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
-
     public SafeZoneOption() {
 
     }
@@ -54,8 +54,6 @@ public class SafeZoneOption implements Option {
         }
 
         new GameRunnable(game) {
-
-            final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
             @Override
             public void run() {
@@ -79,20 +77,7 @@ public class SafeZoneOption implements Option {
                             return;
                         }
                         timesEntered.put(warlordsPlayer, timesEntered.getOrDefault(warlordsPlayer, 0) + 1);
-                        RegularCooldown<OrderOfEviscerate> cooldown = OrderOfEviscerate.giveCloak(warlordsPlayer, safeDuration, "SAFE");
-                        cooldown.setOnRemoveForce(cooldownManager -> {
-                            cooldownManager.removeCooldownNoForce(cooldown);
-                            LivingEntity wpEntity = warlordsPlayer.getEntity();
-                            if (wpEntity instanceof Player) {
-                                PlayerFilter.playingGame(warlordsPlayer.getGame())
-                                            .enemiesOf(warlordsPlayer)
-                                            .stream().map(WarlordsEntity::getEntity)
-                                            .filter(Player.class::isInstance)
-                                            .map(Player.class::cast)
-                                            .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
-                            }
-                            warlordsPlayer.updateArmor();
-                        });
+                        giveSafeZoneEffect(warlordsPlayer);
                         sendEnterMessage(warlordsPlayer);
                     } else {
                         new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
@@ -133,6 +118,51 @@ public class SafeZoneOption implements Option {
 
     public boolean isSafeZone(Location location) {
         return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(yLevel)).getType() == safeMaterial;
+    }
+
+    public void giveSafeZoneEffect(@Nonnull WarlordsEntity wp) {
+        wp.getCooldownManager().removeCooldownByName("Safe Zone");
+        RegularCooldown<SafeZoneOption> safeZoneCooldown = new RegularCooldown<>("Safe Zone",
+                "SAFE",
+                SafeZoneOption.class,
+                null,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+                    wp.updateArmor();
+
+                    LivingEntity wpEntity = wp.getEntity();
+                    if (wpEntity instanceof Player) {
+                        PlayerFilter.playingGame(wp.getGame())
+                                    .enemiesOf(wp)
+                                    .stream().map(WarlordsEntity::getEntity)
+                                    .filter(Player.class::isInstance)
+                                    .map(Player.class::cast)
+                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
+                    }
+                },
+                safeDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 5 == 0) {
+                        wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
+
+                        LivingEntity wpEntity = wp.getEntity();
+                        if (wpEntity instanceof Player) {
+                            ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+                            PlayerFilter.playingGame(wp.getGame())
+                                        .enemiesOf(wp)
+                                        .stream().map(WarlordsEntity::getEntity)
+                                        .filter(Player.class::isInstance)
+                                        .map(Player.class::cast)
+                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                        }
+                    }
+                })
+        );
+        wp.getCooldownManager().addCooldown(safeZoneCooldown);
     }
 
     public void sendEnterMessage(WarlordsPlayer warlordsPlayer) {

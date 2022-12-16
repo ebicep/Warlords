@@ -236,10 +236,6 @@ public class OrderOfEviscerate extends AbstractAbility {
         }
     }
 
-    private static void giveCloak(@Nonnull WarlordsEntity wp, int duration) {
-        giveCloak(wp, duration, "INVIS");
-    }
-
     public void addToDamageThreshold(float damageThreshold) {
         this.damageThreshold += damageThreshold;
     }
@@ -248,10 +244,10 @@ public class OrderOfEviscerate extends AbstractAbility {
         return damageThreshold;
     }
 
-    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int duration, String actionBarName) {
+    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int duration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         RegularCooldown<OrderOfEviscerate> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
-                actionBarName,
+                "INVIS",
                 OrderOfEviscerate.class,
                 null,
                 wp,
