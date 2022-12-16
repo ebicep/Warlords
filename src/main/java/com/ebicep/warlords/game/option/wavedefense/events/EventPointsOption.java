@@ -73,7 +73,7 @@ public class EventPointsOption implements Option {
                                                      .stream()
                                                      .allMatch(WarlordsEntity::isDead);
                 if (allDead) {
-                    points.replaceAll((uuid, points) -> points * (int) reduceMultiplyBy);
+                    points.replaceAll((uuid, points) -> (int) (points * reduceMultiplyBy));
                 }
             }
 
