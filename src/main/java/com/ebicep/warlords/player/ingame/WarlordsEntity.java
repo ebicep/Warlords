@@ -700,10 +700,11 @@ public abstract class WarlordsEntity {
                     cancelHealingPowerUp();
                     removeHorse();
 
-
                     float finalDamageValue = damageValue;
                     doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                     doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
+
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
                     //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                     //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
@@ -717,8 +718,6 @@ public abstract class WarlordsEntity {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                         //appendDebugMessage(debugMessage, 2, abstractCooldown);
                     }
-
-                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
                 }
 
                 regenTimer = 10;
