@@ -14,7 +14,7 @@ import java.util.UUID;
 
 
 @CommandAlias("seeallchats")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class SeeAllChatsCommand extends BaseCommand {
 
     public static final Set<UUID> playerSeeAllChats = new HashSet<>();

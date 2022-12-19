@@ -14,7 +14,7 @@ import java.util.Objects;
 
 
 @CommandAlias("gameinfo")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class GameInfoCommand extends BaseCommand {
 
 

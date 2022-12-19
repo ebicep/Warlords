@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 
 @CommandAlias("stream")
-@CommandPermission("minecraft.command.op|warlords.party.stream")
+@CommandPermission("warlords.party.stream")
 public class StreamCommand extends BaseCommand {
 
     @Default

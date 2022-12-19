@@ -32,7 +32,7 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 
 @CommandAlias("games")
-@CommandPermission("minecraft.command.op|warlords.game.lookupgame")
+@CommandPermission("warlords.game.lookupgame")
 public class GamesCommand extends BaseCommand {
 
     public static final Set<String> PLAYER_NAMES = new HashSet<>();

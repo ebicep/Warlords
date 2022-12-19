@@ -12,7 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("bot")
-@CommandPermission("minecraft.command.op|warlords.game.bot")
+@CommandPermission("warlords.game.bot")
 @Conditions("bot")
 public class BotCommand extends BaseCommand {
 

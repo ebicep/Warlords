@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
 import org.bukkit.ChatColor;
 
 @CommandAlias("offlinefreeze")
-@CommandPermission("minecraft.command.op|warlords.game.toggleofflinefreeze")
+@CommandPermission("warlords.game.toggleofflinefreeze")
 public class ToggleOfflineFreezeCommand extends BaseCommand {
 
     @Default

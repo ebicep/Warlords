@@ -554,7 +554,7 @@ public class GuildCommand extends BaseCommand {
         }
 
         @Subcommand("refresh")
-        @CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
+        @CommandPermission("warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
