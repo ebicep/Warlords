@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandAlias("mute")
-@CommandPermission("minecraft.command.op|warlords.player.mute")
+@CommandPermission("warlords.player.mute")
 public class MuteCommand extends BaseCommand {
 
     public static final HashMap<UUID, Boolean> MUTED_PLAYERS = new HashMap<>();

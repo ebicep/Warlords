@@ -10,7 +10,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("recklesschargestunclear")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class RecklessChargeStunClearCommand extends BaseCommand {
 
     @Default

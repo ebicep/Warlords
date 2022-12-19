@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @CommandAlias("streamchapters")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class StreamChaptersCommand extends BaseCommand {
 
     public static final HashMap<UUID, Instant> PLAYER_TIME_START = new HashMap<>();

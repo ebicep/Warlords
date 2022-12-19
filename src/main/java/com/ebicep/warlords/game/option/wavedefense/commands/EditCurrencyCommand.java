@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 import java.util.Comparator;
 
 @CommandAlias("currency")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class EditCurrencyCommand extends BaseCommand {
 
     @Subcommand("add")

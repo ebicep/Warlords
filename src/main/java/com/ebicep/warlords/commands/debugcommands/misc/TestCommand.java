@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("test")
-@CommandPermission("minecraft.command.op|warlords.game.test")
+@CommandPermission("warlords.game.test")
 public class TestCommand extends BaseCommand {
 
     @Default

@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @CommandAlias("admin")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 @Conditions("database:player")
 public class AdminCommand extends BaseCommand {
 

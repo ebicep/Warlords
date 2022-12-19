@@ -20,7 +20,7 @@ import java.util.OptionalInt;
 import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
 @CommandAlias("gamelist")
-@CommandPermission("minecraft.command.op|warlords.game.list")
+@CommandPermission("warlords.game.list")
 public class GameListCommand extends BaseCommand {
 
     @Default

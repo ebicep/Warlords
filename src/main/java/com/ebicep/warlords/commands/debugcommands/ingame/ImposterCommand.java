@@ -22,7 +22,7 @@ import java.util.Comparator;
 public class ImposterCommand extends BaseCommand {
 
     @Subcommand("assign")
-    @CommandPermission("minecraft.command.op|warlords.game.impostertoggle")
+    @CommandPermission("warlords.game.impostertoggle")
     @Description("Assign/Reassign the imposters in the game")
     public void assign(@Conditions("requireGame:withAddon=IMPOSTER_MODE") WarlordsPlayer warlordsPlayer) {
         for (Option option : warlordsPlayer.getGame().getOptions()) {

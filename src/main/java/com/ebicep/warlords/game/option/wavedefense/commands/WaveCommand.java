@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("wave")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class WaveCommand extends BaseCommand {
 
     @Subcommand("set")
