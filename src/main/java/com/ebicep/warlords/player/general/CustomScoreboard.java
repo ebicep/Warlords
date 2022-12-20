@@ -249,6 +249,10 @@ public class CustomScoreboard {
 
         updateLobbyPlayerNamesInternal();
 
+        if (!DatabaseManager.enabled) {
+            giveNASidebar("PvE");
+            return;
+        }
 
         if (!StatsLeaderboardManager.enabled) {
             givePvEScoreboard();

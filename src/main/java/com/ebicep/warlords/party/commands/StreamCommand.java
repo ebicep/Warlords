@@ -40,6 +40,6 @@ public class StreamCommand extends BaseCommand {
                     ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
                 });
 
-        BotManager.sendMessageToNotificationChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName(), true, false);
+        BotManager.sendMessageToStatusChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName());
     }
 }

@@ -240,14 +240,13 @@ public class WarlordsEvents implements Listener {
                 if (StatsLeaderboardManager.loaded) {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
-                } else {
-                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 }
             }, () -> {
                 if (!fromGame) {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
+            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
