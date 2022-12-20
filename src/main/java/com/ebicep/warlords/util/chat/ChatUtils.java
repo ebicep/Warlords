@@ -246,6 +246,8 @@ public class ChatUtils {
 
         GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
 
+        DISCORD_BOT("DiscordBot", ChatColor.DARK_AQUA),
+
         ;
 
         public final String name;

@@ -405,10 +405,10 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                 if (game.getPlayers().size() >= 14) {
                     boolean isPrivate = game.getAddons().contains(GameAddon.PRIVATE_GAME);
-                    BotManager.sendMessageToNotificationChannel(
-                            "[GAME] A " + (isPrivate ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"),
-                            isPrivate,
-                            !isPrivate
+                    BotManager.sendMessageToStatusChannel(
+                            "[GAME] A " + (isPrivate ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers()
+                                                                                                                                        .size() + (game.getPlayers()
+                                                                                                                                                       .size() == 1 ? "** player!" : "** players!")
                     );
                 }
 
