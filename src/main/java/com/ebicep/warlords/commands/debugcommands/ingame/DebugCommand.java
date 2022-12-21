@@ -30,7 +30,7 @@ public class DebugCommand extends BaseCommand {
 
     @Subcommand("freeze")
     @Description("Freezes/Unfreezes the game")
-    public void freezeGame(@Conditions("requireGame") Player player) {
+    public void freezeGame(@Conditions("requireGame") Player player, @Optional String message) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         if (game.getState() instanceof EndState) {
             sendDebugMessage(player, ChatColor.RED + "Cannot freeze game in end state", true);
@@ -40,7 +40,12 @@ public class DebugCommand extends BaseCommand {
             if (game.isFrozen()) {
                 GameFreezeOption.resumeGame(game);
             } else {
-                game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + player.getName());
+                if (message != null) {
+                    message = message.replaceAll("&", "§");
+                    game.addFrozenCause(ChatColor.GOLD + message);
+                } else {
+                    game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + player.getName());
+                }
                 sendDebugMessage(player, ChatColor.GREEN + "The game has been frozen!", true);
             }
         } else {
