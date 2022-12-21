@@ -79,8 +79,8 @@ public class DatabaseManager {
             playerService = context.getBean("playerService", PlayerService.class);
             gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
-            masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
-            guildService = context.getBean("guildService", GuildService.class);
+//            masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
+//            guildService = context.getBean("guildService", GuildService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
