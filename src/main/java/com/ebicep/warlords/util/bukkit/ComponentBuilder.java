@@ -168,6 +168,12 @@ public class ComponentBuilder {
         return this;
     }
 
+    public ComponentBuilder appendClickEvent(String message, ClickEvent.Action action, String value) {
+        append(message);
+        this.current.setClickEvent(new ClickEvent(action, value));
+        return this;
+    }
+
     public ComponentBuilder event(HoverEvent hoverEvent) {
         this.current.setHoverEvent(hoverEvent);
         return this;

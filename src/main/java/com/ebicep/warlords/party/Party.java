@@ -20,8 +20,12 @@ public class Party {
     private final HashMap<UUID, Integer> invites = new HashMap<>();
     private final BukkitTask partyTask;
     private final RegularGamesMenu regularGamesMenu = new RegularGamesMenu(this);
-    private boolean open = false;
+    private boolean open;
     private boolean allInvite = false;
+
+    public Party(UUID leader) {
+        this(leader, false);
+    }
 
     public Party(UUID leader, boolean open) {
         partyPlayers.add(new PartyPlayer(leader, PartyPlayerType.LEADER));
