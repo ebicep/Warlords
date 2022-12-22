@@ -150,7 +150,7 @@ public class AbilityTree {
         if (upgrade == null) {
             return "No upgrades";
         }
-        StringBuilder output = new StringBuilder((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName() + " ");
+        StringBuilder output = new StringBuilder((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED).toString() + ChatColor.BOLD + upgrade.getName() + " ");
         if (upgrade.isUnlocked()) {
             output.append(ChatColor.GREEN);
         } else {
