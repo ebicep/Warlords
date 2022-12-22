@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
@@ -61,7 +60,6 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WarlordsEvents implements Listener {
 
@@ -84,15 +82,12 @@ public class WarlordsEvents implements Listener {
             }
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                ConcurrentHashMap<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
-                if (!loadedPlayers.containsKey(uuid)) {
-                    DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                        if (!Objects.equals(databasePlayer.getName(), event.getName())) {
-                            databasePlayer.setName(event.getName());
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
-                        }
-                    });
-                }
+                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                    if (!Objects.equals(databasePlayer.getName(), event.getName())) {
+                        databasePlayer.setName(event.getName());
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                    }
+                });
             }
         }
     }
@@ -240,14 +235,13 @@ public class WarlordsEvents implements Listener {
                 if (StatsLeaderboardManager.loaded) {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
-                } else {
-                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 }
             }, () -> {
                 if (!fromGame) {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
+            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);

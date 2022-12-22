@@ -112,7 +112,7 @@ public class CalculateSpeed {
 
             if (speed != lastSpeed) {
                 float walkSpeed = speed * baseSpeedToWalkingSpeed;
-                //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
+//                Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
 //                for (Modifier mod : appliedEffects.values()) {
 //                    Bukkit.broadcastMessage(String.valueOf(mod));
 //                }

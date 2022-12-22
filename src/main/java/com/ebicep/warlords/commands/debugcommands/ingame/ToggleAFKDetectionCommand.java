@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
 import org.bukkit.ChatColor;
 
 @CommandAlias("afkdetection")
-@CommandPermission("minecraft.command.op|warlords.game.toggleafkdetection")
+@CommandPermission("warlords.game.toggleafkdetection")
 public class ToggleAFKDetectionCommand extends BaseCommand {
 
     @Default

@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @CommandAlias("mob")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class MobCommand extends BaseCommand {
 
     private static final Set<AbstractMob<?>> SPAWNED_MOBS = new HashSet<>();

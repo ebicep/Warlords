@@ -41,7 +41,7 @@ public class PollCommand extends BaseCommand {
     }
 
     @Subcommand("end")
-    @CommandPermission("minecraft.command.op|warlords.poll.end")
+    @CommandPermission("warlords.poll.end")
     public void end(Player player, AbstractPoll<?> poll) {
         poll.setTimeLeft(0);
     }

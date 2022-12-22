@@ -7,7 +7,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("serverstatus")
-@CommandPermission("minecraft.command.op|warlords.game.serverstatus")
+@CommandPermission("warlords.game.serverstatus")
 public class ServerStatusCommand extends BaseCommand {
 
     public static boolean enabled = true;

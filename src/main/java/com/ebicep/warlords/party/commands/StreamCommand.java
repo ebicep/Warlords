@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 
 @CommandAlias("stream")
-@CommandPermission("minecraft.command.op|warlords.party.stream")
+@CommandPermission("warlords.party.stream")
 public class StreamCommand extends BaseCommand {
 
     @Default
@@ -40,6 +40,6 @@ public class StreamCommand extends BaseCommand {
                     ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
                 });
 
-        BotManager.sendMessageToNotificationChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName(), true, false);
+        BotManager.sendMessageToStatusChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName());
     }
 }

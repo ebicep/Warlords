@@ -7,7 +7,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -30,7 +30,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -141,8 +144,8 @@ public class WaveDefenseOption implements Option {
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
                 waveDefenseStats.getPlayerWaveDefenseStats(attacker.getUuid())
-                        .getWaveDamage()
-                        .merge(waveCounter, (long) event.getValue(), Long::sum);
+                                .getWaveDamage()
+                                .merge(waveCounter, (long) event.getValue(), Long::sum);
             }
 
             @EventHandler
@@ -182,8 +185,8 @@ public class WaveDefenseOption implements Option {
             @EventHandler
             public void onWeaponDrop(WarlordsGiveWeaponEvent event) {
                 waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
-                        .getWeaponsFound()
-                        .add(event.getWeapon());
+                                .getWeaponsFound()
+                                .add(event.getWeapon());
             }
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -213,21 +216,21 @@ public class WaveDefenseOption implements Option {
                         if (oldTarget instanceof EntityPlayer) {
                             //setting target to player zombie
                             game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
-                                    .findFirst()
-                                    .ifPresent(warlordsPlayer -> {
-                                        if (!(warlordsPlayer.getEntity() instanceof Player)) {
-                                            event.setTarget(warlordsPlayer.getEntity());
-                                        }
-                                    });
+                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
+                                .findFirst()
+                                .ifPresent(warlordsPlayer -> {
+                                    if (!(warlordsPlayer.getEntity() instanceof Player)) {
+                                        event.setTarget(warlordsPlayer.getEntity());
+                                    }
+                                });
                         }
                     } else {
                         if (oldTarget instanceof EntityZombie) {
                             //makes sure player that rejoins is still the target
                             game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
-                                    .findFirst()
-                                    .ifPresent(warlordsPlayer -> event.setCancelled(true));
+                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
+                                .findFirst()
+                                .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }
                         if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                             event.setCancelled(true);
@@ -243,6 +246,38 @@ public class WaveDefenseOption implements Option {
                         warlordsPlayer.respawn();
                     }
                 });
+            }
+
+            @EventHandler
+            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
+                WarlordsEntity player = event.getPlayer();
+                if (!(player instanceof WarlordsPlayer)) {
+                    return;
+                }
+                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+                AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+                if (abilityTree == null) {
+                    return;
+                }
+                AutoUpgradeProfile autoUpgradeProfile = abilityTree.getAutoUpgradeProfile();
+                List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
+                for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
+                    AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
+                    List<Upgrade> upgradeList = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch);
+                    Upgrade upgrade = upgradeList.get(entry.getUpgradeIndex());
+                    if (upgrade.isUnlocked()) {
+                        continue;
+                    }
+                    if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
+                        return;
+                    }
+                    if (entry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
+                        upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, true);
+                    } else {
+                        upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                    }
+                    //break;
+                }
             }
 
         });
@@ -321,15 +356,8 @@ public class WaveDefenseOption implements Option {
 
                     if (waveCounter > 1) {
                         getGame().forEachOnlineWarlordsPlayer(wp -> {
-                            AtomicInteger currency = new AtomicInteger();
-                            if (waveCounter % 5 == 1) {
-                                currency.set(4000);
-                            } else {
-                                currency.set(1000);
-                            }
-                            Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(wp, currency));
-                            wp.addCurrency(currency.get());
-                            wp.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
+                            int currency = waveCounter % 5 == 1 ? 4000 : 1000;
+                            wp.addCurrency(currency);
                         });
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
@@ -388,7 +416,9 @@ public class WaveDefenseOption implements Option {
                 player.updateArmor();
             }
             DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                Optional<AbstractWeapon> optionalWeapon = databasePlayer.getPveStats().getWeaponInventory()
+                Optional<AbstractWeapon> optionalWeapon = databasePlayer
+                        .getPveStats()
+                        .getWeaponInventory()
                         .stream()
                         .filter(AbstractWeapon::isBound)
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
@@ -451,8 +481,8 @@ public class WaveDefenseOption implements Option {
             }
 
             list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤ " + (int) we.getHealth()) + ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
-                    .total()
-                    .getKills());
+                                                                                                                                                                                   .total()
+                                                                                                                                                                                   .getKills());
         }
 
         return list;

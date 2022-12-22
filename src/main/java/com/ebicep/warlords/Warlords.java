@@ -345,6 +345,7 @@ public class Warlords extends JavaPlugin {
         readKeysConfig();
         readWeaponConfig();
         saveWeaponConfig();
+        readBotConfig();
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
 
@@ -366,7 +367,7 @@ public class Warlords extends JavaPlugin {
                 .async(DatabaseManager::init)
                 .execute();
 
-        if (!onCustomServer()) {
+        if (!BotManager.DISCORD_SERVERS.isEmpty()) {
             try {
                 BotManager.connect();
             } catch (LoginException e) {
@@ -465,6 +466,34 @@ public class Warlords extends JavaPlugin {
                 config.set(weapons.getName(), weapons.isUnlocked);
             }
             config.save(new File(this.getDataFolder(), "weapons.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readBotConfig() {
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "bot.yml"));
+            for (String key : config.getKeys(false)) {
+                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
+                        key,
+                        config.getString(key + ".id"),
+                        config.getString(key + ".statusChannel"),
+                        config.getString(key + ".queueChannel")
+                );
+                BotManager.DISCORD_SERVERS.add(discordServer);
+                ChatUtils.MessageTypes.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
+            }
+            /*
+            server1
+                id
+                statusChannel
+                waitingChannel
+            server2
+                id
+                statusChannel
+                waitingChannel
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }

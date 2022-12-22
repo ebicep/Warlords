@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -10,7 +9,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
@@ -67,10 +64,7 @@ public class CurrencyOnEventOption implements Option, Listener {
                 .aliveEnemiesOf(mob)
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                AtomicInteger currencyToAdd = new AtomicInteger(baseCurrencyToAdd);
-                Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(player, currencyToAdd));
-                player.sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
-                player.addCurrency(currencyToAdd.get());
+                player.addCurrency(baseCurrencyToAdd);
             }
         }
     }

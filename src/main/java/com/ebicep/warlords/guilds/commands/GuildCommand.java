@@ -10,15 +10,20 @@ import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -427,6 +432,29 @@ public class GuildCommand extends BaseCommand {
         guild.setTag(guildPlayer, tag);
     }
 
+    @Subcommand("party")
+    @Description("Creates a party in your guild")
+    public void party(
+            @Conditions("guild:true|party:false") Player player,
+            @Conditions("requirePerm:perm=MODIFY_TAG") GuildPlayerWrapper guildPlayerWrapper
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        Party party = new Party(player.getUniqueId());
+        PartyManager.PARTIES.add(party);
+        for (Player onlinePlayer : guild.getOnlinePlayers()) {
+            if (!onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
+                party.invite(onlinePlayer.getUniqueId());
+            }
+            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
+            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " created a guild party!");
+            TextComponent message = new TextComponent(ChatColor.GOLD.toString() + ChatColor.BOLD + "Click here to join!");
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + player.getName()));
+            ChatUtils.sendCenteredMessageWithEvents(onlinePlayer, Collections.singletonList(message));
+            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
+        }
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
@@ -554,7 +582,7 @@ public class GuildCommand extends BaseCommand {
         }
 
         @Subcommand("refresh")
-        @CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
+        @CommandPermission("warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
