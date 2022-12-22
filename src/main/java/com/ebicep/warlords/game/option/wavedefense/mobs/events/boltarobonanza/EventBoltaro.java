@@ -68,7 +68,7 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < 6000) {
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
             for (int i = 0; i < 2; i++) {
-                option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), 1));
+                option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), 0));
             }
 
             warlordsNPC.die(warlordsNPC);
