@@ -117,14 +117,26 @@ public enum DefaultFontInfo {
     }
 
     public int getBoldLength() {
-        if (this == DefaultFontInfo.SPACE) return this.getLength();
+        if (this == DefaultFontInfo.SPACE) {
+            return this.getLength();
+        }
         return this.length + 1;
     }
 
     public static DefaultFontInfo getDefaultFontInfo(char c) {
         for (DefaultFontInfo dFI : VALUES) {
-            if (dFI.getCharacter() == c) return dFI;
+            if (dFI.getCharacter() == c) {
+                return dFI;
+            }
         }
         return DefaultFontInfo.DEFAULT;
+    }
+
+    public static int getStringLength(String text) {
+        int length = 0;
+        for (char c1 : text.toCharArray()) {
+            length += DefaultFontInfo.getDefaultFontInfo(c1).getLength();
+        }
+        return length;
     }
 }

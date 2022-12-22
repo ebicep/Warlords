@@ -244,4 +244,16 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     public void setFreeUpgrades(int freeUpgrades) {
         this.freeUpgrades = freeUpgrades;
     }
+
+    public List<Upgrade> getTreeA() {
+        return treeA;
+    }
+
+    public List<Upgrade> getTreeB() {
+        return treeB;
+    }
+
+    public Upgrade getMasterUpgrade() {
+        return masterUpgrade;
+    }
 }
