@@ -735,11 +735,8 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onWeatherChange(WeatherChangeEvent change) {
-        change.setCancelled(true);
-        if (change.getWorld().hasStorm()) {
-            change.getWorld().setWeatherDuration(0);
-        }
+    public void onWeatherChange(WeatherChangeEvent event) {
+        event.setCancelled(event.toWeatherState());
     }
 
     @EventHandler
