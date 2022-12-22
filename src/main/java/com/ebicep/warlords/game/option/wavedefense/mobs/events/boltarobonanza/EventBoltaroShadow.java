@@ -70,7 +70,7 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
         Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
 
         int nextSplit = split + 1;
-        if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (1.0 / nextSplit)) {
+        if (forceSplit || option.getMobs().isEmpty() || ThreadLocalRandom.current().nextDouble(0, 1) < (1.0 / nextSplit)) {
             for (int i = 0; i < 2; i++) {
                 option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
             }

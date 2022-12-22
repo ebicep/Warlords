@@ -345,7 +345,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         this.spec.setUpgradeBranches(this);
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
-            if (autoUpgradeProfiles.isEmpty()) {
+            if (autoUpgradeProfiles == null || autoUpgradeProfiles.isEmpty()) {
                 return;
             }
             this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
