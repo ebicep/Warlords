@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -17,6 +18,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -110,8 +112,8 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         this.skillBoost = settings.getSkillBoostForClass();
-        this.spec.setUpgradeBranches(this);
 
+        resetAbilityTree();
         updatePlayerReference(player.getPlayer());
         updateEntity();
 
@@ -341,6 +343,13 @@ public final class WarlordsPlayer extends WarlordsEntity {
     public void resetAbilityTree() {
         this.abilityTree.getUpgradeBranches().clear();
         this.spec.setUpgradeBranches(this);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
+            if (autoUpgradeProfiles.isEmpty()) {
+                return;
+            }
+            this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
+        });
     }
 
     public AbstractWeapon getWeapon() {

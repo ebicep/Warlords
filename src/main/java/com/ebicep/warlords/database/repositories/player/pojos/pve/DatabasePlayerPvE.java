@@ -25,6 +25,7 @@ import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
+import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -74,6 +75,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private boolean completedTutorial = false;
     @Field("quests_completed")
     private Map<Quests, Long> questsCompleted = new HashMap<>();
+    @Field("auto_upgrade_profiles")
+    private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
 
 
     @Override
@@ -298,4 +301,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         return compensationRewards;
     }
 
+    public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {
+        return autoUpgradeProfiles;
+    }
 }

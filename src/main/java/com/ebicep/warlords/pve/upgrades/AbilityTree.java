@@ -1,8 +1,10 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
@@ -11,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -20,6 +23,7 @@ public class AbilityTree {
     private final WarlordsPlayer player;
     private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
     private final List<UpgradeLog> upgradeLog = new ArrayList<>();
+    private AutoUpgradeProfile autoUpgradeProfile = new AutoUpgradeProfile();
 
     private int maxMasterUpgrades = 3;
 
@@ -67,9 +71,64 @@ public class AbilityTree {
                         .get(),
                 ACTION_DO_NOTHING
         );
+
+        menu.setItem(
+                0,
+                4,
+                new ItemBuilder(Material.BOOKSHELF)
+                        .name(ChatColor.GREEN + "Auto Upgrade Queue")
+                        .lore(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
+                              Collections.singletonList(WordWrap.wrapWithNewline(
+                                      ChatColor.GRAY + "You have no upgrades queued. " +
+                                              ChatColor.YELLOW + ChatColor.BOLD + "RIGHT-CLICK " +
+                                              ChatColor.GRAY + "upgrades to add/remove them.", 130)
+                              ) : autoUpgradeProfile.getLore(this)
+                        )
+                        .get(),
+                (m, e) -> {
+
+                }
+        );
+        DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
+                    .getPveStats()
+                    .getAutoUpgradeProfiles()
+                    .computeIfAbsent(player.getSpecClass(), k -> new ArrayList<>());
+            if (autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ||
+                    !autoUpgradeProfiles.isEmpty() &&
+                            autoUpgradeProfiles.get(0).equals(autoUpgradeProfile)
+            ) {
+                return;
+            }
+            menu.setItem(
+                    2,
+                    4,
+                    new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Click to save auto upgrade queue to spec")
+                            .get(),
+                    (m, e) -> {
+                        autoUpgradeProfiles.clear();
+                        autoUpgradeProfiles.add(new AutoUpgradeProfile(autoUpgradeProfile));
+                        player.sendMessage(AutoUpgradeProfile.AUTO_UPGRADE_PREFIX + ChatColor.GREEN + "Current auto upgrade queue saved to " + player.getSpecClass().name);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        openAbilityTree();
+                    }
+            );
+        });
+        if (!autoUpgradeProfile.getAutoUpgradeEntries().isEmpty()) {
+            menu.setItem(
+                    1,
+                    4,
+                    new ItemBuilder(Material.PAPER)
+                            .name(ChatColor.GREEN + "Click to clear the auto upgrade queue")
+                            .get(),
+                    (m, e) -> {
+                        autoUpgradeProfile.getAutoUpgradeEntries().clear();
+                        openAbilityTree();
+                    }
+            );
+        }
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-
-
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }
@@ -200,6 +259,14 @@ public class AbilityTree {
 
     public void setMaxMasterUpgrades(int maxMasterUpgrades) {
         this.maxMasterUpgrades = maxMasterUpgrades;
+    }
+
+    public AutoUpgradeProfile getAutoUpgradeProfile() {
+        return autoUpgradeProfile;
+    }
+
+    public void setAutoUpgradeProfile(AutoUpgradeProfile autoUpgradeProfile) {
+        this.autoUpgradeProfile = autoUpgradeProfile;
     }
 
     public static class UpgradeLog {
