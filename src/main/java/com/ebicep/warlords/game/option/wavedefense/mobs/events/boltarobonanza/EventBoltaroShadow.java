@@ -74,8 +74,9 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
         if (forceSplit || ThreadLocalRandom.current().nextDouble(0, 1) < (1.0 / nextSplit)) {
             option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));
         }
-//        for (int i = 0; i < option.getGame().warlordsPlayers().count() * 2; i++) {
-//            option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
-//        }
+    }
+
+    public int getSplit() {
+        return split;
     }
 }

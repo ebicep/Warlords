@@ -14,6 +14,7 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.wavedefense.events.SafeZoneOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
@@ -2758,9 +2759,10 @@ public enum GameMap {
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
                     .addPointsOnKill(100)
-                    .reduceScoreOnAllDeath(30)
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
             );
             options.add(new FieldEffect(options));
+            options.add(new BoltaroBonanzaOption());
 
             return options;
         }

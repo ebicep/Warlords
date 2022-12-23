@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -616,7 +617,9 @@ public class WaveDefenseOption implements Option {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
                 mobSpawnTimes.put(abstractMob, ticksElapsed.get());
                 mobs.add(abstractMob);
-                return abstractMob.toNPC(game, team, UUID.randomUUID());
+                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
+                Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+                return warlordsNPC;
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
@@ -654,6 +657,7 @@ public class WaveDefenseOption implements Option {
         game.addNPC(abstractMob.getWarlordsNPC());
         mobSpawnTimes.put(abstractMob, ticksElapsed.get());
         mobs.add(abstractMob);
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
     }
 
     public Set<AbstractMob<?>> getMobs() {

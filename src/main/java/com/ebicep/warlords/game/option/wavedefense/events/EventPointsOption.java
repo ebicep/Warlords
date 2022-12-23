@@ -1,11 +1,14 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
+import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -49,31 +52,32 @@ public class EventPointsOption implements Option {
                 if (!(killer instanceof WarlordsPlayer)) {
                     return;
                 }
-                PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
-                                   .matchingTeam(killer.getTeam())
-                                   .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), pointsPerKill, Integer::sum));
+                PlayerFilterGeneric
+                        .playingGameWarlordsPlayers(killer.getGame())
+                        .matchingTeam(killer.getTeam())
+                        .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), pointsPerKill, Integer::sum));
             }
 
         });
         return this;
     }
 
-    public EventPointsOption reduceScoreOnAllDeath(int percentage) {
+    public EventPointsOption reduceScoreOnAllDeath(int percentage, Team team) {
         double reduceMultiplyBy = (100 - percentage) / 100.0;
         listeners.add(new Listener() {
 
             @EventHandler
-            public void onDeath(WarlordsDeathEvent event) {
-                WarlordsEntity deadPlayer = event.getPlayer();
-                if (!(deadPlayer instanceof WarlordsPlayer)) {
-                    return;
-                }
-                boolean allDead = PlayerFilterGeneric.playingGameWarlordsPlayers(deadPlayer.getGame())
-                                                     .matchingTeam(deadPlayer.getTeam())
-                                                     .stream()
-                                                     .allMatch(WarlordsEntity::isDead);
-                if (allDead) {
-                    points.replaceAll((uuid, points) -> (int) (points * reduceMultiplyBy));
+            public void onDeath(WarlordsGameTriggerWinEvent event) {
+                Option cause = event.getCause();
+                if (cause instanceof WinByAllDeathOption) {
+                    boolean allDead = PlayerFilterGeneric
+                            .playingGameWarlordsPlayers(event.getGame())
+                            .matchingTeam(team)
+                            .stream()
+                            .allMatch(WarlordsEntity::isDead);
+                    if (allDead) {
+                        points.replaceAll((uuid, points) -> (int) (points * reduceMultiplyBy));
+                    }
                 }
             }
 
