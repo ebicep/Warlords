@@ -60,6 +60,6 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        attacker.getSpec().increaseAllCooldownTimersBy(1);
+        //attacker.getSpec().increaseAllCooldownTimersBy(1);
     }
 }

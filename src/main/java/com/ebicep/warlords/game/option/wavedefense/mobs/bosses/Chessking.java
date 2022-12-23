@@ -26,8 +26,8 @@ public class Chessking extends AbstractSlime implements BossMob {
                 100000,
                 0.3f,
                 30,
-                1000,
-                2000
+                0,
+                0
         );
     }
 
@@ -48,6 +48,14 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        if (ticksElapsed % 100 == 0) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(warlordsNPC, 15, 15, 15)
+                    .aliveEnemiesOf(warlordsNPC)
+            ) {
+                we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100, false);
+            }
+        }
         if (ticksElapsed % 200 == 0) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 15, 15, 15)
