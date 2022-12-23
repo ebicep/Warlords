@@ -109,7 +109,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         }
 
         ability.updateDescription((Player) player.getEntity());
-        if (autoUpgraded) {
+        if (!autoUpgraded) {
             openUpgradeBranchMenu();
         }
 
