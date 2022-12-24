@@ -17,8 +17,6 @@ import java.util.*;
 
 public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
-    @Field("longest_time_in_combat")
-    private int longestTimeInCombat;
     @Field("most_damage_in_wave")
     private long mostDamageInWave;
     private int prestige;
@@ -76,10 +74,6 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
-    }
-
-    public int getLongestTimeInCombat() {
-        return longestTimeInCombat;
     }
 
     public long getMostDamageInWave() {

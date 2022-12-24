@@ -127,7 +127,6 @@ public class EditStatsCommand extends BaseCommand {
 
     private static void wipe(PvEDatabaseStatInformation statInformation) {
         statInformation.setHighestWaveCleared(0);
-        statInformation.setLongestTimeInCombat(0);
         statInformation.setMostDamageInRound(0);
         statInformation.setMostDamageInWave(0);
         statInformation.setFastestGameFinished(0);

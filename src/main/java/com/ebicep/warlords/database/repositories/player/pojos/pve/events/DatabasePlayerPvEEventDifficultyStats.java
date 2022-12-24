@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -7,21 +7,32 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabasePlayer {
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    private DatabaseMagePvE mage = new DatabaseMagePvE();
-    private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
-    private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
-    private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
-    private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
+public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatInformation implements DatabasePlayer {
 
-    public DatabasePlayerPvEPlayerCountStats() {
+    private DatabaseMagePvEEvent mage = new DatabaseMagePvEEvent();
+    private DatabaseWarriorPvEEvent warrior = new DatabaseWarriorPvEEvent();
+    private DatabasePaladinPvEEvent paladin = new DatabasePaladinPvEEvent();
+    private DatabaseShamanPvEEvent shaman = new DatabaseShamanPvEEvent();
+    private DatabaseRoguePvEEvent rogue = new DatabaseRoguePvEEvent();
+    @Field("player_count_stats")
+    private Map<Integer, DatabasePlayerPvEEventPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
+        put(1, new DatabasePlayerPvEEventPlayerCountStats());
+        put(2, new DatabasePlayerPvEEventPlayerCountStats());
+        put(3, new DatabasePlayerPvEEventPlayerCountStats());
+        put(4, new DatabasePlayerPvEEventPlayerCountStats());
+    }};
+
+    public DatabasePlayerPvEEventDifficultyStats() {
     }
 
     @Override
@@ -45,10 +56,20 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInfor
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+
+        //UPDATE PLAYER COUNT STATS
+        int playerCount = ((DatabaseGamePvE) databaseGame).getPlayers().size();
+        DatabasePlayerPvEEventPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
+        if (countStats != null) {
+            countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        } else {
+            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+        }
+
     }
 
     @Override
-    public PvEDatabaseStatInformation getSpec(Specializations specializations) {
+    public DatabaseBasePvEEvent getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -85,7 +106,7 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInfor
     }
 
     @Override
-    public PvEDatabaseStatInformation getClass(Classes classes) {
+    public DatabaseBasePvEEvent getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -102,23 +123,14 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInfor
     }
 
     @Override
-    public DatabaseBasePvE[] getClasses() {
-        return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBasePvEEvent[] getClasses() {
+        return new DatabaseBasePvEEvent[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    public void merge(DatabasePlayerPvEPlayerCountStats other) {
-        super.merge(other);
-        mage.merge(other.mage);
-        warrior.merge(other.warrior);
-        paladin.merge(other.paladin);
-        shaman.merge(other.shaman);
-        rogue.merge(other.rogue);
-        for (Classes value : Classes.VALUES) {
-            this.getClass(value).merge(other.getClass(value));
+    public DatabasePlayerPvEEventPlayerCountStats getPlayerCountStats(int playerCount) {
+        if (playerCount < 1) {
+            return null;
         }
-        for (Specializations value : Specializations.VALUES) {
-            this.getSpec(value).merge(other.getSpec(value));
-        }
+        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEEventPlayerCountStats());
     }
-
 }

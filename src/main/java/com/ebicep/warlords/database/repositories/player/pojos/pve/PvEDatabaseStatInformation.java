@@ -32,8 +32,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     //TOP STATS
     @Field("highest_wave_cleared")
     protected int highestWaveCleared;
-    @Field("longest_time_in_combat")
-    protected int longestTimeInCombat;
     @Field("most_damage_in_round")
     protected long mostDamageInRound;
     @Field("most_damage_in_wave")
@@ -63,9 +61,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             if (databaseGamePvE.getWavesCleared() > highestWaveCleared) {
                 this.highestWaveCleared = databaseGamePvE.getWavesCleared();
             }
-            if (databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
-                this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
-            }
             if (databaseGamePlayerPvE.getTotalDamage() > mostDamageInRound) {
                 this.mostDamageInRound = databaseGamePlayerPvE.getTotalDamage();
             }
@@ -91,7 +86,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         this.totalWavesCleared += other.totalWavesCleared;
         this.totalTimePlayed += other.totalTimePlayed;
         this.highestWaveCleared = Math.max(this.highestWaveCleared, other.highestWaveCleared);
-        this.longestTimeInCombat = Math.max(this.longestTimeInCombat, other.longestTimeInCombat);
         this.mostDamageInRound = Math.max(this.mostDamageInRound, other.mostDamageInRound);
         this.mostDamageInWave = Math.max(this.mostDamageInWave, other.mostDamageInWave);
         this.fastestGameFinished = Math.min(this.fastestGameFinished, other.fastestGameFinished);
@@ -110,14 +104,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public void setHighestWaveCleared(int highestWaveCleared) {
         this.highestWaveCleared = highestWaveCleared;
-    }
-
-    public int getLongestTimeInCombat() {
-        return longestTimeInCombat;
-    }
-
-    public void setLongestTimeInCombat(int longestTimeInCombat) {
-        this.longestTimeInCombat = longestTimeInCombat;
     }
 
     public long getMostDamageInRound() {

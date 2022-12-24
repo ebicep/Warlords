@@ -1,0 +1,108 @@
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro;
+
+import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
+
+    @Field("highest_split")
+    private int highestSplit;
+    @Field("time_left")
+    private int timeLeft;
+    @Field("total_mobs_killed")
+    private int totalMobsKilled;
+    private List<DatabaseGamePlayerPvEEventBoltaro> players = new ArrayList<>();
+
+    public DatabaseGamePvEEventBoltaro() {
+    }
+
+    public DatabaseGamePvEEventBoltaro(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, counted);
+        AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
+        AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
+        AtomicReference<RecordTimeElapsedOption> recordTimeElapsedOption = new AtomicReference<>();
+        AtomicReference<BoltaroBonanzaOption> boltaroBonanzaOption = new AtomicReference<>();
+        for (Option option : game.getOptions()) {
+            if (option instanceof WaveDefenseOption) {
+                waveDefenseOption.set((WaveDefenseOption) option);
+            } else if (option instanceof EventPointsOption) {
+                eventPointsOption.set((EventPointsOption) option);
+            } else if (option instanceof RecordTimeElapsedOption) {
+                recordTimeElapsedOption.set((RecordTimeElapsedOption) option);
+            } else if (option instanceof BoltaroBonanzaOption) {
+                boltaroBonanzaOption.set((BoltaroBonanzaOption) option);
+            }
+        }
+        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || recordTimeElapsedOption.get() == null || boltaroBonanzaOption.get() == null) {
+            throw new IllegalStateException("Missing option");
+        }
+        game.warlordsPlayers()
+            .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltaro(warlordsPlayer, waveDefenseOption.get(), eventPointsOption.get())));
+        this.highestSplit = boltaroBonanzaOption.get().getHighestSplitValue();
+        this.timeLeft = recordTimeElapsedOption.get().getTicksElapsed();
+        this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
+    }
+
+    @Override
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.forEach(databaseGamePlayerPvEEventBoltaro -> {
+            DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
+                    databaseGamePlayerPvEEventBoltaro,
+                    multiplier
+            );
+            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvEEventBoltaro.getName());
+        });
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return new HashSet<>(players);
+    }
+
+    @Override
+    public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
+        return DatabaseGamePlayerResult.NONE;
+    }
+
+    @Override
+    public void createHolograms() {
+
+    }
+
+    @Override
+    public String getGameLabel() {
+        return null;
+    }
+
+    @Override
+    public List<String> getExtraLore() {
+        return null;
+    }
+
+    public int getHighestSplit() {
+        return highestSplit;
+    }
+
+    public int getTimeLeft() {
+        return timeLeft;
+    }
+}

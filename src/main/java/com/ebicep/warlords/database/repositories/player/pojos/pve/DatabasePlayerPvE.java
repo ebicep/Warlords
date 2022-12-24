@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -45,6 +46,17 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
+    //EVENTS
+    @Field("event_stats")
+    private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
+    /*
+        event_stats
+        > total shit
+          > event_1
+            > date_1
+            > date_2
+          > event_2
+     */
     //GENERAL
 
     //SUPPLY DROP
