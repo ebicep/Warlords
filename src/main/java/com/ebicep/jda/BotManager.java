@@ -120,7 +120,7 @@ public class BotManager {
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
                 String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
-                if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+                if (GameMode.isWaveDefense(game.getGameMode())) {
                     for (Option option : game.getOptions()) {
                         if (option instanceof WaveDefenseOption) {
                             WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;

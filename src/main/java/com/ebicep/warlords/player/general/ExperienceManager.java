@@ -140,7 +140,7 @@ public class ExperienceManager {
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
 
         Game game = warlordsPlayer.getGame();
-        if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+        if (GameMode.isWaveDefense(game.getGameMode())) {
             for (Option option : game.getOptions()) {
                 if (option instanceof WaveDefenseOption) {
                     WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;

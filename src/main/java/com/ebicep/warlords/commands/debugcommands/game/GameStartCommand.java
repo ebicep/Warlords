@@ -77,7 +77,7 @@ public class GameStartCommand {
                 .newEntry(people);
         entryEditor.accept(entryBuilder);
 
-        if (entryBuilder.getGameMode() == GameMode.WAVE_DEFENSE) {
+        if (GameMode.isWaveDefense(entryBuilder.getGameMode())) {
             if (people.size() == 1) {
                 DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
                     if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {

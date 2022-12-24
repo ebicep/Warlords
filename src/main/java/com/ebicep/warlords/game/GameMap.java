@@ -12,7 +12,6 @@ import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -2695,18 +2694,11 @@ public enum GameMap {
             120 * SECOND,
             "IllusionRiftEvent",
             1,
-            GameMode.WAVE_DEFENSE
+            GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-
-            options.removeIf(option -> option instanceof TextOption);
-            options.forEach(option -> {
-                if (option instanceof RecordTimeElapsedOption) {
-                    ((RecordTimeElapsedOption) option).setHidden(true);
-                }
-            });
 
             String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
             options.add(TextOption.Type.CHAT_CENTERED.create(
@@ -2761,7 +2753,6 @@ public enum GameMap {
                     .addPointsOnKill(100)
                     .reduceScoreOnAllDeath(30, Team.BLUE)
             );
-            options.add(new FieldEffect(options));
             options.add(new BoltaroBonanzaOption());
 
             return options;

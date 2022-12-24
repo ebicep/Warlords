@@ -35,6 +35,13 @@ public class RecordTimeElapsedOption implements Option {
     private int ticksElapsed;
     private boolean hidden = false;
 
+    public RecordTimeElapsedOption() {
+    }
+
+    public RecordTimeElapsedOption(boolean hidden) {
+        this.hidden = hidden;
+    }
+
     @Override
     public void register(@Nonnull Game game) {
         if (hidden) {

@@ -81,7 +81,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         List<UUID> toRemove = new ArrayList<>();
         this.game.forEachOfflinePlayer((player, team) -> {
-            if (team != null && (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE || player.isOnline())) {
+            if (team != null && (!com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode()) || player.isOnline())) {
                 Warlords.addPlayer(new WarlordsPlayer(
                         player,
                         this.getGame(),
@@ -272,7 +272,7 @@ public class PlayingState implements State, TimerDebugAble {
                             .getCurrentCooldown() + .5));
                     byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
                             .getCurrentCooldown() + .5));
-                    if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                    if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
                             playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
                         });
@@ -314,7 +314,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (winEvent != null) {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
-                    game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE &&
+                    !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode()) &&
                     players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
                     timer >= 6000;
             //comps
@@ -331,7 +331,7 @@ public class PlayingState implements State, TimerDebugAble {
                 }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
-                if (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                if (!com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
 //                    Warlords.newChain()
 //                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
 //                            .syncLast(databasePlayers -> {

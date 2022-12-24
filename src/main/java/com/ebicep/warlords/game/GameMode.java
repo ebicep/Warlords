@@ -18,6 +18,7 @@ import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
+import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -291,10 +292,40 @@ public enum GameMode {
             return options;
         }
     },
+    EVENT_WAVE_DEFENSE(
+            "Event Wave Defense",
+            "PVE",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            DatabaseGamePvE::new,
+            GamesCollections.PVE,
+            1,
+            false
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption(true));
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            //options.add(new WinByMaxWaveClearOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+            options.add(new FieldEffect(options));
+
+            return options;
+        }
+    },
 
     ;
 
     public static final GameMode[] VALUES = values();
+
+    public static boolean isWaveDefense(GameMode mode) {
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE;
+    }
 
     public final String name;
     public final String abbreviation;

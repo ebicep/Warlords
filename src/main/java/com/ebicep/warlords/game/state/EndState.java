@@ -95,13 +95,13 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
         sendGlobalMessage(game, "", false);
         if (teamBlueWins) {
-            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "PLAYERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
             }
         } else if (teamRedWins) {
-            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "MONSTERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
@@ -119,6 +119,7 @@ public class EndState implements State, TimerDebugAble {
             case SIMULATION_TRIAL:
             case TEAM_DEATHMATCH:
             case WAVE_DEFENSE:
+            case EVENT_WAVE_DEFENSE:
                 showTopDamage(players);
                 showTopHealing(players);
                 break;
@@ -159,7 +160,7 @@ public class EndState implements State, TimerDebugAble {
                     .create()
             );
 
-            boolean hoverable = game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE;
+            boolean hoverable = !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode());
             List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
             baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable)));

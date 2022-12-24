@@ -58,17 +58,17 @@ public abstract class DatabaseGameBase {
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            if (game.getGameMode() != GameMode.WAVE_DEFENSE) {
+            if (!GameMode.isWaveDefense(game.getGameMode())) {
                 float highestDamage = game.warlordsPlayers()
-                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
-                        .get()
-                        .getMinuteStats()
-                        .total()
-                        .getDamage();
+                                          .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
+                                          .get()
+                                          .getMinuteStats()
+                                          .total()
+                                          .getDamage();
                 float highestHealing = game.warlordsPlayers()
-                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
-                        .get()
-                        .getMinuteStats()
+                                           .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
+                                           .get()
+                                           .getMinuteStats()
                         .total()
                         .getHealing();
                 //checking for inflated stats
@@ -151,7 +151,7 @@ public abstract class DatabaseGameBase {
                 addGameToDatabase(databaseGame, null);
             }
 
-            if (updatePlayerStats && game.getGameMode() == GameMode.WAVE_DEFENSE) {
+            if (updatePlayerStats && GameMode.isWaveDefense(game.getGameMode())) {
                 GuildLeaderboardManager.recalculateAllLeaderboards();
             }
 
@@ -279,7 +279,7 @@ public abstract class DatabaseGameBase {
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
-                if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
+                if (GameMode.isWaveDefense(databaseGame.getGameMode())) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,
