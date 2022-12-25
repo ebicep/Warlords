@@ -26,7 +26,7 @@ public class GameEventTrait extends WarlordsTrait {
         hologramTrait.setLine(2, ChatColor.RED + DatabaseGameEvent.currentGameEvent.getEvent().name + " Event");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
         hologramTrait.setLine(4,
-                ChatColor.GOLD + "Ends in " + ChatColor.BOLD + DateUtil.getTimeTill(DatabaseGameEvent.currentGameEvent.getEndDate(),
+                ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + DateUtil.getTimeTill(DatabaseGameEvent.currentGameEvent.getEndDate(),
                         true,
                         true,
                         true,

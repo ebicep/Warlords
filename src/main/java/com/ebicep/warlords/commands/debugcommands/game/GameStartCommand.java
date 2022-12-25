@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.game;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +43,29 @@ public class GameStartCommand {
                             });
                 })
         );
+    }
 
+    public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
+            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            return;
+        }
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
+            player.sendMessage(ChatColor.RED + "The event is over!");
+            return;
+        }
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                }
+                            });
+                })
+        );
     }
 
     public static void startGame(
