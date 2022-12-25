@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
@@ -44,7 +43,6 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
@@ -58,7 +56,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
-        int playerCount = ((DatabaseGamePvE) databaseGame).getPlayers().size();
+        int playerCount = databaseGame.getBasePlayers().size();
         DatabasePlayerPvEEventPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
         if (countStats != null) {
             countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);

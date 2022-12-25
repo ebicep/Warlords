@@ -19,7 +19,6 @@ import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
-import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -319,7 +318,6 @@ public enum GameMode {
             options.add(new WinByAllDeathOption());
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
-            options.add(new FieldEffect(options));
 
             return options;
         }

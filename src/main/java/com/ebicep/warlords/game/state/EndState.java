@@ -234,6 +234,7 @@ public class EndState implements State, TimerDebugAble {
                     "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                     true
             );
+            sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
             for (Option option : game.getOptions()) {
                 if (option instanceof WaveDefenseOption) {
@@ -243,6 +244,19 @@ public class EndState implements State, TimerDebugAble {
                     showQuestSummary(waveDefenseOption, players);
                     break;
                 }
+            }
+            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game,
+                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    true
+            );
+            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.EVENT_WAVE_DEFENSE) {
+                sendGlobalMessage(game, "", false);
+                sendGlobalMessage(game,
+                        "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                        true
+                );
+                showEventStats(players);
             }
         }
 
@@ -300,33 +314,12 @@ public class EndState implements State, TimerDebugAble {
             .findAny()
             .ifPresent(recordTimeElapsedOption -> {
                 hover.append(ChatColor.WHITE).append("Time Elapsed").append(ChatColor.GRAY).append(": ")
-                     .append(ChatColor.GOLD).append(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20));
+                     .append(ChatColor.GREEN).append(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20));
             });
         sendGlobalEventMessage(game, new ComponentBuilder()
                 .appendHoverText(ChatColor.BLUE.toString() + ChatColor.BOLD + "✚ GAME STATS ✚", hover.toString())
                 .create()
         );
-
-        EventPointsOption eventPointsOption = game
-                .getOptions()
-                .stream()
-                .filter(option -> option instanceof EventPointsOption)
-                .map(EventPointsOption.class::cast)
-                .findFirst()
-                .orElse(null);
-        for (WarlordsPlayer wp : players) {
-            Player player = Bukkit.getPlayer(wp.getUuid());
-            if (player == null) {
-                continue;
-            }
-            if (eventPointsOption != null) {
-                Integer points = eventPointsOption.getPoints().getOrDefault(player.getUniqueId(), 0);
-                ChatUtils.sendMessage(player,
-                        true,
-                        ChatColor.GRAY + "+" + ChatColor.YELLOW + points + " Point" + (points == 1 ? "" : "s")
-                );
-            }
-        }
     }
 
     private void showTopDamage(List<WarlordsPlayer> players) {
@@ -652,6 +645,37 @@ public class EndState implements State, TimerDebugAble {
                 );
             }
         }
+    }
+
+    private void showEventStats(List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ EVENT SUMMARY ✚", true);
+        EventPointsOption eventPointsOption = game
+                .getOptions()
+                .stream()
+                .filter(option -> option instanceof EventPointsOption)
+                .map(EventPointsOption.class::cast)
+                .findFirst()
+                .orElse(null);
+        for (WarlordsPlayer wp : players) {
+            Player player = Bukkit.getPlayer(wp.getUuid());
+            if (player == null) {
+                continue;
+            }
+
+            if (eventPointsOption != null) {
+                Integer points = eventPointsOption.getPoints().getOrDefault(player.getUniqueId(), 0);
+                ChatUtils.sendMessage(player,
+                        true,
+                        ChatColor.GRAY + "+" + ChatColor.YELLOW + NumberFormat.addCommas(points) + " Point" + (points == 1 ? "" : "s")
+                );
+            }
+
+            for (Option option : game.getOptions()) {
+                option.sendEventStatsMessage(game, player);
+            }
+        }
+        sendGlobalMessage(game, "", false);
     }
 
     public void sendGlobalEventMessage(Game game, BaseComponent[] message) {

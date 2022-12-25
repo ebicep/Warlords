@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve.events;
 
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -21,6 +22,8 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase {
         super(game, counted);
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);
     }
+
+    public abstract GameEvents getEvent();
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {

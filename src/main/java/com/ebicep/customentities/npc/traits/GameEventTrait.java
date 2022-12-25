@@ -25,14 +25,17 @@ public class GameEventTrait extends WarlordsTrait {
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE) + " in Lobby");
         hologramTrait.setLine(2, ChatColor.RED + DatabaseGameEvent.currentGameEvent.getEvent().name + " Event");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-        hologramTrait.setLine(4,
-                ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + DateUtil.getTimeTill(DatabaseGameEvent.currentGameEvent.getEndDate(),
-                        true,
-                        true,
-                        true,
-                        true
-                )
+        String timeTill = DateUtil.getTimeTill(DatabaseGameEvent.currentGameEvent.getEndDate(),
+                true,
+                true,
+                true,
+                true
         );
+        if (timeTill.equals("0 seconds")) {
+            hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ended!");
+        } else {
+            hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + timeTill);
+        }
     }
 
     @Override

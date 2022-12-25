@@ -32,7 +32,6 @@ public class NPCManager {
 
         Warlords.newChain()
                 .sync(() -> {
-                    //for reloading
                     createGameNPC();
                     createPvENPC();
                 })

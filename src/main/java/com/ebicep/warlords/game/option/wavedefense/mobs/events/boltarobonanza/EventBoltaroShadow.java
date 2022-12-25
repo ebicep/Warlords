@@ -62,6 +62,7 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)
                                                                        .with(FireworkEffect.Type.BALL)
@@ -78,5 +79,10 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
 
     public int getSplit() {
         return split;
+    }
+
+    @Override
+    public double dropRate() {
+        return 10;
     }
 }

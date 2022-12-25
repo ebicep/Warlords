@@ -15,8 +15,6 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
 
     @Field("event_points_cum")
     private long eventPointsCumulative;
-    @Field("event_points")
-    private long eventPoints;
 
     @Override
     public void updateCustomStats(
@@ -36,6 +34,5 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
         DatabaseGamePlayerPvEEvent databaseGamePlayerPvEEvent = (DatabaseGamePlayerPvEEvent) gamePlayer;
 
         this.eventPointsCumulative += databaseGamePlayerPvEEvent.getPoints() * multiplier;
-        this.eventPoints += databaseGamePlayerPvEEvent.getPoints() * multiplier;
     }
 }

@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -2733,7 +2734,8 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
             options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
 
-            options.add(new RespawnWaveOption(1, 20, 20));
+            //options.add(new RespawnOption(20));
+            options.add(new RespawnWaveOption(2, 1, 20));
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -2754,6 +2756,7 @@ public enum GameMap {
                     .reduceScoreOnAllDeath(30, Team.BLUE)
             );
             options.add(new BoltaroBonanzaOption());
+            options.add(new FieldEffect(options));
 
             return options;
         }

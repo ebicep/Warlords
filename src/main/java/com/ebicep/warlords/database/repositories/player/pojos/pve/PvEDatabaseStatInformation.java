@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -51,11 +52,20 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
+        DatabaseGamePlayerPvE databaseGamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
+        databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
+        databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
+        databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
+        if (!(databaseGame instanceof DatabaseGamePvE)) {
+            if (databaseGame instanceof DatabaseGamePvEEvent) {
+                DatabaseGamePvEEvent databaseGamePvEEvent = (DatabaseGamePvEEvent) databaseGame;
+                this.totalTimePlayed += (long) databaseGamePvEEvent.getTimeElapsed() * multiplier;
+            }
+            return;
+        }
 
         DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) databaseGame;
-        DatabaseGamePlayerPvE databaseGamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
 
         if (multiplier > 0) {
             if (databaseGamePvE.getWavesCleared() > highestWaveCleared) {
@@ -74,10 +84,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         }
 
         this.totalWavesCleared += databaseGamePvE.getWavesCleared() * multiplier;
-        this.totalTimePlayed += (long) databaseGamePvE.getTimeElapsed() * multiplier;
-        databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
     }
 
     public void merge(PvEDatabaseStatInformation other) {
@@ -96,6 +102,22 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public long getExperiencePvE() {
         return experiencePvE;
+    }
+
+    public long getTotalTimePlayed() {
+        return totalTimePlayed;
+    }
+
+    public Map<String, Long> getMobKills() {
+        return mobKills;
+    }
+
+    public Map<String, Long> getMobAssists() {
+        return mobAssists;
+    }
+
+    public Map<String, Long> getMobDeaths() {
+        return mobDeaths;
     }
 
     public int getHighestWaveCleared() {
@@ -126,10 +148,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         return totalWavesCleared;
     }
 
-    public long getTotalTimePlayed() {
-        return totalTimePlayed;
-    }
-
     public void addTimePlayed(long time) {
         this.totalTimePlayed += time;
     }
@@ -142,15 +160,4 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         this.fastestGameFinished = fastestGameFinished;
     }
 
-    public Map<String, Long> getMobKills() {
-        return mobKills;
-    }
-
-    public Map<String, Long> getMobAssists() {
-        return mobAssists;
-    }
-
-    public Map<String, Long> getMobDeaths() {
-        return mobDeaths;
-    }
 }

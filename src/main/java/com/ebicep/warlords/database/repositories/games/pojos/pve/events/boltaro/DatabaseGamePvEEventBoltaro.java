@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro;
 
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -8,7 +9,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
@@ -26,8 +26,6 @@ public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
 
     @Field("highest_split")
     private int highestSplit;
-    @Field("time_left")
-    private int timeLeft;
     @Field("total_mobs_killed")
     private int totalMobsKilled;
     private List<DatabaseGamePlayerPvEEventBoltaro> players = new ArrayList<>();
@@ -35,30 +33,31 @@ public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
     public DatabaseGamePvEEventBoltaro() {
     }
 
+    @Override
+    public GameEvents getEvent() {
+        return GameEvents.BOLTARO;
+    }
+
     public DatabaseGamePvEEventBoltaro(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
-        AtomicReference<RecordTimeElapsedOption> recordTimeElapsedOption = new AtomicReference<>();
         AtomicReference<BoltaroBonanzaOption> boltaroBonanzaOption = new AtomicReference<>();
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 waveDefenseOption.set((WaveDefenseOption) option);
             } else if (option instanceof EventPointsOption) {
                 eventPointsOption.set((EventPointsOption) option);
-            } else if (option instanceof RecordTimeElapsedOption) {
-                recordTimeElapsedOption.set((RecordTimeElapsedOption) option);
             } else if (option instanceof BoltaroBonanzaOption) {
                 boltaroBonanzaOption.set((BoltaroBonanzaOption) option);
             }
         }
-        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || recordTimeElapsedOption.get() == null || boltaroBonanzaOption.get() == null) {
+        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || boltaroBonanzaOption.get() == null) {
             throw new IllegalStateException("Missing option");
         }
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltaro(warlordsPlayer, waveDefenseOption.get(), eventPointsOption.get())));
         this.highestSplit = boltaroBonanzaOption.get().getHighestSplitValue();
-        this.timeLeft = recordTimeElapsedOption.get().getTicksElapsed();
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
     }
 
@@ -102,7 +101,4 @@ public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
         return highestSplit;
     }
 
-    public int getTimeLeft() {
-        return timeLeft;
-    }
 }

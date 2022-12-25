@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboard
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardGeneral;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -118,6 +119,7 @@ public class StatsLeaderboardManager {
                         if (init) {
                             DatabaseTiming.checkLeaderboardResets();
                             NPCManager.createGameJoinNPCs();
+                            DatabaseGameEvent.startGameEvent();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???

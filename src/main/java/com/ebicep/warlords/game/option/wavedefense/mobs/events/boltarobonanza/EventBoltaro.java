@@ -104,11 +104,17 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)
                                                                        .withTrail()
                                                                        .build());
+    }
+
+    @Override
+    public double dropRate() {
+        return 10;
     }
 }

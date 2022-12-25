@@ -7,6 +7,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
@@ -101,7 +103,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
@@ -178,11 +179,22 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
         //UPDATE GAME MODE STATS
-        PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
-        if (difficultyStats != null) {
-            difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        if (databaseGame instanceof DatabaseGamePvEEvent) {
+            assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
+            eventStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
+                case BOLTARO:
+                    addCurrency(Currencies.EVENT_POINTS_BOLTARO, ((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier);
+                    break;
+            }
+
         } else {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
+            if (difficultyStats != null) {
+                difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            } else {
+                ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            }
         }
     }
 
@@ -196,8 +208,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 return hardStats;
             case ENDLESS:
                 return endlessStats;
-            case EVENT:
-                return eventStats;
         }
         return null;
     }
@@ -273,6 +283,25 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
         this.currencies.put(currency, this.currencies.get(currency) + amount);
         CustomScoreboard.reloadPvEScoreboard(this);
+        /*
+        if (amount < 0) {
+//            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+//            if (currentGameEvent == null) {
+//                return;
+//            }
+            //TODO
+            for (GameEvents value : GameEvents.VALUES) {
+                if (value.currency == currency) {
+                    switch (value) {
+                        case BOLTARO:
+                            //eventStats.getBoltaroStats().
+                    }
+                    break;
+                }
+            }
+        }
+
+         */
     }
 
     public void addOneCurrency(Currencies currency) {
@@ -310,4 +339,5 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {
         return autoUpgradeProfiles;
     }
+
 }

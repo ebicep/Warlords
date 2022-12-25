@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriFunction;
@@ -31,7 +32,7 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public enum GameEvents {
 
-    BOLTARO("Boltaro", DatabaseGamePvEEventBoltaro::new) {
+    BOLTARO("Boltaro", Currencies.EVENT_POINTS_BOLTARO, DatabaseGamePvEEventBoltaro::new) {
         @Override
         public void editNPC(NPC npc) {
             Equipment equipment = npc.getOrAddTrait(Equipment.class);
@@ -117,13 +118,16 @@ public enum GameEvents {
 
     ;
 
+    public static final GameEvents[] VALUES = values();
     public static NPC npc;
 
     public final String name;
+    public final Currencies currency;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
 
-    GameEvents(String name, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame) {
+    GameEvents(String name, Currencies currency, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame) {
         this.name = name;
+        this.currency = currency;
         this.createDatabaseGame = createDatabaseGame;
     }
 
@@ -155,6 +159,8 @@ public enum GameEvents {
 
                 }
         );
+
+        //TODO previous event shop
 
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);

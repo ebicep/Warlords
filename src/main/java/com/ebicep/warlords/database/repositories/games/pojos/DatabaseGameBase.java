@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -79,7 +80,8 @@ public abstract class DatabaseGameBase {
             } else {
                 for (Option option : game.getOptions()) {
                     if (option instanceof WaveDefenseOption) {
-                        if (((WaveDefenseOption) option).getWavesCleared() == 0) {
+                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                        if (waveDefenseOption.getDifficulty() != DifficultyIndex.EVENT && waveDefenseOption.getWavesCleared() == 0) {
                             System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
                             break;

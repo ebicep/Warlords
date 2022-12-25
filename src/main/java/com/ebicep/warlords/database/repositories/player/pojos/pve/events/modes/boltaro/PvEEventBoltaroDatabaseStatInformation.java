@@ -28,8 +28,6 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
 
     @Field("event_points_cum")
     private long eventPointsCumulative;
-    @Field("event_points")
-    private long eventPoints;
     @Field("highest_split")
     private int highestSplit;
 
@@ -54,7 +52,6 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         databaseGamePlayerPvEEventBoltaro.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
         this.eventPointsCumulative += databaseGamePlayerPvEEventBoltaro.getPoints() * multiplier;
-        this.eventPoints += databaseGamePlayerPvEEventBoltaro.getPoints() * multiplier;
         int split = databaseGamePvEEventBoltaro.getHighestSplit();
         if (multiplier > 0) {
             if (this.highestSplit < split) {
@@ -87,9 +84,6 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         return eventPointsCumulative;
     }
 
-    public long getEventPoints() {
-        return eventPoints;
-    }
 
     public int getHighestSplit() {
         return highestSplit;

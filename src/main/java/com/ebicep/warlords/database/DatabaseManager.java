@@ -89,9 +89,10 @@ public class DatabaseManager {
             e.printStackTrace();
             return;
         }
-
         NPCManager.createDatabaseRequiredNPCs();
-
+        if (!StatsLeaderboardManager.enabled) {
+            DatabaseGameEvent.startGameEvent();
+        }
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
@@ -113,9 +114,6 @@ public class DatabaseManager {
                     GuildManager.reloadPlayerCaches();
                 })
                 .execute();
-
-        //Game Events
-        DatabaseGameEvent.startGameEvent();
 
         //runnable that updates all player that need updating every 10 seconds (prevents spam update)
         new BukkitRunnable() {

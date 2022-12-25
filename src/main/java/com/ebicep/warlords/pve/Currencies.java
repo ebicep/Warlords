@@ -74,6 +74,11 @@ public enum Currencies {
             ChatColor.DARK_GRAY,
             new ItemStack(Material.BOOKSHELF)
     ),
+    EVENT_POINTS_BOLTARO(
+            "Event Points Boltaro",
+            ChatColor.YELLOW,
+            new ItemStack(Material.DOUBLE_PLANT)
+    ),
 
 
     ;

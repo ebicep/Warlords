@@ -2,6 +2,9 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -26,9 +29,27 @@ public class DatabaseGameEvent {
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
                             currentGameEvent = gameEvent;
+                            if (!gameEvent.getStarted()) {
+                                Currencies currency = gameEvent.getEvent().currency;
+                                for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
+                                    Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
+                                    if (currencyValue > 0) {
+                                        databasePlayer.getPveStats().subtractCurrency(currency, currencyValue);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    }
+                                }
+                                gameEvent.setStarted(true);
+                                Warlords.newChain()
+                                        .async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
+                            }
                             gameEvent.start();
                             break;
                         }
+                    }
+                    if (currentGameEvent == null && !gameEvents.isEmpty()) {
+                        DatabaseGameEvent gameEvent = gameEvents.get(gameEvents.size() - 1);
+                        currentGameEvent = gameEvent;
+                        gameEvent.start();
                     }
                 })
                 .execute();
@@ -42,6 +63,18 @@ public class DatabaseGameEvent {
         return endDate;
     }
 
+    public GameEvents getEvent() {
+        return event;
+    }
+
+    public Boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
+
     public void start() {
         if (GameEvents.npc != null) {
             GameEvents.npc.destroy();
@@ -50,13 +83,10 @@ public class DatabaseGameEvent {
         getEvent().createNPC();
     }
 
-    public GameEvents getEvent() {
-        return event;
-    }
-
-    protected GameEvents event;
+    private GameEvents event;
     @Field("start_date")
-    protected Instant startDate;
+    private Instant startDate;
     @Field("end_date")
-    protected Instant endDate;
+    private Instant endDate;
+    private Boolean started = false;
 }
