@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -86,10 +88,11 @@ public class AvengersStrike extends AbstractStrikeBase {
         }
         AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
-        getStandingOnConsecrate(wp, nearPlayer).ifPresent(consecrate -> {
+        Optional<Consecrate> consecrate = getStandingOnConsecrate(wp, nearPlayer);
+        consecrate.ifPresent(cons -> {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
+            minDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
+            maxDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
         });
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
@@ -98,7 +101,8 @@ public class AvengersStrike extends AbstractStrikeBase {
                 (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
                 critChance,
                 critMultiplier,
-                false
+                false,
+                consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
         );
         energyStole += nearPlayer.subtractEnergy(energySteal, true);
         return true;

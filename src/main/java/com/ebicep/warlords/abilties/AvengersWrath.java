@@ -91,7 +91,7 @@ public class AvengersWrath extends AbstractAbility {
                         tempAvengersWrath.addPlayersStruckDuringWrath();
 
                         Optional<Consecrate> standingOnConsecrate = AbstractStrikeBase.getStandingOnConsecrate(wp, wrathTarget);
-                        if (standingOnConsecrate.isPresent()) {
+                        if (standingOnConsecrate.isPresent() && !event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                             wrathTarget.addDamageInstance(
                                     wp,
