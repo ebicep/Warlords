@@ -31,6 +31,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -177,24 +178,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
         //UPDATE GAME MODE STATS
-        switch (((DatabaseGamePvE) databaseGame).getDifficulty()) {
-            case EASY:
-                easyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case NORMAL:
-                normalStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case HARD:
-                hardStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case ENDLESS:
-                endlessStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
+        PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
+        if (difficultyStats != null) {
+            difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        } else {
+            ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
         }
-
     }
 
-    public DatabasePlayerPvEDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {
+    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
         switch (difficultyIndex) {
             case EASY:
                 return easyStats;
@@ -204,6 +196,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 return hardStats;
             case ENDLESS:
                 return endlessStats;
+            case EVENT:
+                return eventStats;
         }
         return null;
     }

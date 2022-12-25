@@ -289,7 +289,7 @@ public class WaveDefenseOption implements Option {
                 if (waveSidebarOverride != null) {
                     return waveSidebarOverride.apply(WaveDefenseOption.this, player);
                 }
-                return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave < 10000 ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
+                return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave != -1 ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {

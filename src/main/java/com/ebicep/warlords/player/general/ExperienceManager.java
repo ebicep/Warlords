@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
@@ -9,7 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -49,6 +50,13 @@ public class ExperienceManager {
             new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
             new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //13
     );
+    public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
+        put(Classes.MAGE, new Pair<>(2, 1));
+        put(Classes.WARRIOR, new Pair<>(4, 1));
+        put(Classes.PALADIN, new Pair<>(6, 1));
+        put(Classes.SHAMAN, new Pair<>(3, 3));
+        put(Classes.ROGUE, new Pair<>(5, 3));
+    }};
     private static final Map<String, int[]> awardOrder = new LinkedHashMap<>() {{
         put("wins", new int[]{1000, 750, 500});
         put("losses", new int[]{200, 150, 100});
@@ -62,13 +70,6 @@ public class ExperienceManager {
         put("absorbed", new int[]{850, 600, 350});
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
-    }};
-    public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
-        put(Classes.MAGE, new Pair<>(2, 1));
-        put(Classes.WARRIOR, new Pair<>(4, 1));
-        put(Classes.PALADIN, new Pair<>(6, 1));
-        put(Classes.SHAMAN, new Pair<>(3, 3));
-        put(Classes.ROGUE, new Pair<>(5, 3));
     }};
 
     static {
@@ -106,7 +107,7 @@ public class ExperienceManager {
                     playerAwardSummary.putIfAbsent(uuid, new AwardSummary());
                     AwardSummary awardSummary = playerAwardSummary.get(uuid);
                     awardSummary.getMessages()
-                            .add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                                .add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
                     awardSummary.addTotalExperienceGain(experienceGain);
                 }
             }
@@ -141,10 +142,29 @@ public class ExperienceManager {
 
         Game game = warlordsPlayer.getGame();
         if (GameMode.isWaveDefense(game.getGameMode())) {
-            for (Option option : game.getOptions()) {
-                if (option instanceof WaveDefenseOption) {
-                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                    DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
+            WaveDefenseOption waveDefenseOption = game
+                    .getOptions()
+                    .stream()
+                    .filter(option -> option instanceof WaveDefenseOption)
+                    .map(WaveDefenseOption.class::cast)
+                    .findAny()
+                    .orElse(null);
+            if (waveDefenseOption != null) {
+                DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
+                if (difficulty == DifficultyIndex.EVENT) {
+                    if (DatabaseGameEvent.currentGameEvent != null) {
+                        game.getOptions()
+                            .stream()
+                            .filter(option -> option instanceof RecordTimeElapsedOption)
+                            .map(RecordTimeElapsedOption.class::cast)
+                            .findAny()
+                            .ifPresent(recordTimeElapsedOption -> {
+                                int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
+                                Pair<Long, Integer> expPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().expPerXSec();
+                                expGain.put("Seconds Survived", secondsElapsed / expPerXSec.getB() * expPerXSec.getA());
+                            });
+                    }
+                } else {
                     int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), difficulty.getMaxWaves());
                     expGain.put("Waves Cleared", (long) wavesCleared * difficulty.getWaveExperienceMultiplier());
                     if (wavesCleared == 25) {
@@ -154,7 +174,6 @@ public class ExperienceManager {
                             expGain.put("Wave 25 Clear Bonus", 3000L);
                         }
                     }
-                    break;
                 }
             }
             Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));
@@ -174,8 +193,8 @@ public class ExperienceManager {
                     .getPoints(warlordsPlayer.getTeam().enemy());
             long winLossExp = won ? 500 : 250;
             long kaExp = 5L * (warlordsPlayer.getMinuteStats().total().getKills() + warlordsPlayer.getMinuteStats()
-                    .total()
-                    .getAssists());
+                                                                                                  .total()
+                                                                                                  .getAssists());
 
             double damageMultiplier;
             double healingMultiplier;
@@ -195,12 +214,12 @@ public class ExperienceManager {
                 absorbedMultiplier = .325;
             }
             double calculatedDHP = warlordsPlayer.getMinuteStats()
-                    .total()
-                    .getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats()
-                    .total()
-                    .getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats()
-                    .total()
-                    .getAbsorbed() * absorbedMultiplier;
+                                                 .total()
+                                                 .getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats()
+                                                                                                 .total()
+                                                                                                 .getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats()
+                                                                                                                                                   .total()
+                                                                                                                                                   .getAbsorbed() * absorbedMultiplier;
             long dhpExp = (long) (calculatedDHP / 500L);
             long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
             long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
@@ -325,9 +344,9 @@ public class ExperienceManager {
 
     public static String getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
         String progress = nextLevel == 100 ?
-                ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1)
-                        .getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
-                ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+                          ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1)
+                                                                           .getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
+                          ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
         return getProgressString(currentExperience, nextLevel, progress);
     }
 
@@ -341,12 +360,12 @@ public class ExperienceManager {
         }
         int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
         return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel)
-                .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+                                                          .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
     }
 
     public static String getPrestigeLevelString(int prestigeLevel) {
         return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel)
-                .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+                                                          .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
     }
 
     public static double calculateExpFromLevel(int level) {

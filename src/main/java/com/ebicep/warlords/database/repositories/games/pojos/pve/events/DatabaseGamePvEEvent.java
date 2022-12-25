@@ -3,10 +3,12 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve.events;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 
+@Document(collection = "Games_Information_Event_PvE")
 public abstract class DatabaseGamePvEEvent extends DatabaseGameBase {
 
     @Field("time_elapsed")

@@ -40,13 +40,31 @@ public enum DifficultyIndex {
             "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
                     "\n\nModifiers:\n§c+25% Mob Spawns",
             ChatColor.RED,
-            10000,
+            Integer.MAX_VALUE,
             80,
             5,
             1500,
             1.25f
-    );
+    ),
+    EVENT("Event",
+            "" +
+                    "",
+            ChatColor.BLUE,
+            Integer.MAX_VALUE,
+            0,
+            0,
+            1000,
+            1
+    ),
 
+    ;
+
+    public static final DifficultyIndex[] NON_EVENT = new DifficultyIndex[]{
+            EASY,
+            NORMAL,
+            HARD,
+            ENDLESS
+    };
     private final String name;
     private final String description;
     private final ChatColor difficultyColor;

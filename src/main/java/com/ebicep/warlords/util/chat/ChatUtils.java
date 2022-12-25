@@ -243,7 +243,7 @@ public class ChatUtils {
         LEADERBOARDS("Leaderboards", ChatColor.BLUE),
         TIMINGS("Timings", ChatColor.DARK_GRAY),
         MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
-        EVENTS("Events", ChatColor.DARK_RED),
+        GAME_EVENTS("Events", ChatColor.DARK_RED),
 
         GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
 

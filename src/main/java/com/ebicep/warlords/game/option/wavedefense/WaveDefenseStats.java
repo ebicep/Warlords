@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -53,39 +55,50 @@ public class WaveDefenseStats {
 
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
         LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
-        cachedBaseCoinSummary.put("Waves Cleared", 0L);
-        cachedBaseCoinSummary.put("Bosses Killed", 0L);
+        DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
+        if (difficulty != DifficultyIndex.EVENT) {
+            cachedBaseCoinSummary.put("Waves Cleared", 0L);
+            cachedBaseCoinSummary.put("Bosses Killed", 0L);
 
-        for (int i = 1; i <= waveDefenseOption.getWavesCleared(); i++) {
-            if ((i - 1) / 5 >= WaveDefenseStats.COINS_PER_5_WAVES.length) {
-                break;
-            }
-            cachedBaseCoinSummary.merge("Waves Cleared",
-                    (long) (WaveDefenseStats.COINS_PER_5_WAVES[(i - 1) / 5] * waveDefenseOption.getDifficulty().getRewardsMultiplier()),
-                    Long::sum
-            );
-        }
-        for (Map.Entry<String, Long> stringLongEntry : WaveDefenseStats.BOSS_COIN_VALUES.entrySet()) {
-            if (bossesKilled.containsKey(stringLongEntry.getKey())) {
-                cachedBaseCoinSummary.merge("Bosses Killed",
-                        (long) (bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * waveDefenseOption.getDifficulty()
-                                .getRewardsMultiplier()),
+            for (int i = 1; i <= waveDefenseOption.getWavesCleared(); i++) {
+                if ((i - 1) / 5 >= WaveDefenseStats.COINS_PER_5_WAVES.length) {
+                    break;
+                }
+                cachedBaseCoinSummary.merge("Waves Cleared",
+                        (long) (WaveDefenseStats.COINS_PER_5_WAVES[(i - 1) / 5] * difficulty.getRewardsMultiplier()),
                         Long::sum
                 );
             }
+            for (Map.Entry<String, Long> stringLongEntry : WaveDefenseStats.BOSS_COIN_VALUES.entrySet()) {
+                if (bossesKilled.containsKey(stringLongEntry.getKey())) {
+                    cachedBaseCoinSummary.merge("Bosses Killed",
+                            (long) (bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * difficulty
+                                    .getRewardsMultiplier()),
+                            Long::sum
+                    );
+                }
+            }
+        } else {
+            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+            if (currentGameEvent != null) {
+                GameEvents event = currentGameEvent.getEvent();
+                cachedBaseCoinSummary.put("Kills",
+                        event.coinsPerKill() * waveDefenseOption.getGame().warlordsPlayers().mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum()
+                );
+            }
         }
-
         waveDefenseOption.getGame()
-                .warlordsPlayers()
-                .forEach(warlordsPlayer -> {
-                    if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
-                        long coinsConverted = warlordsPlayer.getCurrency() / 100;
-                        cachedBaseCoinSummary.put("Excess Insignia Converted",
-                                Math.min(coinsConverted, waveDefenseOption.getDifficulty().getMaxInsigniaConverted())
-                        );
-                    }
-                    getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary);
-                });
+                         .warlordsPlayers()
+                         .forEach(warlordsPlayer -> {
+                             if (difficulty.getMaxInsigniaConverted() != 0 && waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() || difficulty == DifficultyIndex.ENDLESS) {
+                                 long coinsConverted = warlordsPlayer.getCurrency() / 100;
+                                 cachedBaseCoinSummary.put("Excess Insignia Converted",
+                                         Math.min(coinsConverted, difficulty.getMaxInsigniaConverted())
+                                 );
+                             }
+                             getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary);
+                         });
+
     }
 
     public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {
@@ -96,37 +109,41 @@ public class WaveDefenseStats {
         int wavesCleared = waveDefenseOption.getWavesCleared();
         boolean won = waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
         DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
+        if (difficulty == DifficultyIndex.EVENT) {
+            return;
+        }
         waveDefenseOption.getGame()
-                .warlordsPlayers()
-                .forEach(warlordsPlayer -> {
-                    if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
-                        UUID uuid = warlordsPlayer.getUuid();
-                        Specializations currentSpec = warlordsPlayer.getSpecClass();
-                        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                            AtomicLong legendFragmentGain = new AtomicLong();
-                            if (won || difficulty == DifficultyIndex.ENDLESS) {
-                                legendFragmentGain.set(wavesCleared);
-                            } else {
-                                legendFragmentGain.set((long) (wavesCleared * 0.5));
-                            }
-                            //warlordsPlayer.sendMessage("Legend Fragment Gain: " + legendFragmentGain.get());
-                            legendFragmentGain.updateAndGet(v -> (long) (v * difficulty.getRewardsMultiplier()));
-                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Rewards Multiplier: " + legendFragmentGain.get());
-                            int specPrestigeBonus = databasePlayer.getSpec(currentSpec).getPrestige() * 5;
-                            int otherSpecPrestigeBonus = 0;
-                            for (Specializations value : Specializations.VALUES) {
-                                if (value != currentSpec) {
-                                    otherSpecPrestigeBonus += databasePlayer.getSpec(value).getPrestige() * 2;
-                                }
-                            }
-                            legendFragmentGain.addAndGet((long) ((specPrestigeBonus + otherSpecPrestigeBonus) * difficulty.getRewardsMultiplier() * (wavesCleared / 25)));
-                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Prestiges: " + legendFragmentGain.get());
-                            Bukkit.getPluginManager().callEvent(new WarlordsLegendFragmentGainEvent(warlordsPlayer, legendFragmentGain, waveDefenseOption));
-                            //warlordsPlayer.sendMessage("Legend Fragment Gain After Guild: " + legendFragmentGain.get());
-                            getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain.get());
-                        });
-                    }
-                });
+                         .warlordsPlayers()
+                         .forEach(warlordsPlayer -> {
+                             if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+                                 UUID uuid = warlordsPlayer.getUuid();
+                                 Specializations currentSpec = warlordsPlayer.getSpecClass();
+                                 DatabaseManager.getPlayer(uuid, databasePlayer -> {
+                                     AtomicLong legendFragmentGain = new AtomicLong();
+                                     if (won || difficulty == DifficultyIndex.ENDLESS) {
+                                         legendFragmentGain.set(wavesCleared);
+                                     } else {
+                                         legendFragmentGain.set((long) (wavesCleared * 0.5));
+                                     }
+                                     //warlordsPlayer.sendMessage("Legend Fragment Gain: " + legendFragmentGain.get());
+                                     legendFragmentGain.updateAndGet(v -> (long) (v * difficulty.getRewardsMultiplier()));
+                                     //warlordsPlayer.sendMessage("Legend Fragment Gain After Rewards Multiplier: " + legendFragmentGain.get());
+                                     int specPrestigeBonus = databasePlayer.getSpec(currentSpec).getPrestige() * 5;
+                                     int otherSpecPrestigeBonus = 0;
+                                     for (Specializations value : Specializations.VALUES) {
+                                         if (value != currentSpec) {
+                                             otherSpecPrestigeBonus += databasePlayer.getSpec(value).getPrestige() * 2;
+                                         }
+                                     }
+                                     legendFragmentGain.addAndGet((long) ((specPrestigeBonus + otherSpecPrestigeBonus) * difficulty.getRewardsMultiplier() * (wavesCleared / 25)));
+                                     //warlordsPlayer.sendMessage("Legend Fragment Gain After Prestiges: " + legendFragmentGain.get());
+                                     Bukkit.getPluginManager()
+                                           .callEvent(new WarlordsLegendFragmentGainEvent(warlordsPlayer, legendFragmentGain, waveDefenseOption));
+                                     //warlordsPlayer.sendMessage("Legend Fragment Gain After Guild: " + legendFragmentGain.get());
+                                     getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain.get());
+                                 });
+                             }
+                         });
     }
 
     public HashMap<String, Long> getBossesKilled() {

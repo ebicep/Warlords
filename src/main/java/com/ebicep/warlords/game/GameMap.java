@@ -2744,7 +2744,7 @@ public enum GameMap {
                     .add(1, new SimpleWave(1, 10 * SECOND, ChatColor.GREEN + "Event")
                             .add(Mobs.EVENT_BOLTARO_BONANZA)
                     ),
-                    DifficultyIndex.NORMAL,
+                    DifficultyIndex.EVENT,
                     (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza")
             ));
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));

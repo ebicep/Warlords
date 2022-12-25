@@ -113,10 +113,10 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
         lastGameStats.getLines().appendText(ChatColor.GRAY + date);
         lastGameStats.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
+                     .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
         lastGameStats.getLines()
-                .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
-                        (difficulty != DifficultyIndex.ENDLESS ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
+                     .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
+                             (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
 
 
         List<DatabaseGamePlayerPvE> allPlayers = players;

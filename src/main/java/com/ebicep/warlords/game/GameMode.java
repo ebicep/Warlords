@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
@@ -296,8 +297,13 @@ public enum GameMode {
             "Event Wave Defense",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
-            DatabaseGamePvE::new,
-            GamesCollections.PVE,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                if (DatabaseGameEvent.currentGameEvent == null) {
+                    return null;
+                }
+                return DatabaseGameEvent.currentGameEvent.getEvent().createDatabaseGame.apply(game, warlordsGameTriggerWinEvent, aBoolean);
+            },
+            GamesCollections.EVENT_PVE,
             1,
             false
     ) {

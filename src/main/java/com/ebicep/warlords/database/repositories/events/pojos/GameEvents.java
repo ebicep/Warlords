@@ -3,8 +3,14 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.TriFunction;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,7 +23,9 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 public enum GameEvents {
 
-    BOLTARO("Boltaro") {
+    BOLTARO("Boltaro",
+            DatabaseGamePvEEventBoltaro::new
+    ) {
         @Override
         public void setMenu(Menu menu) {
             menu.setItem(
@@ -33,6 +41,21 @@ public enum GameEvents {
                     (m, e) -> {}
             );
         }
+
+        @Override
+        public Long coinsPerKill() {
+            return 100L;
+        }
+
+        @Override
+        public Pair<Long, Integer> guildCoinsPerXSec() {
+            return new Pair<>(1L, 1); // 1 coin per second
+        }
+
+        @Override
+        public Pair<Long, Integer> expPerXSec() {
+            return new Pair<>(15L, 10); // 15 exp per 10 seconds
+        }
     },
 
     ;
@@ -40,9 +63,24 @@ public enum GameEvents {
     public static NPC npc;
 
     public final String name;
+    public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
 
-    GameEvents(String name) {
+    GameEvents(String name, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame) {
         this.name = name;
+        this.createDatabaseGame = createDatabaseGame;
+    }
+
+
+    public Long coinsPerKill() {
+        return 0L;
+    }
+
+    public Pair<Long, Integer> guildCoinsPerXSec() {
+        return null;
+    }
+
+    public Pair<Long, Integer> expPerXSec() {
+        return null;
     }
 
     public void createNPC() {
