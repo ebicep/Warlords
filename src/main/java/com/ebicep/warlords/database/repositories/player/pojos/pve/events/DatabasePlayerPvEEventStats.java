@@ -1,24 +1,21 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
-import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.game.GameMode;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficultyStats {
 
-    private Map<GameEvents, Map<Integer, DatabasePlayerPvEEventBoltaroDifficultyStats>> events = new LinkedHashMap<>() {{
-        put(GameEvents.BOLTARO, new LinkedHashMap<>() {{
-            put(Instant.now().getNano(), new DatabasePlayerPvEEventBoltaroDifficultyStats());
-        }});
-    }};
+    @Field("boltaro")
+    private Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> boltaroStats = new LinkedHashMap<>();
 
     @Override
     public void updateCustomStats(
@@ -31,13 +28,20 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     ) {
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        //TODO
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent != null) {
+            switch (currentGameEvent.getEvent()) {
+                case BOLTARO:
+                    boltaroStats.computeIfAbsent(currentGameEvent.getStartDate().getEpochSecond(), k -> new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                                .updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                    break;
+            }
+        }
     }
 
-//    public Map<Instant, DatabasePlayerEventBoltaroStats> getBoltaroStats() {
-//        return boltaroStats;
-//    }
-
+    public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getBoltaroStats() {
+        return boltaroStats;
+    }
 }
 
 /*
