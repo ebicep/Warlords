@@ -78,7 +78,7 @@ public class WaveDefenseStats {
         waveDefenseOption.getGame()
                 .warlordsPlayers()
                 .forEach(warlordsPlayer -> {
-                    if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() && waveDefenseOption.getDifficulty() != DifficultyIndex.ENDLESS) {
+                    if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
                         long coinsConverted = warlordsPlayer.getCurrency() / 100;
                         cachedBaseCoinSummary.put("Excess Insignia Converted",
                                 Math.min(coinsConverted, waveDefenseOption.getDifficulty().getMaxInsigniaConverted())
