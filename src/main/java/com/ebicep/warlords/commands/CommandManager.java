@@ -584,9 +584,18 @@ public class CommandManager {
 
     public static void requireGameConfig(ConditionContext<BukkitCommandIssuer> command, Game game) {
         if (command.hasConfig("gamemode")) {
-            GameMode gamemode = GameMode.valueOf(command.getConfigValue("gamemode", ""));
-            if (game.getGameMode() != gamemode) {
-                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + gamemode.name());
+            String configValue = command.getConfigValue("gamemode", "");
+            String[] gameModes = configValue.split("/");
+            boolean hasGameMode = false;
+            for (String gameMode : gameModes) {
+                GameMode gamemode = GameMode.valueOf(gameMode);
+                if (game.getGameMode() == gamemode) {
+                    hasGameMode = true;
+                    break;
+                }
+            }
+            if (!hasGameMode) {
+                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + configValue);
             }
         }
         if (command.hasConfig("withAddon")) {

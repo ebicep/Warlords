@@ -29,6 +29,7 @@ import net.citizensnpcs.api.trait.trait.Equipment;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -205,10 +206,12 @@ public enum GameEvents {
     public abstract void setMenu(Menu menu);
 
     public void openShopMenu(Player player) {
+        boolean currentEvent = true;
         DatabaseGameEvent gameEvent = DatabaseGameEvent.currentGameEvent;
         if (gameEvent == null || gameEvent.getEvent() != this) {
             DatabaseGameEvent previousEvent = DatabaseGameEvent.previousGameEvents.get(this);
             if (previousEvent != null) {
+                currentEvent = false;
                 gameEvent = previousEvent;
             } else {
                 player.sendMessage(ChatColor.RED + "There is no event shop for this event!");
@@ -216,6 +219,8 @@ public enum GameEvents {
             }
         }
         DatabaseGameEvent finalGameEvent = gameEvent;
+        boolean finalCurrentEvent = currentEvent;
+
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
@@ -274,8 +279,9 @@ public enum GameEvents {
                             pveStats.addCurrency(rewardCurrency, rewardAmount);
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
                             generalRewardsPurchased.merge(mapName, 1L, Long::sum);
-                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(1) + ChatColor.GREEN + " for " + currency.getCostColoredName(
+                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
                                     rewardPrice) + ChatColor.GREEN + "!");
+                            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2.5f);
                             openShopMenu(player);
                         }
                 );
@@ -286,6 +292,9 @@ public enum GameEvents {
                 }
             }
 
+            //TODO previous event shop
+            menu.setItem(3, 5, MENU_BACK, finalCurrentEvent ? (m, e) -> openMenu(player) : (m, e) -> openMenu(player));
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
     }

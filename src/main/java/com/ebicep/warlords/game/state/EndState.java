@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -79,7 +80,9 @@ public class EndState implements State, TimerDebugAble {
             return;
         }
         RecklessCharge.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
-        for (Option option : game.getOptions()) {
+
+        List<Option> options = game.getOptions();
+        for (Option option : options) {
             option.onGameEnding(game);
         }
 
@@ -110,7 +113,7 @@ public class EndState implements State, TimerDebugAble {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
             }
         } else {
-            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE) || options.stream().anyMatch(BoltaroBonanzaOption.class::isInstance)) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
@@ -206,7 +209,7 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && options.stream().noneMatch(BoltaroBonanzaOption.class::isInstance)) {
                 if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
                     PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
@@ -236,7 +239,7 @@ public class EndState implements State, TimerDebugAble {
             );
             sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
-            for (Option option : game.getOptions()) {
+            for (Option option : options) {
                 if (option instanceof WaveDefenseOption) {
                     WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                     showCoinSummary(waveDefenseOption, players);

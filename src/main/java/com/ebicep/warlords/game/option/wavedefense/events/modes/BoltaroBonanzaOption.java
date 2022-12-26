@@ -9,6 +9,8 @@ import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.events.boltarobonanza.EventBoltaroShadow;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
@@ -65,6 +67,13 @@ public class BoltaroBonanzaOption implements Option {
                 true,
                 ChatColor.WHITE + "Highest Split: " + ChatColor.GOLD + highestSplitValue.get()
         );
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            ((WarlordsPlayer) player).getAbilityTree().setMaxMasterUpgrades(6);
+        }
     }
 
     private void startSpawnTask(@Nonnull Game game, WaveDefenseOption option) {
