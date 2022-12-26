@@ -1,9 +1,13 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.TextOption;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -70,13 +74,19 @@ public class FieldEffect implements Option {
     public enum FieldEffects {
 
         WARRIORS_TRIUMPH("Warrior's Triumph",
-                "Ability durations are reduced by 30% on ability activation."
+                "Ability durations are reduced by 50% on ability activation for non-Warrior specializations. All strikes deal 100% more damage."
         ) {
             @Override
             public void onStart(Game game) {
                 game.registerEvents(new Listener() {
                     @EventHandler
                     public void onCooldown(WarlordsAddCooldownEvent event) {
+                        if (!(event.getPlayer() instanceof WarlordsPlayer)) {
+                            return;
+                        }
+                        if (Specializations.getClass(event.getPlayer().getSpecClass()) == Classes.WARRIOR) {
+                            return;
+                        }
                         AbstractCooldown<?> abstractCooldown = event.getAbstractCooldown();
                         if (abstractCooldown instanceof LinkedCooldown) {
                             if (abstractCooldown.getFrom().equals(event.getPlayer())) {
@@ -86,6 +96,21 @@ public class FieldEffect implements Option {
                         } else if (abstractCooldown instanceof RegularCooldown) {
                             RegularCooldown<?> regularCooldown = (RegularCooldown<?>) abstractCooldown;
                             regularCooldown.setTicksLeft((int) (regularCooldown.getTicksLeft() * 0.7));
+                        }
+                    }
+
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                            return;
+                        }
+                        if (Specializations.getClass(event.getAttacker().getSpecClass()) == Classes.WARRIOR) {
+                            return;
+                        }
+                        String ability = event.getAbility();
+                        if (ability.contains("Strike")) {
+                            event.setMin(event.getMin() * 2);
+                            event.setMax(event.getMax() * 2);
                         }
                     }
                 });
