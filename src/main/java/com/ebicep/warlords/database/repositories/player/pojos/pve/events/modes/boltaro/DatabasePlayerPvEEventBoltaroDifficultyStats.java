@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltaroDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltaroDatabaseStatInformation implements DatabasePlayer, EventMode {
 
     private DatabaseMagePvEEventBoltaro mage = new DatabaseMagePvEEventBoltaro();
     private DatabaseWarriorPvEEventBoltaro warrior = new DatabaseWarriorPvEEventBoltaro();
@@ -133,5 +134,15 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
             return null;
         }
         return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEEventBoltaroPlayerCountStats());
+    }
+
+    @Override
+    public long getEventPointsSpent() {
+        return eventPointsSpent;
+    }
+
+    @Override
+    public void addEventPointsSpent(long eventPointsSpent) {
+        this.eventPointsSpent += eventPointsSpent;
     }
 }

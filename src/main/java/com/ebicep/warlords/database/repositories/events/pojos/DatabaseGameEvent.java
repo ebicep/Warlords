@@ -10,11 +10,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.HashMap;
 
 @Document(collection = "Game_Events")
 public class DatabaseGameEvent {
 
     public static DatabaseGameEvent currentGameEvent = null;
+    public static HashMap<GameEvents, DatabaseGameEvent> previousGameEvents = new HashMap<>();
 
     public static void startGameEvent() {
         long start = System.nanoTime();
@@ -24,12 +26,18 @@ public class DatabaseGameEvent {
                 .syncLast(gameEvents -> {
                     Instant now = Instant.now();
                     for (DatabaseGameEvent gameEvent : gameEvents) {
-                        if (gameEvent.getStartDate().isBefore(now) && gameEvent.getEndDate().isAfter(now)) {
+                        if (gameEvent.getStartDate().isAfter(now)) {
+                            continue;
+                        }
+                        if (gameEvent.getEndDate().isBefore(now)) {
+                            previousGameEvents.put(gameEvent.getEvent(), gameEvent);
+                        } else if (gameEvent.getEndDate().isAfter(now)) {
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
                             currentGameEvent = gameEvent;
                             if (!gameEvent.getStarted()) {
+                                ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
                                 Currencies currency = gameEvent.getEvent().currency;
                                 for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
                                     Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
@@ -46,10 +54,13 @@ public class DatabaseGameEvent {
                             break;
                         }
                     }
-                    if (currentGameEvent == null && !gameEvents.isEmpty()) {
-                        DatabaseGameEvent gameEvent = gameEvents.get(gameEvents.size() - 1);
-                        currentGameEvent = gameEvent;
-                        gameEvent.start();
+                    if (currentGameEvent == null && !previousGameEvents.isEmpty()) {
+                        currentGameEvent = previousGameEvents
+                                .values()
+                                .stream()
+                                .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
+                                .get();
+                        currentGameEvent.start();
                     }
                 })
                 .execute();

@@ -6,6 +6,8 @@ import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -28,11 +30,18 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
+import java.util.function.Function;
+
 import static com.ebicep.warlords.menu.Menu.*;
 
 public enum GameEvents {
 
-    BOLTARO("Boltaro", Currencies.EVENT_POINTS_BOLTARO, DatabaseGamePvEEventBoltaro::new) {
+    BOLTARO("Boltaro",
+            Currencies.EVENT_POINTS_BOLTARO,
+            DatabasePlayerPvEEventStats::getBoltaroStats,
+            DatabaseGamePvEEventBoltaro::new
+    ) {
         @Override
         public void editNPC(NPC npc) {
             Equipment equipment = npc.getOrAddTrait(Equipment.class);
@@ -123,11 +132,18 @@ public enum GameEvents {
 
     public final String name;
     public final Currencies currency;
+    public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventModeFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
 
-    GameEvents(String name, Currencies currency, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame) {
+    GameEvents(
+            String name,
+            Currencies currency,
+            Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventModeFunction,
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame
+    ) {
         this.name = name;
         this.currency = currency;
+        this.eventModeFunction = eventModeFunction;
         this.createDatabaseGame = createDatabaseGame;
     }
 

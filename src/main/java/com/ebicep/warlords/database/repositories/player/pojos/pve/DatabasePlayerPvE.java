@@ -2,6 +2,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -13,6 +15,7 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -32,6 +35,7 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -283,25 +287,35 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
         this.currencies.put(currency, this.currencies.get(currency) + amount);
         CustomScoreboard.reloadPvEScoreboard(this);
-        /*
-        if (amount < 0) {
-//            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-//            if (currentGameEvent == null) {
-//                return;
-//            }
-            //TODO
-            for (GameEvents value : GameEvents.VALUES) {
-                if (value.currency == currency) {
-                    switch (value) {
-                        case BOLTARO:
-                            //eventStats.getBoltaroStats().
+
+        if (amount >= 0) {
+            return;
+        }
+        DatabaseGameEvent gameEvent = null;
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent != null && currentGameEvent.getEvent().currency == currency) {
+            gameEvent = currentGameEvent;
+        } else {
+            for (GameEvents events : GameEvents.VALUES) {
+                if (events.currency == currency) {
+                    if (DatabaseGameEvent.previousGameEvents.containsKey(events)) {
+                        gameEvent = DatabaseGameEvent.previousGameEvents.get(events);
                     }
                     break;
                 }
             }
         }
-
-         */
+        if (gameEvent == null) {
+            return;
+        }
+        Map<Long, ? extends EventMode> eventModeStats = gameEvent.getEvent().eventModeFunction.apply(eventStats);
+        long epochSecond = gameEvent.getStartDate().getEpochSecond();
+        EventMode eventMode = eventModeStats.get(epochSecond);
+        if (eventMode == null) {
+            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + gameEvent.getEvent().name + "(" + epochSecond + ")");
+            return;
+        }
+        eventMode.addEventPointsSpent(-amount);
     }
 
     public void addOneCurrency(Currencies currency) {
@@ -340,4 +354,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         return autoUpgradeProfiles;
     }
 
+    public DatabasePlayerPvEEventStats getEventStats() {
+        return eventStats;
+    }
 }
