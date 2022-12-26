@@ -44,7 +44,7 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public enum GameEvents {
 
-    BOLTARO("Boltaro",
+    BOLTARO("Fighter’s Glory",
             Currencies.EVENT_POINTS_BOLTARO,
             DatabasePlayerPvEEventStats::getBoltaroStats,
             DatabasePlayerPvEEventStats::getBoltaroEventStats,
@@ -103,11 +103,11 @@ public enum GameEvents {
         }
 
         private void openBoltaroModeMenu(Player player, boolean privateGame) {
-            Menu menu = new Menu("Boltaro Modes", 9 * 4);
+            Menu menu = new Menu("Fighter’s Glory Modes", 9 * 4);
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.IRON_FENCE)
-                            .name(ChatColor.GREEN + "Boltaro")
+                            .name(ChatColor.GREEN + "Boltaro’s Lair")
                             .get(),
                     (m, e) -> {
                     }
