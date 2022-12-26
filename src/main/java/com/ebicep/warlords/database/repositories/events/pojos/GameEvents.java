@@ -3,10 +3,12 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -29,8 +31,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -42,7 +47,18 @@ public enum GameEvents {
             Currencies.EVENT_POINTS_BOLTARO,
             DatabasePlayerPvEEventStats::getBoltaroStats,
             DatabasePlayerPvEEventStats::getBoltaroEventStats,
-            DatabaseGamePvEEventBoltaro::new
+            DatabasePlayerPvEEventStats::getBoltaroStats,
+            DatabaseGamePvEEventBoltaro::new,
+            new ArrayList<>() {{
+                add(new EventReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new EventReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new EventReward(100_000, Currencies.COIN, 5, 100_000));
+                add(new EventReward(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
+                add(new EventReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new EventReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
+                add(new EventReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new EventReward(1_000, Currencies.COIN, -1, 10_000));
+            }}
     ) {
         @Override
         public void editNPC(NPC npc) {
@@ -68,11 +84,6 @@ public enum GameEvents {
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), false)
             );
-        }
-
-        @Override
-        public void openShopMenu(Player player) {
-
         }
 
         @Override
@@ -135,21 +146,27 @@ public enum GameEvents {
     public final String name;
     public final Currencies currency;
     public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion;
-    public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventModeFunction;
+    public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
+    public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
+    public final List<EventReward> rewards;
 
     GameEvents(
             String name,
             Currencies currency,
             Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion,
-            Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventModeFunction,
-            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame
+            Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
+            Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
+            List<EventReward> rewards
     ) {
         this.name = name;
         this.currency = currency;
         this.updateStatsFuntion = updateStatsFuntion;
-        this.eventModeFunction = eventModeFunction;
+        this.eventsStatsFunction = eventsStatsFunction;
+        this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
+        this.rewards = rewards;
     }
 
 
@@ -176,9 +193,7 @@ public enum GameEvents {
                 new ItemBuilder(Material.ENDER_CHEST)
                         .name(ChatColor.GREEN + "Event Shop")
                         .get(),
-                (m, e) -> {
-
-                }
+                (m, e) -> openShopMenu(player)
         );
 
         //TODO previous event shop
@@ -189,7 +204,91 @@ public enum GameEvents {
 
     public abstract void setMenu(Menu menu);
 
-    public abstract void openShopMenu(Player player);
+    public void openShopMenu(Player player) {
+        DatabaseGameEvent gameEvent = DatabaseGameEvent.currentGameEvent;
+        if (gameEvent == null || gameEvent.getEvent() != this) {
+            DatabaseGameEvent previousEvent = DatabaseGameEvent.previousGameEvents.get(this);
+            if (previousEvent != null) {
+                gameEvent = previousEvent;
+            } else {
+                player.sendMessage(ChatColor.RED + "There is no event shop for this event!");
+                return;
+            }
+        }
+        DatabaseGameEvent finalGameEvent = gameEvent;
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
+            EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDate().getEpochSecond());
+            Map<String, Long> generalRewardsPurchased = generalEventFunction.apply(eventStats).getRewardsPurchased();
+
+            Menu menu = new Menu(name + " Shop", 9 * 6);
+
+            menu.setItem(4, 0,
+                    new ItemBuilder(Material.CHEST)
+                            .name(currency.getCostColoredName(pveStats.getCurrencyValue(currency)))
+                            .get(),
+                    (m, e) -> {
+
+                    }
+            );
+
+            int x = 1;
+            int y = 1;
+            for (EventReward reward : rewards) {
+                int rewardAmount = reward.getAmount();
+                Currencies rewardCurrency = reward.getCurrency();
+                int rewardPrice = reward.getPrice();
+                String mapName = rewardAmount + "_" + rewardCurrency.name();
+
+                String stock;
+                if (reward.getStock() == -1) {
+                    stock = "Unlimited";
+                } else if (eventMode == null) {
+                    stock = "" + reward.getStock();
+                } else {
+                    stock = "" + (reward.getStock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
+                }
+
+
+                menu.setItem(x, y,
+                        new ItemBuilder(rewardCurrency.item)
+                                .name(rewardCurrency.getCostColoredName(rewardAmount))
+                                .lore(
+                                        ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
+                                        ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
+                                )
+                                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                                .get(),
+                        (m, e) -> {
+                            if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {
+                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(rewardPrice) + ChatColor.RED + " to purchase this item!");
+                                return;
+                            }
+                            Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
+                            if (reward.getStock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.getStock()) {
+                                player.sendMessage(ChatColor.RED + "This item is out of stock!");
+                                return;
+                            }
+                            pveStats.subtractCurrency(currency, rewardPrice);
+                            pveStats.addCurrency(rewardCurrency, rewardAmount);
+                            rewardsPurchased.merge(mapName, 1L, Long::sum);
+                            generalRewardsPurchased.merge(mapName, 1L, Long::sum);
+                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(1) + ChatColor.GREEN + " for " + currency.getCostColoredName(
+                                    rewardPrice) + ChatColor.GREEN + "!");
+                            openShopMenu(player);
+                        }
+                );
+                x++;
+                if (x == 8) {
+                    x = 1;
+                    y++;
+                }
+            }
+
+            menu.openForPlayer(player);
+        });
+    }
 
     public Long coinsPerKill() {
         return 0L;
@@ -201,5 +300,36 @@ public enum GameEvents {
 
     public Pair<Long, Integer> expPerXSec() {
         return null;
+    }
+
+    static class EventReward {
+
+        private final int amount;
+        private final Currencies currency;
+        private final int stock;
+        private final int price;
+
+        EventReward(int amount, Currencies currency, int stock, int price) {
+            this.amount = amount;
+            this.currency = currency;
+            this.stock = stock;
+            this.price = price;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public Currencies getCurrency() {
+            return currency;
+        }
+
+        public int getStock() {
+            return stock;
+        }
+
+        public int getPrice() {
+            return price;
+        }
     }
 }

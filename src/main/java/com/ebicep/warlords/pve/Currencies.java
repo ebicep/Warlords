@@ -75,13 +75,18 @@ public enum Currencies {
             new ItemStack(Material.BOOKSHELF)
     ),
     EVENT_POINTS_BOLTARO(
-            "Event Points Boltaro",
+            "Boltaro Event Point",
             ChatColor.YELLOW,
             new ItemStack(Material.DOUBLE_PLANT)
     ),
-
+    TITLE_TOKEN_JUGGERNAUT(
+            "Juggernaut Title Token",
+            ChatColor.YELLOW,
+            new ItemStack(Material.SNOW_BALL)
+    ),
 
     ;
+
     public static final List<Currencies> STAR_PIECES = Arrays.asList(
             COMMON_STAR_PIECE,
             RARE_STAR_PIECE,

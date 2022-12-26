@@ -27,13 +27,15 @@ public class DatabasePlayerPvEEventBoltaroStats extends DatabasePlayerPvEEventBo
     ) {
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        getEventStats()
-                .computeIfAbsent(DatabaseGameEvent.currentGameEvent.getStartDate().getEpochSecond(), k -> new DatabasePlayerPvEEventBoltaroDifficultyStats())
-                .updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        getEvent(DatabaseGameEvent.currentGameEvent.getStartDate().getEpochSecond()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
     public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getEventStats() {
         return eventStats;
+    }
+
+    public DatabasePlayerPvEEventBoltaroDifficultyStats getEvent(long epochSecond) {
+        return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventBoltaroDifficultyStats());
     }
 
 }

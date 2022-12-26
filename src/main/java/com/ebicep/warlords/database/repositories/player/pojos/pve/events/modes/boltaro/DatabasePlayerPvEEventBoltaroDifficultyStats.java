@@ -33,7 +33,8 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
     }};
     @Field("event_points_spent")
     private long eventPointsSpent;
-    //TODO CURRENCY
+    @Field("rewards_purchased")
+    private Map<String, Long> rewardsPurchased = new LinkedHashMap<>();
 
     public DatabasePlayerPvEEventBoltaroDifficultyStats() {
     }
@@ -144,5 +145,10 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
     @Override
     public void addEventPointsSpent(long eventPointsSpent) {
         this.eventPointsSpent += eventPointsSpent;
+    }
+
+    @Override
+    public Map<String, Long> getRewardsPurchased() {
+        return rewardsPurchased;
     }
 }

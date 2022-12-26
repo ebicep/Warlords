@@ -308,14 +308,17 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         if (gameEvent == null) {
             return;
         }
-        Map<Long, ? extends EventMode> eventModeStats = gameEvent.getEvent().eventModeFunction.apply(eventStats);
+        GameEvents event = gameEvent.getEvent();
+        Map<Long, ? extends EventMode> eventsStats = event.eventsStatsFunction.apply(eventStats);
         long epochSecond = gameEvent.getStartDate().getEpochSecond();
-        EventMode eventMode = eventModeStats.get(epochSecond);
+        EventMode eventMode = eventsStats.get(epochSecond);
         if (eventMode == null) {
-            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + gameEvent.getEvent().name + "(" + epochSecond + ")");
+            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
             return;
         }
         eventMode.addEventPointsSpent(-amount);
+        EventMode generalEventMode = event.generalEventFunction.apply(eventStats);
+        generalEventMode.addEventPointsSpent(-amount);
     }
 
     public void addOneCurrency(Currencies currency) {
