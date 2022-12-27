@@ -82,9 +82,12 @@ public class WaveDefenseStats {
             DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
             if (currentGameEvent != null) {
                 GameEvents event = currentGameEvent.getEvent();
-                cachedBaseCoinSummary.put("Kills",
-                        event.coinsPerKill() * waveDefenseOption.getGame().warlordsPlayers().mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum()
-                );
+                Long coinsPerKill = event.coinsPerKill(waveDefenseOption);
+                if (coinsPerKill != null) {
+                    cachedBaseCoinSummary.put("Kills", coinsPerKill * waveDefenseOption.getGame()
+                                                                                       .warlordsPlayers()
+                                                                                       .mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum());
+                }
             }
         }
         waveDefenseOption.getGame()

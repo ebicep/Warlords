@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -242,6 +243,11 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onNewWave(WarlordsGameWaveClearEvent event) {
+                WarlordsGameWaveRespawnEvent respawnEvent = new WarlordsGameWaveRespawnEvent(game);
+                Bukkit.getPluginManager().callEvent(respawnEvent);
+                if (respawnEvent.isCancelled()) {
+                    return;
+                }
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
                     if (warlordsPlayer.isDead()) {
                         warlordsPlayer.respawn();

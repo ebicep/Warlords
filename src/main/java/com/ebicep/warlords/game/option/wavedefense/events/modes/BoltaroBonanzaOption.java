@@ -8,6 +8,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -40,7 +42,7 @@ public class BoltaroBonanzaOption implements Option {
                     int split = ((EventBoltaroShadow) mob).getSplit();
                     if (split > highestSplitValue.get()) {
                         if (eventPointsOption != null) {
-                            eventPointsOption.getPoints().replaceAll((uuid, integer) -> integer + 1000);
+                            eventPointsOption.addToAll(1000);
                         }
                         highestSplitValue.set(split);
                     }
@@ -60,7 +62,11 @@ public class BoltaroBonanzaOption implements Option {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            ((WarlordsPlayer) player).getAbilityTree().setMaxMasterUpgrades(6);
+            AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+            abilityTree.setMaxMasterUpgrades(6);
+            for (AbstractUpgradeBranch<?> upgradeBranch : abilityTree.getUpgradeBranches()) {
+                upgradeBranch.setMaxUpgrades(8);
+            }
         }
     }
 

@@ -160,7 +160,7 @@ public class ExperienceManager {
                             .findAny()
                             .ifPresent(recordTimeElapsedOption -> {
                                 int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
-                                Pair<Long, Integer> expPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().expPerXSec();
+                                Pair<Long, Integer> expPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().expPerXSec(waveDefenseOption);
                                 expGain.put("Seconds Survived", secondsElapsed / expPerXSec.getB() * expPerXSec.getA());
                             });
                     }

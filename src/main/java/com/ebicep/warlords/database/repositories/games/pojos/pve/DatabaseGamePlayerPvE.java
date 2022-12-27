@@ -68,7 +68,11 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
-        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, true).values().stream().mapToLong(aLong -> aLong).sum();
+        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, waveDefenseOption, true)
+                                                  .values()
+                                                  .stream()
+                                                  .mapToLong(aLong -> aLong)
+                                                  .sum();
         this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);

@@ -99,10 +99,10 @@ public class CurrencyOnEventOption implements Option, Listener {
         }
         int waveCleared = event.getWaveCleared();
         currencyPerXWaveClear
-                .values()
+                .keySet()
                 .stream()
                 .filter(integer -> waveCleared % integer == 0)
                 .max(Comparator.naturalOrder())
-                .ifPresent(amount -> event.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> warlordsPlayer.addCurrency(amount)));
+                .ifPresent(wave -> event.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> warlordsPlayer.addCurrency(currencyPerXWaveClear.get(wave))));
     }
 }

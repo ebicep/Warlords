@@ -74,7 +74,7 @@ public class FieldEffect implements Option {
     public enum FieldEffects {
 
         WARRIORS_TRIUMPH("Warrior's Triumph",
-                "Ability durations are reduced by 50% on ability activation for non-Warrior specializations. All strikes deal 100% more damage."
+                "Ability durations are reduced by 50% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage."
         ) {
             @Override
             public void onStart(Game game) {
@@ -108,7 +108,7 @@ public class FieldEffect implements Option {
                             return;
                         }
                         String ability = event.getAbility();
-                        if (ability.contains("Strike")) {
+                        if (ability.equals("Wounding Strike") || ability.equals("Crippling Strike")) {
                             event.setMin(event.getMin() * 2);
                             event.setMax(event.getMax() * 2);
                         }

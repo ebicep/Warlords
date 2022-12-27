@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.menu.Menu;
@@ -101,18 +102,45 @@ public enum GameEvents {
         }
 
         @Override
-        public Long coinsPerKill() {
-            return 100L;
+        public Long coinsPerKill(WaveDefenseOption waveDefenseOption) {
+            for (Option option : waveDefenseOption.getGame().getOptions()) {
+                if (option instanceof BoltarosLairOption) {
+                    return 0L;
+                } else if (option instanceof BoltaroBonanzaOption) {
+                    return 100L;
+                }
+            }
+            return 0L;
         }
 
         @Override
-        public Pair<Long, Integer> guildCoinsPerXSec() {
+        public Pair<Long, Integer> guildCoinsPerXSec(WaveDefenseOption waveDefenseOption) {
             return new Pair<>(1L, 1); // 1 coin per second
         }
 
         @Override
-        public Pair<Long, Integer> expPerXSec() {
+        public Pair<Long, Integer> expPerXSec(WaveDefenseOption waveDefenseOption) {
             return new Pair<>(15L, 10); // 15 exp per 10 seconds
+        }
+
+        @Override
+        public Long guildExpPerWave(WaveDefenseOption waveDefenseOption) {
+            for (Option option : waveDefenseOption.getGame().getOptions()) {
+                if (option instanceof BoltarosLairOption) {
+                    return 10L; // 10 exp per wave
+                }
+            }
+            return super.guildExpPerWave(waveDefenseOption);
+        }
+
+        @Override
+        public Pair<Long, Integer> guildExpPerXSec(WaveDefenseOption waveDefenseOption) {
+            for (Option option : waveDefenseOption.getGame().getOptions()) {
+                if (option instanceof BoltaroBonanzaOption) {
+                    return new Pair<>(4L, 10); // 4 exp per 10 seconds
+                }
+            }
+            return super.guildExpPerXSec(waveDefenseOption);
         }
 
         private void openBoltaroModeMenu(Player player, boolean privateGame) {
@@ -122,7 +150,7 @@ public enum GameEvents {
                     new ItemBuilder(Material.IRON_FENCE)
                             .name(ChatColor.GREEN + "Boltaro’s Lair")
                             .lore(
-                                    ChatColor.YELLOW + "Very cool mode",
+                                    ChatColor.YELLOW + "Do you have what it takes to be a fighter?",
                                     "",
                                     ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
                                     ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
@@ -333,15 +361,23 @@ public enum GameEvents {
         });
     }
 
-    public Long coinsPerKill() {
-        return 0L;
-    }
-
-    public Pair<Long, Integer> guildCoinsPerXSec() {
+    public Long coinsPerKill(WaveDefenseOption waveDefenseOption) {
         return null;
     }
 
-    public Pair<Long, Integer> expPerXSec() {
+    public Pair<Long, Integer> expPerXSec(WaveDefenseOption waveDefenseOption) {
+        return null;
+    }
+
+    public Pair<Long, Integer> guildExpPerXSec(WaveDefenseOption waveDefenseOption) {
+        return null;
+    }
+
+    public Pair<Long, Integer> guildCoinsPerXSec(WaveDefenseOption waveDefenseOption) {
+        return null;
+    }
+
+    public Long guildExpPerWave(WaveDefenseOption waveDefenseOption) {
         return null;
     }
 

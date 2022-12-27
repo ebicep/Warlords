@@ -4,16 +4,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformation implements DatabasePlayer {
 
     private DatabaseMagePvE mage = new DatabaseMagePvE();
     private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
@@ -33,7 +31,6 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEEventDatabaseStatInfor
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);

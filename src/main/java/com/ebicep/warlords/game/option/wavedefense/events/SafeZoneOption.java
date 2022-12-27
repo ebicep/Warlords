@@ -32,7 +32,7 @@ import java.util.HashMap;
 public class SafeZoneOption implements Option {
 
     private final Material safeMaterial = Material.BEDROCK;
-    private final int yLevel = 22;//0;
+    private final int yLevel = 21;//0;
     private final int safeDuration = 15;
     private final int maxEnterableTimes = 3;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();

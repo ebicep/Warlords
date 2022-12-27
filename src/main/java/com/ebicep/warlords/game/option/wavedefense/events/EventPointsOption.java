@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -85,7 +86,7 @@ public class EventPointsOption implements Option, Listener {
         if (onKill != 0) {
             PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
                                .matchingTeam(killer.getTeam())
-                               .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), onKill, Integer::sum));
+                               .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
         }
         if (!perMobKill.isEmpty()) {
             WarlordsNPC warlordsNPC = (WarlordsNPC) deadEntity;
@@ -93,9 +94,14 @@ public class EventPointsOption implements Option, Listener {
             if (mobPoint != null) {
                 PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
                                    .matchingTeam(killer.getTeam())
-                                   .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), mobPoint, Integer::sum));
+                                   .forEach(warlordsPlayer -> addTo(warlordsPlayer, mobPoint));
             }
         }
+    }
+
+    public void addTo(WarlordsPlayer warlordsPlayer, int amount) {
+        points.merge(warlordsPlayer.getUuid(), amount, Integer::sum);
+        warlordsPlayer.sendMessage(ChatColor.YELLOW + "+" + amount + " ✪ Points");
     }
 
     @EventHandler
@@ -126,12 +132,22 @@ public class EventPointsOption implements Option, Listener {
         }
         int waveCleared = event.getWaveCleared();
         perXWaveClear
-                .values()
+                .keySet()
                 .stream()
                 .filter(integer -> waveCleared % integer == 0)
                 .max(Comparator.naturalOrder())
-                .ifPresent(amount -> points.replaceAll((uuid, integer) -> integer + amount));
+                .ifPresent(wave -> addToAll(perXWaveClear.get(wave)));
 
+    }
+
+    public void addToAll(int points) {
+        this.points.replaceAll((uuid, integer) -> {
+            WarlordsEntity player = Warlords.getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(ChatColor.YELLOW + "+" + points + " ✪ Points");
+            }
+            return integer + points;
+        });
     }
 
     public ConcurrentHashMap<UUID, Integer> getPoints() {

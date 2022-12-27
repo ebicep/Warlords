@@ -132,8 +132,8 @@ public enum Currencies {
                         .orElse(null);
                 if (recordTimeElapsedOption != null) {
                     int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
-                    Pair<Long, Integer> expPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().guildCoinsPerXSec();
-                    guildCoinsEarned = secondsElapsed / expPerXSec.getB() * expPerXSec.getA();
+                    Pair<Long, Integer> coinsPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().guildCoinsPerXSec(waveDefenseOption);
+                    guildCoinsEarned = secondsElapsed / coinsPerXSec.getB() * coinsPerXSec.getA();
                 }
             }
         } else {
