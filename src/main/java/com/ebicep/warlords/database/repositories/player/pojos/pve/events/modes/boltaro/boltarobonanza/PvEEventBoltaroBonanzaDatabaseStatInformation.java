@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -6,28 +6,16 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePlayerPvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.PvEEventBoltaroDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBoltaroDatabaseStatInformation {
 
-    @Field("experience_pve")
-    protected long experiencePvE;
-    @Field("total_time_played")
-    protected long totalTimePlayed = 0;
-    @Field("mob_kills")
-    protected Map<String, Long> mobKills = new LinkedHashMap<>();
-    @Field("mob_assists")
-    protected Map<String, Long> mobAssists = new LinkedHashMap<>();
-    @Field("mob_deaths")
-    protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
-
-    @Field("event_points_cum")
-    private long eventPointsCumulative;
+    @Field("highest_split")
+    private int highestSplit;
 
     @Override
     public void updateCustomStats(
@@ -40,16 +28,17 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaroBonanza;
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventBoltaroBonanza databaseGamePvEEventBoltaroBonanza = (DatabaseGamePvEEventBoltaroBonanza) databaseGame;
         DatabaseGamePlayerPvEEventBoltaroBonanza databaseGamePlayerPvEEventBoltaroBonanza = (DatabaseGamePlayerPvEEventBoltaroBonanza) gamePlayer;
 
-        this.totalTimePlayed += (long) databaseGamePvEEventBoltaroBonanza.getTimeElapsed() * multiplier;
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
-
-        this.eventPointsCumulative += databaseGamePlayerPvEEventBoltaroBonanza.getPoints() * multiplier;
+        int split = databaseGamePvEEventBoltaroBonanza.getHighestSplit();
+        if (multiplier > 0) {
+            if (this.highestSplit < split) {
+                this.highestSplit = split;
+            }
+        }
     }
 
     public long getExperiencePvE() {
@@ -72,8 +61,7 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         return mobDeaths;
     }
 
-    public long getEventPointsCumulative() {
-        return eventPointsCumulative;
+    public int getHighestSplit() {
+        return highestSplit;
     }
-
 }

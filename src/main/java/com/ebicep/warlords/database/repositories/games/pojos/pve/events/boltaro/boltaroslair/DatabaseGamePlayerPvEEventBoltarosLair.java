@@ -1,16 +1,16 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-public class DatabaseGamePlayerPvEEventBoltaro extends DatabaseGamePlayerPvEEvent {
+public class DatabaseGamePlayerPvEEventBoltarosLair extends DatabaseGamePlayerPvEEvent {
 
-    public DatabaseGamePlayerPvEEventBoltaro() {
+    public DatabaseGamePlayerPvEEventBoltarosLair() {
     }
 
-    public DatabaseGamePlayerPvEEventBoltaro(
+    public DatabaseGamePlayerPvEEventBoltarosLair(
             WarlordsPlayer warlordsPlayer,
             WaveDefenseOption waveDefenseOption,
             EventPointsOption eventPointsOption

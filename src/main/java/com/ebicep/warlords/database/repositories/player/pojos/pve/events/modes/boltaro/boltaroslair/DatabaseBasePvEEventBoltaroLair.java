@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.GameMode;
 
-public class DatabaseBasePvEEventBoltaro extends PvEEventBoltaroDatabaseStatInformation {
+public class DatabaseBasePvEEventBoltaroLair extends PvEEventBoltaroLairDatabaseStatInformation {
 
     @Override
     public void updateCustomStats(

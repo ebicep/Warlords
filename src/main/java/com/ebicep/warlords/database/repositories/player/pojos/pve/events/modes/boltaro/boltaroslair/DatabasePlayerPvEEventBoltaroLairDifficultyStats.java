@@ -1,26 +1,37 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.classes.*;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBoltaroDatabaseStatInformation implements DatabasePlayer {
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-    private DatabaseMagePvEEventBoltaro mage = new DatabaseMagePvEEventBoltaro();
-    private DatabaseWarriorPvEEventBoltaro warrior = new DatabaseWarriorPvEEventBoltaro();
-    private DatabasePaladinPvEEventBoltaro paladin = new DatabasePaladinPvEEventBoltaro();
-    private DatabaseShamanPvEEventBoltaro shaman = new DatabaseShamanPvEEventBoltaro();
-    private DatabaseRoguePvEEventBoltaro rogue = new DatabaseRoguePvEEventBoltaro();
+public class DatabasePlayerPvEEventBoltaroLairDifficultyStats extends PvEEventBoltaroLairDatabaseStatInformation implements DatabasePlayer {
 
-    public DatabasePlayerPvEEventBoltaroPlayerCountStats() {
+    private DatabaseMagePvEEventBoltaroLair mage = new DatabaseMagePvEEventBoltaroLair();
+    private DatabaseWarriorPvEEventBoltaroLair warrior = new DatabaseWarriorPvEEventBoltaroLair();
+    private DatabasePaladinPvEEventBoltaroLair paladin = new DatabasePaladinPvEEventBoltaroLair();
+    private DatabaseShamanPvEEventBoltaroLair shaman = new DatabaseShamanPvEEventBoltaroLair();
+    private DatabaseRoguePvEEventBoltaroLair rogue = new DatabaseRoguePvEEventBoltaroLair();
+    @Field("player_count_stats")
+    private Map<Integer, DatabasePlayerPvEEventBoltaroLairPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
+        put(1, new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
+        put(2, new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
+        put(3, new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
+        put(4, new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
+    }};
+
+    public DatabasePlayerPvEEventBoltaroLairDifficultyStats() {
     }
 
     @Override
@@ -32,7 +43,6 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
@@ -44,10 +54,20 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+
+        //UPDATE PLAYER COUNT STATS
+        int playerCount = databaseGame.getBasePlayers().size();
+        DatabasePlayerPvEEventBoltaroLairPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
+        if (countStats != null) {
+            countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        } else {
+            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+        }
+
     }
 
     @Override
-    public DatabaseBasePvEEventBoltaro getSpec(Specializations specializations) {
+    public DatabaseBasePvEEventBoltaroLair getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -84,7 +104,7 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
     }
 
     @Override
-    public DatabaseBasePvEEventBoltaro getClass(Classes classes) {
+    public DatabaseBasePvEEventBoltaroLair getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -101,23 +121,15 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
     }
 
     @Override
-    public DatabaseBasePvEEventBoltaro[] getClasses() {
-        return new DatabaseBasePvEEventBoltaro[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBasePvEEventBoltaroLair[] getClasses() {
+        return new DatabaseBasePvEEventBoltaroLair[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    public void merge(DatabasePlayerPvEEventBoltaroPlayerCountStats other) {
-        super.merge(other);
-        mage.merge(other.mage);
-        warrior.merge(other.warrior);
-        paladin.merge(other.paladin);
-        shaman.merge(other.shaman);
-        rogue.merge(other.rogue);
-        for (Classes value : Classes.VALUES) {
-            this.getClass(value).merge(other.getClass(value));
+    public DatabasePlayerPvEEventBoltaroLairPlayerCountStats getPlayerCountStats(int playerCount) {
+        if (playerCount < 1) {
+            return null;
         }
-        for (Specializations value : Specializations.VALUES) {
-            this.getSpec(value).merge(other.getSpec(value));
-        }
+        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
     }
 
 }

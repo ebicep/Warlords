@@ -54,7 +54,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
     //EVENTS
-    @Field("event_stats")
+    @Field("event_statss")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
     /*
         event_stats
@@ -316,9 +316,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
             return;
         }
-        eventMode.addEventPointsSpent(-amount);
+        //event
+        this.eventStats.addEventPointsSpent(-amount);
+        //event mode
         EventMode generalEventMode = event.generalEventFunction.apply(eventStats);
         generalEventMode.addEventPointsSpent(-amount);
+        //event in event mode
+        eventMode.addEventPointsSpent(-amount);
     }
 
     public void addOneCurrency(Currencies currency) {

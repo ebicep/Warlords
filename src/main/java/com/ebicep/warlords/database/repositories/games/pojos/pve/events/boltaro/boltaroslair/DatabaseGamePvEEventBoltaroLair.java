@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair;
 
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -22,15 +22,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
+public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent {
 
-    @Field("highest_split")
-    private int highestSplit;
     @Field("total_mobs_killed")
     private int totalMobsKilled;
-    private List<DatabaseGamePlayerPvEEventBoltaro> players = new ArrayList<>();
+    private List<DatabaseGamePlayerPvEEventBoltarosLair> players = new ArrayList<>();
 
-    public DatabaseGamePvEEventBoltaro() {
+    public DatabaseGamePvEEventBoltaroLair() {
     }
 
     @Override
@@ -38,37 +36,39 @@ public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
         return GameEvents.BOLTARO;
     }
 
-    public DatabaseGamePvEEventBoltaro(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+    public DatabaseGamePvEEventBoltaroLair(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
-        AtomicReference<BoltaroBonanzaOption> boltaroBonanzaOption = new AtomicReference<>();
+        AtomicReference<BoltarosLairOption> boltarosLairOption = new AtomicReference<>();
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 waveDefenseOption.set((WaveDefenseOption) option);
             } else if (option instanceof EventPointsOption) {
                 eventPointsOption.set((EventPointsOption) option);
-            } else if (option instanceof BoltaroBonanzaOption) {
-                boltaroBonanzaOption.set((BoltaroBonanzaOption) option);
+            } else if (option instanceof BoltarosLairOption) {
+                boltarosLairOption.set((BoltarosLairOption) option);
             }
         }
-        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || boltaroBonanzaOption.get() == null) {
+        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || boltarosLairOption.get() == null) {
             throw new IllegalStateException("Missing option");
         }
         game.warlordsPlayers()
-            .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltaro(warlordsPlayer, waveDefenseOption.get(), eventPointsOption.get())));
-        this.highestSplit = boltaroBonanzaOption.get().getHighestSplitValue();
+            .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltarosLair(warlordsPlayer,
+                    waveDefenseOption.get(),
+                    eventPointsOption.get()
+            )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
     }
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.forEach(databaseGamePlayerPvEEventBoltaro -> {
+        players.forEach(databaseGamePlayerPvEEventBoltarosLair -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
-                    databaseGamePlayerPvEEventBoltaro,
+                    databaseGamePlayerPvEEventBoltarosLair,
                     multiplier
             );
-            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvEEventBoltaro.getName());
+            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvEEventBoltarosLair.getName());
         });
     }
 
@@ -97,8 +97,5 @@ public class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
         return null;
     }
 
-    public int getHighestSplit() {
-        return highestSplit;
-    }
 
 }

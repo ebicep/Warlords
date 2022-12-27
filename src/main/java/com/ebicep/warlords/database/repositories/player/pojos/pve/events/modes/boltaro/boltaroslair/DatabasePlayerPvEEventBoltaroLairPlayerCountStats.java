@@ -1,41 +1,26 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+public class DatabasePlayerPvEEventBoltaroLairPlayerCountStats extends PvEEventBoltaroLairDatabaseStatInformation implements DatabasePlayer {
 
-public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatInformation implements DatabasePlayer, EventMode {
+    private DatabaseMagePvEEventBoltaroLair mage = new DatabaseMagePvEEventBoltaroLair();
+    private DatabaseWarriorPvEEventBoltaroLair warrior = new DatabaseWarriorPvEEventBoltaroLair();
+    private DatabasePaladinPvEEventBoltaroLair paladin = new DatabasePaladinPvEEventBoltaroLair();
+    private DatabaseShamanPvEEventBoltaroLair shaman = new DatabaseShamanPvEEventBoltaroLair();
+    private DatabaseRoguePvEEventBoltaroLair rogue = new DatabaseRoguePvEEventBoltaroLair();
 
-    private DatabaseMagePvEEvent mage = new DatabaseMagePvEEvent();
-    private DatabaseWarriorPvEEvent warrior = new DatabaseWarriorPvEEvent();
-    private DatabasePaladinPvEEvent paladin = new DatabasePaladinPvEEvent();
-    private DatabaseShamanPvEEvent shaman = new DatabaseShamanPvEEvent();
-    private DatabaseRoguePvEEvent rogue = new DatabaseRoguePvEEvent();
-    @Field("player_count_stats")
-    private Map<Integer, DatabasePlayerPvEEventPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
-        put(1, new DatabasePlayerPvEEventPlayerCountStats());
-        put(2, new DatabasePlayerPvEEventPlayerCountStats());
-        put(3, new DatabasePlayerPvEEventPlayerCountStats());
-        put(4, new DatabasePlayerPvEEventPlayerCountStats());
-    }};
-    @Field("event_points_spent")
-    private long eventPointsSpent;
-    @Field("rewards_purchased")
-    private Map<String, Long> rewardsPurchased = new LinkedHashMap<>();
-
-    public DatabasePlayerPvEEventDifficultyStats() {
+    public DatabasePlayerPvEEventBoltaroLairPlayerCountStats() {
     }
 
     @Override
@@ -47,6 +32,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
@@ -58,20 +44,10 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-
-        //UPDATE PLAYER COUNT STATS
-        int playerCount = databaseGame.getBasePlayers().size();
-        DatabasePlayerPvEEventPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
-        if (countStats != null) {
-            countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        } else {
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
-        }
-
     }
 
     @Override
-    public DatabaseBasePvEEvent getSpec(Specializations specializations) {
+    public DatabaseBasePvEEventBoltaroLair getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -108,7 +84,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
     }
 
     @Override
-    public DatabaseBasePvEEvent getClass(Classes classes) {
+    public DatabaseBasePvEEventBoltaroLair getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -125,29 +101,23 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
     }
 
     @Override
-    public DatabaseBasePvEEvent[] getClasses() {
-        return new DatabaseBasePvEEvent[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBasePvEEventBoltaroLair[] getClasses() {
+        return new DatabaseBasePvEEventBoltaroLair[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    public DatabasePlayerPvEEventPlayerCountStats getPlayerCountStats(int playerCount) {
-        if (playerCount < 1) {
-            return null;
+    public void merge(DatabasePlayerPvEEventBoltaroLairPlayerCountStats other) {
+        super.merge(other);
+        mage.merge(other.mage);
+        warrior.merge(other.warrior);
+        paladin.merge(other.paladin);
+        shaman.merge(other.shaman);
+        rogue.merge(other.rogue);
+        for (Classes value : Classes.VALUES) {
+            this.getClass(value).merge(other.getClass(value));
         }
-        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEEventPlayerCountStats());
+        for (Specializations value : Specializations.VALUES) {
+            this.getSpec(value).merge(other.getSpec(value));
+        }
     }
 
-    @Override
-    public long getEventPointsSpent() {
-        return eventPointsSpent;
-    }
-
-    @Override
-    public void addEventPointsSpent(long eventPointsSpent) {
-        this.eventPointsSpent += eventPointsSpent;
-    }
-
-    @Override
-    public Map<String, Long> getRewardsPurchased() {
-        return rewardsPurchased;
-    }
 }

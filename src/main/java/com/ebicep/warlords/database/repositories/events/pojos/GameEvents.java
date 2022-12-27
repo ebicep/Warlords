@@ -6,7 +6,7 @@ import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
@@ -49,7 +49,7 @@ public enum GameEvents {
             DatabasePlayerPvEEventStats::getBoltaroStats,
             DatabasePlayerPvEEventStats::getBoltaroEventStats,
             DatabasePlayerPvEEventStats::getBoltaroStats,
-            DatabaseGamePvEEventBoltaro::new,
+            DatabaseGamePvEEventBoltaroBonanza::new,
             new ArrayList<>() {{
                 add(new EventReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
                 add(new EventReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
@@ -225,7 +225,6 @@ public enum GameEvents {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
             EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDate().getEpochSecond());
-            Map<String, Long> generalRewardsPurchased = generalEventFunction.apply(eventStats).getRewardsPurchased();
 
             Menu menu = new Menu(name + " Shop", 9 * 6);
 
@@ -277,12 +276,20 @@ public enum GameEvents {
                             }
                             pveStats.subtractCurrency(currency, rewardPrice);
                             pveStats.addCurrency(rewardCurrency, rewardAmount);
+
+                            //event
+                            eventStats.getRewardsPurchased().merge(mapName, 1L, Long::sum);
+                            //event mode
+                            generalEventFunction.apply(eventStats).getRewardsPurchased().merge(mapName, 1L, Long::sum);
+                            //event in event mode
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
-                            generalRewardsPurchased.merge(mapName, 1L, Long::sum);
+
                             player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
                                     rewardPrice) + ChatColor.GREEN + "!");
                             player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2.5f);
                             openShopMenu(player);
+
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
                 );
                 x++;
