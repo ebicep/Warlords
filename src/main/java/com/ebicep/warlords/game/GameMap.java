@@ -2699,7 +2699,7 @@ public enum GameMap {
             4,
             1, //TODO 2
             120 * SECOND,
-            "IllusionRiftEvent",
+            "IllusionRiftEvent1",
             1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
@@ -2924,7 +2924,7 @@ public enum GameMap {
             4,
             1, //TODO 2
             120 * SECOND,
-            "IllusionRiftEvent",
+            "IllusionRiftEvent2",
             1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {

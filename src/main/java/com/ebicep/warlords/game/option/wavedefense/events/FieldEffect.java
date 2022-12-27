@@ -104,13 +104,13 @@ public class FieldEffect implements Option {
                         if (!(event.getAttacker() instanceof WarlordsPlayer)) {
                             return;
                         }
-                        if (Specializations.getClass(event.getAttacker().getSpecClass()) == Classes.WARRIOR) {
+                        if (Specializations.getClass(event.getAttacker().getSpecClass()) != Classes.WARRIOR) {
                             return;
                         }
                         String ability = event.getAbility();
                         if (ability.equals("Wounding Strike") || ability.equals("Crippling Strike")) {
-                            event.setMin(event.getMin() * 2);
-                            event.setMax(event.getMax() * 2);
+                            event.setMin(event.getMin() * 3);
+                            event.setMax(event.getMax() * 3);
                         }
                     }
                 });
