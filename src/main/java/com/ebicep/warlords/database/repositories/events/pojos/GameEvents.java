@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
@@ -15,6 +16,9 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
@@ -49,7 +53,16 @@ public enum GameEvents {
             DatabasePlayerPvEEventStats::getBoltaroStats,
             DatabasePlayerPvEEventStats::getBoltaroEventStats,
             DatabasePlayerPvEEventStats::getBoltaroStats,
-            DatabaseGamePvEEventBoltaroBonanza::new,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                for (Option option : game.getOptions()) {
+                    if (option instanceof BoltarosLairOption) {
+                        return new DatabaseGamePvEEventBoltaroLair(game, warlordsGameTriggerWinEvent, aBoolean);
+                    } else if (option instanceof BoltaroBonanzaOption) {
+                        return new DatabaseGamePvEEventBoltaroBonanza(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
+                }
+                return null;
+            },
             new ArrayList<>() {{
                 add(new EventReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
                 add(new EventReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
@@ -108,8 +121,22 @@ public enum GameEvents {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.IRON_FENCE)
                             .name(ChatColor.GREEN + "Boltaro’s Lair")
+                            .lore(
+                                    ChatColor.YELLOW + "Very cool mode",
+                                    "",
+                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
+                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            )
                             .get(),
                     (m, e) -> {
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_1).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_1));
+                        }
                     }
             );
             menu.setItem(6, 1,
@@ -125,11 +152,11 @@ public enum GameEvents {
                     (m, e) -> {
                         if (privateGame) {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         } else {
-                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT));
+                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2));
                         }
                     }
             );

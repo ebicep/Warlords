@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class WinByAllDeathOption implements Option {
 
+    private EnumSet<Team> deadTeams = EnumSet.noneOf(Team.class);
+
     @Override
     public void start(Game game) {
         final EnumSet<Team> teams = TeamMarker.getTeams(game);
@@ -41,6 +43,7 @@ public class WinByAllDeathOption implements Option {
                                 return false;
                             }
                         }
+                        deadTeams.add(team);
                         return true;
                     });
                     if (teams.size() == 1) {
@@ -52,4 +55,7 @@ public class WinByAllDeathOption implements Option {
         });
     }
 
+    public EnumSet<Team> getDeadTeams() {
+        return deadTeams;
+    }
 }

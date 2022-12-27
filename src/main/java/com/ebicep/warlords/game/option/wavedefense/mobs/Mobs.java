@@ -3,6 +3,8 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 import com.ebicep.warlords.game.option.wavedefense.mobs.blaze.Blaze;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Void;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.*;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.game.option.wavedefense.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
@@ -26,70 +28,76 @@ import java.util.function.Function;
 
 public enum Mobs {
     // Base
-    BASIC_ZOMBIE(BasicZombie::new),
-    BASIC_BERSERK_ZOMBIE(BasicBerserkZombie::new),
-    BASIC_SKELETON(BasicSkeleton::new),
-    BASIC_PIG_ZOMBIE(BasicPigZombie::new),
-    BASIC_SLIME(BasicSlime::new),
-    SPIDER(Spider::new),
-    WOLF(Wolf::new),
+    BASIC_ZOMBIE(BasicZombie.class, BasicZombie::new),
+    BASIC_BERSERK_ZOMBIE(BasicBerserkZombie.class, BasicBerserkZombie::new),
+    BASIC_SKELETON(BasicSkeleton.class, BasicSkeleton::new),
+    BASIC_PIG_ZOMBIE(BasicPigZombie.class, BasicPigZombie::new),
+    BASIC_SLIME(BasicSlime.class, BasicSlime::new),
+    SPIDER(Spider.class, Spider::new),
+    WOLF(Wolf.class, Wolf::new),
 
     // Elite Tier 1 - Elite
-    ELITE_ZOMBIE(EliteZombie::new),
-    GHOST_ZOMBIE(GhostZombie::new),
-    SLIME_ZOMBIE(SlimeZombie::new),
-    ELITE_BERSERK_ZOMBIE(EliteBerserkZombie::new),
-    ELITE_SKELETON(EliteSkeleton::new),
-    ELITE_PIG_ZOMBIE(ElitePigZombie::new),
-    MAGMA_CUBE(MagmaCube::new),
-    IRON_GOLEM(IronGolem::new),
-    BLAZE(Blaze::new),
-    WITCH(Witch::new),
+    ELITE_ZOMBIE(EliteZombie.class, EliteZombie::new),
+    GHOST_ZOMBIE(GhostZombie.class, GhostZombie::new),
+    SLIME_ZOMBIE(SlimeZombie.class, SlimeZombie::new),
+    ELITE_BERSERK_ZOMBIE(EliteBerserkZombie.class, EliteBerserkZombie::new),
+    ELITE_SKELETON(EliteSkeleton.class, EliteSkeleton::new),
+    ELITE_PIG_ZOMBIE(ElitePigZombie.class, ElitePigZombie::new),
+    MAGMA_CUBE(MagmaCube.class, MagmaCube::new),
+    IRON_GOLEM(IronGolem.class, IronGolem::new),
+    BLAZE(Blaze.class, Blaze::new),
+    WITCH(Witch.class, Witch::new),
 
     // Elite Tier 2 - Envoy
-    ENVOY_ZOMBIE(EnvoyZombie::new),
-    ENVOY_SKELETON(EnvoySkeleton::new),
-    ENVOY_PIG_ZOMBIE(EnvoyPigZombie::new),
-    ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie::new),
+    ENVOY_ZOMBIE(EnvoyZombie.class, EnvoyZombie::new),
+    ENVOY_SKELETON(EnvoySkeleton.class, EnvoySkeleton::new),
+    ENVOY_PIG_ZOMBIE(EnvoyPigZombie.class, EnvoyPigZombie::new),
+    ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie.class, EnvoyBerserkZombie::new),
 
     // Elite Tier 3 - Void
-    VOID_ZOMBIE(VoidZombie::new),
-    VOID_SKELETON(VoidSkeleton::new),
-    VOID_PIG_ZOMBIE(VoidPigZombie::new),
-    VOID_SLIME(VoidSlime::new),
+    VOID_ZOMBIE(VoidZombie.class, VoidZombie::new),
+    VOID_SKELETON(VoidSkeleton.class, VoidSkeleton::new),
+    VOID_PIG_ZOMBIE(VoidPigZombie.class, VoidPigZombie::new),
+    VOID_SLIME(VoidSlime.class, VoidSlime::new),
 
     // Elite Tier 4 - Exiled
-    EXILED_ZOMBIE(ExiledZombie::new),
-    EXILED_SKELETON(ExiledSkeleton::new),
-    EXILED_VOID_LANCER(NetheriteZombie::new),
-    EXILED_ZOMBIE_RIFT(RiftZombie::new),
-    EXILED_ZOMBIE_LAVA(LavaZombie::new),
+    EXILED_ZOMBIE(ExiledZombie.class, ExiledZombie::new),
+    EXILED_SKELETON(ExiledSkeleton.class, ExiledSkeleton::new),
+    EXILED_VOID_LANCER(NetheriteZombie.class, NetheriteZombie::new),
+    EXILED_ZOMBIE_RIFT(RiftZombie.class, RiftZombie::new),
+    EXILED_ZOMBIE_LAVA(LavaZombie.class, LavaZombie::new),
 
     // Elite Tier 5 - Forgotten
-    FORGOTTEN_ZOMBIE(ForgottenZombie::new),
-    FORGOTTEN_LANCER(OvergrownZombie::new),
+    FORGOTTEN_ZOMBIE(ForgottenZombie.class, ForgottenZombie::new),
+    FORGOTTEN_LANCER(OvergrownZombie.class, OvergrownZombie::new),
 
     // Boss
-    BOLTARO(Boltaro::new),
-    GHOULCALLER(Ghoulcaller::new),
-    NARMER(Narmer::new),
-    MITHRA(Mithra::new),
-    ZENITH(Zenith::new),
-    ILLUMINA(Illumina::new),
-    CHESSKING(Chessking::new),
-    VOID(Void::new),
+    BOLTARO(Boltaro.class, Boltaro::new),
+    GHOULCALLER(Ghoulcaller.class, Ghoulcaller::new),
+    NARMER(Narmer.class, Narmer::new),
+    MITHRA(Mithra.class, Mithra::new),
+    ZENITH(Zenith.class, Zenith::new),
+    ILLUMINA(Illumina.class, Illumina::new),
+    CHESSKING(Chessking.class, Chessking::new),
+    VOID(Void.class, Void::new),
+
+    // Boss minions
+    BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),
+    BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new),
 
     // Raid Boss
-    PHYSIRA(Physira::new),
+    PHYSIRA(Physira.class, Physira::new),
 
     //EVENTS
-    EVENT_BOLTARO_BONANZA(EventBoltaro::new),
+    EVENT_BOLTARO_BONANZA(EventBoltaro.class, EventBoltaro::new),
 
     ;
 
+    public final Class<?> mobClass;
     public final Function<Location, AbstractMob<?>> createMob;
 
-    Mobs(Function<Location, AbstractMob<?>> createMob) {
+    Mobs(Class<?> mobClass, Function<Location, AbstractMob<?>> createMob) {
         this.createMob = createMob;
+        this.mobClass = mobClass;
     }
 }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -94,10 +95,22 @@ public class DatabaseGameEvent {
         getEvent().createNPC();
     }
 
+    @Id
+    protected String id;
     private GameEvents event;
     @Field("start_date")
     private Instant startDate;
     @Field("end_date")
     private Instant endDate;
-    private Boolean started = false;
+    private boolean started;
+
+    @Override
+    public String toString() {
+        return "DatabaseGameEvent{" +
+                "event=" + event +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", started=" + started +
+                '}';
+    }
 }

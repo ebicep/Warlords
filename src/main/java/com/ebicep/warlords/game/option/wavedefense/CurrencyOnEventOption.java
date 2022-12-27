@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -16,26 +17,42 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
     public static final int SCOREBOARD_PRIORITY = 15;
-    private static final int BASE_CURRENCY_ON_KILL = 100;
-    private int baseCurrencyToAdd;
+    private final HashMap<Integer, Integer> currencyPerXWaveClear = new HashMap<>() {{
+        put(5, 4000);
+        put(1, 1000);
+    }};
+    private int currencyOnKill = 100;
     private int startingCurrency = 0;
 
     public CurrencyOnEventOption() {
-        this(BASE_CURRENCY_ON_KILL);
     }
 
-    public CurrencyOnEventOption(int baseCurrencyToAdd) {
-        this.baseCurrencyToAdd = baseCurrencyToAdd;
+    public CurrencyOnEventOption onKill(int currencyOnKill) {
+        this.currencyOnKill = currencyOnKill;
+        return this;
     }
 
-    public CurrencyOnEventOption(int baseCurrencyToAdd, int startingCurrency) {
-        this.baseCurrencyToAdd = baseCurrencyToAdd;
+    public CurrencyOnEventOption startWith(int startingCurrency) {
         this.startingCurrency = startingCurrency;
+        return this;
+    }
+
+    public CurrencyOnEventOption onPerWaveClear(int wave, int currency) {
+        currencyPerXWaveClear.put(wave, currency);
+        return this;
+    }
+
+    public CurrencyOnEventOption setPerWaveClear(int wave, int currency) {
+        currencyPerXWaveClear.clear();
+        currencyPerXWaveClear.put(wave, currency);
+        return this;
     }
 
     @Override
@@ -53,19 +70,39 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (startingCurrency == 0) {
+            return;
+        }
         player.addCurrency(startingCurrency);
     }
 
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
+        if (currencyOnKill == 0) {
+            return;
+        }
         WarlordsEntity mob = event.getPlayer();
         for (WarlordsEntity player : PlayerFilter
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                player.addCurrency(baseCurrencyToAdd);
+                player.addCurrency(currencyOnKill);
             }
         }
+    }
+
+    @EventHandler
+    public void onWaveClear(WarlordsGameWaveClearEvent event) {
+        if (currencyPerXWaveClear.isEmpty()) {
+            return;
+        }
+        int waveCleared = event.getWaveCleared();
+        currencyPerXWaveClear
+                .values()
+                .stream()
+                .filter(integer -> waveCleared % integer == 0)
+                .max(Comparator.naturalOrder())
+                .ifPresent(amount -> event.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> warlordsPlayer.addCurrency(amount)));
     }
 }

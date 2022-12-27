@@ -356,10 +356,6 @@ public class WaveDefenseOption implements Option {
                     newWave();
 
                     if (waveCounter > 1) {
-                        getGame().forEachOnlineWarlordsPlayer(wp -> {
-                            int currency = waveCounter % 5 == 1 ? 4000 : 1000;
-                            wp.addCurrency(currency);
-                        });
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
 

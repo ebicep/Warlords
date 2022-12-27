@@ -36,6 +36,7 @@ public class SafeZoneOption implements Option {
     private final int safeDuration = 15;
     private final int maxEnterableTimes = 3;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
+
     public SafeZoneOption() {
 
     }
@@ -69,11 +70,19 @@ public class SafeZoneOption implements Option {
                             return;
                         }
                         if (timesEntered.getOrDefault(warlordsPlayer, 0) >= maxEnterableTimes) {
-                            warlordsPlayer.sendMessage(ChatColor.RED + "You have already received the safe zone effect the maximum amount of times!");
+                            ChatUtils.sendMessageToPlayer(warlordsPlayer,
+                                    ChatColor.RED + "You have already received the safe zone effect the maximum amount of times!",
+                                    ChatColor.GRAY,
+                                    true
+                            );
                             return;
                         }
                         if (winAfterTimeoutOption.getTimeRemaining() <= 60) {
-                            warlordsPlayer.sendMessage(ChatColor.RED + "You cannot receive safe zone effect if there is 60 seconds or less remaining!");
+                            ChatUtils.sendMessageToPlayer(warlordsPlayer,
+                                    ChatColor.RED + "You cannot receive safe zone effect if there is 60 seconds or less remaining!",
+                                    ChatColor.GRAY,
+                                    true
+                            );
                             return;
                         }
                         timesEntered.put(warlordsPlayer, timesEntered.getOrDefault(warlordsPlayer, 0) + 1);
@@ -166,22 +175,21 @@ public class SafeZoneOption implements Option {
     }
 
     public void sendEnterMessage(WarlordsPlayer warlordsPlayer) {
-        if (warlordsPlayer.getEntity() instanceof Player) {
-            ChatUtils.sendMessage(((Player) warlordsPlayer.getEntity()),
-                    true,
-                    ChatColor.GREEN + "You have entered the safe zone. " +
-                            ChatColor.RED + (maxEnterableTimes - timesEntered.getOrDefault(warlordsPlayer, 0)) + " entries left."
-            );
-        }
+        ChatUtils.sendMessageToPlayer(warlordsPlayer,
+                ChatColor.GREEN + "You have entered the safe zone. " +
+                        ChatColor.RED + (maxEnterableTimes - timesEntered.getOrDefault(warlordsPlayer, 0)) + " entries left.",
+                ChatColor.GRAY,
+                true
+        );
     }
 
     public void sendExitMessage(WarlordsPlayer warlordsPlayer) {
-        if (warlordsPlayer.getEntity() instanceof Player) {
-            ChatUtils.sendMessage(((Player) warlordsPlayer.getEntity()),
-                    true,
-                    ChatColor.RED + "You have exited the safe zone. Your safe effect has been removed."
-            );
-        }
+        ChatUtils.sendMessageToPlayer(warlordsPlayer,
+                ChatColor.RED + "You have exited the safe zone.\n" +
+                        ChatColor.RED + "Your safe effect has been removed.",
+                ChatColor.GRAY,
+                true
+        );
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -8,8 +9,10 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -20,17 +23,43 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class EventPointsOption implements Option {
+public class EventPointsOption implements Option, Listener {
 
-    private final HashMap<UUID, Integer> points = new HashMap<>();
-    private final List<Listener> listeners = new ArrayList<>();
+    private final ConcurrentHashMap<UUID, Integer> points = new ConcurrentHashMap<>();
+
+    private final HashMap<Integer, Integer> perXWaveClear = new HashMap<>();
+    private final HashMap<Class<?>, Integer> perMobKill = new HashMap<>();
+    private int onKill = 0;
+    private int reduceScoreOnAllDeath = 0; //percentage 30 = reduce 30%
+
+    public EventPointsOption() {
+    }
+
+    public EventPointsOption onKill(int pointsPerKill) {
+        onKill = pointsPerKill;
+        return this;
+    }
+
+    public EventPointsOption reduceScoreOnAllDeath(int percentage, Team team) {
+        reduceScoreOnAllDeath = percentage;
+        return this;
+    }
+
+    public EventPointsOption onPerWaveClear(int wave, int points) {
+        perXWaveClear.put(wave, points);
+        return this;
+    }
+
+    public EventPointsOption onPerMobKill(Mobs mob, int points) {
+        perMobKill.put(mob.mobClass, points);
+        return this;
+    }
 
     @Override
     public void register(@Nonnull Game game) {
-        for (Listener listener : listeners) {
-            game.registerEvents(listener);
-        }
+        game.registerEvents(this);
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(CurrencyOnEventOption.SCOREBOARD_PRIORITY + 1, "currency") {
             @Nonnull
@@ -43,49 +72,69 @@ public class EventPointsOption implements Option {
         });
     }
 
-    public EventPointsOption addPointsOnKill(int pointsPerKill) {
-        listeners.add(new Listener() {
+    @EventHandler
+    public void onKill(WarlordsDeathEvent event) {
+        WarlordsEntity deadEntity = event.getPlayer();
+        WarlordsEntity killer = event.getKiller();
+        if (!(killer instanceof WarlordsPlayer)) {
+            return;
+        }
+        if (!(deadEntity instanceof WarlordsNPC)) {
+            return;
+        }
+        if (onKill != 0) {
+            PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
+                               .matchingTeam(killer.getTeam())
+                               .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), onKill, Integer::sum));
+        }
+        if (!perMobKill.isEmpty()) {
+            WarlordsNPC warlordsNPC = (WarlordsNPC) deadEntity;
+            Integer mobPoint = perMobKill.get(warlordsNPC.getMob().getClass());
+            if (mobPoint != null) {
+                PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
+                                   .matchingTeam(killer.getTeam())
+                                   .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), mobPoint, Integer::sum));
+            }
+        }
+    }
 
-            @EventHandler
-            public void onKill(WarlordsDeathEvent event) {
-                WarlordsEntity killer = event.getKiller();
-                if (!(killer instanceof WarlordsPlayer)) {
-                    return;
-                }
+    @EventHandler
+    public void onDeath(WarlordsGameTriggerWinEvent event) {
+        if (reduceScoreOnAllDeath == 0) {
+            return;
+        }
+        Option cause = event.getCause();
+        if (cause instanceof WinByAllDeathOption) {
+            double reduceMultiplyBy = (100 - reduceScoreOnAllDeath) / 100.0;
+            EnumSet<Team> deadTeams = ((WinByAllDeathOption) cause).getDeadTeams();
+            for (Team deadTeam : deadTeams) {
                 PlayerFilterGeneric
-                        .playingGameWarlordsPlayers(killer.getGame())
-                        .matchingTeam(killer.getTeam())
-                        .forEach(warlordsPlayer -> points.merge(warlordsPlayer.getUuid(), pointsPerKill, Integer::sum));
+                        .playingGameWarlordsPlayers(event.getGame())
+                        .matchingTeam(deadTeam)
+                        .forEach(warlordsPlayer -> {
+                            int newScore = (int) (points.getOrDefault(warlordsPlayer.getUuid(), 0) * reduceMultiplyBy);
+                            points.put(warlordsPlayer.getUuid(), newScore);
+                        });
             }
-
-        });
-        return this;
+        }
     }
 
-    public EventPointsOption reduceScoreOnAllDeath(int percentage, Team team) {
-        double reduceMultiplyBy = (100 - percentage) / 100.0;
-        listeners.add(new Listener() {
+    @EventHandler
+    public void onWaveClear(WarlordsGameWaveClearEvent event) {
+        if (perXWaveClear.isEmpty()) {
+            return;
+        }
+        int waveCleared = event.getWaveCleared();
+        perXWaveClear
+                .values()
+                .stream()
+                .filter(integer -> waveCleared % integer == 0)
+                .max(Comparator.naturalOrder())
+                .ifPresent(amount -> points.replaceAll((uuid, integer) -> integer + amount));
 
-            @EventHandler
-            public void onDeath(WarlordsGameTriggerWinEvent event) {
-                Option cause = event.getCause();
-                if (cause instanceof WinByAllDeathOption) {
-                    boolean allDead = PlayerFilterGeneric
-                            .playingGameWarlordsPlayers(event.getGame())
-                            .matchingTeam(team)
-                            .stream()
-                            .allMatch(WarlordsEntity::isDead);
-                    if (allDead) {
-                        points.replaceAll((uuid, points) -> (int) (points * reduceMultiplyBy));
-                    }
-                }
-            }
-
-        });
-        return this;
     }
 
-    public HashMap<UUID, Integer> getPoints() {
+    public ConcurrentHashMap<UUID, Integer> getPoints() {
         return points;
     }
 

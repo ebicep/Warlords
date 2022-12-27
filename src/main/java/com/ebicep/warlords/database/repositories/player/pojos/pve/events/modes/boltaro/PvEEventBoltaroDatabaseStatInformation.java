@@ -3,8 +3,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePlayerPvEEventBoltaroBonanza;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -38,18 +38,18 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza;
-        assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaroBonanza;
+        assert databaseGame instanceof DatabaseGamePvEEvent;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
 
-        DatabaseGamePvEEventBoltaroBonanza databaseGamePvEEventBoltaroBonanza = (DatabaseGamePvEEventBoltaroBonanza) databaseGame;
-        DatabaseGamePlayerPvEEventBoltaroBonanza databaseGamePlayerPvEEventBoltaroBonanza = (DatabaseGamePlayerPvEEventBoltaroBonanza) gamePlayer;
+        DatabaseGamePvEEvent databaseGamePvEEvent = (DatabaseGamePvEEvent) databaseGame;
+        DatabaseGamePlayerPvEEvent gamePlayerPvEEvent = (DatabaseGamePlayerPvEEvent) gamePlayer;
 
-        this.totalTimePlayed += (long) databaseGamePvEEventBoltaroBonanza.getTimeElapsed() * multiplier;
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
-        databaseGamePlayerPvEEventBoltaroBonanza.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
+        this.totalTimePlayed += (long) databaseGamePvEEvent.getTimeElapsed() * multiplier;
+        gamePlayerPvEEvent.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
+        gamePlayerPvEEvent.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
+        gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
-        this.eventPointsCumulative += databaseGamePlayerPvEEventBoltaroBonanza.getPoints() * multiplier;
+        this.eventPointsCumulative += gamePlayerPvEEvent.getPoints() * multiplier;
     }
 
     public long getExperiencePvE() {

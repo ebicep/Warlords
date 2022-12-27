@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,6 +24,12 @@ public class ChatUtils {
             sendCenteredMessage(player, message);
         } else {
             player.sendMessage(message);
+        }
+    }
+
+    public static void sendMessageToPlayer(WarlordsPlayer player, String message, ChatColor borderColor, boolean centered) {
+        if (player.getEntity() instanceof Player) {
+            sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
         }
     }
 
