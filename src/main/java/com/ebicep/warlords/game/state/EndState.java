@@ -127,7 +127,12 @@ public class EndState implements State, TimerDebugAble {
         switch (game.getGameMode()) {
             case WAVE_DEFENSE:
             case EVENT_WAVE_DEFENSE:
-                showWaveDefenseStats(players);
+                for (Option option : options) {
+                    if (option instanceof WaveDefenseOption) {
+                        showWaveDefenseStats((WaveDefenseOption) option, players);
+                        break;
+                    }
+                }
             case INTERCEPTION:
             case SIMULATION_TRIAL:
             case TEAM_DEATHMATCH:
@@ -314,9 +319,15 @@ public class EndState implements State, TimerDebugAble {
         });
     }
 
-    private void showWaveDefenseStats(List<WarlordsPlayer> players) {
+    private void showWaveDefenseStats(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         StringBuilder hover = new StringBuilder();
+        hover.append(ChatColor.WHITE)
+             .append("Waves Cleared")
+             .append(ChatColor.GRAY)
+             .append(": ")
+             .append(ChatColor.GREEN)
+             .append(waveDefenseOption.getWavesCleared());
         game.getOptions()
             .stream()
             .filter(option -> option instanceof RecordTimeElapsedOption)
