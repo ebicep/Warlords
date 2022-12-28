@@ -2750,7 +2750,7 @@ public enum GameMap {
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "CREATIVE MESSAGE HERE"
+                    ChatColor.YELLOW + "Kill as many mobs as possible!"
             ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
