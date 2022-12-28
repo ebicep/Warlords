@@ -28,6 +28,8 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
 
     @Field("event_points_cum")
     private long eventPointsCumulative;
+    @Field("highest_event_points_game")
+    private long highestEventPointsGame;
 
     @Override
     public void updateCustomStats(
@@ -50,6 +52,9 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
         this.eventPointsCumulative += gamePlayerPvEEvent.getPoints() * multiplier;
+        if (multiplier > 0) {
+            this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayerPvEEvent.getPoints());
+        }
     }
 
     public long getExperiencePvE() {
@@ -76,4 +81,7 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         return eventPointsCumulative;
     }
 
+    public long getHighestEventPointsGame() {
+        return highestEventPointsGame;
+    }
 }

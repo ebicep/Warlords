@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.GameManager;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,10 +16,13 @@ public class OldTestCommand implements CommandExecutor {
         if (!player.isOp()) {
             return true;
         }
+//
+//        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
+//            System.out.println(game.getMap() + " - " + game.getGame());
+//        }
 
-        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
-            System.out.println(game.getMap() + " - " + game.getGame());
-        }
+        DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values().forEach(DatabaseManager::queueUpdatePlayerAsync);
+
 
 //        Quests quest = Quests.DAILY_300_KA;
 //        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()

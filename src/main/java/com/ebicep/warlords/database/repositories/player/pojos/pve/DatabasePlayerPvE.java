@@ -298,8 +298,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         } else {
             for (GameEvents events : GameEvents.VALUES) {
                 if (events.currency == currency) {
-                    if (DatabaseGameEvent.previousGameEvents.containsKey(events)) {
-                        gameEvent = DatabaseGameEvent.previousGameEvents.get(events);
+                    if (DatabaseGameEvent.PREVIOUS_GAME_EVENTS.containsKey(events)) {
+                        gameEvent = DatabaseGameEvent.PREVIOUS_GAME_EVENTS.get(events);
                     }
                     break;
                 }

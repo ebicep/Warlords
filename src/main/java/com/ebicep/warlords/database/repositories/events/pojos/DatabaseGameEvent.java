@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
@@ -11,13 +12,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Document(collection = "Game_Events")
 public class DatabaseGameEvent {
 
+    public static final HashMap<GameEvents, DatabaseGameEvent> PREVIOUS_GAME_EVENTS = new HashMap<>();
+    public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
     public static DatabaseGameEvent currentGameEvent = null;
-    public static HashMap<GameEvents, DatabaseGameEvent> previousGameEvents = new HashMap<>();
 
     public static void startGameEvent() {
         long start = System.nanoTime();
@@ -27,11 +31,12 @@ public class DatabaseGameEvent {
                 .syncLast(gameEvents -> {
                     Instant now = Instant.now();
                     for (DatabaseGameEvent gameEvent : gameEvents) {
+                        ALL_GAME_EVENT_TIMES.computeIfAbsent(gameEvent.getEvent(), k -> new ArrayList<>()).add(gameEvent.getStartDateSecond());
                         if (gameEvent.getStartDate().isAfter(now)) {
                             continue;
                         }
                         if (gameEvent.getEndDate().isBefore(now)) {
-                            previousGameEvents.put(gameEvent.getEvent(), gameEvent);
+                            PREVIOUS_GAME_EVENTS.put(gameEvent.getEvent(), gameEvent);
                         } else if (gameEvent.getEndDate().isAfter(now)) {
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
                             ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
@@ -55,24 +60,21 @@ public class DatabaseGameEvent {
                             break;
                         }
                     }
-                    if (currentGameEvent == null && !previousGameEvents.isEmpty()) {
-                        currentGameEvent = previousGameEvents
+                    if (currentGameEvent == null && !PREVIOUS_GAME_EVENTS.isEmpty()) {
+                        currentGameEvent = PREVIOUS_GAME_EVENTS
                                 .values()
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
                         currentGameEvent.start();
                     }
+                    EventsLeaderboardManager.create();
                 })
                 .execute();
     }
 
     public Instant getStartDate() {
         return startDate;
-    }
-
-    public long getStartDateSecond() {
-        return startDate.getEpochSecond();
     }
 
     public Instant getEndDate() {
@@ -107,6 +109,10 @@ public class DatabaseGameEvent {
     @Field("end_date")
     private Instant endDate;
     private boolean started;
+
+    public long getStartDateSecond() {
+        return startDate.getEpochSecond();
+    }
 
     @Override
     public String toString() {

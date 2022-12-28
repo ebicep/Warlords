@@ -60,6 +60,8 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getBoltaroEventStats() {
         return boltaroStats.getEventStats();
     }
+
+
 }
 
 /*

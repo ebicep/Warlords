@@ -220,7 +220,7 @@ public enum GameEvents {
         boolean currentEvent = true;
         DatabaseGameEvent gameEvent = DatabaseGameEvent.currentGameEvent;
         if (gameEvent == null || gameEvent.getEvent() != this) {
-            DatabaseGameEvent previousEvent = DatabaseGameEvent.previousGameEvents.get(this);
+            DatabaseGameEvent previousEvent = DatabaseGameEvent.PREVIOUS_GAME_EVENTS.get(this);
             if (previousEvent != null) {
                 currentEvent = false;
                 gameEvent = previousEvent;

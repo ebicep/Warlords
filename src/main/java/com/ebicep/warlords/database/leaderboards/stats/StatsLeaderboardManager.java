@@ -4,6 +4,8 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
+import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
@@ -26,10 +28,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -48,7 +47,7 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -149,6 +148,15 @@ public class StatsLeaderboardManager {
         }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
+        if (playersCollections == PlayersCollections.LIFETIME) {
+            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+            if (currentGameEvent == null) {
+                return;
+            }
+            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> {
+                eventLeaderboard.resetHolograms(null, "", currentGameEvent.getEvent().name);
+            });
+        }
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
@@ -197,6 +205,19 @@ public class StatsLeaderboardManager {
                                     .forEach(holograms -> holograms.get(page)
                                                                    .getVisibilitySettings()
                                                                    .setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        }
+
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent != null) {
+            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> eventLeaderboard
+                    .getSortedHolograms()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN)));
+            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> eventLeaderboard
+                    .getSortedHolograms()
+                    .get(0)
+                    .get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
@@ -321,9 +342,36 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
-                        hologram.getLines()
-                                .appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
-                                                                                                                                                                                                                                                                            .apply(databasePlayer));
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
+                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
+                                                                                    .apply(databasePlayer));
+                        break;
+                    }
+                }
+
+                hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+                hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+                playerHolograms.add(hologram);
+            }
+
+            for (EventLeaderboard eventLeaderboard : EventsLeaderboardManager.EVENT_LEADERBOARDS) {
+                if (eventLeaderboard.isHidden()) {
+                    continue;
+                }
+                Location location = eventLeaderboard.getLocation().clone().add(0, -3.5, 0);
+
+                Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+
+                List<DatabasePlayer> databasePlayers = eventLeaderboard.getSortedPlayers();
+                for (int i = 0; i < databasePlayers.size(); i++) {
+                    DatabasePlayer databasePlayer = databasePlayers.get(i);
+                    if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
+                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction()
+                                                                                    .apply(databasePlayer, eventLeaderboard.getEventTime()));
                         break;
                     }
                 }
