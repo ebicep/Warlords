@@ -74,7 +74,7 @@ public class FieldEffect implements Option {
     public enum FieldEffects {
 
         WARRIORS_TRIUMPH("Warrior's Triumph",
-                "Ability durations are reduced by 50% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage."
+                "Ability durations are reduced by 30% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage. The gravity is twice as intensive."
         ) {
             @Override
             public void onStart(Game game) {

@@ -1,14 +1,17 @@
 package com.ebicep.warlords.game.option.wavedefense.events.modes;
 
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 
@@ -21,6 +24,14 @@ public class BoltarosLairOption implements Option {
             @EventHandler
             public void onWaveRespawn(WarlordsGameWaveRespawnEvent event) {
                 event.setCancelled(true);
+            }
+
+            @EventHandler
+            public void onVelocity(WarlordsAddVelocityEvent event) {
+                if (event.getPlayer() instanceof WarlordsNPC) {
+                    Vector vector = event.getVector();
+                    vector.setY(vector.getY() * .75);
+                }
             }
 
         });

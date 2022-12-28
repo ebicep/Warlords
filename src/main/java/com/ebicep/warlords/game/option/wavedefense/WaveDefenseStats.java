@@ -1,8 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -15,36 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class WaveDefenseStats {
-    public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
-        put("Boltaro", 200L);
-        put("Ghoulcaller", 300L);
-        put("Narmer", 500L);
-        put("Physira", 400L);
-        put("Mithra", 400L);
-        put("Zenith", 1500L);
-    }};
-    public static final long[] COINS_PER_5_WAVES = new long[]{
-            50,
-            100,
-            150,
-            200,
-            300,
-            400,
-            500,
-            600,
-            700,
-            800,
-            900,
-            1000,
-            1100,
-            1200,
-            1300,
-            1400,
-            1500,
-            1600,
-            1700,
-            1800
-    };
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
     private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
     private boolean boostedGame = false;
@@ -56,20 +24,34 @@ public class WaveDefenseStats {
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
         LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
-        if (difficulty != DifficultyIndex.EVENT) {
-            cachedBaseCoinSummary.put("Waves Cleared", 0L);
-            cachedBaseCoinSummary.put("Bosses Killed", 0L);
 
+        CoinGainOption coinGainOption = waveDefenseOption
+                .getGame()
+                .getOptions()
+                .stream()
+                .filter(CoinGainOption.class::isInstance)
+                .map(CoinGainOption.class::cast)
+                .findAny()
+                .orElse(null);
+
+        if (coinGainOption == null) {
+            return;
+        }
+        if (coinGainOption.isPlayerCoinWavesClearedBonus()) {
+            cachedBaseCoinSummary.put("Waves Cleared", 0L);
             for (int i = 1; i <= waveDefenseOption.getWavesCleared(); i++) {
-                if ((i - 1) / 5 >= WaveDefenseStats.COINS_PER_5_WAVES.length) {
+                if ((i - 1) / 5 >= CoinGainOption.COINS_PER_5_WAVES.length) {
                     break;
                 }
                 cachedBaseCoinSummary.merge("Waves Cleared",
-                        (long) (WaveDefenseStats.COINS_PER_5_WAVES[(i - 1) / 5] * difficulty.getRewardsMultiplier()),
+                        (long) (CoinGainOption.COINS_PER_5_WAVES[(i - 1) / 5] * difficulty.getRewardsMultiplier()),
                         Long::sum
                 );
             }
-            for (Map.Entry<String, Long> stringLongEntry : WaveDefenseStats.BOSS_COIN_VALUES.entrySet()) {
+        }
+        if (coinGainOption.isPlayerCoinBossesKilledBonus()) {
+            cachedBaseCoinSummary.put("Bosses Killed", 0L);
+            for (Map.Entry<String, Long> stringLongEntry : CoinGainOption.BOSS_COIN_VALUES.entrySet()) {
                 if (bossesKilled.containsKey(stringLongEntry.getKey())) {
                     cachedBaseCoinSummary.merge("Bosses Killed",
                             (long) (bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * difficulty
@@ -78,30 +60,30 @@ public class WaveDefenseStats {
                     );
                 }
             }
-        } else {
-            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-            if (currentGameEvent != null) {
-                GameEvents event = currentGameEvent.getEvent();
-                Long coinsPerKill = event.coinsPerKill(waveDefenseOption);
-                if (coinsPerKill != null) {
-                    cachedBaseCoinSummary.put("Kills", coinsPerKill * waveDefenseOption.getGame()
-                                                                                       .warlordsPlayers()
-                                                                                       .mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum());
-                }
-            }
         }
-        waveDefenseOption.getGame()
-                         .warlordsPlayers()
-                         .forEach(warlordsPlayer -> {
-                             if (difficulty.getMaxInsigniaConverted() != 0 && waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() || difficulty == DifficultyIndex.ENDLESS) {
-                                 long coinsConverted = warlordsPlayer.getCurrency() / 100;
-                                 cachedBaseCoinSummary.put("Excess Insignia Converted",
-                                         Math.min(coinsConverted, difficulty.getMaxInsigniaConverted())
-                                 );
-                             }
-                             getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary);
-                         });
-
+        if (coinGainOption.getPlayerCoinPerKill() != 0) {
+            int totalKills = waveDefenseOption
+                    .getGame()
+                    .warlordsPlayers()
+                    .mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum();
+            cachedBaseCoinSummary.put("Kills", coinGainOption.getPlayerCoinPerKill() * totalKills);
+        }
+        long convertBonus = coinGainOption.getGuildCoinInsigniaConvertBonus();
+        if (convertBonus != 0) {
+            waveDefenseOption
+                    .getGame()
+                    .warlordsPlayers()
+                    .forEach(warlordsPlayer -> {
+                        if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() || difficulty == DifficultyIndex.ENDLESS) {
+                            long coinsConverted = warlordsPlayer.getCurrency() / 100;
+                            cachedBaseCoinSummary.put("Excess Insignia Converted", Math.min(coinsConverted, convertBonus));
+                        }
+                    });
+        }
+        waveDefenseOption
+                .getGame()
+                .warlordsPlayers()
+                .forEach(warlordsPlayer -> getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary));
     }
 
     public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {

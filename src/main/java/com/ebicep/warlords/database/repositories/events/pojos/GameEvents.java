@@ -17,14 +17,12 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -99,48 +97,6 @@ public enum GameEvents {
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), false)
             );
-        }
-
-        @Override
-        public Long coinsPerKill(WaveDefenseOption waveDefenseOption) {
-            for (Option option : waveDefenseOption.getGame().getOptions()) {
-                if (option instanceof BoltarosLairOption) {
-                    return 0L;
-                } else if (option instanceof BoltaroBonanzaOption) {
-                    return 100L;
-                }
-            }
-            return 0L;
-        }
-
-        @Override
-        public Pair<Long, Integer> guildCoinsPerXSec(WaveDefenseOption waveDefenseOption) {
-            return new Pair<>(1L, 1); // 1 coin per second
-        }
-
-        @Override
-        public Pair<Long, Integer> expPerXSec(WaveDefenseOption waveDefenseOption) {
-            return new Pair<>(15L, 10); // 15 exp per 10 seconds
-        }
-
-        @Override
-        public Long guildExpPerWave(WaveDefenseOption waveDefenseOption) {
-            for (Option option : waveDefenseOption.getGame().getOptions()) {
-                if (option instanceof BoltarosLairOption) {
-                    return 10L; // 10 exp per wave
-                }
-            }
-            return super.guildExpPerWave(waveDefenseOption);
-        }
-
-        @Override
-        public Pair<Long, Integer> guildExpPerXSec(WaveDefenseOption waveDefenseOption) {
-            for (Option option : waveDefenseOption.getGame().getOptions()) {
-                if (option instanceof BoltaroBonanzaOption) {
-                    return new Pair<>(4L, 10); // 4 exp per 10 seconds
-                }
-            }
-            return super.guildExpPerXSec(waveDefenseOption);
         }
 
         private void openBoltaroModeMenu(Player player, boolean privateGame) {
@@ -359,26 +315,6 @@ public enum GameEvents {
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
-    }
-
-    public Long coinsPerKill(WaveDefenseOption waveDefenseOption) {
-        return null;
-    }
-
-    public Pair<Long, Integer> expPerXSec(WaveDefenseOption waveDefenseOption) {
-        return null;
-    }
-
-    public Pair<Long, Integer> guildExpPerXSec(WaveDefenseOption waveDefenseOption) {
-        return null;
-    }
-
-    public Pair<Long, Integer> guildCoinsPerXSec(WaveDefenseOption waveDefenseOption) {
-        return null;
-    }
-
-    public Long guildExpPerWave(WaveDefenseOption waveDefenseOption) {
-        return null;
     }
 
     static class EventReward {

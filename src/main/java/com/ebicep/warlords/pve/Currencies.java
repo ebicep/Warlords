@@ -1,9 +1,9 @@
 package com.ebicep.warlords.pve;
 
-import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.wavedefense.CoinGainOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -119,9 +119,18 @@ public enum Currencies {
         }
 
         long guildCoinsEarned = 0;
-        if (waveDefenseOption.getDifficulty() == DifficultyIndex.EVENT) {
-            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-            if (currentGameEvent != null) {
+        CoinGainOption coinGainOption = waveDefenseOption
+                .getGame()
+                .getOptions()
+                .stream()
+                .filter(CoinGainOption.class::isInstance)
+                .map(CoinGainOption.class::cast)
+                .findAny()
+                .orElse(null);
+
+        if (coinGainOption != null) {
+            Pair<Long, Integer> guildCoinPerXSec = coinGainOption.getGuildCoinPerXSec();
+            if (guildCoinPerXSec != null) {
                 RecordTimeElapsedOption recordTimeElapsedOption = waveDefenseOption
                         .getGame()
                         .getOptions()
@@ -132,14 +141,15 @@ public enum Currencies {
                         .orElse(null);
                 if (recordTimeElapsedOption != null) {
                     int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
-                    Pair<Long, Integer> coinsPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().guildCoinsPerXSec(waveDefenseOption);
+                    Pair<Long, Integer> coinsPerXSec = coinGainOption.getGuildCoinPerXSec();
                     guildCoinsEarned = secondsElapsed / coinsPerXSec.getB() * coinsPerXSec.getA();
                 }
             }
-        } else {
-            AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
-            Bukkit.getPluginManager().callEvent(new WarlordsGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
-            guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+            if (coinGainOption.getGuildCoinInsigniaConvertBonus() != 0) {
+                AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
+                Bukkit.getPluginManager().callEvent(new WarlordsGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
+                guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+            }
         }
 
         Bukkit.getPluginManager().callEvent(new WarlordsCoinSummaryEvent(warlordsPlayer, coinSummary));

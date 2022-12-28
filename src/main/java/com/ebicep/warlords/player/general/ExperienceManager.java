@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
@@ -10,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -142,6 +142,13 @@ public class ExperienceManager {
 
         Game game = warlordsPlayer.getGame();
         if (GameMode.isWaveDefense(game.getGameMode())) {
+            ExperienceGainOption experienceGainOption = game
+                    .getOptions()
+                    .stream()
+                    .filter(ExperienceGainOption.class::isInstance)
+                    .map(ExperienceGainOption.class::cast)
+                    .findAny()
+                    .orElse(null);
             WaveDefenseOption waveDefenseOption = game
                     .getOptions()
                     .stream()
@@ -149,31 +156,31 @@ public class ExperienceManager {
                     .map(WaveDefenseOption.class::cast)
                     .findAny()
                     .orElse(null);
-            if (waveDefenseOption != null) {
+            if (waveDefenseOption != null && experienceGainOption != null) {
                 DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
-                if (difficulty == DifficultyIndex.EVENT) {
-                    if (DatabaseGameEvent.currentGameEvent != null) {
-                        game.getOptions()
-                            .stream()
-                            .filter(option -> option instanceof RecordTimeElapsedOption)
-                            .map(RecordTimeElapsedOption.class::cast)
-                            .findAny()
-                            .ifPresent(recordTimeElapsedOption -> {
-                                int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
-                                Pair<Long, Integer> expPerXSec = DatabaseGameEvent.currentGameEvent.getEvent().expPerXSec(waveDefenseOption);
-                                expGain.put("Seconds Survived", secondsElapsed / expPerXSec.getB() * expPerXSec.getA());
-                            });
-                    }
-                } else {
-                    int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), difficulty.getMaxWaves());
-                    expGain.put("Waves Cleared", (long) wavesCleared * difficulty.getWaveExperienceMultiplier());
-                    if (wavesCleared == 25) {
-                        if (difficulty == DifficultyIndex.NORMAL) {
-                            expGain.put("Wave 25 Clear Bonus", 1500L);
-                        } else if (difficulty == DifficultyIndex.HARD) {
-                            expGain.put("Wave 25 Clear Bonus", 3000L);
-                        }
-                    }
+                int maxWaves = difficulty.getMaxWaves();
+                int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
+                if (experienceGainOption.getPlayerExpPerWave() != 0) {
+                    expGain.put("Waves Cleared", (long) wavesCleared * experienceGainOption.getPlayerExpPerWave());
+                }
+                if (experienceGainOption.getPlayerExpMaxWaveClearBonus() != 0 && wavesCleared == maxWaves) {
+                    expGain.put("Wave " + maxWaves + " Clear Bonus",
+                            (long) (experienceGainOption.getPlayerExpMaxWaveClearBonus() * difficulty.getRewardsMultiplier())
+                    );
+                }
+                if (experienceGainOption.getPlayerExpPerXSec() != null) {
+                    game.getOptions()
+                        .stream()
+                        .filter(option -> option instanceof RecordTimeElapsedOption)
+                        .map(RecordTimeElapsedOption.class::cast)
+                        .findAny()
+                        .ifPresent(recordTimeElapsedOption -> {
+                            int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
+                            Pair<Long, Integer> expPerXSec = experienceGainOption.getPlayerExpPerXSec();
+                            expGain.put("Seconds Survived",
+                                    (long) (secondsElapsed / expPerXSec.getB() * expPerXSec.getA() * difficulty.getRewardsMultiplier())
+                            );
+                        });
                 }
             }
             Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));

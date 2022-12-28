@@ -2218,6 +2218,8 @@ public abstract class WarlordsEntity {
                     abstractCooldown.multiplyKB(v);
                 }
             }
+
+            Bukkit.getPluginManager().callEvent(new WarlordsAddVelocityEvent(this, v));
             this.entity.setVelocity(v);
         }
     }

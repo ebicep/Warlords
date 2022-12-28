@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.game.option.wavedefense.CoinGainOption;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
@@ -1289,6 +1290,15 @@ public enum GameMap {
                     ),
                     DifficultyIndex.HARD
             ));
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(2000)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerWave(96)
+                    .playerExpMaxWaveClearBonus(1500)
+                    .guildExpPerWave(8)
+                    .guildExpMaxWaveClearBonus(500)
+            );
 
             return options;
         }
@@ -1460,6 +1470,15 @@ public enum GameMap {
                     ),
                     DifficultyIndex.NORMAL
             ));
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(1000)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerWave(48)
+                    .playerExpMaxWaveClearBonus(1500)
+                    .guildExpPerWave(4)
+                    .guildExpMaxWaveClearBonus(200)
+            );
 
             return options;
         }
@@ -1617,6 +1636,13 @@ public enum GameMap {
                     ),
                     DifficultyIndex.EASY
             ));
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(750)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerWave(24)
+                    .guildExpPerWave(2)
+            );
 
             return options;
         }
@@ -2569,6 +2595,13 @@ public enum GameMap {
 
                     DifficultyIndex.ENDLESS
             ));
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(1500)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerWave(80)
+                    .guildExpPerWave(5)
+            );
 
             return options;
         }
@@ -2697,7 +2730,7 @@ public enum GameMap {
     ILLUSION_RIFT_EVENT_1(
             "Illusion Rift Event",
             4,
-            1, //TODO 2
+            1,
             120 * SECOND,
             "IllusionRiftEvent1",
             1,
@@ -2749,7 +2782,7 @@ public enum GameMap {
                     .setPerWaveClear(1, 10000)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(8, 10 * SECOND, null)
+                    .add(1, new SimpleWave(8, 5 * SECOND, null)
                             .add(0.6, Mobs.BASIC_ZOMBIE)
                             .add(0.3, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.1, Mobs.BASIC_BERSERK_ZOMBIE)
@@ -2914,6 +2947,14 @@ public enum GameMap {
             );
             options.add(new BoltarosLairOption());
             options.add(new FieldEffect(options));
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerWave(80)
+                    .guildExpPerWave(10)
+            );
 
             return options;
         }
@@ -2922,7 +2963,7 @@ public enum GameMap {
     ILLUSION_RIFT_EVENT_2(
             "Illusion Rift Event",
             4,
-            1, //TODO 2
+            1,
             120 * SECOND,
             "IllusionRiftEvent2",
             1,
@@ -2973,7 +3014,7 @@ public enum GameMap {
                     .onKill(10000)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(1, 10 * SECOND, ChatColor.GREEN + "Event")
+                    .add(1, new SimpleWave(1, 5 * SECOND, ChatColor.GREEN + "Event")
                             .add(Mobs.EVENT_BOLTARO_BONANZA)
                     ),
                     DifficultyIndex.EVENT,
@@ -2987,7 +3028,16 @@ public enum GameMap {
             );
             options.add(new BoltaroBonanzaOption());
             options.add(new FieldEffect(options));
-
+            options.add(new CoinGainOption()
+                    .noPlayerCoinWavesClearedBonus()
+                    .playerCoinPerKill(100)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(4, 10)
+            );
             return options;
         }
 

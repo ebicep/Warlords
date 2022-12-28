@@ -1,12 +1,14 @@
 package com.ebicep.warlords.game.option.wavedefense.events.modes;
 
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -15,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,12 +45,21 @@ public class BoltaroBonanzaOption implements Option {
                     int split = ((EventBoltaroShadow) mob).getSplit();
                     if (split > highestSplitValue.get()) {
                         if (eventPointsOption != null) {
-                            eventPointsOption.addToAll(1000);
+                            eventPointsOption.addToAll(500);
                         }
                         highestSplitValue.set(split);
                     }
                 }
             }
+
+            @EventHandler
+            public void onVelocity(WarlordsAddVelocityEvent event) {
+                if (event.getPlayer() instanceof WarlordsNPC) {
+                    Vector vector = event.getVector();
+                    vector.setY(vector.getY() * .75);
+                }
+            }
+
         });
     }
 

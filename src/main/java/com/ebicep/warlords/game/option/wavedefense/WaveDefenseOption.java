@@ -173,7 +173,7 @@ public class WaveDefenseOption implements Option {
                             we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
                         }
 
-                        if (WaveDefenseStats.BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
+                        if (CoinGainOption.BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
                             waveDefenseStats.getBossesKilled().merge(mobToRemove.getName(), 1L, Long::sum);
                         }
                     }
