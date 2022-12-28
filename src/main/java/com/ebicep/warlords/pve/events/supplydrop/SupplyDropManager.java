@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -191,6 +192,15 @@ public class SupplyDropManager {
                             rewardsGained++;
                             cooldown = instant ? 3 : 13;
                             sendSupplyDropMessage(uuid, reward.getDropMessage());
+                            if (reward.rarity == WeaponsPvE.EPIC) {
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    sendSupplyDropMessage(onlinePlayer.getUniqueId(),
+                                            ChatColor.AQUA + player.getName() +
+                                                    ChatColor.GRAY + " got lucky and received " + reward.getChatColor() + reward.name +
+                                                    ChatColor.GRAY + " from the supply drop!"
+                                    );
+                                }
+                            }
                             databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
                             reward.giveReward.accept(databasePlayerPvE);
                             if (rewardsGained == amount) {
