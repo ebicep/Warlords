@@ -2733,7 +2733,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent1",
-            1,
+            5,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -2944,6 +2944,7 @@ public enum GameMap {
                     .onPerMobKill(Mobs.BOLTARO, 100)
                     .onPerMobKill(Mobs.BOLTARO_SHADOW, 100)
                     .onPerMobKill(Mobs.BOLTARO_EXLIED, 10)
+                    .cap(50_000)
             );
             options.add(new BoltarosLairOption());
             options.add(new FieldEffect(options));
@@ -2966,7 +2967,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent2",
-            1,
+            5,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3016,6 +3017,8 @@ public enum GameMap {
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, ChatColor.GREEN + "Event")
                             .add(Mobs.EVENT_BOLTARO_BONANZA)
+                    )
+                    .add(2, new SimpleWave(0, 5 * SECOND, null)
                     ),
                     DifficultyIndex.EVENT,
                     (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza")
@@ -3023,14 +3026,15 @@ public enum GameMap {
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
-                    .onKill(100)
+                    .onKill(30)
                     .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .cap(15_000)
             );
             options.add(new BoltaroBonanzaOption());
             options.add(new FieldEffect(options));
             options.add(new CoinGainOption()
                     .noPlayerCoinWavesClearedBonus()
-                    .playerCoinPerKill(100)
+                    .playerCoinPerKill(20)
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
             );

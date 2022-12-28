@@ -153,9 +153,7 @@ public class StatsLeaderboardManager {
             if (currentGameEvent == null) {
                 return;
             }
-            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> {
-                eventLeaderboard.resetHolograms(null, "", currentGameEvent.getEvent().name);
-            });
+            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         }
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
@@ -209,15 +207,19 @@ public class StatsLeaderboardManager {
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
-            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> eventLeaderboard
-                    .getSortedHolograms()
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN)));
-            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach(eventLeaderboard -> eventLeaderboard
-                    .getSortedHolograms()
-                    .get(0)
-                    .get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+            EventsLeaderboardManager.EVENT_LEADERBOARDS
+                    .keySet()
+                    .forEach(eventLeaderboard -> eventLeaderboard
+                            .getSortedHolograms()
+                            .stream()
+                            .flatMap(Collection::stream)
+                            .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN)));
+            EventsLeaderboardManager.EVENT_LEADERBOARDS
+                    .keySet()
+                    .forEach(eventLeaderboard -> eventLeaderboard
+                            .getSortedHolograms()
+                            .get(0)
+                            .get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
@@ -356,7 +358,7 @@ public class StatsLeaderboardManager {
                 playerHolograms.add(hologram);
             }
 
-            for (EventLeaderboard eventLeaderboard : EventsLeaderboardManager.EVENT_LEADERBOARDS) {
+            for (EventLeaderboard eventLeaderboard : EventsLeaderboardManager.EVENT_LEADERBOARDS.keySet()) {
                 if (eventLeaderboard.isHidden()) {
                     continue;
                 }

@@ -16,10 +16,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class WeaponSkillBoostMenu {
 
@@ -77,6 +74,14 @@ public class WeaponSkillBoostMenu {
                         confirmLore.add(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name);
                         if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
                             confirmLore.addAll(costLore);
+                        }
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost.entrySet()) {
+                            Currencies currency = currenciesLongEntry.getKey();
+                            long value = currenciesLongEntry.getValue();
+                            if (databasePlayer.getPveStats().getCurrencyValue(currency) < value) {
+                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) + ChatColor.RED + " to unlock this skill boost.");
+                                return;
+                            }
                         }
                         Menu.openConfirmationMenu(
                                 player,

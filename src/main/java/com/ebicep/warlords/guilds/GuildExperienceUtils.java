@@ -55,10 +55,6 @@ public class GuildExperienceUtils {
             return expSummary;
         }
 
-        if (waveDefenseOption.getWavesCleared() == 0) {
-            return expSummary;
-        }
-
         ExperienceGainOption experienceGainOption = warlordsPlayer
                 .getGame()
                 .getOptions()

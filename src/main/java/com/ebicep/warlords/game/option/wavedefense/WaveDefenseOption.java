@@ -60,6 +60,7 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -71,14 +72,13 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
     SimpleScoreboardHandler scoreboard;
-    private final Set<AbstractMob<?>> mobs = new HashSet<>();
+    private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
     private final int maxWave;
     private final WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
-    private final HashMap<AbstractMob<?>, Integer> mobSpawnTimes = new HashMap<>();
     private int waveCounter = 0;
     private int spawnCount = 0;
     private Wave currentWave;
@@ -128,14 +128,14 @@ public class WaveDefenseOption implements Option {
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (mobs.contains(mob)) {
+                        if (mobs.containsKey(mob)) {
                             mob.onAttack(attacker, receiver, event);
                         }
                     }
 
                     if (receiver instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
-                        if (mobs.contains(mob)) {
+                        if (mobs.containsKey(mob)) {
                             mob.onDamageTaken(receiver, attacker, event);
                         }
                     }
@@ -157,16 +157,16 @@ public class WaveDefenseOption implements Option {
 
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
-                    if (mobs.contains(mobToRemove)) {
-                        mobs.remove(mobToRemove);
-                        mobSpawnTimes.remove(mobToRemove);
+                    if (mobs.containsKey(mobToRemove)) {
+                        mobToRemove.getLivingEntity().remove(); // idk if this is needed
                         new GameRunnable(game) {
                             @Override
                             public void run() {
                                 mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
+                                mobs.remove(mobToRemove);
                                 game.removePlayer(we.getUuid());
                             }
-                        }.runTask();
+                        }.run();
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
@@ -178,7 +178,7 @@ public class WaveDefenseOption implements Option {
                         }
                     }
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
-                    if (mobs.contains(((WarlordsNPC) killer).getMob())) {
+                    if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
                         we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
                     }
                 }
@@ -204,7 +204,7 @@ public class WaveDefenseOption implements Option {
                     return;
                 }
                 EntityLiving entityLiving = (EntityLiving) entity;
-                if (mobs.stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
                     return;
                 }
                 if (entityLiving instanceof EntityInsentient) {
@@ -387,16 +387,16 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
-                for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
-                    mob.whileAlive(mobSpawnTimes.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
+                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
+                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
                 }
 
                 //check every 10 seconds for mobs in void
                 if (ticksElapsed.get() % 200 == 0) {
                     for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
                         Location location = marker.getLocation();
-                        for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
-                            if (mob.getWarlordsNPC().getLocation().getY() < -100) {
+                        for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
+                            if (mob.getWarlordsNPC().getLocation().getY() < -50) {
                                 mob.getWarlordsNPC().teleport(location);
                             }
                         }
@@ -617,8 +617,7 @@ public class WaveDefenseOption implements Option {
 
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
-                mobSpawnTimes.put(abstractMob, ticksElapsed.get());
-                mobs.add(abstractMob);
+                mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return warlordsNPC;
@@ -657,13 +656,12 @@ public class WaveDefenseOption implements Option {
     public void spawnNewMob(AbstractMob<?> abstractMob) {
         abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
-        mobSpawnTimes.put(abstractMob, ticksElapsed.get());
-        mobs.add(abstractMob);
+        mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
     }
 
     public Set<AbstractMob<?>> getMobs() {
-        return mobs;
+        return mobs.keySet();
     }
 
     public int getWaveCounter() {

@@ -34,6 +34,7 @@ public class EventPointsOption implements Option, Listener {
     private final HashMap<Class<?>, Integer> perMobKill = new HashMap<>();
     private int onKill = 0;
     private int reduceScoreOnAllDeath = 0; //percentage 30 = reduce 30%
+    private int cap;
 
     public EventPointsOption() {
     }
@@ -55,6 +56,11 @@ public class EventPointsOption implements Option, Listener {
 
     public EventPointsOption onPerMobKill(Mobs mob, int points) {
         perMobKill.put(mob.mobClass, points);
+        return this;
+    }
+
+    public EventPointsOption cap(int cap) {
+        this.cap = cap;
         return this;
     }
 
@@ -154,4 +160,7 @@ public class EventPointsOption implements Option, Listener {
         return points;
     }
 
+    public int getCap() {
+        return cap;
+    }
 }

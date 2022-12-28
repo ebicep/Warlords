@@ -1,16 +1,11 @@
 package com.ebicep.warlords.database.leaderboards.guilds;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
-import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.util.java.NumberFormat;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -71,30 +66,31 @@ public class GuildLeaderboardManager {
     }
 
     public static void resetEventBoards() {
-        EVENT_LEADERBOARDS.forEach(Hologram::delete);
-        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        if (currentGameEvent == null) {
-            return;
-        }
-        GameEvents event = currentGameEvent.getEvent();
-        long startDateSecond = currentGameEvent.getStartDateSecond();
-
-        ArrayList<Guild> sortedGuilds = new ArrayList<>(GuildManager.GUILDS);
-        sortedGuilds.sort((o1, o2) -> o2.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)
-                                        .compareTo(o1.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)));
-
-        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(EVENT_LEADERBOARD_LOCATION);
-        HologramLines hologramLines = hologram.getLines();
-        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Guild Event Points");
-        hologramLines.appendText(ChatColor.GRAY + event.name);
-        for (int i = 0, sortedGuildsSize = sortedGuilds.size(); i < sortedGuildsSize; i++) {
-            Guild guild = sortedGuilds.get(i);
-            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
-                    ChatColor.AQUA + guild.getName() +
-                    ChatColor.GRAY + " - " + ChatColor.YELLOW + guild.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)
-            );
-        }
-
+//        EVENT_LEADERBOARDS.forEach(Hologram::delete);
+//        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+//        if (currentGameEvent == null) {
+//            return;
+//        }
+//        GameEvents event = currentGameEvent.getEvent();
+//        long startDateSecond = currentGameEvent.getStartDateSecond();
+//
+//        ArrayList<Guild> sortedGuilds = new ArrayList<>(GuildManager.GUILDS);
+//        sortedGuilds.sort((o1, o2) -> o2.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)
+//                                        .compareTo(o1.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)));
+//
+//        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(EVENT_LEADERBOARD_LOCATION);
+//        HologramLines hologramLines = hologram.getLines();
+//        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Guild Event Points");
+//        hologramLines.appendText(ChatColor.GRAY + event.name);
+//        for (int i = 0, sortedGuildsSize = sortedGuilds.size(); i < sortedGuildsSize; i++) {
+//            Guild guild = sortedGuilds.get(i);
+//            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
+//                    ChatColor.AQUA + guild.getName() +
+//                    ChatColor.GRAY + " - " + ChatColor.YELLOW + NumberFormat.addCommas(guild.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L))
+//            );
+//        }
+//
+//        EVENT_LEADERBOARDS.add(hologram);
     }
 
 }

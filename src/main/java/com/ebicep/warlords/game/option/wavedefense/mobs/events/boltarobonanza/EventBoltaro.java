@@ -113,8 +113,4 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
                                                                        .build());
     }
 
-    @Override
-    public double dropRate() {
-        return 10;
-    }
 }

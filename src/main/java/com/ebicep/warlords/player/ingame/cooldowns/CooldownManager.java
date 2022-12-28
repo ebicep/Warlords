@@ -11,7 +11,10 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -372,15 +375,18 @@ public class CooldownManager {
     }
 
     public void clearAllCooldowns() {
-        Iterator<AbstractCooldown<?>> iterator = abstractCooldowns.iterator();
-        while (iterator.hasNext()) {
-            AbstractCooldown<?> next = iterator.next();
-            next.getOnRemoveForce().accept(this);
-            if (abstractCooldowns.contains(next)) {
-                iterator.remove();
-            }
+        try {
+            new ArrayList<>(abstractCooldowns).forEach(cd -> {
+                if (abstractCooldowns.contains(cd)) {
+                    cd.getOnRemoveForce().accept(this);
+                    abstractCooldowns.remove(cd);
+                }
+            });
+
+            abstractCooldowns.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        abstractCooldowns.clear();
     }
 
     public void clearCooldowns() {

@@ -688,7 +688,9 @@ public class EndState implements State, TimerDebugAble {
                 Integer points = eventPointsOption.getPoints().getOrDefault(player.getUniqueId(), 0);
                 ChatUtils.sendMessage(player,
                         true,
-                        ChatColor.GRAY + "+" + ChatColor.YELLOW + NumberFormat.addCommas(points) + " Point" + (points == 1 ? "" : "s")
+                        ChatColor.GRAY + "+" + ChatColor.YELLOW + NumberFormat.addCommas(Math.min(points,
+                                eventPointsOption.getCap()
+                        )) + " Point" + (points == 1 ? "" : "s")
                 );
             }
 

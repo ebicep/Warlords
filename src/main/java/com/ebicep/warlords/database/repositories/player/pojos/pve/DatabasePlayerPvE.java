@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
@@ -188,7 +189,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             eventStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
                 case BOLTARO:
-                    addCurrency(Currencies.EVENT_POINTS_BOLTARO, ((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier);
+                    if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 50_000));
+                    } else {
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO,
+                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 15_000)
+                        );
+                    }
                     break;
             }
 
