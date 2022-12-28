@@ -508,6 +508,8 @@ public class WaveDefenseOption implements Option {
         waveCounter++;
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
+        int spawns = spawnCount;
+        spawns *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
 
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
@@ -518,7 +520,7 @@ public class WaveDefenseOption implements Option {
             } else {
                 sendMessage(entry.getKey(),
                         false,
-                        ChatColor.YELLOW + "A wave of §c§l" + spawnCount + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        ChatColor.YELLOW + "A wave of §c§l" + spawns + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             }
 
@@ -566,6 +568,17 @@ public class WaveDefenseOption implements Option {
         startSpawnTask();
     }
 
+    public float getSpawnCountMultiplier(int playerCount) {
+        switch (playerCount) {
+            case 2:
+                return 1.25f;
+            case 3:
+            case 4:
+                return 1.5f;
+        }
+        return 1;
+    }
+
     public void startSpawnTask() {
         if (spawner != null) {
             spawner.cancel();
@@ -577,16 +590,7 @@ public class WaveDefenseOption implements Option {
         }
 
         if (currentWave.getMessage() == null) {
-            int playerCount = (int) game.warlordsPlayers().count();
-            switch (playerCount) {
-                case 2:
-                    spawnCount *= 1.25f;
-                    break;
-                case 3:
-                case 4:
-                    spawnCount *= 1.5f;
-                    break;
-            }
+            spawnCount *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
         }
 
         spawner = new GameRunnable(game) {

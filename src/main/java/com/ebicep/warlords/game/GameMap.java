@@ -2925,7 +2925,18 @@ public enum GameMap {
                     ,
                     DifficultyIndex.EVENT,
                     (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro's Lair")
-            ));
+            ) {
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    switch (playerCount) {
+                        case 3:
+                            return 1.25f;
+                        case 4:
+                            return 1.5f;
+                    }
+                    return 1;
+                }
+            });
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
