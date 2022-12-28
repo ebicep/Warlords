@@ -235,7 +235,7 @@ public enum GameEvents {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
-            EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDate().getEpochSecond());
+            EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDateSecond());
 
             Menu menu = new Menu(name + " Shop", 9 * 6);
 

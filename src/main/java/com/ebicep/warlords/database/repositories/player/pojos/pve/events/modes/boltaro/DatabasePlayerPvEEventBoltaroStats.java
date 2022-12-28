@@ -28,7 +28,7 @@ public class DatabasePlayerPvEEventBoltaroStats extends DatabasePlayerPvEEventDi
     ) {
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        getEvent(DatabaseGameEvent.currentGameEvent.getStartDate().getEpochSecond()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
     public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getEventStats() {

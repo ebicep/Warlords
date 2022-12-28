@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
@@ -101,6 +102,8 @@ public class Guild {
             put(value, 0L);
         }
     }};
+    @Field("event_stats")
+    private Map<GameEvents, Map<Long, Long>> eventStats = new LinkedHashMap<>();
     private List<AbstractGuildUpgrade<?>> upgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
@@ -542,6 +545,15 @@ public class Guild {
         player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "---------- Guild Message of the Day ----------");
         motd.forEach(player::sendMessage);
         player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "-------------------------------------------");
+    }
+
+    public Map<GameEvents, Map<Long, Long>> getEventStats() {
+        return eventStats;
+    }
+
+    public void addEventPoints(GameEvents event, Long eventStartEpochSecond, long amount) {
+        eventStats.computeIfAbsent(event, gameEvents -> new HashMap<>())
+                  .compute(eventStartEpochSecond, (date, previousPoints) -> previousPoints == null ? amount : previousPoints + amount);
     }
 
     @Override

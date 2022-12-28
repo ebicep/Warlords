@@ -71,6 +71,10 @@ public class DatabaseGameEvent {
         return startDate;
     }
 
+    public long getStartDateSecond() {
+        return startDate.getEpochSecond();
+    }
+
     public Instant getEndDate() {
         return endDate;
     }

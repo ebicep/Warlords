@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,10 +9,7 @@ import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class GuildPlayer {
@@ -29,6 +27,8 @@ public class GuildPlayer {
             put(value, 0L);
         }
     }};
+    @Field("event_stats")
+    private Map<GameEvents, Map<Long, Long>> eventStats = new LinkedHashMap<>();
     @Field("coins_converted")
     private long coinsConverted = 0;
     @Field("daily_coin_bonus_received")
@@ -156,6 +156,15 @@ public class GuildPlayer {
             }
         }
         return false;
+    }
+
+    public Map<GameEvents, Map<Long, Long>> getEventStats() {
+        return eventStats;
+    }
+
+    public void addEventPoints(GameEvents event, Long eventStartEpochSecond, long amount) {
+        eventStats.computeIfAbsent(event, gameEvents -> new HashMap<>())
+                  .compute(eventStartEpochSecond, (date, previousPoints) -> previousPoints == null ? amount : previousPoints + amount);
     }
 
     @Override
