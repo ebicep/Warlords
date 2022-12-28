@@ -103,8 +103,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer <= 0) {
                 // TODO update balancing system to read a games Team Markers,
                 // this is needed for when we support more teams in the future
-                if (!game.getAddons()
-                        .contains(GameAddon.PRIVATE_GAME) && game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                     //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
 
                     //balancing based on specs

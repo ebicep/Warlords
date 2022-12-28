@@ -11,10 +11,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -71,8 +68,9 @@ public class CooldownManager {
         List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
             if (abstractCooldown.distinct() && previousCooldowns.stream()
-                    .anyMatch(classStringPair -> classStringPair.getA().equals(abstractCooldown.getCooldownClass()) && classStringPair.getB()
-                            .equals(abstractCooldown.getName()))) {
+                                                                .anyMatch(classStringPair -> classStringPair.getA()
+                                                                                                            .equals(abstractCooldown.getCooldownClass()) && classStringPair.getB()
+                                                                                                                                                                           .equals(abstractCooldown.getName()))) {
                 continue;
             }
             cooldowns.add(abstractCooldown);
@@ -93,37 +91,36 @@ public class CooldownManager {
 
     public void addTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
         abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
-                .filter(RegularCooldown.class::isInstance)
-                .map(RegularCooldown.class::cast)
-                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
+                         .filter(RegularCooldown.class::isInstance)
+                         .map(RegularCooldown.class::cast)
+                         .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
     }
 
     public List<AbstractCooldown<?>> getBuffCooldowns() {
         return abstractCooldowns.stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF)
-                .collect(Collectors.toList());
+                                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF)
+                                .collect(Collectors.toList());
     }
 
     public void removeBuffCooldowns() {
-        abstractCooldowns.removeIf(cd -> {
-            boolean remove = cd.getCooldownType() == CooldownTypes.BUFF;
-            if (remove) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && cd.getCooldownType() == CooldownTypes.BUFF) {
                 cd.getOnRemoveForce().accept(this);
+                abstractCooldowns.remove(cd);
             }
-            return remove;
         });
     }
 
     public List<AbstractCooldown<?>> getDebuffCooldowns() {
         return abstractCooldowns.stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                .collect(Collectors.toList());
+                                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                .collect(Collectors.toList());
     }
 
     public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                .collect(Collectors.toList());
+                                                              .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                                              .collect(Collectors.toList());
         toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
         abstractCooldowns.removeAll(toRemove);
         return toRemove.size();
@@ -131,8 +128,8 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
         return abstractCooldowns.stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
-                .collect(Collectors.toList());
+                                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
+                                .collect(Collectors.toList());
     }
 
     public void removeAbilityCooldowns() {
@@ -240,6 +237,10 @@ public class CooldownManager {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
 
+    public boolean hasCooldownFromActionBarName(String name) {
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getActionBarName() != null && cooldown.getActionBarName().equalsIgnoreCase(name));
+    }
+
     public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
@@ -343,45 +344,49 @@ public class CooldownManager {
         abstractCooldowns.remove(abstractCooldown);
     }
 
-    public boolean removeCooldown(Class<?> cooldownClass) {
-        return abstractCooldowns.removeIf(cd -> {
-            if (Objects.equals(cd.getCooldownClass(), cooldownClass)) {
+    public void removeCooldown(Class<?> cooldownClass) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownClass(), cooldownClass)) {
                 cd.getOnRemoveForce().accept(this);
-                return true;
+                abstractCooldowns.remove(cd);
             }
-            return false;
         });
     }
 
     public void removeCooldownByObject(Object cooldownObject) {
-        abstractCooldowns.removeIf(cd -> {
-            if (Objects.equals(cd.getCooldownObject(), cooldownObject)) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownObject(), cooldownObject)) {
                 cd.getOnRemoveForce().accept(this);
-                return true;
+                abstractCooldowns.remove(cd);
             }
-            return false;
         });
     }
 
     public void removeCooldownByName(String cooldownName) {
-        abstractCooldowns.removeIf(cd -> {
-            if (cd.getName().equals(cooldownName)) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getName(), cooldownName)) {
                 cd.getOnRemoveForce().accept(this);
-                return true;
+                abstractCooldowns.remove(cd);
             }
-            return false;
         });
     }
 
     public void clearAllCooldowns() {
-        abstractCooldowns.forEach(cd -> cd.getOnRemoveForce().accept(this));
+        Iterator<AbstractCooldown<?>> iterator = abstractCooldowns.iterator();
+        while (iterator.hasNext()) {
+            AbstractCooldown<?> next = iterator.next();
+            next.getOnRemoveForce().accept(this);
+            if (abstractCooldowns.contains(next)) {
+                iterator.remove();
+            }
+        }
         abstractCooldowns.clear();
     }
 
     public void clearCooldowns() {
         List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream()
-                .filter(AbstractCooldown::isRemoveOnDeath)
-                .collect(Collectors.toList());
+                                                                       .filter(AbstractCooldown::isRemoveOnDeath)
+                                                                       .collect(Collectors.toList());
 
         cooldownsToRemove.forEach(abstractCooldown -> {
             abstractCooldown.getOnRemove().accept(this);

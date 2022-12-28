@@ -147,7 +147,8 @@ public class WaterBreath extends AbstractAbility {
     }
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        boolean hasPreviousCooldown = hit.getCooldownManager().removeCooldown(WaterBreath.class);
+        boolean hasPreviousCooldown = hit.getCooldownManager().hasCooldown(WaterBreath.class);
+        hit.getCooldownManager().removeCooldown(WaterBreath.class);
         hit.getCooldownManager().addRegularCooldown(
                 name,
                 "BREATH RGN",

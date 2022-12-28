@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -58,17 +59,17 @@ public abstract class DatabaseGameBase {
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            if (game.getGameMode() != GameMode.WAVE_DEFENSE) {
+            if (!GameMode.isWaveDefense(game.getGameMode())) {
                 float highestDamage = game.warlordsPlayers()
-                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
-                        .get()
-                        .getMinuteStats()
-                        .total()
-                        .getDamage();
+                                          .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
+                                          .get()
+                                          .getMinuteStats()
+                                          .total()
+                                          .getDamage();
                 float highestHealing = game.warlordsPlayers()
-                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
-                        .get()
-                        .getMinuteStats()
+                                           .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
+                                           .get()
+                                           .getMinuteStats()
                         .total()
                         .getHealing();
                 //checking for inflated stats
@@ -79,7 +80,8 @@ public abstract class DatabaseGameBase {
             } else {
                 for (Option option : game.getOptions()) {
                     if (option instanceof WaveDefenseOption) {
-                        if (((WaveDefenseOption) option).getWavesCleared() == 0) {
+                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                        if (waveDefenseOption.getDifficulty() != DifficultyIndex.EVENT && waveDefenseOption.getWavesCleared() == 0) {
                             System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
                             break;
@@ -151,7 +153,7 @@ public abstract class DatabaseGameBase {
                 addGameToDatabase(databaseGame, null);
             }
 
-            if (updatePlayerStats && game.getGameMode() == GameMode.WAVE_DEFENSE) {
+            if (updatePlayerStats && GameMode.isWaveDefense(game.getGameMode())) {
                 GuildLeaderboardManager.recalculateAllLeaderboards();
             }
 
@@ -279,7 +281,7 @@ public abstract class DatabaseGameBase {
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
-                if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
+                if (GameMode.isWaveDefense(databaseGame.getGameMode())) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,

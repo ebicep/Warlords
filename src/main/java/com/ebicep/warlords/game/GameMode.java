@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
@@ -220,7 +221,7 @@ public enum GameMode {
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -233,14 +234,12 @@ public enum GameMode {
                     color + "monsters!",
                     ""
             ));
-            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
-//            options.add(new PreGameItemOption(6, PlayerHotBarItemListener.PVE_MENU, (g, p) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(p)));
-//            options.add(new PreGameItemOption(8, PlayerHotBarItemListener.SETTINGS_MENU, (g, p) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(p)));
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Let the wave defense commence."
             ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
             options.add(new WinByMaxWaveClearOption());
@@ -293,10 +292,44 @@ public enum GameMode {
             return options;
         }
     },
+    EVENT_WAVE_DEFENSE(
+            "Event Wave Defense",
+            "PVE",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                if (DatabaseGameEvent.currentGameEvent == null) {
+                    return null;
+                }
+                return DatabaseGameEvent.currentGameEvent.getEvent().createDatabaseGame.apply(game, warlordsGameTriggerWinEvent, aBoolean);
+            },
+            GamesCollections.EVENT_PVE,
+            1,
+            false
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption(true));
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            //options.add(new WinByMaxWaveClearOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+
+            return options;
+        }
+    },
 
     ;
 
     public static final GameMode[] VALUES = values();
+
+    public static boolean isWaveDefense(GameMode mode) {
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE;
+    }
 
     public final String name;
     public final String abbreviation;

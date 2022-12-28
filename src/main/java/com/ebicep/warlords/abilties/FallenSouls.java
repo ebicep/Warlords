@@ -176,6 +176,8 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     wp.subtractBlueCooldown(1.5F);
                     wp.subtractOrangeCooldown(1.5F);
 
+                    boolean masterUpgrade = soulbinding.isPveUpgrade();
+
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
                             .aliveTeammatesOfExcludingSelf(wp)
@@ -185,10 +187,17 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
+                        if (masterUpgrade) {
+                            pveCheck += 1;
+                        }
                         teammate.subtractRedCooldown(pveCheck);
                         teammate.subtractPurpleCooldown(pveCheck);
                         teammate.subtractBlueCooldown(pveCheck);
                         teammate.subtractOrangeCooldown(pveCheck);
+                    }
+
+                    if (masterUpgrade) {
+                        wp.addEnergy(wp, "Soulbinding Weapon", 1);
                     }
                 });
     }

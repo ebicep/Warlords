@@ -2,14 +2,20 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -29,7 +35,9 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -45,6 +53,17 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
+    //EVENTS
+    @Field("event_statss")
+    private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
+    /*
+        event_stats
+        > total shit
+          > event_1
+            > date_1
+            > date_2
+          > event_2
+     */
     //GENERAL
 
     //SUPPLY DROP
@@ -88,7 +107,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
@@ -165,24 +183,26 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
         //UPDATE GAME MODE STATS
-        switch (((DatabaseGamePvE) databaseGame).getDifficulty()) {
-            case EASY:
-                easyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case NORMAL:
-                normalStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case HARD:
-                hardStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case ENDLESS:
-                endlessStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-        }
+        if (databaseGame instanceof DatabaseGamePvEEvent) {
+            assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
+            eventStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
+                case BOLTARO:
+                    addCurrency(Currencies.EVENT_POINTS_BOLTARO, ((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier);
+                    break;
+            }
 
+        } else {
+            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
+            if (difficultyStats != null) {
+                difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            } else {
+                ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            }
+        }
     }
 
-    public DatabasePlayerPvEDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {
+    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
         switch (difficultyIndex) {
             case EASY:
                 return easyStats;
@@ -267,6 +287,42 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
         this.currencies.put(currency, this.currencies.get(currency) + amount);
         CustomScoreboard.reloadPvEScoreboard(this);
+
+        if (amount >= 0) {
+            return;
+        }
+        DatabaseGameEvent gameEvent = null;
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent != null && currentGameEvent.getEvent().currency == currency) {
+            gameEvent = currentGameEvent;
+        } else {
+            for (GameEvents events : GameEvents.VALUES) {
+                if (events.currency == currency) {
+                    if (DatabaseGameEvent.PREVIOUS_GAME_EVENTS.containsKey(events)) {
+                        gameEvent = DatabaseGameEvent.PREVIOUS_GAME_EVENTS.get(events);
+                    }
+                    break;
+                }
+            }
+        }
+        if (gameEvent == null) {
+            return;
+        }
+        GameEvents event = gameEvent.getEvent();
+        Map<Long, ? extends EventMode> eventsStats = event.eventsStatsFunction.apply(eventStats);
+        long epochSecond = gameEvent.getStartDateSecond();
+        EventMode eventMode = eventsStats.get(epochSecond);
+        if (eventMode == null) {
+            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
+            return;
+        }
+        //event
+        this.eventStats.addEventPointsSpent(-amount);
+        //event mode
+        EventMode generalEventMode = event.generalEventFunction.apply(eventStats);
+        generalEventMode.addEventPointsSpent(-amount);
+        //event in event mode
+        eventMode.addEventPointsSpent(-amount);
     }
 
     public void addOneCurrency(Currencies currency) {
@@ -303,5 +359,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {
         return autoUpgradeProfiles;
+    }
+
+    public DatabasePlayerPvEEventStats getEventStats() {
+        return eventStats;
     }
 }

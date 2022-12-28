@@ -50,7 +50,7 @@ public class Chessking extends AbstractSlime implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 100 == 0) {
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 15, 15, 15)
+                    .entitiesAround(warlordsNPC, 8, 8, 8)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100, false);

@@ -63,7 +63,7 @@ public class AFKDetectionOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-        if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE) {
+        if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || GameMode.isWaveDefense(game.getGameMode())) {
             return;
         }
         new GameRunnable(game) {

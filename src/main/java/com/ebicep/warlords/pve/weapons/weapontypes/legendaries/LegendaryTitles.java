@@ -1,10 +1,8 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.*;
-import org.bukkit.ChatColor;
 
-import java.util.*;
+import java.util.UUID;
 import java.util.function.Function;
 
 public enum LegendaryTitles {
@@ -22,6 +20,7 @@ public enum LegendaryTitles {
     STALWART("Stalwart", LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 11),
     ENHANCED("Enhanced", LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, 12),
     GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, 13),
+    JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, 14),
 
     ;
 
@@ -45,25 +44,6 @@ public enum LegendaryTitles {
         this.create = create;
         this.titleWeapon = titleWeapon;
         this.color = color;
-    }
-
-    public List<String> getCostLore() {
-        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
-
-        List<String> loreCost = new ArrayList<>();
-        loreCost.add("");
-        loreCost.add(ChatColor.AQUA + "Title Cost: ");
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
-        }
-        return loreCost;
-    }
-
-    public LinkedHashMap<Currencies, Long> getCost() {
-        return new LinkedHashMap<>() {{
-            put(Currencies.COIN, 50000L);
-            put(Currencies.SYNTHETIC_SHARD, 1000L);
-        }};
     }
 
 }

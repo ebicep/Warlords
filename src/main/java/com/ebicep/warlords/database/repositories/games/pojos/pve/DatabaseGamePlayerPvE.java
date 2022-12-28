@@ -17,8 +17,6 @@ import java.util.*;
 
 public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
-    @Field("longest_time_in_combat")
-    private int longestTimeInCombat;
     @Field("most_damage_in_wave")
     private long mostDamageInWave;
     private int prestige;
@@ -70,16 +68,16 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
-        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, true).values().stream().mapToLong(aLong -> aLong).sum();
+        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, waveDefenseOption, true)
+                                                  .values()
+                                                  .stream()
+                                                  .mapToLong(aLong -> aLong)
+                                                  .sum();
         this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
-    }
-
-    public int getLongestTimeInCombat() {
-        return longestTimeInCombat;
     }
 
     public long getMostDamageInWave() {

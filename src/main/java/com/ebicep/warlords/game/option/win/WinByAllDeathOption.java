@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class WinByAllDeathOption implements Option {
 
+    private EnumSet<Team> deadTeams = EnumSet.noneOf(Team.class);
+
     @Override
     public void start(Game game) {
         final EnumSet<Team> teams = TeamMarker.getTeams(game);
@@ -31,19 +33,19 @@ public class WinByAllDeathOption implements Option {
                 if (event.getPlayer() instanceof WarlordsPlayer) {
                     teams.removeIf(team -> {
                         List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                .matchingTeam(team)
-                                .toList();
-                                if (warlordsPlayers.isEmpty()) {
-                                    return false;
-                                }
-                                for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                                    if (warlordsPlayer.isAlive()) {
-                                        return false;
-                                    }
-                                }
-                                return true;
+                                                                                  .matchingTeam(team)
+                                                                                  .toList();
+                        if (warlordsPlayers.isEmpty()) {
+                            return false;
+                        }
+                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                            if (warlordsPlayer.isAlive()) {
+                                return false;
                             }
-                    );
+                        }
+                        deadTeams.add(team);
+                        return true;
+                    });
                     if (teams.size() == 1) {
                         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
                     }
@@ -53,4 +55,7 @@ public class WinByAllDeathOption implements Option {
         });
     }
 
+    public EnumSet<Team> getDeadTeams() {
+        return deadTeams;
+    }
 }

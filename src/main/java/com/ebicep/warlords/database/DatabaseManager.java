@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.events.GameEventsService;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -62,7 +64,8 @@ public class DatabaseManager {
     public static TimingsService timingsService;
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
-    public static boolean enabled = false;
+    public static GameEventsService gameEventsService;
+    public static boolean enabled = true;
 
     public static void init() {
         if (!enabled) {
@@ -81,13 +84,15 @@ public class DatabaseManager {
             timingsService = context.getBean("timingsService", TimingsService.class);
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
+            gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-
         NPCManager.createDatabaseRequiredNPCs();
-
+        if (!StatsLeaderboardManager.enabled) {
+            DatabaseGameEvent.startGameEvent();
+        }
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {

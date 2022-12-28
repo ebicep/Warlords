@@ -10,10 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -70,6 +67,13 @@ public class WeaponLegendaryCraftMenu {
                                                 .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                                 .create()
                                 );
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    onlinePlayer.spigot().sendMessage(
+                                            new ComponentBuilder(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " crafted ")
+                                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                                                    .create()
+                                    );
+                                }
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                 player.closeInventory();

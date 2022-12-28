@@ -1,0 +1,34 @@
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes;
+
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabaseBasePvEEventBoltaroLair;
+
+public class DatabaseMagePvEEventBoltaroLair extends DatabaseBasePvEEventBoltaroLair implements DatabaseWarlordsClass {
+
+    protected DatabaseBasePvEEventBoltaroLair pyromancer = new DatabaseBasePvEEventBoltaroLair();
+    protected DatabaseBasePvEEventBoltaroLair cryomancer = new DatabaseBasePvEEventBoltaroLair();
+    protected DatabaseBasePvEEventBoltaroLair aquamancer = new DatabaseBasePvEEventBoltaroLair();
+
+    public DatabaseMagePvEEventBoltaroLair() {
+        super();
+    }
+
+    @Override
+    public AbstractDatabaseStatInformation[] getSpecs() {
+        return new DatabaseBasePvEEventBoltaroLair[]{pyromancer, cryomancer, aquamancer};
+    }
+
+    public DatabaseBasePvEEventBoltaroLair getPyromancer() {
+        return pyromancer;
+    }
+
+    public DatabaseBasePvEEventBoltaroLair getCryomancer() {
+        return cryomancer;
+    }
+
+    public DatabaseBasePvEEventBoltaroLair getAquamancer() {
+        return aquamancer;
+    }
+
+}
