@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -68,7 +69,7 @@ public class SpiritLink extends AbstractChainBase {
 
                 int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
                 for (int i = 0; i < numberOfHeals; i++) {
-                    healNearPlayers(wp);
+                    healNearPlayers(wp, nearPlayer);
                 }
 
                 for (WarlordsEntity chainPlayerOne : PlayerFilter
@@ -87,7 +88,7 @@ public class SpiritLink extends AbstractChainBase {
 
                     numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
                     for (int i = 0; i < numberOfHeals; i++) {
-                        healNearPlayers(wp);
+                        healNearPlayers(wp, chainPlayerOne);
                     }
 
                     for (WarlordsEntity chainPlayerTwo : PlayerFilter
@@ -106,7 +107,7 @@ public class SpiritLink extends AbstractChainBase {
 
                         numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
                         for (int i = 0; i < numberOfHeals; i++) {
-                            healNearPlayers(wp);
+                            healNearPlayers(wp, chainPlayerTwo);
                         }
 
                         break;
@@ -152,7 +153,7 @@ public class SpiritLink extends AbstractChainBase {
         return new ItemStack(Material.SPRUCE_FENCE_GATE);
     }
 
-    private void healNearPlayers(WarlordsEntity warlordsPlayer) {
+    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer) {
         //adding .25 to totem, cap 6 sec
         new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterName("Spirits Respite")
@@ -169,6 +170,14 @@ public class SpiritLink extends AbstractChainBase {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
             nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, 0, 100, false, false);
         }
+        new CooldownFilter<>(warlordsPlayer, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(hitPlayer))
+                .forEach(soulbinding -> {
+                    if (soulbinding.isPveUpgrade()) {
+                        warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
+                    }
+                });
     }
 
     public double getSpeedDuration() {
