@@ -22,6 +22,7 @@ public enum LegendaryTitles {
     STALWART("Stalwart", LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 11),
     ENHANCED("Enhanced", LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, 12),
     GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, 13),
+    JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, 14),
 
     ;
 
