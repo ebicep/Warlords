@@ -69,8 +69,8 @@ public class WeaponTitleMenu {
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
 
-                Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
-                List<String> loreCost = title.getCostLore();
+                Set<Map.Entry<Currencies, Long>> cost = titledWeapon.getCost().entrySet();
+                List<String> loreCost = titledWeapon.getCostLore();
 
                 boolean equals = Objects.equals(weapon.getTitle(), title);
                 boolean titleIsLocked = !unlockedTitles.containsKey(title);
@@ -183,7 +183,7 @@ public class WeaponTitleMenu {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         if (!weapon.getTitles().containsKey(title)) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            title.getCost().forEach(pveStats::subtractCurrency);
+            weapon.getCost().forEach(pveStats::subtractCurrency);
             weapon.getTitles().put(title, new LegendaryWeaponTitleInfo());
         }
         AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
