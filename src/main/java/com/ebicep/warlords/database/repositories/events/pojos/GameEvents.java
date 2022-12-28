@@ -239,6 +239,44 @@ public enum GameEvents {
 
             Menu menu = new Menu(name + " Shop", 9 * 6);
 
+            for (int i = 0; i < 9; i++) {
+                menu.setItem(i, 0,
+                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                                .name(" ")
+                                .get(),
+                        (m, e) -> {
+                        }
+                );
+            }
+            for (int i = 0; i < 9; i++) {
+                menu.setItem(i, 5,
+                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                                .name(" ")
+                                .get(),
+                        (m, e) -> {
+                        }
+                );
+            }
+            for (int i = 1; i < 5; i++) {
+                menu.setItem(0, i,
+                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                                .name(" ")
+                                .get(),
+                        (m, e) -> {
+                        }
+                );
+            }
+            for (int i = 1; i < 5; i++) {
+                menu.setItem(8, i,
+                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                                .name(" ")
+                                .get(),
+                        (m, e) -> {
+                        }
+                );
+            }
+
+
             menu.setItem(4, 0,
                     new ItemBuilder(Material.CHEST)
                             .name(currency.getCostColoredName(pveStats.getCurrencyValue(currency)))
