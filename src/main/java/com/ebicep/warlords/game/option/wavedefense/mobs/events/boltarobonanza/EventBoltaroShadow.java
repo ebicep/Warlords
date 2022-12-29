@@ -6,7 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.AbstractSkeleton;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -16,7 +16,7 @@ import org.bukkit.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
+public class EventBoltaroShadow extends AbstractZombie implements BossMob {
 
     private boolean forceSplit = false;
     private int split;

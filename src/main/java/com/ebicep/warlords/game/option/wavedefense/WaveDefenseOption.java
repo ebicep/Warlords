@@ -158,15 +158,15 @@ public class WaveDefenseOption implements Option {
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
-                        mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
+                        mobToRemove.getLivingEntity().remove(); // idk if this is needed
                         new GameRunnable(game) {
                             @Override
                             public void run() {
+                                mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                                 mobs.remove(mobToRemove);
-                                game.getPlayers().remove(we.getUuid());
-                                //game.removePlayer(we.getUuid());
+                                game.removePlayer(we.getUuid());
                             }
-                        }.runTaskLater(1);
+                        }.run();
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());

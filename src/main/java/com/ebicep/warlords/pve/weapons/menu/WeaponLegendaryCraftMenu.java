@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -69,7 +70,7 @@ public class WeaponLegendaryCraftMenu {
                                 );
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                                     onlinePlayer.spigot().sendMessage(
-                                            new ComponentBuilder(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " crafted ")
+                                            new ComponentBuilder(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GRAY + " crafted ")
                                                     .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                                     .create()
                                     );
