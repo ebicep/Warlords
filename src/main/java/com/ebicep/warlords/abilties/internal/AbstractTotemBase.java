@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     }
 
     public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+        List<Entity> entitiesAround = new ArrayList<>(searchNearby.getNearbyEntities(5, 3, 5));
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
@@ -40,7 +41,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     }
 
     public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+        List<Entity> entitiesAround = new ArrayList<>(searchNearby.getNearbyEntities(5, 3, 5));
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))

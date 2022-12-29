@@ -158,15 +158,15 @@ public class WaveDefenseOption implements Option {
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
-                        mobToRemove.getLivingEntity().remove(); // idk if this is needed
+                        mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                         new GameRunnable(game) {
                             @Override
                             public void run() {
-                                mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                                 mobs.remove(mobToRemove);
-                                game.removePlayer(we.getUuid());
+                                game.getPlayers().remove(we.getUuid());
+                                //game.removePlayer(we.getUuid());
                             }
-                        }.run();
+                        }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
@@ -295,7 +295,7 @@ public class WaveDefenseOption implements Option {
                 if (waveSidebarOverride != null) {
                     return waveSidebarOverride.apply(WaveDefenseOption.this, player);
                 }
-                return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave != -1 ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
+                return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave != Integer.MAX_VALUE ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {

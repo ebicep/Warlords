@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -181,6 +182,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
                             .aliveTeammatesOfExcludingSelf(wp)
+                            .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
                             .closestFirst(wp.getLocation())
                             .limit(2)
                     ) {
