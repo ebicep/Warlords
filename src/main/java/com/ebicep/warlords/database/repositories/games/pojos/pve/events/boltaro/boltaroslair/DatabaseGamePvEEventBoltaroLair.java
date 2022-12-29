@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
@@ -22,10 +23,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent {
+public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent implements WavesCleared {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
+    @Field("waves_cleared")
+    private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventBoltarosLair> players = new ArrayList<>();
 
     public DatabaseGamePvEEventBoltaroLair() {
@@ -59,6 +62,7 @@ public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent {
                     eventPointsOption.get()
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
+        this.wavesCleared = waveDefenseOption.get().getWavesCleared();
     }
 
     @Override
@@ -98,4 +102,8 @@ public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent {
     }
 
 
+    @Override
+    public int getWavesCleared() {
+        return wavesCleared;
+    }
 }

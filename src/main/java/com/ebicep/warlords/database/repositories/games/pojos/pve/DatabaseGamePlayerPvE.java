@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
+public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements MostDamageInWave {
 
     @Field("most_damage_in_wave")
     private long mostDamageInWave;

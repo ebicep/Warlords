@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Document(collection = "Games_Information_PvE")
-public class DatabaseGamePvE extends DatabaseGameBase {
+public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, TimeElapsed, Difficulty {
 
     private DifficultyIndex difficulty;
     @Field("waves_cleared")

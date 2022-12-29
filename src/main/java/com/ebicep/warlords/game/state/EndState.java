@@ -327,7 +327,8 @@ public class EndState implements State, TimerDebugAble {
              .append(ChatColor.GRAY)
              .append(": ")
              .append(ChatColor.GREEN)
-             .append(waveDefenseOption.getWavesCleared());
+             .append(waveDefenseOption.getWavesCleared())
+             .append("\n");
         game.getOptions()
             .stream()
             .filter(option -> option instanceof RecordTimeElapsedOption)
