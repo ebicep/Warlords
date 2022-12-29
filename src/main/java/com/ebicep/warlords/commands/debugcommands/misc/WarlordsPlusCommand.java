@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @CommandAlias("wps")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class WarlordsPlusCommand extends BaseCommand {
 
     public static final Set<UUID> UUIDS = new HashSet<>();

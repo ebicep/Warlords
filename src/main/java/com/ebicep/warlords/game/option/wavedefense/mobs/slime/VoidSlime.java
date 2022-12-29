@@ -37,7 +37,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
                     .entitiesAround(warlordsNPC, 10, 10, 10)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.subtractEnergy(10, false);
+                we.subtractEnergy(10, true);
             }
 
             for (WarlordsEntity we : PlayerFilter
@@ -47,8 +47,8 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
                     .limit(1)
             ) {
                 EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
-                we.subtractEnergy(10, false);
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 10);
+                we.subtractEnergy(5, true);
+                we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 20);
             }
         }
     }
@@ -60,6 +60,6 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        attacker.getSpec().increaseAllCooldownTimersBy(1);
+        //attacker.getSpec().increaseAllCooldownTimersBy(1);
     }
 }

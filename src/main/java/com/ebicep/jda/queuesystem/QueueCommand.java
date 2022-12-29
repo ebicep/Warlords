@@ -41,7 +41,7 @@ public class QueueCommand extends BaseCommand {
     }
 
     @Subcommand("add")
-    @CommandPermission("minecraft.command.op|warlords.queue.clear")
+    @CommandPermission("warlords.queue.clear")
     @Description("Adds a player to the queue")
     public void add(Player player, @Flags("other") Player target) {
         QueueManager.addPlayerToQueue(target.getUniqueId(), false);
@@ -50,7 +50,7 @@ public class QueueCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
-    @CommandPermission("minecraft.command.op|warlords.queue.clear")
+    @CommandPermission("warlords.queue.clear")
     @Description("Removes a player from the queue")
     public void remove(Player player, Integer queuePosition) {
         if (queuePosition > QueueManager.queue.size() || queuePosition < 1) {
@@ -64,7 +64,7 @@ public class QueueCommand extends BaseCommand {
     }
 
     @Subcommand("clear")
-    @CommandPermission("minecraft.command.op|warlords.queue.clear")
+    @CommandPermission("warlords.queue.clear")
     @Description("Clears the queue")
     public void clear(Player player) {
         QueueManager.queue.clear();

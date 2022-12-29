@@ -22,7 +22,7 @@ import java.util.List;
 
 
 @CommandAlias("weapon")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 @Conditions("database:player")
 public class WeaponCommand extends BaseCommand {
 

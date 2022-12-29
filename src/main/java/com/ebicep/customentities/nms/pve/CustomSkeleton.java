@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomSkeleton extends EntitySkeleton implements CustomEntity<CustomSkeleton> {
 
@@ -37,25 +38,25 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
 
         private final EntityInsentient self;
 
-        private int fireTickDelay; //delay between shots
+        private final AtomicInteger fireTickDelay = new AtomicInteger(); //delay between shots
 
-        private int ticks = 0; //counter for ticks
-        private int delay = (int) (Math.random() * 4); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
+        private final AtomicInteger ticks = new AtomicInteger(); //counter for ticks
+        private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 4)); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
 
         public PathfinderGoalFireAtPlayer(EntityInsentient self, int fireTickDelay) {
             this.self = self;
-            this.fireTickDelay = fireTickDelay;
+            this.fireTickDelay.set(fireTickDelay);
         }
 
         @Override
         public boolean a() {
-            if (delay != 0) {
-                delay--;
+            if (delay.get() != 0) {
+                delay.getAndDecrement();
                 return false;
             }
-            ticks++;
-            if (ticks % fireTickDelay == 0) {
-                delay = fireTickDelay;
+            ticks.getAndIncrement();
+            if (ticks.get() % fireTickDelay.get() == 0) {
+                delay.set(fireTickDelay.get());
                 return true;
             }
 
@@ -168,11 +169,11 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         }
 
         public int getFireTickDelay() {
-            return fireTickDelay;
+            return fireTickDelay.get();
         }
 
         public void setFireTickDelay(int fireTickDelay) {
-            this.fireTickDelay = fireTickDelay;
+            this.fireTickDelay.set(fireTickDelay);
         }
     }
 

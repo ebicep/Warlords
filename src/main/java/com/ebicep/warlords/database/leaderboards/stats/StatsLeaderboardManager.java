@@ -4,11 +4,14 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
+import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardGeneral;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -43,7 +46,6 @@ public class StatsLeaderboardManager {
             put(value, value.createStatsLeaderboardGameType.get());
         }
     }};
-    public static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> CACHED_PLAYERS = new ConcurrentHashMap<>();
 
     public static boolean enabled = true;
     public static boolean loaded = false;
@@ -82,8 +84,15 @@ public class StatsLeaderboardManager {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
                         .syncLast((databasePlayers) -> {
-                            CACHED_PLAYERS.computeIfAbsent(value, v -> new HashSet<>()).addAll(databasePlayers);
-                            reloadLeaderboardsFromCache(value, true);
+                            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.computeIfAbsent(value,
+                                    v -> new ConcurrentHashMap<>()
+                            );
+                            for (DatabasePlayer databasePlayer : databasePlayers) {
+                                if (databasePlayer.getUuid() != null) {
+                                    concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
+                                }
+                            }
+                            resetLeaderboards(value, true);
                             loadedBoards.getAndIncrement();
                         }).execute();
             }
@@ -109,6 +118,7 @@ public class StatsLeaderboardManager {
                         if (init) {
                             DatabaseTiming.checkLeaderboardResets();
                             NPCManager.createGameJoinNPCs();
+                            DatabaseGameEvent.startGameEvent();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
@@ -120,7 +130,13 @@ public class StatsLeaderboardManager {
         }
     }
 
-    public static void reloadLeaderboardsFromCache(PlayersCollections playersCollections, boolean init) {
+    /**
+     * All players in PLAYERS_TO_ADD become the new leaderboard players
+     *
+     * @param playersCollections The collection of players to reload
+     * @param init               If this is the first time the leaderboards are being loaded
+     */
+    public static void resetLeaderboards(PlayersCollections playersCollections, boolean init) {
         if (!Warlords.holographicDisplaysEnabled) {
             return;
         }
@@ -131,11 +147,14 @@ public class StatsLeaderboardManager {
             return;
         }
 
-        Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
-
-        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) ->
-                statsLeaderboardGameType.resetLeaderboards(playersCollections, new HashSet<>(databasePlayers)
-                ));
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
+        if (playersCollections == PlayersCollections.LIFETIME) {
+            DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+            if (currentGameEvent == null) {
+                return;
+            }
+            EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
+        }
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
@@ -181,7 +200,26 @@ public class StatsLeaderboardManager {
         });
         if (statsLeaderboardCategory != null) {
             statsLeaderboardCategory.getCollectionHologramPaged(selectedTime)
-                    .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+                                    .forEach(holograms -> holograms.get(page)
+                                                                   .getVisibilitySettings()
+                                                                   .setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        }
+
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent != null) {
+            EventsLeaderboardManager.EVENT_LEADERBOARDS
+                    .keySet()
+                    .forEach(eventLeaderboard -> eventLeaderboard
+                            .getSortedHolograms()
+                            .stream()
+                            .flatMap(Collection::stream)
+                            .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN)));
+            EventsLeaderboardManager.EVENT_LEADERBOARDS
+                    .keySet()
+                    .forEach(eventLeaderboard -> eventLeaderboard
+                            .getSortedHolograms()
+                            .get(0)
+                            .get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
@@ -306,9 +344,36 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
-                        hologram.getLines()
-                                .appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
-                                        .apply(databasePlayer));
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
+                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
+                                                                                    .apply(databasePlayer));
+                        break;
+                    }
+                }
+
+                hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+                hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+                playerHolograms.add(hologram);
+            }
+
+            for (EventLeaderboard eventLeaderboard : EventsLeaderboardManager.EVENT_LEADERBOARDS.keySet()) {
+                if (eventLeaderboard.isHidden()) {
+                    continue;
+                }
+                Location location = eventLeaderboard.getLocation().clone().add(0, -3.5, 0);
+
+                Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+
+                List<DatabasePlayer> databasePlayers = eventLeaderboard.getSortedPlayers();
+                for (int i = 0; i < databasePlayers.size(); i++) {
+                    DatabasePlayer databasePlayer = databasePlayers.get(i);
+                    if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
+                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction()
+                                                                                    .apply(databasePlayer, eventLeaderboard.getEventTime()));
                         break;
                     }
                 }
@@ -329,13 +394,13 @@ public class StatsLeaderboardManager {
         }
         removeLeaderboardPlayerSpecificHolograms(player);
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
-                        (h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION) ||
-                                h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION) ||
-                                h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION) ||
-                                h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION) ||
-                                h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION)))
-                .forEach(Hologram::delete);
+                              .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
+                                      (h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION) ||
+                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION) ||
+                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION) ||
+                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION) ||
+                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION)))
+                              .forEach(Hologram::delete);
     }
 
     private static void removeLeaderboardPlayerSpecificHolograms(Player player) {
@@ -345,8 +410,8 @@ public class StatsLeaderboardManager {
 
     public static List<StatsLeaderboardCategory<?>> getAllLeaderboardCategories() {
         return STATS_LEADERBOARDS.values().stream()
-                .flatMap(statsLeaderboardCategory -> statsLeaderboardCategory.getCategories().stream())
-                .collect(Collectors.toList());
+                                 .flatMap(statsLeaderboardCategory -> statsLeaderboardCategory.getCategories().stream())
+                                 .collect(Collectors.toList());
     }
 
     public enum GameType {

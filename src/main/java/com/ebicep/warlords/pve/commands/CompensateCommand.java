@@ -25,17 +25,17 @@ import org.bukkit.inventory.ItemFlag;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 @CommandAlias("compensate")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class CompensateCommand extends BaseCommand {
-
-    private static final Set<UUID> LOADING = new HashSet<>();
 
     public static void openCompensateMenu(Player player, LinkedHashMap<Currencies, Long> compensation, List<DatabasePlayer> compensatedPlayers) {
         if (compensatedPlayers == null || compensatedPlayers.isEmpty()) {
@@ -80,8 +80,8 @@ public class CompensateCommand extends BaseCommand {
                 new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal())
                         .name(ChatColor.GREEN + "Player")
                         .lore(ChatColor.AQUA + (compensatedPlayers == null ? "Not Selected" :
-                                compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
-                                        .getName() : "All " + compensatedPlayers.size() + " Players"))
+                                                compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
+                                                                                                   .getName() : "All " + compensatedPlayers.size() + " Players"))
                         .get(),
                 (m, e) -> {
                     SignGUI.open(player, new String[]{"", "Enter", "Player", "Name"}, (p, lines) -> {
@@ -104,8 +104,8 @@ public class CompensateCommand extends BaseCommand {
                 new ItemBuilder(Material.CHEST)
                         .name(ChatColor.GREEN + "All Players")
                         .lore(compensatedPlayers.stream()
-                                .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
-                                .collect(Collectors.joining("\n")))
+                                                .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
+                                                .collect(Collectors.joining("\n")))
                         .get(),
                 (m, e) -> {
                     openCompensateMenu(player, compensation, new ArrayList<>(compensatedPlayers));
@@ -115,10 +115,10 @@ public class CompensateCommand extends BaseCommand {
                 new ItemBuilder(Colors.GREEN.wool)
                         .name(ChatColor.GREEN + "Confirm Compensate")
                         .lore(compensation.entrySet()
-                                .stream()
-                                .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                        .getCostColoredName(currenciesValues.getValue()))
-                                .toArray(String[]::new))
+                                          .stream()
+                                          .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
+                                                                                                            .getCostColoredName(currenciesValues.getValue()))
+                                          .toArray(String[]::new))
                         .addLore(
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to directly give through the Rewards Inventory",
@@ -162,10 +162,11 @@ public class CompensateCommand extends BaseCommand {
                                                 ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName() +
                                                         ChatColor.GREEN + (title == null ? " directly" : " through the Rewards Inventory"),
                                                 compensation.entrySet()
-                                                        .stream()
-                                                        .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                .getCostColoredName(currenciesValues.getValue()))
-                                                        .collect(Collectors.joining("\n"))
+                                                            .stream()
+                                                            .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
+                                                                                                                              .getCostColoredName(
+                                                                                                                                      currenciesValues.getValue()))
+                                                            .collect(Collectors.joining("\n"))
                                         )
                         );
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -197,22 +198,14 @@ public class CompensateCommand extends BaseCommand {
 
     @Default
     public void openCompensateMenu(Player player) {
-        if (LOADING.contains(player.getUniqueId())) {
-            ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already loading a compensation menu!", true);
-            return;
-        }
-        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Loading compensation menu! Do not do anything", true);
-        LOADING.add(player.getUniqueId());
-        Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
-                .syncLast(unfilteredPlayers -> {
-                    List<DatabasePlayer> databasePlayers = unfilteredPlayers.stream()
-                            .filter(databasePlayer -> databasePlayer.getLastLogin() != null &&
-                                    databasePlayer.getLastLogin().isAfter(Instant.now().minus(30, ChronoUnit.DAYS)))
-                            .collect(Collectors.toList());
-                    openCompensateMenu(player, new LinkedHashMap<>(), databasePlayers);
-                    LOADING.remove(player.getUniqueId());
-                }).execute();
+        List<DatabasePlayer> databasePlayers = DatabaseManager.CACHED_PLAYERS
+                .get(PlayersCollections.LIFETIME)
+                .values()
+                .stream()
+                .filter(databasePlayer -> databasePlayer.getLastLogin() != null &&
+                        databasePlayer.getLastLogin().isAfter(Instant.now().minus(30, ChronoUnit.DAYS)))
+                .collect(Collectors.toList());
+        openCompensateMenu(player, new LinkedHashMap<>(), databasePlayers);
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.concurrent.CompletionStage;
 
 @CommandAlias("patreon")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class PatreonCommand extends BaseCommand {
 
     @Subcommand("give")

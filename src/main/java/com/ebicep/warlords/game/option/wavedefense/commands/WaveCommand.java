@@ -10,17 +10,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("wave")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class WaveCommand extends BaseCommand {
 
     @Subcommand("set")
     @Description("Set the wave counter")
-    public void set(@Conditions("requireGame:gamemode=WAVE_DEFENSE") Player player, Integer amount) {
+    public void set(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, Integer amount) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions().stream()
-                .filter(option -> option instanceof WaveDefenseOption)
-                .findFirst()
-                .get();
+                                                                      .filter(option -> option instanceof WaveDefenseOption)
+                                                                      .findFirst()
+                                                                      .get();
         waveDefenseOption.setWaveCounter(amount);
         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveEditEvent(game, amount));
     }

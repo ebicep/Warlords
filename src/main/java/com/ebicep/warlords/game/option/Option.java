@@ -44,6 +44,9 @@ public interface Option {
     default void onGameEnding(@Nonnull Game game) {
     }
 
+    default void sendEventStatsMessage(@Nonnull Game game, @Nonnull Player player) {
+    }
+
     /**
      * Called when the game transitions to a closed state. This is also when any listeners and gametasks are stopped.
      *

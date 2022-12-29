@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("fly")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class FlyCommand extends BaseCommand {
 
     @Default

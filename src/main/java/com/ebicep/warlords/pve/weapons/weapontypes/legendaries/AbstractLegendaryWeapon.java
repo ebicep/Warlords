@@ -66,6 +66,25 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
     }
 
+    public LinkedHashMap<Currencies, Long> getCost() {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 50000L);
+            put(Currencies.SYNTHETIC_SHARD, 1000L);
+        }};
+    }
+
+    public List<String> getCostLore() {
+        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
+
+        List<String> loreCost = new ArrayList<>();
+        loreCost.add("");
+        loreCost.add(ChatColor.AQUA + "Title Cost: ");
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
+        }
+        return loreCost;
+    }
+
     public SkillBoosts getSelectedSkillBoost() {
         return selectedSkillBoost;
     }
@@ -252,7 +271,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
-                if (ability.getCritChance() != -1) {
+                if (ability.getCritChance() > 0) {
                     ability.setCritChance(ability.getCritChance() + getSkillCritChanceBonus());
                     ability.setCritMultiplier(ability.getCritMultiplier() + getSkillCritMultiplierBonus());
                 }

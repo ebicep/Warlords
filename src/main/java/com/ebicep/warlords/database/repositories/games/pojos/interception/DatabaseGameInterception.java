@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_Interception")
 public class DatabaseGameInterception extends DatabaseGameBase {
@@ -50,6 +51,13 @@ public class DatabaseGameInterception extends DatabaseGameBase {
                 DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
             }
         }
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return players.values().stream()
+                      .flatMap(Collection::stream)
+                      .collect(Collectors.toSet());
     }
 
     @Override

@@ -65,6 +65,7 @@ public class Soulbinding extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();
+        tempSoulBinding.setPveUpgrade(pveUpgrade);
         if (wp.isInPve()) {
             List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
                     .filterCooldownClass(Soulbinding.class)

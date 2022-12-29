@@ -109,7 +109,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (!event.getAbility().equals("Multi Hit")) {
+        if (!(event.getAbility().equals("Multi Hit") || event.getAbility().equals("Intervene"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
 

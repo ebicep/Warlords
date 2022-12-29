@@ -108,9 +108,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         );
 
         Optional<Option> optional = game.getOptions()
-                .stream()
-                .filter(option -> option instanceof WaveDefenseOption)
-                .findFirst();
+                                        .stream()
+                                        .filter(option -> option instanceof WaveDefenseOption)
+                                        .findFirst();
         if (optional.isPresent()) {
             WaveDefenseOption option = (WaveDefenseOption) optional.get();
 
@@ -191,8 +191,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
         dropWeapon(killer, 100);
         PlayerFilter.playingGame(killer.getGame())
-                .teammatesOfExcludingSelf(killer)
-                .forEach(teammate -> dropWeapon(teammate, 200));
+                    .teammatesOfExcludingSelf(killer)
+                    .forEach(teammate -> dropWeapon(teammate, 200));
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
@@ -235,6 +235,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public EntityInsentient getEntityInsentient() {
         return entityInsentient;
+    }
+
+    public LivingEntity getLivingEntity() {
+        return livingEntity;
     }
 
     public WarlordsNPC getWarlordsNPC() {

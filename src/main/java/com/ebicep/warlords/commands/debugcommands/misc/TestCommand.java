@@ -8,19 +8,15 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.cache.MultipleCacheResolver;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
 
 @CommandAlias("test")
-@CommandPermission("minecraft.command.op|warlords.game.test")
+@CommandPermission("warlords.game.test")
 public class TestCommand extends BaseCommand {
 
     @Default
@@ -40,13 +36,13 @@ public class TestCommand extends BaseCommand {
     }
 
     public static void printCache() {
-        for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
-            System.out.println(value.name);
-            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
-
-            System.out.println("CACHE - " + cache.asMap());
-            System.out.println(cache.stats());
-        }
+//        for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
+//            System.out.println(value.name);
+//            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
+//
+//            System.out.println("CACHE - " + cache.asMap());
+//            System.out.println(cache.stats());
+//        }
 
     }
 

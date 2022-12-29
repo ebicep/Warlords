@@ -6,8 +6,8 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pvp.ImposterModeOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -22,7 +22,7 @@ import java.util.Comparator;
 public class ImposterCommand extends BaseCommand {
 
     @Subcommand("assign")
-    @CommandPermission("minecraft.command.op|warlords.game.impostertoggle")
+    @CommandPermission("warlords.game.impostertoggle")
     @Description("Assign/Reassign the imposters in the game")
     public void assign(@Conditions("requireGame:withAddon=IMPOSTER_MODE") WarlordsPlayer warlordsPlayer) {
         for (Option option : warlordsPlayer.getGame().getOptions()) {

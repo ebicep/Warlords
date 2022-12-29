@@ -2,10 +2,7 @@ package com.ebicep.warlords.util.java;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.ingame.UnstuckCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
@@ -14,20 +11,16 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 
 public class MemoryManager implements Listener {
 
@@ -52,23 +45,6 @@ public class MemoryManager implements Listener {
                         .filter(Objects::nonNull)
                         .map(OfflinePlayer::getUniqueId)
                         .forEach(toRemove::remove);
-
-                if (DatabaseManager.enabled && DatabaseManager.playerService != null) {
-                    //removing all players that are not online from cache every 15 minutes
-                    for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(activeCollection.cacheName)).getNativeCache();
-                        ConcurrentMap<@NonNull Object, @NonNull Object> map = cache.asMap();
-                        Set<UUID> toEvict = new HashSet<>();
-                        map.forEach((o, o2) -> {
-                            if (o instanceof UUID) {
-                                if (toRemove.contains(o)) {
-                                    toEvict.add((UUID) o);
-                                }
-                            }
-                        });
-                        toEvict.forEach(cache::invalidate);
-                    }
-                }
 
                 toRemove.forEach(uuid -> {
                     PLAYER_LOGOUT_TIMES.remove(uuid);

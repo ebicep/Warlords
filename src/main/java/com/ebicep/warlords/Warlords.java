@@ -28,9 +28,9 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.*;
-import com.ebicep.warlords.game.option.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -80,6 +80,7 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -93,7 +94,7 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
-    private static final HashMap<UUID, WarlordsEntity> PLAYERS = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
@@ -111,7 +112,7 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newSharedChain(name);
     }
 
-    public static HashMap<UUID, WarlordsEntity> getPlayers() {
+    public static ConcurrentHashMap<UUID, WarlordsEntity> getPlayers() {
         return PLAYERS;
     }
 
@@ -129,9 +130,9 @@ public class Warlords extends JavaPlugin {
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
             Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
-                    .stream()
-                    .filter(e -> e.value() instanceof WarlordsEntity)
-                    .findAny();
+                                                     .stream()
+                                                     .filter(e -> e.value() instanceof WarlordsEntity)
+                                                     .findAny();
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
@@ -185,6 +186,11 @@ public class Warlords extends JavaPlugin {
             player.teleport(value);
         }
     }
+
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
+    }
+
     private GameManager gameManager;
 
     @Override
@@ -287,6 +293,15 @@ public class Warlords extends JavaPlugin {
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : new ArrayList<>(world.getEntities())) {
+                if (entity instanceof Player) {
+                    continue;
+                }
+                entity.remove();
+            }
+        }
+
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
@@ -331,6 +346,7 @@ public class Warlords extends JavaPlugin {
         readKeysConfig();
         readWeaponConfig();
         saveWeaponConfig();
+        readBotConfig();
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
 
@@ -352,7 +368,7 @@ public class Warlords extends JavaPlugin {
                 .async(DatabaseManager::init)
                 .execute();
 
-        if (!onCustomServer()) {
+        if (!BotManager.DISCORD_SERVERS.isEmpty()) {
             try {
                 BotManager.connect();
             } catch (LoginException e) {
@@ -451,6 +467,34 @@ public class Warlords extends JavaPlugin {
                 config.set(weapons.getName(), weapons.isUnlocked);
             }
             config.save(new File(this.getDataFolder(), "weapons.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readBotConfig() {
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "bot.yml"));
+            for (String key : config.getKeys(false)) {
+                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
+                        key,
+                        config.getString(key + ".id"),
+                        config.getString(key + ".statusChannel"),
+                        config.getString(key + ".queueChannel")
+                );
+                BotManager.DISCORD_SERVERS.add(discordServer);
+                ChatUtils.MessageTypes.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
+            }
+            /*
+            server1
+                id
+                statusChannel
+                waitingChannel
+            server2
+                id
+                statusChannel
+                waitingChannel
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -597,16 +641,16 @@ public class Warlords extends JavaPlugin {
                                             ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
                                             "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
                                             ChatColor.RED +
-                                            (wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
+                                            Math.round(wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
                                             ChatColor.LIGHT_PURPLE +
                                             " every second."
                                     );
                                 }
 
                                 FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                        .withColor(Color.LIME)
-                                        .with(FireworkEffect.Type.BALL)
-                                        .build());
+                                                                                                  .withColor(Color.LIME)
+                                                                                                  .with(FireworkEffect.Type.BALL)
+                                                                                                  .build());
 
                                 wp.heal();
 
@@ -648,18 +692,18 @@ public class Warlords extends JavaPlugin {
 
                                         if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
                                             PlayerFilter.entitiesAround(wp, 6, 6, 6)
-                                                    .aliveEnemiesOf(wp)
-                                                    .forEach(enemy -> {
-                                                        enemy.addDamageInstance(
-                                                                wp,
-                                                                "Undying Army",
-                                                                458 + (enemy.getMaxHealth() * .02f),
-                                                                612 + (enemy.getMaxHealth() * .02f),
-                                                                0,
-                                                                100,
-                                                                false
-                                                        );
-                                                    });
+                                                        .aliveEnemiesOf(wp)
+                                                        .forEach(enemy -> {
+                                                            enemy.addDamageInstance(
+                                                                    wp,
+                                                                    "Undying Army",
+                                                                    458 + (enemy.getMaxHealth() * .02f),
+                                                                    612 + (enemy.getMaxHealth() * .02f),
+                                                                    0,
+                                                                    100,
+                                                                    false
+                                                            );
+                                                        });
 
                                         }
                                     }
@@ -789,7 +833,7 @@ public class Warlords extends JavaPlugin {
                         new CooldownFilter<>(wps, PersistentCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                                 .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers()
-                                        .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
+                                                                          .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
                     }
                 }
 
@@ -889,8 +933,8 @@ public class Warlords extends JavaPlugin {
         new BukkitRunnable() {
 
             final Instant nextReset = Instant.now().isAfter(DateUtil.getNextResetDate()) ?
-                    DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
-                    DateUtil.getNextResetDate();
+                                      DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
+                                      DateUtil.getNextResetDate();
 
             @Override
             public void run() {
@@ -915,10 +959,6 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
-    }
-
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
     }
 
     public static boolean hasPlayer(@Nonnull UUID player) {

@@ -98,9 +98,6 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-cache:2.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.3.15" level="project" />
-    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:caffeine:2.9.3" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.19.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: co.aikar:acf-paper:0.5.1-SNAPSHOT" level="project" />
   </component>
 </module>

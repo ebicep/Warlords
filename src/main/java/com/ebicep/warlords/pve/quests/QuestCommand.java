@@ -9,7 +9,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("quest")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class QuestCommand extends BaseCommand {
 
     public static boolean isQuestsEnabled = true;

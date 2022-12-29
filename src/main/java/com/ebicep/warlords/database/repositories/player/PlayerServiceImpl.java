@@ -1,20 +1,19 @@
 package com.ebicep.warlords.database.repositories.player;
 
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service("playerService")
 public class PlayerServiceImpl implements PlayerService {
@@ -22,15 +21,6 @@ public class PlayerServiceImpl implements PlayerService {
     @Autowired
     PlayerRepository playerRepository;
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid")//, condition = "#player != null")
-    @Override
-    public DatabasePlayer create(DatabasePlayer player) {
-        DatabasePlayer p = playerRepository.insert(player);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Created: - " + p);
-        return p;
-    }
-
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.create(player, collection);
@@ -38,7 +28,6 @@ public class PlayerServiceImpl implements PlayerService {
         return p;
     }
 
-    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null", condition = "#player != null")
     @Override
     public DatabasePlayer update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
@@ -46,7 +35,6 @@ public class PlayerServiceImpl implements PlayerService {
         return p;
     }
 
-    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null", condition = "#player != null")
     @Override
     public DatabasePlayer update(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.save(player, collection);
@@ -76,25 +64,27 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.deleteAll(collection);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#criteria.criteriaObject", unless = "#result == null")
-    @Override
-    public DatabasePlayer findOne(Criteria criteria, PlayersCollections collection) {
-        return playerRepository.findOne(new Query().addCriteria(criteria), collection);
-    }
-
-    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", unless = "#result == null")
     @Override
     public DatabasePlayer findByUUID(UUID uuid) {
-        return playerRepository.findByUUID(uuid);
+        return findByUUID(uuid, PlayersCollections.LIFETIME);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", unless = "#result == null")
     @Override
     public DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection) {
-        return playerRepository.findByUUID(uuid, collection);
+        ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(collection);
+        if (concurrentHashMap.containsKey(uuid)) {
+            return concurrentHashMap.get(uuid);
+        }
+        if (StatsLeaderboardManager.enabled && StatsLeaderboardManager.loaded) {
+            return concurrentHashMap.getOrDefault(uuid, null);
+        }
+        DatabasePlayer databasePlayer = playerRepository.findByUUID(uuid, collection);
+        if (databasePlayer != null) {
+            concurrentHashMap.put(uuid, databasePlayer);
+        }
+        return databasePlayer;
     }
 
-    //@Cacheable(cacheResolver = "cacheResolver", key = "#result?.uuid", condition = "#result != null")
     @Override
     public DatabasePlayer findByNameIgnoreCase(String name) {
         return playerRepository.findByNameIgnoreCase(name);

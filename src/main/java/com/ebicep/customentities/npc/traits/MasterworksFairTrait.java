@@ -109,6 +109,8 @@ public class MasterworksFairTrait extends WarlordsTrait {
         );
         if (fairNumber != 0 && fairNumber % 5 == 0) {
             hologramTrait.setLine(3, ChatColor.RED + "2x REWARDS!");
+        } else {
+            hologramTrait.setLine(3, "");
         }
     }
 

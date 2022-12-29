@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
-    int projectileDamageReduction = ability.getProjectileDamageReduction();
+    int duration = ability.getDuration();
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
@@ -51,35 +51,35 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+10% Projectile Damage reduction",
+                "Chronos - Tier I",
+                "+1s Duration",
                 5000,
                 () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 10);
+                    ability.setDuration(duration + 1);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+15% Projectile Damage reduction",
+                "Chronos - Tier II",
+                "+2s Duration",
                 10000,
                 () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 15);
+                    ability.setDuration(duration + 2);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+20% Projectile Damage reduction",
+                "Chronos - Tier III",
+                "+3s Duration",
                 15000,
                 () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 20);
+                    ability.setDuration(duration + 3);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+25% Projectile Damage reduction",
+                "Chronos - Tier IV",
+                "+4s Duration",
                 20000,
                 () -> {
-                    ability.setProjectileDamageReduction(projectileDamageReduction + 25);
+                    ability.setDuration(duration + 4);
                 }
         ));
 

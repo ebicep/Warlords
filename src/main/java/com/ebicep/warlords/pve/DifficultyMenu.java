@@ -40,7 +40,7 @@ public class DifficultyMenu {
 
     public static void openDifficultyMenu(Player player, boolean privateGame) {
         Menu menu = new Menu("Difficulty Menu", 9 * 4);
-        DifficultyIndex[] index = DifficultyIndex.values();
+        DifficultyIndex[] index = DifficultyIndex.NON_EVENT;
         for (int i = 0; i < index.length; i++) {
             DifficultyIndex difficulty = index[i];
             int finalI = i;

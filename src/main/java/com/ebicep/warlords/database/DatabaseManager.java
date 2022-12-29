@@ -2,11 +2,12 @@ package com.ebicep.warlords.database;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.events.GameEventsService;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -27,22 +28,24 @@ import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
 
 public class DatabaseManager {
 
+    public static final ConcurrentHashMap<PlayersCollections, ConcurrentHashMap<UUID, DatabasePlayer>> CACHED_PLAYERS = new ConcurrentHashMap<>() {{
+        for (PlayersCollections value : PlayersCollections.VALUES) {
+            put(value, new ConcurrentHashMap<>());
+        }
+    }};
     private static final AtomicInteger UPDATE_COOLDOWN = new AtomicInteger(0);
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<>() {{
         for (PlayersCollections value : PlayersCollections.VALUES) {
@@ -61,6 +64,7 @@ public class DatabaseManager {
     public static TimingsService timingsService;
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
+    public static GameEventsService gameEventsService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -80,22 +84,15 @@ public class DatabaseManager {
             timingsService = context.getBean("timingsService", TimingsService.class);
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
+            gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-
         NPCManager.createDatabaseRequiredNPCs();
-
-        try {
-            for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
-                Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
-            }
-            ChatUtils.MessageTypes.WARLORDS.sendMessage("Cleared all players cache");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!StatsLeaderboardManager.enabled) {
+            DatabaseGameEvent.startGameEvent();
         }
-
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
@@ -156,8 +153,7 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
-        getPlayer(uuid, collections,
-                databasePlayer -> {
+        getPlayer(uuid, collections, databasePlayer -> {
                     if (collections == PlayersCollections.LIFETIME) {
                         Warlords.newChain()
                                 .sync(() -> {
@@ -168,8 +164,10 @@ public class DatabaseManager {
                     ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
                 },
                 () -> {
+                    DatabasePlayer newDatabasePlayer = new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName());
+                    CACHED_PLAYERS.get(collections).put(uuid, newDatabasePlayer);
                     Warlords.newChain()
-                            .asyncFirst(() -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
+                            .asyncFirst(() -> playerService.create(newDatabasePlayer, collections))
                             .syncLast((databasePlayer) -> {
                                 if (collections == PlayersCollections.LIFETIME) {
                                     loadPlayerInfo(uuid, databasePlayer);
@@ -252,7 +250,7 @@ public class DatabaseManager {
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {
-        return ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(collection.cacheName)).getNativeCache().asMap().containsKey(uuid);
+        return CACHED_PLAYERS.get(collection).containsKey(uuid);
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
@@ -318,14 +316,7 @@ public class DatabaseManager {
         });
     }
 
-    public static Map<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {
-        CaffeineCache cache = (CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(playersCollections.cacheName);
-        if (cache == null) {
-            return new HashMap<>();
-        }
-        ConcurrentMap<Object, Object> objectMap = cache.getNativeCache().asMap();
-        return objectMap.entrySet()
-                .stream()
-                .collect(Collectors.toMap(entry -> (UUID) entry.getKey(), entry -> (DatabasePlayer) entry.getValue()));
+    public static ConcurrentHashMap<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {
+        return CACHED_PLAYERS.get(playersCollections);
     }
 }

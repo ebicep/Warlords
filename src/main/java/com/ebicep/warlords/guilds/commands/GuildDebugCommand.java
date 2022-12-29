@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("gdebug")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class GuildDebugCommand extends BaseCommand {
 
     @Subcommand("experience")

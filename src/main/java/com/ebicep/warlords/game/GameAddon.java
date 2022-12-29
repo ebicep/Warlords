@@ -1,7 +1,11 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.PreGameItemOption;
+import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
+import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.game.option.pvp.ImposterModeOption;
+import com.ebicep.warlords.game.option.pvp.InterchangeModeOption;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;

@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Document(collection = "Games_Information_PvE")
-public class DatabaseGamePvE extends DatabaseGameBase {
+public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, TimeElapsed, Difficulty {
 
     private DifficultyIndex difficulty;
     @Field("waves_cleared")
@@ -64,6 +64,11 @@ public class DatabaseGamePvE extends DatabaseGameBase {
             );
             GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvE.getName());
         });
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return new HashSet<>(players);
     }
 
     @Override
@@ -108,10 +113,10 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
         lastGameStats.getLines().appendText(ChatColor.GRAY + date);
         lastGameStats.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
+                     .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
         lastGameStats.getLines()
-                .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
-                        (difficulty != DifficultyIndex.ENDLESS ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
+                     .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
+                             (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
 
 
         List<DatabaseGamePlayerPvE> allPlayers = players;

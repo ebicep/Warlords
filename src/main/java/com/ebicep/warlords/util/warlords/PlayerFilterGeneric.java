@@ -270,12 +270,10 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     protected static Stream<WarlordsEntity> entitiesAroundRectangle0(@Nonnull Location location, double x, double y, double z) {
-        return entities0(location
+        Collection<Entity> nearbyEntities = location
                 .getWorld()
-                .getNearbyEntities(location, x, y, z)
-                .stream()
-        );
-
+                .getNearbyEntities(location, x, y, z);
+        return entities0(new ArrayList<>(nearbyEntities).stream());
     }
 
     @Nonnull
@@ -287,17 +285,17 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
         double maxY = Math.max(y1, y2);
         double maxZ = Math.max(z1, z2);
 
-        return new PlayerFilterGeneric<>(world.getEntities().stream()
-                .filter(e -> {
-                    e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
-                    double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
-                    double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
-                    double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
+        return new PlayerFilterGeneric<>(new ArrayList<>(world.getEntities()).stream()
+                                                                             .filter(e -> {
+                                                                                 e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
+                                                                                 double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
+                                                                                 double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
+                                                                                 double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
 
-                    return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
-                })
-                .map(Warlords::getPlayer)
-                .filter(Objects::nonNull)
+                                                                                 return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
+                                                                             })
+                                                                             .map(Warlords::getPlayer)
+                                                                             .filter(Objects::nonNull)
         );
     }
 

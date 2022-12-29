@@ -11,6 +11,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.*;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
@@ -700,10 +702,11 @@ public abstract class WarlordsEntity {
                     cancelHealingPowerUp();
                     removeHorse();
 
-
                     float finalDamageValue = damageValue;
                     doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                     doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
+
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
                     //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                     //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
@@ -717,8 +720,6 @@ public abstract class WarlordsEntity {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                         //appendDebugMessage(debugMessage, 2, abstractCooldown);
                     }
-
-                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
                 }
 
                 regenTimer = 10;
@@ -2217,6 +2218,8 @@ public abstract class WarlordsEntity {
                     abstractCooldown.multiplyKB(v);
                 }
             }
+
+            Bukkit.getPluginManager().callEvent(new WarlordsAddVelocityEvent(this, v));
             this.entity.setVelocity(v);
         }
     }
@@ -2487,7 +2490,11 @@ public abstract class WarlordsEntity {
     }
 
     public void addCurrency(int currency) {
+        AtomicInteger currencyToAdd = new AtomicInteger(currency);
+        Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currency;
+        sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
+        Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }
 
     public void subtractCurrency(int currency) {

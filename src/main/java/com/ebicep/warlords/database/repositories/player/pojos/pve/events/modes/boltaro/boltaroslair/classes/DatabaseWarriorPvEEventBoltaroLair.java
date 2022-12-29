@@ -1,0 +1,36 @@
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes;
+
+
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabaseBasePvEEventBoltaroLair;
+
+public class DatabaseWarriorPvEEventBoltaroLair extends DatabaseBasePvEEventBoltaroLair implements DatabaseWarlordsClass {
+
+    private DatabaseBasePvEEventBoltaroLair berserker = new DatabaseBasePvEEventBoltaroLair();
+    private DatabaseBasePvEEventBoltaroLair defender = new DatabaseBasePvEEventBoltaroLair();
+    private DatabaseBasePvEEventBoltaroLair revenant = new DatabaseBasePvEEventBoltaroLair();
+
+    public DatabaseWarriorPvEEventBoltaroLair() {
+        super();
+    }
+
+    @Override
+    public AbstractDatabaseStatInformation[] getSpecs() {
+        return new DatabaseBasePvEEventBoltaroLair[]{berserker, defender, revenant};
+    }
+
+
+    public DatabaseBasePvEEventBoltaroLair getBerserker() {
+        return berserker;
+    }
+
+    public DatabaseBasePvEEventBoltaroLair getDefender() {
+        return defender;
+    }
+
+    public DatabaseBasePvEEventBoltaroLair getRevenant() {
+        return revenant;
+    }
+
+}

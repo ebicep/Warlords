@@ -55,7 +55,7 @@ public class SpectateCommand extends BaseCommand {
                                     .collect(Collectors.joining(", ")),
                             ChatColor.GRAY + "Players: " + ChatColor.RED + game.warlordsPlayers().count()
                     );
-            if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+            if (GameMode.isWaveDefense(game.getGameMode())) {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
                     itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.AQUA + warlordsPlayer.getName() + "\n");
                 });

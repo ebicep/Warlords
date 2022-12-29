@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
@@ -78,21 +77,17 @@ public class WarlordsEvents implements Listener {
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
         } else {
+            if (!DatabaseManager.enabled) {
+                return;
+            }
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(activeCollection);
-                if (loadedPlayers == null) {
-                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
-                    return;
-                }
-                if (!loadedPlayers.containsKey(uuid)) {
-                    DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                        if (!Objects.equals(databasePlayer.getName(), event.getName())) {
-                            databasePlayer.setName(event.getName());
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
-                        }
-                    });
-                }
+                DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
+                    if (!Objects.equals(databasePlayer.getName(), event.getName())) {
+                        databasePlayer.setName(event.getName());
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
+                    }
+                });
             }
         }
     }
@@ -105,9 +100,7 @@ public class WarlordsEvents implements Listener {
         if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
             return;
         }
-        Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME);
-        DatabasePlayer databasePlayer = loadedPlayers.get(event.getPlayer().getUniqueId());
-        if (databasePlayer == null) {
+        if (!DatabaseManager.inCache(event.getPlayer().getUniqueId(), PlayersCollections.LIFETIME)) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Unable to load player data. Report this if this issue persists.");
         }
     }
@@ -198,16 +191,18 @@ public class WarlordsEvents implements Listener {
                             databasePlayer.getSpec(value).addPrestige();
                             int prestige = databasePlayer.getSpec(value).getPrestige();
                             FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                    .with(FireworkEffect.Type.BALL)
-                                    .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
-                                    .build()
+                                                                                                  .with(FireworkEffect.Type.BALL)
+                                                                                                  .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige)
+                                                                                                                                              .getB())
+                                                                                                  .build()
                             );
                             PacketUtils.sendTitle(player,
                                     ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
                                     ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
-                                            .getA()
-                                            .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige)
-                                            .getA() + prestige,
+                                                                     .getA()
+                                                                     .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(
+                                                                                                                                                      prestige)
+                                                                                                                                                              .getA() + prestige,
                                     20,
                                     140,
                                     20
@@ -240,14 +235,13 @@ public class WarlordsEvents implements Listener {
                 if (StatsLeaderboardManager.loaded) {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
-                } else {
-                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 }
             }, () -> {
                 if (!fromGame) {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
                 }
             });
+            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
@@ -319,7 +313,7 @@ public class WarlordsEvents implements Listener {
         }
 
         wpAttacker.setHitCooldown(12);
-        wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit(), true);
+        wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit(), false);
         wpAttacker.getMinuteStats().addMeleeHits();
 
         if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
@@ -331,12 +325,12 @@ public class WarlordsEvents implements Listener {
                         wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
                         if (soulbinding.hasBoundPlayer(wpVictim)) {
                             soulbinding.getSoulBindedPlayers().stream()
-                                    .filter(p -> p.getBoundPlayer() == wpVictim)
-                                    .forEach(boundPlayer -> {
-                                        boundPlayer.setHitWithSoul(false);
-                                        boundPlayer.setHitWithLink(false);
-                                        boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
-                                    });
+                                       .filter(p -> p.getBoundPlayer() == wpVictim)
+                                       .forEach(boundPlayer -> {
+                                           boundPlayer.setHitWithSoul(false);
+                                           boundPlayer.setHitWithLink(false);
+                                           boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
+                                       });
                         } else {
                             wpVictim.sendMessage(
                                     WarlordsEntity.RECEIVE_ARROW_RED +
@@ -741,11 +735,8 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onWeatherChange(WeatherChangeEvent change) {
-        change.setCancelled(true);
-        if (change.getWorld().hasStorm()) {
-            change.getWorld().setWeatherDuration(0);
-        }
+    public void onWeatherChange(WeatherChangeEvent event) {
+        event.setCancelled(event.toWeatherState());
     }
 
     @EventHandler

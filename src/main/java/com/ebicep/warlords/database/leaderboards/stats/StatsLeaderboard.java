@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.leaderboards.stats;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -97,9 +98,24 @@ public class StatsLeaderboard {
         return Objects.equals(title, that.title) && Objects.equals(location, that.location);
     }
 
-    public void resetHolograms(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String categoryName, String subTitle) {
-        //resetting sort then adding new sorted values
-        resetSortedPlayers(databasePlayers, collection);
+    public void resetHolograms(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String categoryName, String subTitle) {
+        resetSortedPlayers(collection, externalFilter);
+        createLeaderboard(collection, categoryName, subTitle);
+    }
+
+    public void resetSortedPlayers(PlayersCollections collections, Predicate<DatabasePlayer> externalFilter) {
+        List<DatabasePlayer> databasePlayers = new ArrayList<>(DatabaseManager.CACHED_PLAYERS.get(collections).values());
+        if (externalFilter != null) {
+            databasePlayers.removeIf(externalFilter);
+        }
+        if (filter != null) {
+            databasePlayers.removeIf(filter);
+        }
+        databasePlayers.sort(comparator);
+        sortedTimedPlayers.put(collections, databasePlayers);
+    }
+
+    private void createLeaderboard(PlayersCollections collection, String categoryName, String subTitle) {
         //skip hologram creation for hidden leaderboards
         if (hidden) {
             return;
@@ -112,15 +128,6 @@ public class StatsLeaderboard {
         getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::delete);
         getSortedHolograms(collection).clear();
         getSortedHolograms(collection).add(holograms);
-    }
-
-    public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
-        List<DatabasePlayer> databasePlayers = new ArrayList<>(newSortedPlayers);
-        if (filter != null) {
-            databasePlayers.removeIf(filter);
-        }
-        databasePlayers.sort(comparator);
-        sortedTimedPlayers.put(collections, databasePlayers);
     }
 
     public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {

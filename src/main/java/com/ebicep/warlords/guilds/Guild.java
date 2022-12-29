@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -100,6 +102,8 @@ public class Guild {
             put(value, 0L);
         }
     }};
+    @Field("event_stats")
+    private Map<GameEvents, Map<Long, Long>> eventStats = new LinkedHashMap<>();
     private List<AbstractGuildUpgrade<?>> upgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
@@ -156,6 +160,12 @@ public class Guild {
     public void sendGuildMessageToOnlinePlayers(String message, boolean centered) {
         for (Player onlinePlayer : getOnlinePlayers()) {
             ChatUtils.sendMessageToPlayer(onlinePlayer, message, ChatColor.GREEN, centered);
+        }
+    }
+
+    public void sendGuildMessageWithEventsToOnlinePlayers(ComponentBuilder componentBuilder, boolean centered) {
+        for (Player onlinePlayer : getOnlinePlayers()) {
+            ChatUtils.sendMessageToPlayer(onlinePlayer, componentBuilder.create(), ChatColor.GREEN, centered);
         }
     }
 
@@ -535,6 +545,15 @@ public class Guild {
         player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "---------- Guild Message of the Day ----------");
         motd.forEach(player::sendMessage);
         player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "-------------------------------------------");
+    }
+
+    public Map<GameEvents, Map<Long, Long>> getEventStats() {
+        return eventStats;
+    }
+
+    public void addEventPoints(GameEvents event, Long eventStartEpochSecond, long amount) {
+        eventStats.computeIfAbsent(event, gameEvents -> new HashMap<>())
+                  .compute(eventStartEpochSecond, (date, previousPoints) -> previousPoints == null ? amount : previousPoints + amount);
     }
 
     @Override

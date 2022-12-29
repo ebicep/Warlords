@@ -4,12 +4,14 @@ import com.ebicep.jda.BotManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class QueueManager {
@@ -20,23 +22,26 @@ public class QueueManager {
     public static boolean sendQueue = true;
 
     public static void sendNewQueue() {
-        Optional<TextChannel> optionalTextChannel = BotManager.getTextChannelCompsByName("waiting");
-        if (optionalTextChannel.isPresent()) {
-            TextChannel textChannel = optionalTextChannel.get();
-            try {
-                textChannel.getLatestMessageId();
-            } catch (Exception e) {
-                textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
-                return;
+        for (BotManager.DiscordServer discordServer : BotManager.DISCORD_SERVERS) {
+            if (discordServer.getQueueChannel() == null) {
+                continue;
             }
-            if (queueMessage == null) {
-                textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
-            } else if (textChannel.getLatestMessageId().equals(queueMessage.getId())) {
-                queueMessage.editMessageEmbeds(QueueManager.getQueueDiscord()).queue();
-            } else {
-                queueMessage.delete().queue();
-                textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
-            }
+            discordServer.getTextChannelByName(discordServer.getQueueChannel()).ifPresent(textChannel -> {
+                try {
+                    textChannel.getLatestMessageId();
+                } catch (Exception e) {
+                    textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
+                    return;
+                }
+                if (queueMessage == null) {
+                    textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
+                } else if (textChannel.getLatestMessageId().equals(queueMessage.getId())) {
+                    queueMessage.editMessageEmbeds(QueueManager.getQueueDiscord()).queue();
+                } else {
+                    queueMessage.delete().queue();
+                    textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(500, TimeUnit.MILLISECONDS, m -> queueMessage = m);
+                }
+            });
         }
     }
 
@@ -126,7 +131,6 @@ public class QueueManager {
             return false;
         });
     }
-
 
     static public class FutureQueuePlayer {
         private final UUID uuid;

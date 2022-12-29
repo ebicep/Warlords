@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("leaderboard|lb")
-@CommandPermission("minecraft.command.op|warlords.leaderboard.interaction")
+@CommandPermission("warlords.leaderboard.interaction")
 public class StatsLeaderboardCommand extends BaseCommand {
 
     @Subcommand("toggle")
@@ -38,11 +38,11 @@ public class StatsLeaderboardCommand extends BaseCommand {
     public void reload(CommandIssuer issuer, @Optional PlayersCollections collection) {
         if (collection == null) {
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
+                StatsLeaderboardManager.resetLeaderboards(activeCollection, false);
             }
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "All leaderboards reloaded", true);
         } else {
-            StatsLeaderboardManager.reloadLeaderboardsFromCache(collection, false);
+            StatsLeaderboardManager.resetLeaderboards(collection, false);
             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + collection.name + " leaderboards reloaded", true);
         }
     }

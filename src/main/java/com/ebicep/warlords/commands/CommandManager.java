@@ -6,10 +6,7 @@ import com.ebicep.jda.BotCommand;
 import com.ebicep.jda.BotManager;
 import com.ebicep.jda.queuesystem.QueueCommand;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.game.GameKillCommand;
-import com.ebicep.warlords.commands.debugcommands.game.GameListCommand;
-import com.ebicep.warlords.commands.debugcommands.game.GameTerminateCommand;
-import com.ebicep.warlords.commands.debugcommands.game.PrivateGameTerminateCommand;
+import com.ebicep.warlords.commands.debugcommands.game.*;
 import com.ebicep.warlords.commands.debugcommands.ingame.*;
 import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
@@ -489,6 +486,7 @@ public class CommandManager {
 
     public static void registerCommands() {
         manager.registerCommand(new DebugCommand());
+        manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
         manager.registerCommand(new GameListCommand());
         manager.registerCommand(new GameTerminateCommand());
@@ -586,9 +584,18 @@ public class CommandManager {
 
     public static void requireGameConfig(ConditionContext<BukkitCommandIssuer> command, Game game) {
         if (command.hasConfig("gamemode")) {
-            GameMode gamemode = GameMode.valueOf(command.getConfigValue("gamemode", ""));
-            if (game.getGameMode() != gamemode) {
-                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + gamemode.name());
+            String configValue = command.getConfigValue("gamemode", "");
+            String[] gameModes = configValue.split("/");
+            boolean hasGameMode = false;
+            for (String gameMode : gameModes) {
+                GameMode gamemode = GameMode.valueOf(gameMode);
+                if (game.getGameMode() == gamemode) {
+                    hasGameMode = true;
+                    break;
+                }
+            }
+            if (!hasGameMode) {
+                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + configValue);
             }
         }
         if (command.hasConfig("withAddon")) {

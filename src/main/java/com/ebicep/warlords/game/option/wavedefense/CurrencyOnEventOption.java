@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,21 +17,42 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
-    private static final int SCOREBOARD_PRIORITY = 15;
-    private static final int BASE_CURRENCY_ON_KILL = 100;
-    private int baseCurrencyToAdd;
+    public static final int SCOREBOARD_PRIORITY = 15;
+    private final HashMap<Integer, Integer> currencyPerXWaveClear = new HashMap<>() {{
+        put(5, 4000);
+        put(1, 1000);
+    }};
+    private int currencyOnKill = 100;
+    private int startingCurrency = 0;
 
     public CurrencyOnEventOption() {
-        this(BASE_CURRENCY_ON_KILL);
     }
 
-    public CurrencyOnEventOption(int baseCurrencyToAdd) {
-        this.baseCurrencyToAdd = baseCurrencyToAdd;
+    public CurrencyOnEventOption onKill(int currencyOnKill) {
+        this.currencyOnKill = currencyOnKill;
+        return this;
+    }
+
+    public CurrencyOnEventOption startWith(int startingCurrency) {
+        this.startingCurrency = startingCurrency;
+        return this;
+    }
+
+    public CurrencyOnEventOption onPerWaveClear(int wave, int currency) {
+        currencyPerXWaveClear.put(wave, currency);
+        return this;
+    }
+
+    public CurrencyOnEventOption setPerWaveClear(int wave, int currency) {
+        currencyPerXWaveClear.clear();
+        currencyPerXWaveClear.put(wave, currency);
+        return this;
     }
 
     @Override
@@ -48,19 +68,41 @@ public class CurrencyOnEventOption implements Option, Listener {
         });
     }
 
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (startingCurrency == 0) {
+            return;
+        }
+        player.addCurrency(startingCurrency);
+    }
+
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
+        if (currencyOnKill == 0) {
+            return;
+        }
         WarlordsEntity mob = event.getPlayer();
         for (WarlordsEntity player : PlayerFilter
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                AtomicInteger currencyToAdd = new AtomicInteger(baseCurrencyToAdd);
-                Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(player, currencyToAdd));
-                player.sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
-                player.addCurrency(currencyToAdd.get());
+                player.addCurrency(currencyOnKill);
             }
         }
+    }
+
+    @EventHandler
+    public void onWaveClear(WarlordsGameWaveClearEvent event) {
+        if (currencyPerXWaveClear.isEmpty()) {
+            return;
+        }
+        int waveCleared = event.getWaveCleared();
+        currencyPerXWaveClear
+                .keySet()
+                .stream()
+                .filter(integer -> waveCleared % integer == 0)
+                .max(Comparator.naturalOrder())
+                .ifPresent(wave -> event.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> warlordsPlayer.addCurrency(currencyPerXWaveClear.get(wave))));
     }
 }

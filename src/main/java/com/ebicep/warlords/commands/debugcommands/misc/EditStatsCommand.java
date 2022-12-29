@@ -22,7 +22,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @CommandAlias("editstats")
-@CommandPermission("minecraft.command.op|group.adminisrator")
+@CommandPermission("group.adminisrator")
 @Conditions("database:player")
 public class EditStatsCommand extends BaseCommand {
 
@@ -127,7 +127,6 @@ public class EditStatsCommand extends BaseCommand {
 
     private static void wipe(PvEDatabaseStatInformation statInformation) {
         statInformation.setHighestWaveCleared(0);
-        statInformation.setLongestTimeInCombat(0);
         statInformation.setMostDamageInRound(0);
         statInformation.setMostDamageInWave(0);
         statInformation.setFastestGameFinished(0);

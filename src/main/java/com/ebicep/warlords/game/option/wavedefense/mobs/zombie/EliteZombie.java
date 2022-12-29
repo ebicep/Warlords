@@ -45,7 +45,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.subtractEnergy(5, false);
+        receiver.subtractEnergy(5, true);
     }
 
     @Override
@@ -55,7 +55,6 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
-        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.PURPLE)
                 .with(FireworkEffect.Type.BURST)

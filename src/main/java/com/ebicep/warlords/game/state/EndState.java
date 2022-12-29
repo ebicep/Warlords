@@ -9,8 +9,12 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -28,6 +32,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,7 +81,9 @@ public class EndState implements State, TimerDebugAble {
             return;
         }
         RecklessCharge.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
-        for (Option option : game.getOptions()) {
+
+        List<Option> options = game.getOptions();
+        for (Option option : options) {
             option.onGameEnding(game);
         }
 
@@ -95,19 +102,22 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
         sendGlobalMessage(game, "", false);
         if (teamBlueWins) {
-            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "PLAYERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
             }
         } else if (teamRedWins) {
-            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "MONSTERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
             }
         } else {
-            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE) ||
+                    options.stream().anyMatch(BoltaroBonanzaOption.class::isInstance) ||
+                    options.stream().anyMatch(BoltarosLairOption.class::isInstance)
+            ) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
@@ -115,10 +125,17 @@ public class EndState implements State, TimerDebugAble {
         }
 
         switch (game.getGameMode()) {
+            case WAVE_DEFENSE:
+            case EVENT_WAVE_DEFENSE:
+                for (Option option : options) {
+                    if (option instanceof WaveDefenseOption) {
+                        showWaveDefenseStats((WaveDefenseOption) option, players);
+                        break;
+                    }
+                }
             case INTERCEPTION:
             case SIMULATION_TRIAL:
             case TEAM_DEATHMATCH:
-            case WAVE_DEFENSE:
                 showTopDamage(players);
                 showTopHealing(players);
                 break;
@@ -135,7 +152,8 @@ public class EndState implements State, TimerDebugAble {
         //PLAYER STATS
 
         sendGlobalMessage(game, "", false);
-        int totalKills = players.stream()
+        int totalKills = players
+                .stream()
                 .mapToInt(wp -> wp.getMinuteStats().total().getKills())
                 .sum();
         int totalAssists = players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum();
@@ -153,13 +171,13 @@ public class EndState implements State, TimerDebugAble {
                                     ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalAssists) + "\n" +
                                     ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalDeaths) + "\n" +
                                     ChatColor.WHITE + "Total Melee Hits (you): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(wp.getMinuteStats()
-                                    .total()
-                                    .getMeleeHits())
+                                                                                                                                     .total()
+                                                                                                                                     .getMeleeHits())
                     )
                     .create()
             );
 
-            boolean hoverable = game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE;
+            boolean hoverable = !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode());
             List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
             baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable)));
@@ -200,7 +218,10 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) &&
+                    options.stream().noneMatch(BoltaroBonanzaOption.class::isInstance) &&
+                    options.stream().noneMatch(BoltarosLairOption.class::isInstance)
+            ) {
                 if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
                     PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
@@ -228,8 +249,9 @@ public class EndState implements State, TimerDebugAble {
                     "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                     true
             );
+            sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
-            for (Option option : game.getOptions()) {
+            for (Option option : options) {
                 if (option instanceof WaveDefenseOption) {
                     WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                     showCoinSummary(waveDefenseOption, players);
@@ -237,6 +259,19 @@ public class EndState implements State, TimerDebugAble {
                     showQuestSummary(waveDefenseOption, players);
                     break;
                 }
+            }
+            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game,
+                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    true
+            );
+            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.EVENT_WAVE_DEFENSE) {
+                sendGlobalMessage(game, "", false);
+                sendGlobalMessage(game,
+                        "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                        true
+                );
+                showEventStats(players);
             }
         }
 
@@ -284,6 +319,31 @@ public class EndState implements State, TimerDebugAble {
         });
     }
 
+    private void showWaveDefenseStats(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        StringBuilder hover = new StringBuilder();
+        hover.append(ChatColor.WHITE)
+             .append("Waves Cleared")
+             .append(ChatColor.GRAY)
+             .append(": ")
+             .append(ChatColor.GREEN)
+             .append(waveDefenseOption.getWavesCleared())
+             .append("\n");
+        game.getOptions()
+            .stream()
+            .filter(option -> option instanceof RecordTimeElapsedOption)
+            .map(RecordTimeElapsedOption.class::cast)
+            .findAny()
+            .ifPresent(recordTimeElapsedOption -> {
+                hover.append(ChatColor.WHITE).append("Time Elapsed").append(ChatColor.GRAY).append(": ")
+                     .append(ChatColor.GREEN).append(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20));
+            });
+        sendGlobalEventMessage(game, new ComponentBuilder()
+                .appendHoverText(ChatColor.BLUE.toString() + ChatColor.BOLD + "✚ GAME STATS ✚", hover.toString())
+                .create()
+        );
+    }
+
     private void showTopDamage(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         sendGlobalEventMessage(game, new ComponentBuilder()
@@ -291,14 +351,14 @@ public class EndState implements State, TimerDebugAble {
                         ChatColor.RED + "Total Damage (everyone)" +
                                 ChatColor.GRAY + ": " +
                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
-                                .sum())
+                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
+                                                                                      .sum())
                 )
                 .create()
         );
         players = players.stream()
-                .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed())
-                .collect(Collectors.toList());
+                         .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed())
+                         .collect(Collectors.toList());
         List<BaseComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
@@ -329,14 +389,14 @@ public class EndState implements State, TimerDebugAble {
                         ChatColor.GREEN + "Total Healing (everyone)" +
                                 ChatColor.GRAY + ": " +
                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
-                                .sum())
+                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
+                                                                                      .sum())
                 )
                 .create()
         );
         players = players.stream()
-                .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()).reversed())
-                .collect(Collectors.toList());
+                         .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()).reversed())
+                         .collect(Collectors.toList());
         List<BaseComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
@@ -369,18 +429,18 @@ public class EndState implements State, TimerDebugAble {
                 .appendHoverText(ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ MVP ✚",
                         ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " +
                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                .mapToInt(WarlordsEntity::getFlagsCaptured)
-                                .sum()) +
+                                                                                      .mapToInt(WarlordsEntity::getFlagsCaptured)
+                                                                                      .sum()) +
                                 "\n" +
                                 ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " +
                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                .mapToInt(WarlordsEntity::getFlagsCaptured)
-                                .sum())
+                                                                                      .mapToInt(WarlordsEntity::getFlagsCaptured)
+                                                                                      .sum())
                 )
                 .create());
         players = players.stream()
-                .sorted(Comparator.comparing(WarlordsEntity::getTotalCapsAndReturnsWeighted).reversed())
-                .collect(Collectors.toList());
+                         .sorted(Comparator.comparing(WarlordsEntity::getTotalCapsAndReturnsWeighted).reversed())
+                         .collect(Collectors.toList());
         sendGlobalEventMessage(game, new ComponentBuilder()
                 .appendHoverText(ChatColor.AQUA + players.get(0).getName(),
                         ChatColor.LIGHT_PURPLE + "Flag Captures: " +
@@ -414,24 +474,24 @@ public class EndState implements State, TimerDebugAble {
                                 !s.equals("Third Game of the Day")
                 ) {
                     specExpSummary.append(ChatColor.AQUA)
-                            .append(s).append(ChatColor.WHITE)
-                            .append(": ")
-                            .append(ChatColor.DARK_GRAY)
-                            .append("+")
-                            .append(ChatColor.DARK_GREEN)
-                            .append(aLong)
-                            .append("\n");
+                                  .append(s).append(ChatColor.WHITE)
+                                  .append(": ")
+                                  .append(ChatColor.DARK_GRAY)
+                                  .append("+")
+                                  .append(ChatColor.DARK_GREEN)
+                                  .append(aLong)
+                                  .append("\n");
                 }
 
                 universalExpSummary.append(ChatColor.AQUA)
-                        .append(s)
-                        .append(ChatColor.WHITE)
-                        .append(": ")
-                        .append(ChatColor.DARK_GRAY)
-                        .append("+")
-                        .append(ChatColor.DARK_GREEN)
-                        .append(aLong)
-                        .append("\n");
+                                   .append(s)
+                                   .append(ChatColor.WHITE)
+                                   .append(": ")
+                                   .append(ChatColor.DARK_GRAY)
+                                   .append("+")
+                                   .append(ChatColor.DARK_GREEN)
+                                   .append(aLong)
+                                   .append("\n");
             });
 
             specExpSummary.setLength(specExpSummary.length() - 1);
@@ -465,19 +525,19 @@ public class EndState implements State, TimerDebugAble {
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
 
 
-            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp, false);
+            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp, null, false);
             if (expFromWaveDefense.size() > 0) {
                 StringBuilder expFromWaveDefenseSummary = new StringBuilder();
                 expFromWaveDefense.forEach((s, aLong) -> {
                     expFromWaveDefenseSummary.append(ChatColor.AQUA)
-                            .append(s)
-                            .append(ChatColor.WHITE)
-                            .append(": ")
-                            .append(ChatColor.DARK_GRAY)
-                            .append("+")
-                            .append(ChatColor.DARK_GREEN)
-                            .append(aLong)
-                            .append("\n");
+                                             .append(s)
+                                             .append(ChatColor.WHITE)
+                                             .append(": ")
+                                             .append(ChatColor.DARK_GRAY)
+                                             .append("+")
+                                             .append(ChatColor.DARK_GREEN)
+                                             .append(aLong)
+                                             .append("\n");
                 });
                 expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
 
@@ -485,9 +545,9 @@ public class EndState implements State, TimerDebugAble {
                         .appendHoverText(
                                 ChatColor.GRAY + "+" +
                                         ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromWaveDefense.values()
-                                        .stream()
-                                        .mapToLong(Long::longValue)
-                                        .sum()) + " " +
+                                                                                                          .stream()
+                                                                                                          .mapToLong(Long::longValue)
+                                                                                                          .sum()) + " " +
                                         ChatColor.DARK_GREEN + "Guild Experience", expFromWaveDefenseSummary.toString()
                         )
                         .create()
@@ -510,14 +570,14 @@ public class EndState implements State, TimerDebugAble {
             StringBuilder coinSummaryString = new StringBuilder();
             pvECoinSummary.getCoinSummary().forEach((s, aLong) -> {
                 coinSummaryString.append(ChatColor.AQUA)
-                        .append(s)
-                        .append(ChatColor.WHITE)
-                        .append(": ")
-                        .append(ChatColor.DARK_GRAY)
-                        .append("+")
-                        .append(ChatColor.GOLD)
-                        .append(aLong)
-                        .append("\n");
+                                 .append(s)
+                                 .append(ChatColor.WHITE)
+                                 .append(": ")
+                                 .append(ChatColor.DARK_GRAY)
+                                 .append("+")
+                                 .append(ChatColor.GOLD)
+                                 .append(aLong)
+                                 .append("\n");
             });
             coinSummaryString.setLength(coinSummaryString.length() - 1);
 
@@ -570,8 +630,8 @@ public class EndState implements State, TimerDebugAble {
                         ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
                                 .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
                                         weapons.stream()
-                                                .map(AbstractWeapon::getName)
-                                                .collect(Collectors.joining("\n"))
+                                               .map(AbstractWeapon::getName)
+                                               .collect(Collectors.joining("\n"))
                                 )
                                 .create()
                         );
@@ -607,6 +667,39 @@ public class EndState implements State, TimerDebugAble {
                 );
             }
         }
+    }
+
+    private void showEventStats(List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ EVENT SUMMARY ✚", true);
+        EventPointsOption eventPointsOption = game
+                .getOptions()
+                .stream()
+                .filter(option -> option instanceof EventPointsOption)
+                .map(EventPointsOption.class::cast)
+                .findFirst()
+                .orElse(null);
+        for (WarlordsPlayer wp : players) {
+            Player player = Bukkit.getPlayer(wp.getUuid());
+            if (player == null) {
+                continue;
+            }
+
+            if (eventPointsOption != null) {
+                Integer points = eventPointsOption.getPoints().getOrDefault(player.getUniqueId(), 0);
+                ChatUtils.sendMessage(player,
+                        true,
+                        ChatColor.GRAY + "+" + ChatColor.YELLOW + NumberFormat.addCommas(Math.min(points,
+                                eventPointsOption.getCap()
+                        )) + " Point" + (points == 1 ? "" : "s")
+                );
+            }
+
+            for (Option option : game.getOptions()) {
+                option.sendEventStatsMessage(game, player);
+            }
+        }
+        sendGlobalMessage(game, "", false);
     }
 
     public void sendGlobalEventMessage(Game game, BaseComponent[] message) {

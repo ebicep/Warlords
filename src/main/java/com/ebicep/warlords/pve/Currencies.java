@@ -2,10 +2,13 @@ package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.wavedefense.CoinGainOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -71,9 +74,19 @@ public enum Currencies {
             ChatColor.DARK_GRAY,
             new ItemStack(Material.BOOKSHELF)
     ),
-
+    EVENT_POINTS_BOLTARO(
+            "Boltaro Event Point",
+            ChatColor.YELLOW,
+            new ItemStack(Material.DOUBLE_PLANT)
+    ),
+    TITLE_TOKEN_JUGGERNAUT(
+            "Juggernaut Title Token",
+            ChatColor.YELLOW,
+            new ItemStack(Material.SNOW_BALL)
+    ),
 
     ;
+
     public static final List<Currencies> STAR_PIECES = Arrays.asList(
             COMMON_STAR_PIECE,
             RARE_STAR_PIECE,
@@ -82,15 +95,6 @@ public enum Currencies {
     );
     public static final Currencies[] VALUES = values();
     public static final HashMap<UUID, PvECoinSummary> CACHED_PLAYER_COIN_STATS = new HashMap<>();
-    public final String name;
-    public final ChatColor chatColor;
-    public final ItemStack item;
-
-    Currencies(String name, ChatColor chatColor, ItemStack item) {
-        this.name = name;
-        this.chatColor = chatColor;
-        this.item = item;
-    }
 
     public static PvECoinSummary getCoinGainFromGameStats(
             WarlordsEntity warlordsPlayer,
@@ -104,7 +108,8 @@ public enum Currencies {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
         }
 
-        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
+        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption
+                .getWaveDefenseStats()
                 .getPlayerWaveDefenseStats(warlordsPlayer.getUuid());
         LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(playerWaveDefenseStats.getCachedBaseCoinSummary());
 
@@ -113,9 +118,39 @@ public enum Currencies {
             totalCoinsEarned += value;
         }
 
-        AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
-        Bukkit.getPluginManager().callEvent(new WarlordsGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
-        long guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+        long guildCoinsEarned = 0;
+        CoinGainOption coinGainOption = waveDefenseOption
+                .getGame()
+                .getOptions()
+                .stream()
+                .filter(CoinGainOption.class::isInstance)
+                .map(CoinGainOption.class::cast)
+                .findAny()
+                .orElse(null);
+
+        if (coinGainOption != null) {
+            Pair<Long, Integer> guildCoinPerXSec = coinGainOption.getGuildCoinPerXSec();
+            if (guildCoinPerXSec != null) {
+                RecordTimeElapsedOption recordTimeElapsedOption = waveDefenseOption
+                        .getGame()
+                        .getOptions()
+                        .stream()
+                        .filter(option -> option instanceof RecordTimeElapsedOption)
+                        .map(RecordTimeElapsedOption.class::cast)
+                        .findAny()
+                        .orElse(null);
+                if (recordTimeElapsedOption != null) {
+                    int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
+                    Pair<Long, Integer> coinsPerXSec = coinGainOption.getGuildCoinPerXSec();
+                    guildCoinsEarned = secondsElapsed / coinsPerXSec.getB() * coinsPerXSec.getA();
+                }
+            }
+            if (coinGainOption.getGuildCoinInsigniaConvertBonus() != 0) {
+                AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
+                Bukkit.getPluginManager().callEvent(new WarlordsGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
+                guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+            }
+        }
 
         Bukkit.getPluginManager().callEvent(new WarlordsCoinSummaryEvent(warlordsPlayer, coinSummary));
 
@@ -125,7 +160,8 @@ public enum Currencies {
         }
 
         if (CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid())) {
-            return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid())
+            return CACHED_PLAYER_COIN_STATS
+                    .get(warlordsPlayer.getUuid())
                     .setCoinSummary(coinSummary)
                     .setTotalCoinsGained(totalCoinsEarned)
                     .setTotalGuildCoinsGained(guildCoinsEarned);
@@ -134,6 +170,16 @@ public enum Currencies {
             CACHED_PLAYER_COIN_STATS.put(warlordsPlayer.getUuid(), pvECoinSummary);
             return pvECoinSummary;
         }
+    }
+
+    public final String name;
+    public final ChatColor chatColor;
+    public final ItemStack item;
+
+    Currencies(String name, ChatColor chatColor, ItemStack item) {
+        this.name = name;
+        this.chatColor = chatColor;
+        this.item = item;
     }
 
     public String getColoredName() {

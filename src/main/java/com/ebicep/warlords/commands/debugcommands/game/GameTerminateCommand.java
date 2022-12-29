@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @CommandAlias("terminategame|endgame")
-@CommandPermission("minecraft.command.op|warlords.game.end")
+@CommandPermission("warlords.game.end")
 public class GameTerminateCommand extends BaseCommand {
 
     public static void terminateGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
@@ -78,21 +78,21 @@ public class GameTerminateCommand extends BaseCommand {
     }
 
     @Subcommand("all")
-    @CommandPermission("minecraft.command.op|warlords.game.end.remote")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Terminates all games")
     public void terminateAllGames(CommandIssuer issuer) {
         terminateGameMatching(issuer, gameHolder -> true, "ALL");
     }
 
     @Subcommand("map")
-    @CommandPermission("minecraft.command.op|warlords.game.end.remote")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Terminates all games matching map")
     public void terminateGameFromMap(CommandIssuer issuer, GameMap map) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getMap(), map), "MAP");
     }
 
     @Subcommand("gamemode")
-    @CommandPermission("minecraft.command.op|warlords.game.end.remote")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Terminates all games matching gamemode")
     public void terminateGameFromGameMode(CommandIssuer issuer, GameMode gameMode) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameMode(), gameMode), "GAMEMODE");
@@ -100,7 +100,7 @@ public class GameTerminateCommand extends BaseCommand {
 
     @Subcommand("gameid")
     @CommandCompletion("@gameids")
-    @CommandPermission("minecraft.command.op|warlords.game.end.remote")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Terminates all games with matching id")
     public void terminateGameFromGameId(CommandIssuer issuer, @Values("@gameids") UUID uuid) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
