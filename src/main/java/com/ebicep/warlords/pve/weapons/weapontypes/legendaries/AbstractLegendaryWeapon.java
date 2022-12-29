@@ -271,7 +271,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
-                if (ability.getCritChance() != -1) {
+                if (ability.getCritChance() > 0) {
                     ability.setCritChance(ability.getCritChance() + getSkillCritChanceBonus());
                     ability.setCritMultiplier(ability.getCritMultiplier() + getSkillCritMultiplierBonus());
                 }
