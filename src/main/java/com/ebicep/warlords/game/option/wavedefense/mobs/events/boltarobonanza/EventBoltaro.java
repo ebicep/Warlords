@@ -22,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class EventBoltaro extends AbstractZombie implements BossMob {
 
+    private boolean split = false;
+
     public EventBoltaro(Location spawnLocation) {
         super(spawnLocation,
                 "Boltaro",
@@ -66,12 +68,18 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
         }
 
         if (warlordsNPC.getHealth() < 6000) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
-            for (int i = 0; i < 2; i++) {
-                option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), 0));
-            }
+            split = true;
+
+            split(option);
 
             warlordsNPC.die(warlordsNPC);
+        }
+    }
+
+    private void split(WaveDefenseOption option) {
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
+        for (int i = 0; i < 2; i++) {
+            option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), 0));
         }
     }
 
@@ -111,6 +119,10 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.STAR)
                                                                        .withTrail()
                                                                        .build());
+
+        if (!split) {
+            split(option);
+        }
     }
 
     @Override

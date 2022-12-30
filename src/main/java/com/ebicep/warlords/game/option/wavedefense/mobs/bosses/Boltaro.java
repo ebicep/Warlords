@@ -88,22 +88,26 @@ public class Boltaro extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < 6000) {
             split = true;
-            if (mobsKilledBeforeSplit == 0) {
-                option.getGame()
-                        .warlordsPlayers()
-                        .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.SIRE));
-            }
-            HandlerList.unregisterAll(listener);
-
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
-            }
-
-            for (int i = 0; i < 6; i++) {
-                option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
-            }
+            split(option);
             warlordsNPC.die(warlordsNPC);
+        }
+    }
+
+    private void split(WaveDefenseOption option) {
+        if (mobsKilledBeforeSplit == 0) {
+            option.getGame()
+                  .warlordsPlayers()
+                  .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.SIRE));
+        }
+        HandlerList.unregisterAll(listener);
+
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
+        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+            option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
+        }
+
+        for (int i = 0; i < 6; i++) {
+            option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
         }
     }
 
@@ -138,9 +142,12 @@ public class Boltaro extends AbstractZombie implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.STAR)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.STAR)
+                                                                       .withTrail()
+                                                                       .build());
+        if (!split) {
+            split(option);
+        }
     }
 }
