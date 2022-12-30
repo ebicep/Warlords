@@ -2501,7 +2501,7 @@ public abstract class WarlordsEntity {
     public void addCurrency(int currency) {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
-        this.currency += currency;
+        this.currency += currencyToAdd.get();
         sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }
