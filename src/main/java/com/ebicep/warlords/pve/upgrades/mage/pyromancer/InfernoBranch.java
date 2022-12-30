@@ -46,7 +46,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Chronos - Tier I",
                 "+1s Duration",
                 5000,
                 () -> {
@@ -54,7 +54,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Chronos - Tier II",
                 "+2s Duration",
                 10000,
                 () -> {
@@ -62,7 +62,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Chronos - Tier III",
                 "+3s Duration",
                 15000,
                 () -> {
@@ -70,7 +70,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Chronos - Tier IV",
                 "+4s Duration",
                 20000,
                 () -> {

@@ -176,7 +176,7 @@ public class WaterBreath extends AbstractAbility {
                 })
         );
         if (!hasPreviousCooldown) {
-            hit.getSpec().decreaseAllCooldownTimersBy(3);
+            hit.getSpec().decreaseAllCooldownTimersBy(2);
             hit.updateItems();
         }
     }

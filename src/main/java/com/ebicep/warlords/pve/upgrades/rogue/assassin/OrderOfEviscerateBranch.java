@@ -15,7 +15,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
         ability.setPveUpgrade(true);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Chronos - Tier I",
                 "+2s Duration",
                 5000,
                 () -> {
@@ -23,7 +23,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Chronos - Tier II",
                 "+4s Duration",
                 10000,
                 () -> {
@@ -31,7 +31,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Chronos - Tier III",
                 "+6s Duration",
                 15000,
                 () -> {
@@ -39,7 +39,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Chronos - Tier IV",
                 "+8s Duration",
                 20000,
                 () -> {
