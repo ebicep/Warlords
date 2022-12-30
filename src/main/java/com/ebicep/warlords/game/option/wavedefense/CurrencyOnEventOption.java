@@ -18,13 +18,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
     public static final int SCOREBOARD_PRIORITY = 15;
-    private final HashMap<Integer, Integer> currencyPerXWaveClear = new HashMap<>() {{
+    private final ConcurrentHashMap<Integer, Integer> currencyPerXWaveClear = new ConcurrentHashMap<>() {{
         put(5, 4000);
         put(1, 1000);
     }};

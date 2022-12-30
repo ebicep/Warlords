@@ -47,6 +47,14 @@ import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public final class WarlordsPlayer extends WarlordsEntity {
 
+//    @Override
+//    public void setWasSneaking(boolean wasSneaking) {
+//        super.setWasSneaking(wasSneaking);
+//        if(wasSneaking) {
+//            ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Player sneak " + name + " - " + specClass);
+//        }
+//    }
+
     private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
         jimmy.setBaby(false);

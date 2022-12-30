@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.warlords.abilties.Fireball;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
@@ -106,6 +108,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 maxMeleeDamage,
                 this
         );
+        AbstractAbility weapon = warlordsNPC.getSpec().getWeapon();
+        if (weapon instanceof Fireball) {
+            ((Fireball) weapon).setMaxDistance(150);
+        }
 
         Optional<Option> optional = game.getOptions()
                                         .stream()

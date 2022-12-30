@@ -124,6 +124,8 @@ public class Warlords extends JavaPlugin {
         for (Option option : warlordsEntity.getGame().getOptions()) {
             option.onWarlordsEntityCreated(warlordsEntity);
         }
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Added player " + warlordsEntity.getName() + " - " + warlordsEntity.getSpecClass
+        // ().name);
     }
 
     @Nullable

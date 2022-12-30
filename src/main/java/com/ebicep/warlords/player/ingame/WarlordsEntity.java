@@ -230,12 +230,12 @@ public abstract class WarlordsEntity {
         if (event.isHealingInstance()) {
             Optional<WarlordsDamageHealingFinalEvent> eventOptional = addHealingInstance(debugMessage, event);
             eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager()
-                    .callEvent(warlordsDamageHealingFinalEvent));
+                                                                             .callEvent(warlordsDamageHealingFinalEvent));
             return eventOptional;
         } else {
             Optional<WarlordsDamageHealingFinalEvent> eventOptional = addDamageInstance(debugMessage, event);
             eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager()
-                    .callEvent(warlordsDamageHealingFinalEvent));
+                                                                             .callEvent(warlordsDamageHealingFinalEvent));
             return eventOptional;
         }
     }
@@ -781,8 +781,8 @@ public abstract class WarlordsEntity {
                     });
 
                     for (WarlordsEntity enemy : PlayerFilter.playingGame(game)
-                            .enemiesOf(this)
-                            .stream().collect(Collectors.toList())
+                                                            .enemiesOf(this)
+                                                            .stream().collect(Collectors.toList())
                     ) {
                         for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
@@ -1031,7 +1031,7 @@ public abstract class WarlordsEntity {
     ) {
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-                .append(" Your ").append(ability);
+               .append(" Your ").append(ability);
         if (isCrit) {
             ownFeed.append(" critically");
         }
@@ -1074,7 +1074,7 @@ public abstract class WarlordsEntity {
         // Own Message
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-                .append(" Your ").append(ability);
+               .append(" Your ").append(ability);
 
         if (isCrit) {
             ownFeed.append(" critically");
@@ -1232,14 +1232,14 @@ public abstract class WarlordsEntity {
     private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
         appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
         debugMessage.append(": ")
-                .append(ChatColor.GOLD)
-                .append(value)
-                .append(ChatColor.DARK_GRAY)
-                .append(" (")
-                .append(ChatColor.GRAY)
-                .append(cooldown.getName())
-                .append(ChatColor.DARK_GRAY)
-                .append(")");
+                    .append(ChatColor.GOLD)
+                    .append(value)
+                    .append(ChatColor.DARK_GRAY)
+                    .append(" (")
+                    .append(ChatColor.GRAY)
+                    .append(cooldown.getName())
+                    .append(ChatColor.DARK_GRAY)
+                    .append(")");
     }
 
     private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
@@ -1249,9 +1249,9 @@ public abstract class WarlordsEntity {
     private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value) {
         appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
         debugMessage.append(": ")
-                .append(ChatColor.GOLD)
-                .append(value)
-                .append(ChatColor.DARK_GRAY);
+                    .append(ChatColor.GOLD)
+                    .append(value)
+                    .append(ChatColor.DARK_GRAY);
     }
 
     private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value) {
@@ -1264,11 +1264,11 @@ public abstract class WarlordsEntity {
 
     private void appendDebugMessage(StringBuilder stringBuilder, int level, ChatColor chatColor, String title) {
         stringBuilder.append("\n")
-                .append(ChatColor.GRAY)
-                .append(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)))
-                .append(" - ")
-                .append(chatColor)
-                .append(title);
+                     .append(ChatColor.GRAY)
+                     .append(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)))
+                     .append(" - ")
+                     .append(chatColor)
+                     .append(title);
     }
 
     private void appendDebugMessage(StringBuilder stringBuilder, int level, AbstractCooldown<?> cooldown) {
@@ -1445,13 +1445,13 @@ public abstract class WarlordsEntity {
         int maxHealthRounded = Math.round(maxHealth);
         int maxBaseHealthRounded = Math.round(maxBaseHealth);
         actionBarMessage.append("§l")
-                .append(Math.round(health))
-                .append(ChatColor.GOLD)
-                .append("§l/")
-                .append(maxHealthRounded > maxBaseHealthRounded ? ChatColor.YELLOW : ChatColor.GOLD)
-                .append(ChatColor.BOLD)
-                .append(maxHealthRounded)
-                .append("    ");
+                        .append(Math.round(health))
+                        .append(ChatColor.GOLD)
+                        .append("§l/")
+                        .append(maxHealthRounded > maxBaseHealthRounded ? ChatColor.YELLOW : ChatColor.GOLD)
+                        .append(ChatColor.BOLD)
+                        .append(maxHealthRounded)
+                        .append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
@@ -1985,10 +1985,10 @@ public abstract class WarlordsEntity {
                         }
                         PlayerStatisticsMinute.Entry entry = entries.get(index);
                         stringBuilder.append(ChatColor.WHITE)
-                                .append("Minute ")
-                                .append(index)
-                                .append(": ")
-                                .append(ChatColor.GOLD);
+                                     .append("Minute ")
+                                     .append(index)
+                                     .append(": ")
+                                     .append(ChatColor.GOLD);
                         stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
                         stringBuilder.append("\n");
                     }
@@ -2013,10 +2013,10 @@ public abstract class WarlordsEntity {
                     PlayerStatisticsMinute.Entry entry = entries.get(i);
                     stringBuilder.append("\n");
                     stringBuilder.append(ChatColor.WHITE)
-                            .append("Minute ")
-                            .append(i + 1)
-                            .append(": ")
-                            .append(ChatColor.GOLD);
+                                 .append("Minute ")
+                                 .append(i + 1)
+                                 .append(": ")
+                                 .append(ChatColor.GOLD);
                     stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
                 }
                 componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
@@ -2193,10 +2193,10 @@ public abstract class WarlordsEntity {
      */
     public double getFlagDamageMultiplier() {
         return this.carriedFlag != null
-                && this.carriedFlag.getFlag() instanceof PlayerFlagLocation
-                && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this
-                ? ((PlayerFlagLocation) this.carriedFlag.getFlag()).getComputedMultiplier()
-                : 1;
+                       && this.carriedFlag.getFlag() instanceof PlayerFlagLocation
+                       && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this
+               ? ((PlayerFlagLocation) this.carriedFlag.getFlag()).getComputedMultiplier()
+               : 1;
     }
 
     public String getColoredName() {
@@ -2218,8 +2218,17 @@ public abstract class WarlordsEntity {
                     abstractCooldown.multiplyKB(v);
                 }
             }
-
+            if (Double.isNaN(v.getX())) {
+                v.setX(0);
+            }
+            if (Double.isNaN(v.getY())) {
+                v.setY(0);
+            }
+            if (Double.isNaN(v.getZ())) {
+                v.setZ(0);
+            }
             Bukkit.getPluginManager().callEvent(new WarlordsAddVelocityEvent(this, v));
+            //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Set entity velocity " + (this instanceof WarlordsPlayer) + " - " + v);
             this.entity.setVelocity(v);
         }
     }
@@ -2304,7 +2313,7 @@ public abstract class WarlordsEntity {
             player.setWalkSpeed(this.walkSpeed);
         } else {
             ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                    .setValue(this.walkSpeed);
+                                                               .setValue(this.walkSpeed);
         }
     }
 
@@ -2344,10 +2353,10 @@ public abstract class WarlordsEntity {
 
     public boolean hasAchievement(ChallengeAchievements achievements) {
         return achievementsUnlocked.stream()
-                .filter(ChallengeAchievements.ChallengeAchievementRecord.class::isInstance)
-                .map(ChallengeAchievements.ChallengeAchievementRecord.class::cast)
-                .map(ChallengeAchievements.ChallengeAchievementRecord::getAchievement)
-                .anyMatch(achievement -> achievement == achievements);
+                                   .filter(ChallengeAchievements.ChallengeAchievementRecord.class::isInstance)
+                                   .map(ChallengeAchievements.ChallengeAchievementRecord.class::cast)
+                                   .map(ChallengeAchievements.ChallengeAchievementRecord::getAchievement)
+                                   .anyMatch(achievement -> achievement == achievements);
     }
 
     public void unlockAchievement(ChallengeAchievements achievement) {
@@ -2418,8 +2427,8 @@ public abstract class WarlordsEntity {
         }
         Location respawnPoint =
                 !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
-                        deathLocation != null ? deathLocation :
-                                getLocation();
+                deathLocation != null ? deathLocation :
+                getLocation();
         WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {

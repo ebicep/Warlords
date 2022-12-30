@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
@@ -158,15 +159,16 @@ public class WaveDefenseOption implements Option {
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
-                        mobToRemove.getLivingEntity().remove(); // idk if this is needed
+                        mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                         new GameRunnable(game) {
                             @Override
                             public void run() {
-                                mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                                 mobs.remove(mobToRemove);
-                                game.removePlayer(we.getUuid());
+                                game.getPlayers().remove(we.getUuid());
+                                Warlords.removePlayer(we.getUuid());
+                                //game.removePlayer(we.getUuid());
                             }
-                        }.run();
+                        }.runTaskLater(1);
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
@@ -624,6 +626,8 @@ public class WaveDefenseOption implements Option {
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+                //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn internal mob " + abstractMob.getName() + " - " + ticksElapsed.get
+                // () + " - " + mobs.size());
                 return warlordsNPC;
             }
 
@@ -662,6 +666,8 @@ public class WaveDefenseOption implements Option {
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
+        // " + mobs.size());
     }
 
     public Set<AbstractMob<?>> getMobs() {

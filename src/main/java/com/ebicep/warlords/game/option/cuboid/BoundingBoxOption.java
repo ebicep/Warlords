@@ -14,6 +14,10 @@ public class BoundingBoxOption extends AbstractCuboidOption implements Option {
         super(world);
     }
 
+    public BoundingBoxOption(World world, int maxSize) {
+        super(world, maxSize);
+    }
+
     public BoundingBoxOption(Location a, Location b) {
         super(a, b);
     }

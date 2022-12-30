@@ -34,10 +34,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     public int numberOfDismounts = 0;
 
     protected final int maxTicks;
-    protected final double maxDistance;
     protected final boolean hitTeammates;
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
+    protected double maxDistance;
     protected float forwardTeleportAmount = 0;
     protected int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
@@ -273,6 +273,8 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
 
         List<Location> projectileLocations = getLocationsToFireShots(shooter.getEntity());
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Shot projectile (" + projectileLocations.size() + ")" + shooter.getName() + " -
+        // " + shooter.getSpecClass());
         List<InternalProjectile> internalProjectiles = new ArrayList<>();
         for (Location projectileLocation : projectileLocations) {
             InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
@@ -367,6 +369,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
         default void onDestroy(InternalProjectile projectile) {
         }
+    }
+
+    public void setMaxDistance(double maxDistance) {
+        this.maxDistance = maxDistance;
     }
 
     public class InternalProjectile extends BukkitRunnable {

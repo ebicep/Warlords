@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
+import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
@@ -92,7 +93,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -153,7 +154,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -214,7 +215,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -275,7 +276,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -400,7 +401,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -464,7 +465,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -529,7 +530,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -586,7 +587,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -650,7 +651,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -719,7 +720,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -769,7 +770,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -817,7 +818,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -863,7 +864,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -912,7 +913,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -961,7 +962,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -1019,7 +1020,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -1068,7 +1069,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -1106,7 +1107,7 @@ public enum GameMap {
             options.add(new DuelsTeleportOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -1139,7 +1140,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
                     .onKill(500)
@@ -1336,7 +1337,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
                     .onKill(500)
@@ -1680,7 +1681,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
                     .onKill(250)
@@ -2633,7 +2634,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList(), DifficultyIndex.NORMAL)); //TODO difficulty
@@ -2721,7 +2722,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 2, 0), Team.BLUE));
 
             //options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -2774,7 +2775,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)
@@ -3019,7 +3020,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)

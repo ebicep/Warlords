@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.state;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -69,6 +71,15 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
+        Warlords.getGameManager().getGames().stream()
+                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
+                .findAny()
+                .ifPresent(gameHolder -> {
+                    ChatChannels.sendDebugMessage((CommandIssuer) null,
+                            ChatColor.LIGHT_PURPLE + "Started Game: " + game.getGameMode() + " - " + gameHolder.getName(),
+                            true
+                    );
+                });
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
@@ -150,7 +161,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
                 StreamChaptersCommand.GAME_TIMES.get(wp.getUuid())
-                        .add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
+                                                .add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
             }
         });
 
@@ -200,12 +211,12 @@ public class PlayingState implements State, TimerDebugAble {
             if (scoreboard.getTeam(name) == null) {
                 org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(name);
                 temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                        .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                                                                                          .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                 temp.addEntry(name);
                 temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]");
             } else {
                 scoreboard.getTeam(name).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                        .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                                                                                                              .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                 if (warlordsEntity.getCarriedFlag() != null) {
                     scoreboard.getTeam(name).setSuffix(
                             ChatColor.DARK_GRAY + "[" +
@@ -265,13 +276,13 @@ public class PlayingState implements State, TimerDebugAble {
                     byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
                     AbstractPlayerClass spec = wp.getSpec();
                     byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed()
-                            .getCurrentCooldown() + .5));
+                                                                                                                    .getCurrentCooldown() + .5));
                     byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple()
-                            .getCurrentCooldown() + .5));
+                                                                                                                       .getCurrentCooldown() + .5));
                     byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue()
-                            .getCurrentCooldown() + .5));
+                                                                                                                     .getCurrentCooldown() + .5));
                     byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
-                            .getCurrentCooldown() + .5));
+                                                                                                                       .getCurrentCooldown() + .5));
                     if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
                             playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
@@ -403,10 +414,10 @@ public class PlayingState implements State, TimerDebugAble {
             int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
             //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
             scoreboard.getTeam(we.getName())
-                    .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
+                      .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
+                                                                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
             scoreboard.getTeam(we.getName())
-                    .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+                      .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
 
         });
     }

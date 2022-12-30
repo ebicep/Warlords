@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
@@ -15,9 +16,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -127,6 +130,34 @@ public final class Game implements Runnable, AutoCloseable {
         //this.printDebuggingInformation();
     }
 
+    @Override
+    public void run() {
+        if (this.nextState == null && this.state != null) {
+            this.nextState = this.state.run();
+        }
+        while (this.nextState != null) {
+            for (GameAddon addon : this.addons) {
+                nextState = addon.stateWillChange(this, this.state, nextState);
+                if (nextState == null) {
+                    return;
+                }
+            }
+            if (this.state != null) {
+                this.state.end();
+            }
+            State newState = nextState == null ? new ClosedState(this) : nextState;
+            nextState = null;
+            //System.out.println("DEBUG OLD TO NEW STATE");
+            //this.printDebuggingInformation();
+            State oldState = this.state;
+            this.state = newState;
+            newState.begin();
+            for (GameAddon addon : this.addons) {
+                addon.stateHasChanged(this, oldState, newState);
+            }
+        }
+    }
+
     public boolean isState(Class<? extends State> clazz) {
         if (this.state == null) {
             throw new IllegalStateException("The game is not started yet");
@@ -150,16 +181,6 @@ public final class Game implements Runnable, AutoCloseable {
             throw new IllegalStateException("The game is not started yet");
         }
         return state;
-    }
-
-    /**
-     * Gets the game map used to construct this game
-     *
-     * @return the game map
-     */
-    @Nonnull
-    public GameMap getMap() {
-        return map;
     }
 
     /**
@@ -309,18 +330,6 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     /**
-     * Checks if a player is on a team, spectators are said to be on team
-     * <code>null</code>
-     *
-     * @param player The player to check
-     * @param team   The team to check, of null for spectators
-     * @return True if the player is in the specified team
-     */
-    public boolean isOnTeam(@Nonnull UUID player, @Nullable Team team) {
-        return players.containsKey(player) && players.get(player) == team;
-    }
-
-    /**
      * @param player
      * @return
      * @see #isOnTeam(java.util.UUID, Team)
@@ -331,6 +340,18 @@ public final class Game implements Runnable, AutoCloseable {
     @Deprecated
     public boolean isRedTeam(@Nonnull UUID player) {
         return isOnTeam(player, Team.RED);
+    }
+
+    /**
+     * Checks if a player is on a team, spectators are said to be on team
+     * <code>null</code>
+     *
+     * @param player The player to check
+     * @param team   The team to check, of null for spectators
+     * @return True if the player is in the specified team
+     */
+    public boolean isOnTeam(@Nonnull UUID player, @Nullable Team team) {
+        return players.containsKey(player) && players.get(player) == team;
     }
 
     /**
@@ -424,22 +445,6 @@ public final class Game implements Runnable, AutoCloseable {
         this.players.put(player.getUniqueId(), team);
     }
 
-    private boolean removePlayer0(UUID player) {
-        if (this.players.containsKey(player)) {
-            assert this.state != null : "A player was added and removed from the game while it was not started??";
-            OfflinePlayer op = Bukkit.getOfflinePlayer(player);
-            this.state.onPlayerQuitGame(op);
-            this.players.remove(player);
-            Warlords.removePlayer(player);
-            Player p = op.getPlayer();
-            if (p != null) {
-                WarlordsEvents.joinInteraction(p, true);
-            }
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Removes a player by UUID from the game
      *
@@ -458,16 +463,20 @@ public final class Game implements Runnable, AutoCloseable {
         return false;
     }
 
-    public List<UUID> removeAllPlayers() {
-        List<UUID> toRemove = new ArrayList<>(this.players.keySet());
-        for (UUID p : toRemove) {
-            this.removePlayer0(p);
+    private boolean removePlayer0(UUID player) {
+        if (this.players.containsKey(player)) {
+            assert this.state != null : "A player was added and removed from the game while it was not started??";
+            OfflinePlayer op = Bukkit.getOfflinePlayer(player);
+            this.state.onPlayerQuitGame(op);
+            this.players.remove(player);
+            Warlords.removePlayer(player);
+            Player p = op.getPlayer();
+            if (p != null) {
+                WarlordsEvents.joinInteraction(p, true);
+            }
+            return true;
         }
-        if (!toRemove.isEmpty()) {
-            Warlords.getInstance().hideAndUnhidePeople();
-        }
-        assert this.players.isEmpty();
-        return toRemove;
+        return false;
     }
 
     public boolean hasPlayer(UUID player) {
@@ -478,68 +487,11 @@ public final class Game implements Runnable, AutoCloseable {
         return (int) this.players.values().stream().filter(Objects::nonNull).count();
     }
 
-    public Stream<WarlordsEntity> warlordsEntities() {
-        return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
-    }
-
-    public Stream<WarlordsPlayer> warlordsPlayers() {
-        return this.players.keySet().stream()
-                .map(Warlords::getPlayer)
-                .filter(WarlordsPlayer.class::isInstance)
-                .map(WarlordsPlayer.class::cast);
-    }
-
     public Stream<WarlordsNPC> warlordsNPCs() {
         return this.players.keySet().stream()
-                .map(Warlords::getPlayer)
-                .filter(WarlordsNPC.class::isInstance)
-                .map(WarlordsNPC.class::cast);
-    }
-
-    public Stream<Map.Entry<UUID, Team>> players() {
-        return this.players.entrySet().stream();
-    }
-
-    public Stream<Map.Entry<UUID, Team>> playersWithoutSpectators() {
-        return this.players.entrySet().stream().filter(e -> e.getValue() != null);
-    }
-
-    public Stream<Map.Entry<UUID, Team>> warlordsPlayersWithoutSpectators() {
-        return this.players.entrySet().stream()
-                .filter(e -> e.getValue() != null)
-                .filter(uuidTeamEntry -> Warlords.getPlayer(uuidTeamEntry.getKey()) instanceof WarlordsPlayer);
-    }
-
-    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
-        return playersWithoutSpectators()
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getOfflinePlayer(e.getKey()),
-                        e.getValue()
-                ));
-    }
-
-    public Stream<Map.Entry<OfflinePlayer, Team>> offlineWarlordsPlayersWithoutSpectators() {
-        return warlordsPlayersWithoutSpectators()
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getOfflinePlayer(e.getKey()),
-                        e.getValue()
-                ));
-    }
-
-    public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
-        return playersWithoutSpectators()
-                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getPlayer(e.getKey()),
-                        e.getValue()
-                )).filter(e -> e.getKey() != null);
-    }
-
-    public Stream<Map.Entry<Player, Team>> onlinePlayers() {
-        return players()
-                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getPlayer(e.getKey()),
-                        e.getValue()
-                )).filter(e -> e.getKey() != null);
+                           .map(Warlords::getPlayer)
+                           .filter(WarlordsNPC.class::isInstance)
+                           .map(WarlordsNPC.class::cast);
     }
 
     public Stream<UUID> spectators() {
@@ -550,24 +502,81 @@ public final class Game implements Runnable, AutoCloseable {
         offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
+    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getOfflinePlayer(e.getKey()),
+                        e.getValue()
+                ));
+    }
+
+    public Stream<Map.Entry<UUID, Team>> playersWithoutSpectators() {
+        return this.players.entrySet().stream().filter(e -> e.getValue() != null);
+    }
+
     public void forEachOfflineWarlordsPlayer(BiConsumer<OfflinePlayer, Team> consumer) {
         offlineWarlordsPlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
+    public Stream<Map.Entry<OfflinePlayer, Team>> offlineWarlordsPlayersWithoutSpectators() {
+        return warlordsPlayersWithoutSpectators()
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getOfflinePlayer(e.getKey()),
+                        e.getValue()
+                ));
+    }
+
+    public Stream<Map.Entry<UUID, Team>> warlordsPlayersWithoutSpectators() {
+        return this.players.entrySet().stream()
+                           .filter(e -> e.getValue() != null)
+                           .filter(uuidTeamEntry -> Warlords.getPlayer(uuidTeamEntry.getKey()) instanceof WarlordsPlayer);
     }
 
     public void forEachOfflineWarlordsEntity(Consumer<WarlordsEntity> consumer) {
         warlordsEntities().forEach(consumer);
     }
 
+    public Stream<WarlordsEntity> warlordsEntities() {
+        return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
+    }
+
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         warlordsPlayers().forEach(consumer);
+    }
+
+    public Stream<WarlordsPlayer> warlordsPlayers() {
+        return this.players.keySet().stream()
+                           .map(Warlords::getPlayer)
+                           .filter(WarlordsPlayer.class::isInstance)
+                           .map(WarlordsPlayer.class::cast);
     }
 
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
         onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
+    public Stream<Map.Entry<Player, Team>> onlinePlayers() {
+        return players()
+                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getPlayer(e.getKey()),
+                        e.getValue()
+                )).filter(e -> e.getKey() != null);
+    }
+
+    public Stream<Map.Entry<UUID, Team>> players() {
+        return this.players.entrySet().stream();
+    }
+
     public void forEachOnlinePlayerWithoutSpectators(BiConsumer<Player, Team> consumer) {
         onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
+    public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
+                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getPlayer(e.getKey()),
+                        e.getValue()
+                )).filter(e -> e.getKey() != null);
     }
 
     public void forEachOnlineWarlordsEntity(Consumer<WarlordsEntity> consumer) {
@@ -578,38 +587,22 @@ public final class Game implements Runnable, AutoCloseable {
         warlordsPlayers().filter(WarlordsEntity::isOnline).forEach(consumer);
     }
 
-    @Override
-    public void run() {
-        if (this.nextState == null && this.state != null) {
-            this.nextState = this.state.run();
-        }
-        while (this.nextState != null) {
-            for (GameAddon addon : this.addons) {
-                nextState = addon.stateWillChange(this, this.state, nextState);
-                if (nextState == null) {
-                    return;
-                }
-            }
-            if (this.state != null) {
-                this.state.end();
-            }
-            State newState = nextState == null ? new ClosedState(this) : nextState;
-            nextState = null;
-            //System.out.println("DEBUG OLD TO NEW STATE");
-            //this.printDebuggingInformation();
-            State oldState = this.state;
-            this.state = newState;
-            newState.begin();
-            for (GameAddon addon : this.addons) {
-                addon.stateHasChanged(this, oldState, newState);
-            }
-        }
-    }
-
     @Nonnull
     @Deprecated
     public List<ScoreboardHandler> getScoreboardHandlers() {
         return this.getMarkers(ScoreboardHandler.class);
+    }
+
+    /**
+     * Gets the list of all registered game markers for a specified
+     *
+     * @param <T>   The type to return
+     * @param clazz A class instance of the requested marker
+     * @return The requested list, or Collections.EMPTY_LIST if none is found
+     */
+    @Nonnull
+    public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
+        return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
 
     @Deprecated
@@ -630,21 +623,10 @@ public final class Game implements Runnable, AutoCloseable {
             throw new IllegalStateException("Game has been closed");
         }
         if (!clazz.isAssignableFrom(object.getClass())) {
-            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passing class " + object.getClass().getName() + " does not implement this");
+            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passing class " + object.getClass()
+                                                                                                                                                   .getName() + " does not implement this");
         }
         gameMarkers.computeIfAbsent(clazz, e -> new ArrayList<>()).add(object);
-    }
-
-    /**
-     * Gets the list of all registered game markers for a specified
-     *
-     * @param <T>   The type to return
-     * @param clazz A class instance of the requested marker
-     * @return The requested list, or Collections.EMPTY_LIST if none is found
-     */
-    @Nonnull
-    public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
-        return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
 
     public void unregisterGameTask(@Nonnull BukkitTask task) {
@@ -652,6 +634,10 @@ public final class Game implements Runnable, AutoCloseable {
             return;
         }
         this.gameTasks.remove(Objects.requireNonNull(task, "task"));
+    }
+
+    public BukkitTask registerGameTask(Runnable task) {
+        return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
 
     /**
@@ -671,10 +657,6 @@ public final class Game implements Runnable, AutoCloseable {
         }
         this.gameTasks.add(Objects.requireNonNull(task, "task"));
         return task;
-    }
-
-    public BukkitTask registerGameTask(Runnable task) {
-        return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
 
     public BukkitTask registerGameTask(Runnable task, int delay) {
@@ -732,7 +714,10 @@ public final class Game implements Runnable, AutoCloseable {
         if (!Warlords.getInstance().isEnabled()) {
             throw new IllegalPluginAccessException("Plugin attempted to register " + listener + " while not enabled");
         }
-        for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : Warlords.getInstance().getPluginLoader().createRegisteredListeners(listener, Warlords.getInstance()).entrySet()) {
+        for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : Warlords.getInstance()
+                                                                                        .getPluginLoader()
+                                                                                        .createRegisteredListeners(listener, Warlords.getInstance())
+                                                                                        .entrySet()) {
             if (AbstractWarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
                 entry.setValue(entry.getValue().stream().map(rl -> {
                     return new RegisteredListener(rl.getListener(), (l, e) -> {
@@ -793,12 +778,38 @@ public final class Game implements Runnable, AutoCloseable {
             }
             throw e;
         }
-        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
-            if (game.getGame() == this) {
-                game.setGame(null);
+        for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            if (gameHolder.getGame() == this) {
+                ChatChannels.sendDebugMessage((CommandIssuer) null,
+                        ChatColor.LIGHT_PURPLE + "Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName(),
+                        true
+                );
+                gameHolder.setGame(null);
                 break;
             }
         }
+    }
+
+    public List<UUID> removeAllPlayers() {
+        List<UUID> toRemove = new ArrayList<>(this.players.keySet());
+        for (UUID p : toRemove) {
+            this.removePlayer0(p);
+        }
+        if (!toRemove.isEmpty()) {
+            Warlords.getInstance().hideAndUnhidePeople();
+        }
+        assert this.players.isEmpty();
+        return toRemove;
+    }
+
+    /**
+     * Gets the game map used to construct this game
+     *
+     * @return the game map
+     */
+    @Nonnull
+    public GameMap getMap() {
+        return map;
     }
 
     @Override
