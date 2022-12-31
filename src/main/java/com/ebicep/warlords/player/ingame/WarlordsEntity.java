@@ -2471,6 +2471,8 @@ public abstract class WarlordsEntity {
         }
         getEntity().removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
         FlagHolder.dropFlagForPlayer(this);
+        getMinuteStats().getEntries().clear();
+        getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
     }
 
