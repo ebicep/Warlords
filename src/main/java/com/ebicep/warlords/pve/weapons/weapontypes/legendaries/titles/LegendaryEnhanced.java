@@ -18,6 +18,7 @@ import java.util.*;
 
 public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
+    private static final int TICKS_TO_ADD = 40;
     private static final List<String> EFFECTED_ABILITIES = new ArrayList<>() {{
         add("BRN");
         add("WND");
@@ -71,8 +72,13 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 if (!(cooldown instanceof RegularCooldown)) {
                     return;
                 }
+                RegularCooldown<?> regularCooldown = (RegularCooldown<?>) cooldown;
+                if (regularCooldown.isEnhanced()) {
+                    return;
+                }
                 if (EFFECTED_ABILITIES.contains(cooldown.getNameAbbreviation())) {
-                    ((RegularCooldown<?>) cooldown).setTicksLeft(((RegularCooldown<?>) cooldown).getTicksLeft() + 40);
+                    regularCooldown.setEnhanced(true);
+                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
                 }
             }
 
@@ -91,7 +97,11 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 if (event.getModifier().get() > 0) {
                     return;
                 }
-                event.getDuration().set(event.getDuration().get() + 40);
+                if (event.isEnhanced()) {
+                    return;
+                }
+                event.setEnhanced(true);
+                event.getDuration().set(event.getDuration().get() + TICKS_TO_ADD);
             }
 
             @EventHandler
@@ -102,8 +112,22 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 HashSet<WarlordsEntity> warlordsEntities = new HashSet<>(event.getTargets());
                 warlordsEntities.add(player);
                 warlordsEntities.stream()
-                        .filter(warlordsEntity -> warlordsEntity.isTeammate(player))
-                        .forEach(warlordsEntity -> warlordsEntity.getCooldownManager().addTicksToRegularCooldowns(CooldownTypes.ABILITY, 40));
+                                .filter(warlordsEntity -> warlordsEntity.isTeammate(player))
+                                .forEach(warlordsEntity -> {
+                                    List<AbstractCooldown<?>> abstractCooldowns = warlordsEntity.getCooldownManager().getCooldowns();
+                                    abstractCooldowns.stream()
+                                                     .filter(abstractCooldown -> abstractCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                                                     .filter(RegularCooldown.class::isInstance)
+                                                     .map(RegularCooldown.class::cast)
+                                                     .filter(regularCooldown -> !regularCooldown.isEnhanced())
+                                                     .forEachOrdered(regularCooldown -> {
+                                                         if (regularCooldown.getTicksLeft() <= 0) {
+                                                             return;
+                                                         }
+                                                         regularCooldown.setEnhanced(true);
+                                                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
+                                                     });
+                                });
             }
 
         });

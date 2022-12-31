@@ -25,6 +25,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     protected int startingTicks;
     protected int ticksLeft;
     protected int ticksElapsed;
+    protected boolean enhanced = false;
 
     public RegularCooldown(
             String name,
@@ -190,5 +191,13 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     public void removeTriConsumer(TriConsumer<RegularCooldown<T>, Integer, Integer> triConsumer) {
         this.consumers.remove(triConsumer);
+    }
+
+    public boolean isEnhanced() {
+        return enhanced;
+    }
+
+    public void setEnhanced(boolean enhanced) {
+        this.enhanced = enhanced;
     }
 }

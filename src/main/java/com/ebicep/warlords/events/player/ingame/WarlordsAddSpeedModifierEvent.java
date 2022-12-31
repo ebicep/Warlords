@@ -19,6 +19,7 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
     private final AtomicInteger modifier;
     private final AtomicInteger duration;
     private final AtomicReference<String[]> toDisable;
+    private boolean enhanced = false;
 
     public WarlordsAddSpeedModifierEvent(
             WarlordsEntity warlordsEntity,
@@ -53,6 +54,14 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
 
     public AtomicReference<String[]> getToDisable() {
         return toDisable;
+    }
+
+    public boolean isEnhanced() {
+        return enhanced;
+    }
+
+    public void setEnhanced(boolean enhanced) {
+        this.enhanced = enhanced;
     }
 
     @Override

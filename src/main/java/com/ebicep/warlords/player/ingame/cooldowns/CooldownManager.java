@@ -93,7 +93,8 @@ public class CooldownManager {
     }
 
     public void addTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
-        abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
+        abstractCooldowns.stream()
+                         .filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
                          .filter(RegularCooldown.class::isInstance)
                          .map(RegularCooldown.class::cast)
                          .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
