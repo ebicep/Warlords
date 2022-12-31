@@ -19,6 +19,7 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -141,7 +142,14 @@ public class PlayingState implements State, TimerDebugAble {
                 timer += GameRunnable.SECOND;
                 if (counter >= 60) {
                     counter -= 60;
-                    PlayerFilter.playingGame(game).forEach(wp -> wp.getMinuteStats().advanceMinute());
+                    PlayerFilter.playingGame(game).forEach(wp -> {
+                        PlayerStatisticsMinute minuteStats = wp.getMinuteStats();
+                        minuteStats.advanceMinute();
+                        //remove minute stats if over 30 minutes for memory
+                        if (minuteStats.getEntries().size() > 30) {
+                            minuteStats.getEntries().remove(0);
+                        }
+                    });
                 }
                 PlayerFilter.playingGame(game).forEach(wp -> {
                     PlayerStatisticsSecond secondStats = wp.getSecondStats();
