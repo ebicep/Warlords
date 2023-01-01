@@ -272,15 +272,16 @@ public class WaveDefenseOption implements Option {
                 List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
                 for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
                     AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
-                    List<Upgrade> upgradeList = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch);
+                    AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
+                    List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
                     Upgrade upgrade = upgradeList.get(entry.getUpgradeIndex());
                     if (upgrade.isUnlocked()) {
                         continue;
                     }
-                    if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
+                    if (player.getCurrency() < upgrade.getCurrencyCost() && (upgradeBranch.getFreeUpgrades() <= 0 && upgradeType != AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER)) {
                         return;
                     }
-                    if (entry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
+                    if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
                         upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, true);
                     } else {
                         upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);

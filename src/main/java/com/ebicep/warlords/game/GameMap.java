@@ -2777,11 +2777,6 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
-            options.add(new CurrencyOnEventOption()
-                    .startWith(120000)
-                    .onKill(500)
-                    .setPerWaveClear(1, 10000)
-            );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(8, 5 * SECOND, null)
                             .add(0.6, Mobs.BASIC_ZOMBIE)
@@ -2939,6 +2934,7 @@ public enum GameMap {
                 }
             });
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new BoltarosLairOption());
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
@@ -2958,8 +2954,11 @@ public enum GameMap {
                     .onPerMobKill(Mobs.BOLTARO_EXLIED, 10)
                     .cap(50_000)
             );
-            options.add(new BoltarosLairOption());
-            options.add(new FieldEffect(options));
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(1, 10000)
+            );
             options.add(new CoinGainOption()
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
@@ -2968,6 +2967,7 @@ public enum GameMap {
                     .playerExpPerWave(80)
                     .guildExpPerWave(10)
             );
+            options.add(new FieldEffect(options));
 
             return options;
         }
@@ -3022,10 +3022,6 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
-            options.add(new CurrencyOnEventOption()
-                    .startWith(120000)
-                    .onKill(10000)
-            );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, ChatColor.GREEN + "Event")
                             .add(Mobs.EVENT_BOLTARO_BONANZA)
@@ -3037,13 +3033,16 @@ public enum GameMap {
             ));
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
             options.add(new SafeZoneOption());
+            options.add(new BoltaroBonanzaOption());
             options.add(new EventPointsOption()
                     .onKill(30)
                     .reduceScoreOnAllDeath(30, Team.BLUE)
                     .cap(15_000)
             );
-            options.add(new BoltaroBonanzaOption());
-            options.add(new FieldEffect(options));
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(10000)
+            );
             options.add(new CoinGainOption()
                     .noPlayerCoinWavesClearedBonus()
                     .playerCoinPerKill(20)
@@ -3054,6 +3053,8 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(4, 10)
             );
+            options.add(new FieldEffect(options));
+
             return options;
         }
 
