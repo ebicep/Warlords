@@ -80,6 +80,7 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -93,7 +94,7 @@ public class Warlords extends JavaPlugin {
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
-    private static final HashMap<UUID, WarlordsEntity> PLAYERS = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, WarlordsEntity> PLAYERS = new ConcurrentHashMap<>();
     public static String VERSION = "";
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
@@ -111,7 +112,7 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newSharedChain(name);
     }
 
-    public static HashMap<UUID, WarlordsEntity> getPlayers() {
+    public static ConcurrentHashMap<UUID, WarlordsEntity> getPlayers() {
         return PLAYERS;
     }
 
