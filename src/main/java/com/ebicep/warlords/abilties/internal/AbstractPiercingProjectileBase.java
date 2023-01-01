@@ -122,7 +122,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         @Nullable
         MovingObjectPosition hit = null;
         double hitDistance = 0;
-        for (Entity entity : new ArrayList<>(currentLocation.getWorld().getEntities())) {
+        for (Entity entity : currentLocation.getWorld().getEntities()) {
             WarlordsEntity wp = getFromEntity(entity);
             if (wp != null && (hitTeammates || shooter.isEnemyAlive(wp)) && wp.isAlive() && wp != shooter) {
                 // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox

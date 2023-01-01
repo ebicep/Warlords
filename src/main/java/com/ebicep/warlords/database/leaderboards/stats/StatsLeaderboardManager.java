@@ -88,9 +88,13 @@ public class StatsLeaderboardManager {
                                     v -> new ConcurrentHashMap<>()
                             );
                             for (DatabasePlayer databasePlayer : databasePlayers) {
-                                if (databasePlayer.getUuid() != null) {
-                                    concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
+                                if (databasePlayer.getUuid() == null) {
+                                    continue;
                                 }
+                                if (value == PlayersCollections.LIFETIME && databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10) {
+                                    continue;
+                                }
+                                concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
                             }
                             resetLeaderboards(value, true);
                             loadedBoards.getAndIncrement();
@@ -156,7 +160,8 @@ public class StatsLeaderboardManager {
             EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         }
 
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
+        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
+                "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
 
 //        if (playersCollections == PlayersCollections.SEASON_5 && init) {
 //            SRCalculator.databasePlayerCache = databasePlayers;
