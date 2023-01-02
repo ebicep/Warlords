@@ -32,7 +32,7 @@ public class PvEEventBoltaroLairDatabaseStatInformation extends PvEEventBoltaroD
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltarosLair;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        this.highestWaveCleared += Math.max((((DatabaseGamePvEEventBoltaroLair) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
+        this.highestWaveCleared = Math.max((((DatabaseGamePvEEventBoltaroLair) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
         this.totalWavesCleared += ((DatabaseGamePvEEventBoltaroLair) databaseGame).getWavesCleared() * multiplier;
     }
 

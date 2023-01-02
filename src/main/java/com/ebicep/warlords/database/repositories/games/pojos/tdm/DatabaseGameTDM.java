@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.tdm;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -7,7 +8,10 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -92,8 +96,44 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     }
 
     @Override
-    public void createHolograms() {
+    public void appendLastGameStats(Hologram hologram) {
+        hologram.getLines().appendText(ChatColor.GRAY + date);
+        hologram.getLines()
+                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        hologram.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    }
 
+    @Override
+    public void addCustomHolograms(List<Hologram> holograms) {
+        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
+        holograms.add(topDHPPerMinute);
+        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+
+        List<String> topDHPPerGamePlayers = new ArrayList<>();
+        int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
+        List<DatabaseGamePlayerTDM> allPlayers = players
+                .values()
+                .stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        HashMap<DatabaseGamePlayerTDM, ChatColor> playerColor = new HashMap<>();
+        for (Map.Entry<Team, List<DatabaseGamePlayerTDM>> teamListEntry : players.entrySet()) {
+            for (DatabaseGamePlayerTDM gamePlayerTDM : teamListEntry.getValue()) {
+                playerColor.put(gamePlayerTDM, teamListEntry.getKey().teamColor);
+            }
+        }
+
+        allPlayers.stream()
+                  .sorted((o1, o2) -> {
+                      Long p1DHPPerGame = o1.getTotalDHP() / minutes;
+                      Long p2DHPPerGame = o2.getTotalDHP() / minutes;
+                      return p2DHPPerGame.compareTo(p1DHPPerGame);
+                  }).forEach(databaseGamePlayer -> {
+                      topDHPPerGamePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+                  });
+
+        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
     }
 
     @Override
@@ -103,6 +143,19 @@ public class DatabaseGameTDM extends DatabaseGameBase {
                 ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
 
     }
+
+    @Override
+    public Team getTeam(DatabaseGamePlayerBase player) {
+        return players.entrySet()
+                      .stream()
+                      .filter(teamListEntry -> teamListEntry.getValue()
+                                                            .stream()
+                                                            .anyMatch(databaseGamePlayerTDM -> databaseGamePlayerTDM.getUuid().equals(player.getUuid())))
+                      .map(Map.Entry::getKey)
+                      .findFirst()
+                      .orElse(null);
+    }
+
 
     @Override
     public List<String> getExtraLore() {

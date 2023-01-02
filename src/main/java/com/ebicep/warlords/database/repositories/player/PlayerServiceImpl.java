@@ -2,7 +2,6 @@ package com.ebicep.warlords.database.repositories.player;
 
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
@@ -74,9 +73,6 @@ public class PlayerServiceImpl implements PlayerService {
         ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(collection);
         if (concurrentHashMap.containsKey(uuid)) {
             return concurrentHashMap.get(uuid);
-        }
-        if (StatsLeaderboardManager.enabled && StatsLeaderboardManager.loaded) {
-            return concurrentHashMap.getOrDefault(uuid, null);
         }
         DatabasePlayer databasePlayer = playerRepository.findByUUID(uuid, collection);
         if (databasePlayer != null) {

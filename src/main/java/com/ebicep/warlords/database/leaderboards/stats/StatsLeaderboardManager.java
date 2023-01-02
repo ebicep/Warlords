@@ -28,6 +28,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +82,7 @@ public class StatsLeaderboardManager {
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
+            Instant minus = Instant.now().minus(30, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.VALUES) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
@@ -91,7 +94,10 @@ public class StatsLeaderboardManager {
                                 if (databasePlayer.getUuid() == null) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.LIFETIME && databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10) {
+                                if (value == PlayersCollections.LIFETIME &&
+                                        (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10 ||
+                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus)))
+                                ) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);

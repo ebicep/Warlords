@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -22,8 +23,11 @@ public class TestCommand extends BaseCommand {
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-        doTest(issuer);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
+        //doTest(issuer);
+        Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName(), false);
+        });
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", false);
     }
 
     public static void doTest(CommandIssuer issuer) {

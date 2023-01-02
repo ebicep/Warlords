@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.warlords.Utils;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -76,13 +77,27 @@ public class DatabaseGameInterception extends DatabaseGameBase {
     }
 
     @Override
-    public void createHolograms() {
+    public void appendLastGameStats(Hologram hologram) {
+        hologram.getLines().appendText(ChatColor.GRAY + date);
+        hologram.getLines()
+                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        hologram.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    }
+
+    @Override
+    public void addCustomHolograms(List<Hologram> holograms) {
 
     }
+
 
     @Override
     public String getGameLabel() {
         return "";
+    }
+
+    @Override
+    public Team getTeam(DatabaseGamePlayerBase player) {
+        return null;
     }
 
     @Override

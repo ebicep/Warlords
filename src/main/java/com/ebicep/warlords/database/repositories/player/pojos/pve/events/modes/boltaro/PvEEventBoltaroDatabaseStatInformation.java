@@ -86,6 +86,10 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         return eventPointsCumulative;
     }
 
+    public void setEventPointsCumulative(long eventPointsCumulative) {
+        this.eventPointsCumulative = eventPointsCumulative;
+    }
+
     public long getHighestEventPointsGame() {
         return highestEventPointsGame;
     }

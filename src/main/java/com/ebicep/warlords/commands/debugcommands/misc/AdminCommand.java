@@ -19,7 +19,6 @@ import java.util.Set;
 
 @CommandAlias("admin")
 @CommandPermission("group.administrator")
-@Conditions("database:player")
 public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();

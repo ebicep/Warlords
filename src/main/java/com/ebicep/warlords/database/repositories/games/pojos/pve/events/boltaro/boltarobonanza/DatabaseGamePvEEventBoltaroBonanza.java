@@ -4,7 +4,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
@@ -12,6 +12,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -31,11 +33,6 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     private List<DatabaseGamePlayerPvEEventBoltaroBonanza> players = new ArrayList<>();
 
     public DatabaseGamePvEEventBoltaroBonanza() {
-    }
-
-    @Override
-    public GameEvents getEvent() {
-        return GameEvents.BOLTARO;
     }
 
     public DatabaseGamePvEEventBoltaroBonanza(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
@@ -65,6 +62,11 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
+    public GameEvents getEvent() {
+        return GameEvents.BOLTARO;
+    }
+
+    @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltaroBonanza -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
@@ -76,28 +78,37 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
-        return new HashSet<>(players);
+    public void appendLastGameStats(Hologram hologram) {
+        super.appendLastGameStats(hologram);
+        hologram.getLines().appendText(ChatColor.YELLOW + "Highest Split: " + highestSplit);
     }
 
     @Override
-    public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        return DatabaseGamePlayerResult.NONE;
-    }
-
-    @Override
-    public void createHolograms() {
+    public void addCustomHolograms(List<Hologram> holograms) {
+        super.addCustomHolograms(holograms);
 
     }
 
     @Override
     public String getGameLabel() {
-        return null;
+        return super.getGameLabel() + " - " + ChatColor.YELLOW + highestSplit;
     }
 
     @Override
     public List<String> getExtraLore() {
-        return null;
+        List<String> extraLore = super.getExtraLore();
+        extraLore.add(ChatColor.GRAY + "Highest Split: " + ChatColor.YELLOW + highestSplit);
+        return extraLore;
+    }
+
+    @Override
+    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+        return new HashSet<>(players);
     }
 
     public int getHighestSplit() {

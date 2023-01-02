@@ -174,4 +174,6 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
     public DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats getBonanzaStats() {
         return bonanzaStats;
     }
+
+
 }

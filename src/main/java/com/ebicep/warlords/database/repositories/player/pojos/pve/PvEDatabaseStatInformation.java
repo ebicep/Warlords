@@ -59,7 +59,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         if (multiplier > 0) {
             if (databaseGame instanceof WavesCleared) {
                 WavesCleared wavesCleared = (WavesCleared) databaseGame;
-                this.highestWaveCleared = wavesCleared.getWavesCleared();
+                this.highestWaveCleared = Math.max(wavesCleared.getWavesCleared(), this.highestWaveCleared);
                 if (databaseGame instanceof TimeElapsed && databaseGame instanceof Difficulty) {
                     TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
                     Difficulty difficulty = (Difficulty) databaseGame;

@@ -75,12 +75,14 @@ public class WeaponSkillBoostMenu {
                         if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
                             confirmLore.addAll(costLore);
                         }
-                        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost.entrySet()) {
-                            Currencies currency = currenciesLongEntry.getKey();
-                            long value = currenciesLongEntry.getValue();
-                            if (databasePlayer.getPveStats().getCurrencyValue(currency) < value) {
-                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) + ChatColor.RED + " to unlock this skill boost.");
-                                return;
+                        if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
+                            for (Map.Entry<Currencies, Long> currenciesLongEntry : cost.entrySet()) {
+                                Currencies currency = currenciesLongEntry.getKey();
+                                long value = currenciesLongEntry.getValue();
+                                if (databasePlayer.getPveStats().getCurrencyValue(currency) < value) {
+                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) + ChatColor.RED + " to unlock this skill boost.");
+                                    return;
+                                }
                             }
                         }
                         Menu.openConfirmationMenu(

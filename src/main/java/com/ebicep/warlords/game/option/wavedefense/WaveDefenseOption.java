@@ -278,7 +278,7 @@ public class WaveDefenseOption implements Option {
                     if (upgrade.isUnlocked()) {
                         continue;
                     }
-                    if (player.getCurrency() < upgrade.getCurrencyCost() && (upgradeBranch.getFreeUpgrades() <= 0 && upgradeType != AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER)) {
+                    if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
                         return;
                     }
                     if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
