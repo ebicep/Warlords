@@ -150,6 +150,4 @@ public class ArcaneShield extends AbstractAbility {
     public void setDuration(int duration) {
         this.duration = duration;
     }
-
-
 }

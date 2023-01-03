@@ -54,7 +54,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Zeal - Tier I",
                 "+15% Knockback\n+15% Cone range",
                 5000,
                 () -> {
@@ -64,7 +64,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Zeal - Tier II",
                 "+30% Knockback\n+30% Cone range",
                 10000,
                 () -> {
@@ -74,7 +74,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Zeal - Tier III",
                 "+45% Knockback\n+45% Cone range",
                 15000,
                 () -> {
@@ -84,7 +84,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Zeal - Tier IV",
                 "+60% Knockback\n+60% Cone range",
                 20000,
                 () -> {

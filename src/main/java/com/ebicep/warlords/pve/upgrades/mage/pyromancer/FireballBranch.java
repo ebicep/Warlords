@@ -54,7 +54,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Scope - Tier I",
                 "+0.5 Blocks hit radius\n-5 Energy cost",
                 5000,
                 () -> {
@@ -63,7 +63,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Scope - Tier II",
                 "+1 Blocks hit radius\n-10 Energy cost",
                 10000,
                 () -> {
@@ -72,7 +72,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Scope - Tier III",
                 "+1.5 Blocks hit radius\n-15 Energy cost",
                 15000,
                 () -> {
@@ -81,7 +81,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Scope - Tier IV",
                 "+2 Block hit radius\n-20 Energy cost",
                 20000,
                 () -> {

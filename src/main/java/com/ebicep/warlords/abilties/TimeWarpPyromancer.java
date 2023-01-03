@@ -114,7 +114,6 @@ public class TimeWarpPyromancer extends AbstractAbility {
         return timesSuccessful;
     }
 
-
     public int getWarpHealPercentage() {
         return warpHealPercentage;
     }

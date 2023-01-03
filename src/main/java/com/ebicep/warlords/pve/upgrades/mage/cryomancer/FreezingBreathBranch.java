@@ -52,7 +52,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Zeal - Tier I",
                 "-5% Cooldown reduction\n+4% Slowness",
                 5000,
                 () -> {
@@ -61,7 +61,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Zeal - Tier II",
                 "-10% Cooldown reduction\n+6% Slowness",
                 10000,
                 () -> {
@@ -70,7 +70,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Zeal - Tier III",
                 "-15% Cooldown reduction\n+8% Slowness",
                 15000,
                 () -> {
@@ -79,7 +79,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Zeal - Tier IV",
                 "-20% Cooldown reduction\n+10% Slowness",
                 20000,
                 () -> {

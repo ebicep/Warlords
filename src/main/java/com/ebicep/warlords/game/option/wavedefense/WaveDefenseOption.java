@@ -369,15 +369,6 @@ public class WaveDefenseOption implements Option {
 
                     if (difficulty == DifficultyIndex.ENDLESS) {
                         switch (waveCounter) {
-                            case 25:
-                            case 75:
-                                getGame().forEachOnlineWarlordsPlayer(wp -> {
-                                    for (AbstractUpgradeBranch<?> branch : wp.getAbilityTree().getUpgradeBranches()) {
-                                        branch.setMaxUpgrades(branch.getMaxUpgrades() + 1);
-                                    }
-                                    wp.sendMessage(ChatColor.GOLD.toString() + ChatColor.BOLD + "+1 Tier Upgrade");
-                                });
-                                break;
                             case 50:
                             case 100:
                                 getGame().forEachOnlineWarlordsPlayer(wp -> {
