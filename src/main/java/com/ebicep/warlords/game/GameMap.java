@@ -1651,7 +1651,7 @@ public enum GameMap {
     },
     ILLUSION_CROSSFIRE(
             "Illusion Crossfire",
-            4,
+            6,
             1,
             120 * SECOND,
             "IllusionCrossfire",
