@@ -56,14 +56,6 @@ public class Chessking extends AbstractSlime implements BossMob {
                 we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100, false);
             }
         }
-        if (ticksElapsed % 200 == 0) {
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 15, 15, 15)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                we.addDamageInstance(warlordsNPC, "Blob", 1000, 1000, -1, 100, false);
-            }
-        }
 
         if (ticksElapsed % 300 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
@@ -71,7 +63,7 @@ public class Chessking extends AbstractSlime implements BossMob {
             }
         }
 
-        if (ticksElapsed % 600 == 0) {
+        if (ticksElapsed % 1200 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new VoidSlime(warlordsNPC.getLocation()));
             }
