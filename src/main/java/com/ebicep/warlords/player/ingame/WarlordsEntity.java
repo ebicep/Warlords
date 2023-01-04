@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
@@ -45,7 +44,6 @@ import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -111,7 +109,6 @@ public abstract class WarlordsEntity {
     private boolean dead = false;
     private float energy = 0;
     private float maxEnergy;
-    private CustomHorse horse;
     private float horseCooldown = 0;
     private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
@@ -176,7 +173,6 @@ public abstract class WarlordsEntity {
                 .stream().filter(CompassTargetMarker::isEnabled)
                 .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
                 .orElse(null);
-        this.horse = new CustomHorse(((CraftWorld) entity.getWorld()).getHandle(), this);
     }
 
     public boolean isInPve() {
@@ -1864,14 +1860,6 @@ public abstract class WarlordsEntity {
 
     public boolean onHorse() {
         return this.entity.isInsideVehicle();
-    }
-
-    public CustomHorse getHorse() {
-        return horse;
-    }
-
-    public void setHorse(CustomHorse horse) {
-        this.horse = horse;
     }
 
     public float getHorseCooldown() {
