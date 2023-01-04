@@ -6,6 +6,7 @@ import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface CustomPlayerRepository {
     DatabasePlayer create(DatabasePlayer player, PlayersCollections collection);
 
     DatabasePlayer save(DatabasePlayer player, PlayersCollections collection);
+
+    void updateMany(Query query, UpdateDefinition update, Class<?> clazz, PlayersCollections collection);
 
     void delete(DatabasePlayer player, PlayersCollections collection);
 

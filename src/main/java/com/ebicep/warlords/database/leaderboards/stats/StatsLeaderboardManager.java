@@ -21,10 +21,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -49,7 +46,7 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -83,7 +80,7 @@ public class StatsLeaderboardManager {
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
             Instant minus = Instant.now().minus(30, ChronoUnit.DAYS);
-            for (PlayersCollections value : PlayersCollections.VALUES) {
+            for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
                         .syncLast((databasePlayers) -> {
@@ -92,12 +89,24 @@ public class StatsLeaderboardManager {
                             );
                             for (DatabasePlayer databasePlayer : databasePlayers) {
                                 if (databasePlayer.getUuid() == null) {
+                                    ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
                                     continue;
+                                }
+                                if (databasePlayer.getName() == null) {
+                                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(databasePlayer.getUuid());
+                                    if (offlinePlayer != null && offlinePlayer.getName() != null) {
+                                        databasePlayer.setName(offlinePlayer.getName());
+                                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
+                                    }
                                 }
                                 if (value == PlayersCollections.LIFETIME &&
                                         (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10 ||
                                                 (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus)))
                                 ) {
+                                    // continue;
+                                }
+                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10)) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
@@ -114,7 +123,7 @@ public class StatsLeaderboardManager {
 
                 @Override
                 public void run() {
-                    if (loadedBoards.get() == PlayersCollections.VALUES.length) {
+                    if (loadedBoards.get() == PlayersCollections.ACTIVE_COLLECTIONS.size()) {
                         loaded = true;
 
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
@@ -158,6 +167,8 @@ public class StatsLeaderboardManager {
         }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
+        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
+                "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
         if (playersCollections == PlayersCollections.LIFETIME) {
             DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
             if (currentGameEvent == null) {
@@ -166,8 +177,6 @@ public class StatsLeaderboardManager {
             EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         }
 
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
-                "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
 
 //        if (playersCollections == PlayersCollections.SEASON_5 && init) {
 //            SRCalculator.databasePlayerCache = databasePlayers;

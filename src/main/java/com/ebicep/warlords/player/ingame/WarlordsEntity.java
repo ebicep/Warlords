@@ -2338,15 +2338,6 @@ public abstract class WarlordsEntity {
         this.carriedFlag = carriedFlag;
     }
 
-    @Nonnull
-    public PlayerStatisticsMinute getMinuteStats() {
-        return this.minuteStats;
-    }
-
-    public PlayerStatisticsSecond getSecondStats() {
-        return secondStats;
-    }
-
     public List<Achievement.AbstractAchievementRecord<?>> getAchievementsUnlocked() {
         return achievementsUnlocked;
     }
@@ -2472,8 +2463,21 @@ public abstract class WarlordsEntity {
         getEntity().removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
         FlagHolder.dropFlagForPlayer(this);
         getMinuteStats().getEntries().clear();
+        getSecondStats().getEntries().forEach(entry -> {
+            entry.getEventsAsSelf().clear();
+            entry.getEventsAsAttacker().clear();
+        });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
+    }
+
+    @Nonnull
+    public PlayerStatisticsMinute getMinuteStats() {
+        return this.minuteStats;
+    }
+
+    public PlayerStatisticsSecond getSecondStats() {
+        return secondStats;
     }
 
     public boolean shouldSpawnGrave() {

@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,6 +31,11 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     @Override
     public DatabasePlayer save(DatabasePlayer player, PlayersCollections collection) {
         return mongoTemplate.save(player, collection.collectionName);
+    }
+
+    @Override
+    public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, PlayersCollections collection) {
+        mongoTemplate.updateMulti(query, update, clazz, collection.collectionName);
     }
 
     @Override

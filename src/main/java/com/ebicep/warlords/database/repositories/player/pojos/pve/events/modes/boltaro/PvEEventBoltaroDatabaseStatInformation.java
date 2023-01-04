@@ -53,9 +53,9 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
         if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints() * multiplier, 50_000);
+            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 50_000) * multiplier;
         } else {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints() * multiplier, 15_000);
+            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 15_000) * multiplier;
         }
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayerPvEEvent.getPoints());
