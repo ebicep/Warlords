@@ -89,6 +89,8 @@ public abstract class WarlordsEntity {
     protected float walkSpeed = 1;
     protected LivingEntity entity;
     protected Specializations specClass;
+    @Nullable
+    protected CompassTargetMarker compassTarget;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -123,12 +125,9 @@ public abstract class WarlordsEntity {
     private double cooldownModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
-    private double flagDamageMultiplier = 0;
     private boolean teamFlagCompass = true;
     @Nullable
     private FlagInfo carriedFlag = null;
-    @Nullable
-    private CompassTargetMarker compassTarget;
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
@@ -168,11 +167,6 @@ public abstract class WarlordsEntity {
         }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
-        this.compassTarget = game
-                .getMarkers(CompassTargetMarker.class)
-                .stream().filter(CompassTargetMarker::isEnabled)
-                .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
-                .orElse(null);
     }
 
     public boolean isInPve() {
@@ -733,7 +727,9 @@ public abstract class WarlordsEntity {
                 attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
                 this.addDamageTaken(damageValue);
                 playHurtAnimation(this.entity, attacker);
-                attacker.getRecordDamage().add(damageValue);
+                if (attacker.isNoEnergyConsumption()) {
+                    attacker.getRecordDamage().add(damageValue);
+                }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,

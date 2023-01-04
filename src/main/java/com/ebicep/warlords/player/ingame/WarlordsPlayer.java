@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -40,6 +41,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,6 +116,11 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 team,
                 settings.getSelectedSpec()
         );
+        this.compassTarget = game
+                .getMarkers(CompassTargetMarker.class)
+                .stream().filter(CompassTargetMarker::isEnabled)
+                .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
+                .orElse(null);
         this.cosmeticSettings = new CosmeticSettings(
                 settings.getWeaponSkinForSelectedSpec(),
                 settings.getHelmet(settings.getSelectedSpec()),
