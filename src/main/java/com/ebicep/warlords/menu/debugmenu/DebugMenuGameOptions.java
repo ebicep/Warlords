@@ -198,13 +198,13 @@ public class DebugMenuGameOptions {
         }
     }
 
-    static class GamesMenu {
+    public static class GamesMenu {
 
         public static void openGameSelectorMenu(Player player) {
             List<Game> games = Warlords.getGameManager().getGames().stream()
-                    .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
-                    .map(GameManager.GameHolder::getGame)
-                    .collect(Collectors.toList());
+                                       .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
+                                       .map(GameManager.GameHolder::getGame)
+                                       .collect(Collectors.toList());
 
             int rows = (games.size() - 1) / 7 + 4;
             Menu menu = new Menu("Game Selector", 9 * rows);

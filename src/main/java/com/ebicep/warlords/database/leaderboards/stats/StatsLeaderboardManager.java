@@ -79,7 +79,7 @@ public class StatsLeaderboardManager {
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
-            Instant minus = Instant.now().minus(30, ChronoUnit.DAYS);
+            Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
@@ -101,12 +101,12 @@ public class StatsLeaderboardManager {
                                     }
                                 }
                                 if (value == PlayersCollections.LIFETIME &&
-                                        (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10 ||
+                                        (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 20 ||
                                                 (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus)))
                                 ) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10)) {
+                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 20)) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.miscellaneouscommands.SpectateCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
@@ -12,6 +13,8 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.State;
+import com.ebicep.warlords.menu.debugmenu.DebugMenu;
+import com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -786,6 +789,24 @@ public final class Game implements Runnable, AutoCloseable {
                 );
                 gameHolder.setGame(null);
                 break;
+            }
+        }
+        reopenGameReferencedMenus();
+    }
+
+    public static void reopenGameReferencedMenus() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String title = player.getOpenInventory().getTopInventory().getTitle();
+            switch (title) {
+                case "Debug Options":
+                    DebugMenu.openDebugMenu(player);
+                    break;
+                case "Current Games":
+                    SpectateCommand.openSpectateMenu(player);
+                    break;
+                case "Game Selector":
+                    DebugMenuGameOptions.GamesMenu.openGameSelectorMenu(player);
+                    break;
             }
         }
     }

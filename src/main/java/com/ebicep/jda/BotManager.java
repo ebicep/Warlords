@@ -220,7 +220,7 @@ public class BotManager {
             if (discordServer.getStatusMessage() == null) {
                 continue;
             }
-            discordServer.getStatusMessage().delete().queue();
+            discordServer.getStatusMessage().delete().complete();
         }
     }
 

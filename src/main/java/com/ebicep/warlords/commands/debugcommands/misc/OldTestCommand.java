@@ -1,5 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.menu.MenuEventListener;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,6 +18,11 @@ public class OldTestCommand implements CommandExecutor {
             if (!player.isOp()) {
                 return true;
             }
+        }
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            System.out.println(onlinePlayer.getName());
+            System.out.println(onlinePlayer.getMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY));
         }
 //
 //        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
