@@ -50,9 +50,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
-                90000,
-                0.3f,
-                20,
+                110000,
+                0.33f,
+                25,
                 2000,
                 3000
         );
@@ -123,8 +123,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
-                        700,
                         1000,
+                        1500,
                         -1,
                         100,
                         true
@@ -140,6 +140,12 @@ public class Illumina extends AbstractZombie implements BossMob {
             ) {
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 Utils.addKnockback(loc, we, -2, 0.3);
+            }
+        }
+
+        if (ticksElapsed % 300 == 0) {
+            for (int i = 0; i < (2 * playerCount); i++) {
+                option.spawnNewMob(new ExiledSkeleton(loc));
             }
         }
 
