@@ -104,7 +104,7 @@ public class StatsLeaderboardManager {
                                         (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10 ||
                                                 (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus)))
                                 ) {
-                                    // continue;
+                                    continue;
                                 }
                                 if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10)) {
                                     continue;
