@@ -93,7 +93,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     shockwave(loc, stormRadius + 5, 24, playerCount, multiplier);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
                     shockwave(loc, stormRadius + 10, 36, playerCount, multiplier);
-                    if (option.getDifficulty() == DifficultyIndex.HARD) {
+                    if (option.getDifficulty() == DifficultyIndex.HARD || option.getDifficulty() == DifficultyIndex.ENDLESS) {
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, warlordsNPC.getGame());
                         shockwave(loc, stormRadius + 15, 48, playerCount, multiplier);
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, warlordsNPC.getGame());
