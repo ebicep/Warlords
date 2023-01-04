@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ArcaneShield extends AbstractAbility {
+public class ArcaneShieldPyromancer extends AbstractAbility {
 
     public int timesBroken = 0;
 
@@ -30,11 +30,11 @@ public class ArcaneShield extends AbstractAbility {
     private int duration = 6;
     private float shieldHealth = 0;
 
-    public ArcaneShield() {
+    public ArcaneShieldPyromancer() {
         super("Arcane Shield", 0, 0, 31.32f, 40);
     }
 
-    public ArcaneShield(int shieldHealth) {
+    public ArcaneShieldPyromancer(int shieldHealth) {
         this();
         this.shieldHealth = shieldHealth;
     }
@@ -109,7 +109,7 @@ public class ArcaneShield extends AbstractAbility {
     @Override
     public void updateCustomStats(AbstractPlayerClass apc) {
         if (apc != null) {
-            ArcaneShield arcaneShield = (this);
+            ArcaneShieldPyromancer arcaneShield = (this);
             arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
             updateDescription(null);
         }

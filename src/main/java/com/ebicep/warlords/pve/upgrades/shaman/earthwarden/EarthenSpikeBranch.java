@@ -28,8 +28,8 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 "+20% Damage",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeA.add(new Upgrade(

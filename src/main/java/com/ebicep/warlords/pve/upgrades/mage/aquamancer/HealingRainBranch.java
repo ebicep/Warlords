@@ -51,7 +51,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Scope - Tier I",
                 "+1 Block rain radius",
                 5000,
                 () -> {
@@ -59,7 +59,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Scope - Tier II",
                 "+2 Blocks rain radius",
                 10000,
                 () -> {
@@ -67,7 +67,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Scope - Tier III",
                 "+3 Blocks rain radius",
                 15000,
                 () -> {
@@ -75,7 +75,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Scope - Tier IV",
                 "+4 Blocks rain radius\n+4s Duration",
                 20000,
                 () -> {

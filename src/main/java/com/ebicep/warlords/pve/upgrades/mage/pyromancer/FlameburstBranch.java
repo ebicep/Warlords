@@ -10,7 +10,6 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     float cooldown = ability.getCooldown();
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float energyCost = ability.getEnergyCost();
     float critMultiplier = ability.getCritMultiplier();
     float hitbox = ability.getHitbox();
 

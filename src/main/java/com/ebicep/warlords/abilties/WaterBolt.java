@@ -217,7 +217,7 @@ public class WaterBolt extends AbstractProjectileBase {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.15f;
+                return currentDamageValue * 1.1f;
             }
         });
     }
