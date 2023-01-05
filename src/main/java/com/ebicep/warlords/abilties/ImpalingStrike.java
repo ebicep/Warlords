@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -125,6 +126,35 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 warlordsDamageHealingFinalEvent -> {
                 }
         );
+
+        if (pveUpgrade) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(nearPlayer, 4, 4, 4)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(nearPlayer)
+                    .excluding(nearPlayer)
+                    .limit(2)
+            ) {
+                giveLeechCooldown(
+                        wp,
+                        we,
+                        leechDuration,
+                        leechSelfAmount / 100f,
+                        leechAllyAmount / 100f,
+                        warlordsDamageHealingFinalEvent -> {
+                        }
+                );
+                we.addDamageInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier,
+                        false
+                );
+            }
+        }
 
         return true;
     }

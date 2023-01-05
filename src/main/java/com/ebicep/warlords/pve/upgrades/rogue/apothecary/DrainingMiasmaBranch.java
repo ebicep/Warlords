@@ -13,7 +13,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
 
     public DrainingMiasmaBranch(AbilityTree abilityTree, DrainingMiasma ability) {
         super(abilityTree, ability);
-        treeB.add(new Upgrade(
+        treeA.add(new Upgrade(
                 "Alleviate - Tier I",
                 "+1.25% Leech Heal",
                 5000,
@@ -22,7 +22,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setLeechAllyAmount(allyLeech + 1.25f);
                 }
         ));
-        treeB.add(new Upgrade(
+        treeA.add(new Upgrade(
                 "Alleviate - Tier II",
                 "+2.5% Leech Heal",
                 10000,
@@ -31,7 +31,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setLeechAllyAmount(allyLeech + 2.5f);
                 }
         ));
-        treeB.add(new Upgrade(
+        treeA.add(new Upgrade(
                 "Alleviate - Tier III",
                 "+3.75% Leech Heal",
                 15000,
@@ -40,7 +40,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setLeechAllyAmount(allyLeech + 3.75f);
                 }
         ));
-        treeB.add(new Upgrade(
+        treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
                 "+5% Leech Heal",
                 20000,
@@ -51,7 +51,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Zeal - Tier I",
                 "-5% Cooldown reduction",
                 5000,
                 () -> {
@@ -59,7 +59,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Zeal - Tier II",
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
@@ -67,7 +67,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Zeal - Tier III",
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
@@ -75,7 +75,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Zeal - Tier IV",
                 "-20% Cooldown reduction",
                 20000,
                 () -> {

@@ -158,7 +158,7 @@ public class DrainingMiasma extends AbstractAbility {
                                     .entitiesAround(miasmaTarget, 6, 6, 6)
                                     .aliveEnemiesOf(wp)
                             ) {
-                                float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                                float healthDamage = miasmaTarget.getMaxHealth() * 0.02f;
                                 if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
                                     healthDamage = DamageCheck.MINIMUM_DAMAGE;
                                 }
