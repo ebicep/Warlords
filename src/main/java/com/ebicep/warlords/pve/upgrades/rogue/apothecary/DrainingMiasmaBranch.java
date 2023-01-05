@@ -7,84 +7,98 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> {
 
-    int duration = ability.getDuration();
-    int hitRadius = ability.getEnemyHitRadius();
+    float cooldown = ability.getCooldown();
+    float selfLeech = ability.getLeechSelfAmount();
+    float allyLeech = ability.getLeechAllyAmount();
 
     public DrainingMiasmaBranch(AbilityTree abilityTree, DrainingMiasma ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Spark - Tier I",
-                "+1s Duration",
+        treeB.add(new Upgrade(
+                "Alleviate - Tier I",
+                "+1.25% Leech Heal",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setLeechSelfAmount(selfLeech + 1.25f);
+                    ability.setLeechAllyAmount(allyLeech + 1.25f);
                 }
         ));
-        treeA.add(new Upgrade(
-                "Spark - Tier II",
-                "+2s Duration",
+        treeB.add(new Upgrade(
+                "Alleviate - Tier II",
+                "+2.5% Leech Heal",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setLeechSelfAmount(selfLeech + 2.5f);
+                    ability.setLeechAllyAmount(allyLeech + 2.5f);
                 }
         ));
-        treeA.add(new Upgrade(
-                "Spark - Tier III",
-                "+3s Duration",
+        treeB.add(new Upgrade(
+                "Alleviate - Tier III",
+                "+3.75% Leech Heal",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setLeechSelfAmount(selfLeech + 3.75f);
+                    ability.setLeechAllyAmount(allyLeech + 3.75f);
                 }
         ));
-        treeA.add(new Upgrade(
-                "Spark - Tier IV",
-                "+4s Duration\n+4s Leech duration",
+        treeB.add(new Upgrade(
+                "Alleviate - Tier IV",
+                "+5% Leech Heal",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
-                    ability.setLeechDuration(ability.getLeechDuration() + 4);
+                    ability.setLeechSelfAmount(selfLeech + 5);
+                    ability.setLeechAllyAmount(allyLeech + 5);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+2 Blocks hit radius",
+                "Spark - Tier I",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setEnemyHitRadius(hitRadius + 2);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+4 Blocks hit radius",
+                "Spark - Tier II",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setEnemyHitRadius(hitRadius + 4);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+6 Blocks hit radius",
+                "Spark - Tier III",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setEnemyHitRadius(hitRadius + 6);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+8 Blocks hit radius",
+                "Spark - Tier IV",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setEnemyHitRadius(hitRadius + 8);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",
                 "Draining Miasma - Master Upgrade",
-                "For each enemy within Draining Miasma, gain a 4% damage boost for Impaling Strike for the duration of Draining Miasma",
+                "Draining Miasma deals 75% less damage but range and duration have been quadrupled." +
+                        " Additionally, afflicted enemies will permanently have their damage reduced by 30% and" +
+                        " will explode on death, dealing 2% max health damage to all nearby enemies.",
                 50000,
                 () -> {
+                    ability.setDuration(ability.getDuration() * 4);
+                    ability.setLeechDuration(ability.getLeechDuration() * 4);
+                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 4);
+
+                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
+                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
+                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
+
                     ability.setPveUpgrade(true);
                 }
         );
