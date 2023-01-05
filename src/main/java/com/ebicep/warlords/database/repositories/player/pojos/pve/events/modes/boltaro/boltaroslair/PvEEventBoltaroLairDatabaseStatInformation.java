@@ -36,6 +36,10 @@ public class PvEEventBoltaroLairDatabaseStatInformation extends PvEEventBoltaroD
         this.totalWavesCleared += ((DatabaseGamePvEEventBoltaroLair) databaseGame).getWavesCleared() * multiplier;
     }
 
+    public void setHighestWaveCleared(int highestWaveCleared) {
+        this.highestWaveCleared = highestWaveCleared;
+    }
+
     public long getExperiencePvE() {
         return experiencePvE;
     }

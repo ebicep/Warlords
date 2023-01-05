@@ -175,5 +175,11 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
         return bonanzaStats;
     }
 
+    public void setLairStats(DatabasePlayerPvEEventBoltaroLairDifficultyStats lairStats) {
+        this.lairStats = lairStats;
+    }
 
+    public void setBonanzaStats(DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats bonanzaStats) {
+        this.bonanzaStats = bonanzaStats;
+    }
 }

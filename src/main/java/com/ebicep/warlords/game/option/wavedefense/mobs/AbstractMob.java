@@ -133,8 +133,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             long playerCount = game.warlordsPlayers().count();
             // Flag check whether mob is a boss.
             boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
-            // Reduce base scale by 75 for each player after 2 or more players in game instance.
-            double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
+            // Reduce base scale by 100 for each player after 2 or more players in game instance.
+            double modifiedScale = scale - (playerCount > 1 ? 100 * playerCount : 0);
             // Divide scale based on wave count.
             double modifier = option.getWaveCounter() / modifiedScale + 1;
 

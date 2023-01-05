@@ -55,7 +55,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
     //EVENTS
-    @Field("event_statss")
+    @Field("event_stats")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
     /*
         event_stats
@@ -190,10 +190,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
                 case BOLTARO:
                     if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 50_000));
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
                     } else {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO,
-                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 15_000)
+                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier
                         );
                     }
                     break;

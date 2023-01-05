@@ -401,11 +401,8 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-//        System.out.println("PlayerInteractEvent");
-//        e.setCancelled(true);
         Player player = e.getPlayer();
         Action action = e.getAction();
-        Location location = player.getLocation();
         WarlordsEntity wp = Warlords.getPlayer(player);
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
@@ -413,26 +410,6 @@ public class WarlordsEvents implements Listener {
             int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
                 switch (itemHeld.getType()) {
-                    case GOLD_BARDING:
-                        if (heldItemSlot == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
-                            if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
-                                player.sendMessage(ChatColor.RED + "You can't mount here!");
-                            } else {
-                                double distance = Utils.getDistance(player, .25);
-                                if (distance >= 2) {
-                                    player.sendMessage(ChatColor.RED + "You can't mount in the air!");
-                                } else if (wp.getCarriedFlag() != null) {
-                                    player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
-                                } else {
-                                    player.playSound(player.getLocation(), "mountup", 1, 1);
-                                    wp.getHorse().spawn();
-                                    if (!wp.isDisableCooldowns()) {
-                                        wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
-                                    }
-                                }
-                            }
-                        }
-                        break;
                     case BONE:
                         if (!itemHeld.equals(UndyingArmy.BONE)) {
                             break;

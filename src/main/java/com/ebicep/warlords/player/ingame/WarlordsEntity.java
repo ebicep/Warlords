@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
@@ -45,7 +44,6 @@ import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -91,6 +89,8 @@ public abstract class WarlordsEntity {
     protected float walkSpeed = 1;
     protected LivingEntity entity;
     protected Specializations specClass;
+    @Nullable
+    protected CompassTargetMarker compassTarget;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -111,7 +111,6 @@ public abstract class WarlordsEntity {
     private boolean dead = false;
     private float energy = 0;
     private float maxEnergy;
-    private CustomHorse horse;
     private float horseCooldown = 0;
     private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
@@ -126,12 +125,9 @@ public abstract class WarlordsEntity {
     private double cooldownModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
-    private double flagDamageMultiplier = 0;
     private boolean teamFlagCompass = true;
     @Nullable
     private FlagInfo carriedFlag = null;
-    @Nullable
-    private CompassTargetMarker compassTarget;
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
@@ -171,12 +167,6 @@ public abstract class WarlordsEntity {
         }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
-        this.compassTarget = game
-                .getMarkers(CompassTargetMarker.class)
-                .stream().filter(CompassTargetMarker::isEnabled)
-                .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
-                .orElse(null);
-        this.horse = new CustomHorse(((CraftWorld) entity.getWorld()).getHandle(), this);
     }
 
     public boolean isInPve() {
@@ -737,7 +727,9 @@ public abstract class WarlordsEntity {
                 attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
                 this.addDamageTaken(damageValue);
                 playHurtAnimation(this.entity, attacker);
-                attacker.getRecordDamage().add(damageValue);
+                if (attacker.isNoEnergyConsumption()) {
+                    attacker.getRecordDamage().add(damageValue);
+                }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -1866,14 +1858,6 @@ public abstract class WarlordsEntity {
         return this.entity.isInsideVehicle();
     }
 
-    public CustomHorse getHorse() {
-        return horse;
-    }
-
-    public void setHorse(CustomHorse horse) {
-        this.horse = horse;
-    }
-
     public float getHorseCooldown() {
         return horseCooldown;
     }
@@ -2338,15 +2322,6 @@ public abstract class WarlordsEntity {
         this.carriedFlag = carriedFlag;
     }
 
-    @Nonnull
-    public PlayerStatisticsMinute getMinuteStats() {
-        return this.minuteStats;
-    }
-
-    public PlayerStatisticsSecond getSecondStats() {
-        return secondStats;
-    }
-
     public List<Achievement.AbstractAchievementRecord<?>> getAchievementsUnlocked() {
         return achievementsUnlocked;
     }
@@ -2472,8 +2447,21 @@ public abstract class WarlordsEntity {
         getEntity().removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
         FlagHolder.dropFlagForPlayer(this);
         getMinuteStats().getEntries().clear();
+        getSecondStats().getEntries().forEach(entry -> {
+            entry.getEventsAsSelf().clear();
+            entry.getEventsAsAttacker().clear();
+        });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
+    }
+
+    @Nonnull
+    public PlayerStatisticsMinute getMinuteStats() {
+        return this.minuteStats;
+    }
+
+    public PlayerStatisticsSecond getSecondStats() {
+        return secondStats;
     }
 
     public boolean shouldSpawnGrave() {
