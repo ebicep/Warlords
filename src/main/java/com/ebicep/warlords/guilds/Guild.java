@@ -556,6 +556,10 @@ public class Guild {
                   .compute(eventStartEpochSecond, (date, previousPoints) -> previousPoints == null ? amount : previousPoints + amount);
     }
 
+    public long getEventPoints(GameEvents event, long eventStartEpochSecond) {
+        return eventStats.getOrDefault(event, new HashMap<>()).getOrDefault(eventStartEpochSecond, 0L);
+    }
+
     @Override
     public String toString() {
         return "Guild{" +

@@ -5,6 +5,9 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.logs.types.general.GuildLogGameEventReward;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.annotation.Id;
@@ -14,7 +17,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Document(collection = "Game_Events")
 public class DatabaseGameEvent {
@@ -73,16 +78,20 @@ public class DatabaseGameEvent {
                 .execute();
     }
 
+    public GameEvents getEvent() {
+        return event;
+    }
+
+    public long getStartDateSecond() {
+        return startDate.getEpochSecond();
+    }
+
     public Instant getStartDate() {
         return startDate;
     }
 
     public Instant getEndDate() {
         return endDate;
-    }
-
-    public GameEvents getEvent() {
-        return event;
     }
 
     public Boolean getStarted() {
@@ -109,9 +118,54 @@ public class DatabaseGameEvent {
     @Field("end_date")
     private Instant endDate;
     private boolean started;
+    @Field("gave_rewards")
+    private boolean gaveRewards;
 
-    public long getStartDateSecond() {
-        return startDate.getEpochSecond();
+    public void giveRewards() {
+        //player rewards
+        List<DatabasePlayer> databasePlayers = DatabaseManager.CACHED_PLAYERS
+                .get(PlayersCollections.LIFETIME)
+                .values()
+                .stream()
+                .sorted((o1, o2) -> Long.compare(
+                        event.eventsStatsFunction.apply(o2.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative(),
+                        event.eventsStatsFunction.apply(o1.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative()
+                ))
+                .collect(Collectors.toList());
+        for (int i = 0; i < databasePlayers.size(); i++) {
+            int position = i + 1;
+            DatabasePlayer databasePlayer = databasePlayers.get(i);
+            databasePlayer.getPveStats()
+                          .getGameEventRewards()
+                          .add(new GameEventReward(event.getRewards(position), event.name + " Event", getStartDateSecond()));
+            //TODO MESSAGES
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        }
+        //guild rewards
+        List<Guild> guilds = GuildManager.GUILDS
+                .stream()
+                .sorted((o1, o2) -> Long.compare(
+                        o2.getEventPoints(event, getStartDateSecond()),
+                        o1.getEventPoints(event, getStartDateSecond())
+                ))
+                .collect(Collectors.toList());
+        for (int i = 0; i < guilds.size(); i++) {
+            int position = i + 1;
+            Guild guild = guilds.get(i);
+            LinkedHashMap<String, Long> guildRewards = event.getGuildRewards(position);
+            guild.addCurrentCoins(guildRewards.getOrDefault("Coins", 0L));
+            guild.addExperience(guildRewards.getOrDefault("Experience", 0L));
+            guild.log(new GuildLogGameEventReward(event, getStartDateSecond(), position, guildRewards));
+            guild.queueUpdate();
+        }
+    }
+
+    public boolean isGaveRewards() {
+        return gaveRewards;
+    }
+
+    public void setGaveRewards(boolean gaveRewards) {
+        this.gaveRewards = gaveRewards;
     }
 
     @Override
