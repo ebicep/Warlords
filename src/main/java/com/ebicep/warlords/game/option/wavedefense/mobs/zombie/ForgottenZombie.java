@@ -76,7 +76,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (Utils.isProjectile(event.getAbility())) {
-            attacker.addDamageInstance(self, "Projectile Thorns", 100, 100, -1, 100, false);
+            attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100, false);
         }
     }
 

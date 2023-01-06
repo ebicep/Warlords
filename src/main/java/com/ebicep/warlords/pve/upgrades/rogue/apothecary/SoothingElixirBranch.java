@@ -10,7 +10,6 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
     float puddleRadius = ability.getPuddleRadius();
-    float cooldown = ability.getCooldown();
 
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);

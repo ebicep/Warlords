@@ -123,8 +123,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
-                        1000,
-                        1500,
+                        1200,
+                        1800,
                         -1,
                         100,
                         true
@@ -145,7 +145,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 300 == 0) {
             for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(loc));
+                option.spawnNewMob(new ExiledSkeleton(spawnLocation));
             }
         }
 

@@ -28,10 +28,10 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
                         Weapons.AMARANTH.getItem()
                 ),
                 10000,
-                0.22f,
+                0.28f,
                 0,
-                2000,
-                2400
+                1600,
+                2000
         );
     }
 

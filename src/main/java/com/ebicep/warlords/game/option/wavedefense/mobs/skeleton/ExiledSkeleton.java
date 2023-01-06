@@ -39,7 +39,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                         Weapons.SILVER_PHANTASM_SWORD_4.getItem()
                 ),
                 8000,
-                0.28f,
+                0.3f,
                 10,
                 800,
                 1000

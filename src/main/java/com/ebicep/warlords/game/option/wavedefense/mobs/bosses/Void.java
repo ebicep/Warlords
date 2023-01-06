@@ -32,8 +32,10 @@ public class Void extends AbstractSkeleton implements BossMob {
     private boolean flamePhaseTrigger = false;
     private boolean flamePhaseTriggerTwo = false;
     private boolean timedDamageTrigger = false;
+    private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
+    private boolean zenithPhaseTrigger = false;
     private final int stormRadius = 10;
     private final int earthQuakeRadius = 10;
 
@@ -51,8 +53,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
                         Weapons.VOID_EDGE.getItem()
                 ),
-                200000,
-                0.2f,
+                180000,
+                0.24f,
                 20,
                 3000,
                 4000
@@ -115,15 +117,31 @@ public class Void extends AbstractSkeleton implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.25f) && !flamePhaseTriggerTwo) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
             flamePhaseTriggerTwo = true;
             immolation(option, loc);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
+            timedDamageTriggerTwo = true;
+            preventArmageddon = true;
+            timedDamage(option, playerCount, 25000, 17);
+            for (int i = 0; i < (2 * playerCount); i++) {
+                option.spawnNewMob(new IronGolem(loc));
+            }
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.15f) && !boltaroPhaseTrigger) {
             boltaroPhaseTrigger = true;
             for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new Boltaro(loc));
+            }
+        }
+
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !zenithPhaseTrigger) {
+            zenithPhaseTrigger = true;
+            for (int i = 0; i < 2; i++) {
+                option.spawnNewMob(new Zenith(loc));
             }
         }
 
@@ -190,6 +208,18 @@ public class Void extends AbstractSkeleton implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        for (int i = 0; i < 3; i++) {
+            EffectUtils.strikeLightningInCylinder(deathLocation, 8,false);
+        }
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                .withColor(Color.BLACK)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build());
     }
 
     private void immolation(WaveDefenseOption option, Location loc) {
@@ -262,7 +292,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                     );
                 }
 
-                if (counter == 50) {
+                if (counter == 60) {
                     this.cancel();
                     warlordsNPC.getSpeed().addBaseModifier(40);
                 }
@@ -384,8 +414,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
-                                we.getMaxHealth() * 0.9f,
-                                we.getMaxHealth() * 0.9f,
+                                we.getMaxHealth() * 0.95f,
+                                we.getMaxHealth() * 0.95f,
                                 -1,
                                 100,
                                 true
