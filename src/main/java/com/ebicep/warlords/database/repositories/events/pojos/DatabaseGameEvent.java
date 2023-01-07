@@ -5,11 +5,16 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.logs.types.general.GuildLogGameEventReward;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -27,6 +32,10 @@ public class DatabaseGameEvent {
     public static final HashMap<GameEvents, DatabaseGameEvent> PREVIOUS_GAME_EVENTS = new HashMap<>();
     public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
     public static DatabaseGameEvent currentGameEvent = null;
+
+    public static void sendGameEventMessage(Player player, String message) {
+        player.sendMessage(ChatColor.GOLD + "Game Events" + ChatColor.DARK_GRAY + " > " + message);
+    }
 
     public static void startGameEvent() {
         long start = System.nanoTime();
@@ -127,23 +136,41 @@ public class DatabaseGameEvent {
                 .get(PlayersCollections.LIFETIME)
                 .values()
                 .stream()
+                .filter(databasePlayer -> event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                   .getOrDefault(getStartDateSecond(), null) != null &&
+                        event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                 .get(getStartDateSecond())
+                                                 .getEventPointsCumulative() > 0)
                 .sorted((o1, o2) -> Long.compare(
                         event.eventsStatsFunction.apply(o2.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative(),
                         event.eventsStatsFunction.apply(o1.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative()
                 ))
                 .collect(Collectors.toList());
+        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
+        HashMap<DatabasePlayer, List<String>> playerMessages = new HashMap<>();
         for (int i = 0; i < databasePlayers.size(); i++) {
             int position = i + 1;
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             databasePlayer.getPveStats()
                           .getGameEventRewards()
                           .add(new GameEventReward(event.getRewards(position), event.name + " Event", getStartDateSecond()));
-            //TODO MESSAGES
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            List<String> messages = new ArrayList<>();
+            messages.add(ChatColor.GOLD + "------------------------------------------------");
+            messages.add(ChatColor.RED + event.name + " Event has Ended!");
+            messages.add("");
+            messages.add(ChatColor.YELLOW + "#" + position + ". " +
+                    ChatColor.AQUA + databasePlayer.getName() +
+                    ChatColor.GRAY + " - " +
+                    ChatColor.YELLOW + NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                       .get(getStartDateSecond())
+                                                                                       .getEventPointsCumulative()) + " Points");
+            playerMessages.put(databasePlayer, messages);
         }
         //guild rewards
         List<Guild> guilds = GuildManager.GUILDS
                 .stream()
+                .filter(guild -> guild.getEventPoints(event, getStartDateSecond()) > 0)
                 .sorted((o1, o2) -> Long.compare(
                         o2.getEventPoints(event, getStartDateSecond()),
                         o1.getEventPoints(event, getStartDateSecond())
@@ -156,8 +183,30 @@ public class DatabaseGameEvent {
             guild.addCurrentCoins(guildRewards.getOrDefault("Coins", 0L));
             guild.addExperience(guildRewards.getOrDefault("Experience", 0L));
             guild.log(new GuildLogGameEventReward(event, getStartDateSecond(), position, guildRewards));
+
+            for (GuildPlayer player : guild.getPlayers()) {
+                for (DatabasePlayer databasePlayer : playerMessages.keySet()) {
+                    if (databasePlayer.getUuid().equals(player.getUUID())) {
+                        playerMessages.get(databasePlayer).add(ChatColor.YELLOW + "#" + position + ". " +
+                                ChatColor.GOLD + guild.getName() +
+                                ChatColor.GRAY + " - " +
+                                ChatColor.YELLOW + NumberFormat.addCommas(guild.getEventPoints(event, getStartDateSecond())) + " Points");
+                        break;
+                    }
+                }
+            }
+
             guild.queueUpdate();
         }
+        //player reward message
+        playerMessages.forEach((databasePlayer, messages) -> {
+            messages.add("");
+            messages.add(ChatColor.GREEN + "Claim your rewards through your");
+            messages.add(ChatColor.GREEN + "Reward Inventory!");
+            messages.add(ChatColor.GOLD + "------------------------------------------------");
+            databasePlayer.addFutureMessage(new FutureMessage(messages, true));
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        });
     }
 
     public boolean isGaveRewards() {

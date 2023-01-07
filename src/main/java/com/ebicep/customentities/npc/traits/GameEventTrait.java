@@ -4,14 +4,17 @@ import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class GameEventTrait extends WarlordsTrait {
+
 
     public GameEventTrait() {
         super("GameEventTrait");
@@ -36,6 +39,19 @@ public class GameEventTrait extends WarlordsTrait {
         if (timeTill.equals("0 seconds")) {
             hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ended!");
             if (!currentGameEvent.isGaveRewards()) {
+                if (Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE) > 0) {
+                    Warlords.getGameManager().getGames().stream()
+                            .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == GameMode.EVENT_WAVE_DEFENSE)
+                            .forEach(GameManager.GameHolder::forceEndGame);
+                }
+                if (Warlords.getGameManager().getPlayerCount(GameMode.EVENT_WAVE_DEFENSE) > 0) {
+                    return;
+                }
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    DatabaseGameEvent.sendGameEventMessage(onlinePlayer,
+                            ChatColor.RED + currentGameEvent.getEvent().name + " Event " + ChatColor.GREEN + "has just ended!"
+                    );
+                }
                 currentGameEvent.setGaveRewards(true);
                 currentGameEvent.giveRewards();
                 Warlords.newChain()

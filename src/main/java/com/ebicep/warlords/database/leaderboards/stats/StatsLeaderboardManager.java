@@ -104,9 +104,8 @@ public class StatsLeaderboardManager {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                                 if (value == PlayersCollections.LIFETIME &&
-                                        (databasePlayer.getPlays() + pveStats.getPlays() < 20 || (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin()
-                                                                                                                                                         .isBefore(
-                                                                                                                                                                 minus))) &&
+                                        (databasePlayer.getPlays() + pveStats.getPlays() < 20 ||
+                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus))) &&
                                         (currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
                                                                                                                     .get(currentGameEvent.getStartDateSecond())
                                                                                                                     .getPlays() == 0)
