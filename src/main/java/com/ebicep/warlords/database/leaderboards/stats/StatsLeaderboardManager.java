@@ -15,6 +15,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -79,7 +80,7 @@ public class StatsLeaderboardManager {
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
-            Instant minus = Instant.now().minus(30, ChronoUnit.DAYS);
+            Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
@@ -100,13 +101,18 @@ public class StatsLeaderboardManager {
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
                                     }
                                 }
+                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                                 if (value == PlayersCollections.LIFETIME &&
-                                        (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10 ||
-                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus)))
+                                        (databasePlayer.getPlays() + pveStats.getPlays() < 20 ||
+                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus))) &&
+                                        (currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
+                                                                                                                    .get(currentGameEvent.getStartDateSecond())
+                                                                                                                    .getPlays() == 0)
                                 ) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + databasePlayer.getPveStats().getPlays() < 10)) {
+                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + pveStats.getPlays() < 20)) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
