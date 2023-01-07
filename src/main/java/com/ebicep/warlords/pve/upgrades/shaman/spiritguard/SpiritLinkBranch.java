@@ -7,52 +7,56 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     int bounceRange = ability.getBounceRange();
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {
         super(abilityTree, ability);
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.2f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.2f);
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+7.5% Damage",
+                "+10% Damage",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+15% Damage",
+                "+20% Damage",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
                 "+30% Damage",
-                20000,
+                15000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+40% Damage",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.4f);
+                    ability.setMaxDamageHeal(maxDamage * 1.4f);
+                }
+        ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Scope - Tier I",
                 "+4 Blocks hit radius",
                 5000,
                 () -> {
@@ -60,7 +64,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Scope - Tier II",
                 "+6 Blocks hit radius",
                 10000,
                 () -> {
@@ -68,7 +72,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Scope - Tier III",
                 "+8 Blocks hit radius",
                 15000,
                 () -> {
@@ -76,7 +80,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Scope - Tier IV",
                 "+10 Blocks hit radius",
                 20000,
                 () -> {
@@ -87,11 +91,12 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
         masterUpgrade = new Upgrade(
                 "Phantasmic Bond",
                 "Spirit Link - Master Upgrade",
-                "Damage reduction, speed duration and knockback resistance per link is increased by 50%",
+                "Damage reduction and speed duration have been doubled. Additionally, Spirit Link will bounce 3 times instead of 2.",
                 50000,
                 () -> {
-                    ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 1.5);
-                    ability.setSpeedDuration(ability.getSpeedDuration() * 1.5);
+                    ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
+                    ability.setSpeedDuration(ability.getSpeedDuration() * 2);
+                    ability.setPveUpgrade(true);
                 }
         );
     }

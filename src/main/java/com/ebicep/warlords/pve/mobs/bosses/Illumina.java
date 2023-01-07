@@ -144,7 +144,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 300 == 0) {
-            for (int i = 0; i < (2 * playerCount); i++) {
+            for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new ExiledSkeleton(spawnLocation));
             }
         }
@@ -172,7 +172,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(option, playerCount, 5000, 11);
+            timedDamage(option, playerCount, 5000, 9);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
@@ -287,8 +287,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
-                                we.getMaxHealth() * 0.9f,
-                                we.getMaxHealth() * 0.9f,
+                                we.getMaxHealth() * 0.95f,
+                                we.getMaxHealth() * 0.95f,
                                 -1,
                                 100,
                                 true

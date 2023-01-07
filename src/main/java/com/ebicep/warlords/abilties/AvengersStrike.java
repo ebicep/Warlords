@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -104,6 +105,28 @@ public class AvengersStrike extends AbstractStrikeBase {
                 false,
                 consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
         );
+
+        if (pveUpgrade) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(nearPlayer, 4, 4, 4)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(nearPlayer)
+                    .excluding(nearPlayer)
+                    .limit(2)
+            ) {
+                we.addDamageInstance(
+                        wp,
+                        "Avenger's Slash",
+                        (minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                        (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                        critChance,
+                        critMultiplier,
+                        false,
+                        consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
+                );
+            }
+        }
+
         energyStole += nearPlayer.subtractEnergy(energySteal, true);
         return true;
     }

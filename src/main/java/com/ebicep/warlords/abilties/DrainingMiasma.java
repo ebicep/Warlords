@@ -158,7 +158,7 @@ public class DrainingMiasma extends AbstractAbility {
                                     .entitiesAround(miasmaTarget, 6, 6, 6)
                                     .aliveEnemiesOf(wp)
                             ) {
-                                float healthDamage = miasmaTarget.getMaxHealth() * 0.02f;
+                                float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
                                 if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
                                     healthDamage = DamageCheck.MINIMUM_DAMAGE;
                                 }
@@ -180,7 +180,7 @@ public class DrainingMiasma extends AbstractAbility {
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 0.7f;
+                        return currentDamageValue * 0.75f;
                     }
                 });
             }

@@ -20,7 +20,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.95f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -28,7 +28,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.95f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -36,7 +36,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.95f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -44,7 +44,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.95f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
 
@@ -85,7 +85,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         masterUpgrade = new Upgrade(
                 "Flame Awakening",
                 "Flame Burst - Master Upgrade",
-                "Flame Burst deals significantly more damage and ramps up crit chance, crit damage and damage very quickly per blocks traveled at the cost " +
+                "Flame Burst deals significantly more damage and ramps up crit chance, crit multiplier and damage very quickly per blocks traveled at the cost " +
                         "of heavily reduced projectile speed and double the cooldown.",
                 50000,
                 () -> {
