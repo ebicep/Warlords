@@ -74,12 +74,10 @@ public class ImposterCommand extends BaseCommand {
                         .add(warlordsPlayer.getUuid());
 
                 int votesNeeded = (int) (warlordsPlayer.getGame()
-                        .getPlayers()
-                        .entrySet()
-                        .stream()
-                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == warlordsPlayer.getTeam())
-                        .count() * .6);
-                if (votesNeeded >= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
+                                                       .warlordsPlayers()
+                                                       .filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
+                                                       .count() * .6);
+                if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                     Team team = warlordsPlayer.getTeam();
                     imposterModeOption.sendPoll(team);
                     warlordsPlayer.getGame().addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
@@ -87,8 +85,8 @@ public class ImposterCommand extends BaseCommand {
                     warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((p, team) -> {
                         if (team == warlordsPlayer.getTeam()) {
                             p.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + imposterModeOption.getVoters()
-                                    .get(warlordsPlayer.getTeam())
-                                    .size() + "/" + votesNeeded + ")");
+                                                                                                                        .get(warlordsPlayer.getTeam())
+                                                                                                                        .size() + "/" + votesNeeded + ")");
                         }
                     });
                 }
