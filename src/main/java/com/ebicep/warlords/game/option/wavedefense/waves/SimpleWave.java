@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.ebicep.warlords.game.option.wavedefense.mobs.Mobs.BASIC_ZOMBIE;
+import static com.ebicep.warlords.pve.mobs.Mobs.BASIC_ZOMBIE;
 
 public class SimpleWave implements Wave {
 

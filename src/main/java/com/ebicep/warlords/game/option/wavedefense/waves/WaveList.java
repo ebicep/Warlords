@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.Location;
 
 import java.util.Random;
