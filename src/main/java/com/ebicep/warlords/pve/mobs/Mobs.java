@@ -40,6 +40,8 @@ public enum Mobs {
     ELITE_ZOMBIE(EliteZombie.class, EliteZombie::new),
     GHOST_ZOMBIE(GhostZombie.class, GhostZombie::new),
     SLIME_ZOMBIE(SlimeZombie.class, SlimeZombie::new),
+    MELEE_ONLY_ZOMBIE(MeleeOnlyZombie.class, MeleeOnlyZombie::new),
+    RANGE_ONLY_SKELETON(RangeOnlySkeleton.class, RangeOnlySkeleton::new),
     ELITE_BERSERK_ZOMBIE(EliteBerserkZombie.class, EliteBerserkZombie::new),
     ELITE_SKELETON(EliteSkeleton.class, EliteSkeleton::new),
     ELITE_PIG_ZOMBIE(ElitePigZombie.class, ElitePigZombie::new),

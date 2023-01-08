@@ -5,6 +5,16 @@ import javax.annotation.Nonnull;
 // https://minecraft-heads.com/
 //
 public enum SkullID {
+    // https://prnt.sc/5tg_uT72qzUS
+    BOW_HEAD(
+            "e09979b1-9eca-40ba-9fcc-0a0590c928c1",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU0Nzk1MTA0MjJiMWM1ZGNjNzdmNzVmZGMzMzQ2ZWQ0ZDlkYmJjYzFlODg1YjRhMjk5MmEyNzM3MzM2NDZhOSJ9fX0="
+    ),
+    // https://prnt.sc/w-EpPrSo7Gcl
+    SWORD_HEAD(
+            "8dcc05a3-aaa6-47c9-b6d7-39b9b03cfbd9",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjAwZTdiMzNlZTJhNjAwMjc1OGFjZmUwOGM3ZGY2YmQzN2E0OTdkYzlmODAwMGMzY2E5ODI0YTJjZmFiY2FkZCJ9fX0="
+    ),
     HOODED_KNIGHT(
             "12269b6b-14dc-48cc-8174-80a9b7b1b01b",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDg4ZWI0YjRjYWZhMWYzY2JlMDZjZjBlOTAzMGFkNzVjMjhiYjUwMGU4MDBiNjE5NmJkZjMyOTg2NWE1YzcxOCJ9fX0="
