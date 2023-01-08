@@ -82,10 +82,9 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
         masterUpgrade = new Upgrade(
                 "Light Imbusion",
                 "Light Infusion - Master Upgrade",
-                "Reduce the cooldown of Light Infusion by an additional 30% and reset Holy Radiance's cooldown on cast.",
+                "Gain 99% damage reduction/knockback resistance and immunity to de-buffs for 6 seconds and reset Holy Radiance's cooldown on cast.",
                 50000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.7f);
                     ability.setPveUpgrade(true);
                 }
         );

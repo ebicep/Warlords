@@ -101,10 +101,11 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         masterUpgrade = new Upgrade(
                 "Impaling Slash",
                 "Impaling Strike - Master Upgrade",
-                "Righteous Strike hits 2 additional enemies. Additionally, your Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
+                "-10 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
+                    ability.setEnergyCost(ability.getEnergyCost() - 10);
                 }
         );
     }

@@ -2,11 +2,14 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -76,6 +79,33 @@ public class LightInfusionProtector extends AbstractAbility {
 
         if (pveUpgrade) {
             wp.setBlueCurrentCooldown(0);
+            wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusionProtector>(
+                    name,
+                    "INF GRACE",
+                    LightInfusionProtector.class,
+                    tempLightInfusion,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    6 * 20,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 2 == 0) {
+                            wp.getSpeed().removeSlownessModifiers();
+                            wp.getCooldownManager().removeDebuffCooldowns();
+                        }
+                    })
+            ) {
+                @Override
+                public void multiplyKB(Vector currentVector) {
+                    currentVector.multiply(0.01);
+                }
+
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 0.01f;
+                }
+            });
         }
 
         for (int i = 0; i < 10; i++) {
