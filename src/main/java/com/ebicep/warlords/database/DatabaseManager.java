@@ -247,6 +247,10 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
+
+        playerSettings.setChatDamageMode(databasePlayer.getChatDamageMode());
+        playerSettings.setChatHealingMode(databasePlayer.getChatHealingMode());
+        playerSettings.setChatEnergyMode(databasePlayer.getChatEnergyMode());
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {

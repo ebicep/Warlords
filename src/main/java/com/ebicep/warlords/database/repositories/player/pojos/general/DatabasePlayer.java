@@ -81,6 +81,12 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     @Field("flag_message")
     private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
+    @Field("chat_damage")
+    private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
+    @Field("chat_healing")
+    private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
+    @Field("chat_energy")
+    private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
 
@@ -431,6 +437,30 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         return this.achievements.stream()
                                 .anyMatch(achievementRecord -> achievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord &&
                                         ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
+    }
+
+    public Settings.ChatSettings.ChatDamage getChatDamageMode() {
+        return chatDamageMode;
+    }
+
+    public void setChatDamageMode(Settings.ChatSettings.ChatDamage chatDamageMode) {
+        this.chatDamageMode = chatDamageMode;
+    }
+
+    public Settings.ChatSettings.ChatHealing getChatHealingMode() {
+        return chatHealingMode;
+    }
+
+    public void setChatHealingMode(Settings.ChatSettings.ChatHealing chatHealingMode) {
+        this.chatHealingMode = chatHealingMode;
+    }
+
+    public Settings.ChatSettings.ChatEnergy getChatEnergyMode() {
+        return chatEnergyMode;
+    }
+
+    public void setChatEnergyMode(Settings.ChatSettings.ChatEnergy chatEnergyMode) {
+        this.chatEnergyMode = chatEnergyMode;
     }
 
     public String getId() {

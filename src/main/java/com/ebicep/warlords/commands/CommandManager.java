@@ -27,6 +27,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.commands.GuildCommand;
 import com.ebicep.warlords.guilds.commands.GuildDebugCommand;
 import com.ebicep.warlords.guilds.commands.GuildPlayerWrapper;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -560,6 +561,8 @@ public class CommandManager {
         manager.registerCommand(new MasterworksFairCommand());
 
         manager.registerCommand(new TutorialCommand());
+
+        manager.registerCommand(new WarlordsNewHotbarMenu.SettingsMenu());
     }
 
     @Nullable

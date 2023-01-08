@@ -1,5 +1,8 @@
 package com.ebicep.warlords.menu.generalmenu;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -797,7 +800,8 @@ public class WarlordsNewHotbarMenu {
 
     }
 
-    public static class SettingsMenu {
+    @CommandAlias("settings|setting")
+    public static class SettingsMenu extends BaseCommand {
 
         public static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
                 .name(ChatColor.AQUA + "Settings")
@@ -807,7 +811,12 @@ public class WarlordsNewHotbarMenu {
                 .name(ChatColor.GREEN + "Particle Quality")
                 .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
                 .get();
+        public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
+                .name(ChatColor.GREEN + "Chat Settings")
+                .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Configure which chat messages you see in-game", 150))
+                .get();
 
+        @Default
         public static void openSettingsMenu(Player player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
 
@@ -834,6 +843,14 @@ public class WarlordsNewHotbarMenu {
                     (m, e) -> {
                         player.performCommand("flagmessagemode");
                         openSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    7,
+                    1,
+                    MENU_SETTINGS_CHAT_SETTINGS,
+                    (m, e) -> {
+                        Settings.ChatSettings.openChatSettingsMenu(player);
                     }
             );
 
