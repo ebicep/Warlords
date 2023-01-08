@@ -44,7 +44,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void giveBaseAI() {
-        giveBaseAI(1.0, 1.0, 20);
+        giveBaseAI(1.0, 1.0, 100);
     }
 
     default void giveBaseAI(double speedTowardsTarget, double wanderSpeed, int followRange) {
@@ -107,7 +107,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 3, false, false, null));
+            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 2, false, false, null));
         }
     }
 
