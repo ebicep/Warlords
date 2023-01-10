@@ -90,6 +90,7 @@ public class DrainingMiasma extends AbstractAbility {
         ) {
             hitCounter++;
             Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -25, 3 * 20, "BASE");
+            miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class);
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     name,
                     "MIAS",

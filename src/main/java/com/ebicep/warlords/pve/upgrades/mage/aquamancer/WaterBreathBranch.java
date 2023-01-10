@@ -97,7 +97,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         masterUpgrade = new Upgrade(
                 "Typhoon",
                 "Water Breath - Master Upgrade",
-                "+100% Additional cone range\n\nAll allies hit by Water Breath have their cooldowns reduced by 2 seconds and are healed for 2% of their max health per second for 5 seconds.",
+                "+100% Additional cone range\n\nAll allies hit by Water Breath have their cooldowns reduced by 1.5 seconds and are healed for 2% of their max health per second for 5 seconds.",
                 50000,
                 () -> {
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);

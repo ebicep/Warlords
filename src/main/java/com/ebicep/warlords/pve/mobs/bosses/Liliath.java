@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -18,6 +20,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class Liliath extends AbstractZombie implements BossMob {
+
+    boolean test = false;
 
     public Liliath(Location spawnLocation) {
         super(
@@ -55,7 +59,15 @@ public class Liliath extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-
+        if (test) {
+            Location loc = warlordsNPC.getLocation();
+            int counter = 0;
+            if (ticksElapsed % 4 == 0 ) {
+                counter++;
+                loc.setYaw(counter);
+                EffectUtils.playHelixAnimation(loc, 20, ParticleEffect.FLAME, 1, 8);
+            }
+        }
     }
 
     @Override
@@ -65,6 +77,6 @@ public class Liliath extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        test = true;
     }
 }

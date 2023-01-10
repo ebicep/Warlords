@@ -98,6 +98,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
+        we.getSpeed().addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
         we.getCooldownManager().removeCooldown(LightningRod.class);
         we.getCooldownManager().addCooldown(new RegularCooldown<LightningRod>(
                 name,
@@ -108,11 +109,11 @@ public class LightningRod extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                8 * 20
+                12 * 20
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.3f;
+                return currentDamageValue * 1.4f;
             }
         });
     }

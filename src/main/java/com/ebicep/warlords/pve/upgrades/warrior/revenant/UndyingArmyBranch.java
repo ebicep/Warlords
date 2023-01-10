@@ -87,6 +87,8 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                         "Each enemy hit this way can also proc Orbs of Life.",
                 50000,
                 () -> {
+                    ability.setRadius(ability.getRadius() * 2);
+                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
                     ability.setPveUpgrade(true);
                 }
         );

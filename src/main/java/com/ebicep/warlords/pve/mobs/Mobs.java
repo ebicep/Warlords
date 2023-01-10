@@ -81,7 +81,8 @@ public enum Mobs {
     ZENITH(Zenith.class, Zenith::new),
     ILLUMINA(Illumina.class, Illumina::new),
     CHESSKING(Chessking.class, Chessking::new),
-    VOID(com.ebicep.warlords.pve.mobs.bosses.Void.class, Void::new),
+    LILIATH(Liliath.class, Liliath::new),
+    VOID(Void.class, Void::new),
 
     // Boss minions
     BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),

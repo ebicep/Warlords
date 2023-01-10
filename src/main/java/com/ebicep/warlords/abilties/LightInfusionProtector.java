@@ -88,7 +88,7 @@ public class LightInfusionProtector extends AbstractAbility {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    6 * 20,
+                    5 * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 2 == 0) {
                             wp.getSpeed().removeSlownessModifiers();

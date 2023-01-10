@@ -83,10 +83,10 @@ public class FlameBurst extends AbstractProjectileBase {
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
-                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
+                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.65),
+                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.65),
+                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.65),
+                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.65),
                         false
                 );
             } else {

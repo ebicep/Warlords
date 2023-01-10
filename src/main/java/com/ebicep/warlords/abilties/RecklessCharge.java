@@ -141,11 +141,11 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                         CooldownTypes.ABILITY,
                                         cooldownManager -> {
                                         },
-                                        5 * 20
+                                        8 * 20
                                 ) {
                                     @Override
                                     public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                        return currentHealValue * 1.3f;
+                                        return currentHealValue * 2;
                                     }
                                 });
                             }

@@ -101,6 +101,7 @@ public class Inferno extends AbstractAbility {
                 if (pveUpgrade) {
                     if (isCrit && !(finalMaxHits <= 0)) {
                         subtractCooldown(0.5f);
+                        setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
                     }
                     wp.updateOrangeItem();

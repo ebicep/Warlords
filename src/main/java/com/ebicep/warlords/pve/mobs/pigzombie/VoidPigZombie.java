@@ -45,8 +45,11 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 10 == 0) {
+        if (ticksElapsed % 20 == 0) {
             EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.CLOUD, 1);
+        }
+
+        if (ticksElapsed % 10 == 0) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(warlordsNPC)

@@ -93,10 +93,11 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         masterUpgrade = new Upgrade(
                 "Alleviating Strike",
                 "Protector's Strike - Master Upgrade",
-                "Increase the healing of Protector's Strike on the lowest health allies and you by 50% and double the healing range.",
+                "Increase the healing of Protector's Strike on the lowest health allies and you by 50%. Additionally, double the healing range and increase your strike radius by 1 block.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
+                    ability.setHitbox(ability.getHitbox() + 1);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                 }
         );
