@@ -125,4 +125,8 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     T get();
+
+    default void setStunned(boolean stunned) {
+
+    }
 }

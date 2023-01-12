@@ -33,4 +33,18 @@ public class CustomIronGolem extends EntityIronGolem implements CustomEntity<Cus
 
     }
 
+    private boolean stunned;
+
+    @Override
+    public void collide(Entity entity) {
+        if (stunned) {
+            return;
+        }
+        super.collide(entity);
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
+    }
 }

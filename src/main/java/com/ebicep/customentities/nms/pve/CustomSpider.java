@@ -29,6 +29,21 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
         return this;
     }
 
+    private boolean stunned;
+
+    @Override
+    public void collide(Entity entity) {
+        if (stunned) {
+            return;
+        }
+        super.collide(entity);
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
+    }
+
     static class PathfinderGoalSpiderMeleeAttack extends PathfinderGoalMeleeAttack {
         public PathfinderGoalSpiderMeleeAttack(EntitySpider entityspider, Class<? extends Entity> oclass) {
             super(entityspider, oclass, 1.0, true);

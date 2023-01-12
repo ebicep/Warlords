@@ -95,13 +95,14 @@ public class MobCommand extends BaseCommand {
         //Ghoul Caller - @MainLobby | 10,-3,3
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
-                String message = ((WaveDefenseOption) option).getMobs()
-                                                             .stream()
-                                                             .map(abstractMob -> {
-                                                                 EntityInsentient entity = abstractMob.getEntityInsentient();
-                                                                 return abstractMob.getWarlordsNPC().getColoredName() +
-                                                                         ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
-                                                                         ChatColor.GRAY + " | " + ChatColor.GREEN + entity.locX + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
+                String message = ((WaveDefenseOption) option)
+                        .getMobs()
+                        .stream()
+                        .map(abstractMob -> {
+                            EntityInsentient entity = abstractMob.getEntityInsentient();
+                            return abstractMob.getWarlordsNPC().getColoredName() +
+                                    ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
+                                    ChatColor.GRAY + " | " + ChatColor.GREEN + entity.locX + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
                         })
                         .collect(Collectors.joining("\n"));
                 ChatChannels.sendDebugMessage(issuer, message, true);

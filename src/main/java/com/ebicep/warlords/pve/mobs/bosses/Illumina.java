@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -23,6 +24,7 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -115,11 +117,13 @@ public class Illumina extends AbstractZombie implements BossMob {
         if (ticksElapsed % 100 == 0) {
             Utils.playGlobalSound(loc, Sound.DIG_GRASS, 500, 0.4f);
             new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
-            for (WarlordsEntity we : PlayerFilter
+            for (WarlordsNPC we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
+                    .warlordsNPCs()
             ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.setStunTicks(30);
+                //we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
@@ -134,11 +138,13 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 220 == 0) {
             EffectUtils.strikeLightningInCylinder(loc, 6,false);
-            for (WarlordsEntity we : PlayerFilter
+            for (WarlordsNPC we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
+                    .warlordsNPCs()
             ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.setStunTicks(30);
+                //we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 Utils.addKnockback(loc, we, -2, 0.3);
             }
         }

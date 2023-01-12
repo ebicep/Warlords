@@ -30,6 +30,21 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         return this;
     }
 
+    private boolean stunned;
+
+    @Override
+    public void collide(Entity entity) {
+        if (stunned) {
+            return;
+        }
+        super.collide(entity);
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
+    }
+
     public PathfinderGoalFireAtPlayer getPathfinderGoalFireAtPlayer() {
         return pathfinderGoalFireAtPlayer;
     }

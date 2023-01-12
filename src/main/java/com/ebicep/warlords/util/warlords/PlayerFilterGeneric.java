@@ -42,6 +42,11 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
         return stream;
     }
 
+    @Nonnull
+    public PlayerFilterGeneric<WarlordsNPC> warlordsNPCs() {
+        return new PlayerFilterGeneric<>(stream.filter(WarlordsNPC.class::isInstance).map(WarlordsNPC.class::cast));
+    }
+
     /**
      * Adds new internalPlayers to the list
      *
