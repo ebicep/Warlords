@@ -4,10 +4,12 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -146,13 +148,15 @@ public class HeartToHeart extends AbstractAbility {
                 }
 
                 if (pveUpgrade) {
-                    for (WarlordsEntity we : PlayerFilter
+                    for (WarlordsNPC we : PlayerFilterGeneric
                             .entitiesAround(wp, 3, 3, 3)
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
+                            .warlordsNPCs()
                     ) {
                         playersHit.add(we);
-                        we.addSpeedModifier(wp, "Heart Slowness", -99, GameRunnable.SECOND, "BASE");
+                        we.setStunTicks(GameRunnable.SECOND);
+                        //we.addSpeedModifier(wp, "Heart Slowness", -99, GameRunnable.SECOND, "BASE");
                         we.addDamageInstance(
                                 wp,
                                 name,

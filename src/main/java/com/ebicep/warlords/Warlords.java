@@ -39,6 +39,7 @@ import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -506,10 +507,6 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newChain();
     }
 
-    public static boolean onCustomServer() {
-        return !serverIP.equals("51.81.49.127");
-    }
-
     public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
         return hasPlayer(player.getUniqueId());
     }
@@ -764,6 +761,14 @@ public class Warlords extends JavaPlugin {
                     // Melee Cooldown
                     if (wp.getHitCooldown() > 0) {
                         wp.setHitCooldown(wp.getHitCooldown() - 1);
+                    }
+
+                    //NPC STUN
+                    if (wp instanceof WarlordsNPC) {
+                        WarlordsNPC npc = (WarlordsNPC) wp;
+                        if (npc.getStunTicks() > 0) {
+                            npc.setStunTicks(npc.getStunTicks() - 1, true);
+                        }
                     }
 
                     // Orbs of Life

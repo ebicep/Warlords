@@ -170,7 +170,8 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (ticksElapsed % 320 == 0 && !preventArmageddon) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 90);
+            warlordsNPC.setStunTicks(90);
+            //warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 90);
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
                 public void run() {
@@ -223,7 +224,8 @@ public class Void extends AbstractSkeleton implements BossMob {
     }
 
     private void immolation(WaveDefenseOption option, Location loc) {
-        warlordsNPC.addSpeedModifier(warlordsNPC, "Void Slowness", -99, 250);
+        warlordsNPC.setStunTicks(250);
+        //warlordsNPC.addSpeedModifier(warlordsNPC, "Void Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
         }
