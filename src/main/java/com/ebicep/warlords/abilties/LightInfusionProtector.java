@@ -88,7 +88,7 @@ public class LightInfusionProtector extends AbstractAbility {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    5 * 20,
+                    4 * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 2 == 0) {
                             wp.getSpeed().removeSlownessModifiers();
@@ -98,12 +98,12 @@ public class LightInfusionProtector extends AbstractAbility {
             ) {
                 @Override
                 public void multiplyKB(Vector currentVector) {
-                    currentVector.multiply(0.01);
+                    currentVector.multiply(0.1);
                 }
 
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 0.01f;
+                    return currentDamageValue * 0.1f;
                 }
             });
         }
