@@ -70,7 +70,6 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
-
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
     SimpleScoreboardHandler scoreboard;

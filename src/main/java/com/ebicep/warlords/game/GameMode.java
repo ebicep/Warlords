@@ -270,27 +270,8 @@ public enum GameMode {
                     color + "the raid trials!",
                     ""
             ));
-            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                    .name(ChatColor.AQUA + "Pre-game Menu ")
-                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
-                    .get(), (g, p) -> openMainMenu(p)));
-            options.add(new PreGameItemOption(
-                    6,
-                    (game, player) -> {
-                        if (DatabaseManager.playerService != null) {
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-                            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
-                                    .filter(AbstractWeapon::isBound)
-                                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
-                                    .findFirst();
-                            return optionalWeapon.map(abstractWeapon -> abstractWeapon.generateItemStack(false)).orElse(null);
-                        } else {
-                            return null;
-                        }
-                    },
-                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
-            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
