@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,8 @@ public interface PlayerService {
     DatabasePlayer update(DatabasePlayer player);
 
     DatabasePlayer update(DatabasePlayer player, PlayersCollections collection);
+
+    void updateMany(Query query, UpdateDefinition update, Class<?> clazz, PlayersCollections collection);
 
     void delete(DatabasePlayer player);
 

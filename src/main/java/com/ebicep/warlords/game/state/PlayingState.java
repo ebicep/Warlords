@@ -174,6 +174,8 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         Warlords.getInstance().hideAndUnhidePeople();
+        Game.reopenGameReferencedMenus();
+
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game start done");
     }
 

@@ -42,6 +42,7 @@ public enum PlayersCollections {
 //            return ACTIVE_COLLECTIONS.contains(this);
 //        }
 //    },
+
     WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {

@@ -21,6 +21,7 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.wavedefense.commands.MobCommand;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
@@ -179,6 +180,7 @@ public class WaveDefenseOption implements Option {
                             waveDefenseStats.getBossesKilled().merge(mobToRemove.getName(), 1L, Long::sum);
                         }
                     }
+                    MobCommand.SPAWNED_MOBS.remove(mobToRemove);
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
                     if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
                         we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());

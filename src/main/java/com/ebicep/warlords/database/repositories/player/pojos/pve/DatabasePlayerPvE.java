@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEventReward;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -55,7 +56,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
     //EVENTS
-    @Field("event_statss")
+    @Field("event_stats")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
     /*
         event_stats
@@ -73,14 +74,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //MASTERWORKS FAIR
     @Field("masterworks_fair_submissions")
     private List<MasterworksFairEntry> masterworksFairEntries = new ArrayList<>();
+    //REWARDS
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
-    //PATERON
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
-    //COMPENSATION
     @Field("compensation_rewards")
     private List<CompensationReward> compensationRewards = new ArrayList<>();
+    @Field("game_event_rewards")
+    private List<GameEventReward> gameEventRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -190,10 +192,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
                 case BOLTARO:
                     if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 50_000));
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
                     } else {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO,
-                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints() * multiplier, 15_000)
+                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier
                         );
                     }
                     break;
@@ -362,6 +364,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public List<CompensationReward> getCompensationRewards() {
         return compensationRewards;
+    }
+
+    public List<GameEventReward> getGameEventRewards() {
+        return gameEventRewards;
     }
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {

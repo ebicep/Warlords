@@ -411,6 +411,7 @@ public abstract class DatabaseGameBase {
     public static long convertToTimestampFrom(String objectId) {
         return Long.parseLong(objectId.substring(0, 8), 16) * 1000;
     }
+
     @Id
     protected String id;
     @Field("exact_date")
@@ -424,6 +425,7 @@ public abstract class DatabaseGameBase {
     protected boolean counted = false;
     @Transient
     protected List<Hologram> holograms = new ArrayList<>();
+
     public DatabaseGameBase() {
     }
 
@@ -491,6 +493,7 @@ public abstract class DatabaseGameBase {
             final boolean[] add = {false};
             allPlayers.stream()
                       .filter(o -> o.getSpec().name.equalsIgnoreCase(s))
+                      .sorted((o1, o2) -> Integer.compare(playerColor.get(o2).ordinal(), playerColor.get(o1).ordinal()))
                       .forEach(p -> {
                           playerSpecs.append(playerColor.getOrDefault(p, ChatColor.WHITE))
                                      .append(p.getName())
@@ -546,6 +549,8 @@ public abstract class DatabaseGameBase {
         topDamagePlayers.forEach(s -> topDamage.getLines().appendText(s));
         topHealingPlayers.forEach(s -> topHealing.getLines().appendText(s));
         topAbsorbedPlayers.forEach(s -> topAbsorbed.getLines().appendText(s));
+
+        addCustomHolograms(holograms);
 
         //setting visibility to none
         holograms.forEach(hologram -> {

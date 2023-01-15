@@ -10,4 +10,8 @@ public interface EventMode {
 
     Map<String, Long> getRewardsPurchased();
 
+    int getPlays();
+
+    long getEventPointsCumulative();
+
 }

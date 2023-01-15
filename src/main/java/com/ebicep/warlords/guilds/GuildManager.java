@@ -51,7 +51,7 @@ public class GuildManager {
                             for (Player player : guild.getOnlinePlayers()) {
                                 Guild.sendGuildMessage(player,
                                         ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade()
-                                                .getName() + ChatColor.RED + " has expired!"
+                                                                                                          .getName() + ChatColor.RED + " has expired!"
                                 );
                             }
                         }
@@ -65,13 +65,6 @@ public class GuildManager {
 
     public static void updateGuilds() {
         GUILDS_TO_UPDATE.forEach(guild -> DatabaseManager.guildService.update(guild));
-    }
-
-    public static void queueUpdateGuild(Guild guild) {
-        if (DatabaseManager.guildService == null || !DatabaseManager.enabled) {
-            return;
-        }
-        GUILDS_TO_UPDATE.add(guild);
     }
 
     public static void reloadPlayerCaches() {
@@ -89,11 +82,22 @@ public class GuildManager {
         queueUpdateGuild(guild);
     }
 
+    public static void queueUpdateGuild(Guild guild) {
+        if (DatabaseManager.guildService == null || !DatabaseManager.enabled) {
+            return;
+        }
+        GUILDS_TO_UPDATE.add(guild);
+    }
+
     public static void removeGuild(Guild guild) {
         GUILDS.remove(guild);
         GuildLeaderboardManager.COINS_LEADERBOARD.forEach((timing, guilds) -> guilds.remove(guild));
         GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.forEach((timing, guilds) -> guilds.remove(guild));
         queueUpdateGuild(guild);
+    }
+
+    public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
+        return getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
     }
 
     public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(UUID uuid) {
@@ -108,11 +112,6 @@ public class GuildManager {
         }
         return null;
     }
-
-    public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
-        return getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
-    }
-
 
     public static void addInvite(Player from, Player to, Guild guild) {
         INVITES.put(new GuildInvite(to.getUniqueId(), guild), Instant.now().plus(5, ChronoUnit.MINUTES));
@@ -141,8 +140,8 @@ public class GuildManager {
 
     public static Optional<Guild> getGuildFromName(String guildName) {
         return GUILDS.stream()
-                .filter(guild -> guild.getDisbandDate() == null && guild.getName().equalsIgnoreCase(guildName))
-                .findFirst();
+                     .filter(guild -> guild.getDisbandDate() == null && guild.getName().equalsIgnoreCase(guildName))
+                     .findFirst();
     }
 
     static class GuildInvite {
@@ -163,6 +162,11 @@ public class GuildManager {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(uuid, guild);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -172,11 +176,6 @@ public class GuildManager {
             }
             GuildInvite that = (GuildInvite) o;
             return uuid.equals(that.uuid) && guild.equals(that.guild);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(uuid, guild);
         }
     }
 

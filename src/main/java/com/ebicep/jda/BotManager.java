@@ -43,7 +43,7 @@ public class BotManager {
 
     public static void connect() throws LoginException {
         if (botToken != null) {
-            jda = JDABuilder.createDefault(botToken)
+            jda = JDABuilder.createLight(botToken)
                             .enableIntents(GatewayIntent.GUILD_MEMBERS)
                             .addEventListeners(new BotListener(), new QueueListener())
                             .build();
@@ -220,7 +220,7 @@ public class BotManager {
             if (discordServer.getStatusMessage() == null) {
                 continue;
             }
-            discordServer.getStatusMessage().delete().queue();
+            discordServer.getStatusMessage().delete().complete();
         }
     }
 

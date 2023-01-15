@@ -50,9 +50,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
-                90000,
-                0.3f,
-                20,
+                110000,
+                0.33f,
+                25,
                 2000,
                 3000
         );
@@ -123,8 +123,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
-                        700,
                         1000,
+                        1500,
                         -1,
                         100,
                         true
@@ -143,14 +143,20 @@ public class Illumina extends AbstractZombie implements BossMob {
             }
         }
 
+        if (ticksElapsed % 300 == 0) {
+            for (int i = 0; i < (2 * playerCount); i++) {
+                option.spawnNewMob(new ExiledSkeleton(loc));
+            }
+        }
+
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 8000, 11);
+            timedDamage(option, playerCount, 10000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 10500, 11);
+            timedDamage(option, playerCount, 12500, 11);
             for (int i = 0; i < (3 * playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(loc));
             }
@@ -158,7 +164,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 13000, 11);
+            timedDamage(option, playerCount, 15000, 11);
             for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new ForgottenZombie(loc));
             }
@@ -251,8 +257,8 @@ public class Illumina extends AbstractZombie implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Vampiric Leash",
-                                500,
-                                500,
+                                600,
+                                600,
                                 -1,
                                 100,
                                 true

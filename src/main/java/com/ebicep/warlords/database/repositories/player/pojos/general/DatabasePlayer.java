@@ -423,14 +423,17 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public boolean hasAchievement(TieredAchievements achievement) {
         return this.achievements.stream()
-                .anyMatch(achievementRecord -> achievementRecord instanceof TieredAchievements.TieredAchievementRecord &&
-                        ((TieredAchievements.TieredAchievementRecord) achievementRecord).getAchievement() == achievement);
+                                .anyMatch(achievementRecord -> achievementRecord instanceof TieredAchievements.TieredAchievementRecord &&
+                                        ((TieredAchievements.TieredAchievementRecord) achievementRecord).getAchievement() == achievement);
     }
 
     public boolean hasAchievement(ChallengeAchievements achievement) {
         return this.achievements.stream()
-                .anyMatch(achievementRecord -> achievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord &&
-                        ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
+                                .anyMatch(achievementRecord -> achievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord &&
+                                        ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
     }
 
+    public String getId() {
+        return id;
+    }
 }

@@ -33,10 +33,11 @@ public class RewardInventory {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
             List<AbstractReward> rewards = Stream.of(
-                            databasePlayerPvE.getMasterworksFairRewards(),
-                            databasePlayerPvE.getPatreonRewards(),
-                            databasePlayerPvE.getCompensationRewards()
-                    )
+                                                         databasePlayerPvE.getMasterworksFairRewards(),
+                                                         databasePlayerPvE.getPatreonRewards(),
+                                                         databasePlayerPvE.getCompensationRewards(),
+                                                         databasePlayerPvE.getGameEventRewards()
+                                                 )
                     .flatMap(List::stream)
                     .filter(reward -> reward.getTimeClaimed() == null)
                     .collect(Collectors.toList());

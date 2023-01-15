@@ -8,6 +8,8 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +41,12 @@ public class PlayerServiceImpl implements PlayerService {
         DatabasePlayer p = playerRepository.save(player, collection);
         ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Updated: - " + player + " in " + collection);
         return p;
+    }
+
+    @Override
+    public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, PlayersCollections collection) {
+        playerRepository.updateMany(query, update, clazz, collection);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
     }
 
     @Override

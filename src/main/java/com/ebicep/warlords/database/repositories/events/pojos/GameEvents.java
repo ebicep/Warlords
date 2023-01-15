@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -63,16 +64,112 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
-                add(new EventReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventReward(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
-                add(new EventReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
-                add(new EventReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventReward(1_000, Currencies.COIN, -1, 10_000));
+                add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
+                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
+                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
+                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new EventShopReward(1_000, Currencies.COIN, -1, 10_000));
             }}
     ) {
+        @Override
+        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 500_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 200_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 25_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
+        }
+
+        @Override
+        public LinkedHashMap<String, Long> getGuildRewards(int position) {
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 150_000L);
+                    put("Experience", 150_000L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 100_000L);
+                    put("Experience", 100_000L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 75_000L);
+                    put("Experience", 75_000L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 50_000L);
+                    put("Experience", 50_000L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put("Coins", 20_000L);
+                put("Experience", 20_000L);
+            }};
+        }
+
         @Override
         public void editNPC(NPC npc) {
             Equipment equipment = npc.getOrAddTrait(Equipment.class);
@@ -161,7 +258,7 @@ public enum GameEvents {
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
-    public final List<EventReward> rewards;
+    public final List<EventShopReward> shopRewards;
 
     GameEvents(
             String name,
@@ -170,7 +267,7 @@ public enum GameEvents {
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
-            List<EventReward> rewards
+            List<EventShopReward> shopRewards
     ) {
         this.name = name;
         this.currency = currency;
@@ -178,8 +275,12 @@ public enum GameEvents {
         this.eventsStatsFunction = eventsStatsFunction;
         this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
-        this.rewards = rewards;
+        this.shopRewards = shopRewards;
     }
+
+    public abstract LinkedHashMap<Currencies, Long> getRewards(int position);
+
+    public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
 
 
     public void createNPC() {
@@ -288,7 +389,7 @@ public enum GameEvents {
 
             int x = 1;
             int y = 1;
-            for (EventReward reward : rewards) {
+            for (EventShopReward reward : shopRewards) {
                 int rewardAmount = reward.getAmount();
                 Currencies rewardCurrency = reward.getCurrency();
                 int rewardPrice = reward.getPrice();
@@ -355,14 +456,14 @@ public enum GameEvents {
         });
     }
 
-    static class EventReward {
+    static class EventShopReward {
 
         private final int amount;
         private final Currencies currency;
         private final int stock;
         private final int price;
 
-        EventReward(int amount, Currencies currency, int stock, int price) {
+        EventShopReward(int amount, Currencies currency, int stock, int price) {
             this.amount = amount;
             this.currency = currency;
             this.stock = stock;
