@@ -35,7 +35,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "+20 energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
+        return "+40 energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
     }
 
     @Override
@@ -96,7 +96,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = ChatColor.YELLOW + "+10 " + ChatColor.GRAY + "energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
+            description = ChatColor.YELLOW + "+40 " + ChatColor.GRAY + "energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
         }
 
         @Override
@@ -119,7 +119,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + 1f;
+                    return energyGainPerTick + 2f;
                 }
             });
             return true;

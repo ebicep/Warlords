@@ -59,8 +59,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 5000,
                 () -> {
                     ability.setVelocity(velocity * 1.15);
-                    ability.setHitbox(ability.getHitbox() + 2);
-                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
+                    ability.setHitbox(hitbox + 2);
+                    ability.setMaxAnimationTime(coneRange + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -69,8 +69,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 10000,
                 () -> {
                     ability.setVelocity(velocity * 1.3);
-                    ability.setHitbox(ability.getHitbox() + 2);
-                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
+                    ability.setHitbox(hitbox + 4);
+                    ability.setMaxAnimationTime(coneRange + 8);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,8 +79,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 15000,
                 () -> {
                     ability.setVelocity(velocity * 1.45);
-                    ability.setHitbox(ability.getHitbox() + 2);
-                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
+                    ability.setHitbox(hitbox + 6);
+                    ability.setMaxAnimationTime(coneRange + 12);
                 }
         ));
         treeB.add(new Upgrade(
@@ -89,8 +89,8 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 20000,
                 () -> {
                     ability.setVelocity(velocity * 1.6);
-                    ability.setHitbox(ability.getHitbox() + 2);
-                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() + 4);
+                    ability.setHitbox(hitbox + 8);
+                    ability.setMaxAnimationTime(coneRange + 16);
                 }
         ));
 

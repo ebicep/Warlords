@@ -41,7 +41,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
                 if (player.isDead()) {
                     return;
                 }
-                float healValue = player.getMaxHealth() * .05f;
+                float healValue = player.getMaxHealth() * .06f;
                 player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
             }
         }.runTaskTimer(0, 5 * 20);

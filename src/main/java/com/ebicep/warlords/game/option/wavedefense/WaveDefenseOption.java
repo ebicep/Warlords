@@ -573,7 +573,7 @@ public class WaveDefenseOption implements Option {
                 return 1.5f;
             case 5:
             case 6:
-                return 2;
+                return 1.75f;
         }
 
         return 1;
@@ -656,7 +656,7 @@ public class WaveDefenseOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(currentWave.getDelay(), 10);
+        }.runTaskTimer(currentWave.getDelay(), 9);
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
