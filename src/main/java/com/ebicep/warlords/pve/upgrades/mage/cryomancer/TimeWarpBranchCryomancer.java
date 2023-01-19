@@ -1,16 +1,16 @@
-package com.ebicep.warlords.pve.upgrades.mage;
+package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.TimeWarp;
+import com.ebicep.warlords.abilties.TimeWarpCryomancer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
+public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryomancer> {
 
     float cooldown = ability.getCooldown();
     int healing = ability.getWarpHealPercentage();
 
-    public TimeWarpBranch(AbilityTree abilityTree, TimeWarp ability) {
+    public TimeWarpBranchCryomancer(AbilityTree abilityTree, TimeWarpCryomancer ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",

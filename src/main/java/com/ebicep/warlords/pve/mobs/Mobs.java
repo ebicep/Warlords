@@ -79,9 +79,9 @@ public enum Mobs {
     NARMER(Narmer.class, Narmer::new),
     MITHRA(Mithra.class, Mithra::new),
     ZENITH(Zenith.class, Zenith::new),
-    ILLUMINA(Illumina.class, Illumina::new),
     CHESSKING(Chessking.class, Chessking::new),
-    LILIATH(Liliath.class, Liliath::new),
+    ILLUMINA(Illumina.class, Illumina::new),
+    TORMENT(Torment.class, Torment::new),
     VOID(Void.class, Void::new),
 
     // Boss minions

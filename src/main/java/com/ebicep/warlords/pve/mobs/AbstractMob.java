@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -27,6 +28,7 @@ import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -209,7 +211,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot().sendMessage(new ComponentBuilder(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                player.spigot().sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
                         .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                         .append(ChatColor.GRAY + "!")
                         .create()

@@ -2,12 +2,14 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -43,7 +45,7 @@ public class TimeWarpPyromancer extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 
@@ -60,8 +62,8 @@ public class TimeWarpPyromancer extends AbstractAbility {
                     if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                         return;
                     }
-                    timesSuccessful++;
 
+                    timesSuccessful++;
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
                     wp.addHealingInstance(
@@ -86,6 +88,7 @@ public class TimeWarpPyromancer extends AbstractAbility {
                         }
 
                         warpTrail.add(wp.getLocation());
+                        Bukkit.broadcastMessage("multiplier: " + warpTrail.size());
                         ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
 
                         int points = 6;
@@ -97,7 +100,23 @@ public class TimeWarpPyromancer extends AbstractAbility {
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (pveUpgrade) {
+                    return currentCritChance + warpTrail.size();
+                }
+                return currentCritChance;
+            }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (pveUpgrade) {
+                    return currentCritMultiplier + warpTrail.size();
+                }
+                return currentCritMultiplier;
+            }
+        };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
         if (pveUpgrade) {

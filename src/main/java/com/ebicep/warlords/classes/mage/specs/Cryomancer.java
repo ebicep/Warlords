@@ -6,10 +6,10 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
-import com.ebicep.warlords.pve.upgrades.mage.TimeWarpBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.IceBarrierBranch;
+import com.ebicep.warlords.pve.upgrades.mage.cryomancer.TimeWarpBranchCryomancer;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class Cryomancer extends AbstractMage {
                 10,
                 new FrostBolt(),
                 new FreezingBreath(),
-                new TimeWarp(),
+                new TimeWarpCryomancer(),
                 new ArcaneShield(),
                 new IceBarrier()
         );
@@ -37,7 +37,7 @@ public class Cryomancer extends AbstractMage {
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
         branch.add(new FrostboltBranch(abilityTree, (FrostBolt) weapon));
         branch.add(new FreezingBreathBranch(abilityTree, (FreezingBreath) red));
-        branch.add(new TimeWarpBranch(abilityTree, (TimeWarp) purple));
+        branch.add(new TimeWarpBranchCryomancer(abilityTree, (TimeWarpCryomancer) purple));
         branch.add(new ArcaneShieldBranch(abilityTree, (ArcaneShield) blue));
         branch.add(new IceBarrierBranch(abilityTree, (IceBarrier) orange));
     }

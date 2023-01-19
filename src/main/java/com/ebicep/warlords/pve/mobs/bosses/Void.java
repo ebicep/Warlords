@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -35,7 +36,6 @@ public class Void extends AbstractSkeleton implements BossMob {
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
-    private boolean zenithPhaseTrigger = false;
     private final int stormRadius = 10;
     private final int earthQuakeRadius = 10;
 
@@ -103,7 +103,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.75f) && !flamePhaseTrigger) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.8f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
             immolation(option, loc);
         }
@@ -111,7 +111,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
             timedDamageTrigger = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 15000, 13);
+            timedDamage(option, playerCount, 15000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
@@ -125,23 +125,16 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
             timedDamageTriggerTwo = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 25000, 17);
+            timedDamage(option, playerCount, 25000, 16);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.15f) && !boltaroPhaseTrigger) {
+        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
             boltaroPhaseTrigger = true;
             for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new Boltaro(loc));
-            }
-        }
-
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !zenithPhaseTrigger) {
-            zenithPhaseTrigger = true;
-            for (int i = 0; i < 2; i++) {
-                option.spawnNewMob(new Zenith(loc));
             }
         }
 
@@ -225,21 +218,18 @@ public class Void extends AbstractSkeleton implements BossMob {
 
     private void immolation(WaveDefenseOption option, Location loc) {
         warlordsNPC.setStunTicks(250);
-        //warlordsNPC.addSpeedModifier(warlordsNPC, "Void Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
         }
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + "PREPARE TO DIE",
-                        ChatColor.LIGHT_PURPLE + "Augmented Immolation",
-                        20, 60, 20
-                );
-            }
-        }
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                ChatColor.RED + "PREPARE TO DIE",
+                ChatColor.LIGHT_PURPLE + "Augmented Immolation Spell",
+                20,
+                60,
+                20
+        );
 
         float damage;
         switch (option.getDifficulty()) {
@@ -416,8 +406,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
-                                we.getMaxHealth() * 0.95f,
-                                we.getMaxHealth() * 0.95f,
+                                we.getMaxHealth() * 0.9f,
+                                we.getMaxHealth() * 0.9f,
                                 -1,
                                 100,
                                 true

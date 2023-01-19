@@ -573,7 +573,10 @@ public class WaveDefenseOption implements Option {
                 return 1.5f;
             case 5:
             case 6:
-                return 1.75f;
+                return 2;
+            case 7:
+            case 8:
+                return 2.5f;
         }
 
         return 1;

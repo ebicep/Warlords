@@ -79,7 +79,6 @@ public class ArcaneShield extends AbstractAbility {
                                 .warlordsNPCs()
                         ) {
                             we.setStunTicks(6 * 20);
-                            //we.addSpeedModifier(wp, "Arcane Aegis", -99, 6 * 20);
                         }
                     }
                 },

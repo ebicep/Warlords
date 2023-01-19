@@ -32,7 +32,7 @@ public enum SkillBoosts {
     TIME_WARP_PYROMANCER("Time Warp",
             "§7Increase the amount of health you restore with Time Warp by 10% and reduce the cooldown by 50%.",
             "§aIncrease the amount of health you restore with Time Warp by §c10% §aand reduce the cooldown by §c50%.",
-            TimeWarp.class,
+            TimeWarpPyromancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(40);

@@ -10,7 +10,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -117,13 +116,11 @@ public class Illumina extends AbstractZombie implements BossMob {
         if (ticksElapsed % 100 == 0) {
             Utils.playGlobalSound(loc, Sound.DIG_GRASS, 500, 0.4f);
             new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
-            for (WarlordsNPC we : PlayerFilterGeneric
+            for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
-                    .warlordsNPCs()
             ) {
-                we.setStunTicks(30);
-                //we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
@@ -138,13 +135,11 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 220 == 0) {
             EffectUtils.strikeLightningInCylinder(loc, 6,false);
-            for (WarlordsNPC we : PlayerFilterGeneric
+            for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
-                    .warlordsNPCs()
             ) {
-                we.setStunTicks(30);
-                //we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 Utils.addKnockback(loc, we, -2, 0.3);
             }
         }
@@ -178,7 +173,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(option, playerCount, 5000, 9);
+            timedDamage(option, playerCount, 5000, 6);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
