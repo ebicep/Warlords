@@ -18,20 +18,20 @@ public class WitherWarrior extends AbstractSkeleton implements EliteMob {
     public WitherWarrior(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Lunar Hound",
-                MobTier.BASE,
+                "Celestial Opus",
+                MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BOW_HEAD),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.FROSTBITE.getItem()
+                        SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 40, 40, 40),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 40, 40, 40),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 40, 40),
+                        Weapons.SILVER_PHANTASM_SAWBLADE.getItem()
                 ),
-                900,
-                0.5f,
-                0,
-                600,
-                800
+                10000,
+                0.4f,
+                10,
+                800,
+                1000
         );
     }
 

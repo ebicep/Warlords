@@ -2221,7 +2221,7 @@ public enum GameMap {
                             .add(0.5, Mobs.FORGOTTEN_LANCER)
                     )
                     .add(80, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.MITHRA)
+                            .add(Mobs.TORMENT)
                     )
                     .add(81, new SimpleWave(60, 5 * SECOND, null)
                             //basic

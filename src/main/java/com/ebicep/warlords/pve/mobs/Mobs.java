@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.mobs.slime.BasicSlime;
 import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
 import com.ebicep.warlords.pve.mobs.spider.Spider;
 import com.ebicep.warlords.pve.mobs.witch.Witch;
+import com.ebicep.warlords.pve.mobs.witherskeleton.WitherWarrior;
 import com.ebicep.warlords.pve.mobs.wolf.Wolf;
 import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicBerserkZombie;
@@ -49,6 +50,7 @@ public enum Mobs {
     IRON_GOLEM(IronGolem.class, IronGolem::new),
     BLAZE(Blaze.class, Blaze::new),
     WITCH(Witch.class, Witch::new),
+    WITHER_SKELETON(WitherWarrior.class, WitherWarrior::new),
 
     // Elite Tier 2 - Envoy
     ENVOY_ZOMBIE(EnvoyZombie.class, EnvoyZombie::new),

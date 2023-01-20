@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -88,7 +87,6 @@ public class TimeWarpPyromancer extends AbstractAbility {
                         }
 
                         warpTrail.add(wp.getLocation());
-                        Bukkit.broadcastMessage("multiplier: " + warpTrail.size());
                         ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
 
                         int points = 6;

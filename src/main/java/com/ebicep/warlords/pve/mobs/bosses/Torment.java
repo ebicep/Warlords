@@ -11,8 +11,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -26,7 +27,7 @@ import org.bukkit.Material;
 
 import java.util.Collections;
 
-public class Torment extends AbstractZombie implements BossMob {
+public class Torment extends AbstractSkeleton implements BossMob {
 
     public Torment(Location spawnLocation) {
         super(
@@ -50,6 +51,7 @@ public class Torment extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+        this.entity.setSkeletonType(1);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
                 ChatColor.RED + "Torment",
@@ -82,7 +84,6 @@ public class Torment extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         warlordsNPC.getSpeed().removeSlownessModifiers();
-        Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
@@ -90,7 +91,12 @@ public class Torment extends AbstractZombie implements BossMob {
                 public void run() {
                     EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 0.2 * counter, 255, 30, 30, counter, 4);
                     counter++;
-                    if (counter == 40 || warlordsNPC.isDead()) {
+                    if (counter == 40) {
+                        option.spawnNewMob(new SoulOfGradient(warlordsNPC.getLocation()));
+                        this.cancel();
+                    }
+
+                    if (warlordsNPC.isDead()) {
                         this.cancel();
                     }
                 }
@@ -102,6 +108,7 @@ public class Torment extends AbstractZombie implements BossMob {
                     .leastAliveFirst()
                     .limit(1)
             ) {
+                Utils.addKnockback(warlordsNPC.getLocation(), we, 2, 0.35);
                 we.getCooldownManager().removeCooldown(DamageCheck.class);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Tormenting Mark",
