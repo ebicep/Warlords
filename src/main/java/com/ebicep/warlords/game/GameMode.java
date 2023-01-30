@@ -250,6 +250,42 @@ public enum GameMode {
             return options;
         }
     },
+    ONSLAUGHT(
+            "Onslaught",
+            "PVE",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            DatabaseGamePvE::new,
+            GamesCollections.PVE,
+            1,
+            false
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Survive against waves of",
+                    color + "monsters!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the wave defense commence."
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+
+            return options;
+        }
+    },
     DEBUG(
             "Sandbox",
             "SandBox",

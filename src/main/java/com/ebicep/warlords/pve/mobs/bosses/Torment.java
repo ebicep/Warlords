@@ -41,7 +41,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 230, 60, 60),
                         Weapons.SILVER_PHANTASM_TRIDENT.getItem()
                 ),
-                130000,
+                135000,
                 0.39f,
                 20,
                 1600,

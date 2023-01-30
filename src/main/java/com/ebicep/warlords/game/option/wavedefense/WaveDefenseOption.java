@@ -659,7 +659,7 @@ public class WaveDefenseOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(currentWave.getDelay(), 9);
+        }.runTaskTimer(currentWave.getDelay(), 8);
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {

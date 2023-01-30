@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
@@ -3054,6 +3055,35 @@ public enum GameMap {
                     .guildExpPerXSec(4, 10)
             );
             options.add(new FieldEffect(options));
+
+            return options;
+        }
+
+    },
+    ILLUSION_PHANTOM(
+            "Illusion Phantom",
+            1,
+            1,
+            10 * SECOND,
+            "IllusionPhantom",
+            3,
+            GameMode.ONSLAUGHT
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 80, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 80, 0.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 2, 0), Team.BLUE));
+
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new CurrencyOnEventOption()
+                    .onKill(25)
+            );
+            options.add(new OnslaughtOption(Team.RED));
 
             return options;
         }

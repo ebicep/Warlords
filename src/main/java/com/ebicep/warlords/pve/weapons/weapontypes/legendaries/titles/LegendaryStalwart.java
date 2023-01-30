@@ -38,11 +38,6 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 160;
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
@@ -61,7 +56,6 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                         },
                         false
                 ) {
-
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                         if (player.getHealth() >= player.getMaxHealth() * .7) {
@@ -115,6 +109,11 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.STALWART;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 160;
     }
 
     @Override

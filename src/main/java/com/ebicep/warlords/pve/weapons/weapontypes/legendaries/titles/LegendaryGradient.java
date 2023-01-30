@@ -22,12 +22,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Perpetually regenerate 5% of your health every 5 seconds.";
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
+        return "Perpetually regenerate 7% of your health every 5 seconds.";
     }
 
     @Override
@@ -41,7 +36,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
                 if (player.isDead()) {
                     return;
                 }
-                float healValue = player.getMaxHealth() * .06f;
+                float healValue = player.getMaxHealth() * .07f;
                 player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
             }
         }.runTaskTimer(0, 5 * 20);
@@ -50,6 +45,11 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.GRADIENT;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
     }
 
     @Override
