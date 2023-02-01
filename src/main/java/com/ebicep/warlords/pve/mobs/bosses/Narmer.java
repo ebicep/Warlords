@@ -73,7 +73,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
-        for (int i = 0; i < (multiplier * option.getGame().warlordsPlayers().count()); i++) {
+        for (int i = 0; i < (multiplier * warlordsNPC.getGame().warlordsPlayers().count()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
             option.spawnNewMob(acolyte);
             acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
@@ -93,7 +93,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     if (warlordsNPC.getHealth() < executeHealth && !acolytes.isEmpty()) {
                         warlordsNPC.setHealth(warlordsNPC.getHealth());
                         Location loc = warlordsNPC.getLocation();
-                        option.getGame().forEachOnlineWarlordsEntity(we -> {
+                        warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
                             we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
@@ -186,7 +186,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                 }
             }
         };
-        option.getGame().registerEvents(listener);
+        warlordsNPC.getGame().registerEvents(listener);
     }
 
     @Override

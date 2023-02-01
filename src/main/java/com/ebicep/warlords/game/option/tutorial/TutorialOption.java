@@ -344,7 +344,7 @@ public class TutorialOption implements Option {
                             );
                             for (Location loc : locations) {
                                 AbstractMob<?> mob = Mobs.BASIC_ZOMBIE.createMob.apply(loc);
-                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID())));
+                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }
                             sendTutorialMessage(p,

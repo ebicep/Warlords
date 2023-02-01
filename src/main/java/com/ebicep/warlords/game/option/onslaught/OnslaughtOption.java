@@ -14,12 +14,13 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.wavedefense.commands.MobCommand;
+import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
+import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -41,14 +42,18 @@ public class OnslaughtOption implements Option {
     private Game game;
     private SimpleScoreboardHandler scoreboard;
     private final Team team;
+    private Wave currentWave;
+    private final WaveList waves;
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private int spawnCount = 0;
     private Location lastLocation;
     private final AtomicInteger integrityCounter = new AtomicInteger(100);
 
-    public OnslaughtOption(Team team) {
+    public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
+        this.waves = waves;
+        this.currentWave = this.waves.getWave(0, new Random());
     }
 
     @Override
@@ -128,7 +133,7 @@ public class OnslaughtOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
 
-                return Collections.singletonList(difficultyScoreboard());
+                return Collections.singletonList("Difficulty " + currentWave.getMessage());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(5, "percentage") {
@@ -223,9 +228,12 @@ public class OnslaughtOption implements Option {
             }
 
             public WarlordsEntity spawn(Location loc) {
-                AbstractMob<?> abstractMob = new BasicZombie(loc);
+                currentWave = waves.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
+                AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
+                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID(), warlordsNPC1 -> {
+
+                });
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return warlordsNPC;
             }
@@ -349,7 +357,9 @@ public class OnslaughtOption implements Option {
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
+        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {
+
+        });
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));

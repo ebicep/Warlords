@@ -1689,35 +1689,35 @@ public enum GameMap {
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(15, 10 * SECOND, null)
-                                    //basic
-                                    .add(0.8, Mobs.BASIC_ZOMBIE)
-                                    .add(0.1, Mobs.GHOST_ZOMBIE)
-                                    .add(0.1, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
-                                    .add(0.06, Mobs.BASIC_SLIME)
-                                    .add(0.06, Mobs.SPIDER)
-                                    //elite
-                                    .add(0.15, Mobs.ELITE_ZOMBIE)
-                                    //.add(0, Mobs.ELITE_SKELETON)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
-                                    .add(0.01, Mobs.MAGMA_CUBE)
-                                    .add(0.01, Mobs.IRON_GOLEM)
-                            //.add(0, Mobs.WITCH)
-                            //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
-                            //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
-                            //void
-                            //.add(0, Mobs.VOID_ZOMBIE)
-                            //.add(0, Mobs.VOID_SKELETON)
+                            // basic
+                            .add(0.8, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.06, Mobs.BASIC_SLIME)
+                            .add(0.06, Mobs.SPIDER)
+                            // elite
+                            .add(0.15, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.01, Mobs.MAGMA_CUBE)
+                            .add(0.01, Mobs.IRON_GOLEM)
+                            .add(0, Mobs.WITCH)
+                            // envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            // void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                            .add(0, Mobs.VOID_SKELETON)
                             // exiled
-                            //.add(0, Mobs.EXILED_VOID_LANCER)
-                            //.add(0, Mobs.EXILED_ZOMBIE)
-                            //.add(0, Mobs.EXILED_SKELETON)
-                            //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
-                            //.add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0, Mobs.EXILED_VOID_LANCER)
+                            .add(0, Mobs.EXILED_ZOMBIE)
+                            .add(0, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            //.add(0, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
                     )
                     .add(5, new SimpleWave(15, 10 * SECOND, null)
                                     //basic
@@ -3087,7 +3087,18 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .onKill(25)
             );
-            options.add(new OnslaughtOption(Team.RED));
+            options.add(new OnslaughtOption(Team.RED, new StaticWaveList()
+                    .add(0, new SimpleWave(8, 5 * SECOND, ChatColor.GREEN + "EASY")
+                            .add(1, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
+                    )
+                    .add(1, new SimpleWave(8, 5 * SECOND, ChatColor.YELLOW + "MEDIUM")
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(1, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
+                    )
+            ));
 
             return options;
         }

@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
@@ -625,11 +626,9 @@ public class WaveDefenseOption implements Option {
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
+                WarlordsNPC npc = abstractMob.toNPC(game, team, UUID.randomUUID(), WaveDefenseOption.this::modifyStats);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-                //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn internal mob " + abstractMob.getName() + " - " + ticksElapsed.get
-                // () + " - " + mobs.size());
-                return warlordsNPC;
+                return npc;
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
@@ -663,12 +662,63 @@ public class WaveDefenseOption implements Option {
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
+        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
         // " + mobs.size());
+    }
+
+    private void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
+
+        boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
+        /*
+         * Base scale of 600
+         *
+         * The higher the scale is the longer it takes to increase per interval.
+         */
+        double scale = isEndless ? 1200.0 : 600.0;
+        long playerCount = game.warlordsPlayers().count();
+        // Flag check whether mob is a boss.
+        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+        // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
+        double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
+        // Divide scale based on wave count.
+        double modifier = waveCounter / modifiedScale + 1;
+
+        // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+        // Increase boss health by 25% for each player in game instance.
+        float bossMultiplier = 1 + (0.25f * playerCount);
+
+        // Multiply damage/health by given difficulty.
+        float difficultyMultiplier;
+        switch (difficulty) {
+            case EASY:
+                difficultyMultiplier = 0.75f;
+                break;
+            case HARD:
+                difficultyMultiplier = 1.5f;
+                break;
+            default:
+                difficultyMultiplier = 1;
+                break;
+        }
+
+        // Final health value after applying all modifiers.
+        float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+        warlordsNPC.setMaxBaseHealth(finalHealth);
+        warlordsNPC.setMaxHealth(finalHealth);
+        warlordsNPC.setHealth(finalHealth);
+
+        int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
+        int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
+        warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
+        warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }
 
     public Set<AbstractMob<?>> getMobs() {

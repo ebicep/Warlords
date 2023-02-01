@@ -273,7 +273,7 @@ public enum GameMode {
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the wave defense commence."
+                    ChatColor.YELLOW + "Let the onslaught begin!"
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
