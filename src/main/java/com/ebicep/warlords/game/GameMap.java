@@ -3062,7 +3062,7 @@ public enum GameMap {
     },
     ILLUSION_PHANTOM(
             "Illusion Phantom",
-            1,
+            6,
             1,
             10 * SECOND,
             "IllusionPhantom",
@@ -3074,10 +3074,14 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 80, 0.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 80, 0.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 73, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 73, 0.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 2, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 72, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(5, 73, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 73, 5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 73, -5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-5, 73, 0), Team.RED));
 
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
             options.add(new CurrencyOnEventOption()

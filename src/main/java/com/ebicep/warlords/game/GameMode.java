@@ -282,6 +282,7 @@ public enum GameMode {
             options.add(new WinByAllDeathOption());
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
+            options.add(new BasicScoreboardOption());
 
             return options;
         }
