@@ -74,7 +74,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
-            hpDamageIncrease = 1 + .1f * option.getGame().warlordsPlayers().count();
+            hpDamageIncrease = 1 + .25f * (currentWave / 5f - 1);
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * hpDamageIncrease);
             warlordsNPC.heal();
         }
