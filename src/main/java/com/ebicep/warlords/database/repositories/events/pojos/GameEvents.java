@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.NarmersTombOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
@@ -318,13 +320,11 @@ public enum GameEvents {
             null,
             null,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
-//                for (Option option : game.getOptions()) {
-//                    if (option instanceof BoltarosLairOption) {
-//                        return new DatabaseGamePvEEventBoltaroLair(game, warlordsGameTriggerWinEvent, aBoolean);
-//                    } else if (option instanceof BoltaroBonanzaOption) {
-//                        return new DatabaseGamePvEEventBoltaroBonanza(game, warlordsGameTriggerWinEvent, aBoolean);
-//                    }
-//                }
+                for (Option option : game.getOptions()) {
+                    if (option instanceof NarmersTombOption) {
+                        return new DatabaseGamePvEEventNarmersTomb(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
+                }
                 return null;
             },
             new ArrayList<>() {{
