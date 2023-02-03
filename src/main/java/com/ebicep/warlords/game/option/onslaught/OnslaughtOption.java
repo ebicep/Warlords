@@ -42,8 +42,8 @@ public class OnslaughtOption implements Option {
     private Game game;
     private SimpleScoreboardHandler scoreboard;
     private final Team team;
-    private Wave currentWave;
-    private final WaveList waves;
+    private Wave currentMobSet;
+    private final WaveList mobSet;
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private int spawnCount = 0;
@@ -53,8 +53,8 @@ public class OnslaughtOption implements Option {
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
-        this.waves = waves;
-        this.currentWave = this.waves.getWave(0, new Random());
+        this.mobSet = waves;
+        this.currentMobSet = this.mobSet.getWave(0, new Random());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class OnslaughtOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
 
-                return Collections.singletonList("Difficulty " + currentWave.getMessage());
+                return Collections.singletonList("Difficulty " + currentMobSet.getMessage());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(5, "percentage") {
@@ -194,6 +194,7 @@ public class OnslaughtOption implements Option {
                 counter++;
                 if (counter % 20 == 0) {
                     integrityCounter.getAndDecrement();
+                    integrityCounter.getAndDecrement();
                 }
 
                 if (integrityCounter.get() <= 0) {
@@ -228,8 +229,8 @@ public class OnslaughtOption implements Option {
             }
 
             public WarlordsEntity spawn(Location loc) {
-                currentWave = waves.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
-                AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
+                currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
+                AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID(), warlordsNPC1 -> {
 
@@ -265,7 +266,7 @@ public class OnslaughtOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(10 * GameRunnable.SECOND, 5);
+        }.runTaskTimer(10 * GameRunnable.SECOND, 6);
     }
 
     @Override
@@ -305,9 +306,12 @@ public class OnslaughtOption implements Option {
                 newName = name;
             }
 
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤ " + (int) we.getHealth()) + ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
-                    .total()
-                    .getKills());
+            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor +
+                    "❤ " + (int) we.getHealth()) +
+                    ChatColor.RESET + " / " +
+                    ChatColor.RED + "⚔ " + we.getMinuteStats()
+                        .total()
+                        .getKills());
         }
 
         return list;
@@ -324,36 +328,6 @@ public class OnslaughtOption implements Option {
         }
 
         return "Integrity: " + color + (integrityCounter.get() + "%");
-    }
-
-    private String difficultyScoreboard() {
-        String difficulty = ChatColor.GREEN + "EASY";
-        if (ticksElapsed.get() >= 60 * 2) {
-            difficulty = ChatColor.YELLOW + "MEDIUM";
-        }
-        if (ticksElapsed.get() >= 60 * 3) {
-            difficulty = ChatColor.GOLD + "HARD";
-        }
-        if (ticksElapsed.get() >= 60 * 4) {
-            difficulty = ChatColor.RED + "INSANE";
-        }
-        if (ticksElapsed.get() >= 60 * 5) {
-            difficulty = ChatColor.DARK_RED + "EXTREME";
-        }
-        if (ticksElapsed.get() >= 60 * 6) {
-            difficulty = ChatColor.LIGHT_PURPLE + "NIGHTMARE";
-        }
-        if (ticksElapsed.get() >= 60 * 7) {
-            difficulty = ChatColor.DARK_PURPLE + "INSOMNIA";
-        }
-        if (ticksElapsed.get() >= 60 * 8) {
-            difficulty = ChatColor.DARK_GRAY + "VANGUARD";
-        }
-        if (ticksElapsed.get() >= 60 * 10) {
-            difficulty = ChatColor.BLACK.toString() + ChatColor.MAGIC + "???????";
-        }
-
-        return "Difficulty: " + difficulty;
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {

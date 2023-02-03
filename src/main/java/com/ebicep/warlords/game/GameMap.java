@@ -2608,41 +2608,6 @@ public enum GameMap {
             return options;
         }
     },
-    /*FROZEN_DIVIDE(
-            "Frozen Divide",
-            4,
-            1,
-            60 * SECOND,
-            "FrozenDivide",
-            0,
-            GameMode.WAVE_DEFENSE
-    ) {
-        @Override
-        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.RED).asOption());
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 9, 65.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(126.5, 8, 74.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(96.5, 9, 50.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(90, 5, 75), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(135.5, 5, 50.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(125.5, 9, 60.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(101.5, 9, 67.5), Team.RED));
-
-            options.add(new RespawnWaveOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
-
-            options.add(new CurrencyOnEventOption(250));
-            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList(), DifficultyIndex.NORMAL)); //TODO difficulty
-
-            return options;
-        }
-    },*/
     DEBUG(
             "Practice",
             300,
@@ -3088,12 +3053,263 @@ public enum GameMap {
                     .onKill(25)
             );
             options.add(new OnslaughtOption(Team.RED, new StaticWaveList()
-                    .add(0, new SimpleWave(8, 5 * SECOND, ChatColor.GREEN + "EASY")
-                            .add(1, Mobs.BASIC_ZOMBIE)
+                    .add(0, new SimpleWave(0, 5 * SECOND, ChatColor.GREEN + "EASY")
+                            .add(0.8, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.06, Mobs.BASIC_SLIME)
+                            .add(0.06, Mobs.SPIDER)
+                            // elite
+                            .add(0.15, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.01, Mobs.MAGMA_CUBE)
+                            .add(0.01, Mobs.IRON_GOLEM)
+                            .add(0, Mobs.WITCH)
+                            // envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            // void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                            .add(0, Mobs.VOID_SKELETON)
+                            // exiled
+                            .add(0, Mobs.EXILED_VOID_LANCER)
+                            .add(0, Mobs.EXILED_ZOMBIE)
+                            .add(0, Mobs.EXILED_SKELETON)
+                            .add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0, Mobs.FORGOTTEN_ZOMBIE)
+                    )
+                    .add(5, new SimpleWave(0, 5 * SECOND, ChatColor.YELLOW + "MEDIUM")
+                            //basic
+                            .add(0.2, Mobs.BASIC_ZOMBIE)
+                            .add(0.35, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SKELETON)
+                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.08, Mobs.BASIC_SLIME)
+                            .add(0.08, Mobs.SPIDER)
+                            //elite
+                            .add(0.4, Mobs.ELITE_ZOMBIE)
+                            .add(0.15, Mobs.ELITE_SKELETON)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.06, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.03, Mobs.WITCH)
+                            //envoy
+                            .add(0.01, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ENVOY_SKELETON)
+                            .add(0.01, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.03, Mobs.VOID_ZOMBIE)
+                            .add(0.03, Mobs.VOID_SKELETON)
+                            // exiled
+                            //.add(0, Mobs.EXILED_VOID_LANCER)
+                            .add(0.01, Mobs.EXILED_ZOMBIE)
+                            //.add(0, Mobs.EXILED_SKELETON)
+                            .add(0.02, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.01, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(10, new SimpleWave(0, 5 * SECOND, ChatColor.GOLD + "HARD")
+                            //basic
+                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0.5, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SKELETON)
+                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SLIME)
+                            //.add(0, Mobs.SPIDER)
+                            //elite
+                            //.add(0, Mobs.ELITE_ZOMBIE)
+                            //.add(0, Mobs.ELITE_SKELETON)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.2, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0.01, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ENVOY_SKELETON)
+                            .add(0.01, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.06, Mobs.VOID_ZOMBIE)
+                            .add(0.1, Mobs.VOID_SKELETON)
+                            // exiled
+                            .add(0.02, Mobs.EXILED_VOID_LANCER)
+                            .add(0.02, Mobs.EXILED_ZOMBIE)
+                            //.add(0, Mobs.EXILED_SKELETON)
+                            .add(0.02, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.06, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.01, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(15, new SimpleWave(0, 5 * SECOND, ChatColor.RED + "INSANE")
+                            //basic
+                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SKELETON)
+                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SLIME)
+                            //.add(0, Mobs.SPIDER)
+                            //elite
+                            //.add(0, Mobs.ELITE_ZOMBIE)
+                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.12, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0.3, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ENVOY_SKELETON)
+                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.12, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.2, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(20, new SimpleWave(0, 5 * SECOND, ChatColor.DARK_RED + "EXTREME")
+                            //basic
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
+                            .add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_SLIME)
+                            .add(0, Mobs.SPIDER)
+                            //elite
+                            .add(0, Mobs.ELITE_ZOMBIE)
+                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.08, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.05, Mobs.WITCH)
+                            //envoy
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.16, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            // exiled
+                            .add(0.2, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.07, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(25, new SimpleWave(0, 5 * SECOND, ChatColor.LIGHT_PURPLE + "NIGHTMARE")
+                            //basic
+                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SKELETON)
+                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SLIME)
+                            //.add(0, Mobs.SPIDER)
+                            //elite
+                            //.add(0, Mobs.ELITE_ZOMBIE)
+                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.15, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ENVOY_SKELETON)
+                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.3, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.2, Mobs.VOID_ZOMBIE)
+                            .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            .add(0.02, Mobs.VOID_SLIME)
+                            // exiled
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.3, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.25, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.5, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(30, new SimpleWave(0, 5 * SECOND, ChatColor.DARK_PURPLE + "INSOMNIA")
+                            //basic
+                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SKELETON)
+                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.BASIC_SLIME)
+                            //.add(0, Mobs.SPIDER)
+                            //elite
+                            //.add(0, Mobs.ELITE_ZOMBIE)
+                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(0.25, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
+                            //envoy
+                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ENVOY_SKELETON)
+                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.5, Mobs.SLIME_ZOMBIE)
+                            //void
+                            .add(0.1, Mobs.VOID_ZOMBIE)
+                            .add(0.2, Mobs.VOID_SKELETON)
+                            .add(0.06, Mobs.VOID_PIG_ZOMBIE)
+                            .add(0.08, Mobs.VOID_SLIME)
+                            // exiled
+                            .add(0.08, Mobs.EXILED_VOID_LANCER)
+                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.3, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.25, Mobs.EXILED_ZOMBIE_RIFT)
+                            // forgotten
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.4, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
+                    )
+                    .add(35, new SimpleWave(0, 5 * SECOND, ChatColor.GRAY + "VANGUARD")
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
                     )
-                    .add(1, new SimpleWave(8, 5 * SECOND, ChatColor.YELLOW + "MEDIUM")
+                    .add(40, new SimpleWave(0, 5 * SECOND,  ChatColor.RED.toString() + ChatColor.BOLD + "DEMISE")
+                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(1, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
+                    )
+                    .add(45, new SimpleWave(0, 5 * SECOND,  ChatColor.BLACK.toString() + ChatColor.MAGIC + "??????")
                             .add(0, Mobs.BASIC_ZOMBIE)
                             .add(1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
