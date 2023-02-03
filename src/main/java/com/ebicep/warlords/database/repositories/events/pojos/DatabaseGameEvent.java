@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -75,12 +76,17 @@ public class DatabaseGameEvent {
                         }
                     }
                     if (currentGameEvent == null && !PREVIOUS_GAME_EVENTS.isEmpty()) {
-                        currentGameEvent = PREVIOUS_GAME_EVENTS
+                        DatabaseGameEvent gameEvent = PREVIOUS_GAME_EVENTS
                                 .values()
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
-                        currentGameEvent.start();
+                        if (gameEvent.getEndDate().isAfter(Instant.now().minus(7, ChronoUnit.DAYS))) {
+                            currentGameEvent = gameEvent;
+                            currentGameEvent.start();
+                        } else {
+                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
+                        }
                     }
                     EventsLeaderboardManager.create();
                 })
