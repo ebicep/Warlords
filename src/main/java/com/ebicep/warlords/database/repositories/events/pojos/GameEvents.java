@@ -23,6 +23,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -356,8 +357,58 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void editNPC(NPC npc) {
+            Equipment equipment = npc.getOrAddTrait(Equipment.class);
+            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON));
+            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160));
+            equipment.set(Equipment.EquipmentSlot.LEGGINGS, ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed);
+            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160));
+            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.WALKING_STICK.getItem());
+        }
 
+        @Override
+        public void setMenu(Menu menu) {
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BLAZE_POWDER)
+                            .name(ChatColor.GREEN + "Start a private Narmer event game")
+                            .get(),
+                    (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), true)
+            );
+            menu.setItem(6, 1,
+                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                            .name(ChatColor.GREEN + "Join a public Narmer event game")
+                            .get(),
+                    (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), false)
+            );
+        }
+
+        private void openNarmerModeMenu(Player player, boolean privateGame) {
+            Menu menu = new Menu("Pharaoh's Revenge Modes", 9 * 4);
+
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(ChatColor.GREEN + "Narmer’s Tomb")
+                            .lore(
+                                    ChatColor.YELLOW + "Something spooky here...",
+                                    "",
+                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
+                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3));
+                        }
+                    }
+            );
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMenu(player));
+            menu.openForPlayer(player);
         }
     };
 
