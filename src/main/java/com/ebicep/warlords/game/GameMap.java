@@ -3237,13 +3237,12 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)
                     .onKill(500)
-                    .setPerWaveClear(1, 10000)
+                    .setPerWaveClear(5, 10000)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Narmer's Killed", "Narmer", 100)
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
-                    .disableCoinConversionUpgrade()
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(15, 10)
