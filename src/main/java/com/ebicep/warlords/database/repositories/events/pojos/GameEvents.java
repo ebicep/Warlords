@@ -4,6 +4,8 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
@@ -12,6 +14,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -23,6 +26,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -38,10 +42,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -171,6 +172,70 @@ public enum GameEvents {
         }
 
         @Override
+        public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
+            long eventStart = currentGameEvent.getStartDateSecond();
+            EventLeaderboard lairBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 751.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getLairStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getLairStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard bonanzaBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 757.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getBonanzaStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getBonanzaStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 737.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getBoltaroEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventBoltaroDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(lairBoard, "Boltaro's Lair");
+            leaderboards.put(bonanzaBoard, "Boltaro Bonanza");
+            leaderboards.put(totalBoard, "Total Event Points");
+            leaderboards.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
+        }
+
+        @Override
         public void editNPC(NPC npc) {
             Equipment equipment = npc.getOrAddTrait(Equipment.class);
             equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.DEMON));
@@ -282,6 +347,7 @@ public enum GameEvents {
 
     public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
 
+    public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
 
     public void createNPC() {
         NPCManager.registerTrait(GameEventTrait.class, "GameEventTrait");
