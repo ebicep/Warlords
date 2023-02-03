@@ -42,36 +42,33 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 60 != 0) {
-            return;
-        }
-        Location loc = getWarlordsNPC().getLocation();
-        WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
-        if (we == null) return;
-        EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
-        Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
-        for (WarlordsEntity ally : PlayerFilter
-                .entitiesAround(we, 9, 9, 9)
-                .aliveTeammatesOfExcludingSelf(we)
-        ) {
-            if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
-                ally.getCooldownManager().removeCooldown(LastStand.class);
-                ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
-                        name,
-                        "",
-                        LastStand.class,
-                        new LastStand(),
-                        we,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        3 * 20
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * .5f;
-                    }
-                });
+        Location loc = warlordsNPC.getLocation();
+        if (ticksElapsed % 60 == 0) {
+            EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
+            Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
+            for (WarlordsEntity ally : PlayerFilter
+                    .entitiesAround(warlordsNPC, 9, 9, 9)
+                    .aliveTeammatesOfExcludingSelf(warlordsNPC)
+            ) {
+                if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
+                    ally.getCooldownManager().removeCooldown(LastStand.class);
+                    ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                            name,
+                            "",
+                            LastStand.class,
+                            new LastStand(),
+                            warlordsNPC,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            3 * 20
+                    ) {
+                        @Override
+                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * .5f;
+                        }
+                    });
+                }
             }
         }
     }

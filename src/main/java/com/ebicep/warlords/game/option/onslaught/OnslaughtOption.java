@@ -47,6 +47,7 @@ public class OnslaughtOption implements Option {
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private int spawnCount = 0;
+    private int spawnLimit;
     private Location lastLocation;
     private final AtomicInteger integrityCounter = new AtomicInteger(100);
 
@@ -110,7 +111,6 @@ public class OnslaughtOption implements Option {
                                 mobs.remove(mobToRemove);
                                 game.getPlayers().remove(we.getUuid());
                                 Warlords.removePlayer(we.getUuid());
-                                //game.removePlayer(we.getUuid());
                             }
                         }.runTaskLater(1);
 
@@ -213,7 +213,7 @@ public class OnslaughtOption implements Option {
                     return;
                 }
 
-                if (spawnCount >= 20) {
+                if (spawnCount >= getSpawnLimit((int) game.warlordsPlayers().count())) {
                     return;
                 }
 
@@ -265,7 +265,7 @@ public class OnslaughtOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(200, 5);
+        }.runTaskTimer(10 * GameRunnable.SECOND, 5);
     }
 
     @Override
@@ -363,5 +363,28 @@ public class OnslaughtOption implements Option {
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+    }
+
+    public int getSpawnLimit(int playerCount) {
+        switch (playerCount) {
+            case 1:
+                return 5;
+            case 2:
+                return 10;
+            case 3:
+                return 15;
+            case 4:
+                return 20;
+            case 5:
+                return 25;
+            case 6:
+                return 30;
+        }
+
+        return spawnLimit;
+    }
+
+    public void setSpawnLimit(int spawnLimit) {
+        this.spawnLimit = spawnLimit;
     }
 }

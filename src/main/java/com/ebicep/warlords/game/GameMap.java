@@ -3064,7 +3064,7 @@ public enum GameMap {
             "Illusion Phantom",
             6,
             1,
-            10 * SECOND,
+            30 * SECOND,
             "IllusionPhantom",
             3,
             GameMode.ONSLAUGHT
