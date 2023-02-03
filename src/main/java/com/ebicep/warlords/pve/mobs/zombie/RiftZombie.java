@@ -55,7 +55,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(attacker.getLocation(), receiver, 1, 0.15);
+        Utils.addKnockback(name, attacker.getLocation(), receiver, 1, 0.15);
     }
 
     @Override

@@ -108,8 +108,8 @@ public class Torment extends AbstractSkeleton implements BossMob {
                     .leastAliveFirst()
                     .limit(1)
             ) {
-                Utils.addKnockback(warlordsNPC.getLocation(), we, 2, 0.35);
-                we.getCooldownManager().removeCooldown(DamageCheck.class);
+                Utils.addKnockback(name, warlordsNPC.getLocation(), we, 2, 0.35);
+                we.getCooldownManager().removeCooldown(DamageCheck.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Tormenting Mark",
                         "MARK",

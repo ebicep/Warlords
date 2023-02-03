@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -15,20 +16,14 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
-
-    public static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
 
     public int playersCharged = 0;
 
@@ -88,9 +83,9 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             public void run() {
                 if (maxChargeDuration == 5) {
                     if (finalInAir) {
-                        wp.setVelocity(location.getDirection().multiply(2).setY(.2), true);
+                        wp.setVelocity(name, location.getDirection().multiply(2).setY(.2), true);
                     } else {
-                        wp.setVelocity(location.getDirection().multiply(1.5).setY(.2), true);
+                        wp.setVelocity(name, location.getDirection().multiply(1.5).setY(.2), true);
                     }
                 }
                 //cancel charge if hit a block, making the player stand still
@@ -98,7 +93,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                         (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0) ||
                         maxChargeDuration <= 0
                 ) {
-                    wp.setVelocity(new Vector(0, 0, 0), true);
+                    wp.setVelocity(name, new Vector(0, 0, 0), true);
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {
@@ -120,12 +115,12 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 if (otherPlayer instanceof WarlordsNPC) {
                                     ((WarlordsNPC) otherPlayer).setStunTicks(getStunTimeInTicks());
                                     //otherPlayer.addSpeedModifier(wp, "Charge Stun", -99, getStunTimeInTicks(), "BASE");
-                                } else {
-                                    STUNNED_PLAYERS.add(otherPlayer.getUuid());
+                                } else if (otherPlayer instanceof WarlordsPlayer) {
+                                    ((WarlordsPlayer) otherPlayer).stun();
                                     new GameRunnable(wp.getGame()) {
                                         @Override
                                         public void run() {
-                                            STUNNED_PLAYERS.remove(otherPlayer.getUuid());
+                                            ((WarlordsPlayer) otherPlayer).unstun();
                                         }
                                     }.runTaskLater(getStunTimeInTicks());
                                     if (otherPlayer.getEntity() instanceof Player) {
@@ -168,16 +163,4 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         this.stunTimeInTicks = stunTimeInTicks;
     }
 
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
-            if (
-                    (e.getFrom().getX() != e.getTo().getX() ||
-                            e.getFrom().getZ() != e.getTo().getZ()) &&
-                            !(e instanceof PlayerTeleportEvent)
-            ) {
-                e.getPlayer().teleport(e.getFrom());
-            }
-        }
-    }
 }

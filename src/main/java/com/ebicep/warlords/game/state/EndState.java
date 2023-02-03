@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.state;
 
-import com.ebicep.warlords.abilties.RecklessCharge;
 import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -80,7 +79,7 @@ public class EndState implements State, TimerDebugAble {
             });
             return;
         }
-        RecklessCharge.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
+        WarlordsPlayer.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
 
         List<Option> options = game.getOptions();
         for (Option option : options) {

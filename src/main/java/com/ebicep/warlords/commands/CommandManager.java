@@ -495,7 +495,7 @@ public class CommandManager {
 
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
-        manager.registerCommand(new RecklessChargeStunClearCommand());
+        manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
         manager.registerCommand(new ToggleAFKDetectionCommand());

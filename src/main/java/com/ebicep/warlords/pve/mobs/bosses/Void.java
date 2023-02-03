@@ -147,7 +147,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                Utils.addKnockback(loc, enemy, -1.5, 0.25);
+                Utils.addKnockback(name, loc, enemy, -1.5, 0.25);
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
@@ -308,8 +308,15 @@ public class Void extends AbstractSkeleton implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC, "Augmented Armageddon", (550 * playerCount) * damageMultiplier, (700 * playerCount) * damageMultiplier, 0, 100, false);
-                        Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.2);
+                        we.addDamageInstance(warlordsNPC,
+                                "Augmented Armageddon",
+                                (550 * playerCount) * damageMultiplier,
+                                (700 * playerCount) * damageMultiplier,
+                                0,
+                                100,
+                                false
+                        );
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
                     }
                 }
             }
@@ -331,7 +338,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                         10, 35, 0
                 );
             }
-            Utils.addKnockback(warlordsNPC.getLocation(), we, -4, 0.3);
+            Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.3);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
         }
 
@@ -401,7 +408,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
-                        Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.4);
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
                         EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,

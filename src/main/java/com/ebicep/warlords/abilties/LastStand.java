@@ -217,7 +217,7 @@ public class LastStand extends AbstractAbility {
                                 .closestFirst(wp)
                         ) {
                             EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
-                            Utils.addKnockback(wp.getLocation(), we, -2, 0.25f);
+                            Utils.addKnockback(name, wp.getLocation(), we, -2, 0.25f);
                         }
                     },
                     true,

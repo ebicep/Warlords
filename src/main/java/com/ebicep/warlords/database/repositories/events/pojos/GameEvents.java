@@ -311,8 +311,55 @@ public enum GameEvents {
             menu.openForPlayer(player);
         }
     },
+    NARMER("Pharaoh's Revenge",
+            Currencies.EVENT_POINTS_NARMER,
+            null,
+            null,
+            null,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+//                for (Option option : game.getOptions()) {
+//                    if (option instanceof BoltarosLairOption) {
+//                        return new DatabaseGamePvEEventBoltaroLair(game, warlordsGameTriggerWinEvent, aBoolean);
+//                    } else if (option instanceof BoltaroBonanzaOption) {
+//                        return new DatabaseGamePvEEventBoltaroBonanza(game, warlordsGameTriggerWinEvent, aBoolean);
+//                    }
+//                }
+                return null;
+            },
+            new ArrayList<>() {{
+                // add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
+                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new EventShopReward(1_000, Currencies.COIN, -1, 8_000));
+                add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+            }}
+    ) {
+        @Override
+        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+            return null;
+        }
 
-    ;
+        @Override
+        public LinkedHashMap<String, Long> getGuildRewards(int position) {
+            return null;
+        }
+
+        @Override
+        public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
+
+        }
+
+        @Override
+        public void setMenu(Menu menu) {
+
+        }
+    };
 
     public static final GameEvents[] VALUES = values();
     public static NPC npc;

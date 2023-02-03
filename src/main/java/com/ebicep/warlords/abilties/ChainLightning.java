@@ -72,7 +72,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
-        wp.getCooldownManager().removeCooldown(ChainLightning.class);
+        wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
                 name,
                 "CHAIN",

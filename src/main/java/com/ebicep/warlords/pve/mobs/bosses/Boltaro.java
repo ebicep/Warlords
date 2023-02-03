@@ -121,7 +121,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 public void run() {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
-                    Utils.addKnockback(attacker.getLocation(), receiver, -0.7, 0.2);
+                    Utils.addKnockback(name, attacker.getLocation(), receiver, -0.7, 0.2);
                     receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, 0, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {

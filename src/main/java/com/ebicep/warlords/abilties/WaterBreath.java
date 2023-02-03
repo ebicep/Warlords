@@ -134,7 +134,7 @@ public class WaterBreath extends AbstractAbility {
                 } else {
                     final Location loc = breathTarget.getLocation();
                     final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
-                    breathTarget.setVelocity(v, false);
+                    breathTarget.setVelocity(name, v, false);
                 }
             }
         }
@@ -148,7 +148,7 @@ public class WaterBreath extends AbstractAbility {
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         boolean hasPreviousCooldown = hit.getCooldownManager().hasCooldown(WaterBreath.class);
-        hit.getCooldownManager().removeCooldown(WaterBreath.class);
+        hit.getCooldownManager().removeCooldown(WaterBreath.class, false);
         hit.getCooldownManager().addRegularCooldown(
                 name,
                 "BREATH RGN",

@@ -6,6 +6,10 @@ import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
+import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
+import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
+import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
+import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.magmacube.MagmaCube;
 import com.ebicep.warlords.pve.mobs.pigzombie.BasicPigZombie;
@@ -95,6 +99,11 @@ public enum Mobs {
 
     //EVENTS
     EVENT_BOLTARO_BONANZA(EventBoltaro.class, EventBoltaro::new),
+    EVENT_NARMER(EventNarmer.class, EventNarmer::new),
+    EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
+    EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
+    EVENT_NARMER_DJET(EventDjet.class, EventDjet::new),
+
 
     ;
 

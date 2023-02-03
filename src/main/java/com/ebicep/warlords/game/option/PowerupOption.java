@@ -251,7 +251,7 @@ public class PowerupOption implements Option {
         SPEED(10, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.getCooldownManager().removeCooldown(SpeedPowerup.class);
+                we.getCooldownManager().removeCooldown(SpeedPowerup.class, false);
                 we.getCooldownManager().addRegularCooldown(
                         "Speed",
                         "SPEED",
@@ -281,7 +281,7 @@ public class PowerupOption implements Option {
         HEALING(5, Material.WOOL, (short) 13) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.getCooldownManager().removeCooldown(HealingPowerup.class);
+                we.getCooldownManager().removeCooldown(HealingPowerup.class, false);
                 we.getCooldownManager().addRegularCooldown(
                         "Healing",
                         "HEAL",
@@ -311,7 +311,7 @@ public class PowerupOption implements Option {
         ENERGY(30, Material.WOOL, (short) 1) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.getCooldownManager().removeCooldown(EnergyPowerup.class);
+                we.getCooldownManager().removeCooldown(EnergyPowerup.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<EnergyPowerup>(
                         "Energy",
                         "ENERGY",
@@ -344,7 +344,7 @@ public class PowerupOption implements Option {
         DAMAGE(30, Material.WOOL, (short) 14) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.getCooldownManager().removeCooldown(DamagePowerup.class);
+                we.getCooldownManager().removeCooldown(DamagePowerup.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
                         "Damage",
                         "DMG",
@@ -378,7 +378,7 @@ public class PowerupOption implements Option {
         COOLDOWN(30, Material.WOOL, (short) 9) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.getCooldownManager().removeCooldown(CooldownPowerup.class);
+                we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
                 we.getCooldownManager().addRegularCooldown(
                         "Cooldown",
                         "CDR",

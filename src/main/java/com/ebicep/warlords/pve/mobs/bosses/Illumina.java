@@ -80,7 +80,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         prismGuard.setDuration(10);
         warlordsNPC.getSpec().setBlue(prismGuard);
 
-        warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class);
+        warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
                 null,
@@ -140,7 +140,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(loc, we, -2, 0.3);
+                Utils.addKnockback(name, loc, we, -2, 0.3);
             }
         }
 
@@ -214,7 +214,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         10, 35, 0
                 );
             }
-            Utils.addKnockback(warlordsNPC.getLocation(), we, -4, 0.35);
+            Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.35);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
         }
 
@@ -283,7 +283,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
-                        Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.4);
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
                         EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,

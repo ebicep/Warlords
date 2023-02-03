@@ -19,6 +19,7 @@ import com.ebicep.warlords.game.option.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
+import com.ebicep.warlords.game.option.wavedefense.events.modes.NarmersTombOption;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.win.MercyWinOption;
@@ -2695,7 +2696,7 @@ public enum GameMap {
 
     },
     ILLUSION_RIFT_EVENT_1(
-            "Illusion Rift Event",
+            "Combatant’s Cavern",
             4,
             1,
             120 * SECOND,
@@ -2940,7 +2941,7 @@ public enum GameMap {
 
     },
     ILLUSION_RIFT_EVENT_2(
-            "Illusion Rift Event",
+            "Combatant’s Cavern",
             4,
             1,
             120 * SECOND,
@@ -3018,6 +3019,234 @@ public enum GameMap {
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(4, 10)
+            );
+            options.add(new FieldEffect(options));
+
+            return options;
+        }
+
+    },
+    ILLUSION_RIFT_EVENT_3(
+            "Acolyte Archives",
+            4,
+            1,
+            120 * SECOND,
+            "IllusionRiftEvent3",
+            5,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Narmer’s Tomb",
+                    "",
+                    color + "Kill mobs to gain event points!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Kill as many mobs as possible!"
+            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
+
+            options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
+
+            //options.add(new RespawnOption(20));
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mobs.BASIC_ZOMBIE)
+                            .add(0.5, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_BERSERK_ZOMBIE)
+                    )
+                    .add(2, new SimpleWave(8, SECOND, null)
+                            .add(0.4, Mobs.BASIC_ZOMBIE)
+                            .add(0.4, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                    )
+                    .add(4, new SimpleWave(8, SECOND, null)
+                            .add(0.4, Mobs.BASIC_ZOMBIE)
+                            .add(0.3, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.IRON_GOLEM)
+                    )
+                    .add(5, new SimpleWave(1, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.EVENT_NARMER)
+                    )
+                    .add(6, new SimpleWave(12, SECOND, null)
+                            .add(0.4, Mobs.BASIC_ZOMBIE)
+                            .add(0.3, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.05, Mobs.GHOST_ZOMBIE)
+                            .add(0.05, Mobs.IRON_GOLEM)
+                    )
+                    .add(7, new SimpleWave(12, SECOND, null)
+                            .add(0.3, Mobs.BASIC_ZOMBIE)
+                            .add(0.3, Mobs.BASIC_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.IRON_GOLEM)
+                    )
+                    .add(8, new SimpleWave(12, SECOND, null)
+                            .add(0.2, Mobs.BASIC_ZOMBIE)
+                            .add(0.2, Mobs.BASIC_BERSERK_ZOMBIE)
+                            .add(0.2, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.ELITE_ZOMBIE)
+                    )
+                    .add(10, new SimpleWave(2, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.EVENT_NARMER)
+                    )
+                    .add(11, new SimpleWave(16, SECOND, null)
+                            .add(0.1, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.3, Mobs.IRON_GOLEM)
+                            .add(0.2, Mobs.ELITE_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_ZOMBIE)
+                    )
+                    .add(12, new SimpleWave(16, SECOND, null)
+                            .add(0.1, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.02, Mobs.IRON_GOLEM)
+                            .add(0.01, Mobs.ELITE_ZOMBIE)
+                            .add(0.2, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                    )
+                    .add(13, new SimpleWave(16, SECOND, null)
+                            .add(0.1, Mobs.ELITE_BERSERK_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.2, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.ELITE_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_ZOMBIE)
+                            .add(0.05, Mobs.EXILED_SKELETON)
+                            .add(0.02, Mobs.EXILED_ZOMBIE_LAVA)
+                    )
+                    .add(15, new SimpleWave(3, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.EVENT_NARMER)
+                    )
+                    .add(16, new SimpleWave(20, SECOND, null)
+                            .add(0.2, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.IRON_GOLEM)
+                            .add(0.2, Mobs.ELITE_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_ZOMBIE)
+                            .add(0.05, Mobs.EXILED_VOID_LANCER)
+                            .add(0.05, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                    )
+                    .add(20, new SimpleWave(4, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.EVENT_NARMER)
+                    )
+                    .add(21, new SimpleWave(20, SECOND, null)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.ELITE_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0.05, Mobs.EXILED_VOID_LANCER)
+                            .add(0.05, Mobs.FORGOTTEN_LANCER)
+                            .add(0.2, Mobs.EXILED_SKELETON)
+                            .add(0.05, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                    )
+                    .add(25, new SimpleWave(5, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.EVENT_NARMER)
+                    )
+                    ,
+                    DifficultyIndex.EVENT,
+                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Pharaoh's Revenge")
+            ) {
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    switch (playerCount) {
+                        case 3:
+                            return 1.25f;
+                        case 4:
+                            return 1.5f;
+                    }
+                    return 1;
+                }
+            });
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new NarmersTombOption());
+            options.add(new SafeZoneOption());
+            options.add(new EventPointsOption()
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .onPerWaveClear(1, 500)
+                    .onPerWaveClear(5, 2000)
+                    .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
+                    .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
+                    .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
+                    .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
+                    .onPerMobKill(Mobs.IRON_GOLEM, 20)
+                    .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
+                    .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
+                    .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
+                    .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
+                    .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
+                    .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
+                    .onPerMobKill(Mobs.EXILED_SKELETON, 40)
+                    .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
+                    .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
+                    .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
+                    .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
+                    .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
+                    .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
+                    .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
+                    .onPerMobKill(Mobs.EVENT_NARMER, 500)
+                    .cap(50_000)
+            );
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(1, 10000)
+            );
+            options.add(new CoinGainOption()
+                    .clearMobCoinValueAndSet("Narmer's Killed", "Narmer", 100)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+                    .disableCoinConversionUpgrade()
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
             );
             options.add(new FieldEffect(options));
 
@@ -3304,12 +3533,12 @@ public enum GameMap {
                             .add(1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
                     )
-                    .add(40, new SimpleWave(0, 5 * SECOND,  ChatColor.RED.toString() + ChatColor.BOLD + "DEMISE")
+                    .add(40, new SimpleWave(0, 5 * SECOND, ChatColor.RED.toString() + ChatColor.BOLD + "DEMISE")
                             .add(0, Mobs.BASIC_ZOMBIE)
                             .add(1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0, Mobs.BASIC_BERSERK_ZOMBIE)
                     )
-                    .add(45, new SimpleWave(0, 5 * SECOND,  ChatColor.BLACK.toString() + ChatColor.MAGIC + "??????")
+                    .add(45, new SimpleWave(0, 5 * SECOND, ChatColor.BLACK.toString() + ChatColor.MAGIC + "??????")
                             .add(0, Mobs.BASIC_ZOMBIE)
                             .add(1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0, Mobs.BASIC_BERSERK_ZOMBIE)

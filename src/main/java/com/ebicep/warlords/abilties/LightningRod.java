@@ -71,7 +71,7 @@ public class LightningRod extends AbstractAbility {
         ) {
             final Location loc = knockbackTarget.getLocation();
             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
-            knockbackTarget.setVelocity(v, false);
+            knockbackTarget.setVelocity(name, v, false);
         }
 
         // pulsedamage
@@ -99,7 +99,7 @@ public class LightningRod extends AbstractAbility {
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
         we.getSpeed().addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
-        we.getCooldownManager().removeCooldown(LightningRod.class);
+        we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<LightningRod>(
                 name,
                 "ROD DMG",

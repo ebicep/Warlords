@@ -71,7 +71,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
         }
         if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
-            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeDefender>(
                     name,
                     "WND",
@@ -116,13 +116,13 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
             }
         };
 
-        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, false);
         we.getCooldownManager().addCooldown(cooldown);
         for (WarlordsEntity target : PlayerFilter
                 .entitiesAround(nearPlayer, 6, 6, 6)
                 .aliveTeammatesOfExcludingSelf(we)
         ) {
-            target.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+            target.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, false);
             target.getCooldownManager().addCooldown(cooldown);
         }
     }

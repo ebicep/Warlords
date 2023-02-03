@@ -84,7 +84,7 @@ public class SeismicWave extends AbstractAbility {
 
                     playersHit.add(waveTarget);
                     final Vector v = player.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-                    waveTarget.setVelocity(v, false, false);
+                    waveTarget.setVelocity(name, v, false, false);
                     if (pveUpgrade) {
                         float multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
                         waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, false);

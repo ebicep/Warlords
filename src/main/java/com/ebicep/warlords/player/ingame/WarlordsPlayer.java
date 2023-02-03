@@ -31,6 +31,10 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -41,13 +45,38 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
-public final class WarlordsPlayer extends WarlordsEntity {
+public final class WarlordsPlayer extends WarlordsEntity implements Listener {
+
+    public static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
+
+    public void stun() {
+        STUNNED_PLAYERS.add(uuid);
+    }
+
+    public void unstun() {
+        STUNNED_PLAYERS.remove(uuid);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
+            if (
+                    (e.getFrom().getX() != e.getTo().getX() ||
+                            e.getFrom().getZ() != e.getTo().getZ()) &&
+                            !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
+        }
+    }
 
 //    @Override
 //    public void setWasSneaking(boolean wasSneaking) {
@@ -81,9 +110,13 @@ public final class WarlordsPlayer extends WarlordsEntity {
     }
 
     private final AbilityTree abilityTree = new AbilityTree(this);
-    private final CosmeticSettings cosmeticSettings;
+    private CosmeticSettings cosmeticSettings;
     private SkillBoosts skillBoost;
     private AbstractWeapon weapon;
+
+    public WarlordsPlayer() {
+        super();
+    }
 
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,

@@ -47,7 +47,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(attacker.getLocation(), receiver, -1.1, 0.3);
+        Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.3);
     }
 
     @Override

@@ -183,7 +183,7 @@ public class PrismGuard extends AbstractAbility {
                                 Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, Set.of(bubblePlayer)));
                             }
                             playersHit.add(bubblePlayer);
-                            bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
+                            bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class, false);
                             bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                     "Prism Guard",
                                     "GUARD",

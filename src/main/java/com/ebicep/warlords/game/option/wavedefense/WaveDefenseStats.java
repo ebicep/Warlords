@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class WaveDefenseStats {
-    private final HashMap<String, Long> bossesKilled = new HashMap<>();
+    private final HashMap<String, Long> mobsKilled = new HashMap<>();
     private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
     private boolean boostedGame = false;
 
@@ -49,12 +49,12 @@ public class WaveDefenseStats {
                 );
             }
         }
-        if (coinGainOption.isPlayerCoinBossesKilledBonus()) {
-            cachedBaseCoinSummary.put("Bosses Killed", 0L);
-            for (Map.Entry<String, Long> stringLongEntry : CoinGainOption.BOSS_COIN_VALUES.entrySet()) {
-                if (bossesKilled.containsKey(stringLongEntry.getKey())) {
-                    cachedBaseCoinSummary.merge("Bosses Killed",
-                            (long) (bossesKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * difficulty
+        for (Map.Entry<String, LinkedHashMap<String, Long>> stringLinkedHashMapEntry : coinGainOption.getMobCoinValues().entrySet()) {
+            cachedBaseCoinSummary.put(stringLinkedHashMapEntry.getKey(), 0L);
+            for (Map.Entry<String, Long> stringLongEntry : stringLinkedHashMapEntry.getValue().entrySet()) {
+                if (mobsKilled.containsKey(stringLongEntry.getKey())) {
+                    cachedBaseCoinSummary.merge(stringLinkedHashMapEntry.getKey(),
+                            (long) (mobsKilled.get(stringLongEntry.getKey()) * stringLongEntry.getValue() * difficulty
                                     .getRewardsMultiplier()),
                             Long::sum
                     );
@@ -131,8 +131,8 @@ public class WaveDefenseStats {
                          });
     }
 
-    public HashMap<String, Long> getBossesKilled() {
-        return bossesKilled;
+    public HashMap<String, Long> getMobsKilled() {
+        return mobsKilled;
     }
 
     public static class PlayerWaveDefenseStats {

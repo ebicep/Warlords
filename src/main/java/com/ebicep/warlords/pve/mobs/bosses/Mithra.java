@@ -79,7 +79,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
-                knockTarget.setVelocity(new Vector(0, 1, 0), false);
+                knockTarget.setVelocity(name, new Vector(0, 1, 0), false);
                 knockTarget.addDamageInstance(
                         warlordsNPC,
                         "Virtue Strike",
@@ -214,7 +214,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    Utils.addKnockback(warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
+                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
                     flameTarget.addDamageInstance(
                             warlordsNPC,
                             "Immolation",

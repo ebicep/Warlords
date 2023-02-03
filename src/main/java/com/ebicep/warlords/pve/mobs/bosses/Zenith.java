@@ -110,7 +110,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     .entitiesAround(loc, 4, 4, 4)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                Utils.addKnockback(warlordsNPC.getLocation(), we, -1.5, 0.3);
+                Utils.addKnockback(name, warlordsNPC.getLocation(), we, -1.5, 0.3);
                 we.addDamageInstance(warlordsNPC, "Cleanse", (300 * playerCount) * multiplier, (400 * playerCount) * multiplier, 0, 100, false);
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
@@ -139,10 +139,10 @@ public class Zenith extends AbstractZombie implements BossMob {
 
                     counter++;
                     FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BURST)
-                            .build());
-                    Utils.addKnockback(attacker.getLocation(), receiver, -1, 0.3);
+                                                                                            .withColor(Color.WHITE)
+                                                                                            .with(FireworkEffect.Type.BURST)
+                                                                                            .build());
+                    Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {
@@ -185,8 +185,15 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC, "Armageddon", (550 * playerCount) * damageMultiplier, (700 * playerCount) * damageMultiplier, 0, 100, false);
-                        Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.2);
+                        we.addDamageInstance(warlordsNPC,
+                                "Armageddon",
+                                (550 * playerCount) * damageMultiplier,
+                                (700 * playerCount) * damageMultiplier,
+                                0,
+                                100,
+                                false
+                        );
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
                     }
                 }
             }

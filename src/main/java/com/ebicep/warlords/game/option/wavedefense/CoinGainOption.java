@@ -7,14 +7,6 @@ import java.util.LinkedHashMap;
 
 public class CoinGainOption implements Option {
 
-    public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
-        put("Boltaro", 200L);
-        put("Ghoulcaller", 300L);
-        put("Narmer", 500L);
-        put("Physira", 400L);
-        put("Mithra", 400L);
-        put("Zenith", 1500L);
-    }};
     public static final long[] COINS_PER_5_WAVES = new long[]{
             50,
             100,
@@ -37,20 +29,41 @@ public class CoinGainOption implements Option {
             1700,
             1800
     };
-
+    private final LinkedHashMap<String, LinkedHashMap<String, Long>> mobCoinValues = new LinkedHashMap<>() {{
+        put("Bosses Killed", new LinkedHashMap<>() {{
+            put("Boltaro", 200L);
+            put("Ghoulcaller", 300L);
+            put("Narmer", 500L);
+            put("Physira", 400L);
+            put("Mithra", 400L);
+            put("Zenith", 1500L);
+        }});
+    }};
     private boolean playerCoinWavesClearedBonus = true;
-    private boolean playerCoinBossesKilledBonus = true;
     private long playerCoinPerKill = 0;
     private long guildCoinInsigniaConvertBonus = 0;
     private Pair<Long, Integer> guildCoinPerXSec = null;
+    private boolean disableCoinConversionUpgrade = false;
 
-    public CoinGainOption noPlayerCoinWavesClearedBonus() {
-        playerCoinWavesClearedBonus = false;
+    public LinkedHashMap<String, LinkedHashMap<String, Long>> getMobCoinValues() {
+        return mobCoinValues;
+    }
+
+    public void clearMobCoinValueAndSet(String key, LinkedHashMap<String, Long> value) {
+        mobCoinValues.clear();
+        mobCoinValues.put(key, value);
+    }
+
+    public CoinGainOption clearMobCoinValueAndSet(String key, String mobName, long value) {
+        mobCoinValues.clear();
+        mobCoinValues.put(key, new LinkedHashMap<>() {{
+            put(mobName, value);
+        }});
         return this;
     }
 
-    public CoinGainOption noPlayerCoinBossesKilledBonus() {
-        playerCoinBossesKilledBonus = false;
+    public CoinGainOption noPlayerCoinWavesClearedBonus() {
+        playerCoinWavesClearedBonus = false;
         return this;
     }
 
@@ -69,12 +82,13 @@ public class CoinGainOption implements Option {
         return this;
     }
 
-    public boolean isPlayerCoinWavesClearedBonus() {
-        return playerCoinWavesClearedBonus;
+    public CoinGainOption disableCoinConversionUpgrade() {
+        disableCoinConversionUpgrade = true;
+        return this;
     }
 
-    public boolean isPlayerCoinBossesKilledBonus() {
-        return playerCoinBossesKilledBonus;
+    public boolean isPlayerCoinWavesClearedBonus() {
+        return playerCoinWavesClearedBonus;
     }
 
     public long getPlayerCoinPerKill() {
@@ -87,5 +101,9 @@ public class CoinGainOption implements Option {
 
     public Pair<Long, Integer> getGuildCoinPerXSec() {
         return guildCoinPerXSec;
+    }
+
+    public boolean isDisableCoinConversionUpgrade() {
+        return disableCoinConversionUpgrade;
     }
 }

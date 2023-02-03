@@ -129,6 +129,12 @@ public abstract class WarlordsEntity {
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
 
+
+    public WarlordsEntity() {
+        game = null;
+        deathLocation = null;
+    }
+
     /**
      * @param uuid
      * @param name
@@ -1378,7 +1384,7 @@ public abstract class WarlordsEntity {
     public void cancelHealingPowerUp() {
         if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
             sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
-            this.getCooldownManager().removeCooldown(HealingPowerup.class);
+            this.getCooldownManager().removeCooldown(HealingPowerup.class, false);
         }
     }
 
@@ -2284,11 +2290,11 @@ public abstract class WarlordsEntity {
         return getTeam().teamColor().toString() + ChatColor.BOLD + getName();
     }
 
-    public void setVelocity(Vector v, boolean ignoreModifications) {
-        setVelocity(v, true, ignoreModifications);
+    public void setVelocity(String from, Vector v, boolean ignoreModifications) {
+        setVelocity(from, v, true, ignoreModifications);
     }
 
-    public void setVelocity(Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
+    public void setVelocity(String from, Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (!ignoreModifications) {
                 for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldownsDistinct()) {
@@ -2304,9 +2310,11 @@ public abstract class WarlordsEntity {
             if (Double.isNaN(v.getZ())) {
                 v.setZ(0);
             }
-            Bukkit.getPluginManager().callEvent(new WarlordsAddVelocityEvent(this, v));
-            //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Set entity velocity " + (this instanceof WarlordsPlayer) + " - " + v);
-            this.entity.setVelocity(v);
+            WarlordsAddVelocityEvent warlordsAddVelocityEvent = new WarlordsAddVelocityEvent(this, from, v);
+            Bukkit.getPluginManager().callEvent(warlordsAddVelocityEvent);
+            if (!warlordsAddVelocityEvent.isCancelled()) {
+                this.entity.setVelocity(v);
+            }
         }
     }
 

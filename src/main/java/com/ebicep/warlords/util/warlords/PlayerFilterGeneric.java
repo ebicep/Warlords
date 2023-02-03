@@ -47,6 +47,11 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
         return new PlayerFilterGeneric<>(stream.filter(WarlordsNPC.class::isInstance).map(WarlordsNPC.class::cast));
     }
 
+    @Nonnull
+    public PlayerFilterGeneric<WarlordsPlayer> warlordsPlayers() {
+        return new PlayerFilterGeneric<>(stream.filter(WarlordsPlayer.class::isInstance).map(WarlordsPlayer.class::cast));
+    }
+
     /**
      * Adds new internalPlayers to the list
      *
@@ -162,12 +167,12 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
     }
 
     @Nonnull
-    public PlayerFilterGeneric<T> enemiesOf(@Nonnull T player) {
+    public PlayerFilterGeneric<T> enemiesOf(@Nonnull WarlordsEntity player) {
         return filter(player::isEnemy);
     }
 
     @Nonnull
-    public PlayerFilterGeneric<T> aliveEnemiesOf(@Nonnull T player) {
+    public PlayerFilterGeneric<T> aliveEnemiesOf(@Nonnull WarlordsEntity player) {
         return filter(player::isEnemyAlive);
     }
 

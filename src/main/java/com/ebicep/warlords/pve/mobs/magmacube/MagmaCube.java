@@ -51,7 +51,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                     .aliveTeammatesOfExcludingSelf(warlordsNPC)
             ) {
                 if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
-                    ally.getCooldownManager().removeCooldown(LastStand.class);
+                    ally.getCooldownManager().removeCooldown(LastStand.class, false);
                     ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
                             name,
                             "",

@@ -14,7 +14,6 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilties.OrbsOfLife;
-import com.ebicep.warlords.abilties.RecklessCharge;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
@@ -309,7 +308,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
-        getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
+        getServer().getPluginManager().registerEvents(new WarlordsPlayer(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);

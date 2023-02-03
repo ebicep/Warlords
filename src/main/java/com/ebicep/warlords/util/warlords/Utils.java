@@ -625,18 +625,26 @@ public class Utils {
     }
 
     /**
+     * @param from
      * @param vectorLocation initial center point
-     * @param target which target to apply the knockback on
-     * @param multiplier how much the vector should be multiplied by
-     * @param yBoost how high should the target be raised in Y level
+     * @param target         which target to apply the knockback on
+     * @param multiplier     how much the vector should be multiplied by
+     * @param yBoost         how high should the target be raised in Y level
      */
-    public static void addKnockback(Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost) {
+    public static void addKnockback(String from, Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost) {
         Vector v = vectorLocation.toVector().subtract(target.getLocation().toVector()).normalize().multiply(multiplier).setY(yBoost);
-        target.setVelocity(v, false);
+        target.setVelocity(from, v, false);
     }
 
-    public static void addKnockback(Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost, boolean ignoreModifiers) {
+    public static void addKnockback(
+            String from,
+            Location vectorLocation,
+            @Nonnull WarlordsEntity target,
+            double multiplier,
+            double yBoost,
+            boolean ignoreModifiers
+    ) {
         Vector v = vectorLocation.toVector().subtract(target.getLocation().toVector()).normalize().multiply(multiplier).setY(yBoost);
-        target.setVelocity(v, ignoreModifiers);
+        target.setVelocity(from, v, ignoreModifiers);
     }
 }

@@ -121,6 +121,14 @@ public class WaveDefenseOption implements Option {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
+        CoinGainOption coinGainOption = game
+                .getOptions()
+                .stream()
+                .filter(CoinGainOption.class::isInstance)
+                .map(CoinGainOption.class::cast)
+                .findAny()
+                .orElse(null);
+
         game.registerEvents(new Listener() {
 
             @EventHandler
@@ -177,8 +185,15 @@ public class WaveDefenseOption implements Option {
                             we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
                         }
 
-                        if (CoinGainOption.BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
-                            waveDefenseStats.getBossesKilled().merge(mobToRemove.getName(), 1L, Long::sum);
+                        if (coinGainOption == null) {
+                            return;
+                        }
+                        if (coinGainOption.getMobCoinValues()
+                                          .values()
+                                          .stream()
+                                          .anyMatch(stringLongLinkedHashMap -> stringLongLinkedHashMap.containsKey(mobToRemove.getName()))
+                        ) {
+                            waveDefenseStats.getMobsKilled().merge(mobToRemove.getName(), 1L, Long::sum);
                         }
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
@@ -661,15 +676,6 @@ public class WaveDefenseOption implements Option {
         }.runTaskTimer(currentWave.getDelay(), 8);
     }
 
-    public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(abstractMob.getWarlordsNPC());
-        mobs.put(abstractMob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
-        // " + mobs.size());
-    }
-
     private void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
@@ -719,6 +725,15 @@ public class WaveDefenseOption implements Option {
         int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
         warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
+    }
+
+    public void spawnNewMob(AbstractMob<?> abstractMob) {
+        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(abstractMob.getWarlordsNPC());
+        mobs.put(abstractMob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
+        // " + mobs.size());
     }
 
     public Set<AbstractMob<?>> getMobs() {

@@ -115,8 +115,9 @@ public class FieldEffect implements Option {
                     }
                 });
             }
+        },
 
-        };
+        ;
 
         public final String name;
         public final String description;

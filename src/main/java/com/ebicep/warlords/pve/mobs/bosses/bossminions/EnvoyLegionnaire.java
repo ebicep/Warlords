@@ -72,7 +72,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(attacker.getLocation(), receiver, -1.1, 0.3);
+        Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.3);
         Utils.playGlobalSound(attacker.getLocation(), Sound.ENDERMAN_DEATH, 2, 0.2f);
     }
 

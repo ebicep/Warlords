@@ -78,7 +78,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.getCooldownManager().removeCooldown(Fireball.class);
+                wp.getCooldownManager().removeCooldown(Fireball.class, false);
                 wp.getCooldownManager().addCooldown(new RegularCooldown<Fireball>(
                         name,
                         "BLI",
@@ -110,7 +110,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
+        receiver.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
         receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
                 name,
                 "WND",
