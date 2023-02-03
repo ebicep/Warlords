@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb;
 
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;

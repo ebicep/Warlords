@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
