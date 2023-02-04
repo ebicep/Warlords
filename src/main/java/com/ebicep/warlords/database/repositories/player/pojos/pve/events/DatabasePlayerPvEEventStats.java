@@ -9,6 +9,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerStats;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -22,6 +24,8 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
     @Field("boltaro")
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();
+    @Field("narmer")
+    private DatabasePlayerPvEEventNarmerStats narmerStats = new DatabasePlayerPvEEventNarmerStats();
 
     @Override
     public void updateCustomStats(
@@ -66,6 +70,14 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
     public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getBoltaroEventStats() {
         return boltaroStats.getEventStats();
+    }
+
+    public DatabasePlayerPvEEventNarmerStats getNarmerStats() {
+        return narmerStats;
+    }
+
+    public Map<Long, DatabasePlayerPvEEventNarmerDifficultyStats> getNarmerEventStats() {
+        return narmerStats.getEventStats();
     }
 
 

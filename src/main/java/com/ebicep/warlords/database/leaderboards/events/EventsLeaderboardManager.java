@@ -15,6 +15,7 @@ public class EventsLeaderboardManager {
             return;
         }
         currentGameEvent.getEvent().addLeaderboards(currentGameEvent, EVENT_LEADERBOARDS);
+        EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
     }
 }

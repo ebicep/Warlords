@@ -3190,6 +3190,9 @@ public enum GameMap {
                     .add(25, new SimpleWave(1, SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.EVENT_NARMER)
                     )
+                    .add(25, new SimpleWave(1, SECOND, "Boss", MobTier.BOSS)
+                            .add(Mobs.CHESSKING)
+                    )
                     ,
                     DifficultyIndex.EVENT,
                     (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Pharaoh's Revenge")

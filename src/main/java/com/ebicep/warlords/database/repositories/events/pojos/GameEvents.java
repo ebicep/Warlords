@@ -16,6 +16,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -235,7 +236,6 @@ public enum GameEvents {
             leaderboards.put(lairBoard, "Boltaro's Lair");
             leaderboards.put(bonanzaBoard, "Boltaro Bonanza");
             leaderboards.put(totalBoard, "Total Event Points");
-            leaderboards.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         }
 
         @Override
@@ -316,9 +316,9 @@ public enum GameEvents {
     },
     NARMER("Pharaoh's Revenge",
             Currencies.EVENT_POINTS_NARMER,
-            null,
-            null,
-            null,
+            DatabasePlayerPvEEventStats::getNarmerStats,
+            DatabasePlayerPvEEventStats::getNarmerEventStats,
+            DatabasePlayerPvEEventStats::getNarmerStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof NarmersTombOption) {
@@ -353,7 +353,45 @@ public enum GameEvents {
 
         @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
-
+            long eventStart = currentGameEvent.getStartDateSecond();
+            EventLeaderboard lairBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 751.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getNarmerEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventNarmerDifficultyStats())
+                            .getTombStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getNarmerEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventNarmerDifficultyStats())
+                            .getTombStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 737.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getNarmerEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventNarmerDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getNarmerEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventNarmerDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(lairBoard, "Narmer's Tomb");
+            leaderboards.put(totalBoard, "Total Event Points");
         }
 
         @Override
