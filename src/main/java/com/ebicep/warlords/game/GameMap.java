@@ -3235,7 +3235,7 @@ public enum GameMap {
                     .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
                     .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
                     .onPerMobKill(Mobs.EVENT_NARMER, 500)
-                    .cap(50_000)
+                    //.cap(50_000)
             );
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)

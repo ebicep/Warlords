@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
@@ -194,9 +195,12 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
                     } else {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO,
-                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier
-                        );
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier);
+                    }
+                    break;
+                case NARMER:
+                    if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
+                        addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier);
                     }
                     break;
             }

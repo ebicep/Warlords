@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
@@ -51,8 +52,10 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
                 long points;
                 if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
                     points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier;
-                } else {
+                } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
                     points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier;
+                } else {
+                    points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier;
                 }
                 guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points);
                 guildPlayer.addEventPoints(currentGameEvent.getEvent(),
