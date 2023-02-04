@@ -17,6 +17,7 @@ import com.ebicep.warlords.abilties.OrbsOfLife;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.commands.CommandManager;
@@ -692,11 +693,18 @@ public class Warlords extends JavaPlugin {
                                             PlayerFilter.entitiesAround(wp, 6, 6, 6)
                                                         .aliveEnemiesOf(wp)
                                                         .forEach(enemy -> {
+                                                            float healthDamage = enemy.getMaxHealth() * .02f;
+                                                            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                                                healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                                            }
+                                                            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                                                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                                            }
                                                             enemy.addDamageInstance(
                                                                     wp,
                                                                     "Undying Army",
-                                                                    458 + (enemy.getMaxHealth() * .02f),
-                                                                    612 + (enemy.getMaxHealth() * .02f),
+                                                                    458 + healthDamage,
+                                                                    612 + healthDamage,
                                                                     0,
                                                                     100,
                                                                     false
