@@ -122,7 +122,15 @@ public class EventDjer extends AbstractZombie implements BossMob {
                         100,
                         false
                 );
-                warlordsPlayer.stun();
+                new GameRunnable(option.getGame()) {
+
+                    @Override
+                    public void run() {
+                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                            warlordsPlayer.stun();
+                        }
+                    }
+                }.runTaskLater(30);
             }
             new GameRunnable(option.getGame()) {
 
@@ -132,7 +140,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                         warlordsPlayer.unstun();
                     }
                 }
-            }.runTaskLater(40);
+            }.runTaskLater(50);
         }
     }
 
