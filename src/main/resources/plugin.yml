@@ -1,5 +1,5 @@
 name: Warlords
-version: Illusion Vanguard
+version: Forgotten Relics
 authors: [ebic, Plikie]
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]

@@ -22,6 +22,12 @@ public class SimpleWave implements Wave {
     private final String message;
     private MobTier mobTier;
 
+    public SimpleWave(@Nullable String message) {
+        this.delay = 0;
+        this.count = 0;
+        this.message = message;
+    }
+
     public SimpleWave(int count, int delay, @Nullable String message) {
         this.count = count;
         this.delay = delay;

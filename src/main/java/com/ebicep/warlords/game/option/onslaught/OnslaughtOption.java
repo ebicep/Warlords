@@ -133,14 +133,13 @@ public class OnslaughtOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
 
-                return Collections.singletonList("Difficulty " + currentMobSet.getMessage());
+                return Collections.singletonList("Difficulty: " + currentMobSet.getMessage());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-
                 return Collections.singletonList(integrityScoreboard());
             }
         });
@@ -202,7 +201,7 @@ public class OnslaughtOption implements Option {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(0, 0);
+        }.runTaskTimer(10 * GameRunnable.SECOND, 0);
 
         new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
@@ -232,11 +231,11 @@ public class OnslaughtOption implements Option {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
                 AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID(), warlordsNPC1 -> {
+                WarlordsNPC wpc = abstractMob.toNPC(game, team, UUID.randomUUID(), warlordsNPC -> {
 
                 });
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-                return warlordsNPC;
+                return wpc;
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
@@ -320,14 +319,14 @@ public class OnslaughtOption implements Option {
     private String integrityScoreboard() {
         ChatColor color;
         if (integrityCounter.get() >= 50) {
-            color = ChatColor.GREEN;
+            color = ChatColor.AQUA;
         } else if (integrityCounter.get() >= 25) {
             color = ChatColor.GOLD;
         } else {
             color = ChatColor.RED;
         }
 
-        return "Integrity: " + color + (integrityCounter.get() + "%");
+        return "Soul Energy: " + color + (integrityCounter.get() + "%");
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
