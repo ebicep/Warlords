@@ -45,17 +45,14 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
-    public static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
+    public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
     public void stun() {
         STUNNED_PLAYERS.add(uuid);
