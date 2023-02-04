@@ -405,7 +405,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public List<String> getLoreAddons() {
-        return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+        return Arrays.asList(
+                ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]",
+                ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]"
+        );
     }
 
     @Override
@@ -539,5 +542,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
         this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setStarPieceInfo(starPiece, starPieceBonus);
+    }
+
+    public int getTitleLevel() {
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
     }
 }

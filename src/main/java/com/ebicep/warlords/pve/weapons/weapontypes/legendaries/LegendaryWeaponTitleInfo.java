@@ -10,6 +10,8 @@ public class LegendaryWeaponTitleInfo {
     private StarPieces starPiece;
     @Field("star_piece_stat")
     private WeaponStats starPieceStat;
+    @Field("upgrade_level")
+    private int upgradeLevel;
 
     public LegendaryWeaponTitleInfo() {
     }
@@ -30,5 +32,13 @@ public class LegendaryWeaponTitleInfo {
 
     public WeaponStats getStarPieceStat() {
         return starPieceStat;
+    }
+
+    public void upgrade() {
+        upgradeLevel++;
+    }
+
+    public int getUpgradeLevel() {
+        return upgradeLevel;
     }
 }
