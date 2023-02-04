@@ -122,16 +122,16 @@ public class EventDjer extends AbstractZombie implements BossMob {
                         100,
                         false
                 );
-                new GameRunnable(option.getGame()) {
-
-                    @Override
-                    public void run() {
-                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                            warlordsPlayer.stun();
-                        }
-                    }
-                }.runTaskLater(30);
             }
+            new GameRunnable(option.getGame()) {
+
+                @Override
+                public void run() {
+                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                        warlordsPlayer.stun();
+                    }
+                }
+            }.runTaskLater(30);
             new GameRunnable(option.getGame()) {
 
                 @Override
