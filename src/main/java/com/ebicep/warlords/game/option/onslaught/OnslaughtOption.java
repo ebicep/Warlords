@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -40,7 +41,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class OnslaughtOption implements Option {
 
     private Game game;
-    private SimpleScoreboardHandler scoreboard;
     private final Team team;
     private Wave currentMobSet;
     private final WaveList mobSet;
@@ -49,7 +49,7 @@ public class OnslaughtOption implements Option {
     private int spawnCount = 0;
     private int spawnLimit;
     private Location lastLocation;
-    private final AtomicInteger integrityCounter = new AtomicInteger(100);
+    private float integrityCounter = 100;
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -103,9 +103,9 @@ public class OnslaughtOption implements Option {
                         new GameRunnable(game) {
                             @Override
                             public void run() {
-                                integrityCounter.getAndAdd(1);
-                                if (integrityCounter.get() >= 100) {
-                                    integrityCounter.set(100);
+                                integrityCounter += 1;
+                                if (integrityCounter >= 100) {
+                                    integrityCounter = 100;
                                 }
                                 spawnCount--;
                                 mobs.remove(mobToRemove);
@@ -128,7 +128,7 @@ public class OnslaughtOption implements Option {
             }
         });
 
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(5, "percentage") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
@@ -136,14 +136,14 @@ public class OnslaughtOption implements Option {
                 return Collections.singletonList("Difficulty: " + currentMobSet.getMessage());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(5, "percentage") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(integrityScoreboard());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
@@ -192,11 +192,10 @@ public class OnslaughtOption implements Option {
                 ticksElapsed.getAndIncrement();
                 counter++;
                 if (counter % 20 == 0) {
-                    integrityCounter.getAndDecrement();
-                    integrityCounter.getAndDecrement();
+                    integrityCounter -= getIntegrityDecay((int) game.warlordsPlayers().count());
                 }
 
-                if (integrityCounter.get() <= 0) {
+                if (integrityCounter <= 0) {
                     getGame().setNextState(new EndState(game, null));
                     this.cancel();
                 }
@@ -231,9 +230,7 @@ public class OnslaughtOption implements Option {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
                 AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC wpc = abstractMob.toNPC(game, team, UUID.randomUUID(), warlordsNPC -> {
-
-                });
+                WarlordsNPC wpc = abstractMob.toNPC(game, team, UUID.randomUUID(), OnslaughtOption.this::modifyStats);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return wpc;
             }
@@ -318,21 +315,19 @@ public class OnslaughtOption implements Option {
 
     private String integrityScoreboard() {
         ChatColor color;
-        if (integrityCounter.get() >= 50) {
+        if (integrityCounter >= 50) {
             color = ChatColor.AQUA;
-        } else if (integrityCounter.get() >= 25) {
+        } else if (integrityCounter >= 25) {
             color = ChatColor.GOLD;
         } else {
             color = ChatColor.RED;
         }
 
-        return "Soul Energy: " + color + (integrityCounter.get() + "%");
+        return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {
-
-        });
+        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.put(abstractMob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
@@ -355,6 +350,55 @@ public class OnslaughtOption implements Option {
         }
 
         return spawnLimit;
+    }
+
+    public float getIntegrityDecay(int playerCount) {
+        switch (playerCount) {
+            case 1:
+                return 0.5f;
+            case 2:
+                return 1;
+            case 3:
+            case 4:
+                return 1.5f;
+            case 5:
+            case 6:
+                return 2;
+        }
+
+        return 1.5f;
+    }
+
+    private void modifyStats(WarlordsNPC warlordsNPC) {
+        /*
+         * Base scale of 600
+         *
+         * The higher the scale is the longer it takes to increase per interval.
+         */
+        double scale = 900.0;
+        long playerCount = game.warlordsPlayers().count();
+        // Flag check whether mob is a boss.
+        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+        // Reduce base scale by 75 for each player after 2 or more players in game instance.
+        double modifiedScale = scale - (playerCount > 1 ? (75 * playerCount) : 0);
+        // Divide scale based on game time.
+        double modifier = (game.getState().getTicksElapsed() / 1000f) / modifiedScale + 1;
+
+        // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+        // Increase boss health by 25% for each player in game instance.
+        float bossMultiplier = 1 + (0.25f * playerCount);
+
+        // Final health value after applying all modifiers.
+        float finalHealth = health * (bossFlagCheck ? bossMultiplier : 1);
+        warlordsNPC.setMaxBaseHealth(finalHealth);
+        warlordsNPC.setMaxHealth(finalHealth);
+        warlordsNPC.setHealth(finalHealth);
+
+        warlordsNPC.setMinMeleeDamage(minMeleeDamage);
+        warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
     public void setSpawnLimit(int spawnLimit) {

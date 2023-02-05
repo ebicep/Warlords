@@ -1686,7 +1686,8 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
-                    .onKill(150)
+                    .onKill(250)
+                    .onPerWaveClear(5, 2000)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(15, 10 * SECOND, null)
@@ -3347,19 +3348,22 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 73, 0.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 73, 0.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 68, 0.5), Team.BLUE).asOption());
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 68, 0), Team.BLUE));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 72, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(5, 73, 0), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 73, 5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 73, -5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-5, 73, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(12.5, 68, 11.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(16.5, 68, 15.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(16.5, 68, -15.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(12.5, 68, -12.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-11.5, 68, -12.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-15.5, 68, -16.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-11.5, 68, 11.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-15.5, 68, 15.5), Team.RED));
 
             options.add(new RespawnWaveOption(1, 20, 10));
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
             options.add(new CurrencyOnEventOption()
-                    .onKill(50)
+                    .onKill(125)
             );
             options.add(new OnslaughtOption(Team.RED, new StaticWaveList()
                     .add(0, new SimpleWave(ChatColor.GREEN + "EASY")
@@ -3375,6 +3379,7 @@ public enum GameMap {
                             .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.02, Mobs.WITHER_SKELETON)
+                            .add(0.02, Mobs.IRON_GOLEM)
                     )
                     .add(10, new SimpleWave(ChatColor.GOLD + "HARD")
                             .add(0.4, Mobs.BASIC_ZOMBIE)
