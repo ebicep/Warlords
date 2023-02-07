@@ -2,14 +2,12 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -17,7 +15,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TimeWarpAquamancer extends AbstractAbility {
 
@@ -52,7 +49,6 @@ public class TimeWarpAquamancer extends AbstractAbility {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
-        AtomicInteger critCounter = new AtomicInteger();
         RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -90,8 +86,6 @@ public class TimeWarpAquamancer extends AbstractAbility {
                         }
 
                         warpTrail.add(wp.getLocation());
-                        critCounter.set(wp.getBlocksTravelledCM());
-                        Bukkit.broadcastMessage("multiplier: " + critCounter);
                         ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
 
                         int points = 6;
@@ -103,17 +97,7 @@ public class TimeWarpAquamancer extends AbstractAbility {
                         }
                     }
                 })
-        ) {
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                return currentCritChance + critCounter.get();
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                return currentCritMultiplier + critCounter.get();
-            }
-        };
+        );
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
         if (pveUpgrade) {
