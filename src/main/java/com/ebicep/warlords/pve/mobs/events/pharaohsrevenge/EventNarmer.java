@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -17,6 +18,7 @@ import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -67,7 +69,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                         (Player) we.getEntity(),
                         ChatColor.GOLD + getWarlordsNPC().getName(),
                         ChatColor.YELLOW + "Unifier of Worlds",
-                        20, 30, 20
+                        20, 20, 20
                 );
             }
         }
@@ -80,17 +82,32 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         }
 
         Location location = warlordsNPC.getLocation();
+        AbstractMob<?> ancestor;
         if (Math.random() < 0.5) {
-            EventDjer ancestor = new EventDjer(location);
-            option.spawnNewMob(ancestor);
-            ancestor.getWarlordsNPC().teleport(location);
-            ancestors.add(ancestor.getWarlordsNPC());
+            ancestor = new EventDjer(location);
         } else {
-            EventDjet ancestor = new EventDjet(location);
-            option.spawnNewMob(ancestor);
-            ancestor.getWarlordsNPC().teleport(location);
-            ancestors.add(ancestor.getWarlordsNPC());
+            ancestor = new EventDjet(location);
         }
+        option.spawnNewMob(ancestor);
+        ancestor.getWarlordsNPC().teleport(location);
+        ancestors.add(ancestor.getWarlordsNPC());
+        new GameRunnable(option.getGame()) {
+
+            @Override
+            public void run() {
+                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                    if (we.getEntity() instanceof Player) {
+                        PacketUtils.sendTitle(
+                                (Player) we.getEntity(),
+                                ChatColor.GOLD + getWarlordsNPC().getName() + " has called",
+                                ChatColor.YELLOW + ancestor.getName(),
+                                20, 20, 20
+                        );
+                    }
+                }
+            }
+        }.runTaskLater(20);
+
 
         for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new BasicZombie(location));

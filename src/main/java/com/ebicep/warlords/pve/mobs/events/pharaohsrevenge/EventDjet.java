@@ -32,11 +32,11 @@ public class EventDjet extends AbstractZombie implements BossMob {
                         null,
                         null
                 ),
-                6000,
-                0.3f,
+                9000,
+                0.32f,
                 10,
-                520,
-                600
+                620,
+                800
         );
     }
 
@@ -54,7 +54,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         int curseTickCycle;
         if (aboveHalfHealth()) {
-            curseTickCycle = 200;
+            curseTickCycle = 140;
         } else {
             curseTickCycle = 100;
         }
@@ -63,7 +63,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
                     .playingGameWarlordsPlayers(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 40);
+                SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
                 warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
                         name,
                         "CRIP",

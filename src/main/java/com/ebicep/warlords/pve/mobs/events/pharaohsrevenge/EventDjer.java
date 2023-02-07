@@ -48,11 +48,11 @@ public class EventDjer extends AbstractZombie implements BossMob {
                         null,
                         null
                 ),
-                6000,
-                0.3f,
+                9000,
+                0.32f,
                 10,
-                610,
-                720
+                730,
+                900
         );
     }
 
