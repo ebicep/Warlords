@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -60,7 +60,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -73,7 +73,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
-        for (int i = 0; i < (multiplier * warlordsNPC.getGame().warlordsPlayers().count()); i++) {
+        for (int i = 0; i < (multiplier * option.playerCount()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
             option.spawnNewMob(acolyte);
             acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
@@ -190,7 +190,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
@@ -266,7 +266,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.WHITE)

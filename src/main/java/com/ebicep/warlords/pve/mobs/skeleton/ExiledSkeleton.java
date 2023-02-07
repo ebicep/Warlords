@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -47,7 +47,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -70,7 +70,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
         if (ticksElapsed % 80 == 0) {
             EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FLAME, 1);
@@ -140,7 +140,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.ORANGE)

@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -44,7 +44,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                 .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BALL_LARGE)
@@ -52,7 +52,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 400 == 0) {
             warlordsNPC.getMob().removeTarget();
         }

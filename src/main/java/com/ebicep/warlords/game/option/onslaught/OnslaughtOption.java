@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
@@ -38,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class OnslaughtOption implements Option {
+public class OnslaughtOption implements Option, PveOption {
 
     private Game game;
     private final Team team;
@@ -266,17 +267,17 @@ public class OnslaughtOption implements Option {
     }
 
     @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+    public void updateInventory(@Nonnull WarlordsPlayer wp, Player player) {
+        AbstractWeapon weapon = wp.getWeapon();
         if (weapon == null) {
-            WeaponOption.showWeaponStats(warlordsPlayer, player);
+            WeaponOption.showWeaponStats(wp, player);
         } else {
-            WeaponOption.showPvEWeapon(warlordsPlayer, player);
+            WeaponOption.showPvEWeapon(wp, player);
         }
 
         player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
-        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        if (wp.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) wp.getWeapon()).updateAbilityItem(wp, player);
         }
     }
 
@@ -326,11 +327,17 @@ public class OnslaughtOption implements Option {
         return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
     }
 
-    public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(abstractMob.getWarlordsNPC());
-        mobs.put(abstractMob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 
     public int getSpawnLimit(int playerCount) {
@@ -352,13 +359,18 @@ public class OnslaughtOption implements Option {
         return spawnLimit;
     }
 
+    public void setSpawnLimit(int spawnLimit) {
+        this.spawnLimit = spawnLimit;
+    }
+
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
             case 1:
                 return 0.5f;
             case 2:
-                return 1;
+                return 0.75f;
             case 3:
+                return 1;
             case 4:
                 return 1.5f;
             case 5:
@@ -370,8 +382,9 @@ public class OnslaughtOption implements Option {
     }
 
     private void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(OnslaughtOption.this);
         /*
-         * Base scale of 600
+         * Base scale of 900
          *
          * The higher the scale is the longer it takes to increase per interval.
          */
@@ -401,7 +414,8 @@ public class OnslaughtOption implements Option {
         warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
-    public void setSpawnLimit(int spawnLimit) {
-        this.spawnLimit = spawnLimit;
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
     }
 }

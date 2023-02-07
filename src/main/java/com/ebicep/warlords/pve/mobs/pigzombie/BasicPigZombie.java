@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
@@ -35,12 +35,12 @@ public class BasicPigZombie extends AbstractPigZombie implements BasicMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
 
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
     }
 
     @Override

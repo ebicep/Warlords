@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -40,12 +40,12 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         reduceCooldown = option.getDifficulty() == DifficultyIndex.HARD ? 0.4f : 0.2f;
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 400 == 0) {
             warlordsNPC.getMob().removeTarget();
         }

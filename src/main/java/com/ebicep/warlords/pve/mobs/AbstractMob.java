@@ -9,7 +9,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -119,20 +119,20 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
-    public abstract void onSpawn(WaveDefenseOption option);
+    public abstract void onSpawn(PveOption option);
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
         mapper.apply(this.warlordsNPC);
         return this;
     }
 
-    public abstract void whileAlive(int ticksElapsed, WaveDefenseOption option);
+    public abstract void whileAlive(int ticksElapsed, PveOption option);
 
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
 
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         dropWeapon(killer);
     }
 

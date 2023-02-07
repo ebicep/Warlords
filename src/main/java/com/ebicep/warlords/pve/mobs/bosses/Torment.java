@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -50,7 +50,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         this.entity.setSkeletonType(1);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
@@ -81,8 +81,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        long playerCount = option.getGame().warlordsPlayers().count();
+    public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
         if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
@@ -160,7 +159,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
 
     }
 }

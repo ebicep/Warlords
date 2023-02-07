@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 import com.ebicep.warlords.abilties.CripplingStrike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -41,7 +41,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
@@ -51,7 +51,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         int curseTickCycle;
         if (aboveHalfHealth()) {
             curseTickCycle = 140;

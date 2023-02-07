@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -60,7 +60,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -75,7 +75,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 == 0) {
             if (getWarlordsNPC().getCooldownManager().hasCooldown(SoulShackle.class) && !skipNextAttack) {
                 skipNextAttack = true;
@@ -106,7 +106,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                     timesInARowDamageMaxReduced = 0;
                 }
 
-                int playerCount = (int) option.getGame().warlordsPlayers().count();
+                int playerCount = option.playerCount();
                 float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
                         playerCount,
                         PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds)
@@ -179,7 +179,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.GRAY)
                 .with(FireworkEffect.Type.BALL_LARGE)
@@ -187,7 +187,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 .build());
     }
 
-    private void spawnTormentedSouls(WaveDefenseOption option, int amount) {
+    private void spawnTormentedSouls(PveOption option, int amount) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 1.5f);
         for (int i = 0; i < amount; i++) {
             option.spawnNewMob(new TormentedSoul(getWarlordsNPC().getLocation()));

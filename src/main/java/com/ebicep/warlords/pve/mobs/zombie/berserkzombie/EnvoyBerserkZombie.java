@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.abilties.BloodLust;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -40,7 +40,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
                 "Berserk",

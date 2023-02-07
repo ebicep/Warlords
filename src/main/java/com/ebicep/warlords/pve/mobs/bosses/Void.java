@@ -5,7 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -62,7 +62,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -100,7 +100,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.8f) && !flamePhaseTrigger) {
@@ -205,7 +205,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         for (int i = 0; i < 3; i++) {
             EffectUtils.strikeLightningInCylinder(deathLocation, 8,false);
         }
@@ -216,7 +216,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                 .build());
     }
 
-    private void immolation(WaveDefenseOption option, Location loc) {
+    private void immolation(PveOption option, Location loc) {
         warlordsNPC.setStunTicks(250);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
@@ -323,21 +323,19 @@ public class Void extends AbstractSkeleton implements BossMob {
         }.runTaskLater(tickDelay);
     }
 
-    private void timedDamage(WaveDefenseOption option, long playerCount, int damageValue, int timeToDealDamage) {
+    private void timedDamage(PveOption option, long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
+        ChatUtils.sendTitleToGamePlayers(
+                warlordsNPC.getGame(),
+                "",
+                ChatColor.RED + "Keep attacking Void to stop the draining!",
+                10, 35, 0
+        );
         for (WarlordsEntity we : PlayerFilter
-                .playingGame(getWarlordsNPC().getGame())
+                .playingGame(warlordsNPC.getGame())
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        "",
-                        ChatColor.RED + "Keep attacking Void to stop the draining!",
-                        10, 35, 0
-                );
-            }
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.3);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
         }

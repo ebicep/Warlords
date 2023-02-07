@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -40,7 +40,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -63,7 +63,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
 
     }
 
@@ -81,7 +81,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BURST)

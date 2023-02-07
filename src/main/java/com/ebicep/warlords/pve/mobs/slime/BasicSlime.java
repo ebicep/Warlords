@@ -8,7 +8,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -42,11 +42,11 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 4 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
@@ -79,7 +79,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(warlordsNPC, shimmerRadius, shimmerRadius, shimmerRadius)
                 .aliveEnemiesOf(warlordsNPC)

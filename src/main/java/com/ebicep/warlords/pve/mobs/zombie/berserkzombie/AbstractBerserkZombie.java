@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -33,14 +33,14 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
         if (option.getDifficulty() != DifficultyIndex.EASY && option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
             woundingStrike.setHitbox(woundingStrike.getHitbox() - 1);
         }
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
         if (strikeTickDelay > 0) {
             strikeTickDelay--;
             return;

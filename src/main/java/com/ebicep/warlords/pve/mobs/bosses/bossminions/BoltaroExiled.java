@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -36,11 +36,11 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onSpawn(WaveDefenseOption option) {
+    public void onSpawn(PveOption option) {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+    public void whileAlive(int ticksElapsed, PveOption option) {
 
     }
 
@@ -53,7 +53,7 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 1.3f);
     }
 }

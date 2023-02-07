@@ -15,6 +15,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
@@ -72,7 +73,7 @@ import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 
-public class WaveDefenseOption implements Option {
+public class WaveDefenseOption implements Option, PveOption {
     private static final int SCOREBOARD_PRIORITY = 5;
     SimpleScoreboardHandler scoreboard;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
@@ -727,19 +728,19 @@ public class WaveDefenseOption implements Option {
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }
 
-    public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(abstractMob.getWarlordsNPC());
-        mobs.put(abstractMob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
-        // " + mobs.size());
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
     public Set<AbstractMob<?>> getMobs() {
         return mobs.keySet();
     }
 
+    @Override
     public int getWaveCounter() {
         return waveCounter;
     }
@@ -764,6 +765,7 @@ public class WaveDefenseOption implements Option {
         return waves;
     }
 
+    @Override
     @Nonnull
     public Game getGame() {
         return game;
@@ -785,6 +787,12 @@ public class WaveDefenseOption implements Option {
         return waveDefenseStats;
     }
 
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
+    }
+
+    @Override
     public DifficultyIndex getDifficulty() {
         return difficulty;
     }
