@@ -10,7 +10,9 @@ public interface PveOption {
 
     int playerCount();
 
-    int getWaveCounter();
+    default int getWaveCounter() {
+        return 1;
+    }
 
     default DifficultyIndex getDifficulty() {
         return DifficultyIndex.NORMAL;

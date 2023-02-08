@@ -201,9 +201,9 @@ public class OnslaughtOption implements Option, PveOption {
                             game.warlordsPlayers()
                                     .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
                                     .findFirst()
-                                    .ifPresent(warlordsPlayer -> {
-                                        if (!(warlordsPlayer.getEntity() instanceof Player)) {
-                                            event.setTarget(warlordsPlayer.getEntity());
+                                    .ifPresent(wp -> {
+                                        if (!(wp.getEntity() instanceof Player)) {
+                                            event.setTarget(wp.getEntity());
                                         }
                                     });
                         }
@@ -266,11 +266,11 @@ public class OnslaughtOption implements Option, PveOption {
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
                         .findFirst();
                 optionalWeapon.ifPresent(abstractWeapon -> {
-                    WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+                    WarlordsPlayer wp = (WarlordsPlayer) player;
 
                     ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                    wp.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(wp);
                     player.updateEntity();
                     player.getSpec().updateCustomStats();
                 });
@@ -331,7 +331,7 @@ public class OnslaughtOption implements Option, PveOption {
                     return;
                 }
 
-                if (spawnCount >= getSpawnLimit((int) game.warlordsPlayers().count())) {
+                if (spawnCount >= getSpawnLimit(playerCount())) {
                     return;
                 }
 
@@ -518,7 +518,7 @@ public class OnslaughtOption implements Option, PveOption {
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
         // Reduce base scale by 75 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (playerCount > 1 ? (75 * playerCount) : 0);
+        double modifiedScale = scale - (playerCount > 1 ? (50 * playerCount) : 0);
         // Divide scale based on game time.
         double modifier = (game.getState().getTicksElapsed() / 1000f) / modifiedScale + 1;
 
@@ -542,10 +542,5 @@ public class OnslaughtOption implements Option, PveOption {
     @Override
     public int playerCount() {
         return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
-    public int getWaveCounter() {
-        return 0;
     }
 }
