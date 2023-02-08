@@ -8,7 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mobs;
@@ -39,11 +39,11 @@ public class MobCommand extends BaseCommand {
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+            if (option instanceof PveOption) {
+                PveOption pveOption = (PveOption) option;
                 for (int i = 0; i < amount; i++) {
                     AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
-                    waveDefenseOption.spawnNewMob(mob);
+                    pveOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
                 ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned " + amount + " Mobs", true);
@@ -78,8 +78,8 @@ public class MobCommand extends BaseCommand {
     @Subcommand("alltarget")
     public void allTarget(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, WarlordsPlayer target) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> abstractMob.setTarget(target));
+            if (option instanceof PveOption) {
+                ((PveOption) option).getMobs().forEach(abstractMob -> abstractMob.setTarget(target));
                 ChatChannels.sendDebugMessage(player,
                         ChatColor.GREEN + "Set All Mob Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
                         true
@@ -94,8 +94,8 @@ public class MobCommand extends BaseCommand {
     public void getMobLocations(CommandIssuer issuer, @Conditions("filter:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Game game) {
         //Ghoul Caller - @MainLobby | 10,-3,3
         for (Option option : game.getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                String message = ((WaveDefenseOption) option)
+            if (option instanceof PveOption) {
+                String message = ((PveOption) option)
                         .getMobs()
                         .stream()
                         .map(abstractMob -> {
@@ -114,8 +114,8 @@ public class MobCommand extends BaseCommand {
     @Subcommand("ai")
     public void ai(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, @Conditions("limits:min=0,max=1") Integer ai) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
+            if (option instanceof PveOption) {
+                ((PveOption) option).getMobs().forEach(abstractMob -> {
                     EntityInsentient entityInsentient = abstractMob.getEntity().get();
                     NBTTagCompound tag = entityInsentient.getNBTTag();
                     if (tag == null) {

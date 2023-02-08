@@ -736,6 +736,7 @@ public class WaveDefenseOption implements Option, PveOption {
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
+    @Override
     public Set<AbstractMob<?>> getMobs() {
         return mobs.keySet();
     }

@@ -461,6 +461,11 @@ public class OnslaughtOption implements Option, PveOption {
     }
 
     @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs.keySet();
+    }
+
+    @Override
     public Game getGame() {
         return game;
     }
