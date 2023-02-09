@@ -30,6 +30,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
@@ -94,6 +95,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             put(value, 0L);
         }
     }};
+    //MOB DROPS
+    @Field("mob_drops")
+    private Map<MobDrops, Long> mobDrops = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
     @Field("quests_completed")
@@ -380,5 +384,17 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public DatabasePlayerPvEEventStats getEventStats() {
         return eventStats;
+    }
+
+    public long getMobDrops(MobDrops mobDrops) {
+        return this.mobDrops.getOrDefault(mobDrops, 0L);
+    }
+
+    public void addMobDrops(MobDrops mobDrops, long amount) {
+        if (!this.mobDrops.containsKey(mobDrops)) {
+            this.mobDrops.put(mobDrops, amount);
+        } else {
+            this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
+        }
     }
 }

@@ -9,21 +9,25 @@ import com.ebicep.warlords.util.java.RandomCollection;
 
 public interface Mob {
 
-    double dropRate();
+    double weaponDropRate();
 
-    int commonDropChance();
+    int commonWeaponDropChance();
 
-    int rareDropChance();
+    int rareWeaponDropChance();
 
-    int epicDropChance();
+    int epicWeaponDropChance();
 
     default AbstractWeapon generateWeapon(WarlordsPlayer warlordsPlayer) {
         return new RandomCollection<AbstractWeapon>()
-                .add(commonDropChance(), new CommonWeapon(warlordsPlayer))
-                .add(rareDropChance(), new RareWeapon(warlordsPlayer))
-                .add(epicDropChance(), new EpicWeapon(warlordsPlayer))
+                .add(commonWeaponDropChance(), new CommonWeapon(warlordsPlayer))
+                .add(rareWeaponDropChance(), new RareWeapon(warlordsPlayer))
+                .add(epicWeaponDropChance(), new EpicWeapon(warlordsPlayer))
                 .next();
     }
+
+//    MobDrops
+//
+//    double mobDropRate();
 
 
 }

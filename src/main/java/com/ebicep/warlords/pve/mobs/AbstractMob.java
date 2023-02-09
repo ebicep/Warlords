@@ -147,7 +147,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
-        AtomicDouble dropRate = new AtomicDouble(dropRate());
+        AtomicDouble dropRate = new AtomicDouble(weaponDropRate());
         Bukkit.getPluginManager().callEvent(new WarlordsDropWeaponEvent(killer, dropRate));
         if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);

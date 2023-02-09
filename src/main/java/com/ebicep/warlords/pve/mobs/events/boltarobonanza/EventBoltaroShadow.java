@@ -82,7 +82,7 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public double dropRate() {
+    public double weaponDropRate() {
         return 2;
     }
 }

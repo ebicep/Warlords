@@ -5,22 +5,22 @@ import com.ebicep.warlords.pve.mobs.Mob;
 public interface EliteMob extends Mob {
 
     @Override
-    default double dropRate() {
+    default double weaponDropRate() {
         return 5;
     }
 
     @Override
-    default int commonDropChance() {
+    default int commonWeaponDropChance() {
         return 75;
     }
 
     @Override
-    default int rareDropChance() {
+    default int rareWeaponDropChance() {
         return 20;
     }
 
     @Override
-    default int epicDropChance() {
+    default int epicWeaponDropChance() {
         return 5;
     }
 
