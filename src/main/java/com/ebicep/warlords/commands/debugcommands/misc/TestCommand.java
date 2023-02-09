@@ -9,12 +9,17 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Comparator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
@@ -75,6 +80,23 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
+
+        Set<DatabasePlayer> databasePlayers = new HashSet<>(DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values());
+        for (DatabasePlayer databasePlayer : databasePlayers) {
+            System.out.println("Checking " + databasePlayer.getName());
+            for (Specializations spec : Specializations.VALUES) {
+                DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                int prestige = databasePlayerSpec.getPrestige();
+                int level = databasePlayerSpec.getLevel();
+                for (int i = 0; i < prestige; i++) {
+                    int levelToCheck = i == prestige - 1 ? level : 100;
+                    boolean hasLevelUpReward = databasePlayerSpec.hasLevelUpReward(i, levelToCheck);
+                    if (!hasLevelUpReward) {
+                        System.out.println("Unclaimed: P" + i + " L" + levelToCheck);
+                    }
+                }
+            }
+        }
         /*
         Warlords.newChain()
                 .asyncFirst(() -> {
