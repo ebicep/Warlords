@@ -14,6 +14,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -89,11 +90,17 @@ public class TestCommand extends BaseCommand {
                 int prestige = databasePlayerSpec.getPrestige();
                 int level = databasePlayerSpec.getLevel();
                 for (int i = 0; i < prestige; i++) {
-                    int levelToCheck = i == prestige - 1 ? level : 100;
-                    boolean hasLevelUpReward = databasePlayerSpec.hasLevelUpReward(i, levelToCheck);
-                    if (!hasLevelUpReward) {
-                        System.out.println("Unclaimed: P" + i + " L" + levelToCheck);
+                    boolean currentPrestigeLevel = i == prestige - 1;
+                    int levelToCheck = currentPrestigeLevel ? level : 100;
+                    for (int j = 0; j < levelToCheck; j++) {
+                        boolean hasLevelUpReward = databasePlayerSpec.hasLevelUpReward(j, i);
+                        if (!hasLevelUpReward) {
+                            //databasePlayerSpec.addLevelUpReward(new LevelUpReward(LevelUpReward.getRewardForLevel(levelToCheck), j, i));
+                            //System.out.println("Auto Claimed: P" + i + " L" + levelToCheck);
+                            System.out.println("Unclaimed: P" + i + " L" + levelToCheck);
+                        }
                     }
+
                 }
             }
         }
