@@ -11,7 +11,8 @@ import java.util.UUID;
 
 public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
-    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.012f;
+    private static final float HEALTH_INCREASE = 0.01f;
+    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.0035f;
 
     public LegendaryTitanic() {
     }
@@ -26,7 +27,14 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase maximum health by 1.2% per upgrade purchased.";
+        return "Increase maximum health by " + formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()) * 100f,
+                "%"
+        ) + " per upgrade purchased.";
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 150;
     }
 
     @Override
@@ -43,7 +51,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
                     if (baseMaxHealth == -1) {
                         baseMaxHealth = player.getMaxBaseHealth();
                     }
-                    player.setMaxBaseHealth(baseMaxHealth * (1 + (++upgradeCount * HEALTH_INCREASE_PER_UPGRADE)));
+                    player.setMaxBaseHealth(baseMaxHealth * (1 + (++upgradeCount * (HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()))));
                 }
             }
         });
@@ -52,11 +60,6 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.TITANIC;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 150;
     }
 
     @Override

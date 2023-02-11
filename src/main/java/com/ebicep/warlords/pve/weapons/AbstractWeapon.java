@@ -24,7 +24,7 @@ import java.util.UUID;
 public abstract class AbstractWeapon {
 
     protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
-    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.#");
+    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
 
     static {
         DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
