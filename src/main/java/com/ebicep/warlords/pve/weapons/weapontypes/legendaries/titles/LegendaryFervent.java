@@ -44,7 +44,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
-                " health (Post damage reduction). Maximum 3 stacks.\nWhen at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
+                " health (Post damage reduction). Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
                 formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " more damage for " +
                 formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds.";
     }

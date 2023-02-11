@@ -37,9 +37,8 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return formatTitleUpgrade("+",
-                EPS + EPS_PER_UPGRADE * getTitleLevel()
-        ) + " energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
+        return formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()) +
+                " energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
     }
 
     @Override

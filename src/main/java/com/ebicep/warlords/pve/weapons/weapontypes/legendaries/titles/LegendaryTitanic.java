@@ -27,9 +27,8 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase maximum health by " + formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()) * 100f,
-                "%"
-        ) + " per upgrade purchased.";
+        return "Increase maximum health by " + formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()) * 100f, "%") +
+                " per upgrade purchased.";
     }
 
     @Override

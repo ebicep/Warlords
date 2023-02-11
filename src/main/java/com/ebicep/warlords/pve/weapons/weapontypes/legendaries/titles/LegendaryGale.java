@@ -44,9 +44,8 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return "Increase movement speed by 40%, decrease energy consumption of all abilities by " +
                 formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()) + ", and gain " +
-                formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(),
-                        "%"
-                ) + " knockback resistance. Can be triggered every 30 seconds.";
+                formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%") +
+                " knockback resistance. Can be triggered every 30 seconds.";
     }
 
     @Override
