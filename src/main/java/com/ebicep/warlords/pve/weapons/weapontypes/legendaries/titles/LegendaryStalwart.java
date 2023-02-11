@@ -39,7 +39,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
                 " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
-                ", gain an additional 7.5% damage reduction. Maximum 8/0% Damage Reduction." +
+                ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
                 "\n\nIf your HP is currently higher than 80% and you will die from the next source of damage, your " +
                 "health will be set to 5% of your max HP and gain 99% damage reduction for 5 seconds. Can be triggered every 30 seconds.";
     }
