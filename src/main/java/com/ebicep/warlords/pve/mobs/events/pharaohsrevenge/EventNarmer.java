@@ -264,37 +264,35 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
 
-        if (ancestors.isEmpty()) {
-            if (acolytes.size() < playerCount && ticksUntilNewAcolyte <= 0) {
-                EventNarmerAcolyte acolyte = new EventNarmerAcolyte(loc);
-                option.spawnNewMob(acolyte);
-                acolytes.add(acolyte.getWarlordsNPC());
-                ticksUntilNewAcolyte = 300;
-            }
+        if (acolytes.size() < playerCount && ticksUntilNewAcolyte <= 0) {
+            EventNarmerAcolyte acolyte = new EventNarmerAcolyte(loc);
+            option.spawnNewMob(acolyte);
+            acolytes.add(acolyte.getWarlordsNPC());
+            ticksUntilNewAcolyte = 300;
+        }
 
-            if (ticksUntilNewAcolyte > 0) {
-                ticksUntilNewAcolyte--;
-            }
+        if (ticksUntilNewAcolyte > 0) {
+            ticksUntilNewAcolyte--;
+        }
 
-            if (acolyteDeathTickWindow > 0) {
-                acolyteDeathTickWindow--;
+        if (acolyteDeathTickWindow > 0) {
+            acolyteDeathTickWindow--;
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.RED + "Death Wish",
-                                ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
-                                0, acolyteDeathTickWindow, 0
-                        );
-                    }
+            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                if (we.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle(
+                            (Player) we.getEntity(),
+                            ChatColor.RED + "Death Wish",
+                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
+                            0, acolyteDeathTickWindow, 0
+                    );
                 }
             }
+        }
 
-            if (ticksElapsed % 15 == 0) {
-                for (WarlordsEntity acolyte : acolytes) {
-                    EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
-                }
+        if (ticksElapsed % 15 == 0) {
+            for (WarlordsEntity acolyte : acolytes) {
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
             }
         }
 
