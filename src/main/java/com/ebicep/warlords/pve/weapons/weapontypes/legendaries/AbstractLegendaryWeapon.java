@@ -547,4 +547,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public int getTitleLevel() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
     }
+
+    public void setTitleLevel(int level) {
+        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setUpgradeLevel(level);
+    }
 }

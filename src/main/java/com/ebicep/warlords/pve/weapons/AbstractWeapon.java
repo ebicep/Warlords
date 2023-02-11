@@ -24,12 +24,16 @@ import java.util.UUID;
 public abstract class AbstractWeapon {
 
     protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
+    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.#");
 
     static {
         DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
         DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT.setPositivePrefix("+");
         DECIMAL_FORMAT.setNegativePrefix("-");
+
+        DECIMAL_FORMAT_TITLE.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_TITLE.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     protected UUID uuid = UUID.randomUUID();
@@ -61,6 +65,10 @@ public abstract class AbstractWeapon {
 
     protected static String format(double value) {
         return DECIMAL_FORMAT.format(value);
+    }
+
+    protected static String formatTitleUpgrade(double value) {
+        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value);
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {

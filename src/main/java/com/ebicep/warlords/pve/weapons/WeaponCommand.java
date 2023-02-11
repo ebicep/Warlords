@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -68,9 +69,11 @@ public class WeaponCommand extends BaseCommand {
 
     @Subcommand("legendary")
     @Description("Give yourself a legendary weapon with your selected specialization, optional title")
-    public void legendary(Player player, @Optional LegendaryTitles title) {
+    public void legendary(Player player, @Optional LegendaryTitles title, @Default("0") @Conditions("limits:min=0,max=4") Integer level) {
         if (title != null) {
-            giveWeapon(player, title.create.apply(player.getUniqueId()));
+            AbstractLegendaryWeapon legendaryWeapon = title.create.apply(player.getUniqueId());
+            legendaryWeapon.setTitleLevel(level);
+            giveWeapon(player, legendaryWeapon);
         } else {
             giveWeapon(player, new LegendaryWeapon(player.getUniqueId()));
         }
