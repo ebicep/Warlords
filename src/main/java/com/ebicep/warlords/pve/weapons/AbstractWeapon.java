@@ -71,6 +71,10 @@ public abstract class AbstractWeapon {
         return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + append + ChatColor.GRAY;
     }
 
+    protected static String formatTitleUpgrade(double value) {
+        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    }
+
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         player.setMaxBaseHealth(player.getMaxBaseHealth() + getHealthBonus());
         player.setHealth(player.getMaxHealth() + getHealthBonus());
