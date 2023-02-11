@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
@@ -22,8 +23,8 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     public static final int DAMAGE_TO_TAKE = 5000;
     public static final int DURATION = 45;
 
-    public static final int STRIKE_DAMAGE_BOOST = 100;
-    public static final int STRIKE_DAMAGE_BOOST_PER_UPGRADE = 20;
+    public static final int ABILITY_STRIKE_DAMAGE_BOOST = 100;
+    public static final int ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE = 20;
     public static final int ABILITY_DURATION = 12;
     public static final float ABILITY_DURATION_PER_UPGRADE = 2.5f;
 
@@ -42,9 +43,10 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return DAMAGE_BOOST + "% damage per stack of Fervent. When at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
-                formatTitleUpgrade(STRIKE_DAMAGE_BOOST + STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " more damage for " +
-                formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds. Maximum 3 stacks.";
+        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
+                " health (Post damage reduction). Maximum 3 stacks.\nWhen at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
+                formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " more damage for " +
+                formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds.";
     }
 
     @Override
@@ -74,7 +76,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                     if (!event.getAbility().contains("Strike")) {
                         return;
                     }
-                    float strikeDamageBoost = 1 + (STRIKE_DAMAGE_BOOST + STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+                    float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
                     event.setMin(event.getMin() * strikeDamageBoost);
                     event.setMax(event.getMax() * strikeDamageBoost);
                 }
