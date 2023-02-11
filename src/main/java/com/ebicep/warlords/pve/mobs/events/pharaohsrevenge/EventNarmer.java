@@ -108,6 +108,12 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             }
         }.runTaskLater(20);
 
+        for (int i = 0; i < option.playerCount(); i++) {
+            EventNarmerAcolyte acolyte = new EventNarmerAcolyte(warlordsNPC.getLocation());
+            option.spawnNewMob(acolyte);
+            acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
+            acolytes.add(acolyte.getWarlordsNPC());
+        }
 
         for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new BasicZombie(location));
