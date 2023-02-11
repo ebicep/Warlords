@@ -7,10 +7,13 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,12 +47,17 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                 "health will be set to 5% of your max HP and gain 99% damage reduction for 5 seconds. Can be triggered every 30 seconds.";
     }
 
-    private float getEveryHpPercent() {
-        return EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel();
-    }
-
-    private int getUnderHpCheck() {
-        return UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel();
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override
@@ -155,5 +163,13 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     @Override
     protected float getSpeedBonusValue() {
         return 7;
+    }
+
+    private float getEveryHpPercent() {
+        return EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    private int getUnderHpCheck() {
+        return UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel();
     }
 }

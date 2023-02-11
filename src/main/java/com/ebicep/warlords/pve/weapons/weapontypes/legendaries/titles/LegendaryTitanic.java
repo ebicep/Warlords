@@ -4,9 +4,12 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryTitanic extends AbstractLegendaryWeapon {
@@ -29,6 +32,14 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return "Increase maximum health by " + formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()) * 100f, "%") +
                 " per upgrade purchased.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()) * 100f, "%"),
+                formatTitleUpgrade((HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevelUpgraded()) * 100f, "%")
+        ));
     }
 
     @Override

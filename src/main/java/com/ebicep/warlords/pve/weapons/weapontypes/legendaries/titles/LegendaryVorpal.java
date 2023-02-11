@@ -8,9 +8,12 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryVorpal extends AbstractLegendaryWeapon {
@@ -36,6 +39,19 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         return "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by " +
                 formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " and proc chance by " +
                 formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override

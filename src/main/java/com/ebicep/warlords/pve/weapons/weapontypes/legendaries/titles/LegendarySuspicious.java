@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +53,14 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Play an among us sound and gain " + formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()) + " energy whenever you land a melee crit.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()),
+                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevelUpgraded())
+        ));
     }
 
     @Override

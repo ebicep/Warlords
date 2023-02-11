@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +47,20 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                 formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()) + ", and gain " +
                 formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%") +
                 " knockback resistance. Can be triggered every 30 seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevelUpgraded())
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevelUpgraded(), "%"
+                        )
+                )
+        );
     }
 
     @Override

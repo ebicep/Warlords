@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,14 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()) +
                 " energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()),
+                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevelUpgraded())
+        ));
     }
 
     @Override

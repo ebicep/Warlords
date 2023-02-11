@@ -3,8 +3,11 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryGradient extends AbstractLegendaryWeapon {
@@ -26,6 +29,14 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Perpetually regenerate 7% of your health every " + formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20) + " seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20),
+                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevelUpgraded()) / 20)
+        ));
     }
 
     @Override

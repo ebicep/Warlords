@@ -205,4 +205,59 @@ public class WeaponTitleMenu {
         return titledWeapon;
     }
 
+    public static void openWeaponTitleUpgradeMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        if (weapon == null) {
+            return;
+        }
+
+        Menu menu = new Menu("Upgrade Weapon Title", 9 * 3);
+
+        menu.setItem(2, 1,
+                weapon.getUpgradedTitleItem(),
+                (m, e) -> {
+                    upgradeWeaponTitle(player, databasePlayer, weapon);
+                    WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
+                }
+        );
+
+        menu.setItem(4, 1,
+                weapon.generateItemStack(false),
+                (m, e) -> {
+                }
+        );
+
+        menu.setItem(6, 1,
+                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                        .name(ChatColor.RED + "Deny")
+                        .lore(ChatColor.GRAY + "Go back.")
+                        .get(),
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
+        );
+
+        menu.openForPlayer(player);
+
+    }
+
+    public static void upgradeWeaponTitle(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        if (weapon == null) {
+            return;
+        }
+        if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
+            LinkedHashMap<Currencies, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
+            for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                databasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
+            }
+            weapon.upgradeTitleLevel();
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            player.spigot().sendMessage(
+                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon Title: ")
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                            .create()
+            );
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        }
+    }
+
+
 }

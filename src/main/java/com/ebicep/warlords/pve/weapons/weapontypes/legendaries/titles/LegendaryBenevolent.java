@@ -4,9 +4,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryBenevolent extends AbstractLegendaryWeapon {
@@ -28,6 +31,14 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Increase healing provided by " + formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+        ));
     }
 
     @Override

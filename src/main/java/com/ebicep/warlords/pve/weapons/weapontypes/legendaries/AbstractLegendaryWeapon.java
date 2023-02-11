@@ -12,8 +12,10 @@ import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
@@ -66,25 +68,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
     }
 
-    public LinkedHashMap<Currencies, Long> getCost() {
-        return new LinkedHashMap<>() {{
-            put(Currencies.COIN, 50000L);
-            put(Currencies.SYNTHETIC_SHARD, 1000L);
-        }};
-    }
-
-    public List<String> getCostLore() {
-        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
-
-        List<String> loreCost = new ArrayList<>();
-        loreCost.add("");
-        loreCost.add(ChatColor.AQUA + "Title Cost: ");
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
-        }
-        return loreCost;
-    }
-
     public SkillBoosts getSelectedSkillBoost() {
         return selectedSkillBoost;
     }
@@ -99,6 +82,25 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public Map<LegendaryTitles, LegendaryWeaponTitleInfo> getTitles() {
         return titles;
+    }
+
+    public List<String> getCostLore() {
+        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
+
+        List<String> loreCost = new ArrayList<>();
+        loreCost.add("");
+        loreCost.add(ChatColor.AQUA + "Title Cost: ");
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
+        }
+        return loreCost;
+    }
+
+    public LinkedHashMap<Currencies, Long> getCost() {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 50000L);
+            put(Currencies.SYNTHETIC_SHARD, 1000L);
+        }};
     }
 
     @Override
@@ -146,14 +148,14 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
                     format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
         }
-        String passiveEffect = getPassiveEffect();
-        if (!passiveEffect.isEmpty()) {
-            upgradeLore.addAll(Arrays.asList(
-                    "",
-                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
-            ));
-        }
+//        String passiveEffect = getPassiveEffect();
+//        if (!passiveEffect.isEmpty()) {
+//            upgradeLore.addAll(Arrays.asList(
+//                    "",
+//                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
+//                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
+//            ));
+//        }
 
         return upgradeLore;
     }
@@ -244,8 +246,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
         return skillCritMultiplierBonus;
     }
-
-    public abstract String getPassiveEffect();
 
     protected abstract float getMeleeDamageMaxValue();
 
@@ -354,6 +354,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
+    public String getName() {
+        if (getTitleName().isEmpty()) {
+            return super.getName();
+        } else {
+            return ChatColor.GOLD + getTitleName() + " " + super.getName();
+        }
+    }
+
+    @Override
     public List<String> getBaseStats() {
         return Arrays.asList(
                 ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
@@ -405,19 +414,27 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public List<String> getLoreAddons() {
-        return Arrays.asList(
-                ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]",
-                ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]"
-        );
+        List<String> loreAddons = new ArrayList<>();
+        loreAddons.add(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+        if (getPassiveEffect() != null) {
+            loreAddons.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]");
+        }
+        return loreAddons;
+    }
+
+    public abstract String getPassiveEffect();
+
+    public int getTitleLevel() {
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
+    }
+
+    public void setTitleLevel(int level) {
+        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setUpgradeLevel(level);
     }
 
     @Override
-    public String getName() {
-        if (getTitleName().isEmpty()) {
-            return super.getName();
-        } else {
-            return ChatColor.GOLD + getTitleName() + " " + super.getName();
-        }
+    public ChatColor getChatColor() {
+        return ChatColor.GOLD;
     }
 
     public String getTitleName() {
@@ -428,9 +445,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return LegendaryTitles.NONE;
     }
 
-    @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GOLD;
+    public void upgradeTitleLevel() {
+        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).upgrade();
     }
 
     public void activateAbility(WarlordsPlayer wp, Player player, boolean hotkeyMode) {
@@ -505,9 +521,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     protected abstract float getMeleeDamageMinValue();
 
-    protected abstract float getCritChanceValue();
-
-    protected abstract float getCritMultiplierValue();
+    public WeaponStats getStarPieceStat() {
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPieceStat();
+    }
 
     protected abstract float getHealthBonusValue();
 
@@ -536,19 +552,61 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
     }
 
-    public WeaponStats getStarPieceStat() {
-        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPieceStat();
-    }
+    protected abstract float getCritChanceValue();
+
+    protected abstract float getCritMultiplierValue();
 
     public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
         this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setStarPieceInfo(starPiece, starPieceBonus);
     }
 
-    public int getTitleLevel() {
-        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
+    public ItemStack getUpgradedTitleItem() {
+        String passiveEffect = getPassiveEffect();
+        if (passiveEffect.isEmpty()) {
+            return null;
+        }
+        for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
+            passiveEffect = passiveEffect.replace(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
+        }
+        List<String> upgradeLore = new ArrayList<>(Arrays.asList(
+                ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
+                ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175),
+                ""
+        ));
+        upgradeLore.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + getTitleLevelUpgraded() + "/4]");
+        upgradeLore.addAll(getTitleUpgradeCostLore());
+        return new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+                .name(ChatColor.GREEN + "Confirm")
+                .lore(upgradeLore)
+                .get();
+
     }
 
-    public void setTitleLevel(int level) {
-        this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).setUpgradeLevel(level);
+    public abstract List<Pair<String, String>> getPassiveEffectUpgrade();
+
+    public int getTitleLevelUpgraded() {
+        return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel() + 1;
     }
+
+    public List<String> getTitleUpgradeCostLore() {
+        LinkedHashMap<Currencies, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
+        List<String> lore = new ArrayList<>();
+        if (upgradeCost.isEmpty()) {
+            lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
+        } else {
+            lore.add("");
+            lore.add(ChatColor.AQUA + "Upgrade Cost: ");
+            upgradeCost.forEach((currencies, aLong) -> {
+                lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
+            });
+        }
+        return lore;
+    }
+
+    public LinkedHashMap<Currencies, Long> getTitleUpgradeCost(int tier) {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 1L);
+        }};
+    }
+
 }

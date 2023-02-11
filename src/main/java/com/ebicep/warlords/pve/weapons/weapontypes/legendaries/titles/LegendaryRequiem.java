@@ -12,9 +12,11 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +42,11 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     public String getPassiveEffect() {
         return "Gain a " + DAMAGE_HEAL_BOOST + "% damage and healing bonus whenever a teammate dies or Undying Army is cast/popped on teammates " +
                 "(Only applicable to caster).";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return null;
     }
 
     @Override
