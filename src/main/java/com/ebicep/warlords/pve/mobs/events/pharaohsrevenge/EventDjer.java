@@ -51,8 +51,8 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 9000,
                 0.32f,
                 10,
-                730,
-                900
+                1100,
+                1310
         );
     }
 
@@ -71,7 +71,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 if (!event.getPlayer().equals(warlordsNPC)) {
                     return;
                 }
-                if (aboveHalfHealth()) {
+                if (aboveHealthThreshold()) {
                     return;
                 }
                 if (!skillsImmuneTo.contains(event.getFrom())) {
@@ -85,7 +85,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 if (!event.getPlayer().equals(warlordsNPC)) {
                     return;
                 }
-                if (aboveHalfHealth()) {
+                if (aboveHealthThreshold()) {
                     return;
                 }
                 if (!skillsImmuneTo.contains(event.getAbility())) {
@@ -118,8 +118,8 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 warlordsPlayer.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred", //TODO
-                        540,
-                        770,
+                        920,
+                        1080,
                         0,
                         100,
                         false
@@ -156,8 +156,8 @@ public class EventDjer extends AbstractZombie implements BossMob {
 
     }
 
-    private boolean aboveHalfHealth() {
-        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() / 2);
+    private boolean aboveHealthThreshold() {
+        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
     }
 
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
 import com.ebicep.warlords.abilties.CripplingStrike;
 import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -21,6 +22,8 @@ import org.bukkit.Location;
 
 public class EventDjet extends AbstractZombie implements BossMob {
 
+    private boolean fireFlameBursts = false;
+
     public EventDjet(Location spawnLocation) {
         super(spawnLocation,
                 "Djet",
@@ -35,8 +38,8 @@ public class EventDjet extends AbstractZombie implements BossMob {
                 9000,
                 0.32f,
                 10,
-                620,
-                800
+                930,
+                1210
         );
     }
 
@@ -48,17 +51,17 @@ public class EventDjet extends AbstractZombie implements BossMob {
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
             warlordsNPC.heal();
         }
+        AbstractAbility redAbility = warlordsNPC.getRedAbility();
+        redAbility.setMinDamageHeal(1200);
+        redAbility.setMinDamageHeal(1380);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        int curseTickCycle;
-        if (aboveHalfHealth()) {
-            curseTickCycle = 140;
-        } else {
-            curseTickCycle = 100;
+        if (ticksElapsed % 60 == 0 && aboveHealthThreshold()) {
+            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
         }
-        if (ticksElapsed % curseTickCycle == 0) {
+        if (ticksElapsed % 100 == 0) {
             for (WarlordsPlayer warlordsPlayer : PlayerFilterGeneric
                     .playingGameWarlordsPlayers(warlordsNPC.getGame())
                     .aliveEnemiesOf(warlordsNPC)
@@ -96,14 +99,14 @@ public class EventDjet extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (aboveHalfHealth()) {
+        if (aboveHealthThreshold()) {
             warlordsNPC.getSpec().setDamageResistance(10);
         } else {
             warlordsNPC.getSpec().setDamageResistance(30);
         }
     }
 
-    private boolean aboveHalfHealth() {
-        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() / 2);
+    private boolean aboveHealthThreshold() {
+        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
     }
 }
