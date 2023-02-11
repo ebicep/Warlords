@@ -17,6 +17,8 @@ import java.util.UUID;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
+    public static final int EPS = 50;
+    public static final float EPS_PER_UPGRADE = 12.5f;
     public static final int DURATION = 10;
 
     @Transient
@@ -35,7 +37,9 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "+40 energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
+        return formatTitleUpgrade("+",
+                EPS + EPS_PER_UPGRADE * getTitleLevel()
+        ) + " energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
     }
 
     @Override
@@ -55,7 +59,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public void resetAbility() {
-        ability = new LegendaryVigorousAbility();
+        ability = new LegendaryVigorousAbility(EPS + EPS_PER_UPGRADE * getTitleLevel());
     }
 
     @Override
@@ -90,13 +94,16 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     static class LegendaryVigorousAbility extends AbstractAbility {
 
-        public LegendaryVigorousAbility() {
+        private final float energyPerSecond;
+
+        public LegendaryVigorousAbility(float energyPerSecond) {
             super("Vigorous", 0, 0, 30, 0);
+            this.energyPerSecond = energyPerSecond;
         }
 
         @Override
         public void updateDescription(Player player) {
-            description = ChatColor.YELLOW + "+40 " + ChatColor.GRAY + "energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
+            description = ChatColor.YELLOW + "+" + energyPerSecond + ChatColor.GRAY + " energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
         }
 
         @Override
@@ -119,7 +126,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + 2f;
+                    return energyGainPerTick + (energyPerSecond / 20);
                 }
             });
             return true;
