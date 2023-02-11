@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class LegendarySuspicious extends AbstractLegendaryWeapon {
-    public static final List<Pair<Note, Integer>> noteDelay = new ArrayList<>() {{
+
+    public static final int ENERGY_GAIN = 20;
+    public static final int ENERGY_GAIN_PER_UPGRADE = 5;
+
+    public static final List<Pair<Note, Integer>> NOTE_DELAY = new ArrayList<>() {{
         add(new Pair<>(new Note(0, Note.Tone.G, false), 7));
         add(new Pair<>(new Note(1, Note.Tone.C, false), 4));
         add(new Pair<>(new Note(1, Note.Tone.D, true), 4));
@@ -47,7 +51,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Play an among us sound and gain 20 energy whenever you land a melee crit.";
+        return "Play an among us sound and gain " + formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()) + " energy whenever you land a melee crit.";
     }
 
     @Override
@@ -67,7 +71,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                     return;
                 }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
-                    player.addEnergy(player, "Suspicious Weapon", 20);
+                    player.addEnergy(player, "Suspicious Weapon", ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel());
                     if (player.getEntity() instanceof Player) {
                         Player p = (Player) player.getEntity();
                         if (sound != null) {
@@ -83,11 +87,11 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                                     delay--;
                                     return;
                                 }
-                                if (tick >= noteDelay.size()) {
+                                if (tick >= NOTE_DELAY.size()) {
                                     this.cancel();
                                     return;
                                 }
-                                Pair<Note, Integer> note = noteDelay.get(tick);
+                                Pair<Note, Integer> note = NOTE_DELAY.get(tick);
                                 Utils.playGlobalSound(p.getLocation(), Instrument.PIANO, note.getA());
                                 delay = note.getB();
                                 tick++;
