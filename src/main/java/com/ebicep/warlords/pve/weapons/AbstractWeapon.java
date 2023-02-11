@@ -67,8 +67,8 @@ public abstract class AbstractWeapon {
         return DECIMAL_FORMAT.format(value);
     }
 
-    protected static String formatTitleUpgrade(double value) {
-        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value);
+    protected static String formatTitleUpgrade(double value, String append) {
+        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + append + ChatColor.GRAY;
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {

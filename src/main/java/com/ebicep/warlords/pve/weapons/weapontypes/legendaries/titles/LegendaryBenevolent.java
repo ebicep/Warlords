@@ -4,7 +4,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -28,7 +27,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase healing provided by " + formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel()) + "%" + ChatColor.GRAY + ".";
+        return "Increase healing provided by " + formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
     }
 
     @Override
