@@ -193,42 +193,22 @@ public class PlayerSettings {
 
     public void setHelmet(Classes classes, ArmorManager.Helmets helmet) {
         switch (classes) {
-            case MAGE:
-                this.mageHelmet = helmet;
-                break;
-            case WARRIOR:
-                this.warriorHelmet = helmet;
-                break;
-            case PALADIN:
-                this.paladinHelmet = helmet;
-                break;
-            case SHAMAN:
-                this.shamanHelmet = helmet;
-                break;
-            case ROGUE:
-                this.rogueHelmet = helmet;
-                break;
+            case MAGE -> this.mageHelmet = helmet;
+            case WARRIOR -> this.warriorHelmet = helmet;
+            case PALADIN -> this.paladinHelmet = helmet;
+            case SHAMAN -> this.shamanHelmet = helmet;
+            case ROGUE -> this.rogueHelmet = helmet;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
     }
 
     public void setArmor(Classes classes, ArmorManager.ArmorSets armor) {
         switch (classes) {
-            case MAGE:
-                this.mageArmor = armor;
-                break;
-            case WARRIOR:
-                this.warriorArmor = armor;
-                break;
-            case PALADIN:
-                this.paladinArmor = armor;
-                break;
-            case SHAMAN:
-                this.shamanArmor = armor;
-                break;
-            case ROGUE:
-                this.rogueArmor = armor;
-                break;
+            case MAGE -> this.mageArmor = armor;
+            case WARRIOR -> this.warriorArmor = armor;
+            case PALADIN -> this.paladinArmor = armor;
+            case SHAMAN -> this.shamanArmor = armor;
+            case ROGUE -> this.rogueArmor = armor;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }

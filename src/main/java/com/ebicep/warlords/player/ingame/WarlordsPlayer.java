@@ -22,12 +22,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -46,7 +43,6 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
@@ -54,60 +50,36 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
-    public void stun() {
-        STUNNED_PLAYERS.add(uuid);
-    }
+    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
+        jimmy.setBaby();
+        jimmy.setCustomNameVisible(true);
 
-    public void unstun() {
-        STUNNED_PLAYERS.remove(uuid);
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
-            if (
-                    (e.getFrom().getX() != e.getTo().getX() ||
-                            e.getFrom().getZ() != e.getTo().getZ()) &&
-                            !(e instanceof PlayerTeleportEvent)
-            ) {
-                e.getPlayer().teleport(e.getFrom());
-            }
+        EntityEquipment equipment = jimmy.getEquipment();
+        if (inv != null) {
+            equipment.setBoots(inv.getBoots());
+            equipment.setLeggings(inv.getLeggings());
+            equipment.setChestplate(inv.getChestplate());
+            equipment.setHelmet(inv.getHelmet());
+            equipment.setItemInMainHand(inv.getItemInMainHand());
+        } else {
+            equipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }
+        //prevents jimmy from moving
+        jimmy.setAI(false);
+        return jimmy;
     }
 
-//    @Override
+    private final AbilityTree abilityTree = new AbilityTree(this);
+    private CosmeticSettings cosmeticSettings;
+
+    //    @Override
 //    public void setWasSneaking(boolean wasSneaking) {
 //        super.setWasSneaking(wasSneaking);
 //        if(wasSneaking) {
 //            ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Player sneak " + name + " - " + specClass);
 //        }
 //    }
-
-    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby(false);
-        jimmy.setCustomNameVisible(true);
-
-        if (inv != null) {
-            jimmy.getEquipment().setBoots(inv.getBoots());
-            jimmy.getEquipment().setLeggings(inv.getLeggings());
-            jimmy.getEquipment().setChestplate(inv.getChestplate());
-            jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
-        return jimmy;
-    }
-
-    private final AbilityTree abilityTree = new AbilityTree(this);
-    private CosmeticSettings cosmeticSettings;
     private SkillBoosts skillBoost;
     private AbstractWeapon weapon;
 
@@ -167,22 +139,35 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
     }
 
+    public void stun() {
+        STUNNED_PLAYERS.add(uuid);
+    }
+
+    public void unstun() {
+        STUNNED_PLAYERS.remove(uuid);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
+            if (
+                    (e.getFrom().getX() != e.getTo().getX() ||
+                            e.getFrom().getZ() != e.getTo().getZ()) &&
+                            !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
+        }
+    }
+
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.setCustomName(this.getSpec()
-                .getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(
-                this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
+        jimmy.setCustomName(getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                .setValue(0);
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE)
-                .setValue(0);
+        jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
+        jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
         //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
+        jimmy.setAI(true);
         if (isDead()) {
             jimmy.remove();
         }
@@ -231,8 +216,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public void updateInventory(boolean closeInventory) {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
 
             player.getInventory().clear();
 
@@ -272,8 +256,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     public void resetPlayerAddons() {
-        if (getEntity() instanceof Player) {
-            Player player = (Player) getEntity();
+        if (getEntity() instanceof Player player) {
             PlayerInventory playerInventory = player.getInventory();
 
             //Soulbinding weapon enchant
@@ -298,13 +281,12 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             //Arcane shield absorption hearts
             List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
-                    .collect(Collectors.toList());
+                    .toList();
             if (!arcaneShields.isEmpty()) {
                 ArcaneShield arcaneShield = arcaneShields.get(0);
-                ((CraftPlayer) player).getHandle()
-                        .setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
+                ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
             } else {
-                ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
+                ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
             }
         }
     }
@@ -315,10 +297,10 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (applied) {
             if (potionEffect.getType() == PotionEffectType.INVISIBILITY) {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-                        .stream()
-                        .map(WarlordsNPC::getMob)
-                        .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueID().equals(uuid))
-                        .forEach(AbstractMob::removeTarget);
+                                   .stream()
+                                   .map(WarlordsNPC::getMob)
+                                   .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
+                                   .forEach(AbstractMob::removeTarget);
             }
         }
         return applied;
@@ -331,8 +313,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public void updateEntity() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
             player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
             player.setWalkSpeed(walkSpeed);

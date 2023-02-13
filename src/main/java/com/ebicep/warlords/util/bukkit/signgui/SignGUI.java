@@ -53,7 +53,7 @@ public class SignGUI {
         BlockPosition blockPosition = new BlockPosition(x, y, z);
 
         WrapperPlayServerBlockChange blockChangePacket = new WrapperPlayServerBlockChange();
-        WrappedBlockData blockData = WrappedBlockData.createData(Material.SIGN_POST);
+        WrappedBlockData blockData = WrappedBlockData.createData(Material.OAK_SIGN);
         blockChangePacket.setBlockData(blockData);
         blockChangePacket.setLocation(blockPosition);
         blockChangePacket.sendPacket(player);

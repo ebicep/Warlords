@@ -80,10 +80,10 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.2f);
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.2f);
     }
 }

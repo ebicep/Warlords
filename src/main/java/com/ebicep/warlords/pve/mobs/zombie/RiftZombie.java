@@ -44,11 +44,11 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
         if (ticksElapsed % 40 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.CREEPER_HISS, 2, 0.2f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 2, 0.2f);
         }
 
         if (ticksElapsed % 200 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.2f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.2f);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Rift Speed", 100, 2 * 20);
         }
     }
@@ -67,10 +67,10 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

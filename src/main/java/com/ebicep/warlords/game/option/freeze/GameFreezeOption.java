@@ -8,13 +8,9 @@ import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +20,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import javax.annotation.Nonnull;
 
 /**
  * Supports actually freezing the internalPlayers in the game
@@ -79,17 +77,11 @@ public class GameFreezeOption implements Option, Listener {
                     game.clearFrozenCauses();
                     game.setUnfreezeCooldown(false);
                     for (Option option : game.getOptions()) {
-                        if (option instanceof PveOption) {
-                            ((PveOption) option).getMobs().forEach(abstractMob -> {
-                                EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                                NBTTagCompound tag = entityInsentient.getNBTTag();
-                                if (tag == null) {
-                                    tag = new NBTTagCompound();
-                                }
-                                entityInsentient.c(tag);
-                                tag.setByte("NoAI", (byte) 0);
-                                entityInsentient.f(tag);
-                            });
+                        if (option instanceof PveOption pveOption) {
+                            pveOption.getMobs()
+                                     .stream()
+                                     .map(abstractMob -> abstractMob.getEntity().get())
+                                     .forEach(mob -> mob.setNoAi(false));
                         }
                     }
                     this.cancel();
@@ -102,7 +94,7 @@ public class GameFreezeOption implements Option, Listener {
     private Game game;
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
 
         game.registerEvents(this);
@@ -118,14 +110,14 @@ public class GameFreezeOption implements Option, Listener {
             return;
         }
         switch (evt.getKey()) {
-            case Game.KEY_UPDATED_FROZEN:
+            case Game.KEY_UPDATED_FROZEN -> {
                 if (game.isFrozen()) {
                     freeze();
                 }
                 if (!game.isFrozen()) {
                     unfreeze();
                 }
-                break;
+            }
         }
     }
 
@@ -134,17 +126,11 @@ public class GameFreezeOption implements Option, Listener {
             throw new IllegalStateException("Game is not marked as frozen");
         }
         for (Option option : game.getOptions()) {
-            if (option instanceof PveOption) {
-                ((PveOption) option).getMobs().forEach(abstractMob -> {
-                    EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                    NBTTagCompound tag = entityInsentient.getNBTTag();
-                    if (tag == null) {
-                        tag = new NBTTagCompound();
-                    }
-                    entityInsentient.c(tag);
-                    tag.setByte("NoAI", (byte) 1);
-                    entityInsentient.f(tag);
-                });
+            if (option instanceof PveOption pveOption) {
+                pveOption.getMobs()
+                         .stream()
+                         .map(abstractMob -> abstractMob.getEntity().get())
+                         .forEach(mob -> mob.setNoAi(true));
             }
         }
         String message = game.getFrozenCauses().get(0);
@@ -156,16 +142,16 @@ public class GameFreezeOption implements Option, Listener {
     }
 
     private void freezePlayer(Player p, String message) {
-        if (p.getVehicle() instanceof Horse) {
-            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
+        if (p.getVehicle() instanceof Horse horse) {
+            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
         PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
     }
 
     private void unfreezePlayer(Player p) {
-        if (p.getVehicle() instanceof Horse) {
-            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+        if (p.getVehicle() instanceof Horse horse) {
+            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.318);
         }
         PacketUtils.sendTitle(p, "", "", 0, 0, 0);
         p.removePotionEffect(PotionEffectType.BLINDNESS);

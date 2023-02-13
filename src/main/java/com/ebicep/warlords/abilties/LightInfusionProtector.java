@@ -79,7 +79,7 @@ public class LightInfusionProtector extends AbstractAbility {
 
         if (pveUpgrade) {
             wp.setBlueCurrentCooldown(0);
-            wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusionProtector>(
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "INF GRACE",
                     LightInfusionProtector.class,

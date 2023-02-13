@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
 /**
@@ -147,6 +148,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.cancelled = cancelled;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -158,21 +160,19 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("WarlordsDamageHealingEvent{");
-        sb.append("player=").append(getPlayer());
-        sb.append(", attacker=").append(attacker);
-        sb.append(", ability=").append(ability);
-        sb.append(", min=").append(min);
-        sb.append(", max=").append(max);
-        sb.append(", critChance=").append(critChance);
-        sb.append(", critMultiplier=").append(critMultiplier);
-        sb.append(", ignoreReduction=").append(ignoreReduction);
-        sb.append(", isLastStandFromShield=").append(isLastStandFromShield);
-        sb.append(", isDamageInstance=").append(isDamageInstance);
-        sb.append(", cancelled=").append(cancelled);
-        sb.append('}');
-        return sb.toString();
+        return "WarlordsDamageHealingEvent{" +
+                "player=" + getPlayer() +
+                ", attacker=" + attacker +
+                ", ability=" + ability +
+                ", min=" + min +
+                ", max=" + max +
+                ", critChance=" + critChance +
+                ", critMultiplier=" + critMultiplier +
+                ", ignoreReduction=" + ignoreReduction +
+                ", isLastStandFromShield=" + isLastStandFromShield +
+                ", isDamageInstance=" + isDamageInstance +
+                ", cancelled=" + cancelled +
+                '}';
     }
             
 }

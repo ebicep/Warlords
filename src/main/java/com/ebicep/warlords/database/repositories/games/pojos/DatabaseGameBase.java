@@ -77,8 +77,7 @@ public abstract class DatabaseGameBase {
                 }
             } else {
                 for (Option option : game.getOptions()) {
-                    if (option instanceof WaveDefenseOption) {
-                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    if (option instanceof WaveDefenseOption waveDefenseOption) {
                         if (waveDefenseOption.getDifficulty() != DifficultyIndex.EVENT && waveDefenseOption.getWavesCleared() == 0) {
                             System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
@@ -90,11 +89,7 @@ public abstract class DatabaseGameBase {
             //check for private + untracked gamemodes
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 switch (game.getGameMode()) {
-                    case DUEL:
-                    case DEBUG:
-                    case SIMULATION_TRIAL:
-                        updatePlayerStats = false;
-                        break;
+                    case DUEL, DEBUG, SIMULATION_TRIAL -> updatePlayerStats = false;
                 }
             }
 
@@ -104,14 +99,10 @@ public abstract class DatabaseGameBase {
                     break;
                 }
                 switch (addon) {
-                    case CUSTOM_GAME:
-                    case IMPOSTER_MODE:
-                    case COOLDOWN_MODE:
-                    case TRIPLE_HEALTH:
-                    case INTERCHANGE_MODE:
+                    case CUSTOM_GAME, IMPOSTER_MODE, COOLDOWN_MODE, TRIPLE_HEALTH, INTERCHANGE_MODE -> {
                         ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
                         updatePlayerStats = false;
-                        break;
+                    }
                 }
             }
 

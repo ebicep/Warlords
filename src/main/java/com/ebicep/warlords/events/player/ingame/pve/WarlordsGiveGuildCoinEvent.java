@@ -5,6 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsGiveGuildCoinEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -19,6 +21,7 @@ public class WarlordsGiveGuildCoinEvent extends AbstractWarlordsEntityEvent {
         return coinConversionRate;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

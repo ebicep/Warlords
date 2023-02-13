@@ -33,7 +33,7 @@ public class PrivateGameTerminateCommand extends BaseCommand {
             holder.getGame().clearFrozenCauses();
         }
         Optional<PlayingState> state = game.getState(PlayingState.class);
-        if (!state.isPresent()) {
+        if (state.isEmpty()) {
             player.sendMessage(ChatColor.RED + "The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
         } else {
             player.sendMessage(ChatColor.RED + "Terminating game...");

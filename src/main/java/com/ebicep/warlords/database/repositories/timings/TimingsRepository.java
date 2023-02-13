@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TimingsRepository extends MongoRepository<DatabaseTiming, String> {
 
-    @Query("{title:'?0'}")
+    @Query("{'title':'?0'}")
     DatabaseTiming findByTitle(String title);
 
 }

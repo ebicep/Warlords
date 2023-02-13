@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class TextCooldown<T> extends AbstractCooldown<T> {
 
     protected boolean remove = false;
-    protected String text = "";
+    protected String text;
 
     public TextCooldown(
             String name,

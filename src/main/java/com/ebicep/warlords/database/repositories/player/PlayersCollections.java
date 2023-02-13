@@ -83,39 +83,29 @@ public enum PlayersCollections {
     public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, SEASON_7, WEEKLY, DAILY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
-        switch (playersCollections) {
-            case LIFETIME:
-                return SEASON_7;
-            case SEASON_7:
-                return WEEKLY;
+        return switch (playersCollections) {
+            case LIFETIME -> SEASON_7;
+            case SEASON_7 -> WEEKLY;
 //            case SEASON_5:
 //                return SEASON_4;
 //            case SEASON_4:
 //                return WEEKLY;
-            case WEEKLY:
-                return DAILY;
-            case DAILY:
-                return LIFETIME;
-        }
-        return LIFETIME;
+            case WEEKLY -> DAILY;
+            case DAILY -> LIFETIME;
+        };
     }
 
     public static PlayersCollections getBeforeCollection(PlayersCollections playersCollections) {
-        switch (playersCollections) {
-            case LIFETIME:
-                return DAILY;
-            case SEASON_7:
-                return LIFETIME;
+        return switch (playersCollections) {
+            case LIFETIME -> DAILY;
+            case SEASON_7 -> LIFETIME;
 //            case SEASON_5:
 //                return SEASON_6;
 //            case SEASON_4:
 //                return SEASON_5;
-            case WEEKLY:
-                return SEASON_7;
-            case DAILY:
-                return WEEKLY;
-        }
-        return LIFETIME;
+            case WEEKLY -> SEASON_7;
+            case DAILY -> WEEKLY;
+        };
     }
 
     public final String name;

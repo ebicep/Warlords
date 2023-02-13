@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SupplyDropManager {
@@ -26,7 +25,7 @@ public class SupplyDropManager {
 
     public static void sendSupplyDropMessage(UUID uuid, String message) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
+        if (offlinePlayer.isOnline()) {
             offlinePlayer.getPlayer().sendMessage(ChatColor.GOLD + "Supply Drop" + ChatColor.DARK_GRAY + " > " + message);
         }
     }
@@ -53,7 +52,7 @@ public class SupplyDropManager {
                             player.closeInventory();
                             return;
                         }
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         databasePlayerPvE.subtractCurrency(Currencies.COIN, 10000);
                         databasePlayerPvE.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
                         openSupplyDropMenu(player);
@@ -64,7 +63,7 @@ public class SupplyDropManager {
             menu.setItem(
                     2,
                     3,
-                    new ItemBuilder(Material.GOLD_BARDING)
+                    new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                             .name(ChatColor.GREEN + "Click to call a supply drop")
                             .lore(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1),
@@ -78,7 +77,7 @@ public class SupplyDropManager {
                             player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                             return;
                         }
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         if (tokens > 0) {
                             supplyDropRoll(player, 1, e.isShiftClick());
                         } else {
@@ -90,7 +89,7 @@ public class SupplyDropManager {
             menu.setItem(
                     6,
                     3,
-                    new ItemBuilder(Material.DIAMOND_BARDING)
+                    new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                             .name(ChatColor.GREEN + "Click to call all available supply drops (Max 25)")
                             .lore(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
@@ -122,15 +121,15 @@ public class SupplyDropManager {
                     .stream()
                     .map(SupplyDropEntry::getReward)
                     .map(supplyDropRewards -> supplyDropRewards.getChatColor() + supplyDropRewards.name + "\n")
-                    .collect(Collectors.toList());
+                    .toList();
             menu.setItem(
                     5,
                     5,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Your most recent supply drops")
                             .lore(IntStream.range(0, supplyDropHistory.size())
-                                    .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
-                                    .collect(Collectors.toList()))
+                                           .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
+                                           .toList())
                             .get(),
                     (m, e) -> {
 
@@ -173,7 +172,7 @@ public class SupplyDropManager {
                     if (instant || counter % slowness == 0) {
                         reward = SupplyDropRewards.getRandomReward();
                         Random random = new Random();
-                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, random.nextFloat());
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, random.nextFloat());
                         PacketUtils.sendTitle(
                                 uuid,
                                 reward.getChatColor() + reward.name,

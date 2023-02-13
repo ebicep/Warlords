@@ -24,6 +24,7 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent {
         return killer;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

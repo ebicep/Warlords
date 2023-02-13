@@ -28,7 +28,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
 
     public static final int DEFAULT_GATE_DELAY = 10;
     public static final Material DEFAULT_OPEN_MATERIAL = Material.AIR;
-    public static final Material DEFAULT_CLOSED_MATERIAL = Material.FENCE;
+    public static final Material DEFAULT_CLOSED_MATERIAL = Material.OAK_FENCE;
     public static final Boolean DEFAULT_SHOULD_BROADCAST = null;
 
     private final Material closed;
@@ -115,11 +115,11 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         changeGate(open, closed);
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
-        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.FENCE_GATE, 0, this.getClass(),
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.OAK_FENCE_GATE, 0, this.getClass(),
                 "Gates",
                 new Location(
                         min.getWorld(),
@@ -140,7 +140,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
         if (this.shouldBroadcast) {
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                 Player player = entry.getKey();
-                player.playSound(player.getLocation(), Sound.WITHER_SPAWN, 5, 1);
+                player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 5, 1);
                 sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
 
                 Utils.resetPlayerMovementStatistics(player);
@@ -167,8 +167,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
     public void start(@Nonnull Game game) {
         if (autoDetectShouldBroadcast) {
             for (Option option : game.getOptions()) {
-                if (option instanceof GateOption) {
-                    GateOption gateOption = (GateOption) option;
+                if (option instanceof GateOption gateOption) {
                     if (gateOption.getDelay() == this.getDelay()) {
                         this.shouldBroadcast = option == this;
                         break;
@@ -190,7 +189,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
                 if (shouldBroadcast) {
                     for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                         Player player = entry.getKey();
-                        player.playSound(player.getLocation(), delay == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
+                        player.playSound(player.getLocation(), delay == 0 ? Sound.ENTITY_WITHER_SPAWN : Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                         String number = (delay >= 8 ? ChatColor.GREEN
                                 : delay >= 4 ? ChatColor.YELLOW
                                         : ChatColor.RED).toString() + delay;

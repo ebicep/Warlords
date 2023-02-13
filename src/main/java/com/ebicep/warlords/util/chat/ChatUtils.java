@@ -8,10 +8,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -272,8 +272,8 @@ public class ChatUtils {
      */
     public static String convertItemStackToJsonRegular(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
+        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        CompoundTag compound = new CompoundTag();
         nmsItemStack.save(compound);
         return compound.toString();
     }

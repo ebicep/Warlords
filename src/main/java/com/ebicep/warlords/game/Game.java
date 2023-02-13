@@ -64,7 +64,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final long createdAt = System.currentTimeMillis();
     private final List<BukkitTask> gameTasks = new ArrayList<>();
     private final List<Listener> eventHandlers = new ArrayList<>();
-    private final EnumMap<Team, Integer> points = new EnumMap(Team.class);
+    private final EnumMap<Team, Integer> points = new EnumMap<>(Team.class);
 
     @Nonnull
     private final GameMap map;
@@ -92,7 +92,7 @@ public final class Game implements Runnable, AutoCloseable {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
 
-    Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations, List<Option> options) {
+    Game(EnumSet<GameAddon> gameAddons, GameMap map, @Nonnull GameMode gameMode, LocationFactory locations, List<Option> options) {
         this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
@@ -722,14 +722,12 @@ public final class Game implements Runnable, AutoCloseable {
                                                                                         .createRegisteredListeners(listener, Warlords.getInstance())
                                                                                         .entrySet()) {
             if (AbstractWarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
-                entry.setValue(entry.getValue().stream().map(rl -> {
-                    return new RegisteredListener(rl.getListener(), (l, e) -> {
-                        AbstractWarlordsGameEvent wge = (AbstractWarlordsGameEvent) e;
-                        if (wge.getGame() == Game.this) {
-                            rl.callEvent(e);
-                        }
-                    }, rl.getPriority(), rl.getPlugin(), false);
-                }).collect(Collectors.toSet()));
+                entry.setValue(entry.getValue().stream().map(rl -> new RegisteredListener(rl.getListener(), (l, e) -> {
+                    AbstractWarlordsGameEvent wge = (AbstractWarlordsGameEvent) e;
+                    if (wge.getGame() == Game.this) {
+                        rl.callEvent(e);
+                    }
+                }, rl.getPriority(), rl.getPlugin(), false)).collect(Collectors.toSet()));
             }
             getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
         }
@@ -794,23 +792,6 @@ public final class Game implements Runnable, AutoCloseable {
         reopenGameReferencedMenus();
     }
 
-    public static void reopenGameReferencedMenus() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            String title = player.getOpenInventory().getTopInventory().getTitle();
-            switch (title) {
-                case "Debug Options":
-                    DebugMenu.openDebugMenu(player);
-                    break;
-                case "Current Games":
-                    SpectateCommand.openSpectateMenu(player);
-                    break;
-                case "Game Selector":
-                    DebugMenuGameOptions.GamesMenu.openGameSelectorMenu(player);
-                    break;
-            }
-        }
-    }
-
     public List<UUID> removeAllPlayers() {
         List<UUID> toRemove = new ArrayList<>(this.players.keySet());
         for (UUID p : toRemove) {
@@ -831,6 +812,17 @@ public final class Game implements Runnable, AutoCloseable {
     @Nonnull
     public GameMap getMap() {
         return map;
+    }
+
+    public static void reopenGameReferencedMenus() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String title = player.getOpenInventory().getTitle();
+            switch (title) {
+                case "Debug Options" -> DebugMenu.openDebugMenu(player);
+                case "Current Games" -> SpectateCommand.openSpectateMenu(player);
+                case "Game Selector" -> DebugMenuGameOptions.GamesMenu.openGameSelectorMenu(player);
+            }
+        }
     }
 
     @Override

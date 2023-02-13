@@ -26,6 +26,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         this(playerFlagLocation.getLocation(), playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getPickUpTicks() + 600 : playerFlagLocation.getPickUpTicks());
     }
 
+    @Nonnull
     @Override
     public Location getLocation() {
         return location;
@@ -44,12 +45,13 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         this.despawnTimer--;
         this.damageTimer++;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
+    @Nonnull
     @Override
     public List<String> getDebugInformation() {
         return Arrays.asList(

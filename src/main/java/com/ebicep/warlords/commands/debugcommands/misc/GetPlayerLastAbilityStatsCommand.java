@@ -23,7 +23,7 @@ public class GetPlayerLastAbilityStatsCommand extends BaseCommand {
     public void getLastAbilityStats(Player player, @Values("@playerabilitystats") String name) {
         for (UUID uuid : PLAYER_LAST_ABILITY_STATS.keySet()) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer != null && Objects.equals(offlinePlayer.getName(), name)) {
+            if (Objects.equals(offlinePlayer.getName(), name)) {
                 ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "--------------------------------------------------");
                 ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "Last ability stats for " + ChatColor.AQUA + offlinePlayer.getName());
                 ChatUtils.sendCenteredMessage(player, "");

@@ -38,13 +38,17 @@ public class GameTerminateCommand extends BaseCommand {
                 game.clearFrozenCauses();
             }
             Optional<PlayingState> state = game.getState(PlayingState.class);
-            if (!state.isPresent()) {
+            if (state.isEmpty()) {
                 otherStateGames.add(gameHolder);
                 continue;
             }
             if (gamePredicate.test(gameHolder)) {
                 game.setNextState(new EndState(game, null));
-                ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"), true);
+                ChatChannels.sendDebugMessage(issuer,
+                        ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap()
+                                                                                                                       .getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"),
+                        true
+                );
             }
         }
         ChatChannels.sendDebugMessage(

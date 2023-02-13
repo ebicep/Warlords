@@ -174,26 +174,26 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
         LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
         switch (tier) {
-            case 1:
+            case 1 -> {
                 cost.put(Currencies.COIN, 100000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 cost.put(Currencies.COIN, 250000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 cost.put(Currencies.COIN, 500000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 30000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
-                break;
-            case 4:
+            }
+            case 4 -> {
                 cost.put(Currencies.COIN, 1000000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 40000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
-                break;
+            }
         }
         return cost;
     }
@@ -575,7 +575,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         ));
         upgradeLore.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + getTitleLevelUpgraded() + "/4]");
         upgradeLore.addAll(getTitleUpgradeCostLore());
-        return new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+        return new ItemBuilder(Material.GREEN_CONCRETE)
                 .name(ChatColor.GREEN + "Confirm")
                 .lore(upgradeLore)
                 .get();

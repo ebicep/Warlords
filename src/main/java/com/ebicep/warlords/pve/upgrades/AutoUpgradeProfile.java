@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;

@@ -37,12 +37,13 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Material;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
@@ -55,7 +56,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class OnslaughtOption implements Option, PveOption {
 
@@ -80,8 +80,7 @@ public class OnslaughtOption implements Option, PveOption {
     public void register(@Nonnull Game game) {
         this.game = game;
         for (Option o : game.getOptions()) {
-            if (o instanceof BoundingBoxOption) {
-                BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;
+            if (o instanceof BoundingBoxOption boundingBoxOption) {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
@@ -149,10 +148,9 @@ public class OnslaughtOption implements Option, PveOption {
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getPlayer();
-                if (!(player instanceof WarlordsPlayer)) {
+                if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
                 AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
                 if (abilityTree == null) {
                     return;
@@ -181,39 +179,38 @@ public class OnslaughtOption implements Option, PveOption {
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
                 Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof EntityLiving)) {
+                if (!(entity instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                EntityLiving entityLiving = (EntityLiving) entity;
                 if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
                     return;
                 }
-                if (entityLiving instanceof EntityInsentient) {
+                if (entityLiving instanceof Mob) {
                     LivingEntity newTarget = event.getTarget();
-                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
-                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                    LivingEntity oldTarget = ((Mob) entityLiving).getTarget();
+                    if (entityLiving.hasPotionEffect(PotionEffectType.BLINDNESS) && newTarget != null) {
                         event.setCancelled(true);
                         return;
                     }
                     if (newTarget == null) {
-                        if (oldTarget instanceof EntityPlayer) {
+                        if (oldTarget instanceof Player) {
                             //setting target to player zombie
                             game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
-                                    .findFirst()
-                                    .ifPresent(wp -> {
-                                        if (!(wp.getEntity() instanceof Player)) {
-                                            event.setTarget(wp.getEntity());
-                                        }
-                                    });
+                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueId()))
+                                .findFirst()
+                                .ifPresent(wp -> {
+                                    if (!(wp.getEntity() instanceof Player)) {
+                                        event.setTarget(wp.getEntity());
+                                    }
+                                });
                         }
                     } else {
-                        if (oldTarget instanceof EntityZombie) {
+                        if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
                             game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
-                                    .findFirst()
-                                    .ifPresent(warlordsPlayer -> event.setCancelled(true));
+                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
+                                .findFirst()
+                                .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }
                         if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                             event.setCancelled(true);
@@ -282,7 +279,7 @@ public class OnslaughtOption implements Option, PveOption {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);

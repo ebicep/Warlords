@@ -33,6 +33,7 @@ public class WarlordsAbilityActivateEvent extends AbstractWarlordsEntityEvent im
         this.cancelled = cancelled;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

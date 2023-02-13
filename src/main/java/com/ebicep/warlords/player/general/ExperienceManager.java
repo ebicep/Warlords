@@ -250,15 +250,9 @@ public class ExperienceManager {
                     databasePlayer -> {
                         int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
                         switch (plays) {
-                            case 0:
-                                expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
-                                break;
-                            case 1:
-                                expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
-                                break;
-                            case 2:
-                                expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
-                                break;
+                            case 0 -> expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
+                            case 1 -> expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
+                            case 2 -> expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
                         }
                     },
                     () -> {
@@ -336,13 +330,9 @@ public class ExperienceManager {
 
         progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
         int greenBars = (int) Math.round(progressPercentage * 20 / 100);
-        for (int i = 0; i < greenBars; i++) {
-            progress += "-";
-        }
+        progress = progress + "-".repeat(Math.max(0, greenBars));
         progress += ChatColor.WHITE;
-        for (int i = greenBars; i < 20; i++) {
-            progress += "-";
-        }
+        progress = progress + "-".repeat(Math.max(0, 20 - greenBars));
         progress += " " + ChatColor.YELLOW + EXPERIENCE_DECIMAL_FORMAT.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(
                 experienceNeeded);
 

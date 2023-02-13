@@ -50,7 +50,7 @@ public class LightInfusion extends AbstractAbility {
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusion tempLightInfusion = new LightInfusion(cooldown);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusion>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "INF",
                 LightInfusion.class,

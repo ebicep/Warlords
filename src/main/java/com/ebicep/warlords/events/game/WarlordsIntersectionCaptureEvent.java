@@ -3,6 +3,8 @@ package com.ebicep.warlords.events.game;
 import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 
 public class WarlordsIntersectionCaptureEvent extends AbstractWarlordsGameEvent {
     private static final HandlerList handlers = new HandlerList();
@@ -18,6 +20,7 @@ public class WarlordsIntersectionCaptureEvent extends AbstractWarlordsGameEvent 
 		return option;
 	}
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

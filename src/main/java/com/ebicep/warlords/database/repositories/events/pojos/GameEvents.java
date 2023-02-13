@@ -257,7 +257,7 @@ public enum GameEvents {
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                    new ItemBuilder(Material.COMPARATOR)
                             .name(ChatColor.GREEN + "Join a public Boltaro event game")
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), false)
@@ -268,7 +268,7 @@ public enum GameEvents {
             Menu menu = new Menu("Fighter’s Glory Modes", 9 * 4);
 
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.IRON_FENCE)
+                    new ItemBuilder(Material.IRON_BARS)
                             .name(ChatColor.GREEN + "Boltaro’s Lair")
                             .lore(
                                     ChatColor.YELLOW + "Do you have what it takes to be a fighter?",
@@ -413,7 +413,7 @@ public enum GameEvents {
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                    new ItemBuilder(Material.COMPARATOR)
                             .name(ChatColor.GREEN + "Join a public Narmer event game")
                             .get(),
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), false)
@@ -491,7 +491,7 @@ public enum GameEvents {
         npc = NPCManager.npcRegistry.createNPC(EntityType.ZOMBIE, "event");
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2539.5, 50, 744.5, 90, 0));
     }
 
@@ -544,7 +544,7 @@ public enum GameEvents {
 
             for (int i = 0; i < 9; i++) {
                 menu.setItem(i, 0,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                                 .name(" ")
                                 .get(),
                         (m, e) -> {
@@ -553,7 +553,7 @@ public enum GameEvents {
             }
             for (int i = 0; i < 9; i++) {
                 menu.setItem(i, 5,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                                 .name(" ")
                                 .get(),
                         (m, e) -> {
@@ -562,7 +562,7 @@ public enum GameEvents {
             }
             for (int i = 1; i < 5; i++) {
                 menu.setItem(0, i,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                                 .name(" ")
                                 .get(),
                         (m, e) -> {
@@ -571,7 +571,7 @@ public enum GameEvents {
             }
             for (int i = 1; i < 5; i++) {
                 menu.setItem(8, i,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                                 .name(" ")
                                 .get(),
                         (m, e) -> {
@@ -592,18 +592,18 @@ public enum GameEvents {
             int x = 1;
             int y = 1;
             for (EventShopReward reward : shopRewards) {
-                int rewardAmount = reward.getAmount();
-                Currencies rewardCurrency = reward.getCurrency();
-                int rewardPrice = reward.getPrice();
+                int rewardAmount = reward.amount();
+                Currencies rewardCurrency = reward.currency();
+                int rewardPrice = reward.price();
                 String mapName = rewardAmount + "_" + rewardCurrency.name();
 
                 String stock;
-                if (reward.getStock() == -1) {
+                if (reward.stock() == -1) {
                     stock = "Unlimited";
                 } else if (eventMode == null) {
-                    stock = "" + reward.getStock();
+                    stock = "" + reward.stock();
                 } else {
-                    stock = "" + (reward.getStock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
+                    stock = "" + (reward.stock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
                 }
 
 
@@ -614,7 +614,7 @@ public enum GameEvents {
                                         ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
                                         ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                                 )
-                                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                 .get(),
                         (m, e) -> {
                             if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {
@@ -622,7 +622,7 @@ public enum GameEvents {
                                 return;
                             }
                             Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
-                            if (reward.getStock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.getStock()) {
+                            if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
                                 player.sendMessage(ChatColor.RED + "This item is out of stock!");
                                 return;
                             }
@@ -638,7 +638,7 @@ public enum GameEvents {
 
                             player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
                                     rewardPrice) + ChatColor.GREEN + "!");
-                            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2.5f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
                             openShopMenu(player);
 
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -658,34 +658,7 @@ public enum GameEvents {
         });
     }
 
-    static class EventShopReward {
+    record EventShopReward(int amount, Currencies currency, int stock, int price) {
 
-        private final int amount;
-        private final Currencies currency;
-        private final int stock;
-        private final int price;
-
-        EventShopReward(int amount, Currencies currency, int stock, int price) {
-            this.amount = amount;
-            this.currency = currency;
-            this.stock = stock;
-            this.price = price;
-        }
-
-        public int getAmount() {
-            return amount;
-        }
-
-        public Currencies getCurrency() {
-            return currency;
-        }
-
-        public int getStock() {
-            return stock;
-        }
-
-        public int getPrice() {
-            return price;
-        }
     }
 }

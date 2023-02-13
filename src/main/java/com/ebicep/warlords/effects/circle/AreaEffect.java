@@ -30,7 +30,7 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
         this(yOffset, new TeamBasedEffect(effect));
     }
 
-    public AreaEffect(double yOffset, TeamBasedEffect effect) {
+    public AreaEffect(double yOffset, @Nonnull TeamBasedEffect effect) {
         this.yOffset = yOffset;
         this.effect = effect;
     }

@@ -300,7 +300,7 @@ public class Guild {
             sb.append(ChatColor.GREEN).append(ChatColor.BOLD).append(" = ").append(role.getRoleName()).append(" =\n ");
             List<GuildPlayer> guildPlayers = players.stream()
                                                     .filter(player -> role.getPlayers().contains(player.getUUID()))
-                                                    .collect(Collectors.toList());
+                                                    .toList();
             for (int i = 0, guildPlayersSize = guildPlayers.size(); i < guildPlayersSize; i++) {
                 GuildPlayer player = guildPlayers.get(i);
                 sb.append(player.getListName()).append(" ");

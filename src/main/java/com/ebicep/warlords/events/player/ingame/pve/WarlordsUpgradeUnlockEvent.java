@@ -21,6 +21,7 @@ public class WarlordsUpgradeUnlockEvent extends AbstractWarlordsEntityEvent {
         return upgrade;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

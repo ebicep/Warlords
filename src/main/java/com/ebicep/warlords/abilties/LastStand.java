@@ -69,7 +69,7 @@ public class LastStand extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
 
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LAST",
                 LastStand.class,
@@ -118,7 +118,7 @@ public class LastStand extends AbstractAbility {
             playersLastStanded++;
 
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
-            standTarget.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+            standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "LAST",
                     LastStand.class,

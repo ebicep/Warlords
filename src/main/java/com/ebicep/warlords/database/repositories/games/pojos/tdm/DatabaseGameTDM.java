@@ -115,7 +115,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
                 .values()
                 .stream()
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
         HashMap<DatabaseGamePlayerTDM, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerTDM>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerTDM gamePlayerTDM : teamListEntry.getValue()) {

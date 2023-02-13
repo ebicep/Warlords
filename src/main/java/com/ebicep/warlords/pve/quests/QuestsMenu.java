@@ -30,7 +30,7 @@ public class QuestsMenu {
                 row.getAndIncrement();
                 col.set(1);
                 menu.setItem(col.get(), row.get(),
-                        new ItemBuilder(Material.BOOK_AND_QUILL)
+                        new ItemBuilder(Material.WRITABLE_BOOK)
                                 .name(ChatColor.GREEN + (quest.expireOn != null ? "Limited" : quest.time.name) + " Quests")
                                 .get(),
                         (m, e) -> {

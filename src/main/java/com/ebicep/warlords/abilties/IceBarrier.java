@@ -55,7 +55,7 @@ public class IceBarrier extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
 
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<IceBarrier>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ICE",
                 IceBarrier.class,
@@ -88,7 +88,7 @@ public class IceBarrier extends AbstractAbility {
                         );
 
                         if (pveUpgrade) {
-                            Utils.playGlobalSound(particleLoc, Sound.GLASS, 1, 1.35f);
+                            Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
                             EffectUtils.playHelixAnimation(
                                     particleLoc.add(0, -1.25, 0),
                                     6,

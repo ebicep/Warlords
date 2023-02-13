@@ -8,10 +8,11 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.inventory.EntityEquipment;
+
+import java.util.Map;
 
 public abstract class AbstractBerserkZombie extends AbstractZombie implements BasicMob {
 
@@ -47,11 +48,12 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
         }
         if (ticksElapsed % 20 == 0) {
             if (woundingStrike.onActivate(warlordsNPC, null)) {
-                //right click animation
-                PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(entity.getBukkitEntity().getHandle(), 0);
-                warlordsNPC.getGame().forEachOnlinePlayer((player, team) -> {
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-                });
+                PacketUtils.playRightClickAnimationForPlayer(entity.getBukkitEntity().getHandle(),
+                        warlordsNPC.getGame()
+                                   .onlinePlayers()
+                                   .map(Map.Entry::getKey)
+                                   .toArray(org.bukkit.entity.Player[]::new)
+                );
                 strikeTickDelay = 100;
             }
         }

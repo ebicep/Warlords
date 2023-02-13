@@ -19,7 +19,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -113,10 +112,10 @@ public class AchievementsMenu {
             R[][] enumsValues
     ) {
         List<R> unlockedAchievements = databasePlayer.getAchievements().stream()
-                .filter(recordClass::isInstance)
-                .map(recordClass::cast)
-                .map(Achievement.AbstractAchievementRecord::getAchievement)
-                .collect(Collectors.toList());
+                                                     .filter(recordClass::isInstance)
+                                                     .map(recordClass::cast)
+                                                     .map(Achievement.AbstractAchievementRecord::getAchievement)
+                                                     .toList();
 
         Menu menu = new Menu((gameMode == null ? "General" : gameMode.getName() + " - " + menuName), 9 * 6);
         int x = 0;
@@ -195,10 +194,10 @@ public class AchievementsMenu {
             R[] enumsValues
     ) {
         List<R> unlockedAchievements = databasePlayer.getAchievements().stream()
-                .filter(recordClass::isInstance)
-                .map(recordClass::cast)
-                .map(Achievement.AbstractAchievementRecord::getAchievement)
-                .collect(Collectors.toList());
+                                                     .filter(recordClass::isInstance)
+                                                     .map(recordClass::cast)
+                                                     .map(Achievement.AbstractAchievementRecord::getAchievement)
+                                                     .toList();
 
         Menu menu = new Menu((gameMode == null ? "General" : gameMode.getName() + " - " + menuName), 9 * 6);
         int x = 0;
@@ -271,10 +270,10 @@ public class AchievementsMenu {
             BiConsumer<Menu, InventoryClickEvent> menuBack
     ) {
         List<T> achievementRecords = databasePlayer.getAchievements().stream()
-                .filter(recordClass::isInstance)
-                .map(recordClass::cast)
-                .filter(t -> t.getAchievement() == achievement)
-                .collect(Collectors.toList());
+                                                   .filter(recordClass::isInstance)
+                                                   .map(recordClass::cast)
+                                                   .filter(t -> t.getAchievement() == achievement)
+                                                   .toList();
 
         Menu menu = new Menu("Achievement History ", 9 * 6);
 

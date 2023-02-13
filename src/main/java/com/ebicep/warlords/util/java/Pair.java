@@ -35,7 +35,7 @@ public class Pair<A, B> {
 
     @Override
     public int hashCode() {
-        return 0xffffffff ^ Objects.hashCode(this.a) ^ Integer.reverse(Objects.hashCode(this.b));
+        return ~Objects.hashCode(this.a) ^ Integer.reverse(Objects.hashCode(this.b));
     }
 
     @Override

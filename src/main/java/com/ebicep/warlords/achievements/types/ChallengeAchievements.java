@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public enum ChallengeAchievements implements Achievement {
 
@@ -296,10 +295,10 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 boolean carrierDeadLast5Seconds = false;
                 for (WarlordsEntity player : PlayerFilter.playingGame(warlordsEntity.getGame())
-                        .teammatesOf(warlordsEntity)
-                        .excluding(warlordsEntity)
-                        .stream()
-                        .collect(Collectors.toList())
+                                                         .teammatesOf(warlordsEntity)
+                                                         .excluding(warlordsEntity)
+                                                         .stream()
+                                                         .toList()
                 ) {
                     if (player.getSecondStats().getEventsAsSelfFromLastSecond(5, WarlordsDamageHealingFinalEvent::isHasFlag)
                             .stream()

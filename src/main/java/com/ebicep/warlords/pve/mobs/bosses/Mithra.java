@@ -168,7 +168,7 @@ public class Mithra extends AbstractZombie implements BossMob {
         warlordsNPC.setStunTicks(250);
         //warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
@@ -182,19 +182,11 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        float damage;
-        switch (option.getDifficulty()) {
-            case ENDLESS:
-            case HARD:
-                damage = 200;
-                break;
-            case EASY:
-                damage = 50;
-                break;
-            default:
-                damage = 100;
-                break;
-        }
+        float damage = switch (option.getDifficulty()) {
+            case ENDLESS, HARD -> 200;
+            case EASY -> 50;
+            default -> 100;
+        };
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
 
@@ -207,7 +199,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
                 counter++;
                 double radius = (2 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.8f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
                 EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter

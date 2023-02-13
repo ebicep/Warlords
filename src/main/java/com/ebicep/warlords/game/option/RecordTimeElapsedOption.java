@@ -20,8 +20,7 @@ public class RecordTimeElapsedOption implements Option {
 
     public static int getTicksElapsed(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if (option instanceof RecordTimeElapsedOption) {
-                RecordTimeElapsedOption recordTimeElapsedOption = (RecordTimeElapsedOption) option;
+            if (option instanceof RecordTimeElapsedOption recordTimeElapsedOption) {
                 return recordTimeElapsedOption.getTicksElapsed();
             }
         }

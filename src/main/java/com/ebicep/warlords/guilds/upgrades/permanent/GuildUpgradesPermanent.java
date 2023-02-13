@@ -20,7 +20,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     PLAYER_EXP_BONUS(
             "Player EXP Bonus",
             "Increases the experience gained at the end of the game",
-            Material.EXP_BOTTLE
+            Material.EXPERIENCE_BOTTLE
     ) {
         @Override
         public double getValueFromTier(int tier) {
@@ -191,28 +191,18 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     }
 
     public long getCost(int tier) {
-        switch (tier) {
-            case 1:
-                return 20000;
-            case 2:
-                return 40000;
-            case 3:
-                return 80000;
-            case 4:
-                return 160000;
-            case 5:
-                return 240000;
-            case 6:
-                return 360000;
-            case 7:
-                return 540000;
-            case 8:
-                return 810000;
-            case 9:
-                return 1215000;
-            default:
-                return Long.MAX_VALUE;
-        }
+        return switch (tier) {
+            case 1 -> 20000;
+            case 2 -> 40000;
+            case 3 -> 80000;
+            case 4 -> 160000;
+            case 5 -> 240000;
+            case 6 -> 360000;
+            case 7 -> 540000;
+            case 8 -> 810000;
+            case 9 -> 1215000;
+            default -> Long.MAX_VALUE;
+        };
     }
 
 }

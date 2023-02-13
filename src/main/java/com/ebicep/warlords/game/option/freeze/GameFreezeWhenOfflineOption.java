@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class GameFreezeWhenOfflineOption implements Option {
 
@@ -53,8 +52,8 @@ public class GameFreezeWhenOfflineOption implements Option {
                 } else {
                     if (anyOffline) {
                         List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators()
-                                .filter(offlinePlayerTeamEntry -> !offlinePlayerTeamEntry.getKey().isOnline())
-                                .collect(Collectors.toList());
+                                                                           .filter(offlinePlayerTeamEntry -> !offlinePlayerTeamEntry.getKey().isOnline())
+                                                                           .toList();
                         for (Map.Entry<OfflinePlayer, Team> player : players) {
                             offlineDuration.merge(player.getKey().getUniqueId(), 1, Integer::sum);
                             if (offlineDuration.get(player.getKey().getUniqueId()) > leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4)) {

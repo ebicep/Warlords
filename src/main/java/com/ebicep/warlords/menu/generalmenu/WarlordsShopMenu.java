@@ -117,7 +117,7 @@ public class WarlordsShopMenu {
                     builder.get(),
                     (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                         playerSettings.setSelectedSpec(spec);
                         ArmorManager.resetArmor(player);
@@ -131,7 +131,6 @@ public class WarlordsShopMenu {
                         openClassMenu(player, selectedGroup);
                         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
                             databasePlayer.setLastSpec(spec);
-
                         });
                     }
             );

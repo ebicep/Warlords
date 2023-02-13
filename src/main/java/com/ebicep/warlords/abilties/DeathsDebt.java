@@ -111,7 +111,7 @@ public class DeathsDebt extends AbstractTotemBase {
         }
 
         DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand, wp);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<DeathsDebt>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Spirits Respite",
                 "RESP",
                 DeathsDebt.class,

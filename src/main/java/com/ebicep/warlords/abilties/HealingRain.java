@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
@@ -56,13 +55,13 @@ public class HealingRain extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) {
+        if (player.getTargetBlock(null, 25).getType() == Material.AIR) {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
         wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
-        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
+        Location location = player.getTargetBlock(null, 25).getLocation().clone();
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
         CircleEffect circleEffect = new CircleEffect(
@@ -92,11 +91,11 @@ public class HealingRain extends AbstractAbility {
                                 .aliveEnemiesOf(wp)
                                 .limit(8)
                         ) {
-                            Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
+                            Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                             FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
-                                    .withColor(Color.AQUA)
-                                    .with(FireworkEffect.Type.BURST)
-                                    .build());
+                                                                                                       .withColor(Color.AQUA)
+                                                                                                       .with(FireworkEffect.Type.BURST)
+                                                                                                       .build());
                             strikeInRain(wp, enemyInRain);
                         }
                     }
@@ -145,11 +144,11 @@ public class HealingRain extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .limit(8)
                             ) {
-                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
+                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
                                 FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
-                                        .withColor(Color.AQUA)
-                                        .with(FireworkEffect.Type.BURST)
-                                        .build());
+                                                                                                           .withColor(Color.AQUA)
+                                                                                                           .with(FireworkEffect.Type.BURST)
+                                                                                                           .build());
                                 strikeInRain(wp, enemyInRain);
                             }
                         }

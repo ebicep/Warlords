@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -18,7 +17,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
@@ -52,7 +50,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         boolean lustDamageBoost = pveUpgrade && wp.getCooldownManager().hasCooldown(BloodLust.class);
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
+        nearPlayer.addDamageInstance(
                 wp,
                 name,
                 minDamageHeal * (lustDamageBoost ? 1.8f : 1),
@@ -71,7 +69,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
             }
             nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, true);
             nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "WND",
                     WoundingStrikeBerserker.class,
@@ -98,7 +96,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
-        hit.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Bleed",
                 "BLEED",
                 WoundingStrikeBerserker.class,

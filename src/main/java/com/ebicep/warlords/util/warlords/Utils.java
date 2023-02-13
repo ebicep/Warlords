@@ -9,9 +9,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,38 +59,38 @@ public class Utils {
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
     private static final ItemStack[] woolSortedByColor = {
-            new ItemStack(Material.WOOL, 1, (byte) 0),
-            new ItemStack(Material.WOOL, 1, (byte) 8),
-            new ItemStack(Material.WOOL, 1, (byte) 7),
-            new ItemStack(Material.WOOL, 1, (byte) 15),
-            new ItemStack(Material.WOOL, 1, (byte) 12),
-            new ItemStack(Material.WOOL, 1, (byte) 14),
-            new ItemStack(Material.WOOL, 1, (byte) 1),
-            new ItemStack(Material.WOOL, 1, (byte) 4),
-            new ItemStack(Material.WOOL, 1, (byte) 5),
-            new ItemStack(Material.WOOL, 1, (byte) 13),
-            new ItemStack(Material.WOOL, 1, (byte) 9),
-            new ItemStack(Material.WOOL, 1, (byte) 3),
-            new ItemStack(Material.WOOL, 1, (byte) 11),
-            new ItemStack(Material.WOOL, 1, (byte) 10),
-            new ItemStack(Material.WOOL, 1, (byte) 2),
-            new ItemStack(Material.WOOL, 1, (byte) 6),
-            new ItemStack(Material.WOOL, 1, (byte) 0),
-            new ItemStack(Material.WOOL, 1, (byte) 8),
-            new ItemStack(Material.WOOL, 1, (byte) 7),
-            new ItemStack(Material.WOOL, 1, (byte) 15),
-            new ItemStack(Material.WOOL, 1, (byte) 12),
-            new ItemStack(Material.WOOL, 1, (byte) 14),
-            new ItemStack(Material.WOOL, 1, (byte) 1),
-            new ItemStack(Material.WOOL, 1, (byte) 4),
-            new ItemStack(Material.WOOL, 1, (byte) 5),
-            new ItemStack(Material.WOOL, 1, (byte) 13),
-            new ItemStack(Material.WOOL, 1, (byte) 9),
-            new ItemStack(Material.WOOL, 1, (byte) 3),
-            new ItemStack(Material.WOOL, 1, (byte) 11),
-            new ItemStack(Material.WOOL, 1, (byte) 10),
-            new ItemStack(Material.WOOL, 1, (byte) 2),
-            new ItemStack(Material.WOOL, 1, (byte) 6),
+            new ItemStack(Material.WHITE_WOOL),
+            new ItemStack(Material.LIGHT_GRAY_WOOL),
+            new ItemStack(Material.GRAY_WOOL),
+            new ItemStack(Material.BLACK_WOOL),
+            new ItemStack(Material.BROWN_WOOL),
+            new ItemStack(Material.RED_WOOL),
+            new ItemStack(Material.ORANGE_WOOL),
+            new ItemStack(Material.YELLOW_WOOL),
+            new ItemStack(Material.LIME_WOOL),
+            new ItemStack(Material.GREEN_WOOL),
+            new ItemStack(Material.CYAN_WOOL),
+            new ItemStack(Material.LIGHT_BLUE_WOOL),
+            new ItemStack(Material.BLUE_WOOL),
+            new ItemStack(Material.PURPLE_WOOL),
+            new ItemStack(Material.MAGENTA_WOOL),
+            new ItemStack(Material.PINK_WOOL),
+            new ItemStack(Material.WHITE_WOOL),
+            new ItemStack(Material.LIGHT_GRAY_WOOL),
+            new ItemStack(Material.GRAY_WOOL),
+            new ItemStack(Material.BLACK_WOOL),
+            new ItemStack(Material.BROWN_WOOL),
+            new ItemStack(Material.RED_WOOL),
+            new ItemStack(Material.ORANGE_WOOL),
+            new ItemStack(Material.YELLOW_WOOL),
+            new ItemStack(Material.LIME_WOOL),
+            new ItemStack(Material.GREEN_WOOL),
+            new ItemStack(Material.CYAN_WOOL),
+            new ItemStack(Material.LIGHT_BLUE_WOOL),
+            new ItemStack(Material.BLUE_WOOL),
+            new ItemStack(Material.PURPLE_WOOL),
+            new ItemStack(Material.MAGENTA_WOOL),
+            new ItemStack(Material.PINK_WOOL),
     };
 
     public static ItemStack getWoolFromIndex(int index) {
@@ -99,7 +101,7 @@ public class Utils {
     }
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
-        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
+        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease), player2.getEyeLocation());
     }
 
     public static double getDotToPlayerEye(LivingEntity player1, LivingEntity player2) {
@@ -107,7 +109,7 @@ public class Utils {
     }
 
     public static double getDotToPlayerCenter(LivingEntity player1, LivingEntity player2) {
-        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7).get(), player2.getEyeLocation());
+        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7), player2.getEyeLocation());
     }
 
     public static double getDotToLocation(Location location1, Location location2) {
@@ -118,56 +120,49 @@ public class Utils {
     public static boolean isLookingAt(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.925;
     }
 
     public static boolean isLookingAtIntervene(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.96;
     }
 
     public static boolean isLookingAtMark(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(5)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.95;
     }
 
     public static boolean isLineOfSightAssassin(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(1)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.7;
     }
 
     public static boolean isLineOfSightVindicator(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(2)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.78;
     }
 
     public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
-                .addY(.7)
-                .get();
+                .addY(.7);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.95 + (player1.getLocation().distanceSquared(player2.getLocation()) / 10000);
     }
 
     public static boolean isLookingAtWave(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .addY(.7)
-                .pitch(0)
-                .get();
+                .pitch(0);
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.91;
     }
 
@@ -286,14 +281,14 @@ public class Utils {
         Location headLocationForward = location.clone().add(location.getDirection().multiply(1)).add(0, 1, 0);
         Location footLocationForward = location.clone().add(location.getDirection().multiply(1));
         return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR &&
-                location.getWorld().getBlockAt(headLocationForward).getType() != Material.WOOD_STEP &&
-                location.getWorld().getBlockAt(headLocationForward).getType() != Material.STEP &&
+                location.getWorld().getBlockAt(headLocationForward).getType() != Material.LEGACY_WOOD_STEP &&
+                location.getWorld().getBlockAt(headLocationForward).getType() != Material.LEGACY_STEP &&
                 location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 
     public static boolean isMountableZone(Location location) {
-        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(2).get()).getType() == Material.NETHERRACK) {
-            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(4).get()).getType() == Material.SOUL_SAND && !insideTunnel(location);
+        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(2)).getType() == Material.NETHERRACK) {
+            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(4)).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }
@@ -488,6 +483,51 @@ public class Utils {
         }
 
         @Override
+        public void setItem(@NotNull EquipmentSlot equipmentSlot, @org.jetbrains.annotations.Nullable ItemStack itemStack) {
+
+        }
+
+        @Override
+        public void setItem(@NotNull EquipmentSlot equipmentSlot, @org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
+        }
+
+        @Override
+        public @NotNull ItemStack getItem(@NotNull EquipmentSlot equipmentSlot) {
+            return null;
+        }
+
+        @Override
+        public @NotNull ItemStack getItemInMainHand() {
+            return null;
+        }
+
+        @Override
+        public void setItemInMainHand(@org.jetbrains.annotations.Nullable ItemStack itemStack) {
+
+        }
+
+        @Override
+        public void setItemInMainHand(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
+        }
+
+        @Override
+        public @NotNull ItemStack getItemInOffHand() {
+            return null;
+        }
+
+        @Override
+        public void setItemInOffHand(@org.jetbrains.annotations.Nullable ItemStack itemStack) {
+
+        }
+
+        @Override
+        public void setItemInOffHand(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
+        }
+
+        @Override
         public ItemStack getItemInHand() {
             return hand;
         }
@@ -508,6 +548,11 @@ public class Utils {
         }
 
         @Override
+        public void setHelmet(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
+        }
+
+        @Override
         public ItemStack getChestplate() {
             return chestplate;
         }
@@ -515,6 +560,11 @@ public class Utils {
         @Override
         public void setChestplate(ItemStack chestplate) {
             this.chestplate = chestplate;
+        }
+
+        @Override
+        public void setChestplate(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
         }
 
         @Override
@@ -528,6 +578,11 @@ public class Utils {
         }
 
         @Override
+        public void setLeggings(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
+        }
+
+        @Override
         public ItemStack getBoots() {
             return boots;
         }
@@ -535,6 +590,11 @@ public class Utils {
         @Override
         public void setBoots(ItemStack boots) {
             this.boots = boots;
+        }
+
+        @Override
+        public void setBoots(@org.jetbrains.annotations.Nullable ItemStack itemStack, boolean b) {
+
         }
 
         @Override
@@ -563,6 +623,26 @@ public class Utils {
 
         @Override
         public void setItemInHandDropChance(float chance) {
+
+        }
+
+        @Override
+        public float getItemInMainHandDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setItemInMainHandDropChance(float v) {
+
+        }
+
+        @Override
+        public float getItemInOffHandDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setItemInOffHandDropChance(float v) {
 
         }
 
@@ -609,6 +689,16 @@ public class Utils {
         @Override
         public Entity getHolder() {
             return null;
+        }
+
+        @Override
+        public float getDropChance(@NotNull EquipmentSlot equipmentSlot) {
+            return 0;
+        }
+
+        @Override
+        public void setDropChance(@NotNull EquipmentSlot equipmentSlot, float v) {
+
         }
     }
 

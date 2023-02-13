@@ -53,7 +53,7 @@ public class Inferno extends AbstractAbility {
         if (pveUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Inferno>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "INFR",
                 Inferno.class,

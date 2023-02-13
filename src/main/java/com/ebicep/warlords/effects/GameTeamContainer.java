@@ -4,8 +4,9 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import org.bukkit.entity.Player;
 
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.stream.Stream;
 
 
 
@@ -30,7 +31,7 @@ public class GameTeamContainer {
     }
 
     public static Stream<Player> getAllyPlayers(Game game, Team team) {
-        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() == team).map(e -> e.getKey());
+        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() == team).map(Map.Entry::getKey);
     }
 
     public Stream<Player> getEnemyPlayers() {
@@ -38,7 +39,7 @@ public class GameTeamContainer {
     }
 
     public static Stream<Player> getEnemyPlayers(Game game, Team team) {
-        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != team).map(e -> e.getKey());
+        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != team).map(Map.Entry::getKey);
     }
 
 }

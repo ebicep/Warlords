@@ -58,21 +58,21 @@ public class TutorialOption implements Option {
                     return;
                 }
                 switch (stage.get()) {
-                    case 1:
+                    case 1 -> {
                         if (event.getAbility().equals("Avenger's Strike") && stageSection.get() == 1) {
                             nextStageSection();
                         } else {
                             event.setCancelled(true);
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         if (event.getAbility().isEmpty()) {
                             event.setCancelled(true);
                         } else {
                             nextStageSection();
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         if (stageSection.get() == 1) {
                             if (event.getAbility().isEmpty()) {
                                 event.setCancelled(true);
@@ -83,7 +83,7 @@ public class TutorialOption implements Option {
                                 }
                             }
                         }
-                        break;
+                    }
                 }
             }
 
@@ -96,26 +96,26 @@ public class TutorialOption implements Option {
 
                 AbstractAbility ability = event.getAbility();
                 switch (stage.get()) {
-                    case 1:
+                    case 1 -> {
                         if (ability instanceof AvengersStrike) {
                             event.setCancelled(false);
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         if (stageSection.get() == 1) {
                             if (ability instanceof Fireball) {
                                 event.setCancelled(false);
                             }
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         switch (stageSection.get()) {
-                            case 1:
+                            case 1 -> {
                                 if (ability instanceof FlameBurst && stageSectionCounter.get() >= 1) {
                                     event.setCancelled(false);
                                 }
-                                break;
-                            case 2:
+                            }
+                            case 2 -> {
                                 if (ability instanceof TimeWarp && stageSectionCounter.get() >= 1) {
                                     event.setCancelled(false);
                                     new GameRunnable(game) {
@@ -127,8 +127,8 @@ public class TutorialOption implements Option {
                                         }
                                     }.runTaskLater(20 * 4);
                                 }
-                                break;
-                            case 3:
+                            }
+                            case 3 -> {
                                 if (ability instanceof ArcaneShield && stageSectionCounter.get() >= 1) {
                                     event.setCancelled(false);
                                     new GameRunnable(game) {
@@ -140,11 +140,10 @@ public class TutorialOption implements Option {
                                         }
                                     }.runTaskLater(20 * 4);
                                 }
-                                break;
-                            case 4:
-                                event.setCancelled(false);
+                            }
+                            case 4 -> event.setCancelled(false);
                         }
-                        break;
+                    }
                 }
             }
 
@@ -210,24 +209,15 @@ public class TutorialOption implements Option {
             @Override
             public void run() {
                 LivingEntity entity = warlordsPlayer.getEntity();
-                if (!(entity instanceof Player)) {
+                if (!(entity instanceof Player p)) {
                     return;
                 }
-                Player p = (Player) entity;
                 //System.out.println(stageSectionCounter);
                 switch (stage.get()) {
-                    case 0:
-                        intro(p);
-                        break;
-                    case 1:
-                        strikeAttackTutorial(p);
-                        break;
-                    case 2:
-                        rangedAttackTutorial(p);
-                        break;
-                    case 3:
-                        activatingAbilities(p);
-                        break;
+                    case 0 -> intro(p);
+                    case 1 -> strikeAttackTutorial(p);
+                    case 2 -> rangedAttackTutorial(p);
+                    case 3 -> activatingAbilities(p);
                 }
 
                 stageSectionCounter.getAndIncrement();
@@ -249,37 +239,29 @@ public class TutorialOption implements Option {
 
             private void strikeAttackTutorial(Player p) {
                 switch (stageSection.get()) {
-                    case 1:
+                    case 1 -> {
                         switch (stageSectionCounter.get()) {
-                            case 0:
+                            case 0 -> {
                                 warlordsPlayer.respawn();
                                 spawnTestDummies(game, Collections.singletonList(dummySpawnLocation.clone()));
                                 sendTutorialMessage(p, "Right click to perform a powerful attack.");
-                                break;
-                            case 15:
-                                sendTutorialMessage(p, "HINT: You need to be within 3 blocks of your enemy to strike them.");
-                                break;
+                            }
+                            case 15 -> sendTutorialMessage(p, "HINT: You need to be within 3 blocks of your enemy to strike them.");
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         switch (stageSectionCounter.get()) {
-                            case 0:
-                                sendTutorialMessage(p, "You just used your right click to perform an attack as Avenger, a melee spec.");
-                                break;
-                            case 2:
-                                sendTutorialMessage(p, "There are two types of right-click attacks, melee and ranged.");
-                                break;
-                            case 3:
-                                nextStage();
-                                break;
+                            case 0 -> sendTutorialMessage(p, "You just used your right click to perform an attack as Avenger, a melee spec.");
+                            case 2 -> sendTutorialMessage(p, "There are two types of right-click attacks, melee and ranged.");
+                            case 3 -> nextStage();
                         }
-                        break;
+                    }
                 }
             }
 
             private void rangedAttackTutorial(Player p) {
                 switch (stageSection.get()) {
-                    case 1:
+                    case 1 -> {
                         if (stageSectionCounter.get() == 0) {
                             warlordsPlayer.respawn();
                             warlordsPlayer.setSpec(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
@@ -288,8 +270,8 @@ public class TutorialOption implements Option {
                                     "Your spec has now been swapped to Pyromancer. Right-Click to shoot a projectile at your enemy."
                             );
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         int counter = stageSectionCounter.get();
                         if (counter % 2 != 0) {
                             return;
@@ -301,14 +283,14 @@ public class TutorialOption implements Option {
                                 nextStage();
                             }
                         }
-                        break;
+                    }
                 }
             }
 
             private void activatingAbilities(Player p) {
                 LocationBuilder spawnLocation = new LocationBuilder(dummySpawnLocation);
                 switch (stageSection.get()) {
-                    case 1:
+                    case 1 -> {
                         if (stageSectionCounter.get() == 1) {
                             warlordsPlayer.respawn();
                             warlordsPlayer.setSpec(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
@@ -316,21 +298,21 @@ public class TutorialOption implements Option {
 
                             sendTutorialMessage(p, "Activate your red rune (Slot 2) while aiming at a group of enemies to deal massive damage to them.");
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         if (stageSectionCounter.get() == 1) {
                             testDummies.forEach(warlordsNPC -> game.removePlayer(warlordsNPC.getUuid()));
                             sendTutorialMessage(p,
                                     "Activate your purple rune (Slot 3) and walk around. After around 5 seconds, you will be teleported back to where you first cast your ability."
                             );
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         if (stageSectionCounter.get() == 1) {
                             sendTutorialMessage(p, "Activate your blue rune (Slot 4) and walk around. This summons a shield that will tank damage for you.");
                         }
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         if (stageSectionCounter.get() == 1) {
                             testDummies.forEach(warlordsNPC -> game.removePlayer(warlordsNPC.getUuid()));
                             testDummies.clear();
@@ -351,8 +333,8 @@ public class TutorialOption implements Option {
                                     "Activate your orange rune (Slot 5) and kill all the enemies! Your orange rune will make you deal more damage overall."
                             );
                         }
-                        break;
-                    case 5:
+                    }
+                    case 5 -> {
                         int counter = stageSectionCounter.get();
                         if (counter % 2 != 0) {
                             return;
@@ -369,20 +351,18 @@ public class TutorialOption implements Option {
                                 stageSectionCounter.set(10);
                             }
                         }
-                        break;
-                    case 6:
+                    }
+                    case 6 -> {
                         switch (stageSectionCounter.get()) {
-                            case 1:
+                            case 1 -> {
                                 sendTutorialMessage(p,
                                         "You have now completed the tutorial. If you have any more questions, feel free to ask them in our Discord server! Hope you have fun with your first game of Warlords PvE."
                                 );
                                 sendTutorialMessage(p, "Link to join Discord Server: https://discord.gg/UMTjJ5Mdc8");
-                                break;
-                            case 3:
-                                game.setNextState(new EndState(game, null));
-                                break;
+                            }
+                            case 3 -> game.setNextState(new EndState(game, null));
                         }
-                        break;
+                    }
                 }
             }
 
@@ -417,7 +397,7 @@ public class TutorialOption implements Option {
 
     private static void sendTutorialMessage(Player player, String message) {
         player.sendMessage(ChatColor.GRAY + ">> " + ChatColor.GREEN + message);
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 
     private void nextStage() {

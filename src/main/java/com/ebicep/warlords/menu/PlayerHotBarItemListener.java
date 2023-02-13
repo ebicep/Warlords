@@ -55,7 +55,7 @@ public class PlayerHotBarItemListener implements Listener {
     public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
             .name("§aStart Menu")
             .get();
-    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER)
+    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.ENDER_EYE)
             .name("§aSpectate")
             .lore(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
@@ -91,7 +91,7 @@ public class PlayerHotBarItemListener implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                            if (e.getPlayer().getOpenInventory().getTitle().equals("Team Builder")) {
                                 p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
                             } else {
                                 this.cancel();

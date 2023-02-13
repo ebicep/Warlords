@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.flags;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +34,12 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         this.despawnTimer--;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
+    @Nonnull
     @Override
     public List<String> getDebugInformation() {
         return Arrays.asList("Type: " + this.getClass().getSimpleName(),

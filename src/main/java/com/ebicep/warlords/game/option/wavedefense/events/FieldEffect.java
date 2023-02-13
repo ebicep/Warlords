@@ -100,8 +100,7 @@ public class FieldEffect implements Option {
                                 LinkedCooldown<?> linkedCooldown = (LinkedCooldown<?>) abstractCooldown;
                                 linkedCooldown.setTicksLeft((int) (linkedCooldown.getTicksLeft() * 0.7));
                             }
-                        } else if (abstractCooldown instanceof RegularCooldown) {
-                            RegularCooldown<?> regularCooldown = (RegularCooldown<?>) abstractCooldown;
+                        } else if (abstractCooldown instanceof RegularCooldown<?> regularCooldown) {
                             regularCooldown.setTicksLeft((int) (regularCooldown.getTicksLeft() * 0.7));
                         }
                     }

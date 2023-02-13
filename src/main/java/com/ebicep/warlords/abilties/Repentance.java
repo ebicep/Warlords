@@ -47,7 +47,7 @@ public class Repentance extends AbstractAbility {
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
 
         pool += 2000;
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name, "REPE",
                 Repentance.class,
                 new Repentance(),

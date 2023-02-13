@@ -30,7 +30,7 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
         this(new TeamBasedEffect(effect));
     }
 
-    public DoubleLineEffect(TeamBasedEffect effect) {
+    public DoubleLineEffect(@Nonnull TeamBasedEffect effect) {
         this.effect = effect;
     }
 

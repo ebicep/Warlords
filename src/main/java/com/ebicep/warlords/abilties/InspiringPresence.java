@@ -58,7 +58,7 @@ public class InspiringPresence extends AbstractAbility {
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, duration * 20, "BASE");
 
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "PRES",
                 InspiringPresence.class,
@@ -108,7 +108,7 @@ public class InspiringPresence extends AbstractAbility {
             );
 
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, duration * 20, "BASE");
-            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
+            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "PRES",
                     InspiringPresence.class,

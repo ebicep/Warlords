@@ -68,7 +68,7 @@ public class Boulder extends AbstractAbility {
             speed = player.getLocation().getDirection().multiply(boulderSpeed);
         }
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
+        stand.setHelmet(new ItemStack(Material.TALL_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
@@ -201,19 +201,12 @@ public class Boulder extends AbstractAbility {
             spawnLoc.add(x, 1, z);
 
             if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
-                switch ((int) (Math.random() * 3)) {
-                    case 0:
-                        fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 0);
-                        break;
-                    case 1:
-                        fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.STONE, (byte) 0);
-                        break;
-                    case 2:
-                        fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 2);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
-                }
+                fallingBlock = switch ((int) (Math.random() * 3)) {
+                    case 0 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT.createBlockData());
+                    case 1 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.STONE.createBlockData());
+                    case 2 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.PODZOL.createBlockData());
+                    default -> throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
+                };
 
                 fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(-.5).setY(.25));
                 fallingBlock.setDropItem(false);

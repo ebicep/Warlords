@@ -23,15 +23,16 @@ public class WarlordsGameTriggerWinEvent extends AbstractWarlordsGameEvent imple
         this.declaredWinner = declaredWinner;
     }
 
+    @Nonnull
     public Option getCause() {
         return cause;
     }
 
-    public Team getDeclaredWinner() {
+    public @org.jetbrains.annotations.Nullable Team getDeclaredWinner() {
         return declaredWinner;
     }
 
-    public void setDeclaredWinner(Team declaredWinner) {
+    public void setDeclaredWinner(@org.jetbrains.annotations.Nullable Team declaredWinner) {
         this.declaredWinner = declaredWinner;
     }
 
@@ -46,6 +47,7 @@ public class WarlordsGameTriggerWinEvent extends AbstractWarlordsGameEvent imple
         this.cancelled = cancelled;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

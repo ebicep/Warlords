@@ -74,7 +74,7 @@ public class DrainingMiasma extends AbstractAbility {
                 .build());
 
         if (pveUpgrade) {
-            Utils.playGlobalSound(wp.getLocation(), Sound.WITHER_SPAWN, 10, 1);
+            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
             EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, ParticleEffect.SLIME, 1);
             FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                     .withColor(Color.WHITE)
@@ -109,7 +109,7 @@ public class DrainingMiasma extends AbstractAbility {
                     duration * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
-                            Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
+                            Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
 
                             for (int i = 0; i < 3; i++) {
                                 ParticleEffect.REDSTONE.display(
@@ -154,7 +154,7 @@ public class DrainingMiasma extends AbstractAbility {
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
-                            new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.SAPLING, (byte) 2).play();
+                            new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.BIRCH_SAPLING).play();
                             for (WarlordsEntity target : PlayerFilter
                                     .entitiesAround(miasmaTarget, 6, 6, 6)
                                     .aliveEnemiesOf(wp)

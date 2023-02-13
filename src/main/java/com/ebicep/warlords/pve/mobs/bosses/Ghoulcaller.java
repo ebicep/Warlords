@@ -27,11 +27,10 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Ghoulcaller extends AbstractZombie implements BossMob {
 
-    private static final HashMap<Integer, Pair<Float, Float>> PLAYER_COUNT_DAMAGE_VALUES = new HashMap<Integer, Pair<Float, Float>>() {{
+    private static final HashMap<Integer, Pair<Float, Float>> PLAYER_COUNT_DAMAGE_VALUES = new HashMap<>() {{
         put(1, new Pair<>(736f, 778f));
         put(2, new Pair<>(1121f, 1191f));
         put(3, new Pair<>(1502f, 1599f));
@@ -90,11 +89,12 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 skipNextAttack = false;
             } else {
                 List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = getWarlordsNPC().getSecondStats().getEventsAsSelfFromLastSecondStream(5)
-                        .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
-                        .collect(Collectors.toList());
+                                                                                             .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
+                                                                                             .toList();
                 int attacksInLast5Seconds = (int) (eventsInLast5Seconds.size() - eventsInLast5Seconds.stream()
-                        .filter(event -> event.getAbility().equals("Windfury Weapon"))
-                        .count() / 2
+                                                                                                     .filter(event -> event.getAbility()
+                                                                                                                           .equals("Windfury Weapon"))
+                                                                                                     .count() / 2
                 );
                 if (attacksInLast5Seconds > 20) {
                     attacksInLast5Seconds = 20;
@@ -109,35 +109,30 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 int playerCount = option.playerCount();
                 float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
                         playerCount,
-                        PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds)
+                        PLAYER_COUNT_DAMAGE_VALUES.get(1)
+                ).getA() * Math.pow(0.95, attacksInLast5Seconds)
                 );
                 float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
                         playerCount,
-                        PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds)
+                        PLAYER_COUNT_DAMAGE_VALUES.get(1)
+                ).getB() * Math.pow(0.95, attacksInLast5Seconds)
                 );
 
-                float multiplier;
-                switch (option.getDifficulty()) {
-                    case EASY:
-                        multiplier = 0.5f;
-                        break;
-                    case HARD:
-                        multiplier = 1.5f;
-                        break;
-                    default:
-                        multiplier = 1;
-                        break;
-                }
+                float multiplier = switch (option.getDifficulty()) {
+                    case EASY -> 0.5f;
+                    case HARD -> 1.5f;
+                    default -> 1;
+                };
                 Location loc = warlordsNPC.getLocation();
                 Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
                 EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 20);
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
-                        .aliveEnemiesOf(getWarlordsNPC())
-                        .forEach(enemyPlayer -> {
-                            enemyPlayer.addDamageInstance(
-                                    getWarlordsNPC(),
-                                    "Fury",
-                                    minDamage * multiplier,
+                            .aliveEnemiesOf(getWarlordsNPC())
+                            .forEach(enemyPlayer -> {
+                                enemyPlayer.addDamageInstance(
+                                        getWarlordsNPC(),
+                                        "Fury",
+                                        minDamage * multiplier,
                                     maxDamage * multiplier,
                                     0,
                                     100,
@@ -188,7 +183,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     }
 
     private void spawnTormentedSouls(PveOption option, int amount) {
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 1.5f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         for (int i = 0; i < amount; i++) {
             option.spawnNewMob(new TormentedSoul(getWarlordsNPC().getLocation()));
         }

@@ -8,10 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class QueueManager {
@@ -55,7 +52,16 @@ public class QueueManager {
             stringBuilder.append("\n");
             stringBuilder.append(ChatColor.GREEN).append("Future Queue -\n");
             futureQueue.forEach(futureQueuePlayer -> {
-                stringBuilder.append("    ").append(ChatColor.YELLOW).append("- ").append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(ChatColor.GRAY).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
+                stringBuilder.append("    ")
+                             .append(ChatColor.YELLOW)
+                             .append("- ")
+                             .append(ChatColor.AQUA)
+                             .append(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName())
+                             .append(ChatColor.GRAY)
+                             .append(" (")
+                             .append(futureQueuePlayer.timeString())
+                             .append(")")
+                             .append("\n");
             });
         }
         return stringBuilder.toString();
@@ -69,7 +75,13 @@ public class QueueManager {
         }
         StringBuilder futureQueue = new StringBuilder();
         QueueManager.futureQueue.forEach(futureQueuePlayer -> {
-            futureQueue.append("    ").append("- ").append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
+            futureQueue.append("    ")
+                       .append("- ")
+                       .append(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName())
+                       .append(" (")
+                       .append(futureQueuePlayer.timeString())
+                       .append(")")
+                       .append("\n");
         });
 
         return new EmbedBuilder()
@@ -87,7 +99,7 @@ public class QueueManager {
     }
 
     public static void addPlayerToQueue(String name, boolean atBeginning) {
-        addPlayerToQueue(Bukkit.getOfflinePlayer(name).getUniqueId(), atBeginning);
+        addPlayerToQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId(), atBeginning);
     }
 
     public static void addPlayerToQueue(UUID uuid, boolean atBeginning) {
@@ -100,7 +112,7 @@ public class QueueManager {
     }
 
     public static void removePlayerFromQueue(String name) {
-        removePlayerFromQueue(Bukkit.getOfflinePlayer(name).getUniqueId());
+        removePlayerFromQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId());
     }
 
     public static void removePlayerFromQueue(UUID uuid) {
@@ -109,50 +121,29 @@ public class QueueManager {
     }
 
     public static void addPlayerToFutureQueue(String name, String timeString, BukkitTask task) {
-        addPlayerToFutureQueue(Bukkit.getOfflinePlayer(name).getUniqueId(), timeString, task);
+        addPlayerToFutureQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId(), timeString, task);
     }
 
     public static void addPlayerToFutureQueue(UUID uuid, String timeString, BukkitTask task) {
-        if (futureQueue.stream().noneMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(uuid))) {
+        if (futureQueue.stream().noneMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(uuid))) {
             futureQueue.add(new FutureQueuePlayer(uuid, timeString, task));
         }
     }
 
     public static void removePlayerFromFutureQueue(String name) {
-        removePlayerFromFutureQueue(Bukkit.getOfflinePlayer(name).getUniqueId());
+        removePlayerFromFutureQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId());
     }
 
     public static void removePlayerFromFutureQueue(UUID uuid) {
         futureQueue.removeIf(futureQueuePlayer -> {
-            if (futureQueuePlayer.getUuid().equals(uuid)) {
-                futureQueuePlayer.getTask().cancel();
+            if (futureQueuePlayer.uuid().equals(uuid)) {
+                futureQueuePlayer.task().cancel();
                 return true;
             }
             return false;
         });
     }
 
-    static public class FutureQueuePlayer {
-        private final UUID uuid;
-        private final String timeString;
-        private final BukkitTask task;
-
-        public FutureQueuePlayer(UUID uuid, String timeString, BukkitTask task) {
-            this.uuid = uuid;
-            this.timeString = timeString;
-            this.task = task;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public String getTimeString() {
-            return timeString;
-        }
-
-        public BukkitTask getTask() {
-            return task;
-        }
+    public record FutureQueuePlayer(UUID uuid, String timeString, BukkitTask task) {
     }
 }

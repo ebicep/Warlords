@@ -22,7 +22,7 @@ public enum Currencies {
     SYNTHETIC_SHARD(
             "Synthetic Shard",
             ChatColor.WHITE,
-            new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
+            new ItemStack(Material.GRAY_STAINED_GLASS_PANE)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
@@ -32,7 +32,7 @@ public enum Currencies {
     FAIRY_ESSENCE(
             "Fairy Essence",
             ChatColor.LIGHT_PURPLE,
-            new ItemStack(Material.INK_SACK, 1, (short) 13)
+            new ItemStack(Material.MAGENTA_DYE)
     ) {
         @Override
         public boolean pluralIncludeS() {
@@ -62,7 +62,7 @@ public enum Currencies {
     SUPPLY_DROP_TOKEN(
             "Supply Drop Token",
             ChatColor.GOLD,
-            new ItemStack(Material.FIREWORK_CHARGE)
+            new ItemStack(Material.FIREWORK_STAR)
     ),
     COIN(
             "Coin",
@@ -77,17 +77,17 @@ public enum Currencies {
     EVENT_POINTS_BOLTARO(
             "Boltaro Event Point",
             ChatColor.YELLOW,
-            new ItemStack(Material.DOUBLE_PLANT)
+            new ItemStack(Material.SUNFLOWER)
     ),
     EVENT_POINTS_NARMER(
             "Narmer Event Point",
             ChatColor.YELLOW,
-            new ItemStack(Material.DOUBLE_PLANT)
+            new ItemStack(Material.SUNFLOWER)
     ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
             ChatColor.YELLOW,
-            new ItemStack(Material.SNOW_BALL)
+            new ItemStack(Material.SNOWBALL)
     ),
 
     ;

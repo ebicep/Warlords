@@ -46,5 +46,5 @@ public interface State {
     default void onPlayerQuitGame(OfflinePlayer player) {
     }
     
-    public int getTicksElapsed();
+    int getTicksElapsed();
 }

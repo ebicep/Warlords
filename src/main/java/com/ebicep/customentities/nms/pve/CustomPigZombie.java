@@ -1,15 +1,18 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityPigZombie;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 
-public class CustomPigZombie extends EntityPigZombie implements CustomEntity<CustomPigZombie> {
+import javax.annotation.Nonnull;
 
-    public CustomPigZombie(World world) {
-        super(world);
-        resetAI(world);
+public class CustomPigZombie extends ZombifiedPiglin implements CustomEntity<CustomPigZombie> {
+
+    public CustomPigZombie(ServerLevel serverLevel) {
+        super(EntityType.ZOMBIFIED_PIGLIN, serverLevel);
+        resetAI();
         giveBaseAI();
     }
 
@@ -25,11 +28,8 @@ public class CustomPigZombie extends EntityPigZombie implements CustomEntity<Cus
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override

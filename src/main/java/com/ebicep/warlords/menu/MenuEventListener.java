@@ -38,7 +38,7 @@ public class MenuEventListener implements Listener {
 
             @Override
             public void run() {
-                if (player.getOpenInventory().getTopInventory().getTitle().equals("container.crafting")) {
+                if (player.getOpenInventory().getTitle().equals("container.crafting")) {
                     player.removeMetadata(METADATA_CUSTOM_INVENTORY, plugin);
                 }
             }

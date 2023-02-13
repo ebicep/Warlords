@@ -1,66 +1,65 @@
 package com.ebicep.warlords.util.bukkit;
 
-import net.minecraft.server.v1_8_R3.*;
+import co.aikar.commands.CommandIssuer;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.ebicep.warlords.util.chat.ChatChannels;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class PacketUtils {
 
+    private static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
+
+    public static void removeEntityForPlayer(Player player, int entityId) {
+        try {
+            PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
+        } catch (InvocationTargetException e) {
+            ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending entity destroy packet", true);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void playRightClickAnimationForPlayer(Entity swinger, Player... players) {
+        for (Player player : players) {
+            try {
+                PROTOCOL_MANAGER.sendServerPacket(player,
+                        PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
+                );
+            } catch (InvocationTargetException e) {
+                ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending right click packet", true);
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public static void sendTitle(UUID uuid, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
+        if (offlinePlayer.isOnline()) {
             sendTitle(offlinePlayer.getPlayer(), title, subtitle, fadeIn, stay, fadeOut);
         }
     }
 
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        CraftPlayer craftplayer = (CraftPlayer) player;
-        PlayerConnection connection = craftplayer.getHandle().playerConnection;
-        IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + title + "'}");
-        IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + subtitle + "'}");
-        PacketPlayOutTitle durationPacket = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
-        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON, fadeIn, stay, fadeOut);
-        PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
-        connection.sendPacket(durationPacket);
-        connection.sendPacket(titlePacket);
-        connection.sendPacket(subtitlePacket);
+        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
     public static void sendTabHF(Player player, String header, String footer) {
-
-        CraftPlayer craftplayer = (CraftPlayer) player;
-        PlayerConnection connection = craftplayer.getHandle().playerConnection;
-        IChatBaseComponent headerJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + header + "\"}");
-        IChatBaseComponent footerJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footer + "\"}");
-        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
-
-        try {
-            Field headerField = packet.getClass().getDeclaredField("a");
-            headerField.setAccessible(true);
-            headerField.set(packet, headerJSON);
-            headerField.setAccessible(!headerField.isAccessible());
-
-            Field footerField = packet.getClass().getDeclaredField("b");
-            footerField.setAccessible(true);
-            footerField.set(packet, footerJSON);
-            footerField.setAccessible(!footerField.isAccessible());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        connection.sendPacket(packet);
+        player.setPlayerListHeader(header);
+        player.setPlayerListFooter(footer);
     }
 
+
     public static void sendActionBar(Player p, String message) {
-        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
+        p.sendActionBar(message);
     }
 
 }

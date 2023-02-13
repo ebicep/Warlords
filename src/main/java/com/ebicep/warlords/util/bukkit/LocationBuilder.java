@@ -5,6 +5,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+
 public class LocationBuilder extends Location {
 
     public LocationBuilder(Location location) {
@@ -46,14 +48,16 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    @Nonnull
     @Override
-    public LocationBuilder add(Vector vector) {
+    public LocationBuilder add(@Nonnull Vector vector) {
         super.add(vector);
         return this;
     }
 
+    @Nonnull
     @Override
-    public LocationBuilder subtract(Vector vector) {
+    public LocationBuilder subtract(@Nonnull Vector vector) {
         super.subtract(vector);
         return this;
     }
@@ -93,16 +97,7 @@ public class LocationBuilder extends Location {
         return this;
     }
 
-    /**
-     * Gets a location
-     * @return A location object
-     * @deprecated The new <code>LocationBuilder</code> instances are locations, this method is no longer needed
-     */
-    @Deprecated
-    public Location get() {
-        return this;
-    }
-
+    @Nonnull
     @Override
     public LocationBuilder clone() {
         return (LocationBuilder) super.clone();

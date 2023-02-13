@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
@@ -75,7 +74,7 @@ public class DebugMenuTeamOptions {
                     if (ee != null && ee.getHelmet() != null) {
                         itemStack = ee.getHelmet();
                     } else {
-                        itemStack = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+                        itemStack = new ItemStack(Material.PLAYER_HEAD);
                     }
                 } else {
                     itemStack = HeadUtils.getHead(warlordsEntity.getUuid());

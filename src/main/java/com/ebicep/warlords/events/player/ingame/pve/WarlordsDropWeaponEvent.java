@@ -5,6 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsDropWeaponEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -23,6 +25,7 @@ public class WarlordsDropWeaponEvent extends AbstractWarlordsEntityEvent {
         return dropRate;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

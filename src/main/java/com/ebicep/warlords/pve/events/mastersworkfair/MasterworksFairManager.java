@@ -54,7 +54,7 @@ public class MasterworksFairManager {
         MasterworksFairTrait.PAUSED.set(false);
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer.getOpenInventory().getTopInventory().getName().equals("Masterworks Fair")) {
+            if (onlinePlayer.getOpenInventory().getTitle().equals("Masterworks Fair")) {
                 onlinePlayer.closeInventory();
             }
         }

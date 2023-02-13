@@ -19,7 +19,6 @@ import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
@@ -51,7 +50,7 @@ public class CompensateCommand extends BaseCommand {
                     new ItemBuilder(currency.item)
                             .name(currency.getColoredName())
                             .lore(ChatColor.GREEN.toString() + compensation.getOrDefault(currency, 0L))
-                            .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                            .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
                         String[] text = new String[]{"", "", "", ""};
@@ -77,7 +76,7 @@ public class CompensateCommand extends BaseCommand {
         }
 
         menu.setItem(3, 5,
-                new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal())
+                new ItemBuilder(Material.PLAYER_HEAD)
                         .name(ChatColor.GREEN + "Player")
                         .lore(ChatColor.AQUA + (compensatedPlayers == null ? "Not Selected" :
                                                 compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
@@ -204,7 +203,7 @@ public class CompensateCommand extends BaseCommand {
                 .stream()
                 .filter(databasePlayer -> databasePlayer.getLastLogin() != null &&
                         databasePlayer.getLastLogin().isAfter(Instant.now().minus(30, ChronoUnit.DAYS)))
-                .collect(Collectors.toList());
+                .toList();
         openCompensateMenu(player, new LinkedHashMap<>(), databasePlayers);
     }
 

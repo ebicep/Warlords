@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.marker;
 
-import com.ebicep.warlords.game.MapSymmetry;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.MapSymmetry;
 import com.ebicep.warlords.game.option.MarkerOption;
 import com.ebicep.warlords.game.option.Option;
 
@@ -21,7 +21,7 @@ public interface MapSymmetryMarker extends GameMarker {
         return MapSymmetry.NONE;
     }
     
-    public default Option asOption() {
+    default Option asOption() {
         return new MarkerOption(this);
     }
 }

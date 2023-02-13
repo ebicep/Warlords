@@ -61,7 +61,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 4);
+        return new ItemStack(Material.RED_TULIP);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                 tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
             }
 
-            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), tempCapacitorTotem.getRadius(), 1.2, Material.SAPLING, (byte) 0).play();
+            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), tempCapacitorTotem.getRadius(), 1.2, Material.OAK_SAPLING).play();
         });
         wp.getCooldownManager().addRegularCooldown(
                 name,

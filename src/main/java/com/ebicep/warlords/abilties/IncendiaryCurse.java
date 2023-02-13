@@ -63,7 +63,7 @@ public class IncendiaryCurse extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.FIREBALL));
+        stand.setHelmet(new ItemStack(Material.LEGACY_FIREBALL));
         stand.setGravity(false);
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {
@@ -127,7 +127,7 @@ public class IncendiaryCurse extends AbstractAbility {
                 if (shouldExplode) {
                     stand.remove();
 
-                    Utils.playGlobalSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
+                    Utils.playGlobalSound(newLoc, Sound.ITEM_FIRECHARGE_USE, 2, 0.1f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.ORANGE)

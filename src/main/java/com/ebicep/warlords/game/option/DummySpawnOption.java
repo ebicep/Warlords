@@ -12,8 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -57,7 +56,7 @@ public class DummySpawnOption implements Option {
                         Specializations.PYROMANCER
                 ));
                 //SKULL
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
+                ItemStack playerSkull = new ItemStack(Material.ZOMBIE_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 playerSkull.setItemMeta(skullMeta);
                 HeadUtils.PLAYER_HEADS.put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));

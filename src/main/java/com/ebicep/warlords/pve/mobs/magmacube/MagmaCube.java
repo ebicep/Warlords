@@ -101,6 +101,6 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                 .withTrail()
                 .build());
         EffectUtils.playHelixAnimation(deathLocation, 6, 255, 40, 40);
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_SCREAM, 1, 2);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_SCREAM, 1, 2);
     }
 }

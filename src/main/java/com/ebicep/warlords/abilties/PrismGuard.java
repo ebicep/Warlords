@@ -84,7 +84,7 @@ public class PrismGuard extends AbstractAbility {
         Set<WarlordsEntity> playersHit = new HashSet<>();
         AtomicInteger hits = new AtomicInteger(0);
         PrismGuard tempPrismGuard = new PrismGuard();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Prism Guard",
                 "GUARD",
                 PrismGuard.class,
@@ -99,7 +99,7 @@ public class PrismGuard extends AbstractAbility {
                         return;
                     }
                     Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.4f);
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.5f);
 
                     new CircleEffect(
                             wp.getGame(),
@@ -135,7 +135,7 @@ public class PrismGuard extends AbstractAbility {
                                     WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
                                             (hits.get() * damageReduction) + "% §7damage reduction for §6" + duration + " §7seconds!"
                             );
-                            entity.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
+                            entity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Prism Guard",
                                     "GUARD RES",
                                     PrismGuard.class,
@@ -165,7 +165,7 @@ public class PrismGuard extends AbstractAbility {
 
                     if (ticksElapsed % 4 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
-                        Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
 
                         isInsideBubble.clear();
                         for (WarlordsEntity enemyInsideBubble : PlayerFilter
@@ -184,7 +184,7 @@ public class PrismGuard extends AbstractAbility {
                             }
                             playersHit.add(bubblePlayer);
                             bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class, false);
-                            bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
+                            bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Prism Guard",
                                     "GUARD",
                                     PrismGuard.class,

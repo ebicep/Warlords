@@ -2,8 +2,10 @@ package com.ebicep.warlords.game.flags;
 
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
+
 public abstract class AbstractLocationBasedFlagLocation implements FlagLocation {
-	
+
     protected final Location location;
 
     public AbstractLocationBasedFlagLocation(Location location) {
@@ -13,6 +15,7 @@ public abstract class AbstractLocationBasedFlagLocation implements FlagLocation 
         this.location.setZ(location.getBlockZ() + 0.5);
     }
 
+    @Nonnull
     @Override
     public Location getLocation() {
         return location;

@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
 
@@ -40,8 +39,8 @@ public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
         this.flagReturns = warlordsPlayer.getFlagsReturned();
         this.totalDamageOnCarrier = warlordsPlayer.getMinuteStats().total().getDamageOnCarrier();
         this.totalHealingOnCarrier = warlordsPlayer.getMinuteStats().total().getHealingOnCarrier();
-        this.damageOnCarrier = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamageOnCarrier).collect(Collectors.toList());
-        this.healingOnCarrier = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealingOnCarrier).collect(Collectors.toList());
+        this.damageOnCarrier = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamageOnCarrier).toList();
+        this.healingOnCarrier = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealingOnCarrier).toList();
     }
 
     public int getSecondsInCombat() {

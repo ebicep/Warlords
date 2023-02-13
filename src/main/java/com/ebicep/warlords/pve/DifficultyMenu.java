@@ -24,7 +24,7 @@ public class DifficultyMenu {
         menu.setItem(
                 5,
                 1,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR).name(ChatColor.GREEN + "Join a public PvE game").get(),
+                new ItemBuilder(Material.COMPARATOR).name(ChatColor.GREEN + "Join a public PvE game").get(),
                 (m, e) -> openDifficultyMenu(player, false)
         );
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -40,7 +40,7 @@ public class DifficultyMenu {
             menu.setItem(
                     9 / 2 - index.length + 1 + i * 2,
                     1,
-                    new ItemBuilder(Material.REDSTONE_LAMP_OFF)
+                    new ItemBuilder(Material.REDSTONE_LAMP)
                             .name(difficulty.getDifficultyColor() + ChatColor.BOLD.toString() + difficulty.getName())
                             .lore(ChatColor.GRAY + difficulty.getDescription())
                             .get(),

@@ -10,14 +10,12 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
@@ -30,14 +28,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class WarlordsNPC extends WarlordsEntity {
 
     public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby(false);
+        jimmy.setAdult();
         jimmy.setCustomNameVisible(true);
 
         if (inv != null) {
@@ -45,69 +41,16 @@ public final class WarlordsNPC extends WarlordsEntity {
             jimmy.getEquipment().setLeggings(inv.getLeggings());
             jimmy.getEquipment().setChestplate(inv.getChestplate());
             jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
+            jimmy.getEquipment().setItemInHand(inv.getItemInMainHand());
         } else {
             jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(0);
+        jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
+        jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
         //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
+        jimmy.setAI(false);
         return jimmy;
 
-    }
-
-    public static <T extends LivingEntity> T spawnEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
-        T entity = loc.getWorld().spawn(loc, clazz);
-        if (entity instanceof Zombie) {
-            ((Zombie) entity).setBaby(false);
-        }
-
-        entity.setCustomNameVisible(true);
-
-        if (inv != null) {
-            entity.getEquipment().setBoots(inv.getBoots());
-            entity.getEquipment().setLeggings(inv.getLeggings());
-            entity.getEquipment().setChestplate(inv.getChestplate());
-            entity.getEquipment().setHelmet(inv.getHelmet());
-            entity.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
-        }
-
-        return entity;
-    }
-
-    public static <T extends CustomEntity<?>> LivingEntity spawnCustomEntity(
-            @Nonnull Class<T> clazz,
-            Supplier<T> create,
-            Consumer<T> onCreate,
-            @Nonnull Location loc,
-            @Nullable EntityEquipment inv
-    ) {
-        T customEntity = create.get();
-        onCreate.accept(customEntity);
-        customEntity.spawn(loc);
-
-        EntityInsentient entityInsentient = customEntity.get();
-        entityInsentient.persistent = true;
-
-        LivingEntity entity = (LivingEntity) entityInsentient.getBukkitEntity();
-        if (inv != null) {
-            entity.getEquipment().setBoots(inv.getBoots());
-            entity.getEquipment().setLeggings(inv.getLeggings());
-            entity.getEquipment().setChestplate(inv.getChestplate());
-            entity.getEquipment().setHelmet(inv.getHelmet());
-            entity.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
-        }
-
-        return entity;
     }
 
     private float minMeleeDamage;
@@ -235,7 +178,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);
+        ((LivingEntity) ((CraftEntity) entity).getHandle()).getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80);
     }
 
     public MobTier getMobTier() {
@@ -271,27 +214,21 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     public void setStunTicks(int stunTicks, boolean decrement) {
-        AtomicReference<Byte> ai = new AtomicReference<>();
+        AtomicReference<Boolean> ai = new AtomicReference<>();
         CustomEntity<?> customEntity = mob.getEntity();
         if (stunTicks > 0) {
             if (this.stunTicks <= 0) {
                 customEntity.setStunned(true);
-                ai.set((byte) 1);
+                ai.set(false);
             }
         } else {
-            ai.set((byte) 0);
+            ai.set(true);
         }
         if (ai.get() != null) {
-            EntityInsentient entityInsentient = customEntity.get();
-            NBTTagCompound tag = entityInsentient.getNBTTag();
-            if (tag == null) {
-                tag = new NBTTagCompound();
-            }
-            entityInsentient.c(tag);
-            tag.setByte("NoAI", ai.get());
-            entityInsentient.f(tag);
+            Mob entityInsentient = customEntity.get();
+            entityInsentient.setNoAi(ai.get());
             //tick later to prevent collision issues
-            if (ai.get() == 0) {
+            if (ai.get()) {
                 new GameRunnable(game) {
                     @Override
                     public void run() {

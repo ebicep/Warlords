@@ -133,7 +133,7 @@ public class HeartToHeart extends AbstractAbility {
                         targetLoc.getPitch()
                 );
 
-                EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.LEAVES, 1, (short) 1), timer);
+                EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.SPRUCE_LEAVES), timer);
 
                 wp.teleportLocationOnly(newLocation);
                 wp.setFallDistance(-5);

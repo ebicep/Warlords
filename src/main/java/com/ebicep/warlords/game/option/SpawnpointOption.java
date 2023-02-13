@@ -31,7 +31,7 @@ public class SpawnpointOption extends MarkerOption {
                   }
 
                 },
-                DebugLocationMarker.create(Material.BED, 0, SpawnpointOption.class, "Spawnpoint", location, () -> debugExtra)
+                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, "Spawnpoint", location, () -> debugExtra)
         );
     }
 
@@ -71,7 +71,7 @@ public class SpawnpointOption extends MarkerOption {
                     double distanceToFriendlies = distances.getOrDefault(Boolean.TRUE, 0d);
                     return distanceToFriendlies - distanceToEnemy;
                 },
-                Arrays.asList("Type: avoiding-enemy-players")
+                List.of("Type: avoiding-enemy-players")
         );
     }
 }

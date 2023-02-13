@@ -32,7 +32,7 @@ public class LineEffect extends AbstractEffectPlayer<CircleEffect> {
         this(target, new TeamBasedEffect(effect));
     }
 
-    public LineEffect(Location target, TeamBasedEffect effect) {
+    public LineEffect(Location target, @Nonnull TeamBasedEffect effect) {
         this.target = target;
         this.effect = effect;
     }

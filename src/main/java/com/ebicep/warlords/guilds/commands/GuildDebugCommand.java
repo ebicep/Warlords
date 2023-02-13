@@ -93,9 +93,7 @@ public class GuildDebugCommand extends BaseCommand {
     @Subcommand("openmenu")
     @Description("Opens guild menu of any guild")
     public void openMenu(Player player, String guildName) {
-        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
-            GuildMenu.openGuildMenu(guild, player, 1);
-        });
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> GuildMenu.openGuildMenu(guild, player, 1));
     }
 
     @HelpCommand

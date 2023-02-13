@@ -150,7 +150,7 @@ public class SpiritLink extends AbstractChainBase {
 
         // speed buff
         warlordsPlayer.addSpeedModifier(warlordsPlayer, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
-        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<SpiritLink>(
+        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LINK",
                 SpiritLink.class,

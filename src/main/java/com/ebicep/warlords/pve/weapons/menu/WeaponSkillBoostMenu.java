@@ -123,7 +123,7 @@ public class WeaponSkillBoostMenu {
                         .append(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")
                         .create()
         );
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 
 }

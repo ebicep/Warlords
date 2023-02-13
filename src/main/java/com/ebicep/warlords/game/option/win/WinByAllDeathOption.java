@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -20,10 +21,10 @@ import java.util.List;
  */
 public class WinByAllDeathOption implements Option {
 
-    private EnumSet<Team> deadTeams = EnumSet.noneOf(Team.class);
+    private final EnumSet<Team> deadTeams = EnumSet.noneOf(Team.class);
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
         game.registerEvents(new Listener() {

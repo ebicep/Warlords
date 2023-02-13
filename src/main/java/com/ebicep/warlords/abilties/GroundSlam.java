@@ -77,7 +77,7 @@ public class GroundSlam extends AbstractAbility {
                     if (!wasOnGround && hitGround) {
                         wasOnGround = true;
 
-                        Utils.playGlobalSound(wp.getLocation(), Sound.IRONGOLEM_DEATH, 2, 0.2f);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_IRON_GOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
                         activateAbility(wp, player, 1.5f);
                         this.cancel();
@@ -212,17 +212,12 @@ public class GroundSlam extends AbstractAbility {
             }
         }
         Material type = location.getWorld().getBlockAt(blockToGet).getType();
-        byte data = location.getWorld().getBlockAt(blockToGet).getData();
         if (type == Material.GRASS) {
             if ((int) (Math.random() * 3) == 2) {
                 type = Material.DIRT;
-                data = 0;
             }
         }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
-                type,
-                data
-        );
+        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);

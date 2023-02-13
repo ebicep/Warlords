@@ -56,7 +56,7 @@ public class Windfury extends AbstractAbility {
         Windfury tempWindfury = new Windfury();
         final boolean[] firstProc = {true};
         wp.getCooldownManager().removeCooldown(Windfury.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Windfury>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "FURY",
                 Windfury.class,
@@ -96,9 +96,9 @@ public class Windfury extends AbstractAbility {
                         new GameRunnable(victim.getGame()) {
                             int counter = 0;
                             final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
+                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
                             final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
 
                             @Override
                             public void run() {

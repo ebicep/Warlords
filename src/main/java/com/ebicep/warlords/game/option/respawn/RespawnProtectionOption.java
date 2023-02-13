@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,22 +58,25 @@ public class RespawnProtectionOption implements Option, Listener {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         new GameRunnable(game) {
             private final Location location = new Location(null, 0, 0, 0);
-            
+
             @Override
             public void run() {
                 Iterator<Map.Entry<WarlordsEntity, Pair<Location, Integer>>> itr = spawnProtection.entrySet().iterator();
                 while (itr.hasNext()) {
                     Map.Entry<WarlordsEntity, Pair<Location, Integer>> next = itr.next();
                     int newVal = next.getValue().getB() - 1;
-                    if (newVal <= 0 || (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() && next.getKey().getLocation(location).distanceSquared(next.getValue().getA()) > radiusSquared)) {
+                    if (newVal <= 0 || (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() && next.getKey()
+                                                                                                                           .getLocation(location)
+                                                                                                                           .distanceSquared(next.getValue()
+                                                                                                                                                .getA()) > radiusSquared)) {
                         itr.remove();
                     } else {
                         next.getValue().setB(newVal);

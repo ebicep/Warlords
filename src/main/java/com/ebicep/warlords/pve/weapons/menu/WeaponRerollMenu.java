@@ -19,7 +19,7 @@ public class WeaponRerollMenu {
 
         int rerollCost = weapon.getRerollCost();
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+                new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(ChatColor.GREEN + "Confirm")
                         .lore(ChatColor.GRAY + "Reroll this weapon and reset its stats.")
                         .addLore(weapon.getRerollCostLore())
@@ -42,7 +42,7 @@ public class WeaponRerollMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),

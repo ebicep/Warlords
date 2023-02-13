@@ -64,7 +64,7 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 1.5f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         }
 
         if (warlordsNPC.getHealth() < 6000) {

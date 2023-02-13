@@ -50,7 +50,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     }
 
     @Override
-    public default int getCompassTargetPriority(WarlordsEntity player) {
+    default int getCompassTargetPriority(WarlordsEntity player) {
         return player.getTeam() == getTeam() ? 20 : 0;
     }
 

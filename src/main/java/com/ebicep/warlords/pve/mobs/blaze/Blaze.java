@@ -35,7 +35,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
     @Override
     public void onSpawn(PveOption option) {
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 20);
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIREWORK_LARGE_BLAST, 2, 0.5f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 2, 0.5f);
     }
 
     @Override
@@ -48,8 +48,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
                     loc,
                     kindleRadius,
                     1.2,
-                    Material.FIRE,
-                    (byte) 0
+                    Material.FIRE
             ).play();
 
             for (WarlordsEntity target : PlayerFilter
@@ -76,7 +75,8 @@ public class Blaze extends AbstractBlaze implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIRE_IGNITE, 2, 0.2f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.2f);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 10);
     }
+
 }

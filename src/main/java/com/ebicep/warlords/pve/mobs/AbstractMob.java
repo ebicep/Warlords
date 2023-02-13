@@ -20,11 +20,9 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.google.common.util.concurrent.AtomicDouble;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -38,7 +36,7 @@ import java.util.function.UnaryOperator;
 public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     protected final T entity;
-    protected final EntityInsentient entityInsentient;
+    protected final net.minecraft.world.entity.Mob mob;
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
@@ -77,16 +75,16 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
         entity.spawn(spawnLocation);
 
-        this.entityInsentient = entity.get();
-        this.entityInsentient.persistent = true;
+        this.mob = entity.get();
+        this.mob.persist = true;
 
-        this.livingEntity = (LivingEntity) entityInsentient.getBukkitEntity();
+        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
         if (ee != null) {
             livingEntity.getEquipment().setBoots(ee.getBoots());
             livingEntity.getEquipment().setLeggings(ee.getLeggings());
             livingEntity.getEquipment().setChestplate(ee.getChestplate());
             livingEntity.getEquipment().setHelmet(ee.getHelmet());
-            livingEntity.getEquipment().setItemInHand(ee.getItemInHand());
+            livingEntity.getEquipment().setItemInHand(ee.getItemInMainHand());
         } else {
             livingEntity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
         }
@@ -154,17 +152,18 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot().sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "!")
-                        .create()
-                );
+                player.spigot()
+                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                              .append(ChatColor.GRAY + "!")
+                              .create()
+                      );
             });
-            killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
     }
 
-    public EntityLiving getTarget() {
+    public net.minecraft.world.entity.LivingEntity getTarget() {
         return this.entity.getTarget();
     }
 
@@ -173,7 +172,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void setTarget(LivingEntity target) {
-        this.entity.setTarget((((EntityLiving) ((CraftEntity) target).getHandle())));
+        this.entity.setTarget((((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target).getHandle())));
     }
 
     public void removeTarget() {
@@ -184,8 +183,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return entity;
     }
 
-    public EntityInsentient getEntityInsentient() {
-        return entityInsentient;
+    public net.minecraft.world.entity.Mob getMob() {
+        return mob;
     }
 
     public LivingEntity getLivingEntity() {

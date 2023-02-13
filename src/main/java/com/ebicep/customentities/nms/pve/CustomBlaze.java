@@ -1,14 +1,17 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityBlaze;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Blaze;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 
-public class CustomBlaze extends EntityBlaze implements CustomEntity<EntityBlaze> {
+import javax.annotation.Nonnull;
 
-    public CustomBlaze(World world) {
-        super(world);
+public class CustomBlaze extends Blaze implements CustomEntity<CustomBlaze> {
+
+    public CustomBlaze(ServerLevel serverLevel) {
+        super(EntityType.BLAZE, serverLevel);
     }
 
     public CustomBlaze(org.bukkit.World world) {
@@ -16,18 +19,15 @@ public class CustomBlaze extends EntityBlaze implements CustomEntity<EntityBlaze
     }
 
     @Override
-    public EntityBlaze get() {
+    public CustomBlaze get() {
         return this;
     }
 
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override

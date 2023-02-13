@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -64,20 +63,13 @@ public interface DebugLocationMarker extends LocationMarker {
     Material getMaterial();
 
     /**
-     * Gets the data value belonging to the
-     *
-     * @return
-     */
-    short getMaterialData();
-
-    /**
      * Converts this debug marker into an item for the debug screen
      *
      * @return
      */
     @Nonnull
     default ItemStack getAsItem() {
-        ItemBuilder item = new ItemBuilder(getMaterial(), 1, getMaterialData());
+        ItemBuilder item = new ItemBuilder(getMaterial(), 1);
         String name = getName();
         String newName;
         if (name.indexOf(ChatColor.COLOR_CHAR) >= 0) {
@@ -137,40 +129,54 @@ public interface DebugLocationMarker extends LocationMarker {
         return create(material, data, creator, name, location, Collections::emptyList);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(
+            @Nullable Material material,
+            int data,
+            Supplier<Class<?>> creator,
+            Supplier<String> name,
+            Supplier<Location> location,
+            Supplier<List<String>> extra
+    ) {
         Material newMaterial = material == null ? Material.BARRIER : material;
-        return create(() -> newMaterial, () -> data, creator, name, location, extra);
+        return create(() -> newMaterial, creator, name, location, extra);
     }
-    static DebugLocationMarker create(Supplier<Material> material, IntSupplier data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
+
+    static DebugLocationMarker create(
+            Supplier<Material> material,
+            Supplier<Class<?>> creator,
+            Supplier<String> name,
+            Supplier<Location> location,
+            Supplier<List<String>> extra
+    ) {
         return new DebugLocationMarker() {
+            @Nonnull
             @Override
             public String getName() {
                 return name.get();
             }
 
+            @Nonnull
             @Override
             public Class<?> getCreator() {
                 return creator.get();
             }
 
+            @Nonnull
             @Override
             public Location getLocation() {
                 return location.get();
             }
 
+            @Nonnull
             @Override
             public List<String> getExtra() {
                 return extra.get();
             }
 
+            @Nonnull
             @Override
             public Material getMaterial() {
                 return material.get();
-            }
-
-            @Override
-            public short getMaterialData() {
-                return (short) data.getAsInt();
             }
             
             @Override

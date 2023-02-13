@@ -28,7 +28,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
             Consumer<WarlordsDamageHealingFinalEvent> finalEvent
     ) {
         target.getCooldownManager().removeCooldown(ImpalingStrike.class, false);
-        target.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Leech Debuff",
                 "LCH",
                 ImpalingStrike.class,

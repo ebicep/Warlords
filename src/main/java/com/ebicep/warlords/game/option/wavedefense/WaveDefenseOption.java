@@ -46,12 +46,13 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Material;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -67,7 +68,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
@@ -114,11 +114,10 @@ public class WaveDefenseOption implements Option, PveOption {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
         for (Option o : game.getOptions()) {
-            if (o instanceof BoundingBoxOption) {
-                BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;
+            if (o instanceof BoundingBoxOption boundingBoxOption) {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
@@ -221,25 +220,24 @@ public class WaveDefenseOption implements Option, PveOption {
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
                 Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof EntityLiving)) {
+                if (!(entity instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                EntityLiving entityLiving = (EntityLiving) entity;
                 if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
                     return;
                 }
-                if (entityLiving instanceof EntityInsentient) {
+                if (entityLiving instanceof Mob) {
                     LivingEntity newTarget = event.getTarget();
-                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
-                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                    LivingEntity oldTarget = ((Mob) entityLiving).getTarget();
+                    if (entityLiving.hasPotionEffect(PotionEffectType.BLINDNESS) && newTarget != null) {
                         event.setCancelled(true);
                         return;
                     }
                     if (newTarget == null) {
-                        if (oldTarget instanceof EntityPlayer) {
+                        if (oldTarget instanceof Player) {
                             //setting target to player zombie
                             game.warlordsPlayers()
-                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
+                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueId()))
                                 .findFirst()
                                 .ifPresent(warlordsPlayer -> {
                                     if (!(warlordsPlayer.getEntity() instanceof Player)) {
@@ -248,7 +246,7 @@ public class WaveDefenseOption implements Option, PveOption {
                                 });
                         }
                     } else {
-                        if (oldTarget instanceof EntityZombie) {
+                        if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
                             game.warlordsPlayers()
                                 .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
@@ -279,10 +277,9 @@ public class WaveDefenseOption implements Option, PveOption {
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getPlayer();
-                if (!(player instanceof WarlordsPlayer)) {
+                if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
                 AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
                 if (abilityTree == null) {
                     return;
@@ -354,7 +351,7 @@ public class WaveDefenseOption implements Option, PveOption {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
@@ -389,13 +386,10 @@ public class WaveDefenseOption implements Option, PveOption {
 
                     if (difficulty == DifficultyIndex.ENDLESS) {
                         switch (waveCounter) {
-                            case 50:
-                            case 100:
-                                getGame().forEachOnlineWarlordsPlayer(wp -> {
-                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                                });
-                                break;
+                            case 50, 100 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                            });
                         }
                     }
                 }
@@ -515,7 +509,7 @@ public class WaveDefenseOption implements Option, PveOption {
 
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
                 sendMessage(entry.getKey(), false, message);
-                entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
+                entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
             }
         }
         waveCounter++;
@@ -575,28 +569,21 @@ public class WaveDefenseOption implements Option, PveOption {
                 wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 
-            entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
+            entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, soundPitch);
             PacketUtils.sendTitle(entry.getKey(), wavePrefix + waveCounter, "", 20, 60, 20);
         }
         startSpawnTask();
     }
 
     public float getSpawnCountMultiplier(int playerCount) {
-        switch (playerCount) {
-            case 2:
-                return 1.25f;
-            case 3:
-            case 4:
-                return 1.5f;
-            case 5:
-            case 6:
-                return 2;
-            case 7:
-            case 8:
-                return 2.5f;
-        }
+        return switch (playerCount) {
+            case 2 -> 1.25f;
+            case 3, 4 -> 1.5f;
+            case 5, 6 -> 2;
+            case 7, 8 -> 2.5f;
+            default -> 1;
+        };
 
-        return 1;
     }
 
     public void startSpawnTask() {
@@ -703,18 +690,11 @@ public class WaveDefenseOption implements Option, PveOption {
         float bossMultiplier = 1 + (0.25f * playerCount);
 
         // Multiply damage/health by given difficulty.
-        float difficultyMultiplier;
-        switch (difficulty) {
-            case EASY:
-                difficultyMultiplier = 0.75f;
-                break;
-            case HARD:
-                difficultyMultiplier = 1.5f;
-                break;
-            default:
-                difficultyMultiplier = 1;
-                break;
-        }
+        float difficultyMultiplier = switch (difficulty) {
+            case EASY -> 0.75f;
+            case HARD -> 1.5f;
+            default -> 1;
+        };
 
         // Final health value after applying all modifiers.
         float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);

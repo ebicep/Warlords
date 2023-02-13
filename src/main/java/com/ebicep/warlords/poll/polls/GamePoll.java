@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class GamePoll extends AbstractPoll<GamePoll> {
 
@@ -22,11 +21,11 @@ public class GamePoll extends AbstractPoll<GamePoll> {
     @Override
     public List<UUID> getUUIDsAllowedToVote() {
         return game.onlinePlayers()
-                .filter(playerTeamEntry -> playerTeamEntry.getValue() != null)
-                .filter(playerTeamEntry -> !excludedPlayers.contains(playerTeamEntry.getKey().getUniqueId()))
-                .map(Map.Entry::getKey)
-                .map(Player::getUniqueId)
-                .collect(Collectors.toList());
+                   .filter(playerTeamEntry -> playerTeamEntry.getValue() != null)
+                   .filter(playerTeamEntry -> !excludedPlayers.contains(playerTeamEntry.getKey().getUniqueId()))
+                   .map(Map.Entry::getKey)
+                   .map(Player::getUniqueId)
+                   .toList();
     }
 
     @Override
@@ -39,15 +38,15 @@ public class GamePoll extends AbstractPoll<GamePoll> {
         //send poll results to other team/spectators
         List<UUID> allowedToVote = getUUIDsAllowedToVote();
         List<UUID> otherUUIDs = game.onlinePlayers()
-                .map(Map.Entry::getKey)
-                .map(Entity::getUniqueId)
-                .filter(uuid -> !allowedToVote.contains(uuid))
-                .collect(Collectors.toList());
+                                    .map(Map.Entry::getKey)
+                                    .map(Entity::getUniqueId)
+                                    .filter(uuid -> !allowedToVote.contains(uuid))
+                                    .toList();
 
         sendPollResultsToPlayers(game.onlinePlayers()
-                .filter(playerTeamEntry -> otherUUIDs.contains(playerTeamEntry.getKey().getUniqueId()))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList()));
+                                     .filter(playerTeamEntry -> otherUUIDs.contains(playerTeamEntry.getKey().getUniqueId()))
+                                     .map(Map.Entry::getKey)
+                                     .toList());
     }
 
     public Game getGame() {

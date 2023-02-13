@@ -50,7 +50,7 @@ public class GuildTagMenu {
         }
 
         menu.setItem(4, 2,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Change Tag Name")
                         .get(),
                 (m, e) -> {

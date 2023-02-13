@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.io.Serial;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -380,8 +381,8 @@ public enum ParticleEffect {
      */
     MOB_APPEARANCE("mobappearance", 41, 8);
 
-    private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
-    private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
+    private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<>();
+    private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<>();
     private final String name;
     private final int id;
     private final int requiredVersion;
@@ -498,7 +499,7 @@ public enum ParticleEffect {
      */
     private static boolean isWater(Location location) {
         Material material = location.getBlock().getType();
-        return material == Material.WATER || material == Material.STATIONARY_WATER;
+        return material == Material.WATER;
     }
 
     /**
@@ -1246,6 +1247,7 @@ public enum ParticleEffect {
      * @since 1.6
      */
     private static final class ParticleDataException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = 3203085387160737484L;
 
         /**
@@ -1267,6 +1269,7 @@ public enum ParticleEffect {
      * @since 1.7
      */
     private static final class ParticleColorException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = 3203085387160737484L;
 
         /**
@@ -1288,6 +1291,7 @@ public enum ParticleEffect {
      * @since 1.6
      */
     private static final class ParticleVersionException extends RuntimeException {
+        @Serial
         private static final long serialVersionUID = 3203085387160737484L;
 
         /**
@@ -1536,6 +1540,7 @@ public enum ParticleEffect {
          * @since 1.5
          */
         private static final class VersionIncompatibleException extends RuntimeException {
+            @Serial
             private static final long serialVersionUID = 3203085387160737484L;
 
             /**
@@ -1558,6 +1563,7 @@ public enum ParticleEffect {
          * @since 1.4
          */
         private static final class PacketInstantiationException extends RuntimeException {
+            @Serial
             private static final long serialVersionUID = 3203085387160737484L;
 
             /**
@@ -1580,6 +1586,7 @@ public enum ParticleEffect {
          * @since 1.4
          */
         private static final class PacketSendingException extends RuntimeException {
+            @Serial
             private static final long serialVersionUID = 3203085387160737484L;
 
             /**

@@ -172,26 +172,14 @@ public enum Specializations {
     }
 
     public static Classes getClass(Specializations selected) {
-        switch (selected) {
-            case PYROMANCER:
-            case CRYOMANCER:
-            case AQUAMANCER:
-                return Classes.MAGE;
-            case BERSERKER:
-            case DEFENDER:
-            case REVENANT:
-                return Classes.WARRIOR;
-            case AVENGER:
-            case CRUSADER:
-            case PROTECTOR:
-                return Classes.PALADIN;
-            case THUNDERLORD:
-            case SPIRITGUARD:
-            case EARTHWARDEN:
-                return Classes.SHAMAN;
-        }
-        return Classes.ROGUE;
-        //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
+        return switch (selected) {
+            case PYROMANCER, CRYOMANCER, AQUAMANCER -> Classes.MAGE;
+            case BERSERKER, DEFENDER, REVENANT -> Classes.WARRIOR;
+            case AVENGER, CRUSADER, PROTECTOR -> Classes.PALADIN;
+            case THUNDERLORD, SPIRITGUARD, EARTHWARDEN -> Classes.SHAMAN;
+            default -> Classes.ROGUE;
+        };
+        //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).toList().get(0);
     }
 
 }

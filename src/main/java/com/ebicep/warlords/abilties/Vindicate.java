@@ -97,7 +97,7 @@ public class Vindicate extends AbstractAbility {
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindicateDuration * 20);
         }
 
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Vindicate Resistance",
                 "VIND RESIST",
                 Vindicate.class,
@@ -135,7 +135,7 @@ public class Vindicate extends AbstractAbility {
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-        target.getCooldownManager().addCooldown(new RegularCooldown<T>(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Vindicate Debuff Immunity",
                 "VIND",
                 cooldownClass,

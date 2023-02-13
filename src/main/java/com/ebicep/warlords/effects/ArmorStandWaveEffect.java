@@ -6,7 +6,10 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class ArmorStandWaveEffect {
     private final List<Stand> stands;
@@ -22,7 +25,7 @@ public class ArmorStandWaveEffect {
                 }
             }
         }
-        Collections.sort(stands, Comparator.comparing(Stand::getTimer).reversed());
+        stands.sort(Comparator.comparing(Stand::getTimer).reversed());
     }
 
     public void play() {
@@ -45,7 +48,7 @@ public class ArmorStandWaveEffect {
         }.runTaskTimer(Warlords.getInstance(), 1, 1);
     }
 
-    class Stand {
+    static class Stand {
         private final Location loc;
         private ArmorStand stand;
         private int timer;

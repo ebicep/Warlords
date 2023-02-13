@@ -21,7 +21,7 @@ public class FutureMessage {
         } else {
             messages.forEach(player::sendMessage);
         }
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 
 }

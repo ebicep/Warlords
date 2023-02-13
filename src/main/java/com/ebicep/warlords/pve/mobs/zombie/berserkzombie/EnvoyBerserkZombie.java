@@ -27,7 +27,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                         new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.COOKED_FISH, 1, (short) 1)
+                        new ItemStack(Material.COOKED_SALMON)
                 ),
                 7000,
                 0.43f,

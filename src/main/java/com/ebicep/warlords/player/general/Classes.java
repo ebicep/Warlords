@@ -12,35 +12,35 @@ public enum Classes {
     MAGE(
             "Mage",
             List.of("mag"),
-            new ItemStack(Material.INK_SACK, 1, (short) 12),
+            new ItemStack(Material.LIGHT_BLUE_DYE),
             "The mage has access to powerful Arcane, Fire, Ice and Water magic.",
             PYROMANCER, CRYOMANCER, AQUAMANCER
     ),
     WARRIOR(
             "Warrior",
             List.of("war"),
-            new ItemStack(Material.COAL, 1, (short) 1),
+            new ItemStack(Material.CHARCOAL),
             "The Warrior uses brute force to overpower their opponents in melee combat or to defend their allies.",
             BERSERKER, DEFENDER, REVENANT
     ),
     PALADIN(
             "Paladin",
             List.of("pal"),
-            new ItemStack(Material.INK_SACK, 1, (short) 11),
+            new ItemStack(Material.DANDELION),
             "The Paladin's strongest ally is the light. They use it to empower their weapon in order to vanquish foes and protect teammates.",
             AVENGER, CRUSADER, PROTECTOR
     ),
     SHAMAN(
             "Shaman",
             List.of("sha"),
-            new ItemStack(Material.INK_SACK, 1, (short) 2),
+            new ItemStack(Material.GREEN_DYE),
             "The Shaman has an unbreakable bond with nature. This grants them access to devastating abilities that are empowered by the elements.",
             THUNDERLORD, SPIRITGUARD, EARTHWARDEN
     ),
     ROGUE(
             "Rogue",
             List.of("rog"),
-            new ItemStack(Material.INK_SACK, 1, (short) 9),
+            new ItemStack(Material.PINK_DYE),
             "The Rogue is a master of deception. Always looking to gain the upper hand in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
     );

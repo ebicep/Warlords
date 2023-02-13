@@ -94,7 +94,7 @@ public class WeaponBindMenu {
                                         weaponInventory.remove(boundWeapon);
                                     }
 
-                                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, databasePlayer, selectedWeapon);
@@ -114,10 +114,10 @@ public class WeaponBindMenu {
                             column + i,
                             row + 1,
                             spec == weaponSpec ?
-                                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 13)
+                            new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE)
                                             .name(ChatColor.GREEN + "Click to bind")
                                             .get() :
-                                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 14)
+                            new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
                                             .name(ChatColor.RED + "You cannot bind this weapon to " + spec.name)
                                             .get(),
                             (m, e) -> {

@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
@@ -146,11 +145,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
             statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair " + value.name + " Placement", SPAWN_POINT,
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer))
+                                                                                                                         .apply(databasePlayer))
                                 .getMasterworksFairEntries()
                                 .stream()
                                 .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                .collect(Collectors.toList());
+                                .toList();
                         if (masterworksFairEntries.isEmpty()) {
                             return 0;
                         }
@@ -160,11 +159,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                     },
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer))
+                                                                                                                         .apply(databasePlayer))
                                 .getMasterworksFairEntries()
                                 .stream()
                                 .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                .collect(Collectors.toList());
+                                .toList();
                         if (masterworksFairEntries.isEmpty()) {
                             return "0";
                         }

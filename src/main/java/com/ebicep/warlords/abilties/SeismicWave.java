@@ -155,17 +155,12 @@ public class SeismicWave extends AbstractAbility {
             }
         }
         Material type = location.getWorld().getBlockAt(blockToGet).getType();
-        byte data = location.getWorld().getBlockAt(blockToGet).getData();
         if (type == Material.GRASS) {
             if ((int) (Math.random() * 3) == 2) {
                 type = Material.DIRT;
-                data = 0;
             }
         }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
-                type,
-                data
-        );
+        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;

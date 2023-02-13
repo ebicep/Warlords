@@ -86,12 +86,12 @@ public class DatabaseGamePlayerBase {
         this.totalHealing = warlordsPlayer.getMinuteStats().total().getHealing();
         this.totalAbsorbed = warlordsPlayer.getMinuteStats().total().getAbsorbed();
         if (!(this instanceof DatabaseGamePlayerPvE)) {
-            this.kills = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getKills).collect(Collectors.toList());
-            this.assists = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAssists).collect(Collectors.toList());
-            this.deaths = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDeaths).collect(Collectors.toList());
-            this.damage = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamage).collect(Collectors.toList());
-            this.healing = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealing).collect(Collectors.toList());
-            this.absorbed = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAbsorbed).collect(Collectors.toList());
+            this.kills = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getKills).toList();
+            this.assists = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAssists).toList();
+            this.deaths = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDeaths).toList();
+            this.damage = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDamage).toList();
+            this.healing = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getHealing).toList();
+            this.absorbed = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAbsorbed).toList();
         }
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;

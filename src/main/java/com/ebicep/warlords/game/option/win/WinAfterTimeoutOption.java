@@ -100,7 +100,7 @@ public class WinAfterTimeoutOption implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         new TimerSkipAbleMarker() {
             @Override
             public int getDelay() {
@@ -185,7 +185,7 @@ public class WinAfterTimeoutOption implements Option {
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         this.runTaskTimer = new GameRunnable(game) {
             @Override
             public void run() {
@@ -220,7 +220,7 @@ public class WinAfterTimeoutOption implements Option {
                 }
                 scoreboard.markChanged();
             }
-        }.runTaskTimer(1 * SECOND, 1 * SECOND);
+        }.runTaskTimer(SECOND, SECOND);
     }
 
     @Override
@@ -233,8 +233,7 @@ public class WinAfterTimeoutOption implements Option {
     
     public static OptionalInt getTimeRemaining(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if (option instanceof WinAfterTimeoutOption) {
-                WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) option;
+            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
                 return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
             }
         }

@@ -9,7 +9,6 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
@@ -59,11 +58,11 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import org.bukkit.GameMode;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -71,7 +70,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,7 +83,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
@@ -103,11 +100,11 @@ public class Warlords extends JavaPlugin {
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
-    static {
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
-    }
+//    static {
+//        ((Log4jLogger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
+//        ((Log4jLogger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
+//        ((Log4jLogger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
+//    }
 
     public static <T> TaskChain<T> newSharedChain(String name) {
         return taskChainFactory.newSharedChain(name);
@@ -179,7 +176,7 @@ public class Warlords extends JavaPlugin {
 
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
-        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
+        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90));
     }
 
     public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
@@ -404,11 +401,11 @@ public class Warlords extends JavaPlugin {
                     @Override
                     public void onPacketReceiving(PacketEvent e) {
                         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-                            if (e.getPacket().getHandle() instanceof PacketPlayInSteerVehicle) {
-                                boolean dismount = e.getPacket().getBooleans().read(1);
+                            if (e.getPacket().getHandle() instanceof ServerboundPlayerInputPacket) {
+                                boolean dismount = ((ServerboundPlayerInputPacket) e.getPacket().getHandle()).isShiftKeyDown();
                                 Field f;
                                 try {
-                                    f = PacketPlayInSteerVehicle.class.getDeclaredField("d");
+                                    f = ServerboundPlayerInputPacket.class.getDeclaredField("isShiftKeyDown");
                                     f.setAccessible(true);
                                     f.set(e.getPacket().getHandle(), false);
                                 } catch (Exception e1) {
@@ -425,8 +422,6 @@ public class Warlords extends JavaPlugin {
 
         SignGUI.init(this);
 
-        CustomEntitiesRegistry.registerEntities();
-
         Warlords.newChain()
                 .sync(NPCManager::createSupplyDropFairNPC)
                 .execute();
@@ -435,7 +430,7 @@ public class Warlords extends JavaPlugin {
         startRestartReminderLoop();
 
         //Sending data to mod
-        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
+        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "warlords:warlords");
 
         MemoryManager.init();
 
@@ -521,7 +516,7 @@ public class Warlords extends JavaPlugin {
                     Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
                     if (player != null) {
                         //ACTION BAR
-                        if (!player.getInventory().getItemInHand().equals(FlagSpawnPointOption.COMPASS)) {
+                        if (!player.getInventory().getItemInMainHand().equals(FlagSpawnPointOption.COMPASS)) {
                             wp.displayActionBar();
                         } else {
                             wp.displayFlagActionBar(player);
@@ -616,7 +611,7 @@ public class Warlords extends JavaPlugin {
                         for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownClass(UndyingArmy.class)
                                 .stream()
-                                .collect(Collectors.toList())
+                                .toList()
                         ) {
                             UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
                             if (!undyingArmy.isArmyDead(wp)) {
@@ -627,7 +622,7 @@ public class Warlords extends JavaPlugin {
 
                                 // Sending the message + check if getFrom is self
                                 if (undyingArmyCooldown.getFrom() == wp) {
-                                    wp.sendMessage("§a\u00BB§7 " +
+                                    wp.sendMessage("§a»§7 " +
                                             ChatColor.LIGHT_PURPLE +
                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
                                             ChatColor.RED +
@@ -636,7 +631,7 @@ public class Warlords extends JavaPlugin {
                                             " every second."
                                     );
                                 } else {
-                                    wp.sendMessage("§a\u00BB§7 " +
+                                    wp.sendMessage("§a»§7 " +
                                             ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
                                             "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
                                             ChatColor.RED +
@@ -771,8 +766,7 @@ public class Warlords extends JavaPlugin {
                     }
 
                     //NPC STUN
-                    if (wp instanceof WarlordsNPC) {
-                        WarlordsNPC npc = (WarlordsNPC) wp;
+                    if (wp instanceof WarlordsNPC npc) {
                         if (npc.getStunTicks() > 0) {
                             npc.setStunTicks(npc.getStunTicks() - 1, true);
                         }
@@ -811,7 +805,7 @@ public class Warlords extends JavaPlugin {
 
                             wp.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                             if (player != null) {
-                                Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
+                                Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
 
                             for (WarlordsEntity nearPlayer : PlayerFilter
@@ -822,7 +816,7 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                                 if (player != null) {
-                                    Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
+                                    Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                                 }
                             }
                         } else {
@@ -986,11 +980,11 @@ public class Warlords extends JavaPlugin {
             Game game1 = players.get(p.getUniqueId());
             if (p != player) {
                 if (game1 == game) {
-                    p.showPlayer(player);
-                    player.showPlayer(p);
+                    p.showPlayer(Warlords.getInstance(), player);
+                    player.showPlayer(Warlords.getInstance(), p);
                 } else {
-                    p.hidePlayer(player);
-                    player.hidePlayer(p);
+                    p.hidePlayer(Warlords.getInstance(), player);
+                    player.hidePlayer(Warlords.getInstance(), p);
                 }
             }
         }
@@ -1021,11 +1015,11 @@ public class Warlords extends JavaPlugin {
                 Player p = peeps.get(j);
                 Game game1 = players.get(p.getUniqueId());
                 if (game1 == game) {
-                    p.showPlayer(player);
-                    player.showPlayer(p);
+                    p.showPlayer(Warlords.getInstance(), player);
+                    player.showPlayer(Warlords.getInstance(), p);
                 } else {
-                    p.hidePlayer(player);
-                    player.hidePlayer(p);
+                    p.hidePlayer(Warlords.getInstance(), player);
+                    player.hidePlayer(Warlords.getInstance(), p);
                 }
             }
         }

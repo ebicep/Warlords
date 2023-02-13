@@ -68,12 +68,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         if (nearPlayer instanceof WarlordsNPC) {
             if (pveUpgrade) {
                 switch (((WarlordsNPC) nearPlayer).getMobTier()) {
-                    case BASE:
-                        multiplier = 1.4f;
-                        break;
-                    case ELITE:
-                        multiplier = 1.2f;
-                        break;
+                    case BASE -> multiplier = 1.4f;
+                    case ELITE -> multiplier = 1.2f;
                 }
 
                 if (((WarlordsNPC) nearPlayer).getMob().getMobTier() == MobTier.ELITE) {

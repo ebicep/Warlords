@@ -15,7 +15,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class AbstractTotemBase extends AbstractAbility {
 
@@ -44,7 +43,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected WarlordsEntity owner;
@@ -110,11 +109,10 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     protected abstract void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand);
 
     public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
-        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+        if (!(warlordsPlayer.getEntity() instanceof Player player)) {
             return false;
         }
-        Player player = (Player) warlordsPlayer.getEntity();
-        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();
+        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1);
         Vector toEntity = this.totem.getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
         return dot > .93f;

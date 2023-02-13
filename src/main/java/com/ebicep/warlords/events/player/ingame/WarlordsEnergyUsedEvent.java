@@ -20,6 +20,7 @@ public class WarlordsEnergyUsedEvent extends AbstractWarlordsEntityEvent {
         return energyUsed;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

@@ -12,7 +12,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class HorseOption implements Option, Listener {
 
-    public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLD_BARDING)
+    public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
             .name(ChatColor.GREEN + "Mount " + ChatColor.GRAY + "- §eRight-Click!")
             .lore(ChatColor.GRAY + "Cooldown: §b15 seconds",
                     "",
@@ -87,7 +87,7 @@ public class HorseOption implements Option, Listener {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         if (warlordsPlayer.getHorseCooldown() > 0) {
             player.getInventory()
-                  .setItem(7, new ItemStack(Material.IRON_BARDING, (int) warlordsPlayer.getHorseCooldown() + 1));
+                  .setItem(7, new ItemStack(Material.IRON_HORSE_ARMOR, (int) warlordsPlayer.getHorseCooldown() + 1));
         } else {
             player.getInventory().setItem(7, HORSE_ITEM);
         }
@@ -101,12 +101,12 @@ public class HorseOption implements Option, Listener {
         WarlordsEntity wp = Warlords.getPlayer(player);
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-            ItemStack itemHeld = player.getItemInHand();
+            ItemStack itemHeld = player.getEquipment().getItemInMainHand();
             int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp == null || !wp.isAlive() || wp.getGame().isFrozen()) {
                 return;
             }
-            if (itemHeld.getType() != Material.GOLD_BARDING) {
+            if (itemHeld.getType() != Material.GOLDEN_HORSE_ARMOR) {
                 return;
             }
             if (heldItemSlot != 7 || player.getVehicle() != null || !(wp.getHorseCooldown() <= 0)) {

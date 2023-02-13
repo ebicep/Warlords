@@ -163,6 +163,6 @@ public enum SupplyDropRewards {
                 ChatColor.GOLD + name,
                 0, 40, 0
         );
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 1.2f);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
     }
 }

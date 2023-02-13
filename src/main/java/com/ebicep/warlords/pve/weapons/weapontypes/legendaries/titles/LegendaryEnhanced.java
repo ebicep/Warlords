@@ -80,10 +80,9 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 if (!Objects.equals(cooldown.getFrom(), player)) {
                     return;
                 }
-                if (!(cooldown instanceof RegularCooldown)) {
+                if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                     return;
                 }
-                RegularCooldown<?> regularCooldown = (RegularCooldown<?>) cooldown;
                 if (regularCooldown.isEnhanced()) {
                     return;
                 }

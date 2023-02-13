@@ -20,7 +20,7 @@ public class Settings {
                 .name(ChatColor.GREEN + "Hotkey Mode")
                 .lore(ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "NEW", "", ChatColor.YELLOW + "Click here to enable Classic mode.")
                 .get()),
-        CLASSIC_MODE(new ItemBuilder(Material.SNOW_BALL)
+        CLASSIC_MODE(new ItemBuilder(Material.SNOWBALL)
                 .name(ChatColor.GREEN + "Hotkey Mode")
                 .lore(ChatColor.YELLOW + "Currently selected " + ChatColor.AQUA + "Classic", "", ChatColor.YELLOW + "Click here to enable NEW mode.")
                 .get()),
@@ -37,15 +37,15 @@ public class Settings {
 
     public enum ParticleQuality {
 
-        LOW(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 1).name(ChatColor.GOLD + "Low Quality").get(),
+        LOW(new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).name(ChatColor.GOLD + "Low Quality").get(),
                 ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see.",
                 2
         ),
-        MEDIUM(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4).name(ChatColor.YELLOW + "Medium Quality").get(),
+        MEDIUM(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(ChatColor.YELLOW + "Medium Quality").get(),
                 ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.",
                 4
         ),
-        HIGH(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5).name(ChatColor.GREEN + "High Quality").get(),
+        HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(ChatColor.GREEN + "High Quality").get(),
                 ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience.",
                 100000
         ),
@@ -76,7 +76,7 @@ public class Settings {
                 )
                 .get()
         ),
-        ABSOLUTE(new ItemBuilder(Material.WOOL)
+        ABSOLUTE(new ItemBuilder(Material.WHITE_WOOL)
                 .name(ChatColor.GREEN + "Flag Message Mode")
                 .lore(
                         ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Absolute",
@@ -104,7 +104,7 @@ public class Settings {
             Menu menu = new Menu("Chat Settings", 9 * 4);
 
             menu.setItem(1, 1,
-                    new ItemBuilder(Material.NETHER_STALK)
+                    new ItemBuilder(Material.NETHER_WART)
                             .name(ChatColor.GREEN + "Damage Messages")
                             .lore(
                                     ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatDamageMode().name,
@@ -120,8 +120,8 @@ public class Settings {
                     }
             );
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.INK_SACK, 1, (short) 6)
-                            .name(ChatColor.GREEN + "Damage Messages")
+                    new ItemBuilder(Material.CYAN_DYE)
+                            .name(ChatColor.GREEN + "Healing Messages")
                             .lore(
                                     ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatHealingMode().name,
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Healing received and healing given", 150),

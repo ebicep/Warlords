@@ -5,9 +5,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent {
     private static final HandlerList handlers = new HandlerList();
@@ -31,9 +31,9 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     private final boolean attackerInCombat;
 
-    private boolean isDamageInstance;
+    private final boolean isDamageInstance;
 
-    private int inGameTick;
+    private final int inGameTick;
 
     public WarlordsDamageHealingFinalEvent(
             WarlordsDamageHealingEvent warlordsDamageHealingEvent, WarlordsEntity player,
@@ -52,12 +52,12 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         super(player);
         this.warlordsDamageHealingEvent = warlordsDamageHealingEvent;
         this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
-                .map(CooldownRecord::new)
-                .collect(Collectors.toList())
+                                          .map(CooldownRecord::new)
+                                          .toList()
         );
         this.attackerCooldowns.addAll(attacker.getCooldownManager().getCooldowns().stream()
-                .map(CooldownRecord::new)
-                .collect(Collectors.toList())
+                                              .map(CooldownRecord::new)
+                                              .toList()
         );
         this.attacker = attacker;
         this.ability = ability;
@@ -156,6 +156,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         return inGameTick;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

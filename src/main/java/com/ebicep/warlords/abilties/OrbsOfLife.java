@@ -1,5 +1,7 @@
 package com.ebicep.warlords.abilties;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -8,25 +10,24 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
-import net.minecraft.server.v1_8_R3.EntityHuman;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ExperienceOrb;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class OrbsOfLife extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal, maxDamageHeal);
-        PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<OrbsOfLife>(
+        PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<>(
                 name,
                 "ORBS",
                 OrbsOfLife.class,
@@ -130,7 +131,7 @@ public class OrbsOfLife extends AbstractAbility {
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
-                        Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.08f, 0.7f);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
                         ParticleEffect.ENCHANTMENT_TABLE.display(
                                 0.8f,
                                 0,
@@ -165,15 +166,14 @@ public class OrbsOfLife extends AbstractAbility {
                                     WarlordsEntity target = targetOrb.getPlayerToMoveTowards();
                                     ArmorStand orbArmorStand = targetOrb.getArmorStand();
                                     Location orbLocation = orbArmorStand.getLocation();
-                                    Entity orb = orbArmorStand.getPassenger();
+                                    @NotNull List<Entity> orb = orbArmorStand.getPassengers();
                                     //must eject passenger then reassign it before teleporting bc ???
                                     orbArmorStand.eject();
                                     orbArmorStand.teleport(
                                             new LocationBuilder(orbLocation.clone())
                                                     .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
-                                                    .get()
                                     );
-                                    orbArmorStand.setPassenger(orb);
+                                    orb.forEach(orbArmorStand::addPassenger);
                                     ParticleEffect.VILLAGER_HAPPY.display(
                                             0,
                                             0,
@@ -273,24 +273,25 @@ public class OrbsOfLife extends AbstractAbility {
         this.orbTickMultiplier = orbTickMultiplier;
     }
 
-    public static class Orb extends EntityExperienceOrb {
+    public static class Orb extends ExperienceOrb {
 
         private final ArmorStand armorStand;
         private final PersistentCooldown<OrbsOfLife> cooldown;
+        private final int tickMultiplier;
         private int ticksLived = 0;
-        private int tickMultiplier = 1;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public Orb(World world, Location location, PersistentCooldown<OrbsOfLife> cooldown, WarlordsEntity owner, int tickMultiplier) {
-            super(world, location.getX(), location.getY() + 2, location.getZ(), 2500);
+        public Orb(ServerLevel world, Location location, PersistentCooldown<OrbsOfLife> cooldown, WarlordsEntity owner, int tickMultiplier) {
+            super(world, location.getX(), location.getY() + 2, location.getZ(), 2500, org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, null);
             this.cooldown = cooldown;
             ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
             orbStand.setVisible(false);
             orbStand.setGravity(true);
-            orbStand.setPassenger(spawn(location).getBukkitEntity());
-            for (WarlordsEntity player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
-                if (player.getEntity() instanceof Player) {
-                    ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
+            orbStand.addPassenger(spawn(location).getBukkitEntity());
+            ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+            for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
+                if (warlordsEntity.getEntity() instanceof Player player) {
+                    PacketUtils.removeEntityForPlayer(player, getId());
                 }
             }
             this.armorStand = orbStand;
@@ -309,16 +310,16 @@ public class OrbsOfLife extends AbstractAbility {
         }
 
         public Orb spawn(Location loc) {
-            World w = ((CraftWorld) loc.getWorld()).getHandle();
-            this.setPosition(loc.getX(), loc.getY(), loc.getZ());
-            w.addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            ServerLevel w = ((CraftWorld) loc.getWorld()).getHandle();
+            moveTo(loc.getX(), loc.getY(), loc.getZ());
+            w.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
             return this;
         }
 
         // Makes it so they cannot be picked up
         @Override
-        public void d(EntityHuman entityHuman) {
-
+        public void playerTouch(@Nonnull net.minecraft.world.entity.player.Player player) {
+            super.playerTouch(player);
         }
 
         public void remove() {

@@ -6,14 +6,13 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-public class WitherWarrior extends AbstractSkeleton implements EliteMob {
+public class WitherWarrior extends AbstractWitherSkeleton implements EliteMob {
 
     public WitherWarrior(Location spawnLocation) {
         super(
@@ -37,7 +36,6 @@ public class WitherWarrior extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        this.entity.setSkeletonType(1);
     }
 
     @Override

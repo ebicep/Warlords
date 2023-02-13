@@ -14,6 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -63,29 +64,27 @@ public class GameOvertimeOption implements Option, Listener {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsGameTriggerWinEvent event) {
-        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption && event.getDeclaredWinner() == null) {
+        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption drawAfterTimeoutOption && event.getDeclaredWinner() == null) {
             event.setCancelled(true);
             for (Team team : TeamMarker.getTeams(event.getGame())) {
                 event.getGame().setPoints(team, 0);
             }
             for (Option option : event.getGame().getOptions()) {
-                if (option instanceof WinByPointsOption) {
-                    WinByPointsOption winByPointsOption = (WinByPointsOption) option;
+                if (option instanceof WinByPointsOption winByPointsOption) {
                     winByPointsOption.setPointLimit(overTimePoints);
                 }
             }
-            WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) event.getCause();
             drawAfterTimeoutOption.setTimeRemaining(overTimeTime);
             event.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                 PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach " + overTimePoints + " points wins!", 0, 60, 0);
                 player.sendMessage("§dOvertime is now active!");
-                player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
+                player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
             });
             wasActivated = true;
         }

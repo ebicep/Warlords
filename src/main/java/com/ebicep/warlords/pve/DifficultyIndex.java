@@ -7,29 +7,57 @@ import javax.annotation.Nonnull;
 public enum DifficultyIndex {
 
     EASY("Easy",
-            "For those seeking a lighter challenge,\nrecommended for solo players." +
-                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage\n-25% Mob Spawns",
+            """
+                    For those seeking a lighter challenge,
+                    recommended for solo players.
+
+                    Modifiers:
+                    §a-25% Mob Health
+                    -25% Mob Damage
+                    -25% Mob Spawns""",
             ChatColor.GREEN,
             25,
             .75f
     ),
     NORMAL("Normal",
-            "Fight off 25 waves of monsters to\nearn rewards." +
-                    "\n\nModifiers:\n§aNone",
+            """
+                    Fight off 25 waves of monsters to
+                    earn rewards.
+
+                    Modifiers:
+                    §aNone""",
             ChatColor.YELLOW,
             25,
             1
     ),
     HARD("Hard",
-            "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
-                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n\nExtreme scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
+            """
+                    Fight off 25 waves of formidable
+                    opponents and bosses with augmented
+                    abilities.
+
+                    Modifiers:
+                    §c+50% Mob Health
+                    +50% Mob Damage
+
+                    Extreme scaling, Illusion, Exiled and
+                    Void monsters appear much sooner and
+                    at a higher rate.
+
+                    No respawns, only way to respawn
+                    is by clearing the wave.""",
             ChatColor.GOLD,
             25,
             2
     ),
     ENDLESS("Endless",
-            "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
-                    "\n\nModifiers:\n§c+25% Mob Spawns",
+            """
+                    Fight to the death against endless
+                    waves of monsters to prove your
+                    worth against the Vanguard.
+
+                    Modifiers:
+                    §c+25% Mob Spawns""",
             ChatColor.RED,
             Integer.MAX_VALUE,
             1.25f

@@ -81,8 +81,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                 }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
                     player.addEnergy(player, "Suspicious Weapon", ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel());
-                    if (player.getEntity() instanceof Player) {
-                        Player p = (Player) player.getEntity();
+                    if (player.getEntity() instanceof Player p) {
                         if (sound != null) {
                             sound.cancel();
                         }

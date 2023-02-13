@@ -114,8 +114,8 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.DIG_GRASS, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
+            Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
+            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
@@ -215,7 +215,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 );
             }
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.35);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
         }
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
@@ -240,8 +240,8 @@ public class Illumina extends AbstractZombie implements BossMob {
 
                 if (counter++ % 20 == 0) {
                     countdown.getAndDecrement();
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)

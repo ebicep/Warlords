@@ -11,7 +11,6 @@ public interface WaveList {
 
     Wave getWave(int wave, Random random);
 
-    // TODO Move to AbstractMob, will do later
     default WaveList prependMapper(BiFunction<Wave, Integer, Wave> mapper) {
         return (wave, random) -> mapper.apply(this.getWave(wave, random), wave);
     }

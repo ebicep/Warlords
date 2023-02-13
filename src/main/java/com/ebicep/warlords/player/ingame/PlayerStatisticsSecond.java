@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.Entry> {
@@ -54,7 +53,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
                 .subList(Math.max(0, entries.size() - seconds), entries.size())
                 .stream()
                 .flatMap(entry -> entry.getEventsAsSelf().stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecond(int seconds, Predicate<WarlordsDamageHealingFinalEvent> filter) {
@@ -63,7 +62,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
                 .stream()
                 .flatMap(entry -> entry.getEventsAsSelf().stream())
                 .filter(filter)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Stream<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecondStream(int seconds) {
@@ -78,7 +77,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
                 .subList(Math.max(0, entries.size() - seconds), entries.size())
                 .stream()
                 .flatMap(entry -> entry.getEventsAsAttacker().stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<WarlordsDamageHealingFinalEvent> getLastEventsAsSelf(int amount, int timeLimitSeconds) {
@@ -101,7 +100,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
 
     public List<WarlordsDamageHealingFinalEvent> getLastEventsAsAttacker(int amount, int timeLimitSeconds, Predicate<WarlordsDamageHealingFinalEvent> filter) {
         List<WarlordsDamageHealingFinalEvent> events = getEventsAsAttackerFromLastSecond(timeLimitSeconds);
-        events = events.stream().filter(filter).collect(Collectors.toList());
+        events = events.stream().filter(filter).toList();
         return events.subList(Math.max(0, events.size() - amount), events.size());
     }
 

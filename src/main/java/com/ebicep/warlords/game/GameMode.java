@@ -49,7 +49,7 @@ public enum GameMode {
     CAPTURE_THE_FLAG(
             "Capture The Flag",
             "CTF",
-            new ItemStack(Material.BANNER),
+            new ItemStack(Material.BLACK_BANNER),
             DatabaseGameCTF::new,
             GamesCollections.CTF,
             16,
@@ -117,7 +117,7 @@ public enum GameMode {
     TEAM_DEATHMATCH(
             "Team Deathmatch",
             "TDM",
-            new ItemStack(Material.DIAMOND_BARDING),
+            new ItemStack(Material.DIAMOND_HORSE_ARMOR),
             DatabaseGameTDM::new,
             GamesCollections.TDM,
             16,
@@ -217,7 +217,7 @@ public enum GameMode {
     WAVE_DEFENSE(
             "Wave Defense",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            new ItemStack(Material.ZOMBIE_HEAD),
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
@@ -253,7 +253,7 @@ public enum GameMode {
     ONSLAUGHT(
             "Onslaught",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            new ItemStack(Material.ZOMBIE_HEAD),
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
@@ -332,7 +332,7 @@ public enum GameMode {
     EVENT_WAVE_DEFENSE(
             "Event Wave Defense",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            new ItemStack(Material.ZOMBIE_HEAD),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 if (DatabaseGameEvent.currentGameEvent == null) {
                     return null;
@@ -422,7 +422,7 @@ public enum GameMode {
 
                                 @Override
                                 public void run() {
-                                    if (p.getOpenInventory().getTopInventory().getName().equals("Player Specs")) {
+                                    if (p.getOpenInventory().getTitle().equals("Player Specs")) {
                                         openPlayerSpecInfoMenu(g, p);
                                     } else {
                                         this.cancel();

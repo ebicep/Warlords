@@ -243,7 +243,7 @@ public class WeaponManagerMenu {
                 }
         );
         menu.setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                new ItemBuilder(Material.COMPARATOR)
                         .name(ChatColor.GREEN + "Sort By")
                         .lore(Arrays.stream(SortOptions.VALUES)
                                     .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
@@ -338,7 +338,7 @@ public class WeaponManagerMenu {
                         List<AbstractWeapon> sameSpecWeapons = pveStats.getWeaponInventory()
                                                                        .stream()
                                                                        .filter(w -> w.getSpecializations() == weaponSpec)
-                                                                       .collect(Collectors.toList());
+                                                                       .toList();
                         if (sameSpecWeapons.size() == 1) {
                             player.sendMessage(ChatColor.RED + "You cannot salvage this weapon because you need to have at least one for each specialization!");
                             return;
@@ -356,7 +356,7 @@ public class WeaponManagerMenu {
         //reroll common/rare/epic
         if (weapon instanceof StatsRerollable) {
             weaponOptions.add(new Pair<>(
-                    new ItemBuilder(Material.WORKBENCH)
+                    new ItemBuilder(Material.CRAFTING_TABLE)
                             .name(ChatColor.GREEN + "Weapon Stats Reroll")
                             .lore(((StatsRerollable) weapon).getRerollCostLore())
                             .get(),
@@ -372,8 +372,7 @@ public class WeaponManagerMenu {
             ));
         }
         //upgrade epic/legendary
-        if (weapon instanceof Upgradeable) {
-            Upgradeable upgradeable = (Upgradeable) weapon;
+        if (weapon instanceof Upgradeable upgradeable) {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
@@ -397,12 +396,11 @@ public class WeaponManagerMenu {
                     }
             ));
         }
-        if (weapon instanceof AbstractLegendaryWeapon) {
+        if (weapon instanceof AbstractLegendaryWeapon legendaryWeapon) {
             PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerMenuSettings());
             PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
-            AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
                             .name(ChatColor.GREEN + "Apply a " + selectedStarPiece.currency.name)
@@ -512,8 +510,8 @@ public class WeaponManagerMenu {
 
     public enum SortOptions {
 
-        DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
-        RARITY("Rarity", (o1, o2) -> o1.getRarity().compareTo(o2.getRarity())),
+        DATE("Date", Comparator.comparing(AbstractWeapon::getDate)),
+        RARITY("Rarity", Comparator.comparing(AbstractWeapon::getRarity)),
         WEAPON_SCORE("Weapon Score", (o1, o2) -> {
             //first check if implements WeaponScore
             if (o1 instanceof WeaponScore && o2 instanceof WeaponScore) {

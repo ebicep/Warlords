@@ -64,15 +64,14 @@ public class DebugCommand extends BaseCommand {
         }
         TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
         switch (option) {
-            case "reset":
+            case "reset" -> {
                 timerDebugAble.resetTimer();
                 sendDebugMessage(player, ChatColor.GREEN + "Timer has been reset!", true);
-                break;
-            case "skip":
+            }
+            case "skip" -> {
                 timerDebugAble.skipTimer();
                 sendDebugMessage(player, ChatColor.GREEN + "Timer has been skipped!", true);
-                break;
-
+            }
         }
     }
 

@@ -29,7 +29,7 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
         this(new TeamBasedEffect(effect));
     }
 
-    public CircumferenceEffect(TeamBasedEffect effect) {
+    public CircumferenceEffect(@Nonnull TeamBasedEffect effect) {
         this.effect = effect;
     }
 

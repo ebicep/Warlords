@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
@@ -47,14 +48,14 @@ public class MercyWinOption implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
             this.timer -= delayInTicks / 20;
         });
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         EnumSet<Team> teams = TeamMarker.getTeams(game);
         new GameRunnable(game) {
             @Override
@@ -84,7 +85,7 @@ public class MercyWinOption implements Option {
                     }
                 }
             }
-        }.runTaskTimer(1 * SECOND, 1 * SECOND);
+        }.runTaskTimer(SECOND, SECOND);
     }
 
 }

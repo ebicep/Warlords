@@ -13,8 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -39,8 +38,7 @@ public class MobCommand extends BaseCommand {
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 for (int i = 0; i < amount; i++) {
                     AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
                     pveOption.spawnNewMob(mob);
@@ -99,10 +97,10 @@ public class MobCommand extends BaseCommand {
                         .getMobs()
                         .stream()
                         .map(abstractMob -> {
-                            EntityInsentient entity = abstractMob.getEntityInsentient();
+                            Mob mob = abstractMob.getMob();
                             return abstractMob.getWarlordsNPC().getColoredName() +
-                                    ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
-                                    ChatColor.GRAY + " | " + ChatColor.GREEN + entity.locX + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
+                                    ChatColor.GREEN + " @" + mob.getLevel().getWorld().getName() +
+                                    ChatColor.GRAY + " | " + ChatColor.GREEN + mob.getX() + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + mob.getY() + ChatColor.GRAY + "," + ChatColor.GREEN + mob.getZ();
                         })
                         .collect(Collectors.joining("\n"));
                 ChatChannels.sendDebugMessage(issuer, message, true);
@@ -111,20 +109,14 @@ public class MobCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("ai")
-    public void ai(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, @Conditions("limits:min=0,max=1") Integer ai) {
+    @Subcommand("noai")
+    public void noAi(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, Boolean ai) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                ((PveOption) option).getMobs().forEach(abstractMob -> {
-                    EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                    NBTTagCompound tag = entityInsentient.getNBTTag();
-                    if (tag == null) {
-                        tag = new NBTTagCompound();
-                    }
-                    entityInsentient.c(tag);
-                    tag.setByte("NoAI", ai.byteValue());
-                    entityInsentient.f(tag);
-                });
+            if (option instanceof PveOption pveOption) {
+                pveOption.getMobs()
+                         .stream()
+                         .map(abstractMob -> abstractMob.getEntity().get())
+                         .forEach(entityInsentient -> entityInsentient.setNoAi(ai));
                 ChatChannels.sendDebugMessage(player,
                         ChatColor.GREEN + "Set All Mob NoAI to " + ChatColor.YELLOW + ai + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
                         true

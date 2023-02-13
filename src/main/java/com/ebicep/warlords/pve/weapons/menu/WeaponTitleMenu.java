@@ -30,7 +30,7 @@ public class WeaponTitleMenu {
 
         for (int i = 0; i < 9 * 5; i++) {
             menu.addItem(
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                    new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                             .name(" ")
                             .get(),
                     (m, e) -> {
@@ -100,7 +100,7 @@ public class WeaponTitleMenu {
                         menu.setItem(
                                 k + i * 3,
                                 j + 1,
-                                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) title.color)
+                                new ItemBuilder(title.glassPane)
                                         .name(" ")
                                         .get(),
                                 (m, e) -> {
@@ -200,7 +200,7 @@ public class WeaponTitleMenu {
                         .create()
         );
 
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
         return titledWeapon;
     }
@@ -227,7 +227,7 @@ public class WeaponTitleMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
@@ -255,7 +255,7 @@ public class WeaponTitleMenu {
                             .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .create()
             );
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
     }
 

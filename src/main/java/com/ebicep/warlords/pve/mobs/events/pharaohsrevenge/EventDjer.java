@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EventDjer extends AbstractZombie implements BossMob {
 
@@ -103,7 +102,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
         Location loc = warlordsNPC.getLocation();
 
         if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f); //TODO animations
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f); //TODO animations
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
@@ -112,7 +111,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
                     .warlordsPlayers()
                     .stream()
-                    .collect(Collectors.toList());
+                    .toList();
             for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
                 Utils.addKnockback(name, loc, warlordsPlayer, -2.5, 0.25);
                 warlordsPlayer.addDamageInstance(

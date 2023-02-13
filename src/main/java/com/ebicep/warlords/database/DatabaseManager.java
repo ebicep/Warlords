@@ -75,6 +75,11 @@ public class DatabaseManager {
         if (!StatsLeaderboardManager.enabled) {
             NPCManager.createGameJoinNPCs();
         }
+        if (ApplicationConfiguration.key == null) {
+            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Database key is null, disabling database");
+            enabled = false;
+            return;
+        }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
 

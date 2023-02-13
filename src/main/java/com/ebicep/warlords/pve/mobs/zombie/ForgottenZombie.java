@@ -70,7 +70,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.BUFF, 60);
-        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SKELETON_DEATH, 2, 0.4f);
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 
     @Override
@@ -83,10 +83,10 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

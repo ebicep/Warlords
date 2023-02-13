@@ -49,7 +49,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
             return;
         }
         Location location = getWarlordsNPC().getLocation();
-        Utils.playGlobalSound(location, Sound.ZOMBIE_PIG_ANGRY, 1, 0.5f);
+        Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 1, 0.5f);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we == null) return;
@@ -85,10 +85,10 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_PIG_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIFIED_PIGLIN_DEATH, 2, 0.4f);
     }
 }

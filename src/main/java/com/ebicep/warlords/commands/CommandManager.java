@@ -130,7 +130,7 @@ public class CommandManager {
                     .map(WarlordsPlayer.class::cast)
                     .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
                     .findAny();
-            if (!optionalWarlordsPlayer.isPresent()) {
+            if (optionalWarlordsPlayer.isEmpty()) {
                 if (target.equals(name)) {
                     throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
                 } else {
@@ -215,7 +215,7 @@ public class CommandManager {
         });
         manager.getCommandContexts().registerContext(AbstractPoll.class, command -> {
             Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
-            if (!optionalPoll.isPresent()) {
+            if (optionalPoll.isEmpty()) {
                 throw new InvalidCommandArgument(ChatColor.RED + "Could not find a poll with that ID");
             }
             if (!optionalPoll.get().getUUIDsAllowedToVote().contains(command.getPlayer().getUniqueId())) {
@@ -246,11 +246,10 @@ public class CommandManager {
         CommandCompletions<BukkitCommandCompletionContext> commandCompletions = manager.getCommandCompletions();
         commandCompletions.registerAsyncCompletion("warlordsplayerssamegame", command -> {
             CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
+            if (sender instanceof Player player) {
                 WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
                 if (warlordsEntity != null) {
-                    return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).collect(Collectors.toList());
+                    return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).toList();
                 }
             }
             return null;
@@ -261,7 +260,7 @@ public class CommandManager {
                         .filter(WarlordsPlayer.class::isInstance)
                         .map(WarlordsPlayer.class::cast)
                         .map(WarlordsPlayer::getName)
-                        .collect(Collectors.toList())
+                        .toList()
         );
         commandCompletions.registerAsyncCompletion("gameplayers", command ->
                 Warlords.getGameManager().getGames().stream()
@@ -271,19 +270,19 @@ public class CommandManager {
                         .map(Map::keySet)
                         .flatMap(Collection::stream)
                         .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList())
+                        .toList()
 
         );
         commandCompletions.registerAsyncCompletion("enabledisable", command -> Arrays.asList("enable", "disable"));
         commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
-                        .map(GameMap::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMap::name)
+                      .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
-                        .map(GameMode::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMode::name)
+                      .toList());
         commandCompletions.registerAsyncCompletion("gameids", command ->
                 Warlords.getGameManager().getGames()
                         .stream()
@@ -291,31 +290,31 @@ public class CommandManager {
                         .filter(Objects::nonNull)
                         .map(Game::getGameId)
                         .map(String::valueOf)
-                        .collect(Collectors.toList())
+                        .toList()
         );
         commandCompletions.registerAsyncCompletion("gameteams",
-                command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList())
+                command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).toList()
         );
         commandCompletions.registerAsyncCompletion("playerabilitystats",
                 command -> GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.keySet()
-                        .stream()
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList())
+                                                                                     .stream()
+                                                                                     .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                                                     .toList()
         );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
         commandCompletions.registerAsyncCompletion("partyleaders",
-                command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).collect(Collectors.toList())
+                command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).toList()
         );
         commandCompletions.registerAsyncCompletion("partymembers", command -> {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return PartyManager.PARTIES.stream()
-                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Party::getPartyPlayers)
-                        .flatMap(Collection::stream)
-                        .map(PartyPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                           .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                                           .map(Party::getPartyPlayers)
+                                           .flatMap(Collection::stream)
+                                           .map(PartyPlayer::getUUID)
+                                           .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                           .toList();
             }
             return null;
         });
@@ -323,12 +322,12 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Guild::getPlayers)
-                        .flatMap(Collection::stream)
-                        .map(GuildPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                          .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
+                                          .map(Guild::getPlayers)
+                                          .flatMap(Collection::stream)
+                                          .map(GuildPlayer::getUUID)
+                                          .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                          .toList();
             }
             return null;
         });
@@ -336,14 +335,14 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .map(Guild::getName)
-                        .collect(Collectors.toList());
+                                          .map(Guild::getName)
+                                          .toList();
             }
             return null;
         });
         commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
-                .map(Mobs::name)
-                .collect(Collectors.toList()));
+                                                                               .map(Mobs::name)
+                                                                               .toList());
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
 
@@ -373,7 +372,7 @@ public class CommandManager {
 
         manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
             Optional<Game> game = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
-            if (!game.isPresent()) {
+            if (game.isEmpty()) {
                 BukkitCommandIssuer issuer = command.getIssuer();
                 if (issuer.isPlayer() && issuer.getPlayer().equals(player)) {
                     throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");

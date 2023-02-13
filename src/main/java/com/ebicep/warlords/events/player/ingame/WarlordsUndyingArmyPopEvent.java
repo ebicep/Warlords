@@ -25,6 +25,7 @@ public class WarlordsUndyingArmyPopEvent extends AbstractWarlordsEntityEvent {
         return undyingArmy;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

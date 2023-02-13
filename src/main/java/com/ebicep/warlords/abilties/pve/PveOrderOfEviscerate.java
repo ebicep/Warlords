@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilties.pve;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.OrderOfEviscerate;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -71,7 +72,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
+        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, duration * 20, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
@@ -90,7 +91,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                 },
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.4f, 2);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
                     if (ticksElapsed % 10 == 0) {
                         ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
@@ -169,7 +170,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                     }.runTaskLater(2);
                 }
 
-                wp.playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
+                wp.playSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 2);
             }
         });
 
@@ -189,11 +190,11 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                         LivingEntity wpEntity = wp.getEntity();
                         if (wpEntity instanceof Player) {
                             PlayerFilter.playingGame(wp.getGame())
-                                    .enemiesOf(wp)
-                                    .stream().map(WarlordsEntity::getEntity)
-                                    .filter(Player.class::isInstance)
-                                    .map(Player.class::cast)
-                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
+                                        .enemiesOf(wp)
+                                        .stream().map(WarlordsEntity::getEntity)
+                                        .filter(Player.class::isInstance)
+                                        .map(Player.class::cast)
+                                        .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
                         }
                     },
                     duration * 20,
@@ -205,11 +206,11 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                             if (wpEntity instanceof Player) {
                                 ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                                 PlayerFilter.playingGame(wp.getGame())
-                                        .enemiesOf(wp)
-                                        .stream().map(WarlordsEntity::getEntity)
-                                        .filter(Player.class::isInstance)
-                                        .map(Player.class::cast)
-                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                                            .enemiesOf(wp)
+                                            .stream().map(WarlordsEntity::getEntity)
+                                            .filter(Player.class::isInstance)
+                                            .map(Player.class::cast)
+                                            .forEach(enemyPlayer -> enemyPlayer.hidePlayer(Warlords.getInstance(), (Player) wpEntity));
                             }
                         }
                     })

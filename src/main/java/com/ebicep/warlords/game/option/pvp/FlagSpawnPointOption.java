@@ -16,9 +16,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.minecraft.server.v1_8_R3.AxisAlignedBB;
-import net.minecraft.server.v1_8_R3.MovingObjectPosition;
-import net.minecraft.server.v1_8_R3.Vec3D;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -73,17 +72,17 @@ public class FlagSpawnPointOption implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
         // We register a gamemarker to prevent any captures for our own team if we lost our flag
         game.registerGameMarker(FlagCaptureInhibitMarker.class, pFlag -> {
             return !(info.getFlag() instanceof SpawnFlagLocation) && info.getTeam() == pFlag.getPlayer().getTeam();
         });
-        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BANNER, 0, this.getClass(),
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 0, this.getClass(),
                 "Flag spawn: " + info.getTeam(),
                 this.info.getSpawnLocation()
         ));
-        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BANNER, 15, this.getClass(),
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 15, this.getClass(),
                 "Flag: " + info.getTeam(),
                 () -> info.getFlag().getLocation(),
                 () -> info.getFlag().getDebugInformation()
@@ -137,12 +136,12 @@ public class FlagSpawnPointOption implements Option {
                 if (wp != null && wp.getGame() == game) {
                     Location playerLocation = wp.getEntity().getEyeLocation();
                     Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
-                    Vec3D from = new Vec3D(
+                    Vec3 from = new Vec3(
                             playerLocation.getX(),
                             playerLocation.getY(),
                             playerLocation.getZ()
                     );
-                    Vec3D to = new Vec3D(
+                    Vec3 to = new Vec3(
                             playerLocation.getX() + direction.getX(),
                             playerLocation.getY() + direction.getY(),
                             playerLocation.getZ() + direction.getZ()
@@ -151,12 +150,12 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-            private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3D from, Vec3D to, FlagRenderer render) {
+            private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3 from, Vec3 to, FlagRenderer render) {
                 Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
                 for (Entity stand : render.getRenderedArmorStands()) {
                     stand.getLocation(entityLoc);
                     if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
-                        AxisAlignedBB aabb = new AxisAlignedBB(
+                        AABB aabb = new AABB(
                                 entityLoc.getX() - 0.5,
                                 entityLoc.getY(),
                                 entityLoc.getZ() - 0.5,
@@ -164,11 +163,11 @@ public class FlagSpawnPointOption implements Option {
                                 entityLoc.getY() + 2,
                                 entityLoc.getZ() + 0.5
                         );
-                        MovingObjectPosition mop = aabb.a(from, to);
-                        if (mop != null) {
-                            onFlagInteract(wp);
-                            break;
-                        }
+//                        HitResult mop = aabb.a(from, to);
+//                        if (mop != null) {
+//                            onFlagInteract(wp);
+//                            break;
+//                        }
                     }
                 }
             }
@@ -191,8 +190,7 @@ public class FlagSpawnPointOption implements Option {
 
                 wp.setFlagDropCooldown(2);
 
-                if (info.getFlag() instanceof GroundFlagLocation) {
-                    GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
+                if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
                     if (team == info.getTeam()) {
                         // Return flag
                         info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp));
@@ -251,14 +249,13 @@ public class FlagSpawnPointOption implements Option {
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         new GameRunnable(game) {
             @Override
             public void run() {
-                if (!(info.getFlag() instanceof PlayerFlagLocation)) {
+                if (!(info.getFlag() instanceof PlayerFlagLocation playerFlagLocation)) {
                     return;
                 }
-                PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
                 if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
                     FlagHolder.update(game, info -> new WaitingFlagLocation(
                             info.getSpawnLocation(),
@@ -280,7 +277,7 @@ public class FlagSpawnPointOption implements Option {
     }
 
     @Override
-    public void onGameCleanup(Game game) {
+    public void onGameCleanup(@Nonnull Game game) {
         this.renderer.reset();
     }
 
@@ -289,10 +286,12 @@ public class FlagSpawnPointOption implements Option {
         player.getInventory().setItem(8, COMPASS);
     }
 
+    @Nonnull
     public FlagInfo getInfo() {
         return info;
     }
 
+    @Nonnull
     public FlagRenderer getRenderer() {
         return renderer;
     }

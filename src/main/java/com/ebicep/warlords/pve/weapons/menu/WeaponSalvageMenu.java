@@ -19,7 +19,7 @@ public class WeaponSalvageMenu {
         Menu menu = new Menu("Confirm salvage", 9 * 3);
 
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+                new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(ChatColor.GREEN + "Confirm")
                         .lore(
                                 ChatColor.GRAY + "Salvage this weapon and claim its materials.",
@@ -40,7 +40,7 @@ public class WeaponSalvageMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
@@ -66,7 +66,7 @@ public class WeaponSalvageMenu {
                             .create()
             );
 
-            player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
             player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);
         }
     }

@@ -46,8 +46,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         game.setAcceptsPlayers(true);
         game.setAcceptsSpectators(false);
         for (Option option : game.getOptions()) {
-            if (option instanceof PreGameItemOption) {
-                PreGameItemOption preGameItemOption = (PreGameItemOption) option;
+            if (option instanceof PreGameItemOption preGameItemOption) {
                 items[preGameItemOption.getSlot()] = preGameItemOption;
             }
         }
@@ -74,23 +73,23 @@ public class PreLobbyState implements State, TimerDebugAble {
                 if (time == 30) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!");
-                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 20) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in 20 seconds!");
-                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 10) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!");
-                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time <= 5 && time != 0) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         String s = time == 1 ? "!" : "s!";
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second" + s);
-                        player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 0) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
@@ -110,7 +109,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     //parties first
                     int sameTeamPartyLimit = 2;
-                    HashMap<Team, List<Player>> partyMembers = new HashMap<Team, List<Player>>() {{
+                    HashMap<Team, List<Player>> partyMembers = new HashMap<>() {{
                         put(Team.BLUE, new ArrayList<>());
                         put(Team.RED, new ArrayList<>());
                     }};
@@ -123,7 +122,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             return;
                         }
                         /*PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId()).getA(party -> {
-                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
+                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).toList();
                             //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
                             if (partyPlayersInGame.size() > sameTeamPartyLimit) {
                                 return;
@@ -206,7 +205,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
 //                        playersLeft = playersLeft.stream()
 //                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
-//                                .collect(Collectors.toList());
+//                                .toList();
                         for (Player player : playersLeft) {
                             if (redSR > blueSR) {
                                 teams.put(player, Team.BLUE);
@@ -500,16 +499,11 @@ public class PreLobbyState implements State, TimerDebugAble {
     private boolean tryMovePeep(Map.Entry<UUID, TeamPreference> entry, Team target) {
         boolean canSwitchPeepTeam;
         if (entry.getValue().wantedTeam != target) {
-            switch (entry.getValue().priority) {
-                case FORCED_PREFERENCE:
-                    canSwitchPeepTeam = false;
-                    break;
-                case PLAYER_PREFERENCE:
-                    canSwitchPeepTeam = false; // Always enforce teams people manually have picked, probably set to true in the future
-                    break;
-                default:
-                    canSwitchPeepTeam = true;
-            }
+            canSwitchPeepTeam = switch (entry.getValue().priority) {
+                case FORCED_PREFERENCE -> false;
+                case PLAYER_PREFERENCE -> false; // Always enforce teams people manually have picked, probably set to true in the future
+                default -> true;
+            };
         } else {
             canSwitchPeepTeam = true;
         }

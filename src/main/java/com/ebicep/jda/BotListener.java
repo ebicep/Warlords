@@ -205,7 +205,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                             for (String player : players) {
                                 String name = player.substring(0, player.indexOf('-'));
                                 String spec = player.substring(player.indexOf('-') + 1);
-                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(name);
                                 if (offlinePlayer == null) {
                                     continue;
                                 }

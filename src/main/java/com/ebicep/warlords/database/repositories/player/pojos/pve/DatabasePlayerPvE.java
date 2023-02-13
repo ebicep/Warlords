@@ -195,18 +195,18 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
             eventStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
-                case BOLTARO:
+                case BOLTARO -> {
                     if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
                     } else {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier);
                     }
-                    break;
-                case NARMER:
+                }
+                case NARMER -> {
                     if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
                         addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier);
                     }
-                    break;
+                }
             }
 
         } else {
@@ -220,17 +220,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     }
 
     public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
-        switch (difficultyIndex) {
-            case EASY:
-                return easyStats;
-            case NORMAL:
-                return normalStats;
-            case HARD:
-                return hardStats;
-            case ENDLESS:
-                return endlessStats;
-        }
-        return null;
+        return switch (difficultyIndex) {
+            case EASY -> easyStats;
+            case NORMAL -> normalStats;
+            case HARD -> hardStats;
+            case ENDLESS -> endlessStats;
+            default -> null;
+        };
     }
 
     public void subtractCurrency(Currencies currency, int amount) {

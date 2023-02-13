@@ -1,26 +1,27 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.*;
+import org.bukkit.Material;
 
 import java.util.UUID;
 import java.util.function.Function;
 
 public enum LegendaryTitles {
 
-    NONE("", LegendaryWeapon.class, LegendaryWeapon::new, LegendaryWeapon::new, 0),
-    TITANIC("Titanic", LegendaryTitanic.class, LegendaryTitanic::new, LegendaryTitanic::new, 1),
-    VIGOROUS("Vigorous", LegendaryVigorous.class, LegendaryVigorous::new, LegendaryVigorous::new, 2),
-    SUSPICIOUS("Suspicious", LegendarySuspicious.class, LegendarySuspicious::new, LegendarySuspicious::new, 3),
-    BENEVOLENT("Benevolent", LegendaryBenevolent.class, LegendaryBenevolent::new, LegendaryBenevolent::new, 4),
-    VORPAL("Vorpal", LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new, 5),
-    DIVINE("Divine", LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new, 6),
-    GALE("Gale", LegendaryGale.class, LegendaryGale::new, LegendaryGale::new, 7),
-    FERVENT("Fervent", LegendaryFervent.class, LegendaryFervent::new, LegendaryFervent::new, 9),
-    REQUIEM("Requiem", LegendaryRequiem.class, LegendaryRequiem::new, LegendaryRequiem::new, 10),
-    STALWART("Stalwart", LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 11),
-    ENHANCED("Enhanced", LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, 12),
-    GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, 13),
-    JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, 14),
+    NONE("", LegendaryWeapon.class, LegendaryWeapon::new, LegendaryWeapon::new, Material.WHITE_STAINED_GLASS_PANE),
+    TITANIC("Titanic", LegendaryTitanic.class, LegendaryTitanic::new, LegendaryTitanic::new, Material.ORANGE_STAINED_GLASS_PANE),
+    VIGOROUS("Vigorous", LegendaryVigorous.class, LegendaryVigorous::new, LegendaryVigorous::new, Material.MAGENTA_STAINED_GLASS_PANE),
+    SUSPICIOUS("Suspicious", LegendarySuspicious.class, LegendarySuspicious::new, LegendarySuspicious::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
+    BENEVOLENT("Benevolent", LegendaryBenevolent.class, LegendaryBenevolent::new, LegendaryBenevolent::new, Material.YELLOW_STAINED_GLASS_PANE),
+    VORPAL("Vorpal", LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new, Material.LIME_STAINED_GLASS_PANE),
+    DIVINE("Divine", LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new, Material.PINK_STAINED_GLASS_PANE),
+    GALE("Gale", LegendaryGale.class, LegendaryGale::new, LegendaryGale::new, Material.GRAY_STAINED_GLASS_PANE),
+    FERVENT("Fervent", LegendaryFervent.class, LegendaryFervent::new, LegendaryFervent::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
+    REQUIEM("Requiem", LegendaryRequiem.class, LegendaryRequiem::new, LegendaryRequiem::new, Material.PURPLE_STAINED_GLASS_PANE),
+    STALWART("Stalwart", LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, Material.BLUE_STAINED_GLASS_PANE),
+    ENHANCED("Enhanced", LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, Material.BROWN_STAINED_GLASS_PANE),
+    GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, Material.GREEN_STAINED_GLASS_PANE),
+    JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, Material.RED_STAINED_GLASS_PANE),
 
     ;
 
@@ -31,19 +32,19 @@ public enum LegendaryTitles {
     public final Class<?> clazz;
     public final Function<UUID, AbstractLegendaryWeapon> create;
     public final Function<AbstractLegendaryWeapon, AbstractLegendaryWeapon> titleWeapon;
-    public final int color;
+    public final Material glassPane;
 
     LegendaryTitles(
             String name, Class<?> clazz,
             Function<UUID, AbstractLegendaryWeapon> create,
             Function<AbstractLegendaryWeapon, AbstractLegendaryWeapon> titleWeapon,
-            int color
+            Material glassPane
     ) {
         this.name = name;
         this.clazz = clazz;
         this.create = create;
         this.titleWeapon = titleWeapon;
-        this.color = color;
+        this.glassPane = glassPane;
     }
 
 }

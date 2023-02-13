@@ -94,7 +94,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         warlordsNPC.setHealth(warlordsNPC.getHealth());
                         Location loc = warlordsNPC.getLocation();
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
-                            Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
+                            Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
                             we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
                         });
@@ -114,7 +114,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
                 if (acolytes.contains(eventPlayer)) {
                     acolytes.remove(eventPlayer);
-                    Utils.playGlobalSound(location, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+                    Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
                             12,
@@ -136,8 +136,8 @@ public class Narmer extends AbstractZombie implements BossMob {
                             break;
                     }
                     if (acolyteDeathTickWindow > 0) {
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(location, false, 12);
                         List<WarlordsEntity> warlordsEntities = PlayerFilter
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
@@ -228,7 +228,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);

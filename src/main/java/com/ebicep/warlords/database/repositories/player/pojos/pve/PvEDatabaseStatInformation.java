@@ -57,34 +57,27 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
         if (multiplier > 0) {
-            if (databaseGame instanceof WavesCleared) {
-                WavesCleared wavesCleared = (WavesCleared) databaseGame;
+            if (databaseGame instanceof WavesCleared wavesCleared) {
                 this.highestWaveCleared = Math.max(wavesCleared.getWavesCleared(), this.highestWaveCleared);
-                if (databaseGame instanceof TimeElapsed && databaseGame instanceof Difficulty) {
-                    TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
-                    Difficulty difficulty = (Difficulty) databaseGame;
+                if (databaseGame instanceof TimeElapsed timeElapsed && databaseGame instanceof Difficulty difficulty) {
                     if (wavesCleared.getWavesCleared() == difficulty.getDifficulty().getMaxWaves() &&
                             (this.fastestGameFinished == 0 || timeElapsed.getTimeElapsed() < fastestGameFinished)) {
                         this.fastestGameFinished = timeElapsed.getTimeElapsed();
                     }
                 }
             }
-            if (gamePlayer instanceof MostDamageInRound) {
-                MostDamageInRound mostDamageInRound = (MostDamageInRound) gamePlayer;
+            if (gamePlayer instanceof MostDamageInRound mostDamageInRound) {
                 this.mostDamageInRound = Math.max(this.mostDamageInRound, mostDamageInRound.getMostDamageInRound());
             }
-            if (gamePlayer instanceof MostDamageInWave) {
-                MostDamageInWave mostDamageInWave = (MostDamageInWave) gamePlayer;
+            if (gamePlayer instanceof MostDamageInWave mostDamageInWave) {
                 this.mostDamageInWave = Math.max(this.mostDamageInWave, mostDamageInWave.getMostDamageInWave());
             }
         }
 
-        if (databaseGame instanceof WavesCleared) {
-            WavesCleared wavesCleared = (WavesCleared) databaseGame;
+        if (databaseGame instanceof WavesCleared wavesCleared) {
             this.totalWavesCleared += wavesCleared.getWavesCleared() * multiplier;
         }
-        if (databaseGame instanceof TimeElapsed) {
-            TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
+        if (databaseGame instanceof TimeElapsed timeElapsed) {
             this.totalTimePlayed += (long) timeElapsed.getTimeElapsed() * multiplier;
         }
     }

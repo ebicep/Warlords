@@ -8,26 +8,31 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class FallingBlockWaveEffect {
     private final List<Stand> stands;
 
-    public FallingBlockWaveEffect(Location center, double range, double speed, Material material, byte damage) {
+    public FallingBlockWaveEffect(Location center, double range, double speed, Material material) {
         stands = new ArrayList<>((int) (Math.pow(Math.ceil(range), 2) * Math.PI * 1.1));
         double doubleRange = range * range;
         for (int x = (int) -range; x <= range; x++) {
             for (int z = (int) -range; z <= range; z++) {
                 double distanceSquared = x * x + z * z;
                 if (distanceSquared < doubleRange) {
-                    stands.add(new Stand(center.clone().add(x, 0, z), (int) (-Math.sqrt(distanceSquared) / speed), material, damage));
+                    stands.add(new Stand(center.clone().add(x, 0, z), (int) (-Math.sqrt(distanceSquared) / speed), material));
                 }
-                if ((int) (Math.random() * 5) == 1) z++;
+                if ((int) (Math.random() * 5) == 1) {
+                    z++;
+                }
             }
             //hypixel random ass holes effect = more immersion
             if ((int) (Math.random() * 5) == 1) x++;
         }
-        Collections.sort(stands, Comparator.comparing(Stand::getTimer).reversed());
+        stands.sort(Comparator.comparing(Stand::getTimer).reversed());
     }
 
     public void play() {
@@ -50,18 +55,16 @@ public class FallingBlockWaveEffect {
         }.runTaskTimer(Warlords.getInstance(), 1, 1);
     }
 
-    class Stand {
+    static class Stand {
         private final Location loc;
         private int timer;
         private final Material material;
-        private final byte damage;
         private FallingBlock fallingBlock;
 
-        public Stand(Location loc, int timer, Material material, byte damage) {
+        public Stand(Location loc, int timer, Material material) {
             this.loc = loc;
             this.timer = timer;
             this.material = material;
-            this.damage = damage;
         }
 
         public int getTimer() {
@@ -71,7 +74,7 @@ public class FallingBlockWaveEffect {
         public boolean tick() {
             timer++;
             if (timer == 0) {
-                fallingBlock = loc.getWorld().spawnFallingBlock(loc, material, damage);
+                fallingBlock = loc.getWorld().spawnFallingBlock(loc, material.createBlockData());
                 fallingBlock.setVelocity(new Vector(0, 0.05, 0));
                 fallingBlock.setDropItem(false);
                 WarlordsEvents.addEntityUUID(fallingBlock);

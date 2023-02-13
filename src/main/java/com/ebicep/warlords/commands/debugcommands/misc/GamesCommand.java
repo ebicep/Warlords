@@ -54,13 +54,13 @@ public class GamesCommand extends BaseCommand {
         }
 
         menu.setItem(2, 5,
-                new ItemBuilder(Material.WORKBENCH)
+                new ItemBuilder(Material.CRAFTING_TABLE)
                         .name(ChatColor.GREEN + "Set Hologram Visibility")
                         .get(),
                 (m, e) -> Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility)
         );
         menu.setItem(3, 5,
-                new ItemBuilder(Material.WORKBENCH)
+                new ItemBuilder(Material.CRAFTING_TABLE)
                         .name(ChatColor.GREEN + "Reload Holograms")
                         .get(),
                 (m, e) -> player.performCommand("games reload")
@@ -231,19 +231,24 @@ public class GamesCommand extends BaseCommand {
         menu.setItem(3, 5, Menu.MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
-                new ItemBuilder(Material.WOOL, 1, (short) 5)
+                new ItemBuilder(Material.LIME_WOOL)
                         .name(ChatColor.GREEN + "Set")
                         .get(),
                 (m, e) -> {
                     Menu.openConfirmationMenu(player,
                             "Confirm Set Addons",
                             3,
-                            addons.stream().map(gameAddon -> ChatColor.GOLD + gameAddon.getName()).collect(Collectors.toList()),
+                            addons.stream().map(gameAddon -> ChatColor.GOLD + gameAddon.getName()).toList(),
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                             (m2, e2) -> {
                                 player.sendMessage(ChatColor.GREEN + "Setting Addons: " + ChatColor.YELLOW + game.getDate());
-                                player.sendMessage(ChatColor.GREEN + "Old Addons: " + ChatColor.GOLD + game.getGameAddons().stream().map(GameAddon::getName).collect(Collectors.joining(", ")));
-                                player.sendMessage(ChatColor.GREEN + "New Addons: " + ChatColor.GOLD + addons.stream().map(GameAddon::getName).collect(Collectors.joining(", ")));
+                                player.sendMessage(ChatColor.GREEN + "Old Addons: " + ChatColor.GOLD + game.getGameAddons()
+                                                                                                           .stream()
+                                                                                                           .map(GameAddon::getName)
+                                                                                                           .collect(Collectors.joining(", ")));
+                                player.sendMessage(ChatColor.GREEN + "New Addons: " + ChatColor.GOLD + addons.stream()
+                                                                                                             .map(GameAddon::getName)
+                                                                                                             .collect(Collectors.joining(", ")));
                                 game.setGameAddons(addons);
                                 DatabaseManager.updateGameAsync(game);
                                 openGameEditorMenu(player, game);

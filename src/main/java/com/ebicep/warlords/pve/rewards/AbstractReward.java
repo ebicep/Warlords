@@ -14,7 +14,6 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class AbstractReward {
 
@@ -39,9 +38,9 @@ public abstract class AbstractReward {
 
     public List<String> getLore() {
         return rewards.entrySet()
-                .stream()
-                .map(currencyValue -> currencyValue.getKey().getCostColoredName(currencyValue.getValue()))
-                .collect(Collectors.toList());
+                      .stream()
+                      .map(currencyValue -> currencyValue.getKey().getCostColoredName(currencyValue.getValue()))
+                      .toList();
     }
 
     public ItemStack getItem() {
@@ -52,7 +51,7 @@ public abstract class AbstractReward {
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
                 .lore(lore)
-                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
 
@@ -60,7 +59,7 @@ public abstract class AbstractReward {
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
                 .lore(getLore())
-                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
 

@@ -80,7 +80,7 @@ public class Menu extends AbstractMenuBase {
         Menu menu = new Menu(title, 9 * rows);
 
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+                new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(confirmName)
                         .lore(confirmLore)
                         .get(),
@@ -88,7 +88,7 @@ public class Menu extends AbstractMenuBase {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                new ItemBuilder(Material.RED_CONCRETE)
                         .name(cancelName)
                         .lore(cancelLore)
                         .get(),

@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CooldownManager {
 
@@ -104,7 +103,7 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getBuffCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public void removeBuffCooldowns() {
@@ -119,13 +118,13 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getDebuffCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
                                                               .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                                              .collect(Collectors.toList());
+                                                              .toList();
         toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
         abstractCooldowns.removeAll(toRemove);
         return toRemove.size();
@@ -134,7 +133,7 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public void removeAbilityCooldowns() {
@@ -396,7 +395,7 @@ public class CooldownManager {
     public void clearCooldowns() {
         List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream()
                                                                        .filter(AbstractCooldown::isRemoveOnDeath)
-                                                                       .collect(Collectors.toList());
+                                                                       .toList();
 
         cooldownsToRemove.forEach(abstractCooldown -> {
             abstractCooldown.getOnRemove().accept(this);
@@ -412,7 +411,7 @@ public class CooldownManager {
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
         for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (soulbinding.hasBoundPlayer(warlordsPlayer)) {
                 return true;
@@ -425,7 +424,7 @@ public class CooldownManager {
         int counter = 0;
         for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
@@ -479,7 +478,7 @@ public class CooldownManager {
     public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
         for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (Objects.equals(undyingArmy, exclude)) {
                 continue;

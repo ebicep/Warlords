@@ -4,6 +4,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
+import javax.annotation.Nonnull;
+
 public abstract class AbstractProjectileBase extends AbstractPiercingProjectileBase {
 
     public AbstractProjectileBase(
@@ -22,17 +24,17 @@ public abstract class AbstractProjectileBase extends AbstractPiercingProjectileB
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
         return true;
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
         return true;
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+    protected void onNonCancellingHit(InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         projectile.getHit().add(hit);
     }
 

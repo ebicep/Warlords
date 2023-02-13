@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 
 public class InterceptionPointOption implements Option {
 
-    private static final ItemStack NEUTRAL_ITEM_STACK = new ItemStack(Material.WOOL);
-	public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3.5;
+    private static final ItemStack NEUTRAL_ITEM_STACK = new ItemStack(Material.WHITE_WOOL);
+    public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3.5;
 	public static final double DEFAULT_MAX_CAPTURE_RADIUS = 5;
 	public static final double DEFAULT_CAPTURE_SPEED = 0.01;
 	private Game game;
@@ -65,18 +65,24 @@ public class InterceptionPointOption implements Option {
 		this(name, location, minCaptureRadius, minCaptureRadius * 2, DEFAULT_CAPTURE_SPEED);
 	}
 
-	public InterceptionPointOption(String name, Location location, @Nonnegative double minCaptureRadius, @Nonnegative double maxCaptureRadius, @Nonnegative double captureSpeed) {
-		this.name = name;
-		this.location = location;
-		this.maxCaptureRadius = maxCaptureRadius;
-		this.minCaptureRadius = minCaptureRadius;
-		this.captureSpeed = captureSpeed;
-	}
+    public InterceptionPointOption(
+            @Nonnull String name,
+            Location location,
+            @Nonnegative double minCaptureRadius,
+            @Nonnegative double maxCaptureRadius,
+            @Nonnegative double captureSpeed
+    ) {
+        this.name = name;
+        this.location = location;
+        this.maxCaptureRadius = maxCaptureRadius;
+        this.minCaptureRadius = minCaptureRadius;
+        this.captureSpeed = captureSpeed;
+    }
 
-	@Override
-	public void register(Game game) {
-		this.game = game;
-		game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
+    @Override
+    public void register(@Nonnull Game game) {
+        this.game = game;
+        game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
             @Override
             public int getCompassTargetPriority(WarlordsEntity player) {
                 return (int) player.getDeathLocation().distanceSquared(location) / -100;
@@ -161,16 +167,16 @@ public class InterceptionPointOption implements Option {
     private ItemStack getItem(Team team) {
         return team == null ? NEUTRAL_ITEM_STACK : team.getItem();
     }
-    
-    private void updateArmorstandsAndEffect(ScoreboardHandler handler) {
+
+    private void updateArmorStandsAndEffect(ScoreboardHandler handler) {
         Location clone = this.location.clone();
         clone.add(0, -1.7, 0);
         for (int i = middle.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
             middle[i].teleport(clone);
             ItemStack item = getItem(i == 0 ? this.inConflict ? null : this.teamAttacking : this.teamOwning);
-            if (!item.equals(middle[i].getHelmet())) {
-                middle[i].setHelmet(item);
+            if (!item.equals(middle[i].getEquipment().getHelmet())) {
+                middle[i].getEquipment().setHelmet(item);
             }
         }
         double computedCurrentRadius = this.computeCurrentRadius();
@@ -183,8 +189,8 @@ public class InterceptionPointOption implements Option {
         }
     }
 
-	@Override
-	public void start(Game game) {
+    @Override
+    public void start(@Nonnull Game game) {
         Location clone = this.location.clone();
         clone.add(0, -1.7, 0);
         for (int i = middle.length - 1; i >= 0; i--) {
@@ -195,28 +201,29 @@ public class InterceptionPointOption implements Option {
             middle[i].setArms(false);
             middle[i].setVisible(false);
         }
-        updateArmorstandsAndEffect(null);
-        scoreboard.registerChangeHandler(this::updateArmorstandsAndEffect);
-		new GameRunnable(game) {
-			@Override
-			public void run() {
+        updateArmorStandsAndEffect(null);
+        scoreboard.registerChangeHandler(this::updateArmorStandsAndEffect);
+        new GameRunnable(game) {
+            @Override
+            public void run() {
                 Stream<WarlordsEntity> computePlayers = computePlayers();
                 double speed = updateTeamInCircle(computePlayers);
-				updateTeamHackProcess(speed);
+                updateTeamHackProcess(speed);
                 if (effectPlayer != null) {
                     effectPlayer.playEffects();
                 }
-			}
+            }
 		}.runTaskTimer(1, 1);
 	}
 
-	public String getName() {
-		return name;
-	}
+    @Nonnull
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(@Nonnull String name) {
+        this.name = name;
+    }
 
 	public Location getLocation() {
 		return location;

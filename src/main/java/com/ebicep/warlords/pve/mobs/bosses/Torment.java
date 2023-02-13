@@ -13,7 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
+import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -27,7 +27,7 @@ import org.bukkit.Material;
 
 import java.util.Collections;
 
-public class Torment extends AbstractSkeleton implements BossMob {
+public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     public Torment(Location spawnLocation) {
         super(
@@ -51,7 +51,6 @@ public class Torment extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        this.entity.setSkeletonType(1);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
                 ChatColor.RED + "Torment",

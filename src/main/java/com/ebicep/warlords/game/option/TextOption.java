@@ -87,7 +87,7 @@ public class TextOption implements Option, TimerSkipAbleMarker {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
     }

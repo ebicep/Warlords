@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -150,7 +151,7 @@ public class SafeZoneOption implements Option {
                                     .stream().map(WarlordsEntity::getEntity)
                                     .filter(Player.class::isInstance)
                                     .map(Player.class::cast)
-                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
+                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
                     }
                 },
                 safeDuration * 20,
@@ -166,7 +167,7 @@ public class SafeZoneOption implements Option {
                                         .stream().map(WarlordsEntity::getEntity)
                                         .filter(Player.class::isInstance)
                                         .map(Player.class::cast)
-                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer(Warlords.getInstance(), (Player) wpEntity));
                         }
                     }
                 })

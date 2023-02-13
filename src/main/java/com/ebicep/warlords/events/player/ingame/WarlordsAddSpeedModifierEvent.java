@@ -3,6 +3,7 @@ package com.ebicep.warlords.events.player.ingame;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -64,6 +65,7 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
         this.enhanced = enhanced;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

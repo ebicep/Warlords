@@ -65,34 +65,35 @@ public class MasterworksFair {
             }
         }
         Warlords.newChain()
-                .async(() -> {
-                    playerFairResults.forEach((uuid, masterworksFairEntries) -> {
-                        Warlords.newChain()
-                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                .syncLast(databasePlayer -> {
-                                    if (databasePlayer == null) {
-                                        return;
-                                    }
-                                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                    if (pveStats == null) {
-                                        return;
-                                    }
-                                    for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
-                                        WeaponsPvE rarity = masterworksFairEntry.getRarity();
-                                        pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                        LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
-                                        if (throughRewardsInventory) {
-                                            pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
-                                        } else {
-                                            rewards.forEach(pveStats::addCurrency);
-                                        }
-                                    }
+                .async(() -> playerFairResults.forEach((uuid, masterworksFairEntries) -> Warlords.newChain()
+                                                                                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                                                                                 .syncLast(databasePlayer -> {
+                                                                                                     if (databasePlayer == null) {
+                                                                                                         return;
+                                                                                                     }
+                                                                                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                                                                                     if (pveStats == null) {
+                                                                                                         return;
+                                                                                                     }
+                                                                                                     for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
+                                                                                                         WeaponsPvE rarity = masterworksFairEntry.getRarity();
+                                                                                                         pveStats.addMasterworksFairEntry(masterworksFairEntry);
+                                                                                                         LinkedHashMap<Currencies, Long> rewards = getRewards(
+                                                                                                                 masterworksFairEntry);
+                                                                                                         if (throughRewardsInventory) {
+                                                                                                             pveStats.addReward(new MasterworksFairReward(
+                                                                                                                     rewards,
+                                                                                                                     now,
+                                                                                                                     rarity
+                                                                                                             ));
+                                                                                                         } else {
+                                                                                                             rewards.forEach(pveStats::addCurrency);
+                                                                                                         }
+                                                                                                     }
 
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                })
-                                .execute();
-                    });
-                })
+                                                                                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                                                                                 })
+                                                                                                 .execute()))
                 .execute();
         sendResults(playerFairResults, false);
         if (throughRewardsInventory) {
@@ -110,45 +111,27 @@ public class MasterworksFair {
         if (placement <= 3) {
             rewards.put(rarity.starPieceCurrency, 1L);
             switch (placement) {
-                case 1:
+                case 1 -> {
                     switch (rarity) {
-                        case COMMON:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
-                            break;
-                        case RARE:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
-                            break;
-                        case EPIC:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
-                            break;
+                        case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                        case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
+                        case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
                     }
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     switch (rarity) {
-                        case COMMON:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
-                            break;
-                        case RARE:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 75L);
-                            break;
-                        case EPIC:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
-                            break;
+                        case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                        case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 75L);
+                        case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
                     }
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     switch (rarity) {
-                        case COMMON:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
-                            break;
-                        case RARE:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
-                            break;
-                        case EPIC:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 70L);
-                            break;
+                        case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                        case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                        case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 70L);
                     }
-                    break;
+                }
             }
         } else {
             if (placement <= 10 ||
@@ -157,39 +140,21 @@ public class MasterworksFair {
                     (rarity == WeaponsPvE.EPIC && score > 75)
             ) {
                 switch (rarity) {
-                    case COMMON:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                        break;
-                    case RARE:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
-                        break;
-                    case EPIC:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
-                        break;
+                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
+                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
                 }
             } else if (placement <= 20) {
                 switch (rarity) {
-                    case COMMON:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                        break;
-                    case RARE:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                        break;
-                    case EPIC:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
-                        break;
+                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
                 }
             } else {
                 switch (masterworksFairEntry.getRarity()) {
-                    case COMMON:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-                        break;
-                    case RARE:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                        break;
-                    case EPIC:
-                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
-                        break;
+                    case COMMON -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                    case RARE -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                    case EPIC -> rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
                 }
             }
         }
@@ -200,45 +165,44 @@ public class MasterworksFair {
     }
 
     public void sendResults(HashMap<UUID, List<MasterworksFairEntry>> playerFairResults, boolean inCaseYouMissedIt) {
-        playerFairResults.forEach((uuid, masterworksFairEntries) -> {
-            Warlords.newChain()
-                    .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                    .syncLast(databasePlayer -> {
-                        if (databasePlayer == null) {
-                            return;
-                        }
-                        List<String> message = new ArrayList<>();
-                        message.add(ChatColor.GOLD + "------------------------------------------------");
-                        if (inCaseYouMissedIt) {
-                            message.add(ChatColor.AQUA + "In case you missed it!");
-                        }
-                        message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
-                        for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
-                            if (rarity.getPlayerEntries == null) {
-                                continue;
-                            }
-                            Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
-                                    .filter(entry -> entry.getRarity() == rarity)
-                                    .findAny();
-                            if (masterworksFairEntry.isPresent()) {
-                                MasterworksFairEntry fairEntry = masterworksFairEntry.get();
-                                message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " +
-                                        ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(fairEntry.getScore()) + "% " +
-                                        ChatColor.GRAY + "(" + ChatColor.AQUA + "#" + fairEntry.getPlacement() + ChatColor.GRAY + ")"
-                                );
-                            } else {
-                                message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Not Submitted");
-                            }
-                        }
-                        message.add("");
-                        message.add(ChatColor.GREEN + "Claim your rewards through your");
-                        message.add(ChatColor.GREEN + "Reward Inventory!");
-                        message.add(ChatColor.GOLD + "------------------------------------------------");
-                        databasePlayer.addFutureMessage(new FutureMessage(message, true));
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    })
-                    .execute();
-        });
+        playerFairResults.forEach((uuid, masterworksFairEntries) -> Warlords.newChain()
+                                                                            .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                                                            .syncLast(databasePlayer -> {
+                                                                                if (databasePlayer == null) {
+                                                                                    return;
+                                                                                }
+                                                                                List<String> message = new ArrayList<>();
+                                                                                message.add(ChatColor.GOLD + "------------------------------------------------");
+                                                                                if (inCaseYouMissedIt) {
+                                                                                    message.add(ChatColor.AQUA + "In case you missed it!");
+                                                                                }
+                                                                                message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
+                                                                                for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+                                                                                    if (rarity.getPlayerEntries == null) {
+                                                                                        continue;
+                                                                                    }
+                                                                                    Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
+                                                                                                                                                                .filter(entry -> entry.getRarity() == rarity)
+                                                                                                                                                                .findAny();
+                                                                                    if (masterworksFairEntry.isPresent()) {
+                                                                                        MasterworksFairEntry fairEntry = masterworksFairEntry.get();
+                                                                                        message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " +
+                                                                                                ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(
+                                                                                                fairEntry.getScore()) + "% " +
+                                                                                                ChatColor.GRAY + "(" + ChatColor.AQUA + "#" + fairEntry.getPlacement() + ChatColor.GRAY + ")"
+                                                                                        );
+                                                                                    } else {
+                                                                                        message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Not Submitted");
+                                                                                    }
+                                                                                }
+                                                                                message.add("");
+                                                                                message.add(ChatColor.GREEN + "Claim your rewards through your");
+                                                                                message.add(ChatColor.GREEN + "Reward Inventory!");
+                                                                                message.add(ChatColor.GOLD + "------------------------------------------------");
+                                                                                databasePlayer.addFutureMessage(new FutureMessage(message, true));
+                                                                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                                                            })
+                                                                            .execute());
     }
 
     public void sendResults(boolean inCaseYouMissedIt) {

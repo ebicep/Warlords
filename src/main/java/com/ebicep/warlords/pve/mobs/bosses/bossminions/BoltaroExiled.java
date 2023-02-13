@@ -54,6 +54,6 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 1.3f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 1.3f);
     }
 }

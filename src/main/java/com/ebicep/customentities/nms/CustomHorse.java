@@ -1,18 +1,15 @@
 package com.ebicep.customentities.nms;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import net.minecraft.server.v1_8_R3.EntityHorse;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.World;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CustomHorse extends EntityHorse {
+public class CustomHorse extends net.minecraft.world.entity.animal.horse.Horse {
 
     private WarlordsEntity owner;
     private Horse horse;
@@ -33,27 +30,25 @@ public class CustomHorse extends EntityHorse {
 //    private float maxHealth = 0;
 //    private float shield = 0;
 
-    public CustomHorse(World world, WarlordsEntity owner) {
-        super(world);
+    public CustomHorse(ServerLevel serverLevel, WarlordsEntity owner) {
+        super(net.minecraft.world.entity.EntityType.HORSE, serverLevel);
         this.owner = owner;
     }
 
     public void spawn() {
-        if (!(owner.getEntity() instanceof Player)) {
+        if (!(owner.getEntity() instanceof Player player)) {
             return;
         }
-        Player player = (Player) owner.getEntity();
         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
         horse.setTamed(true);
         horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
         horse.setOwner(player);
         horse.setJumpStrength(0);
-        horse.setVariant(Horse.Variant.HORSE);
         horse.setColor(Horse.Color.BROWN);
         horse.setStyle(Horse.Style.NONE);
         horse.setAdult();
-        ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(speed);
-        horse.setPassenger(player);
+        horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
+        horse.addPassenger(player);
         this.horse = horse;
 //        this.health = this.maxHealth;
 //        owner.setTimeAfterDismount(0);
@@ -99,11 +94,11 @@ public class CustomHorse extends EntityHorse {
 //    }
 //
 //    public void boostSpeed() {
-//        ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(speed * 1.5);
+//        ((LivingEntity) ((CraftEntity) horse).getHandle()).getAttribute(Attributes.GENERIC_MOVEMENT_SPEED).setBaseValue(speed * 1.5);
 //        new BukkitRunnable() {
 //            @Override
 //            public void run() {
-//                ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(speed);
+//                ((LivingEntity) ((CraftEntity) horse).getHandle()).getAttribute(Attributes.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
 //                owner.updateHorseItem((Player) owner.getEntity());
 //            }
 //        }.runTaskLater(Warlords.getInstance(), 20);

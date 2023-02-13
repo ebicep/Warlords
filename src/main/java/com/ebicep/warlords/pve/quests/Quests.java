@@ -176,14 +176,14 @@ public enum Quests {
     }
 
     public ItemStack getItemStack(DatabasePlayer databasePlayer, boolean completed) {
-        ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
+        ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.MAP : Material.PAPER)
                 .name(ChatColor.GREEN + time.name + ": " + name)
                 //.name(ChatColor.GREEN + name)
                 .lore(
                         ChatColor.GRAY + description,
                         "",
                         ChatColor.GRAY + "Progress: " + (completed ? ChatColor.GREEN + "Completed" :
-                                databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
+                                                         databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
                         "",
                         ChatColor.GRAY + "Rewards:"
                 );

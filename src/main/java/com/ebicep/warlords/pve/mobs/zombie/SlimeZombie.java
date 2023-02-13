@@ -47,7 +47,7 @@ public class SlimeZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.playSound(receiver.getLocation(), Sound.SLIME_WALK, 500, 0.2f);
+        receiver.playSound(receiver.getLocation(), Sound.ENTITY_SLIME_JUMP, 500, 0.2f);
         receiver.getSpeed().addSpeedModifier(warlordsNPC, "Slime Slowness", -30, 2 * 20);
     }
 

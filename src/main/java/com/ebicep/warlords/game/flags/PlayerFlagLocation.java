@@ -17,6 +17,7 @@ public class PlayerFlagLocation implements FlagLocation {
         this.pickUpTicks = pickUpTicks;
     }
 
+    @Nonnull
     @Override
     public Location getLocation() {
         return player.getLocation();
@@ -52,6 +53,7 @@ public class PlayerFlagLocation implements FlagLocation {
         return this.pickUpTicks % (20 * 3) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
     }
 
+    @Nonnull
     @Override
     public List<String> getDebugInformation() {
         return Arrays.asList(

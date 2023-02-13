@@ -43,7 +43,7 @@ public class FlameBurst extends AbstractProjectileBase {
     }
 
     @Override
-    protected void playEffect(Location currentLocation, int ticksLived) {
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
         Matrix4d center = new Matrix4d(currentLocation);
 
         for (float i = 0; i < 4; i++) {

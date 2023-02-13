@@ -27,7 +27,7 @@ public enum WeaponsPvE {
     COMMON("Common",
             CommonWeapon.class,
             ChatColor.GREEN,
-            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5),
+            new ItemStack(Material.LIME_STAINED_GLASS_PANE),
             MasterworksFair::getCommonPlayerEntries,
             Currencies.COMMON_STAR_PIECE,
             50
@@ -35,7 +35,7 @@ public enum WeaponsPvE {
     RARE("Rare",
             RareWeapon.class,
             ChatColor.BLUE,
-            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3),
+            new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE),
             MasterworksFair::getRarePlayerEntries,
             Currencies.RARE_STAR_PIECE,
             100
@@ -43,7 +43,7 @@ public enum WeaponsPvE {
     EPIC("Epic",
             EpicWeapon.class,
             ChatColor.DARK_PURPLE,
-            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 2),
+            new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE),
             MasterworksFair::getEpicPlayerEntries,
             Currencies.EPIC_STAR_PIECE,
             200
@@ -51,7 +51,7 @@ public enum WeaponsPvE {
     LEGENDARY("Legendary",
             AbstractLegendaryWeapon.class,
             ChatColor.GOLD,
-            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1),
+            new ItemStack(Material.ORANGE_STAINED_GLASS_PANE),
             null,
             Currencies.LEGENDARY_STAR_PIECE,
             500

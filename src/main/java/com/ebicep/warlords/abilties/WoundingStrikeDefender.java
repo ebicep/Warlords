@@ -72,7 +72,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         }
         if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
             nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeDefender>(
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "WND",
                     WoundingStrikeDefender.class,

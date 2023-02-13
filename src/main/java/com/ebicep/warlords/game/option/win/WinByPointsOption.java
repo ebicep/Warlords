@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WinByPointsOption implements Option, Listener {
     public static final int DEFAULT_POINT_LIMIT = 1000;
@@ -35,15 +34,15 @@ public class WinByPointsOption implements Option, Listener {
     }     
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "points") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return TeamMarker.getTeams(game).stream()
-                        .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getPoints(t) + ChatColor.GOLD + "/" + pointLimit)
-                        .collect(Collectors.toList());
+                                 .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getPoints(t) + ChatColor.GOLD + "/" + pointLimit)
+                                 .toList();
             }
         });
     }

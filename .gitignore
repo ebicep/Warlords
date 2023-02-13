@@ -20,3 +20,6 @@
 
 # Maven
 .idea/libraries
+
+.paper-nms
+/run

@@ -28,7 +28,7 @@ public class GuildRoleMenu {
 
         List<GuildRole> guildRoles = guild.getRoles();
         menu.setItem(4, 0,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Create a new role")
                         .get(),
                 (m, e) -> {
@@ -165,7 +165,7 @@ public class GuildRoleMenu {
             lore.add("" + (guildRoles.get(i).equals(role) ? ChatColor.GREEN : ChatColor.GRAY) + i + ". " + guildRoles.get(i).getRoleName());
         }
         menu.setItem(5, 4,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Click to change role level")
                         .lore(lore)
                         .get(),

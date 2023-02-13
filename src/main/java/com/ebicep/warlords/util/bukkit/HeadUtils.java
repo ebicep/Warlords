@@ -4,8 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -17,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HeadUtils {
 
 
-    public static final ConcurrentHashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> PLAYER_HEADS = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<UUID, net.minecraft.world.item.ItemStack> PLAYER_HEADS = new ConcurrentHashMap<>();
 //    private static Field metaProfileField;
 
     public static void updateHeads() {
@@ -32,7 +31,7 @@ public class HeadUtils {
 
             @Override
             public void run() {
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+                ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 skullMeta.setOwner(player.getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
                 playerSkull.setItemMeta(skullMeta);
@@ -49,7 +48,7 @@ public class HeadUtils {
         if (PLAYER_HEADS.containsKey(uuid)) {
             return CraftItemStack.asBukkitCopy(PLAYER_HEADS.get(uuid));
         }
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
         skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
         playerSkull.setItemMeta(skullMeta);
@@ -58,7 +57,7 @@ public class HeadUtils {
     }
 /*
     public static ItemStack getHead(UUID uuid) {
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
 
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);

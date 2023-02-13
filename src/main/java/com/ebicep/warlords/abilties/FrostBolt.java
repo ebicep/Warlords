@@ -48,7 +48,7 @@ public class FrostBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected void playEffect(Location currentLocation, int animationTimer) {
+    protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, currentLocation, 500);
     }
 
@@ -145,9 +145,9 @@ public class FrostBolt extends AbstractProjectileBase {
                         .aliveEnemiesOf(giver)
                         .limit(1)
                 ) {
-                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE, (byte) 0).play();
-                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
-                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.GLASS, 2, 0.1f);
+                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE).play();
+                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 2, 0.7f);
+                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
                     freezeTarget.addDamageInstance(giver, name, 409, 554, -1, 100, false);
                 }
             }

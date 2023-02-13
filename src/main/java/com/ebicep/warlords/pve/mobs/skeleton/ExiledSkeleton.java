@@ -79,7 +79,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 wp.getCooldownManager().removeCooldown(Fireball.class, false);
-                wp.getCooldownManager().addCooldown(new RegularCooldown<Fireball>(
+                wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "BLI",
                         Fireball.class,
@@ -111,7 +111,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WND",
                 WoundingStrikeBerserker.class,
@@ -143,10 +143,10 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.ORANGE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.ORANGE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 }

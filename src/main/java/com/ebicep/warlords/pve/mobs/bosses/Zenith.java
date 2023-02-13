@@ -63,18 +63,11 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        float multiplier;
-        switch (option.getDifficulty()) {
-            case EASY:
-                multiplier = 0.5f;
-                break;
-            case HARD:
-                multiplier = 1;
-                break;
-            default:
-                multiplier = 0.75f;
-                break;
-        }
+        float multiplier = switch (option.getDifficulty()) {
+            case EASY -> 0.5f;
+            case HARD -> 1;
+            default -> 0.75f;
+        };
         if (ticksElapsed % 240 == 0) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
@@ -155,7 +148,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(self.getLocation(), Sound.BLAZE_HIT, 2, 0.2f);
+        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
     }
 
     @Override
@@ -178,7 +171,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     this.cancel();
                 }
 
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
                 for (WarlordsEntity we : PlayerFilter
                         .entitiesAround(loc, radius, radius, radius)

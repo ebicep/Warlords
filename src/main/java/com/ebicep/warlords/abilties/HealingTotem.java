@@ -72,7 +72,7 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 7);
+        return new ItemStack(Material.PINK_TULIP);
     }
 
     @Override
@@ -87,10 +87,10 @@ public class HealingTotem extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
+                    Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_BLAZE_DEATH, 1.2f, 0.7f);
                     Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
 
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SPRUCE_SAPLING).play();
 
                     float healMultiplier = Math.min(1 + (.35f * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
@@ -210,7 +210,7 @@ public class HealingTotem extends AbstractTotemBase {
 
         addSecondaryAbility(() -> {
                     Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
-                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
+                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
 
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)

@@ -67,7 +67,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
-                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "CRIP",
                         CripplingStrike.class,

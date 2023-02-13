@@ -40,7 +40,7 @@ public class WeaponLegendaryCraftMenu {
         Menu menu = new Menu("Craft Legendary Weapon", 9 * 6);
 
         menu.setItem(4, 2,
-                new ItemBuilder(Material.SULPHUR)
+                new ItemBuilder(Material.GUNPOWDER)
                         .name(ChatColor.GREEN + "Craft Legendary Weapon")
                         .lore(costLore)
                         .get(),
@@ -59,8 +59,8 @@ public class WeaponLegendaryCraftMenu {
                                 cost.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 Location loc = player.getLocation();
-                                player.playSound(loc, Sound.NOTE_PLING, 500, 2);
-                                player.playSound(loc, Sound.AMBIENCE_THUNDER, 500, 0.1f);
+                                player.playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 500, 2);
+                                player.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.1f);
                                 Utils.playGlobalSound(loc, "legendaryfind", 500, 1);
                                 EffectUtils.strikeLightning(loc, false, 3);
                                 player.getPlayer().spigot().sendMessage(
@@ -87,7 +87,7 @@ public class WeaponLegendaryCraftMenu {
         );
 
         menu.fillEmptySlots(
-                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                         .name(" ")
                         .get(),
                 (m, e) -> {

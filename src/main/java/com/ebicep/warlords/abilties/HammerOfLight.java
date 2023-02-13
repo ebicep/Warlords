@@ -31,11 +31,11 @@ public class HammerOfLight extends AbstractAbility {
 
     private static final int RADIUS = 6;
 
-    public static boolean isStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
+    public static boolean notStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                 .filter(HammerOfLight::isHammer)
-                .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < RADIUS * RADIUS);
+                .noneMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < RADIUS * RADIUS);
     }
 
     public boolean isHammer() {
@@ -104,7 +104,7 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) {
+        if (player.getTargetBlock(null, 25).getType() == Material.AIR) {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
@@ -112,7 +112,7 @@ public class HammerOfLight extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
 
-        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone().add(.6, 0, .6).clone();
+        Location location = player.getTargetBlock(null, 25).getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
             if (location.clone().add(1, 0, 0).getBlock().getType() == Material.AIR) {
                 location.add(.6, 0, 0);

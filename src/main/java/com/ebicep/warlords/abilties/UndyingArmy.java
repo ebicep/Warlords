@@ -70,8 +70,8 @@ public class UndyingArmy extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
-        Utils.playGlobalSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
+        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, 0.3f);
+        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.9f);
 
         // particles
         Location loc = player.getEyeLocation();

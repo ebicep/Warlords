@@ -1,17 +1,23 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityMagmaCube;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 
-public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<CustomMagmaCube> {
+import javax.annotation.Nonnull;
+
+public class CustomMagmaCube extends MagmaCube implements CustomEntity<CustomMagmaCube> {
 
     private final int flameHitbox = 6;
 
-    public CustomMagmaCube(World world) {
-        super(world);
-        setSize(7);
+    public CustomMagmaCube(ServerLevel serverLevel) {
+        super(EntityType.MAGMA_CUBE, serverLevel);
+        setSize(7, true);
     }
 
     public CustomMagmaCube(org.bukkit.World world) {
@@ -20,14 +26,17 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
 
     //jump
     @Override
-    protected void bF() {
-        this.motY = (0.07F + (float) this.getSize() * 0.07F); //motion y
-        this.ai = true; //isAirBorne
+    protected void jumpFromGround() {
+        Vec3 vec3d = this.getDeltaMovement();
+        this.setDeltaMovement(vec3d.x, 0.07F + (float) this.getSize() * 0.07F, vec3d.z);
+        this.hasImpulse = true;
     }
 
     @Override
-    protected void bH() {
-
+    protected void jumpInLiquid(@Nonnull TagKey<Fluid> fluid) {
+        Vec3 vec3d = this.getDeltaMovement();
+        this.setDeltaMovement(vec3d.x, 0.07F + (float) this.getSize() * 0.07F, vec3d.z);
+        this.hasImpulse = true;
     }
 
     @Override
@@ -38,11 +47,8 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override

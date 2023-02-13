@@ -14,13 +14,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
@@ -293,7 +293,7 @@ public class TestCommand extends BaseCommand {
 //                                    .stream()
 //                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
 //                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-//                                    .collect(Collectors.toList());
+//                                    .toList();
 //                            if (entries.size() > 1) {
 //                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
 //                                System.out.println("Removed duplicate for " + databasePlayer.getName());
@@ -709,7 +709,7 @@ public class TestCommand extends BaseCommand {
 //        boolean s5 = false;
 //        List<DatabaseGame> gameList = DatabaseManager.gameService.findAll().stream()
 //                .filter(databaseGame -> databaseGame.isCounted() && databaseGame.isPrivate())
-//                .collect(Collectors.toList());
+//                .toList();
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP2);
 //        for (DatabaseGame databaseGame : gameList) {
 //            if(databaseGame.getDate().startsWith("12/17") && !s5) {

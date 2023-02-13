@@ -80,126 +80,126 @@ public class ArmorManager {
         SIMPLE_MAGE_HELMET(
                 "Simple Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.CARPET, 1, (short) 3),
-                new ItemStack(Material.CARPET, 1, (short) 5)
+                new ItemStack(Material.LIGHT_BLUE_CARPET),
+                new ItemStack(Material.LIME_CARPET)
         ),
         GREATER_MAGE_HELMET(
                 "Greater Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.CARPET, 1, (short) 2),
-                new ItemStack(Material.CARPET, 1, (short) 1)
+                new ItemStack(Material.MAGENTA_CARPET),
+                new ItemStack(Material.ORANGE_CARPET)
         ),
         MASTERWORK_MAGE_HELMET(
                 "Masterwork Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.CARPET, 1, (short) 6),
-                new ItemStack(Material.CARPET, 1, (short) 10)
+                new ItemStack(Material.PINK_CARPET),
+                new ItemStack(Material.PURPLE_CARPET)
         ),
         LEGENDARY_MAGE_HELMET(
                 "Legendary Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.RED_ROSE, 1, (short) 5),
-                new ItemStack(Material.SAPLING, 1, (short) 5)
+                new ItemStack(Material.ORANGE_TULIP),
+                new ItemStack(Material.DARK_OAK_SAPLING)
         ),
 
         SIMPLE_WARRIOR_HELMET(
                 "Simple Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.CARPET, 1, (short) 15),
-                new ItemStack(Material.CARPET, 1, (short) 11)
+                new ItemStack(Material.BLACK_CARPET),
+                new ItemStack(Material.BLUE_CARPET)
         ),
         GREATER_WARRIOR_HELMET(
                 "Greater Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.CARPET, 1, (short) 12),
-                new ItemStack(Material.CARPET, 1, (short) 9)
+                new ItemStack(Material.BROWN_CARPET),
+                new ItemStack(Material.CYAN_CARPET)
         ),
         MASTERWORK_WARRIOR_HELMET(
                 "Masterwork Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.CARPET, 1, (short) 7),
-                new ItemStack(Material.CARPET, 1, (short) 13)
+                new ItemStack(Material.GRAY_CARPET),
+                new ItemStack(Material.GREEN_CARPET)
         ),
         LEGENDARY_WARRIOR_HELMET(
                 "Legendary Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.STONE_PLATE),
-                new ItemStack(Material.WOOD_PLATE)
+                new ItemStack(Material.STONE_PRESSURE_PLATE),
+                new ItemStack(Material.OAK_PRESSURE_PLATE)
         ),
 
         SIMPLE_PALADIN_HELMET(
                 "Simple Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.CARPET, 1, (short) 14),
-                new ItemStack(Material.CARPET, 1, (short) 8)
+                new ItemStack(Material.RED_CARPET),
+                new ItemStack(Material.LIGHT_GRAY_CARPET)
         ),
         GREATER_PALADIN_HELMET(
                 "Greater Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.CARPET),
-                new ItemStack(Material.CARPET, 1, (short) 4)
+                new ItemStack(Material.WHITE_CARPET),
+                new ItemStack(Material.YELLOW_CARPET)
         ),
         MASTERWORK_PALADIN_HELMET(
                 "Masterwork Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.WOOD_STEP, 1, (short) 4),
+                new ItemStack(Material.ACACIA_SLAB),
                 new ItemStack(Material.ACACIA_STAIRS)
         ),
         LEGENDARY_PALADIN_HELMET(
                 "Legendary Paladin Helmet",
                 Classes.PALADIN,
                 new ItemStack(Material.DEAD_BUSH),
-                new ItemStack(Material.RED_ROSE, 1, (short) 6)
+                new ItemStack(Material.WHITE_TULIP)
         ),
 
         SIMPLE_SHAMAN_HELMET(
                 "Simple Shaman Helmet",
                 Classes.SHAMAN,
-                new ItemStack(Material.SAPLING, 1, (short) 4),
-                new ItemStack(Material.RED_ROSE, 1, (short) 2)
+                new ItemStack(Material.ACACIA_SAPLING),
+                new ItemStack(Material.ALLIUM)
         ),
         GREATER_SHAMAN_HELMET(
                 "Greater Shaman Helmet",
                 Classes.SHAMAN,
-                new ItemStack(Material.SAPLING, 1, (short) 2),
+                new ItemStack(Material.BIRCH_SAPLING),
                 new ItemStack(Material.CACTUS)
         ),
         MASTERWORK_SHAMAN_HELMET(
                 "Masterwork Shaman Helmet",
                 Classes.SHAMAN,
-                new ItemStack(Material.RED_ROSE, 1, (short) 8),
-                new ItemStack(Material.YELLOW_FLOWER)
+                new ItemStack(Material.OXEYE_DAISY),
+                new ItemStack(Material.DANDELION)
         ),
         LEGENDARY_SHAMAN_HELMET(
                 "Legendary Shaman Helmet",
                 Classes.SHAMAN,
-                new ItemStack(Material.SAPLING),
-                new ItemStack(Material.SAPLING, 1, (short) 1)
+                new ItemStack(Material.OAK_SAPLING),
+                new ItemStack(Material.SPRUCE_SAPLING)
         ),
 
         SIMPLE_ROGUE_HELMET(
                 "Simple Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.LOG, 1, (short) 0),
-                new ItemStack(Material.WOOD, 1, (short) 0)
+                new ItemStack(Material.OAK_LOG),
+                new ItemStack(Material.OAK_WOOD)
         ),
         GREATER_ROGUE_HELMET(
                 "Greater Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.LOG, 1, (short) 1),
-                new ItemStack(Material.WOOD, 1, (short) 1)
+                new ItemStack(Material.SPRUCE_LOG),
+                new ItemStack(Material.SPRUCE_WOOD)
         ),
         MASTERWORK_ROGUE_HELMET(
                 "Masterwork Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.LOG, 1, (short) 2),
-                new ItemStack(Material.WOOD, 1, (short) 2)
+                new ItemStack(Material.BIRCH_LOG),
+                new ItemStack(Material.BIRCH_WOOD)
         ),
         LEGENDARY_ROGUE_HELMET(
                 "Legendary Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.LOG, 1, (short) 3),
-                new ItemStack(Material.WOOD, 1, (short) 3)
+                new ItemStack(Material.JUNGLE_LOG),
+                new ItemStack(Material.JUNGLE_WOOD)
         ),
 
         ;
@@ -227,9 +227,9 @@ public class ArmorManager {
         GREATER_CHESTPLATE("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
         GREATER_LEGGINGS("Greater Leggings", new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_LEGGINGS)),
         GREATER_BOOTS("Greater Boots", new ItemStack(Material.CHAINMAIL_BOOTS), new ItemStack(Material.IRON_BOOTS)),
-        MASTERWORK_CHESTPLATE("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-        MASTERWORK_LEGGINGS("Masterwork Leggings", new ItemStack(Material.DIAMOND_LEGGINGS), new ItemStack(Material.GOLD_LEGGINGS)),
-        MASTERWORK_BOOTS("Masterwork Boots", new ItemStack(Material.DIAMOND_BOOTS), new ItemStack(Material.GOLD_BOOTS)),
+        MASTERWORK_CHESTPLATE("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLDEN_CHESTPLATE)),
+        MASTERWORK_LEGGINGS("Masterwork Leggings", new ItemStack(Material.DIAMOND_LEGGINGS), new ItemStack(Material.GOLDEN_LEGGINGS)),
+        MASTERWORK_BOOTS("Masterwork Boots", new ItemStack(Material.DIAMOND_BOOTS), new ItemStack(Material.GOLDEN_BOOTS)),
 
         ;
 

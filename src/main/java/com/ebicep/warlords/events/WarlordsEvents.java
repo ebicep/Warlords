@@ -36,7 +36,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Horse;
@@ -352,8 +352,7 @@ public class WarlordsEvents implements Listener {
                     });
         }
 
-        if (wpAttacker instanceof WarlordsNPC) {
-            WarlordsNPC warlordsNPC = (WarlordsNPC) wpAttacker;
+        if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
             if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class)) {
                 if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
                     wpVictim.addDamageInstance(
@@ -406,11 +405,11 @@ public class WarlordsEvents implements Listener {
         WarlordsEntity wp = Warlords.getPlayer(player);
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-            ItemStack itemHeld = player.getItemInHand();
+            ItemStack itemHeld = player.getEquipment().getItemInMainHand();
             int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
                 switch (itemHeld.getType()) {
-                    case BONE:
+                    case BONE -> {
                         if (!itemHeld.equals(UndyingArmy.BONE)) {
                             break;
                         }
@@ -424,8 +423,8 @@ public class WarlordsEvents implements Listener {
                                 100,
                                 false
                         );
-                        break;
-                    case BANNER:
+                    }
+                    case LEGACY_BANNER -> {
                         if (wp.getFlagDropCooldown() > 0) {
                             player.sendMessage("§cYou cannot drop the flag yet, please wait 3 seconds!");
                         } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
@@ -434,21 +433,20 @@ public class WarlordsEvents implements Listener {
                             FlagHolder.dropFlagForPlayer(wp);
                             wp.setFlagDropCooldown(5);
                         }
-                        break;
-                    case COMPASS:
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                    }
+                    case COMPASS -> {
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         wp.toggleTeamFlagCompass();
-                        break;
-                    case GOLD_NUGGET:
-                        player.playSound(player.getLocation(), Sound.DIG_SNOW, 500, 2);
+                    }
+                    case GOLD_NUGGET -> {
+                        player.playSound(player.getLocation(), Sound.BLOCK_SNOW_BREAK, 500, 2);
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
-                        break;
-                    default:
+                    }
+                    default -> {
                         if (heldItemSlot == 0 ||
                                 PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE
                         ) {
-                            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer) {
-                                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                                 if (weapon instanceof AbstractLegendaryWeapon) {
                                     ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
@@ -457,7 +455,7 @@ public class WarlordsEvents implements Listener {
                                 wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                             }
                         }
-                        break;
+                    }
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
@@ -543,8 +541,7 @@ public class WarlordsEvents implements Listener {
                 if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                     e.setCancelled(true);
-                } else if (slot == 8 && wp instanceof WarlordsPlayer) {
-                    WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                     AbstractWeapon weapon = warlordsPlayer.getWeapon();
                     if (weapon instanceof AbstractLegendaryWeapon) {
                         AbstractAbility ability = ((AbstractLegendaryWeapon) weapon).getAbility();
@@ -568,7 +565,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
         if (e.getPlayer().getVehicle() != null) {
-            if (e.getInventory().getHolder() != null && e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
+            if (e.getInventory().getHolder() != null && e.getView().getTitle().equals("Horse")) {
                 e.setCancelled(true);
             }
         }

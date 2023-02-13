@@ -36,13 +36,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -62,20 +59,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public abstract class WarlordsEntity {
 
     //RED << (Receiving from enemy / Negative from team?)
-    public static final String RECEIVE_ARROW_RED = ChatColor.RED + "\u00AB";
+    public static final String RECEIVE_ARROW_RED = ChatColor.RED + "«";
     //GREEN << (Receiving from team / Positive from enemy?)
-    public static final String RECEIVE_ARROW_GREEN = ChatColor.GREEN + "\u00AB";
+    public static final String RECEIVE_ARROW_GREEN = ChatColor.GREEN + "«";
     //RED >> (Doing negatives teammates?)
-    public static final String GIVE_ARROW_RED = ChatColor.RED + "\u00BB";
+    public static final String GIVE_ARROW_RED = ChatColor.RED + "»";
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
-    public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
+    public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "»";
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
     protected boolean spawnGrave = true;
@@ -84,7 +80,7 @@ public abstract class WarlordsEntity {
     protected UUID uuid;
     protected AbstractPlayerClass spec;
     protected float walkSpeed = 1;
-    protected LivingEntity entity;
+    protected org.bukkit.entity.LivingEntity entity;
     protected Specializations specClass;
     @Nullable
     protected CompassTargetMarker compassTarget;
@@ -419,7 +415,7 @@ public abstract class WarlordsEntity {
 
                 for (OrderOfEviscerate orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
                         .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.class)
-                        .collect(Collectors.toList())
+                        .toList()
                 ) {
                     orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
                 }
@@ -443,7 +439,7 @@ public abstract class WarlordsEntity {
                 appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
             }
             // Checks whether the player is standing in a Hammer of Light.
-            if (!HammerOfLight.isStandingInHammer(attacker, this)) {
+            if (HammerOfLight.notStandingInHammer(attacker, this)) {
                 debugMessage.append("\n").append(ChatColor.AQUA).append("Before Intervene");
                 appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
@@ -475,7 +471,7 @@ public abstract class WarlordsEntity {
                 .findFirst();
         if (optionalInterveneCooldown.isPresent() &&
                 optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                !HammerOfLight.isStandingInHammer(attacker, this) &&
+                HammerOfLight.notStandingInHammer(attacker, this) &&
                 isEnemy(attacker)
         ) {
             debugMessage.append("\n").append(ChatColor.AQUA).append("Intervene:");
@@ -555,7 +551,7 @@ public abstract class WarlordsEntity {
         } else {
             // Damage reduction after Intervene
             if (!ignoreReduction) {
-                if (!HammerOfLight.isStandingInHammer(attacker, this)) {
+                if (HammerOfLight.notStandingInHammer(attacker, this)) {
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
                     debugMessage.append("\n").append(ChatColor.AQUA).append("After Intervene:");
@@ -589,7 +585,7 @@ public abstract class WarlordsEntity {
                     .findFirst();
             if (arcaneShieldCooldown.isPresent() &&
                     isEnemy(attacker) &&
-                    !HammerOfLight.isStandingInHammer(attacker, this)
+                    HammerOfLight.notStandingInHammer(attacker, this)
             ) {
                 debugMessage.append("\n").append(ChatColor.AQUA).append("Arcane Shield:");
 
@@ -620,7 +616,7 @@ public abstract class WarlordsEntity {
                     return Optional.empty();
                 } else {
                     if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
+                        entity.setAbsorptionAmount((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
                     }
 
                     if (isMeleeHit) {
@@ -760,8 +756,8 @@ public abstract class WarlordsEntity {
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
                     }
 
                     attacker.addKill();
@@ -777,7 +773,7 @@ public abstract class WarlordsEntity {
 
                     for (WarlordsEntity enemy : PlayerFilter.playingGame(game)
                                                             .enemiesOf(this)
-                                                            .stream().collect(Collectors.toList())
+                                                            .stream().toList()
                     ) {
                         for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
@@ -898,7 +894,7 @@ public abstract class WarlordsEntity {
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
 
-        WarlordsDamageHealingFinalEvent finalEvent = null;
+        WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
@@ -1053,14 +1049,14 @@ public abstract class WarlordsEntity {
         if (player.getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUuid());
             switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+                case ALL -> {
                     if (player.showDebugMessage) {
                         player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
                     } else {
                         player.sendMessage(ownFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
+                }
+                case CRITS_ONLY -> {
                     if (isCrit) {
                         if (player.showDebugMessage) {
                             player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
@@ -1068,7 +1064,7 @@ public abstract class WarlordsEntity {
                             player.sendMessage(ownFeed.toString());
                         }
                     }
-                    break;
+                }
             }
         }
     }
@@ -1122,14 +1118,14 @@ public abstract class WarlordsEntity {
         if (sender.getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid());
             switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+                case ALL -> {
                     if (sender.showDebugMessage) {
                         sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
+                }
+                case CRITS_ONLY -> {
                     if (isCrit) {
                         if (sender.showDebugMessage) {
                             sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
@@ -1137,7 +1133,7 @@ public abstract class WarlordsEntity {
                             sender.sendMessage(ownFeed.toString());
                         }
                     }
-                    break;
+                }
             }
         }
 
@@ -1172,14 +1168,14 @@ public abstract class WarlordsEntity {
         if (receiver.getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid());
             switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+                case ALL -> {
                     if (receiver.showDebugMessage) {
                         receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
                     } else {
                         receiver.sendMessage(allyFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
+                }
+                case CRITS_ONLY -> {
                     if (isCrit) {
                         if (receiver.showDebugMessage) {
                             receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
@@ -1187,7 +1183,7 @@ public abstract class WarlordsEntity {
                             receiver.sendMessage(allyFeed.toString());
                         }
                     }
-                    break;
+                }
             }
         }
     }
@@ -1231,14 +1227,14 @@ public abstract class WarlordsEntity {
         if (receiver.getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid());
             switch (playerSettings.getChatDamageMode()) {
-                case ALL:
+                case ALL -> {
                     if (receiver.showDebugMessage) {
                         receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
                     } else {
                         receiver.sendMessage(enemyFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
+                }
+                case CRITS_ONLY -> {
                     if (isCrit) {
                         if (receiver.showDebugMessage) {
                             receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
@@ -1246,7 +1242,7 @@ public abstract class WarlordsEntity {
                             receiver.sendMessage(enemyFeed.toString());
                         }
                     }
-                    break;
+                }
             }
         }
 
@@ -1276,14 +1272,14 @@ public abstract class WarlordsEntity {
         if (sender.getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid());
             switch (playerSettings.getChatDamageMode()) {
-                case ALL:
+                case ALL -> {
                     if (sender.showDebugMessage) {
                         sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
+                }
+                case CRITS_ONLY -> {
                     if (isCrit) {
                         if (sender.showDebugMessage) {
                             sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
@@ -1291,7 +1287,7 @@ public abstract class WarlordsEntity {
                             sender.sendMessage(ownFeed.toString());
                         }
                     }
-                    break;
+                }
             }
         }
     }
@@ -1366,7 +1362,7 @@ public abstract class WarlordsEntity {
      */
     private void playHitSound(WarlordsEntity attacker) {
         if (attacker.entity instanceof Player) {
-            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         }
     }
 
@@ -1377,7 +1373,7 @@ public abstract class WarlordsEntity {
     private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
         entity.playEffect(EntityEffect.HURT);
         for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
-            player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
+            player1.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_HURT, 2, 1);
         }
     }
 
@@ -1415,12 +1411,11 @@ public abstract class WarlordsEntity {
         this.addDeath();
         FlagHolder.dropFlagForPlayer(this);
 
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             player.setGameMode(GameMode.SPECTATOR);
             //removing yellow hearts
-            ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
-            ItemStack item = ((CraftPlayer) entity).getInventory().getItem(0);
+            entity.setAbsorptionAmount(0);
+            ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
                 item.removeEnchantment(Enchantment.OXYGEN);
@@ -1558,27 +1553,24 @@ public abstract class WarlordsEntity {
     }
 
     public void updateArmor() {
-        if (!(this.entity instanceof Player)) {
+        if (!(this.entity instanceof Player player)) {
             return;
         }
-
-        Player player = (Player) this.entity;
 
         if (!cooldownManager.hasCooldownFromName("Cloaked") || hasFlag()) {
             if (this instanceof WarlordsPlayer) {
                 ArmorManager.resetArmor(player, (WarlordsPlayer) this);
             }
 
-            getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+            player.removePotionEffect(PotionEffectType.INVISIBILITY);
             for (Player otherPlayer : player.getWorld().getPlayers()) {
-                otherPlayer.showPlayer(player);
+                otherPlayer.showPlayer(Warlords.getInstance(), player);
             }
         }
 
         if (hasFlag()) {
-            ItemStack item = new ItemStack(Material.BANNER);
+            ItemStack item = new ItemStack(getTeam() == Team.RED ? Material.RED_BANNER : Material.BLUE_BANNER);
             BannerMeta banner = (BannerMeta) item.getItemMeta();
-            banner.setBaseColor(getTeam() == Team.RED ? DyeColor.BLUE : DyeColor.RED);
             banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
             banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
             item.setItemMeta(banner);
@@ -1612,8 +1604,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateItems() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             updateRedItem(player);
             updatePurpleItem(player);
             updateBlueItem(player);
@@ -1639,7 +1630,7 @@ public abstract class WarlordsEntity {
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte) 8)
+            ItemBuilder cooldown = new ItemBuilder(Material.INK_SAC, ability.getCurrentCooldownItem(), (byte) 8)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
@@ -1822,18 +1813,18 @@ public abstract class WarlordsEntity {
     }
 
     public void showDeathAnimation() {
-        if (!(this.entity instanceof Player)) {
-            this.entity.damage(200);
-        } else {
-            Player player = (Player) this.entity;
-            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+        Zombie zombie;
+        if (this.entity instanceof Player player) {
+            zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
             zombie.getEquipment().setBoots(player.getInventory().getBoots());
             zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
             zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
             zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
-            zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-            zombie.damage(2000);
+            zombie.getEquipment().setItemInMainHand(player.getInventory().getItemInMainHand());
+        } else {
+            zombie = (Zombie) this.entity;
         }
+        zombie.damage(2000);
     }
 
     public void heal() {
@@ -1901,8 +1892,8 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(String message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
-            this.entity.sendMessage(message);
+        if (this.entity instanceof Player player) {
+            player.sendMessage(message);
         }
     }
 
@@ -1915,8 +1906,8 @@ public abstract class WarlordsEntity {
     }
 
     public void sendSpigotMessage(BaseComponent[] message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
-            ((Player) this.entity).spigot().sendMessage(message);
+        if (this.entity instanceof Player player) { // TODO check if this if is really needed, we can send a message to any entity??
+            player.sendMessage(message);
         }
     }
 
@@ -1954,7 +1945,7 @@ public abstract class WarlordsEntity {
     }
 
     public boolean onHorse() {
-        return this.entity.isInsideVehicle();
+        return this.entity.getVehicle() != null;
     }
 
     public float getHorseCooldown() {
@@ -2260,7 +2251,7 @@ public abstract class WarlordsEntity {
             location1.setX(location.getX());
             location1.setY(location.getY());
             location1.setZ(location.getZ());
-            this.entity.teleport(location);
+            this.entity.teleport(location1);
         }
     }
 
@@ -2397,8 +2388,7 @@ public abstract class WarlordsEntity {
         if (player != null) {
             player.setWalkSpeed(this.walkSpeed);
         } else {
-            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                                                               .setValue(this.walkSpeed);
+            entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
     }
 

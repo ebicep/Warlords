@@ -12,9 +12,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -86,7 +86,7 @@ public class ArcaneShieldPyromancer extends AbstractAbility {
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
-                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
+                            ((LivingEntity) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionAmount(0);
                         }
                     }
                 },
@@ -103,7 +103,7 @@ public class ArcaneShieldPyromancer extends AbstractAbility {
         );
 
         if (player != null) {
-            ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+            ((LivingEntity) ((CraftPlayer) player).getHandle()).setAbsorptionAmount(20);
         }
 
         return true;

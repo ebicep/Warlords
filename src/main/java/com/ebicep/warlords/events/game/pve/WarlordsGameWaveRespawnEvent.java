@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.Game;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsGameWaveRespawnEvent extends AbstractWarlordsGameEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -24,6 +26,7 @@ public class WarlordsGameWaveRespawnEvent extends AbstractWarlordsGameEvent impl
         this.cancelled = cancelled;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

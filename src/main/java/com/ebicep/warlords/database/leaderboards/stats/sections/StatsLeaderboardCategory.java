@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * <p>ALL
@@ -39,23 +38,23 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
 
     public List<List<Hologram>> getCollectionHologramPaged(PlayersCollections collections) {
         return getStatsLeaderboards().stream()
-                .flatMap(statsLeaderboard -> statsLeaderboard.getSortedHolograms(collections).stream())
-                .collect(Collectors.toList());
+                                     .flatMap(statsLeaderboard -> statsLeaderboard.getSortedHolograms(collections).stream())
+                                     .toList();
     }
 
     public List<List<Hologram>> getAllHologramsPaged() {
         return getStatsLeaderboards().stream()
-                .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                                     .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
+                                     .flatMap(Collection::stream)
+                                     .toList();
     }
 
     public List<Hologram> getAllHolograms() {
         return getStatsLeaderboards().stream()
-                .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
-                .flatMap(Collection::stream)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                                     .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
+                                     .flatMap(Collection::stream)
+                                     .flatMap(Collection::stream)
+                                     .toList();
     }
 
     public List<StatsLeaderboard> getLeaderboards() {

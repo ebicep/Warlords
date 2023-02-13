@@ -9,8 +9,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.stream.Collectors;
-
 @CommandAlias("findplayer")
 @CommandPermission("group.administrator")
 public class FindPlayerCommand extends BaseCommand {
@@ -20,7 +18,7 @@ public class FindPlayerCommand extends BaseCommand {
     @Description("Finds a player by name")
     public void findPlayer(CommandIssuer issuer, @Conditions("requireGame") @Values("@gameplayers") @Flags("other") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        boolean isSpectator = game.spectators().collect(Collectors.toList()).contains(player.getUniqueId());
+        boolean isSpectator = game.spectators().toList().contains(player.getUniqueId());
         ChatChannels.sendDebugMessage(issuer,
                 ChatColor.GREEN + "Found player " + ChatColor.RED + player.getName() + (isSpectator ? ChatColor.GREEN + " (Spectating)" : " (Playing)") + ChatColor.GREEN + " in game " + ChatColor.RED + game.getGameId(),
                 true

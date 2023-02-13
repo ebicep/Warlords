@@ -51,7 +51,7 @@ public class LightningRod extends AbstractAbility {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
-        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
+        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
         player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
 
         wp.addHealingInstance(
@@ -100,7 +100,7 @@ public class LightningRod extends AbstractAbility {
     private void damageIncreaseOnUse(WarlordsEntity we) {
         we.getSpeed().addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<LightningRod>(
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ROD DMG",
                 LightningRod.class,

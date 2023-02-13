@@ -19,7 +19,7 @@ public class BasicBerserkZombie extends AbstractBerserkZombie {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.WOOD_SWORD)
+                        new ItemStack(Material.WOODEN_SWORD)
                 ),
                 2800,
                 0.38f,

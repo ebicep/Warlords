@@ -74,7 +74,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
-                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.RED_ROSE), 8);
+                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.POPPY), 8);
                 emitMarkRadiance(wp, markTarget);
 
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +

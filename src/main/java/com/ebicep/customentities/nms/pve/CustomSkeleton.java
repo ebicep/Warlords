@@ -2,27 +2,35 @@ package com.ebicep.customentities.nms.pve;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.monster.Skeleton;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CustomSkeleton extends EntitySkeleton implements CustomEntity<CustomSkeleton> {
+public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkeleton> {
 
     private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 30);
+    private boolean stunned;
 
     public CustomSkeleton(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
     }
 
-    public CustomSkeleton(World world) {
-        super(world);
-        resetAI(world);
+    public CustomSkeleton(ServerLevel serverLevel) {
+        super(EntityType.SKELETON, serverLevel);
+        resetAI();
         giveBaseAI(1.2, 1.0, 100);
-        this.goalSelector.a(2, pathfinderGoalFireAtPlayer);
+        this.goalSelector.addGoal(2, pathfinderGoalFireAtPlayer);
     }
 
     @Override
@@ -30,41 +38,36 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         return this;
     }
 
-    private boolean stunned;
-
-    @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
-    }
-
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     public PathfinderGoalFireAtPlayer getPathfinderGoalFireAtPlayer() {
         return pathfinderGoalFireAtPlayer;
     }
 
-    static class PathfinderGoalFireAtPlayer extends PathfinderGoal {
+    static class PathfinderGoalFireAtPlayer extends Goal {
 
-        private final EntityInsentient self;
+        private final Mob self;
 
         private final AtomicInteger fireTickDelay = new AtomicInteger(); //delay between shots
 
         private final AtomicInteger ticks = new AtomicInteger(); //counter for ticks
         private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 4)); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
 
-        public PathfinderGoalFireAtPlayer(EntityInsentient self, int fireTickDelay) {
+        public PathfinderGoalFireAtPlayer(Mob self, int fireTickDelay) {
             this.self = self;
             this.fireTickDelay.set(fireTickDelay);
         }
 
         @Override
-        public boolean a() {
+        public boolean canUse() {
             if (delay.get() != 0) {
                 delay.getAndDecrement();
                 return false;
@@ -79,11 +82,11 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         }
 
         @Override
-        public void c() {
-            if (self.getGoalTarget() == null) {
+        public void tick() {
+            if (self.getTarget() == null) {
                 return;
             }
-            EntityLiving target = self.getGoalTarget();
+            LivingEntity target = self.getTarget();
 
             //Location targetLocation = target.getBukkitEntity().getLocation();
             WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());

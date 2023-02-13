@@ -165,7 +165,7 @@ public class EarthenSpike extends AbstractAbility {
                                 new GameRunnable(wp.getGame()) {
                                     @Override
                                     public void run() {
-                                        new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 4, 0.9, Material.DIRT, (byte) 0).play();
+                                        new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 4, 0.9, Material.DIRT).play();
                                         for (WarlordsEntity wave : PlayerFilter
                                                 .entitiesAround(targetLocation, 6, 6, 6)
                                                 .aliveEnemiesOf(wp)
@@ -173,7 +173,7 @@ public class EarthenSpike extends AbstractAbility {
                                             wave.addDamageInstance(wp, "Earthen Rupture", 548, 695, -1, 100, false);
                                             wave.addSpeedModifier(wp, "Spike Slow", -50, 20);
                                         }
-                                        Utils.playGlobalSound(targetLocation, Sound.DIG_GRAVEL, 2, 0.5f);
+                                        Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_HIT, 2, 0.5f);
                                         ParticleEffect.EXPLOSION_LARGE.display(1, 1, 1, 0.01f, 2, targetLocation, 500);
                                     }
                                 }.runTaskLater(15);
@@ -255,8 +255,7 @@ public class EarthenSpike extends AbstractAbility {
         }
         FallingBlock newBlock = spawnLocation.getWorld().spawnFallingBlock(
                 spawnLocation,
-                blockTypeAndData.clone().add(0, -1, 0).getBlock().getType(),
-                blockTypeAndData.clone().add(0, -1, 0).getBlock().getData()
+                blockTypeAndData.clone().add(0, -1, 0).getBlock().getBlockData()
         );
         newBlock.setVelocity(new Vector(0, .25, 0));
         newBlock.setDropItem(false);
@@ -350,7 +349,7 @@ public class EarthenSpike extends AbstractAbility {
         }
     }
 
-    public class CustomFallingBlock {
+    public static class CustomFallingBlock {
         private FallingBlock block;
         private double yLevelToRemove;
 

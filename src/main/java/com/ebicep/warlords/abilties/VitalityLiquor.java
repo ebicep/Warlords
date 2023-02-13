@@ -55,9 +55,9 @@ public class VitalityLiquor extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), Sound.GLASS, 2, 0.1f);
-        Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.7f);
-        new FallingBlockWaveEffect(player.getLocation(), vitalityRange, 1, Material.SAPLING, (byte) 2).play();
+        Utils.playGlobalSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
+        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
+        new FallingBlockWaveEffect(player.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
 
         VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
         wp.addHealingInstance(
@@ -99,11 +99,11 @@ public class VitalityLiquor extends AbstractAbility {
                     .filterCooldownFrom(wp)
                     .findAny()
                     .ifPresent(regularCooldown -> {
-                        Utils.playGlobalSound(enemyTarget.getLocation(), Sound.GLASS, 2, 0.6f);
+                        Utils.playGlobalSound(enemyTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
                         FireWorkEffectPlayer.playFirework(enemyTarget.getLocation(), FireworkEffect.builder()
-                                .withColor(Color.ORANGE)
-                                .with(FireworkEffect.Type.STAR)
-                                .build());
+                                                                                                   .withColor(Color.ORANGE)
+                                                                                                   .with(FireworkEffect.Type.STAR)
+                                                                                                   .build());
 
                         new GameRunnable(wp.getGame()) {
                             @Override
@@ -126,7 +126,7 @@ public class VitalityLiquor extends AbstractAbility {
                                             false
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
-                                    allyTarget.getCooldownManager().addCooldown(new RegularCooldown<VitalityLiquor>(
+                                    allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             "Vitality Liquor",
                                             "VITAL",
                                             VitalityLiquor.class,

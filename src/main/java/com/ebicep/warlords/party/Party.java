@@ -249,18 +249,18 @@ public class Party {
 
     public List<PartyPlayer> getPartyModerators() {
         return partyPlayers.stream()
-                .filter(partyPlayer -> partyPlayer.getPartyPlayerType() == PartyPlayerType.MODERATOR)
-                .sorted(Comparator.comparing(PartyPlayer::isOffline)
-                        .thenComparing(PartyPlayer::isAFK))
-                .collect(Collectors.toList());
+                           .filter(partyPlayer -> partyPlayer.getPartyPlayerType() == PartyPlayerType.MODERATOR)
+                           .sorted(Comparator.comparing(PartyPlayer::isOffline)
+                                             .thenComparing(PartyPlayer::isAFK))
+                           .toList();
     }
 
     public List<PartyPlayer> getPartyMembers() {
         return partyPlayers.stream()
-                .filter(partyPlayer -> partyPlayer.getPartyPlayerType() == PartyPlayerType.MEMBER)
-                .sorted(Comparator.comparing(PartyPlayer::isOffline)
-                        .thenComparing(PartyPlayer::isAFK))
-                .collect(Collectors.toList());
+                           .filter(partyPlayer -> partyPlayer.getPartyPlayerType() == PartyPlayerType.MEMBER)
+                           .sorted(Comparator.comparing(PartyPlayer::isOffline)
+                                             .thenComparing(PartyPlayer::isAFK))
+                           .toList();
     }
 
     public PartyPlayer getPartyPlayerByUUID(UUID uuid) {

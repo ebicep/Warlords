@@ -31,7 +31,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -54,7 +53,7 @@ public class DebugMenuPlayerOptions {
 
         MenuItemPairList firstRow = new MenuItemPairList();
 
-        firstRow.add(new ItemBuilder(Material.EXP_BOTTLE)
+        firstRow.add(new ItemBuilder(Material.EXPERIENCE_BOTTLE)
                         .name(target.isNoEnergyConsumption() ? ChatColor.GREEN + "Enable Energy Consumption" : ChatColor.RED + "Disable Energy Consumption")
                         .get(),
                 (m, e) -> {
@@ -62,7 +61,7 @@ public class DebugMenuPlayerOptions {
                     openPlayerMenu(player, target);
                 }
         );
-        firstRow.add(new ItemBuilder(Material.INK_SACK, 1, (byte) 8)
+        firstRow.add(new ItemBuilder(Material.GRAY_DYE)
                         .name(target.isDisableCooldowns() ? ChatColor.GREEN + "Enable Cooldowns Timers" : ChatColor.RED + "Disable Cooldown Timers")
                         .get(),
                 (m, e) -> {
@@ -91,18 +90,18 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> {
                 }
         );
-        firstRow.add(new ItemBuilder(new Potion(PotionType.INSTANT_DAMAGE), 1, true)
+        firstRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_DAMAGE)
                         .name(ChatColor.GREEN + "Kill")
-                        .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                        .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
                     target.addDamageInstance(target, "God", 100000, 100000, 0, 100, false);
                     sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName, true);
                 }
         );
-        firstRow.add(new ItemBuilder(Material.WOOL, 1, (short) (PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? 14 : 11))
+        firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().item))
                         .name(ChatColor.GREEN + "Swap to the " + (PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
+                                                                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
                         .get(),
                 (m, e) -> {
                     Game game = target.getGame();
@@ -135,9 +134,9 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> {
                 }
         );
-        secondRow.add(new ItemBuilder(new Potion(PotionType.INSTANT_HEAL), 1, true)
+        secondRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_HEAL)
                         .name(ChatColor.GREEN + "Add Health")
-                        .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                        .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
                     SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter heal amount", "greater than 0"}, (p, lines) -> {
@@ -177,17 +176,17 @@ public class DebugMenuPlayerOptions {
                     });
                 }
         );
-        secondRow.add(new ItemBuilder(Material.BREWING_STAND_ITEM)
+        secondRow.add(new ItemBuilder(Material.BREWING_STAND)
                         .name(ChatColor.GREEN + "Cooldowns")
                         .get(),
                 (m, e) -> PlayerOptionMenus.openCooldownsMenu(player, target)
         );
-        secondRow.add(new ItemBuilder(Material.EYE_OF_ENDER)
+        secondRow.add(new ItemBuilder(Material.ENDER_EYE)
                         .name(ChatColor.GREEN + "Teleport To")
                         .get(),
                 (m, e) -> PlayerOptionMenus.openTeleportLocations(player, target)
         );
-        secondRow.add(new ItemBuilder(Material.BANNER)
+        secondRow.add(new ItemBuilder(Material.BLACK_BANNER)
                         .name(ChatColor.GREEN + "Flag Options")
                         .get(),
                 (m, e) -> PlayerOptionMenus.openFlagOptionMenu(player, target)
@@ -231,7 +230,7 @@ public class DebugMenuPlayerOptions {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTopInventory().getName().equals("CD Manager: " + name)) {
+                                if (player.getOpenInventory().getTitle().equals("CD Manager: " + name)) {
                                     CooldownOptionMenus.openCooldownManagerMenu(player, target);
                                 } else {
                                     this.cancel();
@@ -353,7 +352,7 @@ public class DebugMenuPlayerOptions {
                 }
                 row++;
                 MenuItemPairList menuItemPairList = new MenuItemPairList();
-                menuItemPairList.add(new ItemBuilder(Material.BANNER)
+                menuItemPairList.add(new ItemBuilder(Material.BLACK_BANNER)
                                 .name(ChatColor.GREEN + "Pick Up Flag")
                                 .get(),
                         (m, e) -> {
@@ -372,7 +371,7 @@ public class DebugMenuPlayerOptions {
                             }
                         }
                 );
-                menuItemPairList.add(new ItemBuilder(Material.BED)
+                menuItemPairList.add(new ItemBuilder(Material.BLACK_BED)
                                 .name(ChatColor.GREEN + "Return the Flag")
                                 .get(),
                         (m, e) -> {
@@ -396,7 +395,7 @@ public class DebugMenuPlayerOptions {
                             }
                         }
                 );
-                menuItemPairList.add(new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                menuItemPairList.add(new ItemBuilder(Material.COMPARATOR)
                                 .name(ChatColor.GREEN + "Set Multiplier")
                                 .get(),
                         (m, e) -> {
@@ -549,7 +548,7 @@ public class DebugMenuPlayerOptions {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (player.getOpenInventory().getTopInventory().getName().equals("CD Manager: " + target.getName())) {
+                                    if (player.getOpenInventory().getTitle().equals("CD Manager: " + target.getName())) {
                                         openCooldownManagerMenu(player, target);
                                     } else {
                                         this.cancel();
@@ -595,7 +594,7 @@ public class DebugMenuPlayerOptions {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (player.getOpenInventory().getTopInventory().getName().equals("CD Manager: " + target.getName())) {
+                            if (player.getOpenInventory().getTitle().equals("CD Manager: " + target.getName())) {
                                 openCooldownManagerMenu(player, target);
                             } else {
                                 this.cancel();

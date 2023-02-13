@@ -191,7 +191,7 @@ public class WarlordsNewHotbarMenu {
                         (m, e) -> {
                             if (e.isLeftClick()) {
                                 player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
-                                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                                 PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                                 playerSettings.setSelectedSpec(spec);
                                 if (!player.getWorld().getName().equals("MainLobby")) {
@@ -291,10 +291,11 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(
                         column,
                         row,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE,
-                                1,
-                                menuLevel <= level || currentPrestigeSelected ? claimed.get() ? (short) 5 : (short) 4 : (short) 15
-                        )
+                        new ItemBuilder(menuLevel <= level || currentPrestigeSelected ?
+                                        claimed.get() ?
+                                        Material.LIME_STAINED_GLASS_PANE :
+                                        Material.YELLOW_STAINED_GLASS_PANE :
+                                        Material.BLACK_STAINED_GLASS_PANE)
                                 .name((menuLevel <= level ? ChatColor.GREEN : ChatColor.RED) + "Level Reward " + menuLevel)
                                 .lore(lore)
                                 .get(),

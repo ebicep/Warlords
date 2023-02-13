@@ -53,7 +53,7 @@ public class LightInfusionAvenger extends AbstractAbility {
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusionAvenger tempLightInfusion = new LightInfusionAvenger(cooldown);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusionAvenger>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "INF",
                 LightInfusionAvenger.class,
@@ -63,7 +63,7 @@ public class LightInfusionAvenger extends AbstractAbility {
                 cooldownManager -> {
                     if (pveUpgrade) {
                         wp.addEnergy(wp, name, 30 * strikesUsed);
-                        wp.playSound(wp.getLocation(), Sound.LEVEL_UP, 1, 0.9f);
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
                     }
                 },
                 cooldownManager -> {

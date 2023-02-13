@@ -73,7 +73,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
         wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CHAIN",
                 ChainLightning.class,
@@ -101,7 +101,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.STAINED_GLASS, 1, (byte) 7);
+        return new ItemStack(Material.GRAY_STAINED_GLASS);
     }
 
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
@@ -148,21 +148,15 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
-            float damageMultiplier;
-
-            switch (playersSize) {
-                case 0:
+            float damageMultiplier = switch (playersSize) {
+                case 0 ->
                     // We hit the first player
-                    damageMultiplier = pveUpgrade ? 1.1f : 1f;
-                    break;
-                case 1:
+                        pveUpgrade ? 1.1f : 1f;
+                case 1 ->
                     // We hit the second player
-                    damageMultiplier = pveUpgrade ? 1.2f : .85f;
-                    break;
-                default:
-                    damageMultiplier = pveUpgrade ? 1.3f : .7f;
-                    break;
-            }
+                        pveUpgrade ? 1.2f : .85f;
+                default -> pveUpgrade ? 1.3f : .7f;
+            };
 
             playersHit.add(hit);
             if (hit.onHorse()) {

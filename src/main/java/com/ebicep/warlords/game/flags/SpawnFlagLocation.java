@@ -29,10 +29,11 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         return null;
     }
 
+    @Nonnull
     @Override
     public List<String> getDebugInformation() {
         return Arrays.asList(

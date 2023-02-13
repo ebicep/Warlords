@@ -30,17 +30,13 @@ public enum GameAddon {
         @Override
         public void modifyGame(@Nonnull Game game) {
             switch (game.getGameMode()) {
-                case CAPTURE_THE_FLAG:
-                case INTERCEPTION:
-                case TEAM_DEATHMATCH:
-                case DEBUG:
-                case SIMULATION_TRIAL:
+                case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DEBUG, SIMULATION_TRIAL -> {
                     game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                             .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                             .lore(ChatColor.YELLOW + "Click to select your team!")
                             .get(), (g, p) -> openTeamMenu(p)));
                     game.getOptions().add(new AFKDetectionOption());
-                    break;
+                }
             }
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
@@ -51,8 +47,7 @@ public enum GameAddon {
             if (newState instanceof ClosedState) {
                 return;
             }
-            if (newState instanceof PreLobbyState) {
-                PreLobbyState preLobbyState = (PreLobbyState) newState;
+            if (newState instanceof PreLobbyState preLobbyState) {
                 preLobbyState.setMaxTimer(30 * 20);
                 preLobbyState.resetTimer();
                 game.setAcceptsPlayers(false);
@@ -88,7 +83,7 @@ public enum GameAddon {
         @Override
         public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
             // At the moment, only 1 game can be an imposter game at the same time
-            return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
+            return Warlords.getGameManager().getGames().stream().noneMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
     COOLDOWN_MODE(

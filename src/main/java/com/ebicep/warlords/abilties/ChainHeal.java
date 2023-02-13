@@ -143,7 +143,7 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 1);
+        return new ItemStack(Material.BLUE_ORCHID);
     }
 
     public int getRadius() {

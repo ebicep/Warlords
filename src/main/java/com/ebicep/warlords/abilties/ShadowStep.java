@@ -51,7 +51,7 @@ public class ShadowStep extends AbstractAbility {
         Location playerLoc = wp.getLocation();
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
-        Utils.playGlobalSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
+        Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
 
         wp.setFlagPickCooldown(2);
         if (wp.getCarriedFlag() != null) {
@@ -136,7 +136,7 @@ public class ShadowStep extends AbstractAbility {
     private void buffOnLanding(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
         we.getCooldownManager().removeCooldown(ShadowStep.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<ShadowStep>(
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "STEP KB",
                 "STEP KB",
                 ShadowStep.class,

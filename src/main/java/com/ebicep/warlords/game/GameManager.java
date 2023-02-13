@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class GameManager implements AutoCloseable {
 
@@ -182,7 +181,7 @@ public class GameManager implements AutoCloseable {
     }
 
     public long getQueuePlayerCount() {
-        return this.queue.stream().map(e -> e.getPlayers().size()).collect(Collectors.counting());
+        return this.queue.stream().map(e -> e.getPlayers().size()).count();
     }
 
     private boolean queue(QueueEntry entry) {
@@ -286,7 +285,7 @@ public class GameManager implements AutoCloseable {
 
     @Nonnull
     public Optional<Game> getPlayerGame(UUID player) {
-        return this.games.stream().filter(e -> e.getGame() != null && e.getGame().hasPlayer(player)).map(e -> e.getGame()).findAny();
+        return this.games.stream().filter(e -> e.getGame() != null && e.getGame().hasPlayer(player)).map(GameHolder::getGame).findAny();
     }
 
     @Override
@@ -354,12 +353,13 @@ public class GameManager implements AutoCloseable {
         @Nullable
         private Game game;
 
-        public GameHolder(GameMap map, LocationFactory locations, String name) {
+        public GameHolder(@Nonnull GameMap map, @Nonnull LocationFactory locations, @Nonnull String name) {
             this.map = map;
             this.locations = locations;
             this.name = name;
         }
 
+        @Nonnull
         public GameMap getMap() {
             return map;
         }
@@ -401,6 +401,7 @@ public class GameManager implements AutoCloseable {
             return game;
         }
 
+        @Nonnull
         public String getName() {
             return name;
         }
@@ -458,7 +459,7 @@ public class GameManager implements AutoCloseable {
             return requestedGameAddons;
         }
 
-        public GameMode getCategory() {
+        public @org.jetbrains.annotations.Nullable GameMode getCategory() {
             return category;
         }
 
@@ -472,7 +473,7 @@ public class GameManager implements AutoCloseable {
             return onResult;
         }
 
-        public void setOnResult(BiConsumer<QueueResult, Game> onResult) {
+        public void setOnResult(@org.jetbrains.annotations.Nullable BiConsumer<QueueResult, Game> onResult) {
             this.onResult = onResult;
         }
 
@@ -566,8 +567,7 @@ public class GameManager implements AutoCloseable {
             return this;
         }
 
-        @Nonnull
-        public BiConsumer<QueueResult, Game> getOnResult() {
+        public @org.jetbrains.annotations.Nullable BiConsumer<QueueResult, Game> getOnResult() {
             return onResult;
         }
 

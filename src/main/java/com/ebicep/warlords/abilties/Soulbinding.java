@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Soulbinding extends AbstractAbility {
 
@@ -69,7 +68,7 @@ public class Soulbinding extends AbstractAbility {
         if (wp.isInPve()) {
             List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
                     .filterCooldownClass(Soulbinding.class)
-                    .stream().collect(Collectors.toList());
+                    .stream().toList();
             if (currentSoulBindings.size() >= 3) {
                 wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
             }

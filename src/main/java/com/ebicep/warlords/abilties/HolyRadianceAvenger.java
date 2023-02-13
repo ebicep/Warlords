@@ -72,7 +72,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
-                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.LEAVES, 1, (short) 2), 8);
+                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
                 HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
                         minDamageHeal,
@@ -83,7 +83,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         critMultiplier
                 );
 
-                markTarget.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
+                markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "AVE MARK",
                         HolyRadianceAvenger.class,

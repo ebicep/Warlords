@@ -215,7 +215,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 .values()
                 .stream()
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
         HashMap<DatabaseGamePlayerCTF, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerCTF gamePlayerCTF : teamListEntry.getValue()) {

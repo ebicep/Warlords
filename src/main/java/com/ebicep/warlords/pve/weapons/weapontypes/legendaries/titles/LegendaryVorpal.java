@@ -67,11 +67,9 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
 
         for (AbstractAbility ability : player.getSpec().getAbilities()) {
-            if (ability instanceof Windfury) {
-                Windfury windfury = (Windfury) ability;
+            if (ability instanceof Windfury windfury) {
                 windfury.setProcChance(windfury.getProcChance() + procChanceIncrease);
-            } else if (ability instanceof Earthliving) {
-                Earthliving earthliving = (Earthliving) ability;
+            } else if (ability instanceof Earthliving earthliving) {
                 earthliving.setProcChance(earthliving.getProcChance() + procChanceIncrease);
             }
         }

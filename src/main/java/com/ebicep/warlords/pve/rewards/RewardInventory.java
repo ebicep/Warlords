@@ -22,7 +22,7 @@ public class RewardInventory {
 
     public static void sendRewardMessage(UUID uuid, ComponentBuilder components) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
+        if (offlinePlayer.isOnline()) {
             BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ")
                     .create();
             offlinePlayer.getPlayer().spigot().sendMessage(components.prependAndCreate(baseComponents));

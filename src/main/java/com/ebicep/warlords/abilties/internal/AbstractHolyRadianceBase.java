@@ -69,7 +69,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         }
         Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, warlordsEntities));
 
-        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
 
         Location particleLoc = player.getLocation().add(0, 1.2, 0);

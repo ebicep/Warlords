@@ -90,7 +90,7 @@ public class EndState implements State, TimerDebugAble {
 
         boolean teamBlueWins = winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE;
         boolean teamRedWins = winEvent != null && winEvent.getDeclaredWinner() == Team.RED;
-        List<WarlordsPlayer> players = game.warlordsPlayers().collect(Collectors.toList());
+        List<WarlordsPlayer> players = game.warlordsPlayers().toList();
         if (players.isEmpty()) {
             return;
         }
@@ -251,8 +251,7 @@ public class EndState implements State, TimerDebugAble {
             sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
             for (Option option : options) {
-                if (option instanceof WaveDefenseOption) {
-                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                if (option instanceof WaveDefenseOption waveDefenseOption) {
                     showCoinSummary(waveDefenseOption, players);
                     showWeaponSummary(waveDefenseOption, players);
                     showQuestSummary(waveDefenseOption, players);
@@ -357,7 +356,7 @@ public class EndState implements State, TimerDebugAble {
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed())
-                         .collect(Collectors.toList());
+                         .toList();
         List<BaseComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
@@ -395,7 +394,7 @@ public class EndState implements State, TimerDebugAble {
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()).reversed())
-                         .collect(Collectors.toList());
+                         .toList();
         List<BaseComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
@@ -439,7 +438,7 @@ public class EndState implements State, TimerDebugAble {
                 .create());
         players = players.stream()
                          .sorted(Comparator.comparing(WarlordsEntity::getTotalCapsAndReturnsWeighted).reversed())
-                         .collect(Collectors.toList());
+                         .toList();
         sendGlobalEventMessage(game, new ComponentBuilder()
                 .appendHoverText(ChatColor.AQUA + players.get(0).getName(),
                         ChatColor.LIGHT_PURPLE + "Flag Captures: " +

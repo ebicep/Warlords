@@ -27,10 +27,10 @@ public class SpectateCommand extends BaseCommand {
 
     public static void openSpectateMenu(Player player) {
         List<Game> games = Warlords.getGameManager().getGames().stream()
-                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
-                .map(GameHolder::getGame)
-                .sorted(Comparator.comparing(Game::getStartTime))
-                .collect(Collectors.toList());
+                                   .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
+                                   .map(GameHolder::getGame)
+                                   .sorted(Comparator.comparing(Game::getStartTime))
+                                   .toList();
         //1-7 = 3
         //8-14 = 4
         if (games.isEmpty()) {

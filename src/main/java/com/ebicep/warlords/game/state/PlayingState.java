@@ -52,7 +52,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -320,7 +319,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Force End = " + (winEvent == null));
         System.out.println("Player Count = " + game.warlordsPlayers().count());
-        System.out.println("Players = " + game.warlordsPlayers().collect(Collectors.toList()));
+        System.out.println("Players = " + game.warlordsPlayers().toList());
         System.out.println("Timer = " + timer);
         System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         System.out.println("GameMode = " + game.getGameMode());

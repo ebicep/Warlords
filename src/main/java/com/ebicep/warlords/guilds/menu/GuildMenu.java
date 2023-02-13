@@ -39,7 +39,7 @@ public class GuildMenu {
         int guildLevel = GuildExperienceUtils.getLevelFromExp(guild.getExperience(Timing.LIFETIME));
         GuildRole roleOfPlayer = guild.getRoleOfPlayer(player.getUniqueId());
         menu.setItem(0, 0,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Guild Information")
                         .lore(
                                 ChatColor.GRAY + "Name: " + ChatColor.YELLOW + guild.getName(),
@@ -56,25 +56,20 @@ public class GuildMenu {
                 }
         );
         menu.setItem(2, 0,
-                new ItemBuilder(Material.GOLD_BARDING)
+                new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                         .name(ChatColor.GREEN + "Temporary Blessings")
                         .lore(ChatColor.GRAY + "These upgrades last 24 hours and " +
                                 "\nwill only affect players in the guild.")
                         .get(),
-                (m, e) -> {
-                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES);
-
-                }
+                (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES)
         );
         menu.setItem(3, 0,
-                new ItemBuilder(Material.DIAMOND_BARDING)
+                new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                         .name(ChatColor.GREEN + "Permanent Upgrades")
                         .lore(ChatColor.GRAY + "These upgrades last permanently and " +
                                 "\nwill only affect players in the guild."
                         ).get(),
-                (m, e) -> {
-                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Permanent Upgrades", GuildUpgradesPermanent.VALUES);
-                }
+                (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Permanent Upgrades", GuildUpgradesPermanent.VALUES)
         );
         int conversionRatio = Guild.getConversionRatio(guild);
         menu.setItem(4, 0,
@@ -90,9 +85,7 @@ public class GuildMenu {
                                 (conversionRatio == 5 ? ChatColor.GREEN : ChatColor.GRAY) + "Guild Level 16-20: " + ChatColor.GOLD + "5" + ChatColor.DARK_GRAY + ":" + ChatColor.GOLD + "1"
                         )
                         .get(),
-                (m, e) -> {
-                    onCoinConversion(guild, player);
-                }
+                (m, e) -> onCoinConversion(guild, player)
         );
 
         /*

@@ -10,22 +10,24 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RegularGamesMenu {
 
     private final Party party;
     private final List<RegularGamePlayer> regularGamePlayers = new ArrayList<>();
-    private final HashMap<Team, List<UUID>> selectedPlayersToSwap = new HashMap<Team, List<UUID>>() {{
+    private final HashMap<Team, List<UUID>> selectedPlayersToSwap = new HashMap<>() {{
         put(Team.BLUE, new ArrayList<>());
         put(Team.RED, new ArrayList<>());
     }};
-    private HashMap<Team, Boolean> checkPlayers = new HashMap<Team, Boolean>() {{
+    private HashMap<Team, Boolean> checkPlayers = new HashMap<>() {{
         put(Team.BLUE, true);
         put(Team.RED, true);
     }};
@@ -36,7 +38,9 @@ public class RegularGamesMenu {
 
     public void openMenuForPlayer(Player player) {
         Optional<RegularGamePlayer> gamePlayerOptional = regularGamePlayers.stream().filter(p -> p.getUuid().equals(player.getUniqueId())).findFirst();
-        if (!gamePlayerOptional.isPresent()) return;
+        if (gamePlayerOptional.isEmpty()) {
+            return;
+        }
 
         RegularGamePlayer regularGamePlayer = gamePlayerOptional.get();
         Menu menu = new Menu("Team Builder", 9 * 6);
@@ -74,7 +78,7 @@ public class RegularGamesMenu {
         }
 
         //bottom items
-        List<RegularGamePlayer> teamPlayers = regularGamePlayers.stream().filter(p -> p.getTeam() == team).collect(Collectors.toList());
+        List<RegularGamePlayer> teamPlayers = regularGamePlayers.stream().filter(p -> p.getTeam() == team).toList();
 
         //players with perms to interact with menu
         List<UUID> uuidsWithPerms = new ArrayList<>();
@@ -89,9 +93,7 @@ public class RegularGamesMenu {
         List<String> editors = new ArrayList<>();
         for (UUID uuid : uuidsWithPerms) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer != null) {
-                editors.add(ChatColor.GRAY + offlinePlayer.getName());
-            }
+            editors.add(ChatColor.GRAY + offlinePlayer.getName());
         }
 
         //showing general list of spec and respective players
@@ -108,7 +110,7 @@ public class RegularGamesMenu {
         menu.setItem(
                 7,
                 3,
-                new ItemBuilder(Material.BOOK_AND_QUILL)
+                new ItemBuilder(Material.WRITABLE_BOOK)
                         .name(ChatColor.GREEN + "Editors")
                         .lore(editors)
                         .get(),
@@ -118,7 +120,7 @@ public class RegularGamesMenu {
         menu.setItem(
                 7,
                 4,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "General Information")
                         .lore(playerOnSpecs)
                         .get(),
@@ -128,7 +130,7 @@ public class RegularGamesMenu {
         menu.setItem(
                 7,
                 5,
-                new ItemBuilder(Material.WOOL, 1, (short) 5)
+                new ItemBuilder(Material.LIME_WOOL)
                         .name(ChatColor.GREEN + "Confirm Team")
                         .get(),
                 (m, e) -> {
@@ -207,9 +209,9 @@ public class RegularGamesMenu {
 
             ItemBuilder itemBuilder;
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            String name = offlinePlayer != null ? offlinePlayer.getName() : "UNKNOWN";
+            String name = offlinePlayer.getName();
             if (selectedPlayersToSwap.get(team).contains(uuid)) {
-                itemBuilder = new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.CREEPER.ordinal()))
+                itemBuilder = new ItemBuilder(new ItemStack(Material.CREEPER_HEAD))
                         .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
                         .lore(ChatColor.GOLD + p.getSelectedSpec().name);
             } else {
@@ -242,8 +244,8 @@ public class RegularGamesMenu {
         }
         //fillers
         Arrays.stream(Specializations.VALUES)
-                .filter(classes -> !assignedClasses.contains(classes)).collect(Collectors.toList())
-                .forEach(selectedSpec -> {
+              .filter(classes -> !assignedClasses.contains(classes)).toList()
+              .forEach(selectedSpec -> {
                     Classes classes = Specializations.getClass(selectedSpec);
 
                     int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
@@ -258,17 +260,19 @@ public class RegularGamesMenu {
                     menu.setItem(
                             x,
                             y,
-                            new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7).name(ChatColor.GRAY + "Available Spec").get(),
+                            new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(ChatColor.GRAY + "Available Spec").get(),
                             (m, e) -> {
-                                if (!uuidsWithPerms.contains(player.getUniqueId())) return;
+                                if (!uuidsWithPerms.contains(player.getUniqueId())) {
+                                    return;
+                                }
 
                                 //give new spec
                                 List<UUID> uuids = selectedPlayersToSwap.get(team);
                                 if (uuids.size() == 1) {
                                     regularGamePlayers.stream()
-                                            .filter(p -> p.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
-                                            .findFirst()
-                                            .ifPresent(p -> {
+                                                      .filter(p -> p.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
+                                                      .findFirst()
+                                                      .ifPresent(p -> {
                                                 p.setSelectedSpec(selectedSpec);
                                                 selectedPlayersToSwap.get(team).clear();
                                             });
@@ -284,7 +288,9 @@ public class RegularGamesMenu {
     private void swapPlayers(Team team) {
         Optional<RegularGamePlayer> regularGamePlayer1 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(0))).findFirst();
         Optional<RegularGamePlayer> regularGamePlayer2 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(1))).findFirst();
-        if (!regularGamePlayer1.isPresent() || !regularGamePlayer2.isPresent()) return;
+        if (regularGamePlayer1.isEmpty() || regularGamePlayer2.isEmpty()) {
+            return;
+        }
         Specializations classToSwap = regularGamePlayer1.get().getSelectedSpec();
         regularGamePlayer1.get().setSelectedSpec(regularGamePlayer2.get().getSelectedSpec());
         regularGamePlayer2.get().setSelectedSpec(classToSwap);

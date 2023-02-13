@@ -28,6 +28,7 @@ public class WarlordsLegendFragmentGainEvent extends AbstractWarlordsEntityEvent
         return waveDefenseOption;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

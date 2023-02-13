@@ -1,18 +1,20 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityZombie;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Zombie;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 
-public class CustomZombie extends EntityZombie implements CustomEntity<CustomZombie> {
+import javax.annotation.Nonnull;
 
-    //https://github.com/ZeroedInOnTech/1.8.8/blob/master/1.8.8/Build%20918/src/minecraft/net/minecraft/entity/monster/EntityZombie.java
-    public CustomZombie(World world) {
-        super(world);
+public class CustomZombie extends Zombie implements CustomEntity<CustomZombie> {
+
+    public CustomZombie(ServerLevel serverLevel) {
+        super(EntityType.ZOMBIE, serverLevel);
         setBaby(false);
 
-        resetAI(world);
+        resetAI();
         giveBaseAI();
     }
 
@@ -28,11 +30,8 @@ public class CustomZombie extends EntityZombie implements CustomEntity<CustomZom
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override

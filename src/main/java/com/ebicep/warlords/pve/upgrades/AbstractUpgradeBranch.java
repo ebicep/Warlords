@@ -9,8 +9,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -99,7 +98,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
             player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
             player.subtractCurrency(masterUpgrade.getCurrencyCost());
-            Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500f, 0.8f);
+            Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 500f, 0.8f);
 
             globalAnnouncement(player.getGame(), masterUpgrade, ability, autoUpgraded);
         } else {
@@ -156,7 +155,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             autoUpgradeEntry.getBranchIndex() == branchIndex &&
                             !autoUpgradeEntry.getUpgradeType().getUpgradeFunction.apply(this).get(autoUpgradeEntry.getUpgradeIndex()).isUnlocked()
                     )
-                    .collect(Collectors.toList());
+                    .toList();
             int branchUpgradesInQueue = branchEntries.size();
             if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
                 int masterUpgradesInQueue = (int) autoUpgradeProfile
@@ -253,7 +252,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         } else {
             player.subtractCurrency(upgrade.getCurrencyCost());
         }
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 1.3f);
 
         Bukkit.getPluginManager().callEvent(new WarlordsUpgradeUnlockEvent(player, upgrade));
         globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
@@ -278,7 +277,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         }
         lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                 "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
-        ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
+        ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
                 .lore(lore);
         if (!upgrade.isUnlocked()) {
@@ -303,8 +302,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     private ItemStack branchItem(Upgrade upgrade) {
         ItemBuilder itemBuilder = new ItemBuilder(upgrade.isUnlocked() ?
-                                                  new ItemStack(Material.WOOL, 1, (short) 1) :
-                                                  new ItemStack(Material.WOOL, 1, (short) 8))
+                                                  new ItemStack(Material.ORANGE_WOOL) :
+                                                  new ItemStack(Material.LIGHT_GRAY_WOOL))
                 .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
                 .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                         "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());

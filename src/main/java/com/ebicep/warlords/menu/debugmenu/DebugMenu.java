@@ -29,7 +29,7 @@ public class DebugMenu {
         Menu menu = new Menu("Debug Options", 9 * 4);
 
         LinkedHashMap<ItemStack, BiConsumer<Menu, InventoryClickEvent>> items = new LinkedHashMap<>();
-        items.put(new ItemBuilder(Material.ENDER_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
+        items.put(new ItemBuilder(Material.END_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
                 (m, e) -> DebugMenuGameOptions.openGameMenu(player)
         );
 
@@ -56,7 +56,7 @@ public class DebugMenu {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
+                                if (player.getOpenInventory().getTitle().equals("Team Options")) {
                                     DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                                 } else {
                                     this.cancel();

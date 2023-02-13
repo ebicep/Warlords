@@ -6,7 +6,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.Potion;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,10 +19,10 @@ import java.util.List;
 
 public class ItemBuilder {
 
-    public static final ItemStack RED_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 1);
+    public static final ItemStack RED_ABILITY = new ItemStack(Material.RED_DYE);
     public static final ItemStack PURPLE_ABILITY = new ItemStack(Material.GLOWSTONE_DUST);
-    public static final ItemStack BLUE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 10);
-    public static final ItemStack ORANGE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 14);
+    public static final ItemStack BLUE_ABILITY = new ItemStack(Material.LIME_DYE);
+    public static final ItemStack ORANGE_ABILITY = new ItemStack(Material.ORANGE_DYE);
     @Nonnull
     private final ItemStack item;
     @Nullable
@@ -42,9 +44,11 @@ public class ItemBuilder {
         item = new ItemStack(stack);
     }
 
-    public ItemBuilder(@Nonnull Potion potion, int amount, boolean splash) {
-        potion.setSplash(splash);
-        item = potion.toItemStack(amount);
+    public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
+        this(material);
+        PotionMeta potionMeta = (PotionMeta) meta();
+        potionMeta.setBasePotionData(new PotionData(potionType));
+        item.setItemMeta(potionMeta);
     }
 
     protected ItemMeta meta() {
@@ -145,7 +149,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder unbreakable(boolean unbreakable) {
-        meta().spigot().setUnbreakable(true);
+        meta().setUnbreakable(true);
         return this;
     }
 

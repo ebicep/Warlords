@@ -24,7 +24,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
@@ -35,7 +34,7 @@ public class DebugMenuGameOptions {
     public static void openGameMenu(Player player) {
         Menu menu = new Menu("Game Options", 9 * 4);
         ItemStack[] itemStack = {
-                new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
+                new ItemBuilder(Material.DARK_OAK_DOOR)
                         .name(ChatColor.GREEN + "Start")
                         .get(),
                 new ItemBuilder(Material.BOOK)
@@ -47,12 +46,8 @@ public class DebugMenuGameOptions {
             menu.setItem(index, 1, itemStack[i],
                     (m, e) -> {
                         switch (index) {
-                            case 1:
-                                StartMenu.openGamemodeMenu(player);
-                                break;
-                            case 2:
-                                GamesMenu.openGameSelectorMenu(player);
-                                break;
+                            case 1 -> StartMenu.openGamemodeMenu(player);
+                            case 2 -> GamesMenu.openGameSelectorMenu(player);
                         }
                     }
             );
@@ -75,7 +70,7 @@ public class DebugMenuGameOptions {
                 }
                 i++;
                 menu.setItem(i % 7 + 1, i / 7 + 1,
-                        new ItemBuilder(Material.WOOL, 1, (short) 15)
+                        new ItemBuilder(Material.BLACK_WOOL)
                                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + gm.getName())
                                 .get(),
                         (m, e) -> openMapMenu(player, gm)
@@ -178,7 +173,7 @@ public class DebugMenuGameOptions {
                 );
                 menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
                 menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
+                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.LIME_WOOL).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
                     //safe guard
                     if (!player.isOp()) {
                         addons.remove(GameAddon.TOURNAMENT_MODE);
@@ -204,7 +199,7 @@ public class DebugMenuGameOptions {
             List<Game> games = Warlords.getGameManager().getGames().stream()
                                        .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
                                        .map(GameManager.GameHolder::getGame)
-                                       .collect(Collectors.toList());
+                                       .toList();
 
             int rows = (games.size() - 1) / 7 + 4;
             Menu menu = new Menu("Game Selector", 9 * rows);
@@ -244,13 +239,13 @@ public class DebugMenuGameOptions {
         public static void openGameEditorMenu(Player player, Game game) {
             Menu menu = new Menu("Game Editor", 9 * 5);
             menu.setItem(1, 1,
-                    new ItemBuilder(Material.DIODE)
+                    new ItemBuilder(Material.REPEATER)
                             .name(ChatColor.GREEN + "Timer")
                             .get(),
                     (m, e) -> openTimerMenu(player, game)
             );
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.SIGN)
+                    new ItemBuilder(Material.OAK_SIGN)
                             .name(ChatColor.GREEN + "Edit Team Scores")
                             .get(),
                     (m, e) -> openTeamScoreEditorMenu(player, game)
@@ -286,7 +281,7 @@ public class DebugMenuGameOptions {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
+                                if (player.getOpenInventory().getTitle().equals("Team Options")) {
                                     DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                                 } else {
                                     this.cancel();
@@ -314,7 +309,7 @@ public class DebugMenuGameOptions {
                     }
             );
             menu.setItem(5, 1,
-                    new ItemBuilder(Material.WATCH)
+                    new ItemBuilder(Material.CLOCK)
                             .name(ChatColor.GREEN + "Set")
                             .get(),
                     (m, e) -> {

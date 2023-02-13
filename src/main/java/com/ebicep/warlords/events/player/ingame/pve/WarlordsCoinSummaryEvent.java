@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 
 public class WarlordsCoinSummaryEvent extends AbstractWarlordsEntityEvent {
@@ -20,6 +21,7 @@ public class WarlordsCoinSummaryEvent extends AbstractWarlordsEntityEvent {
         return coinSummary;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

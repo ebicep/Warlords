@@ -18,6 +18,7 @@ public abstract class AbstractWarlordsGameEvent extends Event {
         this.game = Objects.requireNonNull(game, "game");
     }
 
+    @Nonnull
     public Game getGame() {
         return game;
     }

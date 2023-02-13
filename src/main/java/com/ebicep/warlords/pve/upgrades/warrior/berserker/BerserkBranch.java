@@ -87,8 +87,10 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
         masterUpgrade = new Upgrade(
                 "Maniacal Rage",
                 "Berserk - Master Upgrade",
-                "+10% Additional damage increase\n\nGain 0.2% Crit chance and Crit Multiplier for each " +
-                        "instance of damage you deal to an enemy while Berserk is active. (Max 50%)",
+                """
+                        +10% Additional damage increase
+
+                        Gain 0.2% Crit chance and Crit Multiplier for each instance of damage you deal to an enemy while Berserk is active. (Max 50%)""",
                 50000,
                 () -> {
                     ability.setDamageIncrease(ability.getDamageIncrease() + 10);

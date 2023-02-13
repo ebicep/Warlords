@@ -91,11 +91,10 @@ public class PowerupOption implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(
                 () -> type.getDebugMaterial(),
-                () -> type.getDebugData(),
                 this::getClass,
                 () -> this.getClass().getSimpleName() + ": " + this.type.name(),
                 this::getLocation,
@@ -125,7 +124,7 @@ public class PowerupOption implements Option {
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         hasStarted = true;
         if (cooldown == 0) {
             spawn();
@@ -135,7 +134,7 @@ public class PowerupOption implements Option {
             public void run() {
                 if (cooldown == 0) {
                     PlayerFilter.entitiesAround(location, 1.4, 1.4, 1.4)
-                            .isAlive()
+                                .isAlive()
                             .first((nearPlayer) -> {
                                 if (nearPlayer instanceof WarlordsPlayer) {
                                     type.onPickUp(PowerupOption.this, nearPlayer);
@@ -207,7 +206,7 @@ public class PowerupOption implements Option {
         return maxCooldown;
     }
 
-    public ArmorStand getEntity() {
+    public @org.jetbrains.annotations.Nullable ArmorStand getEntity() {
         return entity;
     }
 
@@ -248,7 +247,7 @@ public class PowerupOption implements Option {
     }
 
     public enum PowerupType {
-        SPEED(10, Material.WOOL, (short) 4) {
+        SPEED(10, Material.YELLOW_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(SpeedPowerup.class, false);
@@ -274,11 +273,11 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§b§lSPEED");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
+                armorStand.setHelmet(new ItemStack(Material.YELLOW_WOOL));
             }
         },
 
-        HEALING(5, Material.WOOL, (short) 13) {
+        HEALING(5, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(HealingPowerup.class, false);
@@ -304,15 +303,15 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§a§lHEALING");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
+                armorStand.setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
         },
 
-        ENERGY(30, Material.WOOL, (short) 1) {
+        ENERGY(30, Material.ORANGE_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(EnergyPowerup.class, false);
-                we.getCooldownManager().addCooldown(new RegularCooldown<EnergyPowerup>(
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Energy",
                         "ENERGY",
                         EnergyPowerup.class,
@@ -337,15 +336,15 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§6§lENERGY");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
+                armorStand.setHelmet(new ItemStack(Material.ORANGE_WOOL));
             }
         },
 
-        DAMAGE(30, Material.WOOL, (short) 14) {
+        DAMAGE(30, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(DamagePowerup.class, false);
-                we.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Damage",
                         "DMG",
                         DamagePowerup.class,
@@ -371,11 +370,11 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§c§lDAMAGE");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
+                armorStand.setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
 
-        COOLDOWN(30, Material.WOOL, (short) 9) {
+        COOLDOWN(30, Material.LIGHT_BLUE_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
@@ -404,11 +403,11 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§b§lCOOLDOWN");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 9));
+                armorStand.setHelmet(new ItemStack(Material.LIGHT_BLUE_WOOL));
             }
         },
 
-        SELF_DAMAGE(0, Material.WOOL, (short) 15) {
+        SELF_DAMAGE(0, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100, true);
@@ -417,11 +416,11 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§c§l5000 SELF DAMAGE");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
+                armorStand.setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
 
-        SELF_HEAL(0, Material.WOOL, (short) 15) {
+        SELF_HEAL(0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100, true, false);
@@ -430,7 +429,7 @@ public class PowerupOption implements Option {
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§a§l5000 SELF HEAL");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
+                armorStand.setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
         };
 
@@ -438,12 +437,10 @@ public class PowerupOption implements Option {
         public static final PowerupType[] DEFAULT_POWERUPS = {ENERGY, HEALING};
         private final int duration;
         private final Material debugMaterial;
-        private final int debugData;
 
-        PowerupType(int duration, Material debugMaterial, int debugData) {
+        PowerupType(int duration, Material debugMaterial) {
             this.duration = duration;
             this.debugMaterial = debugMaterial;
-            this.debugData = debugData;
         }
 
         public static PowerupType getRandomPowerupType() {
@@ -456,10 +453,6 @@ public class PowerupOption implements Option {
 
         public Material getDebugMaterial() {
             return debugMaterial;
-        }
-
-        public int getDebugData() {
-            return debugData;
         }
 
         public abstract void onPickUp(PowerupOption option, WarlordsEntity we);

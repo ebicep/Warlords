@@ -63,7 +63,7 @@ public class Earthliving extends AbstractAbility {
 
         Earthliving tempEarthliving = new Earthliving();
         final boolean[] firstProc = {true};
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Earthliving>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "EARTH",
                 Earthliving.class,
@@ -106,9 +106,9 @@ public class Earthliving extends AbstractAbility {
                         new GameRunnable(victim.getGame()) {
                             int counter = 0;
                             final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
+                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
                             final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
 
                             @Override
                             public void run() {
@@ -168,7 +168,7 @@ public class Earthliving extends AbstractAbility {
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                     Utils.playGlobalSound(target.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.2f);
-                    new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.SAPLING, (byte) 2).play();
+                    new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.BIRCH_SAPLING).play();
                     for (WarlordsEntity ally : PlayerFilter
                             .entitiesAround(target, 6, 6, 6)
                             .aliveTeammatesOf(giver)

@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +52,13 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected void playEffect(InternalProjectile projectile) {
+    protected void playEffect(@Nonnull InternalProjectile projectile) {
         super.playEffect(projectile);
     }
 
     @Override
     @Deprecated
-    protected void playEffect(Location currentLocation, int ticksLived) {
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
     }
 
     @Override
@@ -87,17 +88,17 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
         return false;
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
         return true;
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+    protected void onNonCancellingHit(InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
@@ -121,7 +122,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected void onSpawn(InternalProjectile projectile) {
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
         ArmorStand fallenSoul = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.7, 0), ArmorStand.class);
         fallenSoul.setGravity(false);

@@ -45,7 +45,7 @@ public class NPCManager {
         npc.addTrait(GameStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 741.5, 90, 0));
     }
 
@@ -56,7 +56,7 @@ public class NPCManager {
         npc.addTrait(PvEStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 747.5, 90, 0));
     }
 
@@ -89,11 +89,11 @@ public class NPCManager {
         }
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
-        NPC npc = npcRegistry.createNPC(EntityType.PIG_ZOMBIE, "masterworks-fair");
+        NPC npc = npcRegistry.createNPC(EntityType.ZOMBIFIED_PIGLIN, "masterworks-fair");
         npc.addTrait(MasterworksFairTrait.class);
 
-        npc.data().set(NPC.VILLAGER_BLOCK_TRADES, true);
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.VILLAGER_BLOCK_TRADES, true);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.toggle();
 
@@ -109,7 +109,7 @@ public class NPCManager {
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "The Weaponsmith");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2533.5, 50, 722.5, 45, 0));
 
     }
@@ -120,7 +120,7 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.WITCH, "legendary-weapon");
         npc.addTrait(LegendaryWeaponTrait.class);
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2515.5, 54, 766.5, 180, 0));
 
     }
@@ -135,7 +135,7 @@ public class NPCManager {
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.AQUA + "Quest Lord");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2574.5, 50, 758.5, -90, 0));
 
     }
@@ -146,7 +146,7 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.ENDER_CRYSTAL, "star-piece-synthesizer");
         npc.addTrait(StarPieceSynthesizerTrait.class);
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2515.5, 53.49, 722.5, 0, 0));
     }
 
@@ -169,7 +169,7 @@ public class NPCManager {
         hologramTrait.setLine(1, ChatColor.GREEN + "Supply Drop Susan");
         //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.toggle();
 

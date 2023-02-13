@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class StatsLeaderboard {
 
@@ -173,7 +172,7 @@ public class StatsLeaderboard {
         boolean filter = sortedWeekly.get(0).getPlays() >= 10;
         List<DatabasePlayer> databasePlayers;
         if (filter) {
-            databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).collect(Collectors.toList());
+            databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).toList();
         } else {
             databasePlayers = new ArrayList<>(sortedWeekly);
         }

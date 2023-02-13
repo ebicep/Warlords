@@ -27,7 +27,7 @@ public interface Upgradeable {
         upgradeLore.add("");
         upgradeLore.add(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + (getUpgradeLevel() + 1) + "/" + getMaxUpgradeLevel() + "]");
         upgradeLore.addAll(getUpgradeCostLore());
-        return new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+        return new ItemBuilder(Material.GREEN_CONCRETE)
                 .name(ChatColor.GREEN + "Confirm")
                 .lore(upgradeLore)
                 .get();

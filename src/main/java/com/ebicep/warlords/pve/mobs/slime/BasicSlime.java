@@ -124,7 +124,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                 .withTrail()
                 .build());
         EffectUtils.playHelixAnimation(deathLocation, shimmerRadius, 0, 255, 0);
-        Utils.playGlobalSound(deathLocation, Sound.SLIME_WALK, 2, 0.5f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
     }
 
 }

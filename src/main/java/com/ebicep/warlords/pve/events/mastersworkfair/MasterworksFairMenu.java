@@ -17,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MasterworksFairMenu {
@@ -73,13 +72,13 @@ public class MasterworksFairMenu {
                         .collect(Utils.lastN(10))
                         .stream()
                         .map(masterworksFairEntry -> ChatColor.GRAY + MasterworksFairManager.FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
-                        .collect(Collectors.toList());
+                        .toList();
                 menu.setItem(column, 3,
                         new ItemBuilder(Material.BOOK)
                                 .name(ChatColor.GREEN + "Your most recent placements")
                                 .lore(IntStream.range(0, placementHistory.size())
-                                        .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
-                                        .collect(Collectors.toList()))
+                                               .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
+                                               .toList())
                                 .get(), (m, e) -> {
 
                         }
@@ -87,7 +86,7 @@ public class MasterworksFairMenu {
                 column += 2;
             }
 
-            ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK)
+            ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK_ROCKET)
                     .name(ChatColor.GREEN + "Current Submissions");
             List<String> infoLore = new ArrayList<>();
             for (WeaponsPvE value : values) {

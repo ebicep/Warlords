@@ -57,10 +57,10 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.ORANGE)
-                .with(FireworkEffect.Type.BALL)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
+                                                                       .withColor(Color.ORANGE)
+                                                                       .with(FireworkEffect.Type.BALL)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 0.5f);
     }
 }

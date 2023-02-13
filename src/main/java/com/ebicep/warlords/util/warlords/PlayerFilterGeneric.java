@@ -58,8 +58,9 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
      * @param player
      * @return The new {@code PlayerFilter}
      */
+    @SafeVarargs
     @Nonnull
-    public PlayerFilterGeneric<T> concat(@Nonnull T... player) {
+    public final PlayerFilterGeneric<T> concat(@Nonnull T... player) {
         return new PlayerFilterGeneric<>(Stream.concat(stream, Stream.of(player)));
     }
 
@@ -206,8 +207,9 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
         return filter(wp -> wp.getTeam() == team);
     }
 
+    @SafeVarargs
     @Nonnull
-    public PlayerFilterGeneric<T> excluding(@Nonnull T... exclude) {
+    public final PlayerFilterGeneric<T> excluding(@Nonnull T... exclude) {
         return exclude.length == 0 ? this : excluding0(new HashSet<>(Arrays.asList(exclude)));
     }
 
@@ -229,7 +231,7 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     public boolean first(@Nonnull Consumer<? super T> action) {
         Optional<T> findAny = this.findAny();
-        if (!findAny.isPresent()) {
+        if (findAny.isEmpty()) {
             return false;
         }
         action.accept(findAny.get());

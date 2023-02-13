@@ -68,7 +68,7 @@ public class SoothingElixir extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.STAINED_GLASS, 1, (short) 6));
+        stand.setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
         stand.setGravity(false);
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {
@@ -134,7 +134,7 @@ public class SoothingElixir extends AbstractAbility {
                 if (shouldExplode) {
                     stand.remove();
                     Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
-                    Utils.playGlobalSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
+                    Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 
                     CircleEffect circleEffect = new CircleEffect(
@@ -202,7 +202,7 @@ public class SoothingElixir extends AbstractAbility {
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
                             .aliveEnemiesOf(wp)
                     ) {
-                        Utils.playGlobalSound(nearEntity.getLocation(), Sound.GLASS, 1, 0.5f);
+                        Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);
                         nearEntity.addDamageInstance(
                                 wp,
                                 name,

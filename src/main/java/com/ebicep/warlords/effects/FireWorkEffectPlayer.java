@@ -62,11 +62,11 @@ public class FireWorkEffectPlayer {
 
         Objects.requireNonNull(world);
         // Bukkit load (CraftFirework)
-        Firework fw = (Firework) world.spawn(loc, Firework.class);
+        Firework fw = world.spawn(loc, Firework.class);
         fw.teleport(loc);
         Object nms_firework;
         if (firework_getHandle == null) {
-            firework_getHandle = getMethod(fw.getClass(), "getHandle");
+            firework_getHandle = getMethod(fw.getClass());
 
         }
         nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
@@ -76,7 +76,7 @@ public class FireWorkEffectPlayer {
             expectedLifespan = nms_firework.getClass().getDeclaredField("expectedLifespan");
             expectedLifespan.setAccessible(true);
         }
-        FireworkMeta data = (FireworkMeta) fw.getFireworkMeta();
+        FireworkMeta data = fw.getFireworkMeta();
         data.clearEffects();
         data.addEffect(fe[0]);
         fw.setFireworkMeta(data);
@@ -85,13 +85,13 @@ public class FireWorkEffectPlayer {
         expectedLifespan.set(nms_firework, 2);
     }
 
-    private static Method getMethod(Class<?> cl, String method) throws NoSuchMethodException {
+    private static Method getMethod(Class<?> cl) throws NoSuchMethodException {
         for (Method m : cl.getMethods()) {
-            if (m.getName().equals(method)) {
+            if (m.getName().equals("getHandle")) {
                 return m;
             }
         }
-        throw new NoSuchMethodException(method + " on class " + cl);
+        throw new NoSuchMethodException("getHandle" + " on class " + cl);
     }
 
 }

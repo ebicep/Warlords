@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Document(collection = "Game_Events")
 public class DatabaseGameEvent {
@@ -151,7 +150,7 @@ public class DatabaseGameEvent {
                         event.eventsStatsFunction.apply(o2.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative(),
                         event.eventsStatsFunction.apply(o1.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative()
                 ))
-                .collect(Collectors.toList());
+                .toList();
         ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
         HashMap<DatabasePlayer, List<String>> playerMessages = new HashMap<>();
         for (int i = 0; i < databasePlayers.size(); i++) {
@@ -181,7 +180,7 @@ public class DatabaseGameEvent {
                         o2.getEventPoints(event, getStartDateSecond()),
                         o1.getEventPoints(event, getStartDateSecond())
                 ))
-                .collect(Collectors.toList());
+                .toList();
         for (int i = 0; i < guilds.size(); i++) {
             int position = i + 1;
             Guild guild = guilds.get(i);

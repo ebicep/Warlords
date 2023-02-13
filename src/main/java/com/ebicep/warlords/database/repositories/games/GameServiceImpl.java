@@ -27,12 +27,8 @@ public class GameServiceImpl implements GameService {
     @Override
     public void create(DatabaseGameBase game) {
         switch (game.getGameMode()) {
-            case CAPTURE_THE_FLAG:
-                create(game, GamesCollections.CTF);
-                break;
-            case TEAM_DEATHMATCH:
-                create(game, GamesCollections.TDM);
-                break;
+            case CAPTURE_THE_FLAG -> create(game, GamesCollections.CTF);
+            case TEAM_DEATHMATCH -> create(game, GamesCollections.TDM);
         }
     }
 

@@ -139,7 +139,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         }
 
         if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
@@ -219,7 +219,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     private void immolation(PveOption option, Location loc) {
         warlordsNPC.setStunTicks(250);
         for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
         ChatUtils.sendTitleToGamePlayers(
@@ -231,18 +231,11 @@ public class Void extends AbstractSkeleton implements BossMob {
                 20
         );
 
-        float damage;
-        switch (option.getDifficulty()) {
-            case HARD:
-                damage = 400;
-                break;
-            case EASY:
-                damage = 100;
-                break;
-            default:
-                damage = 300;
-                break;
-        }
+        float damage = switch (option.getDifficulty()) {
+            case HARD -> 400;
+            case EASY -> 100;
+            default -> 300;
+        };
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
 
@@ -255,7 +248,7 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 counter++;
                 double radius = (4 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.1f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.1f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.2f);
                 EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.SMOKE_LARGE, 1, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
@@ -301,7 +294,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                     return;
                 }
 
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
                 for (WarlordsEntity we : PlayerFilter
                         .entitiesAround(loc, radius, radius, radius)
@@ -337,7 +330,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                 .aliveEnemiesOf(warlordsNPC)
         ) {
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.3);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
         }
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
@@ -363,8 +356,8 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 if (counter++ % 20 == 0) {
                     countdown.getAndDecrement();
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)

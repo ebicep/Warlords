@@ -123,20 +123,12 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         } else if (playerCount == 4) {
             berserkerSpawnCount = 9;
         }
-        Mobs bersekerToSpawn = null;
-        switch (currentWave) {
-            case 5:
-                bersekerToSpawn = Mobs.BASIC_BERSERK_ZOMBIE;
-                break;
-            case 10:
-            case 15:
-                bersekerToSpawn = Mobs.ELITE_BERSERK_ZOMBIE;
-                break;
-            case 20:
-            case 25:
-                bersekerToSpawn = Mobs.ENVOY_BERSERKER_ZOMBIE;
-                break;
-        }
+        Mobs bersekerToSpawn = switch (currentWave) {
+            case 5 -> Mobs.BASIC_BERSERK_ZOMBIE;
+            case 10, 15 -> Mobs.ELITE_BERSERK_ZOMBIE;
+            case 20, 25 -> Mobs.ENVOY_BERSERKER_ZOMBIE;
+            default -> null;
+        };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {
                 AbstractMob<?> berserker = bersekerToSpawn.createMob.apply(warlordsNPC.getLocation());
@@ -159,7 +151,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                     Location loc = warlordsNPC.getLocation();
                     if (!ancestors.isEmpty()) {
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
-                            Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
+                            Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
                             we.sendMessage(ChatColor.RED + "Narmer cannot take damage while his ancestors are still alive!");
                         });
@@ -169,7 +161,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                     if (warlordsNPC.getHealth() < executeHealth && !acolytes.isEmpty()) {
                         warlordsNPC.setHealth(warlordsNPC.getHealth());
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
-                            Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
+                            Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
                             we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
                         });
@@ -196,7 +188,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
                 if (acolytes.contains(eventPlayer)) {
                     acolytes.remove(eventPlayer);
-                    Utils.playGlobalSound(location, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+                    Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
                             12,
@@ -206,8 +198,8 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                     );
 
                     if (acolyteDeathTickWindow > 0) {
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(location, false, 12);
                         List<WarlordsEntity> warlordsEntities = PlayerFilter
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
@@ -297,7 +289,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
