@@ -59,6 +59,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.GameMode;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -100,11 +102,11 @@ public class Warlords extends JavaPlugin {
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
-//    static {
-//        ((Log4jLogger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
-//        ((Log4jLogger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
-//        ((Log4jLogger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
-//    }
+    static {
+        Configurator.setLevel("org.mongodb.driver", Level.ERROR);
+        Configurator.setLevel("org.springframework", Level.ERROR);
+        Configurator.setLevel("net.dv8tion.jda", Level.ERROR);
+    }
 
     public static <T> TaskChain<T> newSharedChain(String name) {
         return taskChainFactory.newSharedChain(name);
