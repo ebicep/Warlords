@@ -1373,7 +1373,7 @@ public abstract class WarlordsEntity {
     private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
         entity.playEffect(EntityEffect.HURT);
         for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
-            player1.playSound(entity.getLocation(), Sound.ENTITY_GENERIC_HURT, 2, 1);
+            player1.playSound(entity.getLocation(), Sound.ENTITY_PLAYER_HURT, 2, 1);
         }
     }
 

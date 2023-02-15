@@ -127,7 +127,7 @@ public class IncendiaryCurse extends AbstractAbility {
                 if (shouldExplode) {
                     stand.remove();
 
-                    Utils.playGlobalSound(newLoc, Sound.ITEM_FIRECHARGE_USE, 2, 0.1f);
+                    Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.ORANGE)

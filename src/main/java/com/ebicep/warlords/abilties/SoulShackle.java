@@ -143,7 +143,7 @@ public class SoulShackle extends AbstractAbility {
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
-                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_HIT, 2, 2);
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
 
                         Location playerLoc = shackleTarget.getLocation();
                         Location particleLoc = playerLoc.clone();
