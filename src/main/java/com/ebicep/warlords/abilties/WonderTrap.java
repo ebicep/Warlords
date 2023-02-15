@@ -57,18 +57,16 @@ public class WonderTrap extends AbstractAbility {
             @Override
             public void run() {
                 switch (counter++) {
-                    case 1:
-                        textCooldown.setText("1");
-                        break;
-                    case 2:
+                    case 1 -> textCooldown.setText("1");
+                    case 2 -> {
                         textCooldown.setText("READY");
                         trap.setCanEndEarly(true);
-                        break;
-                    case 10:
+                    }
+                    case 10 -> {
                         textCooldown.setRemove(true);
                         trap.cancel();
                         this.cancel();
-                        break;
+                    }
                 }
 
                 if (counter > 2 && wp.isSneaking() && trap.isCanEndEarly()) {

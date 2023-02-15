@@ -48,7 +48,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
             ) {
                 if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
                     ally.getCooldownManager().removeCooldown(LastStand.class, false);
-                    ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                    ally.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             "",
                             LastStand.class,

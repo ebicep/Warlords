@@ -42,12 +42,14 @@ public class MessageCommand extends BaseCommand {
     @Description("Reply to a player")
     public void reply(Player player, String message) {
         Optional<PlayerMessage> playerMessage = LAST_PLAYER_MESSAGES.entrySet().stream()
-                .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
-                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
-                .map(Map.Entry::getKey)
-                .findFirst();
+                                                                    .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey()
+                                                                                                                            .to()
+                                                                                                                            .equals(player.getUniqueId()))
+                                                                    .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                                                                    .map(Map.Entry::getKey)
+                                                                    .findFirst();
         if (playerMessage.isPresent() && Instant.now().isBefore(LAST_PLAYER_MESSAGES.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
-            Player otherPlayer = Bukkit.getPlayer(playerMessage.get().getFrom());
+            Player otherPlayer = Bukkit.getPlayer(playerMessage.get().from());
             if (otherPlayer != null) {
                 player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                 otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
@@ -68,14 +70,7 @@ public class MessageCommand extends BaseCommand {
     }
 }
 
-class PlayerMessage {
-    private final UUID from;
-    private final UUID to;
-
-    public PlayerMessage(UUID from, UUID to) {
-        this.from = from;
-        this.to = to;
-    }
+record PlayerMessage(UUID from, UUID to) {
 
     @Override
     public String toString() {
@@ -85,24 +80,16 @@ class PlayerMessage {
                 '}';
     }
 
-    public UUID getFrom() {
-        return from;
-    }
-
-    public UUID getTo() {
-        return to;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PlayerMessage that = (PlayerMessage) o;
         return Objects.equals(from, that.from) && Objects.equals(to, that.to);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to);
-    }
 }

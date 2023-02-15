@@ -145,7 +145,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 critChance,
                 critMultiplier
         );
-        target.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "AVE MARK",
                 HolyRadianceAvenger.class,

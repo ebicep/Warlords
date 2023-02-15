@@ -151,8 +151,8 @@ public abstract class AbstractAbility {
         for (int i = 0; i < secondaryAbilities.size(); i++) {
             SecondaryAbility secondaryAbility = secondaryAbilities.get(i);
 
-            secondaryAbility.getRunnable().run();
-            if (!secondaryAbility.isHasInfiniteUses()) {
+            secondaryAbility.runnable().run();
+            if (!secondaryAbility.hasInfiniteUses()) {
                 secondaryAbilities.remove(i);
                 i--;
             }
@@ -160,7 +160,7 @@ public abstract class AbstractAbility {
     }
 
     public void checkSecondaryAbilities() {
-        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.getShouldRemove().test(secondaryAbility));
+        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility));
     }
 
     public ItemStack getItem(ItemStack baseItem) {
@@ -267,28 +267,7 @@ public abstract class AbstractAbility {
         this.pveUpgrade = pveUpgrade;
     }
 
-    public static class SecondaryAbility {
+    public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
 
-        public final Predicate<SecondaryAbility> shouldRemove;
-        private final Runnable runnable;
-        private final boolean hasInfiniteUses;
-
-        public SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
-            this.runnable = runnable;
-            this.hasInfiniteUses = hasInfiniteUses;
-            this.shouldRemove = shouldRemove;
-        }
-
-        public Runnable getRunnable() {
-            return runnable;
-        }
-
-        public boolean isHasInfiniteUses() {
-            return hasInfiniteUses;
-        }
-
-        public Predicate<SecondaryAbility> getShouldRemove() {
-            return shouldRemove;
-        }
     }
 }

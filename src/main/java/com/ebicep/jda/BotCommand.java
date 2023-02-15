@@ -20,7 +20,7 @@ public class BotCommand extends BaseCommand {
     public void sendBal(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, String command) {
         java.util.Optional<TextChannel> botTeams = BotManager.getTextChannelCompsByName("bot-teams");
         java.util.Optional<TextChannel> gsTeams = BotManager.getTextChannelCompsByName("gs-teams");
-        if (!botTeams.isPresent()) {
+        if (botTeams.isEmpty()) {
             player.sendMessage(ChatColor.RED + "Could not find bot-teams!");
             return;
         }

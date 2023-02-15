@@ -15,7 +15,6 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -180,13 +179,6 @@ public class Guild {
     public void setDefaultRole(String defaultRole) {
         this.defaultRole = defaultRole;
     }
-
-    public void sendGuildMessageWithEventsToOnlinePlayers(ComponentBuilder componentBuilder, boolean centered) {
-        for (Player onlinePlayer : getOnlinePlayers()) {
-            ChatUtils.sendMessageToPlayer(onlinePlayer, componentBuilder.create(), ChatColor.GREEN, centered);
-        }
-    }
-
     public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
     }

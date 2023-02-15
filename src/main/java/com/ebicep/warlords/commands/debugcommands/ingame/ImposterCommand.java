@@ -44,18 +44,17 @@ public class ImposterCommand extends BaseCommand {
             return;
         }
         for (Option option : warlordsPlayer.getGame().getOptions()) {
-            if (option instanceof ImposterModeOption) {
-                ImposterModeOption imposterModeOption = (ImposterModeOption) option;
+            if (option instanceof ImposterModeOption imposterModeOption) {
                 if (imposterModeOption.getPoll() != null) {
                     warlordsPlayer.sendMessage(ChatColor.GREEN + "There is an ongoing poll!");
                     return;
                 }
 
                 if (imposterModeOption.getImposters()
-                        .values()
-                        .stream()
-                        .flatMap(Collection::stream)
-                        .anyMatch(wp -> wp.equals(warlordsPlayer.getUuid()))
+                                      .values()
+                                      .stream()
+                                      .flatMap(Collection::stream)
+                                      .anyMatch(wp -> wp.equals(warlordsPlayer.getUuid()))
                 ) {
                     warlordsPlayer.sendMessage(ChatColor.RED + "You cannot request to vote when you are an imposter!");
                     return;

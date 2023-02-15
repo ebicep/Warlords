@@ -156,11 +156,10 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
 
             @Override
             public String toString() {
-                StringBuilder sb = new StringBuilder();
-                sb.append("FlagHolder.create{");
-                sb.append(info.get());
-                sb.append('}');
-                return sb.toString();
+                String sb = "FlagHolder.create{" +
+                        info.get() +
+                        '}';
+                return sb;
             }
             
         };

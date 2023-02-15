@@ -76,7 +76,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, duration * 20, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<PveOrderOfEviscerate>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Order of Eviscerate",
                 "ORDER",
                 PveOrderOfEviscerate.class,

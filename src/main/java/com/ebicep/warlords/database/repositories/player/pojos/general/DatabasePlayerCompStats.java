@@ -48,70 +48,42 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         switch (gameMode) {
-            case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         }
     }
 
     @Override
     public AbstractDatabaseStatInformation getSpec(Specializations specializations) {
-        switch (specializations) {
-            case PYROMANCER:
-                return mage.getPyromancer();
-            case CRYOMANCER:
-                return mage.getCryomancer();
-            case AQUAMANCER:
-                return mage.getAquamancer();
-            case BERSERKER:
-                return warrior.getBerserker();
-            case DEFENDER:
-                return warrior.getDefender();
-            case REVENANT:
-                return warrior.getRevenant();
-            case AVENGER:
-                return paladin.getAvenger();
-            case CRUSADER:
-                return paladin.getCrusader();
-            case PROTECTOR:
-                return paladin.getProtector();
-            case THUNDERLORD:
-                return shaman.getThunderlord();
-            case SPIRITGUARD:
-                return shaman.getSpiritguard();
-            case EARTHWARDEN:
-                return shaman.getEarthwarden();
-            case ASSASSIN:
-                return rogue.getAssassin();
-            case VINDICATOR:
-                return rogue.getVindicator();
-            case APOTHECARY:
-                return rogue.getApothecary();
-        }
-        return null;
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+        };
     }
 
     @Override
     public AbstractDatabaseStatInformation getClass(Classes classes) {
-        switch (classes) {
-            case MAGE:
-                return mage;
-            case WARRIOR:
-                return warrior;
-            case PALADIN:
-                return paladin;
-            case SHAMAN:
-                return shaman;
-            case ROGUE:
-                return rogue;
-        }
-        return null;
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+        };
     }
 
     @Override

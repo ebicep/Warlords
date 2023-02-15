@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.guild;
 
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,12 @@ import java.util.List;
 @Service("guildService")
 public class GuildServiceImpl implements GuildService {
 
-    @Autowired
+    final
     GuildRepository guildRepository;
+
+    public GuildServiceImpl(GuildRepository guildRepository) {
+        this.guildRepository = guildRepository;
+    }
 
 
     @Override

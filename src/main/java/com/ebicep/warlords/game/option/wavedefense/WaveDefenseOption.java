@@ -223,7 +223,7 @@ public class WaveDefenseOption implements Option, PveOption {
                 if (!(entity instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
                     return;
                 }
                 if (entityLiving instanceof Mob) {
@@ -249,7 +249,7 @@ public class WaveDefenseOption implements Option, PveOption {
                         if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
                             game.warlordsPlayers()
-                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
+                                .filter(warlordsPlayer -> warlordsPlayer.getEntity().equals(oldTarget))
                                 .findFirst()
                                 .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }

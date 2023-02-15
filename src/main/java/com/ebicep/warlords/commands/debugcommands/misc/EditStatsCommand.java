@@ -79,7 +79,7 @@ public class EditStatsCommand extends BaseCommand {
 
     @Subcommand("wipetop")
     public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
-        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+        return databasePlayerFuture.future().thenAccept(databasePlayer -> {
             wipeTopStats(databasePlayer);
             ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Wiped Top Stats of " + databasePlayer.getName(), true);
         });

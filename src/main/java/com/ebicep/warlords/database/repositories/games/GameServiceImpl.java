@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.games;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,8 +15,12 @@ import java.util.List;
 @Service("gameService")
 public class GameServiceImpl implements GameService {
 
-    @Autowired
+    final
     MongoTemplate mongoTemplate;
+
+    public GameServiceImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public boolean exists(DatabaseGameBase game, GamesCollections collections) {

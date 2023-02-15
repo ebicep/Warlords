@@ -3,14 +3,17 @@ package com.ebicep.warlords.database.repositories.timings;
 
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("timingsService")
 public class TimingsServiceImpl implements TimingsService {
 
-    @Autowired
+    final
     TimingsRepository timingsRepository;
+
+    public TimingsServiceImpl(TimingsRepository timingsRepository) {
+        this.timingsRepository = timingsRepository;
+    }
 
 
     @Override

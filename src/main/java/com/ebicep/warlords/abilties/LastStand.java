@@ -212,7 +212,7 @@ public class LastStand extends AbstractAbility {
 
                 loc.getWorld().spawnParticle(
                         Particle.REDSTONE,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width)
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
                         0,

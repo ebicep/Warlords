@@ -547,7 +547,7 @@ public class WeaponManagerMenu {
     public enum BindFilterOptions {
 
         ALL("All", (weapon) -> true),
-        BOUND("Bound", (weapon) -> weapon.isBound()),
+        BOUND("Bound", AbstractWeapon::isBound),
         UNBOUND("Unbound", (weapon) -> !weapon.isBound()),
 
         ;

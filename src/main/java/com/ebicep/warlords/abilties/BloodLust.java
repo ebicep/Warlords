@@ -54,7 +54,7 @@ public class BloodLust extends AbstractAbility {
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
         BloodLust tempBloodLust = new BloodLust(maxConversionAmount);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<BloodLust>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LUST",
                 BloodLust.class,

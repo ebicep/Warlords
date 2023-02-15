@@ -717,7 +717,7 @@ public class WarlordsEvents implements Listener {
     public void onFoodChange(FoodLevelChangeEvent change) {
         change.setCancelled(true);
         if (change.getEntity() instanceof Player) {
-            ((Player) change.getEntity()).setFoodLevel(20);
+            change.getEntity().setFoodLevel(20);
         }
     }
 
@@ -739,8 +739,7 @@ public class WarlordsEvents implements Listener {
             ((PlayerFlagLocation) eventOld).getPlayer().setCarriedFlag(null);
         }
 
-        if (eventNew instanceof PlayerFlagLocation) {
-            PlayerFlagLocation pfl = (PlayerFlagLocation) eventNew;
+        if (eventNew instanceof PlayerFlagLocation pfl) {
             WarlordsEntity player = pfl.getPlayer();
             player.setCarriedFlag(event.getInfo());
             //removing invis for assassins
@@ -825,8 +824,7 @@ public class WarlordsEvents implements Listener {
                 }
             }
         } else if (eventNew instanceof GroundFlagLocation) {
-            if (eventOld instanceof PlayerFlagLocation) {
-                PlayerFlagLocation pfl = (PlayerFlagLocation) eventOld;
+            if (eventOld instanceof PlayerFlagLocation pfl) {
                 pfl.getPlayer().updateArmor();
                 game.forEachOnlinePlayer((p, t) -> {
                     PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);

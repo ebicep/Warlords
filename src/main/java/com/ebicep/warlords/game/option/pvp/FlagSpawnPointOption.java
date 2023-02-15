@@ -100,12 +100,10 @@ public class FlagSpawnPointOption implements Option {
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {
                     return singletonList(flagName + " Flag: " + ChatColor.GREEN + "Safe");
-                } else if (flag instanceof PlayerFlagLocation) {
-                    PlayerFlagLocation pFlag = (PlayerFlagLocation) flag;
+                } else if (flag instanceof PlayerFlagLocation pFlag) {
                     String extra = pFlag.getPickUpTicks() == 0 ? "" : ChatColor.YELLOW + " +" + pFlag.getComputedHumanMultiplier() + "§e%";
                     return singletonList(flagName + " Flag: " + ChatColor.RED + "Stolen!" + extra);
-                } else if (flag instanceof GroundFlagLocation) {
-                    GroundFlagLocation gFlag = (GroundFlagLocation) flag;
+                } else if (flag instanceof GroundFlagLocation gFlag) {
                     return singletonList(flagName + " Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + gFlag.getDespawnTimerSeconds());
                 } else {
                     return singletonList(flagName + " Flag: " + ChatColor.GRAY + "Respawning...");
@@ -208,7 +206,7 @@ public class FlagSpawnPointOption implements Option {
                     } else {
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, 0));
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<FlagSpawnPointOption>(
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Flag Damage Resistance",
                                 "RES",
                                 FlagSpawnPointOption.class,

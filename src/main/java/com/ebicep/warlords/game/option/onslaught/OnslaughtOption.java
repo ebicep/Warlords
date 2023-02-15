@@ -182,7 +182,7 @@ public class OnslaughtOption implements Option, PveOption {
                 if (!(entity instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
                     return;
                 }
                 if (entityLiving instanceof Mob) {
@@ -208,7 +208,7 @@ public class OnslaughtOption implements Option, PveOption {
                         if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
                             game.warlordsPlayers()
-                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
+                                .filter(warlordsPlayer -> warlordsPlayer.getEntity().equals(oldTarget))
                                 .findFirst()
                                 .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }
@@ -468,22 +468,16 @@ public class OnslaughtOption implements Option, PveOption {
     }
 
     public int getSpawnLimit(int playerCount) {
-        switch (playerCount) {
-            case 1:
-                return 5;
-            case 2:
-                return 10;
-            case 3:
-                return 15;
-            case 4:
-                return 20;
-            case 5:
-                return 25;
-            case 6:
-                return 30;
-        }
+        return switch (playerCount) {
+            case 1 -> 5;
+            case 2 -> 10;
+            case 3 -> 15;
+            case 4 -> 20;
+            case 5 -> 25;
+            case 6 -> 30;
+            default -> spawnLimit;
+        };
 
-        return spawnLimit;
     }
 
     public void setSpawnLimit(int spawnLimit) {
@@ -491,21 +485,15 @@ public class OnslaughtOption implements Option, PveOption {
     }
 
     public float getIntegrityDecay(int playerCount) {
-        switch (playerCount) {
-            case 1:
-                return 0.5f;
-            case 2:
-                return 0.75f;
-            case 3:
-                return 1;
-            case 4:
-                return 1.5f;
-            case 5:
-            case 6:
-                return 2;
-        }
+        return switch (playerCount) {
+            case 1 -> 0.5f;
+            case 2 -> 0.75f;
+            case 3 -> 1;
+            case 4 -> 1.5f;
+            case 5, 6 -> 2;
+            default -> 1.5f;
+        };
 
-        return 1.5f;
     }
 
     private void modifyStats(WarlordsNPC warlordsNPC) {

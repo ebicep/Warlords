@@ -107,8 +107,7 @@ public class BotManager {
             if (game == null) {
                 continue;
             }
-            if (game.getState() instanceof PreLobbyState) {
-                PreLobbyState state = (PreLobbyState) game.getState();
+            if (game.getState() instanceof PreLobbyState state) {
                 if (!state.hasEnoughPlayers()) {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
                                                                                                       .getMapName() + " Lobby - Waiting for players\n");
@@ -122,8 +121,7 @@ public class BotManager {
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 if (GameMode.isWaveDefense(game.getGameMode())) {
                     for (Option option : game.getOptions()) {
-                        if (option instanceof WaveDefenseOption) {
-                            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                        if (option instanceof WaveDefenseOption waveDefenseOption) {
                             eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
                                                                                                               .getMapName() + " - " + time + word + " - " + waveDefenseOption.getDifficulty()
                                                                                                                                                                              .getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");

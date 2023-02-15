@@ -52,7 +52,7 @@ public class AvengersWrath extends AbstractAbility {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         AvengersWrath tempAvengersWrath = new AvengersWrath();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<AvengersWrath>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WRATH",
                 AvengersWrath.class,

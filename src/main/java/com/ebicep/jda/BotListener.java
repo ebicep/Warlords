@@ -46,12 +46,8 @@ public class BotListener extends ListenerAdapter implements Listener {
         Member member = event.getMember();
         Message message = event.getMessage();
         switch (event.getChannelType()) {
-            case PRIVATE:
-                parsePrivateLinkMessage(event, message);
-                break;
-            case TEXT:
-                readBalanceStatuses(event, message);
-                break;
+            case PRIVATE -> parsePrivateLinkMessage(event, message);
+            case TEXT -> readBalanceStatuses(event, message);
         }
     }
 
@@ -95,14 +91,11 @@ public class BotListener extends ListenerAdapter implements Listener {
     private void readBalanceStatuses(MessageReceivedEvent event, Message message) {
         TextChannel textChannel = event.getTextChannel();
         switch (textChannel.getName().toLowerCase()) {
-            case "gs-teams":
-            case "bot-teams": {
+            case "gs-teams", "bot-teams" -> {
                 readOnGoingBalance(message);
-                break;
             }
-            case "teams": {
+            case "teams" -> {
                 readNewTeamPosted(message);
-                break;
             }
         }
     }

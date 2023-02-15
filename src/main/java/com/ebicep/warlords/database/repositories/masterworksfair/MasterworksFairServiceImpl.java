@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.masterworksfair;
 
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,12 @@ import java.util.List;
 @Service("masterworksFairService")
 public class MasterworksFairServiceImpl implements MasterworksFairService {
 
-    @Autowired
+    final
     MasterworksFairRepository masterworksFairRepository;
+
+    public MasterworksFairServiceImpl(MasterworksFairRepository masterworksFairRepository) {
+        this.masterworksFairRepository = masterworksFairRepository;
+    }
 
 
     @Override

@@ -54,7 +54,7 @@ public class Berserk extends AbstractAbility {
 
         Berserk tempBerserk = new Berserk();
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "BERS",
                 Berserk.class,

@@ -155,22 +155,22 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public PlayerFilter enemiesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isEnemy(wp));
+        return filter(player::isEnemy);
     }
 
     @Nonnull
     public PlayerFilter aliveEnemiesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isEnemyAlive(wp));
+        return filter(player::isEnemyAlive);
     }
 
     @Nonnull
     public PlayerFilter teammatesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isTeammate(wp));
+        return filter(player::isTeammate);
     }
 
     @Nonnull
     public PlayerFilter aliveTeammatesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isTeammateAlive(wp));
+        return filter(player::isTeammateAlive);
     }
 
     @Nonnull
@@ -292,7 +292,7 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
                                          return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
                                      })
-                                     .map(e -> Warlords.getPlayer(e))
+                                     .map(Warlords::getPlayer)
                                      .filter(Objects::nonNull)
         );
     }
@@ -328,7 +328,7 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     @Nonnull
     protected static Stream<WarlordsEntity> entities0(@Nonnull Stream<Entity> entities) {
         return entities
-                .map(e -> Warlords.getPlayer(e))
+                .map(Warlords::getPlayer)
                 .filter(Objects::nonNull);
     }
 

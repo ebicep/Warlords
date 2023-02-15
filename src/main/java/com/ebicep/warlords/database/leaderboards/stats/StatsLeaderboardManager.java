@@ -446,27 +446,19 @@ public class StatsLeaderboardManager {
         PVE("Wave Defense", "PvE", StatsLeaderboardPvE::new);
 
         public static GameType getAfter(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return CTF;
-                case CTF:
-                    return PVE;
-                case PVE:
-                    return ALL;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> CTF;
+                case CTF -> PVE;
+                case PVE -> ALL;
+            };
         }
 
         public static GameType getBefore(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return PVE;
-                case CTF:
-                    return ALL;
-                case PVE:
-                    return CTF;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> PVE;
+                case CTF -> ALL;
+                case PVE -> CTF;
+            };
         }
 
         public final String name;

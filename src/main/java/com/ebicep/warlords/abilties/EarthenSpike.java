@@ -306,7 +306,7 @@ public class EarthenSpike extends AbstractAbility {
         this.radius = radius;
     }
 
-    public class EarthenSpikeBlock {
+    public static class EarthenSpikeBlock {
 
         private final WarlordsEntity target;
         private final WarlordsEntity user;

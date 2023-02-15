@@ -5,7 +5,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,8 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service("playerService")
 public class PlayerServiceImpl implements PlayerService {
 
-    @Autowired
+    final
     PlayerRepository playerRepository;
+
+    public PlayerServiceImpl(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     @Override
     public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {

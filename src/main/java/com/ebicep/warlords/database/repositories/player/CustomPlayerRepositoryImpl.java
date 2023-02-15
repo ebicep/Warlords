@@ -5,7 +5,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.model.RenameCollectionOptions;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -20,8 +19,12 @@ import java.util.UUID;
 @Repository
 public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
-    @Autowired
+    final
     MongoTemplate mongoTemplate;
+
+    public CustomPlayerRepositoryImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {

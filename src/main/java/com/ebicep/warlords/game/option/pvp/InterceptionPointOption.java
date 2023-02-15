@@ -279,17 +279,20 @@ public class InterceptionPointOption implements Option {
     }
 
     protected double updateTeamInCircle(Stream<WarlordsEntity> players) {
-        Map<Team, List<WarlordsEntity>> perTeam = players.collect(Collectors.groupingBy(WarlordsEntity::getTeam, Collectors.toList()));
-        if (perTeam.isEmpty()) {
-            teamInCircle = teamOwning;
-            inConflict = false;
-            return captureSpeed * 0.2;
-        }
-        Map.Entry<Team, List<WarlordsEntity>> highest = perTeam.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Team, List<WarlordsEntity>> e) -> e.getValue().size()).reversed()).findFirst().get();
-        int highestValue = highest.getValue().size();
-        int otherTeamPresence = perTeam.values().stream().mapToInt(Collection::size).sum() - highestValue;
-        int currentTeamPresence = highestValue - otherTeamPresence;
-        // Calculate who is in the zone
+		Map<Team, List<WarlordsEntity>> perTeam = players.collect(Collectors.groupingBy(WarlordsEntity::getTeam, Collectors.toList()));
+		if (perTeam.isEmpty()) {
+			teamInCircle = teamOwning;
+			inConflict = false;
+			return captureSpeed * 0.2;
+		}
+		Map.Entry<Team, List<WarlordsEntity>> highest = perTeam.entrySet()
+															   .stream()
+															   .max(Comparator.comparing((Map.Entry<Team, List<WarlordsEntity>> e) -> e.getValue().size()))
+															   .get();
+		int highestValue = highest.getValue().size();
+		int otherTeamPresence = perTeam.values().stream().mapToInt(Collection::size).sum() - highestValue;
+		int currentTeamPresence = highestValue - otherTeamPresence;
+		// Calculate who is in the zone
 		// If there are no other players from outside your team, yu ca always capture the point, else you need 2 peopl more
 		if (currentTeamPresence > 1 || otherTeamPresence == 0) {
 			teamInCircle = highest.getKey();

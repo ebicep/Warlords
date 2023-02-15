@@ -43,7 +43,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Berserk",
                 "BERS",
                 Berserk.class,
@@ -74,7 +74,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 return currentDamageValue * 1.2f;
             }
         });
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<BloodLust>(
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 name,
                 "LUST",
                 BloodLust.class,

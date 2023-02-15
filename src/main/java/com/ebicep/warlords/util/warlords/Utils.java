@@ -389,9 +389,7 @@ public class Utils {
                     a.setA(count);
                     return a;
                 },
-                (i) -> {
-                    return i.getB();
-                },
+                Pair::getB,
                 Collector.Characteristics.CONCURRENT,
                 Collector.Characteristics.UNORDERED
         );

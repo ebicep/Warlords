@@ -122,18 +122,11 @@ public class Narmer extends AbstractZombie implements BossMob {
                             60
                     );
 
-                    float multiplier;
-                    switch (option.getDifficulty()) {
-                        case EASY:
-                            multiplier = 2;
-                            break;
-                        case HARD:
-                            multiplier = 16;
-                            break;
-                        default:
-                            multiplier = 8;
-                            break;
-                    }
+                    float multiplier = switch (option.getDifficulty()) {
+                        case EASY -> 2;
+                        case HARD -> 16;
+                        default -> 8;
+                    };
                     if (acolyteDeathTickWindow > 0) {
                         Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);

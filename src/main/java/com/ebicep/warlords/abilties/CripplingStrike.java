@@ -78,7 +78,7 @@ public class CripplingStrike extends AbstractStrikeBase {
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrike cripplingStrike = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "CRIP",
                     CripplingStrike.class,
@@ -103,7 +103,7 @@ public class CripplingStrike extends AbstractStrikeBase {
             });
         } else {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "CRIP",
                     CripplingStrike.class,

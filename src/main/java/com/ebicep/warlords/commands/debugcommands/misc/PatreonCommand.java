@@ -29,13 +29,13 @@ public class PatreonCommand extends BaseCommand {
             year = Year.from(ZonedDateTime.now());
         }
         Year finalYear = year;
-        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+        return databasePlayerFuture.future().thenAccept(databasePlayer -> {
             boolean given = PatreonReward.giveMonthlyPatreonRewards(databasePlayer, month, finalYear);
             ChatChannels.sendDebugMessage(issuer,
                     given ? ChatColor.GREEN + "Gave " +
                             ChatColor.LIGHT_PURPLE + finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
                             ChatColor.GREEN + " Patreon reward to " + ChatColor.AQUA + databasePlayer.getName() :
-                            ChatColor.AQUA + databasePlayer.getName() + ChatColor.RED + " has already received their monthly Patreon reward",
+                    ChatColor.AQUA + databasePlayer.getName() + ChatColor.RED + " has already received their monthly Patreon reward",
                     true
             );
             PatreonReward.givePatreonFutureMessage(databasePlayer, month, finalYear);

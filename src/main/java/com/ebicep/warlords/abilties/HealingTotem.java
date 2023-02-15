@@ -193,7 +193,7 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        enemy.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
+                                        enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                 "Totem Crippling",
                                                 "CRIP",
                                                 HealingTotem.class,
@@ -225,7 +225,7 @@ public class HealingTotem extends AbstractTotemBase {
                             .forEach((p) -> {
                                 playersCrippled++;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
-                                p.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
+                                p.getCooldownManager().addCooldown(new RegularCooldown<>(
                                         "Totem Crippling",
                                         "CRIP",
                                         HealingTotem.class,

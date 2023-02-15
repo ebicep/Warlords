@@ -58,11 +58,10 @@ public class DebugCommand extends BaseCommand {
     @Description("Resets or skips the timer")
     public void timer(@Conditions("requireGame") Player player, @Values("reset|skip") String option) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        if (!(game.getState() instanceof TimerDebugAble)) {
+        if (!(game.getState() instanceof TimerDebugAble timerDebugAble)) {
             sendDebugMessage(player, ChatColor.RED + "This gamestate cannot be manipulated by the timer debug option!", true);
             return;
         }
-        TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
         switch (option) {
             case "reset" -> {
                 timerDebugAble.resetTimer();

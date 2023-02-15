@@ -45,27 +45,19 @@ public class DifficultyMenu {
                             .lore(ChatColor.GRAY + difficulty.getDescription())
                             .get(),
                     (m, e) -> {
-                        GameMap map = null;
-                        switch (finalI) {
-                            case 0:
-                                map = GameMap.ILLUSION_APERTURE;
-                                break;
-                            case 1:
-                                map = GameMap.ILLUSION_RIFT;
-                                break;
-                            case 2:
-                                map = GameMap.ILLUSION_VALLEY;
-                                break;
-                            case 3:
-                                map = GameMap.ILLUSION_CROSSFIRE;
-                                break;
-                        }
+                        GameMap map = switch (finalI) {
+                            case 0 -> GameMap.ILLUSION_APERTURE;
+                            case 1 -> GameMap.ILLUSION_RIFT;
+                            case 2 -> GameMap.ILLUSION_VALLEY;
+                            case 3 -> GameMap.ILLUSION_CROSSFIRE;
+                            default -> null;
+                        };
                         GameMap finalMap = map;
                         if (finalMap != null) {
                             if (privateGame) {
                                 GameStartCommand.startGamePvE(player, queueEntryBuilder ->
                                         queueEntryBuilder.setMap(finalMap)
-                                                .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                                         .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                                 );
                             } else {

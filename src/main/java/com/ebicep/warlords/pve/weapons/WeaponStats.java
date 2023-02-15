@@ -12,6 +12,4 @@ public enum WeaponStats {
     SKILL_CRIT_CHANCE_BONUS,
     SKILL_CRIT_MULTIPLIER_BONUS,
 
-    ;
-
 }

@@ -105,7 +105,7 @@ public class GuildDebugCommand extends BaseCommand {
     }
 
     @Subcommand("upgrades")
-    public class GuildDebugUpgradeCommand extends BaseCommand {
+    public static class GuildDebugUpgradeCommand extends BaseCommand {
 
         @Subcommand("add")
         @Description("Adds upgrades to the guild")
