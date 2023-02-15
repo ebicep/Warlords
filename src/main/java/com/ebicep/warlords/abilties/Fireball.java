@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +10,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,9 +50,10 @@ public class Fireball extends AbstractProjectileBase {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, currentLocation, 500);
-        ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, currentLocation, 500);
-        ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, currentLocation, 500);
+        World world = currentLocation.getWorld();
+        world.spawnParticle(Particle.DRIP_LAVA, currentLocation, 5, 0, 0, 0, 0.35, null, true);
+        world.spawnParticle(Particle.SMOKE_NORMAL, currentLocation, 7, 0, 0, 0, 0.001, null, true);
+        world.spawnParticle(Particle.FLAME, currentLocation, 1, 0, 0, 0, 0.06, null, true);
     }
 
     @Override
@@ -59,16 +61,17 @@ public class Fireball extends AbstractProjectileBase {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1);
 
-        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, currentLocation, 500);
-        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 1.5f, 10, currentLocation, 500);
-        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
+        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 5, 0, 0, 0, 0.35, null, true);
+        world.spawnParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 1.5, null, true);
+        world.spawnParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1, null, true);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) {
             toReduceBy = .2;
         }

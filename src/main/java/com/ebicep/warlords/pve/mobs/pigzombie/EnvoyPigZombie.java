@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -53,7 +52,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 1, 0.5f);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we == null) return;
-        EffectUtils.playSphereAnimation(location, 8, ParticleEffect.FLAME, 1);
+        EffectUtils.playSphereAnimation(location, 8, Particle.FLAME, 1);
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(we, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(we)

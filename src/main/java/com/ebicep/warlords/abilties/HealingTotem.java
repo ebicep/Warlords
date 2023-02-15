@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -14,10 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -121,21 +117,23 @@ public class HealingTotem extends AbstractTotemBase {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksElapsed % 10 == 0) {
-                        EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
+                        EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, Particle.VILLAGER_HAPPY, 2);
                     }
 
                     if (ticksElapsed % 20 == 0) {
                         cooldownCounter.set(ticksElapsed);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
 
-                        ParticleEffect.VILLAGER_HAPPY.display(
-                                0.4F,
-                                0.2F,
-                                0.4F,
-                                0.05F,
-                                5,
+                        totemStand.getLocation().getWorld().spawnParticle(
+                                Particle.VILLAGER_HAPPY,
                                 totemStand.getLocation().clone().add(0, 1.6, 0),
-                                500
+                                5,
+                                0.4,
+                                0.2,
+                                0.4,
+                                0.05,
+                                null,
+                                true
                         );
 
                         Location totemLoc = totemStand.getLocation();
@@ -149,7 +147,17 @@ public class HealingTotem extends AbstractTotemBase {
                                 particleLoc.setY(totemLoc.getY() + i / 2D);
                                 particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
 
-                                ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
+                                particleLoc.getWorld().spawnParticle(
+                                        Particle.FIREWORKS_SPARK,
+                                        particleLoc,
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        null,
+                                        true
+                                );
                             }
                         }
 
@@ -158,7 +166,7 @@ public class HealingTotem extends AbstractTotemBase {
                                 wp.getTeam(),
                                 totemStand.getLocation().add(0, 1, 0),
                                 radius,
-                                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5)
+                                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(1.5)
                         );
                         circle.playEffects();
 

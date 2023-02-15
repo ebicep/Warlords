@@ -3,15 +3,12 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -118,7 +115,18 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                         return;
                     }
 
-                    ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, target.getLocation(), 500);
+                    target.getLocation().getWorld().spawnParticle(
+                            Particle.SPELL,
+                            target.getLocation(),
+                            12,
+                            1,
+                            1,
+                            1,
+                            0.06,
+                            null,
+                            true
+                    );
+
                     Utils.playGlobalSound(target.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
                     for (WarlordsEntity waveTarget : PlayerFilter
                             .entitiesAround(target, 6, 6, 6)
@@ -149,7 +157,17 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                                 particleLoc.setY(playerLoc.getY() + i / 6D);
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
+                                particleLoc.getWorld().spawnParticle(
+                                        Particle.REDSTONE,
+                                        particleLoc,
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1),
+                                        true
+                                );
                             }
                         }
                     }

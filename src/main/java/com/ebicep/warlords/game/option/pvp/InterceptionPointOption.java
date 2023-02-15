@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.pvp;
 
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
@@ -17,10 +16,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
@@ -181,8 +177,8 @@ public class InterceptionPointOption implements Option {
         }
         double computedCurrentRadius = this.computeCurrentRadius();
         if (this.effectPlayer == null || this.effectPlayer.getTeam() != teamOwning) {
-            this.effectPlayer = new CircleEffect(game, teamOwning, location, computedCurrentRadius);
-            this.effectPlayer.addEffect(new CircumferenceEffect(ParticleEffect.CRIT).particles(20));
+			this.effectPlayer = new CircleEffect(game, teamOwning, location, computedCurrentRadius);
+			this.effectPlayer.addEffect(new CircumferenceEffect(Particle.CRIT).particles(20));
         }
         if (this.effectPlayer.getRadius() != computedCurrentRadius) {
             this.effectPlayer.setRadius(computedCurrentRadius);

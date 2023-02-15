@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -69,9 +68,9 @@ public class HealingRain extends AbstractAbility {
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.025),
-                new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025),
+                new AreaEffect(5, Particle.DRIP_WATER).particlesPerSurface(0.025)
         );
 
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);

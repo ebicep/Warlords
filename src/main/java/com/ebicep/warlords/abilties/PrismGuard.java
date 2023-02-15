@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
@@ -106,7 +105,7 @@ public class PrismGuard extends AbstractAbility {
                             wp.getTeam(),
                             wp.getLocation(),
                             bubbleRadius,
-                            new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2)
+                            new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(2)
                     ).playEffects();
 
                     for (WarlordsEntity entity : PlayerFilter

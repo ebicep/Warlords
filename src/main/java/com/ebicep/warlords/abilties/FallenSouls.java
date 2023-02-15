@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -140,13 +140,33 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, projectile.getCurrentLocation().clone().add(0, 0, 0), 500);
+                projectile.getCurrentLocation().getWorld().spawnParticle(
+                        Particle.SPELL_WITCH,
+                        projectile.getCurrentLocation().clone().add(0, 0, 0),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, projectile.getCurrentLocation(), 500);
+                projectile.getCurrentLocation().getWorld().spawnParticle(
+                        Particle.SPELL_WITCH,
+                        projectile.getCurrentLocation(),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0.7f,
+                        null,
+                        true
+                );
             }
         });
     }

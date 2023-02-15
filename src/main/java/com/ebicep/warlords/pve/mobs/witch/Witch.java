@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witch;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 public class Witch extends AbstractWitch implements EliteMob {
 
@@ -45,8 +45,8 @@ public class Witch extends AbstractWitch implements EliteMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     9,
-                    new CircumferenceEffect(ParticleEffect.SPELL_WITCH, ParticleEffect.REDSTONE).particlesPerCircumference(1),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
+                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.REDSTONE).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
         }
 

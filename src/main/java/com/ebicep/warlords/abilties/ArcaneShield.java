@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -14,6 +13,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -94,9 +95,10 @@ public class ArcaneShield extends AbstractAbility {
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
-                        ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
-                        ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
-                        ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0, 1, location, 500);
+                        World world = location.getWorld();
+                        world.spawnParticle(Particle.CLOUD, location, 2, 0.15F, 0.3F, 0.15F, 0.01, null, true);
+                        world.spawnParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001, null, true);
+                        world.spawnParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0, null, true);
                     }
                 })
         );

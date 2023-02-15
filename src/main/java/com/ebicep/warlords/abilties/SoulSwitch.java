@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -66,8 +66,8 @@ public class SoulSwitch extends AbstractAbility {
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();
 
-                EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
-                EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
+                EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
+                EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
 
                 swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
                 swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
@@ -152,14 +152,27 @@ public class SoulSwitch extends AbstractAbility {
                                                     20 * 5
                                             ) {
                                                 @Override
-                                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                public float modifyDamageBeforeInterveneFromAttacker(
+                                                        WarlordsDamageHealingEvent event,
+                                                        float currentDamageValue
+                                                ) {
                                                     return currentDamageValue * .5f;
                                                 }
                                             });
                                         }
                                     });
 
-                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
+                            ownLocation.getWorld().spawnParticle(
+                                    Particle.EXPLOSION_LARGE,
+                                    ownLocation.add(0, 1, 0),
+                                    5,
+                                    0,
+                                    0,
+                                    0,
+                                    0.5,
+                                    null,
+                                    true
+                            );
                         }
                     }.runTaskLater(60);
                 }

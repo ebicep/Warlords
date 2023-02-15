@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,10 +10,7 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -85,8 +81,16 @@ public class UndyingArmy extends AbstractAbility {
                 double angle = c / 30D * Math.PI * 2;
                 double width = 1.5;
 
-                ParticleEffect.ENCHANTMENT_TABLE.display(0, 0.1f, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                player.getWorld().spawnParticle(
+                        Particle.ENCHANTMENT_TABLE,
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0.1,
+                        0,
+                        0,
+                        null,
+                        true
                 );
             }
 
@@ -94,8 +98,16 @@ public class UndyingArmy extends AbstractAbility {
                 double angle = c / 15D * Math.PI * 2;
                 double width = 0.6;
 
-                ParticleEffect.SPELL.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                player.getWorld().spawnParticle(
+                        Particle.SPELL,
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
                 );
             }
         }
@@ -105,7 +117,7 @@ public class UndyingArmy extends AbstractAbility {
                 wp.getTeam(),
                 player.getLocation(),
                 radius,
-                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2)
+                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();
 
         UndyingArmy tempUndyingArmy = new UndyingArmy(maxHealthDamage);
@@ -164,7 +176,17 @@ public class UndyingArmy extends AbstractAbility {
                                         particleLoc.setY(playerLoc.getY() + i / 5D);
                                         particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                        particleLoc.getWorld().spawnParticle(
+                                                Particle.REDSTONE,
+                                                particleLoc,
+                                                1,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                new Particle.DustOptions(Color.fromRGB(255, 255, 255), 1),
+                                                true
+                                        );
                                     }
                                 }
                             }

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -63,7 +63,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
-        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
+        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 1, 0, 0, 0, 0, null, true);
 
         int playersHit = 0;
         for (WarlordsEntity enemy : PlayerFilter

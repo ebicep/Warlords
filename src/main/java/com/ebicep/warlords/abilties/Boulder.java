@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -107,14 +107,16 @@ public class Boulder extends AbstractAbility {
                 boolean shouldExplode;
 
                 if (last) {
-                    ParticleEffect.CRIT.display(
-                            0.3f,
-                            0.3f,
-                            0.3f,
-                            0.1f,
-                            4,
+                    wp.getLocation().getWorld().spawnParticle(
+                            Particle.CRIT,
                             newLoc.clone().add(0, -1, 0),
-                            500
+                            6,
+                            0.3F,
+                            0.3F,
+                            0.3F,
+                            0.1F,
+                            null,
+                            true
                     );
                 }
 

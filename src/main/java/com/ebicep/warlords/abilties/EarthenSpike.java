@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -174,7 +174,17 @@ public class EarthenSpike extends AbstractAbility {
                                             wave.addSpeedModifier(wp, "Spike Slow", -50, 20);
                                         }
                                         Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
-                                        ParticleEffect.EXPLOSION_LARGE.display(1, 1, 1, 0.01f, 2, targetLocation, 500);
+                                        targetLocation.getWorld().spawnParticle(
+                                                Particle.EXPLOSION_LARGE,
+                                                targetLocation,
+                                                2,
+                                                1,
+                                                1,
+                                                1,
+                                                0.01F,
+                                                null,
+                                                true
+                                        );
                                     }
                                 }.runTaskLater(15);
                             }

@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -82,8 +82,8 @@ public class Consecrate extends AbstractAbility {
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                new DoubleLineEffect(ParticleEffect.SPELL)
+                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new DoubleLineEffect(Particle.SPELL)
         );
         BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
 

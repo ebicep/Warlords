@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -83,7 +82,7 @@ public class Intervene extends AbstractAbility {
             wp.subtractEnergy(energyCost, false);
             // Green line / Sound
             Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1, 1);
-            EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), Particle.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
             Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);

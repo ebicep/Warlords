@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.abilties.internal.Overheal;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +10,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,10 +58,11 @@ public class WaterBolt extends AbstractProjectileBase {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, currentLocation, 500);
-        ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
-        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
-        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, currentLocation, 500);
+        World world = currentLocation.getWorld();
+        world.spawnParticle(Particle.DRIP_WATER, currentLocation, 2, 0.3, 0.3, 0.3, 0.1, null, true);
+        world.spawnParticle(Particle.ENCHANTMENT_TABLE, currentLocation, 1, 0, 0, 0, 0.1, null, true);
+        world.spawnParticle(Particle.VILLAGER_HAPPY, currentLocation, 1, 0, 0, 0, 0.1, null, true);
+        world.spawnParticle(Particle.CLOUD, currentLocation, 1, 0, 0, 0, 0, null, true);
     }
 
     @Override
@@ -68,15 +70,16 @@ public class WaterBolt extends AbstractProjectileBase {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        World world = currentLocation.getWorld();
 
-        ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
-        ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
+        world.spawnParticle(Particle.HEART, currentLocation, 3, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.VILLAGER_HAPPY, currentLocation, 5, 1, 1, 1, 0.2, null, true);
 
         Utils.playGlobalSound(currentLocation, "mage.waterbolt.impact", 2, 1);
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) {
             toReduceBy = .2;
         }

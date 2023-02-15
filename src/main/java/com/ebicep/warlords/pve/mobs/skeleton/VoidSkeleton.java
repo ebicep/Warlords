@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 import com.ebicep.warlords.abilties.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -56,7 +55,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
         }
 
         if (ticksElapsed % 100 == 0) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 30);
+            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, Particle.SMOKE_NORMAL, 1, 30);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)

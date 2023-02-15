@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -10,6 +9,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -51,14 +51,16 @@ public class CrusadersStrike extends AbstractStrikeBase {
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
-        ParticleEffect.SPELL.display(
+        location.getWorld().spawnParticle(
+                Particle.SPELL,
+                location.clone().add(0, 1, 0),
+                4,
                 (float) ((Math.random() * 2) - 1),
                 (float) ((Math.random() * 2) - 1),
                 (float) ((Math.random() * 2) - 1),
                 1,
-                4,
-                location.clone().add(0, 1, 0),
-                500
+                null,
+                true
         );
     }
 

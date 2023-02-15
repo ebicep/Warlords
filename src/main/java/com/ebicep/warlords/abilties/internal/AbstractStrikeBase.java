@@ -4,13 +4,14 @@ import com.ebicep.warlords.abilties.Consecrate;
 import com.ebicep.warlords.abilties.HammerOfLight;
 import com.ebicep.warlords.abilties.ProtectorsStrike;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -100,12 +101,17 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
     protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
-            ParticleEffect.REDSTONE.display(
-                    new ParticleEffect.OrdinaryColor(red, green, blue),
+            location.getWorld().spawnParticle(
+                    Particle.REDSTONE,
                     location.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                    500
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    new Particle.DustOptions(Color.fromRGB(red, green, blue), 1),
+                    true
             );
-
         }
     }
 

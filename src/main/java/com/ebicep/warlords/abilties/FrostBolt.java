@@ -2,15 +2,12 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +46,17 @@ public class FrostBolt extends AbstractProjectileBase {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, currentLocation, 500);
+        currentLocation.getWorld().spawnParticle(
+                Particle.CLOUD,
+                currentLocation,
+                1,
+                0,
+                0,
+                0,
+                0,
+                null,
+                true
+        );
     }
 
     @Override
@@ -57,15 +64,17 @@ public class FrostBolt extends AbstractProjectileBase {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
 
-        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
-        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
+        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 1, 0, 0, 0, 0, null, true);
+        world.spawnParticle(Particle.CLOUD, currentLocation, 3, .3, .3, .3, 1, null, true);
+
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) {
             toReduceBy = .2;
         }

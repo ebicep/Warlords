@@ -2,13 +2,14 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -65,14 +66,20 @@ public class BloodLust extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 3 == 0) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                wp.getLocation().getWorld().spawnParticle(
+                                        Particle.REDSTONE,
                                         wp.getLocation().add(
                                                 (Math.random() - 0.5) * 1,
                                                 1.2,
                                                 (Math.random() - 0.5) * 1
                                         ),
-                                        500
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
+                                        true
                                 );
                             }
                         }

@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -141,8 +140,8 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (ticksElapsed % 160 == 0) {
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -250,7 +249,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                 double radius = (4 * counter);
                 Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.1f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.2f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.SMOKE_LARGE, 1, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.SMOKE_LARGE, 1, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -400,7 +399,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",

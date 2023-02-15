@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -75,14 +75,16 @@ public class Earthliving extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        ParticleEffect.VILLAGER_HAPPY.display(
+                        wp.getLocation().getWorld().spawnParticle(
+                                Particle.VILLAGER_HAPPY,
+                                wp.getLocation().add(0, 1.2, 0),
+                                2,
                                 0.3f,
                                 0.3f,
                                 0.3f,
                                 0.1f,
-                                2,
-                                wp.getLocation().add(0, 1.2, 0),
-                                500
+                                null,
+                                true
                         );
                     }
                 })
@@ -199,7 +201,7 @@ public class Earthliving extends AbstractAbility {
                     //target.addSpeedModifier(giver, "Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
-                        EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
                     }
                 })
         );

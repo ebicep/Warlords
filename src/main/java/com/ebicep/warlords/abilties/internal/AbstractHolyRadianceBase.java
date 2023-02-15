@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.HammerOfLight;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -73,8 +73,29 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
 
         Location particleLoc = player.getLocation().add(0, 1.2, 0);
-        ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
-        ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
+
+        particleLoc.getWorld().spawnParticle(
+                Particle.VILLAGER_HAPPY,
+                particleLoc,
+                2,
+                1,
+                1,
+                1,
+                0.1,
+                null,
+                true
+        );
+        particleLoc.getWorld().spawnParticle(
+                Particle.SPELL,
+                particleLoc,
+                12,
+                1,
+                1,
+                1,
+                0.06,
+                null,
+                true
+        );
 
         return true;
     }
@@ -156,7 +177,18 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 armorStandLocation.add(targetLocation);
                 this.armorStand.teleport(armorStandLocation);
 
-                ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+                armorStandLocation.getWorld().spawnParticle(
+                        Particle.SPELL,
+                        armorStandLocation.add(0, 1.75, 0),
+                        2,
+                        0.01,
+                        0,
+                        0.01,
+                        0.1,
+                        null,
+                        true
+                );
+
             }
         }
 

@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -24,6 +23,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 
 import java.util.Collections;
 
@@ -121,8 +121,8 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
                         15 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 10 == 0) {
-                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
-                                EffectUtils.playSphereAnimation(we.getLocation(), 3, ParticleEffect.FLAME, 1);
+                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
+                                EffectUtils.playSphereAnimation(we.getLocation(), 3, Particle.FLAME, 1);
                             }
 
                             if (ticksLeft % 5 == 0) {

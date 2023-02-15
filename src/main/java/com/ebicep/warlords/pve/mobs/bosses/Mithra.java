@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -72,7 +71,7 @@ public class Mithra extends AbstractZombie implements BossMob {
         int hitRadius = 15;
 
         if (ticksElapsed % 150 == 0) {
-            EffectUtils.playSphereAnimation(loc, hitRadius, ParticleEffect.FLAME, 1);
+            EffectUtils.playSphereAnimation(loc, hitRadius, Particle.FLAME, 1);
             for (WarlordsEntity knockTarget : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -201,7 +200,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                 double radius = (2 * counter);
                 Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.8f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.FLAME, 2, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)

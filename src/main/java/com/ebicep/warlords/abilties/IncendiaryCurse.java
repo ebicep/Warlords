@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -96,15 +95,18 @@ public class IncendiaryCurse extends AbstractAbility {
                 boolean shouldExplode;
 
                 if (last) {
-                    ParticleEffect.FIREWORKS_SPARK.display(
-                            0.1f,
-                            0.1f,
-                            0.1f,
-                            0.1f,
-                            4,
+                    newLoc.getWorld().spawnParticle(
+                            Particle.FIREWORKS_SPARK,
                             newLoc.clone().add(0, -1, 0),
-                            500
+                            1,
+                            0.1,
+                            0.1,
+                            0.1,
+                            0.1,
+                            null,
+                            true
                     );
+
                 }
 
                 WarlordsEntity directHit;
@@ -135,7 +137,7 @@ public class IncendiaryCurse extends AbstractAbility {
                             .with(FireworkEffect.Type.BURST)
                             .build());
 
-                    ParticleEffect.SMOKE_NORMAL.display(0.4f, 0.05f, 0.4f, 0.2f, 100, newLoc, 500);
+                    newLoc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2, null, true);
 
                     for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, hitbox, hitbox, hitbox)

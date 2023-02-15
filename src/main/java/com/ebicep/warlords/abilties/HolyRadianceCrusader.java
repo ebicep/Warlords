@@ -2,16 +2,13 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -92,7 +89,17 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                                         particleLoc.setY(playerLoc.getY() + i / 6D);
                                         particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), particleLoc, 500);
+                                        particleLoc.getWorld().spawnParticle(
+                                                Particle.REDSTONE,
+                                                particleLoc,
+                                                1,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                new Particle.DustOptions(Color.fromRGB(255, 170, 0), 1),
+                                                true
+                                        );
                                     }
                                 }
                             }

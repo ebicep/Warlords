@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.PveOption;
@@ -101,7 +100,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
         }
         HandlerList.unregisterAll(listener);
 
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
         for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
             option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
         }
@@ -140,7 +139,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)

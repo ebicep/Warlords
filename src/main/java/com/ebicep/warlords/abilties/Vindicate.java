@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -64,7 +63,7 @@ public class Vindicate extends AbstractAbility {
                 wp.getTeam(),
                 player.getLocation(),
                 radius,
-                new CircumferenceEffect(ParticleEffect.SPELL, ParticleEffect.REDSTONE).particlesPerCircumference(2)
+                new CircumferenceEffect(Particle.SPELL, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();
 
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);

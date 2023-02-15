@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -142,8 +142,16 @@ public class HeartToHeart extends AbstractAbility {
                 for (float i = 0; i < 6; i++) {
                     double angle = Math.toRadians(i * 90) + timer * 0.6;
                     double width = 1.5D;
-                    ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1,
-                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    playerLoc.getWorld().spawnParticle(
+                            Particle.SPELL_WITCH,
+                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            null,
+                            true
                     );
                 }
 

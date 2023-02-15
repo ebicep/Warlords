@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties.pve;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.OrderOfEviscerate;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,6 +13,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -92,9 +92,9 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.4f, 2);
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
+                    wp.getWorld().spawnParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05, null, true);
                     if (ticksElapsed % 10 == 0) {
-                        ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
+                        //ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
                     }
                 })
         ) {

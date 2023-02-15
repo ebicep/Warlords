@@ -1,13 +1,14 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
@@ -49,8 +50,16 @@ public class FlameBurst extends AbstractProjectileBase {
         for (float i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
             double width = projectileWidth;
-            ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
-                    center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+            currentLocation.getWorld().spawnParticle(
+                    Particle.FLAME,
+                    center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                    2,
+                    0,
+                    0,
+                    0,
+                    0,
+                    null,
+                    true
             );
         }
     }
@@ -60,12 +69,13 @@ public class FlameBurst extends AbstractProjectileBase {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
 
-        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 2, currentLocation, 500);
-        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
-        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1, 3, currentLocation, 500);
+        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 2, 0, 0, 0, 0.5, null, true);
+        world.spawnParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2, null, true);
+        world.spawnParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1, null, true);
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter

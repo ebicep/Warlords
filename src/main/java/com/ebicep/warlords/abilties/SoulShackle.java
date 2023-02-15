@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -155,7 +154,17 @@ public class SoulShackle extends AbstractAbility {
                                 particleLoc.setY(playerLoc.getY() + i / 5D);
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                                particleLoc.getWorld().spawnParticle(
+                                        Particle.REDSTONE,
+                                        particleLoc,
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1),
+                                        true
+                                );
                             }
                         }
                     }

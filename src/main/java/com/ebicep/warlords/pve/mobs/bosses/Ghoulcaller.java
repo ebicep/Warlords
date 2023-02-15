@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.PveOption;
@@ -125,7 +124,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 };
                 Location loc = warlordsNPC.getLocation();
                 Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
-                EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 20);
+                EffectUtils.playHelixAnimation(loc, 10, Particle.VILLAGER_ANGRY, 1, 20);
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
                             .aliveEnemiesOf(getWarlordsNPC())
                             .forEach(enemyPlayer -> {
@@ -133,9 +132,9 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                                         getWarlordsNPC(),
                                         "Fury",
                                         minDamage * multiplier,
-                                    maxDamage * multiplier,
-                                    0,
-                                    100,
+                                        maxDamage * multiplier,
+                                        0,
+                                        100,
                                     false
                             );
                         });

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -82,18 +82,49 @@ public class TimeWarp extends AbstractAbility {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
-                            ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
+                            location.getWorld().spawnParticle(
+                                    Particle.SPELL_WITCH,
+                                    location,
+                                    1,
+                                    0.01,
+                                    0,
+                                    0.01,
+                                    0.001,
+                                    null,
+                                    true
+                            );
                         }
 
                         warpTrail.add(wp.getLocation());
-                        ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
+                        warpLocation.getWorld().spawnParticle(
+                                Particle.SPELL_WITCH,
+                                warpLocation,
+                                4,
+                                0.1,
+                                0,
+                                0.1,
+                                0.001,
+                                null,
+                                true
+                        );
 
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
+                            point.getWorld().spawnParticle(
+                                    Particle.CLOUD,
+                                    point,
+                                    1,
+                                    0.1,
+                                    0,
+                                    0.1,
+                                    0.001,
+                                    null,
+                                    true
+                            );
+
                         }
                     }
                 })

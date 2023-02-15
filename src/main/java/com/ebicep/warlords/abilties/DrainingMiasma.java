@@ -6,7 +6,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -14,10 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -66,7 +62,7 @@ public class DrainingMiasma extends AbstractAbility {
         Utils.playGlobalSound(wp.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
 
-        EffectUtils.playSphereAnimation(wp.getLocation(), 6, ParticleEffect.SLIME, 1);
+        EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.SLIME, 1);
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                 .withColor(Color.LIME)
@@ -75,11 +71,11 @@ public class DrainingMiasma extends AbstractAbility {
 
         if (pveUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
-            EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, ParticleEffect.SLIME, 1);
+            EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, Particle.SLIME, 1);
             FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .with(FireworkEffect.Type.BALL_LARGE)
-                    .build());
+                                                                              .withColor(Color.WHITE)
+                                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                                              .build());
         }
 
         int hitCounter = 0;
@@ -112,15 +108,22 @@ public class DrainingMiasma extends AbstractAbility {
                             Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
 
                             for (int i = 0; i < 3; i++) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(30, 200, 30),
+                                miasmaTarget.getLocation().getWorld().spawnParticle(
+                                        Particle.REDSTONE,
                                         miasmaTarget.getLocation().clone().add(
                                                 (Math.random() * 2) - 1,
                                                 1.2 + (Math.random() * 2) - 1,
                                                 (Math.random() * 2) - 1
                                         ),
-                                        500
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1),
+                                        true
                                 );
+
                             }
 
                             float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;

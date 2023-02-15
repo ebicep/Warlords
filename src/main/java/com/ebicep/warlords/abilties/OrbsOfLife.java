@@ -4,7 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -17,10 +16,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -132,14 +128,16 @@ public class OrbsOfLife extends AbstractAbility {
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
-                        ParticleEffect.ENCHANTMENT_TABLE.display(
-                                0.8f,
-                                0,
-                                0.8f,
-                                0.2f,
-                                10,
+                        wp.getWorld().spawnParticle(
+                                Particle.ENCHANTMENT_TABLE,
                                 wp.getLocation().add(0, 1.5, 0),
-                                500
+                                10,
+                                0.8,
+                                0,
+                                0.8,
+                                0.2,
+                                null,
+                                true
                         );
 
                         //setting target player to move towards (includes self)
@@ -174,14 +172,16 @@ public class OrbsOfLife extends AbstractAbility {
                                                     .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
                                     );
                                     orb.forEach(orbArmorStand::addPassenger);
-                                    ParticleEffect.VILLAGER_HAPPY.display(
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1,
+                                    orbArmorStand.getWorld().spawnParticle(
+                                            Particle.SPELL_WITCH,
                                             orbArmorStand.getLocation().add(0, 1.65, 0),
-                                            500
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            null,
+                                            true
                                     );
                                 });
 

@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -157,14 +157,16 @@ public class RemedicChains extends AbstractAbility {
                         if (outOfRange) {
                             linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                            ParticleEffect.VILLAGER_HAPPY.display(
-                                    0.5f,
-                                    0.5f,
-                                    0.5f,
-                                    1,
-                                    10,
+                            linked.getWorld().spawnParticle(
+                                    Particle.VILLAGER_HAPPY,
                                     linked.getLocation().add(0, 1, 0),
-                                    500
+                                    10,
+                                    0.5,
+                                    0.5,
+                                    0.5,
+                                    1,
+                                    null,
+                                    true
                             );
                             // Ally is out of range, break link
                             numberOfBrokenLinks++;

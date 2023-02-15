@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.abilties.BloodLust;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -11,8 +10,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
 public class EnvoyBerserkZombie extends AbstractBerserkZombie {
@@ -54,14 +55,16 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        ParticleEffect.VILLAGER_ANGRY.display(
-                                0,
-                                0,
-                                0,
-                                0.1f,
-                                1,
+                        warlordsNPC.getWorld().spawnParticle(
+                                Particle.VILLAGER_ANGRY,
                                 warlordsNPC.getLocation().add(0, 1.75, 0),
-                                500
+                                1,
+                                0,
+                                0,
+                                0,
+                                0.1,
+                                null,
+                                true
                         );
                     }
                 }
@@ -83,14 +86,20 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        ParticleEffect.REDSTONE.display(
-                                new ParticleEffect.OrdinaryColor(255, 0, 0),
+                        warlordsNPC.getWorld().spawnParticle(
+                                Particle.REDSTONE,
                                 warlordsNPC.getLocation().add(
                                         (Math.random() - 0.5) * 1,
                                         1.2,
                                         (Math.random() - 0.5) * 1
                                 ),
-                                500
+                                1,
+                                0,
+                                0,
+                                0,
+                                0,
+                                new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
+                                true
                         );
                     }
                 }

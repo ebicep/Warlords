@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
@@ -104,8 +103,8 @@ public class EventDjer extends AbstractZombie implements BossMob {
         if (ticksElapsed % 100 == 0) {
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f); //TODO animations
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
             List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)

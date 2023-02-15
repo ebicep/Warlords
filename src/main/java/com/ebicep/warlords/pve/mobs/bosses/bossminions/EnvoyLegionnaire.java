@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -64,7 +63,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                 );
 
                 Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
-                EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+                EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
             }
             warlordsNPC.getMob().removeTarget();
         }

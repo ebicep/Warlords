@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -11,6 +10,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -76,8 +77,9 @@ public class InspiringPresence extends AbstractAbility {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
-                        ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                        ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
+                        World world = location.getWorld();
+                        world.spawnParticle(Particle.SMOKE_NORMAL, location, 1, 0.3, 0.3, 0.3, 0.02, null, true);
+                        world.spawnParticle(Particle.SPELL, location, 2, 0.3, 0.3, 0.3, 0.5, null, true);
                     }
                 })
         ) {

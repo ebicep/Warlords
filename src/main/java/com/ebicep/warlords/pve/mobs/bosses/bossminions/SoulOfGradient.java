@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -63,8 +62,8 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation().add(0, 0.25, 0),
                     6,
-                    new CircumferenceEffect(ParticleEffect.SPELL_WITCH, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(1),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
+                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
 
             for (WarlordsEntity we : PlayerFilter

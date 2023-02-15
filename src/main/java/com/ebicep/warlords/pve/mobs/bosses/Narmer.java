@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.PveOption;
@@ -118,7 +117,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
                             12,
-                            ParticleEffect.SPELL,
+                            Particle.SPELL,
                             3,
                             60
                     );
@@ -223,15 +222,15 @@ public class Narmer extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 15 == 0) {
             for (WarlordsEntity acolyte : acolytes) {
-                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
             }
         }
 
         if (ticksElapsed % 160 == 0) {
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -267,12 +266,12 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FIREWORKS_SPARK, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.STAR)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.STAR)
+                                                                       .withTrail()
+                                                                       .build());
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);

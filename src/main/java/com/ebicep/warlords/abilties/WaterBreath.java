@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -57,7 +57,17 @@ public class WaterBreath extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
-        ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 2, player.getLocation().add(0, 0.7, 0), 500);
+        player.getWorld().spawnParticle(
+                Particle.HEART,
+                player.getLocation().add(0, 0.7, 0),
+                2,
+                0.6,
+                0.6,
+                0.6,
+                1,
+                null,
+                true
+        );
 
         Location playerLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
@@ -82,14 +92,38 @@ public class WaterBreath extends AbstractAbility {
                 for (int i = 0; i < maxAnimationEffects; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
-                    ParticleEffect.DRIP_WATER.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    wp.getWorld().spawnParticle(
+                            Particle.DRIP_WATER,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            null,
+                            true
                     );
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    wp.getWorld().spawnParticle(
+                            Particle.ENCHANTMENT_TABLE,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            null,
+                            true
                     );
-                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    wp.getWorld().spawnParticle(
+                            Particle.VILLAGER_HAPPY,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            null,
+                            true
                     );
                 }
 

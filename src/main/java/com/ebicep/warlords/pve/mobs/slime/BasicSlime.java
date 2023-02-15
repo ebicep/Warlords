@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.slime;
 import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -15,10 +14,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 
 import java.util.Collections;
 
@@ -53,8 +49,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     hitRadius,
-                    new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
+                    new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(0.75),
+                    new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
         }
 
@@ -98,8 +94,29 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                         if (ticksElapsed % 10 == 0) {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
-                            ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                            ParticleEffect.SLIME.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
+                            location.getWorld().spawnParticle(
+                                    Particle.SMOKE_NORMAL,
+                                    location,
+                                    1,
+                                    0.3F,
+                                    0.3F,
+                                    0.3F,
+                                    0.02F,
+                                    null,
+                                    true
+                            );
+                            location.getWorld().spawnParticle(
+                                    Particle.SLIME,
+                                    location,
+                                    1,
+                                    0.3F,
+                                    0.3F,
+                                    0.3F,
+                                    0.5F,
+                                    null,
+                                    true
+                            );
+
                         }
 
                         if (ticksLeft % 20 == 0) {
@@ -119,10 +136,10 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
         }
 
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.GREEN)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.GREEN)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .withTrail()
+                                                                       .build());
         EffectUtils.playHelixAnimation(deathLocation, shimmerRadius, 0, 255, 0);
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
     }

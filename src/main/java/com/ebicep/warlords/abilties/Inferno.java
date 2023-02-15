@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -66,9 +67,10 @@ public class Inferno extends AbstractAbility {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation().add(0, 1.2, 0);
-                        ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
-                        ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
-                        ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                        World world = location.getWorld();
+                        world.spawnParticle(Particle.DRIP_LAVA, location, 1, 0.5, 0.3, 0.5, 0.4, null, true);
+                        world.spawnParticle(Particle.FLAME, location, 1, 0.5, 0.3, 0.5, 0.0001, null, true);
+                        world.spawnParticle(Particle.CRIT, location, 1, 0.5, 0.3, 0.5, 0.0001, null, true);
                     }
                 })
         ) {

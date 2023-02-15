@@ -1,13 +1,13 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -69,14 +69,16 @@ public class Berserk extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        ParticleEffect.VILLAGER_ANGRY.display(
-                                0,
-                                0,
-                                0,
-                                0.1f,
+                        wp.getLocation().getWorld().spawnParticle(
+                                Particle.VILLAGER_ANGRY,
+                                wp.getLocation().add(0, 1.2, 0),
                                 1,
-                                wp.getLocation().add(0, 1.75, 0),
-                                500
+                                0,
+                                0,
+                                0,
+                                0.1F,
+                                null,
+                                true
                         );
                     }
                 })

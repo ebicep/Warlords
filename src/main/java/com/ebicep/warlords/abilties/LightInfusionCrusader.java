@@ -1,12 +1,12 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -62,14 +62,16 @@ public class LightInfusionCrusader extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        ParticleEffect.SPELL.display(
-                                0.3f,
-                                0.1f,
-                                0.3f,
-                                0.2f,
-                                2,
+                        wp.getWorld().spawnParticle(
+                                Particle.SPELL,
                                 wp.getLocation().add(0, 1.2, 0),
-                                500
+                                2,
+                                0.3,
+                                0.1,
+                                0.3,
+                                0.2,
+                                null,
+                                true
                         );
                     }
                 })
@@ -96,14 +98,16 @@ public class LightInfusionCrusader extends AbstractAbility {
                         duration * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 4 == 0) {
-                                ParticleEffect.SPELL.display(
-                                        0.3f,
-                                        0.1f,
-                                        0.3f,
-                                        0.2f,
-                                        2,
+                                wp.getWorld().spawnParticle(
+                                        Particle.SPELL,
                                         wp.getLocation().add(0, 1.2, 0),
-                                        500
+                                        2,
+                                        0.3,
+                                        0.1,
+                                        0.3,
+                                        0.2,
+                                        null,
+                                        true
                                 );
                             }
                         })
@@ -112,14 +116,16 @@ public class LightInfusionCrusader extends AbstractAbility {
         }
 
         for (int i = 0; i < 10; i++) {
-            ParticleEffect.SPELL.display(
+            wp.getWorld().spawnParticle(
+                    Particle.SPELL,
+                    wp.getLocation().add(0, 1.5, 0),
+                    3,
                     1,
                     0,
                     1,
-                    0.3f,
-                    3,
-                    wp.getLocation().add(0, 1.5, 0),
-                    500
+                    0.3,
+                    null,
+                    true
             );
         }
 

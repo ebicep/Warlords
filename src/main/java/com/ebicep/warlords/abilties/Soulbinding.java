@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -95,7 +95,17 @@ public class Soulbinding extends AbstractAbility {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
-                        ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 2, location, 500);
+                        location.getWorld().spawnParticle(
+                                Particle.SPELL_WITCH,
+                                location,
+                                2,
+                                0.2,
+                                0,
+                                0.2,
+                                0.1,
+                                null,
+                                true
+                        );
                     }
                 })
         );

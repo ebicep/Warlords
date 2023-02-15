@@ -1,7 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
@@ -127,7 +127,7 @@ public interface CustomEntity<T extends Mob> {
     }
 
     default void spawn(Location location) {
-        EffectUtils.playCylinderAnimation(location, 1.05, ParticleEffect.SPELL_WITCH, 1);
+        EffectUtils.playCylinderAnimation(location, 1.05, Particle.SPELL_WITCH, 1);
         Utils.playGlobalSound(location, Sound.ENTITY_GHAST_SHOOT, 2, 0.25f);
         T customEntity = get();
         customEntity.setPos(location.getX(), location.getY(), location.getZ());

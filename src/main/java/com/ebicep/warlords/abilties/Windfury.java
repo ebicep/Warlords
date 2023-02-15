@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -68,15 +68,18 @@ public class Windfury extends AbstractAbility {
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        ParticleEffect.CRIT.display(
-                                0.2f,
-                                0,
-                                0.2f,
-                                0.1f,
-                                3,
+                        wp.getWorld().spawnParticle(
+                                Particle.CRIT,
                                 wp.getLocation().add(0, 1.2, 0),
-                                500
+                                3,
+                                0.2,
+                                0,
+                                0.2,
+                                0.1,
+                                null,
+                                true
                         );
+
                     }
                 })
         ) {
@@ -94,11 +97,11 @@ public class Windfury extends AbstractAbility {
                     if (windfuryActivate < procChance) {
                         timesProcd++;
                         new GameRunnable(victim.getGame()) {
-                            int counter = 0;
                             final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
                                                     ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
                             final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
                                                     ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                            int counter = 0;
 
                             @Override
                             public void run() {

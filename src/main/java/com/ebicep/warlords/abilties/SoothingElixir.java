@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -108,9 +107,18 @@ public class SoothingElixir extends AbstractAbility {
                     for (float i = 0; i < 6; i++) {
                         double angle = Math.toRadians(i * 90) + timer * 0.3;
                         double width = 0.3D;
-                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 2,
-                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                        newLoc.getWorld().spawnParticle(
+                                Particle.VILLAGER_HAPPY,
+                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                                2,
+                                0,
+                                0,
+                                0,
+                                0,
+                                null,
+                                true
                         );
+
                     }
                 }
 
@@ -142,8 +150,8 @@ public class SoothingElixir extends AbstractAbility {
                             wp.getTeam(),
                             newLoc,
                             puddleRadius,
-                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                            new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                            new AreaEffect(1, Particle.DRIP_WATER).particlesPerSurface(0.025)
                     );
                     BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
                     wp.getGame().registerGameTask(particleTask);

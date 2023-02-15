@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -50,7 +49,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 10 == 0) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 20);
+            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, Particle.SMOKE_NORMAL, 1, 20);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -66,8 +65,8 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     voidRadius,
-                    new CircumferenceEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(0.6),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
+                    new CircumferenceEffect(Particle.FIREWORKS_SPARK, Particle.FIREWORKS_SPARK).particlesPerCircumference(0.6),
+                    new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
         }
 

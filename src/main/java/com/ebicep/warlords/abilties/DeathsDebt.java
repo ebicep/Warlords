@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -16,10 +15,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -93,8 +89,8 @@ public class DeathsDebt extends AbstractTotemBase {
                 wp,
                 totemStand.getLocation().clone().add(0, 1.25, 0),
                 respiteRadius,
-                new CircumferenceEffect(ParticleEffect.SPELL),
-                new DoubleLineEffect(ParticleEffect.REDSTONE)
+                new CircumferenceEffect(Particle.SPELL),
+                new DoubleLineEffect(Particle.REDSTONE)
         );
         BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
 
@@ -186,7 +182,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                 }
                             })
                     ));
-                    circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
+                    circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.SPELL_WITCH));
                     circle.setRadius(debtRadius);
 
                     //blue to purple totem

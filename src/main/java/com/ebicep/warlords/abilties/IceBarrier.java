@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -68,31 +68,16 @@ public class IceBarrier extends AbstractAbility {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
-                        ParticleEffect.CLOUD.display(
-                                0.2f,
-                                0.2f,
-                                0.2f,
-                                0.001f,
-                                1,
-                                particleLoc,
-                                500
-                        );
-                        ParticleEffect.FIREWORKS_SPARK.display(
-                                0.3f,
-                                0.2f,
-                                0.3f,
-                                0.0001f,
-                                1,
-                                particleLoc,
-                                500
-                        );
+
+                        particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
+                        particleLoc.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
 
                         if (pveUpgrade) {
                             Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
                             EffectUtils.playHelixAnimation(
                                     particleLoc.add(0, -1.25, 0),
                                     6,
-                                    ParticleEffect.FIREWORKS_SPARK,
+                                    Particle.FIREWORKS_SPARK,
                                     1,
                                     8
                             );

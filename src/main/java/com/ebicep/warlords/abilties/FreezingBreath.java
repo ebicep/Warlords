@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -73,15 +73,31 @@ public class FreezingBreath extends AbstractAbility {
                     this.cancel();
                 }
 
-                ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
-                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0), 500
+                wp.getWorld().spawnParticle(
+                        Particle.CLOUD,
+                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
+                        5,
+                        0,
+                        0,
+                        0,
+                        0.6f,
+                        null,
+                        true
                 );
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
-                    ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    wp.getWorld().spawnParticle(
+                            Particle.FIREWORKS_SPARK,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            null,
+                            true
                     );
                 }
 

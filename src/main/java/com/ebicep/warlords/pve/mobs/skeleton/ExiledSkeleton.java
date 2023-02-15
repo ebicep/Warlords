@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -73,7 +72,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
         if (ticksElapsed % 80 == 0) {
-            EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FLAME, 1);
+            EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), 6, Particle.FLAME, 1);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)

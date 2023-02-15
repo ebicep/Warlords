@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.LastStand;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,10 +13,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 
 public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
@@ -44,7 +40,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 60 == 0) {
-            EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
+            EffectUtils.playSphereAnimation(loc, 9, Particle.SPELL, 1);
             Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
             for (WarlordsEntity ally : PlayerFilter
                     .entitiesAround(warlordsNPC, 9, 9, 9)

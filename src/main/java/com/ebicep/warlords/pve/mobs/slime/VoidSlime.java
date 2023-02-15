@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 public class VoidSlime extends AbstractSlime implements EliteMob {
     public VoidSlime(Location spawnLocation) {
@@ -46,7 +46,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
                     .closestFirst(warlordsNPC)
                     .limit(1)
             ) {
-                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
                 we.subtractEnergy(5, true);
                 we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 20);
             }

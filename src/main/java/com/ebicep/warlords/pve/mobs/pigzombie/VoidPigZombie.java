@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilties.PrismGuard;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 
 public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
 
@@ -46,7 +46,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 == 0) {
-            EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.CLOUD, 1);
+            EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 6, Particle.CLOUD, 1);
         }
 
         if (ticksElapsed % 10 == 0) {

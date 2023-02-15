@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -117,7 +117,7 @@ public class LastStand extends AbstractAbility {
         ) {
             playersLastStanded++;
 
-            EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "LAST",
@@ -192,8 +192,16 @@ public class LastStand extends AbstractAbility {
                 double width = 1.2;
                 double distance = 3;
 
-                ParticleEffect.FLAME.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                loc.getWorld().spawnParticle(
+                        Particle.FLAME,
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
                 );
             }
 
@@ -202,8 +210,16 @@ public class LastStand extends AbstractAbility {
                 double width = 0.6;
                 double distance = 3;
 
-                ParticleEffect.REDSTONE.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                loc.getWorld().spawnParticle(
+                        Particle.REDSTONE,
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width)
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
                 );
             }
         }
@@ -216,7 +232,7 @@ public class LastStand extends AbstractAbility {
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
                         ) {
-                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
+                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, Particle.FLAME, 1);
                             Utils.addKnockback(name, wp.getLocation(), we, -2, 0.25f);
                         }
                     },

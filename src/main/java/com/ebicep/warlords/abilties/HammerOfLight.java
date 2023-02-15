@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
@@ -16,6 +15,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -130,8 +130,8 @@ public class HammerOfLight extends AbstractAbility {
                 wp.getTeam(),
                 location,
                 RADIUS,
-                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
+                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new LineEffect(location.clone().add(0, 2.3, 0), Particle.SPELL)
         );
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
         ArmorStand hammer = spawnHammer(location);
@@ -234,7 +234,17 @@ public class HammerOfLight extends AbstractAbility {
                                     angle += 40;
                                     Vector v = new Vector(x, 2, z);
                                     Location loc = wp.getLocation().clone().add(v);
-                                    ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
+                                    loc.getWorld().spawnParticle(
+                                            Particle.SPELL,
+                                            loc,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            null,
+                                            true
+                                    );
                                 }
 
                                 new CircleEffect(
@@ -242,7 +252,7 @@ public class HammerOfLight extends AbstractAbility {
                                         wp.getTeam(),
                                         wp.getLocation().add(0, 0.75f, 0),
                                         RADIUS / 2f,
-                                        new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f)
+                                        new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(0.5f)
                                 ).playEffects();
                             }
                         });
@@ -304,13 +314,13 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.4f);
                 EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
-                EffectUtils.playHelixAnimation(wp.getLocation(), RADIUS * radiusMultiplier, ParticleEffect.SPELL_WITCH, 1, 20);
+                EffectUtils.playHelixAnimation(wp.getLocation(), RADIUS * radiusMultiplier, Particle.SPELL_WITCH, 1, 20);
                 new CircleEffect(
                         wp.getGame(),
                         wp.getTeam(),
                         wp.getLocation().add(0, 0.75f, 0),
                         RADIUS * radiusMultiplier,
-                        new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(1)
+                        new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(1)
                 ).playEffects();
 
                 for (WarlordsEntity allyTarget : PlayerFilter

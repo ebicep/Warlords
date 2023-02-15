@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.blaze;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 
 public class Blaze extends AbstractBlaze implements EliteMob {
@@ -34,7 +34,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, Particle.FLAME, 1, 20);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 2, 0.5f);
     }
 
@@ -42,7 +42,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 160 == 0) {
             Location loc = warlordsNPC.getLocation();
-            EffectUtils.playSphereAnimation(loc, kindleRadius, ParticleEffect.FLAME, 1);
+            EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);
             new FallingBlockWaveEffect(
                     loc,
@@ -76,7 +76,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.2f);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 10);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, Particle.FLAME, 1, 10);
     }
 
 }

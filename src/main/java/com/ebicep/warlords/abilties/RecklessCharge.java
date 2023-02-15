@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -13,8 +12,10 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
@@ -97,10 +98,16 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {
-                    ParticleEffect.REDSTONE.display(
-                            new ParticleEffect.OrdinaryColor(255, 0, 0),
+                    wp.getLocation().getWorld().spawnParticle(
+                            Particle.REDSTONE,
                             wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
-                            500
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
+                            true
                     );
                 }
                 PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5)
