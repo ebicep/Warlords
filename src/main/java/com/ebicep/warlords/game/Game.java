@@ -782,8 +782,7 @@ public final class Game implements Runnable, AutoCloseable {
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (gameHolder.getGame() == this) {
                 ChatChannels.sendDebugMessage((CommandIssuer) null,
-                        ChatColor.LIGHT_PURPLE + "Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName(),
-                        true
+                        ChatColor.LIGHT_PURPLE + "Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName()
                 );
                 gameHolder.setGame(null);
                 break;

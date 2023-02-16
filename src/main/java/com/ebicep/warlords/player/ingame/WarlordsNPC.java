@@ -15,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
@@ -178,7 +177,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((LivingEntity) ((CraftEntity) entity).getHandle()).getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80);
+        entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80);
     }
 
     public MobTier getMobTier() {

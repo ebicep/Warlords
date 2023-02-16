@@ -44,7 +44,7 @@ public class MobCommand extends BaseCommand {
                     pveOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned " + amount + " Mobs", true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned " + amount + " Mobs");
                 return;
             }
         }
@@ -57,8 +57,7 @@ public class MobCommand extends BaseCommand {
             spawnedMob.getWarlordsNPC().addSpeedModifier(null, "Test", speed, 30 * 20, "BASE");
         }
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
+                ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs"
         );
     }
 
@@ -68,8 +67,7 @@ public class MobCommand extends BaseCommand {
             spawnedMob.setTarget(target);
         }
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
+                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs"
         );
     }
 
@@ -79,8 +77,7 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption) {
                 ((PveOption) option).getMobs().forEach(abstractMob -> abstractMob.setTarget(target));
                 ChatChannels.sendDebugMessage(player,
-                        ChatColor.GREEN + "Set All Mob Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                        true
+                        ChatColor.GREEN + "Set All Mob Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs"
                 );
                 return;
             }
@@ -103,7 +100,7 @@ public class MobCommand extends BaseCommand {
                                     ChatColor.GRAY + " | " + ChatColor.GREEN + mob.getX() + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + mob.getY() + ChatColor.GRAY + "," + ChatColor.GREEN + mob.getZ();
                         })
                         .collect(Collectors.joining("\n"));
-                ChatChannels.sendDebugMessage(issuer, message, true);
+                ChatChannels.sendDebugMessage(issuer, message);
                 return;
             }
         }
@@ -118,8 +115,7 @@ public class MobCommand extends BaseCommand {
                          .map(abstractMob -> abstractMob.getEntity().get())
                          .forEach(entityInsentient -> entityInsentient.setNoAi(ai));
                 ChatChannels.sendDebugMessage(player,
-                        ChatColor.GREEN + "Set All Mob NoAI to " + ChatColor.YELLOW + ai + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                        true
+                        ChatColor.GREEN + "Set All Mob NoAI to " + ChatColor.YELLOW + ai + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs"
                 );
                 return;
             }

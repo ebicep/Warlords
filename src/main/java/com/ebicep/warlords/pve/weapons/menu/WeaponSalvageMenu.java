@@ -6,8 +6,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -60,11 +60,8 @@ public class WeaponSalvageMenu {
             databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
-            );
+            player.sendMessage(Component.text(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
+                                        .append(weapon.getHoverComponent(false)));
 
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
             player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);

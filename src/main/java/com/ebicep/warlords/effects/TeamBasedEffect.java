@@ -1,5 +1,6 @@
 package com.ebicep.warlords.effects;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -8,21 +9,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 
 public class TeamBasedEffect {
-
-    private static void display(
-            Particle particle,
-            double offsetX,
-            double offsetY,
-            double offsetZ,
-            double speed,
-            int amount,
-            Location center,
-            Iterable<? extends Player> players
-    ) {
-        for (Player player : players) {
-            player.spawnParticle(particle, center, amount, offsetX, offsetY, offsetZ, speed, null);
-        }
-    }
 
     @Nonnull
     final Particle ownTeam;
@@ -41,6 +27,30 @@ public class TeamBasedEffect {
     public void display(GameTeamContainer teams, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {
         display(ownTeam, offsetX, offsetY, offsetZ, speed, amount, center, teams.getAllyPlayers().toList());
         display(enemyTeam, offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers().toList());
+    }
+
+    private static void display(
+            Particle particle,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed,
+            int amount,
+            Location center,
+            Iterable<? extends Player> players
+    ) {
+        Class<?> dataType = particle.getDataType();
+        if (dataType == Void.class) {
+            for (Player player : players) {
+                player.spawnParticle(particle, center, amount, offsetX, offsetY, offsetZ, speed, null);
+            }
+        } else {
+            if (dataType == Particle.DustOptions.class) {
+                for (Player player : players) {
+                    player.spawnParticle(particle, center, amount, offsetX, offsetY, offsetZ, speed, new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1));
+                }
+            }
+        }
     }
 
     public void display(GameTeamContainer teams, Vector direction, float speed, Location center) {

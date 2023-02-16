@@ -17,7 +17,7 @@ public class QuestCommand extends BaseCommand {
     @Subcommand("toggle")
     public void toggle(CommandIssuer issuer) {
         isQuestsEnabled = !isQuestsEnabled;
-        ChatChannels.sendDebugMessage(issuer, isQuestsEnabled ? ChatColor.GREEN + "Quests Enabled" : ChatColor.RED + "Quests Disabled", true);
+        ChatChannels.sendDebugMessage(issuer, isQuestsEnabled ? ChatColor.GREEN + "Quests Enabled" : ChatColor.RED + "Quests Disabled");
     }
 
 }

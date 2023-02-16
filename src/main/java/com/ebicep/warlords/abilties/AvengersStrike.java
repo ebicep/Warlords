@@ -90,8 +90,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         Optional<Consecrate> consecrate = getStandingOnConsecrate(wp, nearPlayer);
         consecrate.ifPresent(cons -> {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
+            minDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
+            maxDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
         });
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,

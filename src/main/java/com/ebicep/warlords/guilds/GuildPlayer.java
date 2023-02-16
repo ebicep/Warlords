@@ -54,10 +54,7 @@ public class GuildPlayer {
 
     public String getName() {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null) {
-            return offlinePlayer.getName();
-        }
-        return "UNKNOWN";
+        return offlinePlayer.getName();
     }
 
     public String getListName() {

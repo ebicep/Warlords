@@ -95,7 +95,7 @@ public class StatsLeaderboardManager {
                                 }
                                 if (databasePlayer.getName() == null) {
                                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(databasePlayer.getUuid());
-                                    if (offlinePlayer != null && offlinePlayer.getName() != null) {
+                                    if (offlinePlayer.getName() != null) {
                                         databasePlayer.setName(offlinePlayer.getName());
                                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);

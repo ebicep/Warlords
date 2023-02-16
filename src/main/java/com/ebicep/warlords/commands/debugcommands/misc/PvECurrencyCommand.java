@@ -25,9 +25,8 @@ public class PvECurrencyCommand extends BaseCommand {
             databasePlayer.getPveStats().addCurrency(currency, amount);
         });
         ChatChannels.playerSendMessage(player,
-                ChatColor.GREEN + "Gave yourself " + ChatColor.YELLOW + amount + " " + ChatColor.LIGHT_PURPLE + currency.name + (amount != 1 ? "s" : ""),
                 ChatChannels.DEBUG,
-                true
+                ChatColor.GREEN + "Gave yourself " + ChatColor.YELLOW + amount + " " + ChatColor.LIGHT_PURPLE + currency.name + (amount != 1 ? "s" : "")
         );
     }
 

@@ -13,8 +13,8 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,9 +36,10 @@ public class WeaponCommand extends BaseCommand {
     public static void giveWeapon(Player player, AbstractWeapon abstractWeapon) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new ComponentBuilder(ChatColor.GRAY + "Spawned weapon: ")
-                            .appendHoverItem(abstractWeapon.getName(), abstractWeapon.generateItemStack(false))
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text(ChatColor.GRAY + "Spawned weapon: ")
+                                                                                .append(Component.text(abstractWeapon.getName())
+                                                                                                 .hoverEvent(abstractWeapon.generateItemStack(false)
+                                                                                                                           .asHoverEvent()))
             );
         });
     }
@@ -84,9 +85,7 @@ public class WeaponCommand extends BaseCommand {
     public void clear(Player player) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getWeaponInventory().clear();
-            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new ComponentBuilder(ChatColor.GRAY + "Cleared weapon inventory.")
-            );
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text(ChatColor.GRAY + "Cleared weapon inventory."));
         });
     }
 
@@ -97,11 +96,8 @@ public class WeaponCommand extends BaseCommand {
             List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
             for (int i = 0; i < weaponInventory.size(); i++) {
                 AbstractWeapon weapon = weaponInventory.get(i);
-                player.spigot().sendMessage(
-                        new ComponentBuilder(ChatColor.GOLD.toString() + (i + 1) + ". ")
-                                .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                .create()
-                );
+                player.sendMessage(Component.text(ChatColor.GOLD.toString() + (i + 1) + ". ")
+                                            .append(weapon.getHoverComponent(false)));
             }
         });
     }

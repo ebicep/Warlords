@@ -26,7 +26,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
@@ -34,8 +33,10 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
@@ -80,7 +81,7 @@ public abstract class WarlordsEntity {
     protected UUID uuid;
     protected AbstractPlayerClass spec;
     protected float walkSpeed = 1;
-    protected org.bukkit.entity.LivingEntity entity;
+    protected LivingEntity entity;
     protected Specializations specClass;
     @Nullable
     protected CompassTargetMarker compassTarget;
@@ -1051,7 +1052,9 @@ public abstract class WarlordsEntity {
             switch (playerSettings.getChatHealingMode()) {
                 case ALL -> {
                     if (player.showDebugMessage) {
-                        player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        player.sendMessage(Component.text(ownFeed.toString())
+                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        );
                     } else {
                         player.sendMessage(ownFeed.toString());
                     }
@@ -1059,7 +1062,9 @@ public abstract class WarlordsEntity {
                 case CRITS_ONLY -> {
                     if (isCrit) {
                         if (player.showDebugMessage) {
-                            player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                            player.sendMessage(Component.text(ownFeed.toString())
+                                                        .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                            );
                         } else {
                             player.sendMessage(ownFeed.toString());
                         }
@@ -1120,7 +1125,9 @@ public abstract class WarlordsEntity {
             switch (playerSettings.getChatHealingMode()) {
                 case ALL -> {
                     if (sender.showDebugMessage) {
-                        sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        sender.sendMessage(Component.text(ownFeed.toString())
+                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        );
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
@@ -1128,7 +1135,9 @@ public abstract class WarlordsEntity {
                 case CRITS_ONLY -> {
                     if (isCrit) {
                         if (sender.showDebugMessage) {
-                            sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                            sender.sendMessage(Component.text(ownFeed.toString())
+                                                        .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                            );
                         } else {
                             sender.sendMessage(ownFeed.toString());
                         }
@@ -1170,7 +1179,9 @@ public abstract class WarlordsEntity {
             switch (playerSettings.getChatHealingMode()) {
                 case ALL -> {
                     if (receiver.showDebugMessage) {
-                        receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
+                        receiver.sendMessage(Component.text(receiver.toString())
+                                                      .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        );
                     } else {
                         receiver.sendMessage(allyFeed.toString());
                     }
@@ -1178,7 +1189,9 @@ public abstract class WarlordsEntity {
                 case CRITS_ONLY -> {
                     if (isCrit) {
                         if (receiver.showDebugMessage) {
-                            receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
+                            receiver.sendMessage(Component.text(receiver.toString())
+                                                          .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                            );
                         } else {
                             receiver.sendMessage(allyFeed.toString());
                         }
@@ -1229,7 +1242,9 @@ public abstract class WarlordsEntity {
             switch (playerSettings.getChatDamageMode()) {
                 case ALL -> {
                     if (receiver.showDebugMessage) {
-                        receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
+                        receiver.sendMessage(Component.text(enemyFeed.toString())
+                                                      .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        );
                     } else {
                         receiver.sendMessage(enemyFeed.toString());
                     }
@@ -1237,7 +1252,9 @@ public abstract class WarlordsEntity {
                 case CRITS_ONLY -> {
                     if (isCrit) {
                         if (receiver.showDebugMessage) {
-                            receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
+                            receiver.sendMessage(Component.text(enemyFeed.toString())
+                                                          .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                            );
                         } else {
                             receiver.sendMessage(enemyFeed.toString());
                         }
@@ -1274,7 +1291,9 @@ public abstract class WarlordsEntity {
             switch (playerSettings.getChatDamageMode()) {
                 case ALL -> {
                     if (sender.showDebugMessage) {
-                        sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        sender.sendMessage(Component.text(ownFeed.toString())
+                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        );
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
@@ -1282,7 +1301,9 @@ public abstract class WarlordsEntity {
                 case CRITS_ONLY -> {
                     if (isCrit) {
                         if (sender.showDebugMessage) {
-                            sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                            sender.sendMessage(Component.text(ownFeed.toString())
+                                                        .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                            );
                         } else {
                             sender.sendMessage(ownFeed.toString());
                         }
@@ -1582,21 +1603,12 @@ public abstract class WarlordsEntity {
         return FlagHolder.isPlayerHolderFlag(this);
     }
 
-    @Nonnull
-    public LivingEntity getEntity() {
-        return this.entity;
-    }
-
     public Team getTeam() {
         return team;
     }
 
     public void setTeam(Team team) {
         this.team = team;
-    }
-
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
     }
 
     public Specializations getSpecClass() {
@@ -1813,18 +1825,17 @@ public abstract class WarlordsEntity {
     }
 
     public void showDeathAnimation() {
-        Zombie zombie;
-        if (this.entity instanceof Player player) {
-            zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+        if (!(this.entity instanceof Player player)) {
+            this.entity.damage(200);
+        } else {
+            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
             zombie.getEquipment().setBoots(player.getInventory().getBoots());
             zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
             zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
             zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
             zombie.getEquipment().setItemInMainHand(player.getInventory().getItemInMainHand());
-        } else {
-            zombie = (Zombie) this.entity;
+            zombie.damage(2000);
         }
-        zombie.damage(2000);
     }
 
     public void heal() {
@@ -1883,6 +1894,15 @@ public abstract class WarlordsEntity {
         return energyGiven;
     }
 
+    @Nonnull
+    public LivingEntity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -1903,6 +1923,12 @@ public abstract class WarlordsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void sendMessage(Component component) {
+        if (this.entity instanceof Player player) {
+            player.sendMessage(component);
+        }
     }
 
     public void sendSpigotMessage(BaseComponent[] message) {
@@ -2029,18 +2055,18 @@ public abstract class WarlordsEntity {
      *
      * <p>This still has the chance of producing an error depending on how big the size of minuteStats is, how many stats the player has, and what other BaseComponents are on the same line as this. (String length increases).
      * Point of reference: 300 minutes with 500K damage/healing/absorbed PER minute did not produce an error
+     * Max json size is 262144 chars
      *
      * @param minuteStatsType The type of minute stats to get the hoverable text for
      * @param hoverable       if the text should be hoverable
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
-    public BaseComponent[] getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
+    public Component getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
         if (!hoverable) {
-            return new ComponentBuilder(ChatColor.WHITE + minuteStatsType.name + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(
-                    minuteStats.total())))
-                    .create();
+            return Component.text(ChatColor.WHITE + minuteStatsType.name + ": " +
+                    ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())));
         } else {
-            ComponentBuilder componentBuilder = new ComponentBuilder();
+            net.kyori.adventure.text.TextComponent component = Component.empty();
             StringBuilder stringBuilder = new StringBuilder();
             String minuteStatsTypeName = minuteStatsType.name;
 
@@ -2068,16 +2094,15 @@ public abstract class WarlordsEntity {
                     }
                     stringBuilder.setLength(stringBuilder.length() - 1);
                     stringLength += stringBuilder.length();
-                    componentBuilder.appendHoverText((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i],
-                            stringBuilder.toString()
-                    );
+                    component.append(Component.text((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i])
+                                              .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString()))));
                     stringBuilder.setLength(0);
                 }
                 //this will never happen in reality
                 if (stringLength >= 8000) {
-                    for (BaseComponent baseComponent : componentBuilder.create()) {
-                        if (baseComponent instanceof TextComponent) {
-                            ((TextComponent) baseComponent).setText(((TextComponent) baseComponent).getText().replace("Minute", "Min."));
+                    for (Component child : component.children()) {
+                        if (child instanceof TextComponent textComponent) {
+                            textComponent.content(textComponent.content().replace("Minute", "Min."));
                         }
                     }
                 }
@@ -2093,11 +2118,12 @@ public abstract class WarlordsEntity {
                                  .append(ChatColor.GOLD);
                     stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
                 }
-                componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
-                        minuteStatsType.getValue.apply(minuteStats.total())), stringBuilder.toString());
+                component.append(Component.text(ChatColor.WHITE + minuteStatsTypeName + ": " +
+                                                  ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())))
+                                          .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString()))));
             }
 
-            return componentBuilder.create();
+            return component;
         }
     }
 
@@ -2198,7 +2224,7 @@ public abstract class WarlordsEntity {
     }
 
     public boolean isSneaking() {
-        return this.entity instanceof Player && ((Player) this.entity).isSneaking();
+        return this.entity instanceof Player && this.entity.isSneaking();
     }
 
     public boolean isWasSneaking() {

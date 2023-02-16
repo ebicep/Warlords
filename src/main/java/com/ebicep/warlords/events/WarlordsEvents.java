@@ -35,6 +35,9 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.*;
 import org.bukkit.entity.Entity;
@@ -75,7 +78,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text("Please wait!"));
         } else {
             if (!DatabaseManager.enabled) {
                 return;
@@ -101,7 +104,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
         if (!DatabaseManager.inCache(event.getPlayer().getUniqueId(), PlayersCollections.LIFETIME)) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Unable to load player data. Report this if this issue persists.");
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text("Unable to load player data. Report this if this issue persists."));
         }
     }
 
@@ -113,10 +116,10 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
+            e.joinMessage(Component.text(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!"));
         } else {
             player.setAllowFlight(true);
-            e.setJoinMessage(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GOLD + " joined the lobby!");
+            e.joinMessage(Permissions.getPrefixWithColor(player).append(Component.text(player.getName() + ChatColor.GOLD + " joined the lobby!")));
         }
 
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
@@ -208,8 +211,11 @@ public class WarlordsEvents implements Listener {
                                     20
                             );
                             //sumSmash is now prestige level 5 in Pyromancer!
-                            Bukkit.broadcastMessage(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(
-                                    prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
+                            Bukkit.broadcast(Permissions.getPrefixWithColor(player)
+                                                        .append(Component.text(player.getName() + ChatColor.GRAY + " is now prestige level " +
+                                                                ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige +
+                                                                ChatColor.GRAY + " in " + ChatColor.GOLD + value.name)
+                                                        ));
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
                     }
@@ -262,9 +268,9 @@ public class WarlordsEvents implements Listener {
         WarlordsPlayer wp = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (wp != null) {
             wp.updatePlayerReference(null);
-            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
+            e.quitMessage(Component.text(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!"));
         } else {
-            e.setQuitMessage(Permissions.getPrefixWithColor(e.getPlayer()) + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
+            e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer()).append(Component.text(e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!")));
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -674,6 +680,28 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent e) {
+//        Player player = e.getPlayer();
+//        UUID uuid = player.getUniqueId();
+//        if (MuteCommand.MUTED_PLAYERS.getOrDefault(uuid, false)) {
+//            e.setCancelled(true);
+//            return;
+//        }
+//
+//        if (!ChatChannels.PLAYER_CHAT_CHANNELS.containsKey(uuid) || ChatChannels.PLAYER_CHAT_CHANNELS.get(uuid) == null) {
+//            ChatChannels.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
+//        }
+//
+//        String prefixWithColor = Permissions.getPrefixWithColor(player);
+//        if (prefixWithColor.equals(ChatColor.WHITE.toString())) {
+//            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
+//        }
+//
+//        ChatChannels channel = ChatChannels.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);
+//        channel.onPlayerChatEvent(e, prefixWithColor);
+    }
+
+    @EventHandler
+    public void chat(AsyncChatEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
         if (MuteCommand.MUTED_PLAYERS.getOrDefault(uuid, false)) {
@@ -685,8 +713,8 @@ public class WarlordsEvents implements Listener {
             ChatChannels.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
         }
 
-        String prefixWithColor = Permissions.getPrefixWithColor(player);
-        if (prefixWithColor.equals(ChatColor.WHITE.toString())) {
+        Component prefixWithColor = Permissions.getPrefixWithColor(player);
+        if (Objects.requireNonNull(prefixWithColor.color()).value() == NamedTextColor.WHITE.value()) {
             ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
         }
 

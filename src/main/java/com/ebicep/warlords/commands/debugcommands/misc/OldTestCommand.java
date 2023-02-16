@@ -1,7 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.menu.MenuEventListener;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,16 +16,20 @@ public class OldTestCommand implements CommandExecutor {
     public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, String[] strings) {
 
         if (commandSender instanceof Player player) {
-
             if (!player.isOp()) {
                 return true;
             }
         }
 
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            System.out.println(onlinePlayer.getName());
-            System.out.println(onlinePlayer.getMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY));
+        if (commandSender instanceof Player player) {
+            player.chat(LegacyComponentSerializer.legacyAmpersand().serialize(Component.text("TEST").color(NamedTextColor.RED)));
         }
+
+
+//        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+//            System.out.println(onlinePlayer.getName());
+//            System.out.println(onlinePlayer.getMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY));
+//        }
 //
 //        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
 //            System.out.println(game.getMap() + " - " + game.getGame());

@@ -7,10 +7,10 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
@@ -73,12 +73,15 @@ public abstract class AbstractPlayerClass {
         }
     }
 
+    public AbstractAbility[] getAbilities() {
+        return new AbstractAbility[]{weapon, red, purple, blue, orange};
+    }
+
     public void setUpgradeBranches(WarlordsPlayer wp) {
 
     }
 
-    public List<BaseComponent[]> getFormattedData() {
-        List<BaseComponent[]> baseComponents = new ArrayList<>();
+    public List<Component> getFormattedData() {
         ChatColor[] chatColors = {
                 ChatColor.GREEN,
                 ChatColor.RED,
@@ -90,22 +93,19 @@ public abstract class AbstractPlayerClass {
                 ChatColor.GRAY,
                 ChatColor.GRAY
         };
+        List<Component> components = new ArrayList<>();
         for (int i = 0; i < getAbilities().length; i++) {
             AbstractAbility ability = getAbilities()[i];
-            baseComponents.add(new ComponentBuilder()
-                    .appendHoverText(chatColors[i] + ability.getName(), ability.getAbilityInfo()
-                            .stream()
-                            .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
-                            .collect(Collectors.joining("\n")))
-                    .create()
+            String abilityInfo = ability.getAbilityInfo()
+                                        .stream()
+                                        .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
+                                        .collect(Collectors.joining("\n"));
+            components.add(Component.text(chatColors[i] + ability.getName())
+                                    .hoverEvent(HoverEvent.showText(Component.text(abilityInfo)))
             );
         }
 
-        return baseComponents;
-    }
-
-    public AbstractAbility[] getAbilities() {
-        return new AbstractAbility[]{weapon, red, purple, blue, orange};
+        return components;
     }
 
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
@@ -120,25 +120,14 @@ public abstract class AbstractPlayerClass {
 
         if (!wp.getGame().isFrozen()) {
 
-            AbstractAbility ability = null;
-
-            switch (slot) {
-                case 0:
-                    ability = weapon;
-                    break;
-                case 1:
-                    ability = red;
-                    break;
-                case 2:
-                    ability = purple;
-                    break;
-                case 3:
-                    ability = blue;
-                    break;
-                case 4:
-                    ability = orange;
-                    break;
-            }
+            AbstractAbility ability = switch (slot) {
+                case 0 -> weapon;
+                case 1 -> red;
+                case 2 -> purple;
+                case 3 -> blue;
+                case 4 -> orange;
+                default -> null;
+            };
 
             if (ability == null) {
                 return;

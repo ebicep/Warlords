@@ -26,13 +26,13 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -164,55 +164,39 @@ public class EndState implements State, TimerDebugAble {
                 continue;
             }
 
-            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                    .appendHoverText(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚",
-                            ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalKills) + "\n" +
-                                    ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalAssists) + "\n" +
-                                    ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalDeaths) + "\n" +
-                                    ChatColor.WHITE + "Total Melee Hits (you): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(wp.getMinuteStats()
-                                                                                                                                     .total()
-                                                                                                                                     .getMeleeHits())
-                    )
-                    .create()
+            ChatUtils.sendCenteredMessage(player,
+                    Component.text(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚")
+                             .hoverEvent(HoverEvent.showText(Component.text(ChatColor.WHITE + "Total Kills (everyone): " +
+                                     ChatColor.GREEN + NumberFormat.addCommaAndRound(totalKills) + "\n" +
+                                     ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalAssists) + "\n" +
+                                     ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalDeaths) + "\n" +
+                                     ChatColor.WHITE + "Total Melee Hits (you): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(wp.getMinuteStats()
+                                                                                                                                      .total()
+                                                                                                                                      .getMeleeHits()))))
+
             );
 
             boolean hoverable = !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode());
-            List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)));
-            baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable)));
-            baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DEATHS, hoverable)));
-            ChatUtils.sendCenteredMessageWithEvents(player, baseComponents.toArray(new BaseComponent[0]));
-
-            baseComponents.clear();
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.DAMAGE, hoverable)));
-            baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.HEALING, hoverable)));
-            baseComponents.add(ChatUtils.SPACER);
-            baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED, hoverable)));
-            ChatUtils.sendCenteredMessageWithEvents(player, baseComponents.toArray(new BaseComponent[0]));
+            ChatUtils.sendCenteredMessage(player,
+                    wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)
+                      .append(ChatUtils.SPACER)
+                      .append(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable))
+                      .append(ChatUtils.SPACER)
+                      .append(wp.getAllMinuteHoverableStats(MinuteStats.DEATHS, hoverable))
+            );
+            ChatUtils.sendCenteredMessage(player,
+                    wp.getAllMinuteHoverableStats(MinuteStats.DAMAGE, hoverable)
+                      .append(ChatUtils.SPACER)
+                      .append(wp.getAllMinuteHoverableStats(MinuteStats.HEALING, hoverable))
+                      .append(ChatUtils.SPACER)
+                      .append(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED, hoverable))
+            );
 
             ChatUtils.sendMessage(player, false, "");
 
             //ABILITY INFO
-            List<BaseComponent> formattedData = new ArrayList<>();
-            List<BaseComponent[]> components = wp.getSpec().getFormattedData();
-            for (int i = 0; i < components.size() && i < 3; i++) {
-                formattedData.addAll(List.of(components.get(i)));
-                if (i < 2) {
-                    formattedData.add(ChatUtils.SPACER);
-                }
-            }
-            ChatUtils.sendCenteredMessageWithEvents(player, formattedData.toArray(new BaseComponent[0]));
-            formattedData.clear();
-            for (int i = 3; i < components.size(); i++) {
-                formattedData.addAll(List.of(components.get(i)));
-                if (i < 4) {
-                    formattedData.add(ChatUtils.SPACER);
-                }
-            }
-            ChatUtils.sendCenteredMessageWithEvents(player, formattedData.toArray(new BaseComponent[0]));
-            GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.put(player.getUniqueId(), components);
+            GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.put(player.getUniqueId(), wp.getSpec().getFormattedData());
+            GetPlayerLastAbilityStatsCommand.sendLastAbilityStats(player, player.getUniqueId());
 
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
@@ -336,86 +320,76 @@ public class EndState implements State, TimerDebugAble {
                 hover.append(ChatColor.WHITE).append("Time Elapsed").append(ChatColor.GRAY).append(": ")
                      .append(ChatColor.GREEN).append(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20));
             });
-        sendGlobalEventMessage(game, new ComponentBuilder()
-                .appendHoverText(ChatColor.BLUE.toString() + ChatColor.BOLD + "✚ GAME STATS ✚", hover.toString())
-                .create()
-        );
+        sendGlobalEventMessage(game, Component.text(ChatColor.BLUE.toString() + ChatColor.BOLD + "✚ GAME STATS ✚")
+                                              .hoverEvent(HoverEvent.showText(Component.text(hover.toString()))));
     }
 
     private void showTopDamage(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
-        sendGlobalEventMessage(game, new ComponentBuilder()
-                .appendHoverText(ChatColor.RED.toString() + ChatColor.BOLD + "✚ TOP DAMAGE ✚",
-                        ChatColor.RED + "Total Damage (everyone)" +
-                                ChatColor.GRAY + ": " +
-                                ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
-                                                                                      .sum())
-                )
-                .create()
+        sendGlobalEventMessage(game,
+                Component.text(ChatColor.RED.toString() + ChatColor.BOLD + "✚ TOP DAMAGE ✚")
+                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.RED + "Total Damage (everyone)" +
+                                 ChatColor.GRAY + ": " +
+                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
+                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
+                                                                                       .sum())
+                         )))
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed())
                          .toList();
-        List<BaseComponent> leaderboardPlayersDamage = new ArrayList<>();
+        Component leaderboardPlayersDamage = Component.empty();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
-            leaderboardPlayersDamage.addAll(List.of(new ComponentBuilder()
-                    .appendHoverText(ChatColor.AQUA + we.getName() +
-                                    ChatColor.GRAY + ": " +
-                                    ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()),
-                            ChatColor.DARK_GRAY + "Lv" +
-                                    ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
-                                    ChatColor.GOLD + we.getSpec().getClassName() +
-                                    ChatColor.GREEN + " (" +
-                                    we.getSpec().getClass().getSimpleName() +
-                                    ")"
-                    )
-                    .create()));
+            leaderboardPlayersDamage.append(
+                    Component.text(ChatColor.AQUA + we.getName() + ChatColor.GRAY + ": " +
+                                     ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()))
+                             .hoverEvent(HoverEvent.showText(Component.text(
+                                     ChatColor.DARK_GRAY + "Lv" +
+                                             ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
+                                             ChatColor.GOLD + we.getSpec().getClassName() +
+                                             ChatColor.GREEN + " (" + we.getSpec().getClass().getSimpleName() + ")"
+                             ))));
 
             if (i != players.size() - 1 && i != 2) {
-                leaderboardPlayersDamage.add(ChatUtils.SPACER);
+                leaderboardPlayersDamage.append(ChatUtils.SPACER);
             }
         }
-        sendGlobalEventMessage(game, leaderboardPlayersDamage.toArray(new BaseComponent[0]));
+        sendGlobalEventMessage(game, leaderboardPlayersDamage);
     }
 
     private void showTopHealing(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
-        sendGlobalEventMessage(game, new ComponentBuilder()
-                .appendHoverText(ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ TOP HEALING ✚",
-                        ChatColor.GREEN + "Total Healing (everyone)" +
-                                ChatColor.GRAY + ": " +
-                                ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
-                                                                                      .sum())
-                )
-                .create()
+        sendGlobalEventMessage(game,
+                Component.text(ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ TOP HEALING ✚")
+                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + "Total Healing (everyone)" +
+                                 ChatColor.GRAY + ": " +
+                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
+                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
+                                                                                       .sum())
+                         )))
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()).reversed())
                          .toList();
-        List<BaseComponent> leaderboardPlayersHealing = new ArrayList<>();
+        Component leaderboardPlayersHealing = Component.empty();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
-            leaderboardPlayersHealing.addAll(List.of(new ComponentBuilder()
-                    .appendHoverText(ChatColor.AQUA + we.getName() +
-                                    ChatColor.GRAY + ": " +
-                                    ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getHealing()),
-                            ChatColor.DARK_GRAY + "Lv" +
-                                    ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
-                                    ChatColor.GOLD + we.getSpec().getClassName() +
-                                    ChatColor.GREEN + " (" +
-                                    we.getSpec().getClass().getSimpleName() +
-                                    ")"
-                    )
-                    .create()));
+            leaderboardPlayersHealing.append(
+                    Component.text(ChatColor.AQUA + we.getName() + ChatColor.GRAY + ": " +
+                                     ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getHealing()))
+                             .hoverEvent(HoverEvent.showText(Component.text(
+                                     ChatColor.DARK_GRAY + "Lv" +
+                                             ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
+                                             ChatColor.GOLD + we.getSpec().getClassName() +
+                                             ChatColor.GREEN + " (" + we.getSpec().getClass().getSimpleName() + ")"
+                             ))));
 
             if (i != players.size() - 1 && i != 2) {
-                leaderboardPlayersHealing.add(ChatUtils.SPACER);
+                leaderboardPlayersHealing.append(ChatUtils.SPACER);
             }
         }
-        sendGlobalEventMessage(game, leaderboardPlayersHealing.toArray(new BaseComponent[0]));
+        sendGlobalEventMessage(game, leaderboardPlayersHealing);
     }
 
     /**
@@ -423,30 +397,27 @@ public class EndState implements State, TimerDebugAble {
      */
     private void showFlagCaptures(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
-        sendGlobalEventMessage(game, new ComponentBuilder()
-                .appendHoverText(ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ MVP ✚",
-                        ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " +
-                                ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                      .mapToInt(WarlordsEntity::getFlagsCaptured)
-                                                                                      .sum()) +
-                                "\n" +
-                                ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " +
-                                ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                      .mapToInt(WarlordsEntity::getFlagsCaptured)
-                                                                                      .sum())
-                )
-                .create());
+        sendGlobalEventMessage(game,
+                Component.text(ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ MVP ✚")
+                         .hoverEvent(HoverEvent.showText(Component.text(
+                                 ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " +
+                                         ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsEntity::getFlagsCaptured).sum()) +
+                                         "\n" +
+                                         ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " +
+                                         ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsEntity::getFlagsReturned).sum())
+                         )))
+        );
         players = players.stream()
                          .sorted(Comparator.comparing(WarlordsEntity::getTotalCapsAndReturnsWeighted).reversed())
                          .toList();
-        sendGlobalEventMessage(game, new ComponentBuilder()
-                .appendHoverText(ChatColor.AQUA + players.get(0).getName(),
-                        ChatColor.LIGHT_PURPLE + "Flag Captures: " +
-                                ChatColor.GOLD + players.get(0).getFlagsCaptured() +
-                                "\n" +
-                                ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned()
-                )
-                .create()
+        WarlordsPlayer topPlayer = players.get(0);
+        sendGlobalEventMessage(game,
+                Component.text(ChatColor.AQUA + topPlayer.getName())
+                         .hoverEvent(HoverEvent.showText(Component.text(
+                                 ChatColor.LIGHT_PURPLE + "Flag Captures: " +
+                                         ChatColor.GOLD + topPlayer.getFlagsCaptured() + "\n" +
+                                         ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + topPlayer.getFlagsReturned()
+                         )))
         );
     }
 
@@ -495,28 +466,22 @@ public class EndState implements State, TimerDebugAble {
             specExpSummary.setLength(specExpSummary.length() - 1);
             universalExpSummary.setLength(universalExpSummary.length() - 1);
 
-            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                    .appendHoverText(
-                            ChatColor.GRAY + "+" +
-                                    ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(experienceEarnedSpec) + " " +
-                                    ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " +
-                                    ChatColor.GRAY + "(" +
-                                    wp.getSpecClass().specType.chatColor + wp.getSpecClass().name +
-                                    ChatColor.GRAY + ")",
-                            specExpSummary.toString()
-                    )
-                    .create()
+            ChatUtils.sendCenteredMessage(player,
+                    Component.text(ChatColor.GRAY + "+" +
+                                     ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(experienceEarnedSpec) + " " +
+                                     ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " +
+                                     ChatColor.GRAY + "(" +
+                                     wp.getSpecClass().specType.chatColor + wp.getSpecClass().name +
+                                     ChatColor.GRAY + ")")
+                             .hoverEvent(HoverEvent.showText(Component.text(specExpSummary.toString())))
             );
 
             ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
-            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                    .appendHoverText(
-                            ChatColor.GRAY + "+" +
-                                    ChatColor.DARK_AQUA + NumberFormat.addCommaAndRound(experienceEarnedUniversal) + " " +
-                                    ChatColor.GOLD + "Universal Experience ",
-                            universalExpSummary.toString()
-                    )
-                    .create()
+            ChatUtils.sendCenteredMessage(player,
+                    Component.text(ChatColor.GRAY + "+" +
+                                     ChatColor.DARK_AQUA + NumberFormat.addCommaAndRound(experienceEarnedUniversal) + " " +
+                                     ChatColor.GOLD + "Universal Experience ")
+                             .hoverEvent(HoverEvent.showText(Component.text(universalExpSummary.toString())))
             );
 
             ExperienceManager.giveLevelUpMessage(player, experienceUniversal - experienceEarnedUniversal, experienceUniversal);
@@ -539,17 +504,13 @@ public class EndState implements State, TimerDebugAble {
                 });
                 expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
 
-                ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                        .appendHoverText(
-                                ChatColor.GRAY + "+" +
-                                        ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromWaveDefense.values()
-                                                                                                          .stream()
-                                                                                                          .mapToLong(Long::longValue)
-                                                                                                          .sum()) + " " +
-                                        ChatColor.DARK_GREEN + "Guild Experience", expFromWaveDefenseSummary.toString()
-                        )
-                        .create()
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text(ChatColor.GRAY + "+" +
+                                         ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromWaveDefense.values().stream().mapToLong(Long::longValue).sum()) +
+                                         ChatColor.DARK_GREEN + " Guild Experience")
+                                 .hoverEvent(HoverEvent.showText(Component.text(expFromWaveDefenseSummary.toString())))
                 );
+
             }
         }
     }
@@ -579,15 +540,13 @@ public class EndState implements State, TimerDebugAble {
             });
             coinSummaryString.setLength(coinSummaryString.length() - 1);
 
-            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                    .appendHoverText(
-                            ChatColor.GRAY + "+" +
-                                    ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalCoinsGained()) + " " +
-                                    ChatColor.GOLD + "Coins",
-                            coinSummaryString.toString()
-                    )
-                    .create()
+            ChatUtils.sendCenteredMessage(player,
+                    Component.text(ChatColor.GRAY + "+" +
+                                     ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalCoinsGained()) +
+                                     ChatColor.GOLD + " Coins")
+                             .hoverEvent(HoverEvent.showText(Component.text(coinSummaryString.toString())))
             );
+
 
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
             if (guildGuildPlayerPair != null) {
@@ -625,13 +584,12 @@ public class EndState implements State, TimerDebugAble {
                 weaponsFoundByType.forEach((rarity, weapons) -> {
                     int amountFound = weapons.size();
                     if (amountFound > 0) {
-                        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                                .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
-                                        weapons.stream()
-                                               .map(AbstractWeapon::getName)
-                                               .collect(Collectors.joining("\n"))
-                                )
-                                .create()
+                        ChatUtils.sendCenteredMessage(player,
+                                Component.text(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"))
+                                         .hoverEvent(HoverEvent.showText(Component.text(weapons.stream()
+                                                                                               .map(AbstractWeapon::getName)
+                                                                                               .collect(Collectors.joining("\n"))))
+                                         )
                         );
                     }
                 });
@@ -659,9 +617,9 @@ public class EndState implements State, TimerDebugAble {
                 ChatUtils.sendCenteredMessage(player, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚");
             }
             for (Quests quest : quests) {
-                ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                        .appendHoverText(ChatColor.GREEN + quest.name, ChatColor.GREEN + quest.description)
-                        .create()
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text(ChatColor.GREEN + quest.name)
+                                 .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + quest.description)))
                 );
             }
         }
@@ -700,10 +658,8 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "", false);
     }
 
-    public void sendGlobalEventMessage(Game game, BaseComponent[] message) {
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            ChatUtils.sendCenteredMessageWithEvents(p, message);
-        });
+    public void sendGlobalEventMessage(Game game, Component component) {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> ChatUtils.sendCenteredMessage(p, component));
     }
 
     @Override

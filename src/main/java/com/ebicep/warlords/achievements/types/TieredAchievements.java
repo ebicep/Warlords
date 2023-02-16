@@ -4,12 +4,6 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -277,29 +271,6 @@ public enum TieredAchievements implements Achievement {
     @Override
     public Difficulty getDifficulty() {
         return null;
-    }
-
-    @Override
-    public void sendAchievementUnlockMessage(Player player) {
-        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  Achievement Unlocked: ")
-                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
-                .append(ChatColor.GREEN + "  <<")
-                .create();
-        ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true);
-    }
-
-    @Override
-    public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
-        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: ")
-                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
-                .append(ChatColor.GREEN + "  <<")
-                .create();
-        warlordsEntity.getGame().warlordsPlayers()
-                //.filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
-                .filter(wp -> wp != warlordsEntity)
-                .filter(wp -> wp.getEntity() instanceof Player)
-                .map(wp -> (Player) wp.getEntity())
-                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true));
     }
 
     public static class TieredAchievementRecord extends AbstractAchievementRecord<TieredAchievements> {

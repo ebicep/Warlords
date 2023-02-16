@@ -46,19 +46,19 @@ public class ChatCommand extends BaseCommand {
     @CommandAlias("achat|ac")
     @Description("Send a message to the ALL chat channel")
     public void allChat(Player player, String message) {
-        ChatChannels.playerSendMessage(player, message, ChatChannels.ALL, true);
+        ChatChannels.playerSendMessage(player, ChatChannels.ALL, message);
     }
 
     @CommandAlias("pchat|pc")
     @Description("Send a message to the PARTY chat channel")
     public void partyChat(@Conditions("party:true") Player player, String message) {
-        ChatChannels.playerSendMessage(player, message, ChatChannels.PARTY, true);
+        ChatChannels.playerSendMessage(player, ChatChannels.PARTY, message);
     }
 
     @CommandAlias("gchat|gc")
     @Description("Send a message to the GUILD chat channel")
     public void guildChat(@Conditions("guild:true") Player player, String message) {
-        ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD, true);
+        ChatChannels.playerSendMessage(player, ChatChannels.GUILD, message);
     }
 
     @CommandAlias("gochat|goc")
@@ -67,7 +67,7 @@ public class ChatCommand extends BaseCommand {
             @Conditions("guild:true") Player player, @Conditions("requirePerm:perm=OFFICER_CHAT") GuildPlayerWrapper guildPlayerWrapper,
             String message
     ) {
-        ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD_OFFICER, true);
+        ChatChannels.playerSendMessage(player, ChatChannels.GUILD_OFFICER, message);
     }
 
     @HelpCommand

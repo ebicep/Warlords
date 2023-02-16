@@ -3,9 +3,9 @@ package com.ebicep.warlords.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -81,10 +81,7 @@ public enum StarPieces {
                                         pveStats.addCurrency(starPiece.currency, 1);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                        player.spigot().sendMessage(
-                                                new ComponentBuilder(ChatColor.GREEN + "Synthesized " + starPiece.currency.getCostColoredName(1) + ChatColor.GRAY + "!")
-                                                        .create()
-                                        );
+                                        player.sendMessage(Component.text(ChatColor.GREEN + "Synthesized " + starPiece.currency.getCostColoredName(1) + ChatColor.GRAY + "!"));
                                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
                                         openStarPieceSynthesizerMenu(player);

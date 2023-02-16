@@ -9,8 +9,8 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -191,13 +191,11 @@ public class WeaponTitleMenu {
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.spigot().sendMessage(
-                new ComponentBuilder(ChatColor.GRAY + "Titled Weapon: ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + " and it became ")
-                        .appendHoverItem(titledWeapon.getName(), titledWeapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "!")
-                        .create()
+        player.sendMessage(Component.text(ChatColor.GRAY + "Titled Weapon: ")
+                                    .append(weapon.getHoverComponent(false))
+                                    .append(Component.text(ChatColor.GRAY + " and it became "))
+                                    .append(titledWeapon.getHoverComponent(false))
+                                    .append(Component.text(ChatColor.GRAY + "!"))
         );
 
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
@@ -250,10 +248,8 @@ public class WeaponTitleMenu {
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon Title: ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(Component.text(ChatColor.GRAY + "Upgraded Weapon Title: ")
+                                        .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }

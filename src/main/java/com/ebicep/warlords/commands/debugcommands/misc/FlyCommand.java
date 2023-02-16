@@ -26,8 +26,7 @@ public class FlyCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(
                 player,
                 ChatColor.AQUA + otherPlayer.getName() + (allowFlight ? ChatColor.GREEN : ChatColor.RED) +
-                        " Fly " + (allowFlight ? "Enabled" : "Disabled"),
-                true
+                        " Fly " + (allowFlight ? "Enabled" : "Disabled")
         );
     }
 

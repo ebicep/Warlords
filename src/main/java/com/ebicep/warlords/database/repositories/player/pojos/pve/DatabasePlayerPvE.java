@@ -157,15 +157,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                                 !fair.getRarePlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
                                 !fair.getEpicPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID()))
                         ) {
-                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency", true);
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency");
                             subtractCurrency(Currencies.SYNTHETIC_SHARD,
                                     (((Salvageable) weapon).getMaxSalvageAmount() + ((Salvageable) weapon).getMinSalvageAmount()) / 2
                             );
                         } else {
-                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair", true);
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair");
                         }
                     } else {
-                        ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory", true);
+                        ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory");
                     }
                 }
             }
@@ -214,7 +214,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             if (difficultyStats != null) {
                 difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             } else {
-                ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+                ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null");
             }
         }
     }

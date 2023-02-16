@@ -73,7 +73,7 @@ public class EditStatsCommand extends BaseCommand {
                     }
                 }
             }
-            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Done: " + Arrays.toString(query), true);
+            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Done: " + Arrays.toString(query));
         });
     }
 
@@ -81,7 +81,7 @@ public class EditStatsCommand extends BaseCommand {
     public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
         return databasePlayerFuture.future().thenAccept(databasePlayer -> {
             wipeTopStats(databasePlayer);
-            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Wiped Top Stats of " + databasePlayer.getName(), true);
+            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Wiped Top Stats of " + databasePlayer.getName());
         });
     }
 

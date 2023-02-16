@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="USE_RELEASE_OPTION" value="false" />
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17">
       <module name="Warlords (1)" target="1.8" />
     </bytecodeTargetLevel>
   </component>

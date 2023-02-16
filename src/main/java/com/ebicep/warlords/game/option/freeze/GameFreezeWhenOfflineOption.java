@@ -63,8 +63,7 @@ public class GameFreezeWhenOfflineOption implements Option {
                                 ChatChannels.sendDebugMessage(
                                         (CommandIssuer) null,
                                         ChatColor.GREEN + "Leave Cooldown of " + ChatColor.AQUA + player.getKey().getName() +
-                                                ChatColor.GREEN + " increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds",
-                                        true
+                                                ChatColor.GREEN + " increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds"
                                 );
                                 break;
                             }

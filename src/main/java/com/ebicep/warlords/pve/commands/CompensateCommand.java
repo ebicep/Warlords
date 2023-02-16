@@ -13,10 +13,11 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.util.bukkit.Colors;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public class CompensateCommand extends BaseCommand {
 
     public static void openCompensateMenu(Player player, LinkedHashMap<Currencies, Long> compensation, List<DatabasePlayer> compensatedPlayers) {
         if (compensatedPlayers == null || compensatedPlayers.isEmpty()) {
-            ChatChannels.sendDebugMessage(player, ChatColor.RED + "No players to compensate!", true);
+            ChatChannels.sendDebugMessage(player, ChatColor.RED + "No players to compensate!");
             return;
         }
         Menu menu = new Menu("Compensate", 9 * 6);
@@ -78,8 +79,7 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.PLAYER_HEAD)
                         .name(ChatColor.GREEN + "Player")
-                        .lore(ChatColor.AQUA + (compensatedPlayers == null ? "Not Selected" :
-                                                compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
+                        .lore(ChatColor.AQUA + (compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
                                                                                                    .getName() : "All " + compensatedPlayers.size() + " Players"))
                         .get(),
                 (m, e) -> {
@@ -92,8 +92,7 @@ public class CompensateCommand extends BaseCommand {
                             }
                         }
                         ChatChannels.sendDebugMessage(player,
-                                ChatColor.AQUA + playerName + ChatColor.RED + " was not found for compensation",
-                                true
+                                ChatColor.AQUA + playerName + ChatColor.RED + " was not found for compensation"
                         );
                     });
                 }
@@ -129,7 +128,7 @@ public class CompensateCommand extends BaseCommand {
                         SignGUI.open(player, new String[]{"", "Enter Reward", "Title", "Blank to Cancel"}, (p, lines) -> {
                             String title = lines[0];
                             if (title.isEmpty()) {
-                                ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled", true);
+                                ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled");
                                 return;
                             }
                             compensate(player, compensation, compensatedPlayers, title);
@@ -155,18 +154,16 @@ public class CompensateCommand extends BaseCommand {
                         } else {
                             pveStats.getCompensationRewards().add(new CompensationReward(compensation, title));
                         }
-                        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                                new ComponentBuilder()
-                                        .appendHoverText(
-                                                ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName() +
-                                                        ChatColor.GREEN + (title == null ? " directly" : " through the Rewards Inventory"),
-                                                compensation.entrySet()
-                                                            .stream()
-                                                            .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                                                                              .getCostColoredName(
-                                                                                                                                      currenciesValues.getValue()))
-                                                            .collect(Collectors.joining("\n"))
-                                        )
+                        ChatChannels.playerSendMessage(player,
+                                ChatChannels.DEBUG,
+                                Component.text(ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GREEN + (title == null ? " directly" : " through the Rewards Inventory"))
+                                         .hoverEvent(HoverEvent.showText(
+                                                 Component.text(compensation.entrySet()
+                                                                            .stream()
+                                                                            .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
+                                                                                                                                              .getCostColoredName(
+                                                                                                                                                      currenciesValues.getValue()))
+                                                                            .collect(Collectors.joining("\n")))))
                         );
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         player.closeInventory();
@@ -186,8 +183,7 @@ public class CompensateCommand extends BaseCommand {
                         }
                         ChatChannels.sendDebugMessage(player,
                                 ChatColor.GREEN + "All " + ChatColor.AQUA + compensatedPlayers.size() + " players " +
-                                        ChatColor.GREEN + "were given compensation" + (title == null ? " directly" : " through the Rewards Inventory"),
-                                true
+                                        ChatColor.GREEN + "were given compensation" + (title == null ? " directly" : " through the Rewards Inventory")
                         );
                         player.closeInventory();
                     })

@@ -31,9 +31,9 @@ public class TestCommand extends BaseCommand {
     public void test(CommandIssuer issuer) {
         //doTest(issuer);
         Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName(), false);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName());
         });
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", false);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
     }
 
     public static void doTest(CommandIssuer issuer) {
@@ -75,7 +75,7 @@ public class TestCommand extends BaseCommand {
 
          */
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed");
     }
 
     @CommandAlias("testdatabase")
@@ -376,7 +376,7 @@ public class TestCommand extends BaseCommand {
 //                        }).execute();
 
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed");
     }
 
     @CommandAlias("testgame")
@@ -385,7 +385,7 @@ public class TestCommand extends BaseCommand {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.updateDescription((Player) warlordsPlayer.getEntity());
         }
-        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
+        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed");
     }
 
     @CommandAlias("testplayer")

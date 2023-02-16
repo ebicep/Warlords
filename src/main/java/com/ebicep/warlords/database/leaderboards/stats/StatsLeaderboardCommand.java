@@ -22,16 +22,16 @@ public class StatsLeaderboardCommand extends BaseCommand {
         StatsLeaderboardManager.enabled = !StatsLeaderboardManager.enabled;
         StatsLeaderboardManager.addHologramLeaderboards(false);
         if (StatsLeaderboardManager.enabled) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled");
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled");
         }
     }
 
     @Subcommand("forcereload")
     public void forceReload(CommandIssuer issuer) {
         StatsLeaderboardManager.addHologramLeaderboards(false);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded");
     }
 
     @Subcommand("reload")
@@ -40,17 +40,17 @@ public class StatsLeaderboardCommand extends BaseCommand {
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 StatsLeaderboardManager.resetLeaderboards(activeCollection, false);
             }
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "All leaderboards reloaded", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "All leaderboards reloaded");
         } else {
             StatsLeaderboardManager.resetLeaderboards(collection, false);
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + collection.name + " leaderboards reloaded", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + collection.name + " leaderboards reloaded");
         }
     }
 
     @Subcommand("refresh")
     public void refresh(CommandIssuer issuer) {
         StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players");
     }
 
     @Subcommand("page")

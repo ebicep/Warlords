@@ -96,7 +96,7 @@ public class DebugMenuPlayerOptions {
                         .get(),
                 (m, e) -> {
                     target.addDamageInstance(target, "God", 100000, 100000, 0, 100, false);
-                    sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName, true);
+                    sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName);
                 }
         );
         firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().item))
@@ -119,7 +119,9 @@ public class DebugMenuPlayerOptions {
                     }
                     target.updateArmor();
                     openPlayerMenu(player, target);
-                    sendDebugMessage(player, ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team", true);
+                    sendDebugMessage(player,
+                            ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team"
+                    );
                 }
         );
 
@@ -147,7 +149,7 @@ public class DebugMenuPlayerOptions {
                                 throw new NumberFormatException();
                             }
                             target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
-                            sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber, true);
+                            sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber);
                         } catch (NumberFormatException exception) {
                             p.sendMessage(ChatColor.RED + "Invalid number");
                         }
@@ -168,7 +170,7 @@ public class DebugMenuPlayerOptions {
                                 throw new NumberFormatException();
                             }
                             target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100, false);
-                            sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber, true);
+                            sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber);
                         } catch (NumberFormatException exception) {
                             p.sendMessage(ChatColor.RED + "Invalid number");
                         }
@@ -244,7 +246,7 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().clearAllCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Cooldowns", true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Cooldowns");
                     }
             );
 
@@ -253,7 +255,7 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeBuffCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Buffs", true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Buffs");
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
@@ -261,7 +263,7 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeDebuffCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Debuffs", true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Debuffs");
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
@@ -269,7 +271,7 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeAbilityCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Ability Cooldowns", true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Ability Cooldowns");
                     }
             );
 
@@ -306,7 +308,9 @@ public class DebugMenuPlayerOptions {
                                     if (cooldown == StatusEffectCooldowns.SPEED) {
                                         target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
                                     }
-                                    sendDebugMessage(player, ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name, true);
+                                    sendDebugMessage(player,
+                                            ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name
+                                    );
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid number");
                                 }
@@ -328,7 +332,7 @@ public class DebugMenuPlayerOptions {
             for (DebugLocationMarker marker : game.getMarkers(DebugLocationMarker.class)) {
                 menu.setItem(x, y, marker.getAsItem(), (m, e) -> {
                     target.teleport(marker.getLocation());
-                    sendDebugMessage(player, ChatColor.GREEN + "Teleported " + target.getColoredName() + ChatColor.GREEN + " to " + marker.getName(), true);
+                    sendDebugMessage(player, ChatColor.GREEN + "Teleported " + target.getColoredName() + ChatColor.GREEN + " to " + marker.getName());
                 });
 
                 x++;
@@ -357,17 +361,17 @@ public class DebugMenuPlayerOptions {
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                sendDebugMessage(player, ChatColor.RED + "That player already has the flag", true);
+                                sendDebugMessage(player, ChatColor.RED + "That player already has the flag");
                             } else {
                                 FlagHolder.update(
                                         target.getGame(),
                                         info -> info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer() == target ?
                                                 GroundFlagLocation.of(info.getFlag()) :
                                                 info == holder.getInfo() ?
-                                                        PlayerFlagLocation.of(info.getFlag(), target) :
-                                                        null
+                                                PlayerFlagLocation.of(info.getFlag(), target) :
+                                                null
                                 );
-                                sendDebugMessage(player, ChatColor.GREEN + "Picked up the flag for " + target.getColoredName(), true);
+                                sendDebugMessage(player, ChatColor.GREEN + "Picked up the flag for " + target.getColoredName());
                             }
                         }
                 );
@@ -377,9 +381,9 @@ public class DebugMenuPlayerOptions {
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 holder.getInfo().setFlag(new SpawnFlagLocation(holder.getInfo().getSpawnLocation(), null));
-                                sendDebugMessage(player, ChatColor.GREEN + "Returned the flag for " + target.getColoredName(), true);
+                                sendDebugMessage(player, ChatColor.GREEN + "Returned the flag for " + target.getColoredName());
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag", true);
+                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
                             }
                         }
                 );
@@ -389,9 +393,9 @@ public class DebugMenuPlayerOptions {
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 holder.getInfo().setFlag(GroundFlagLocation.of(holder.getFlag()));
-                                sendDebugMessage(player, ChatColor.GREEN + "Dropped the flag for " + target.getColoredName(), true);
+                                sendDebugMessage(player, ChatColor.GREEN + "Dropped the flag for " + target.getColoredName());
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag", true);
+                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
                             }
                         }
                 );
@@ -410,7 +414,9 @@ public class DebugMenuPlayerOptions {
                                         if (target.getCarriedFlag() != null) {
                                             PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
                                             flag.setPickUpTicks(amountNumber * 60);
-                                            sendDebugMessage(player, ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%", true);
+                                            sendDebugMessage(player,
+                                                    ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%"
+                                            );
                                         }
                                     } catch (NumberFormatException exception) {
                                         p.sendMessage(ChatColor.RED + "Invalid number");
@@ -418,7 +424,7 @@ public class DebugMenuPlayerOptions {
                                     openFlagOptionMenu(player, target);
                                 });
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag", true);
+                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
                             }
                         }
                 );
@@ -481,7 +487,9 @@ public class DebugMenuPlayerOptions {
 
                             target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             openSpecMenu(player, target);
-                            sendDebugMessage(player, ChatColor.GREEN + "Changed " + target.getColoredName() + ChatColor.GREEN + "'s spec to " + selectedSpec.name, true);
+                            sendDebugMessage(player,
+                                    ChatColor.GREEN + "Changed " + target.getColoredName() + ChatColor.GREEN + "'s spec to " + selectedSpec.name
+                            );
                         }
                 );
 
@@ -555,7 +563,9 @@ public class DebugMenuPlayerOptions {
                                     }
                                 }
                             }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                            sendDebugMessage(player, ChatColor.GREEN + "Removed " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName() + " cooldown", true);
+                            sendDebugMessage(player,
+                                    ChatColor.GREEN + "Removed " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName() + " cooldown"
+                            );
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.REDSTONE)
@@ -564,7 +574,7 @@ public class DebugMenuPlayerOptions {
                         (m, e) -> {
                             if (!target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
                                 openCooldownsMenu(player, target);
-                                sendDebugMessage(player, ChatColor.RED + "That cooldown no longer exists", true);
+                                sendDebugMessage(player, ChatColor.RED + "That cooldown no longer exists");
                                 return;
                             }
                             if (!(abstractCooldown instanceof RegularCooldown)) {
@@ -576,7 +586,9 @@ public class DebugMenuPlayerOptions {
                                 try {
                                     int amountNumber = Integer.parseInt(amount);
                                     ((RegularCooldown<?>) abstractCooldown).subtractTime(-amountNumber * 20);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName(), true);
+                                    sendDebugMessage(player,
+                                            ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName()
+                                    );
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid number");
                                 }

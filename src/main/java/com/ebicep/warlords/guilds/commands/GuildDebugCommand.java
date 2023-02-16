@@ -33,8 +33,7 @@ public class GuildDebugCommand extends BaseCommand {
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
                 ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                        .getName() + " experience to " + ChatColor.YELLOW + amount,
-                true
+                                                                   .getName() + " experience to " + ChatColor.YELLOW + amount
         );
     }
 
@@ -50,8 +49,7 @@ public class GuildDebugCommand extends BaseCommand {
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
                 ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                        .getName() + " current coins to " + ChatColor.YELLOW + amount,
-                true
+                                                                   .getName() + " current coins to " + ChatColor.YELLOW + amount
         );
     }
 
@@ -69,8 +67,7 @@ public class GuildDebugCommand extends BaseCommand {
         guild.setTag(tag);
         GuildManager.queueUpdateGuild(guild);
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(),
-                true
+                ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag()
         );
     }
 
@@ -105,7 +102,7 @@ public class GuildDebugCommand extends BaseCommand {
     }
 
     @Subcommand("upgrades")
-    public static class GuildDebugUpgradeCommand extends BaseCommand {
+    public class GuildDebugUpgradeCommand extends BaseCommand {
 
         @Subcommand("add")
         @Description("Adds upgrades to the guild")
@@ -118,8 +115,7 @@ public class GuildDebugCommand extends BaseCommand {
             guildPlayerWrapper.getGuild().addUpgrade(upgrade.createUpgrade(tier));
             GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
             ChatChannels.sendDebugMessage(player,
-                    ChatColor.GREEN + "Added upgrade " + ChatColor.YELLOW + upgrade.name + " (" + tier + ") " + ChatColor.GREEN + "to guild",
-                    true
+                    ChatColor.GREEN + "Added upgrade " + ChatColor.YELLOW + upgrade.name + " (" + tier + ") " + ChatColor.GREEN + "to guild"
             );
         }
 
@@ -131,8 +127,7 @@ public class GuildDebugCommand extends BaseCommand {
         ) {
             guildPlayerWrapper.getGuild().getUpgrades().clear();
             ChatChannels.sendDebugMessage(player,
-                    ChatColor.GREEN + "Cleared upgrades of guild",
-                    true
+                    ChatColor.GREEN + "Cleared upgrades of guild"
             );
         }
 

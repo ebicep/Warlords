@@ -47,7 +47,7 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
             externalFilter = switch (collection) {
                 case LIFETIME -> databasePlayer -> databasePlayer.getPlays() < 50;
                 case WEEKLY -> databasePlayer -> databasePlayer.getPlays() < 10;
-                default -> externalFilter;
+                default -> null;
             };
         }
         String subTitle = getSubTitle();

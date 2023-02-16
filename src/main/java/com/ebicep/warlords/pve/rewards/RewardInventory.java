@@ -4,9 +4,9 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,12 +20,10 @@ import java.util.stream.Stream;
 
 public class RewardInventory {
 
-    public static void sendRewardMessage(UUID uuid, ComponentBuilder components) {
+    public static void sendRewardMessage(UUID uuid, Component component) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.isOnline()) {
-            BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ")
-                    .create();
-            offlinePlayer.getPlayer().spigot().sendMessage(components.prependAndCreate(baseComponents));
+        if (offlinePlayer.getPlayer() != null) {
+            offlinePlayer.getPlayer().sendMessage(Component.text(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ").append(component));
         }
     }
 
@@ -38,9 +36,9 @@ public class RewardInventory {
                                                          databasePlayerPvE.getCompensationRewards(),
                                                          databasePlayerPvE.getGameEventRewards()
                                                  )
-                    .flatMap(List::stream)
-                    .filter(reward -> reward.getTimeClaimed() == null)
-                    .collect(Collectors.toList());
+                                                 .flatMap(List::stream)
+                                                 .filter(reward -> reward.getTimeClaimed() == null)
+                                                 .collect(Collectors.toList());
             if (rewards.isEmpty()) {
                 player.sendMessage(ChatColor.RED + "You have no rewards to claim!");
                 return;
@@ -59,10 +57,10 @@ public class RewardInventory {
 
                                 sendRewardMessage(
                                         player.getUniqueId(),
-                                        new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
-                                                .appendHoverItem(reward.getNameColor() + reward.getFrom() + " Reward",
-                                                        reward.getItemWithoutClaim()
-                                                )
+                                        Component.text(ChatColor.GREEN + "Claimed: ")
+                                                 .append(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")
+                                                                  .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
+                                                 .hoverEvent(HoverEvent.showText(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")))
                                 );
 
                                 if (rewards.size() > 1) {
@@ -88,10 +86,10 @@ public class RewardInventory {
 
                             sendRewardMessage(
                                     player.getUniqueId(),
-                                    new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
-                                            .appendHoverItem(reward.getNameColor() + reward.getFrom() + " Reward",
-                                                    reward.getItemWithoutClaim()
-                                            )
+                                    Component.text(ChatColor.GREEN + "Claimed: ")
+                                             .append(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")
+                                                              .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
+                                             .hoverEvent(HoverEvent.showText(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")))
                             );
                         }
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

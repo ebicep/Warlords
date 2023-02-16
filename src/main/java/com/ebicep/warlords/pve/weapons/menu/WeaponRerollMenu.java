@@ -6,8 +6,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -57,16 +57,13 @@ public class WeaponRerollMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "Reroll Result: ")
-                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false));
-
+            Component component = Component.text(ChatColor.GRAY + "Reroll Result: ")
+                                           .append(weapon.getHoverComponent(false));
             weapon.reroll();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    componentBuilder.append(ChatColor.GRAY + " to ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(component.append(Component.text(ChatColor.GRAY + " to "))
+                                        .append(weapon.getHoverComponent(false))
             );
         }
     }

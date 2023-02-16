@@ -12,10 +12,9 @@ import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -63,7 +62,7 @@ public class PartyCommand extends BaseCommand {
         if (!party.isAllInvite() &&
                 !party.getPartyLeader().getUUID().equals(playerUUID) &&
                 party.getPartyModerators().stream()
-                        .noneMatch(partyPlayer -> partyPlayer.getUUID().equals(playerUUID))
+                     .noneMatch(partyPlayer -> partyPlayer.getUUID().equals(playerUUID))
         ) {
             Party.sendPartyMessage(player, ChatColor.RED + "All invite is disabled!");
             return;
@@ -86,13 +85,14 @@ public class PartyCommand extends BaseCommand {
         ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         ChatUtils.sendCenteredMessage(target,
                 ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (party.getPartyLeader()
-                        .getUUID()
-                        .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
+                                                                                                           .getUUID()
+                                                                                                           .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
         );
-        TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + party.getLeaderName()));
-        ChatUtils.sendCenteredMessageWithEvents(target, Collections.singletonList(message));
+        ChatUtils.sendCenteredMessage(target,
+                Component.text(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!")
+                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + "Click to join the party!")))
+                         .clickEvent(ClickEvent.runCommand("/party join " + party.getLeaderName()))
+        );
         ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
     }
 
@@ -253,8 +253,8 @@ public class PartyCommand extends BaseCommand {
         Party party = partyPlayerWrapper.getParty();
         if (target.equalsIgnoreCase("@a")) {
             Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> !party.hasUUID(p.getUniqueId()))
-                    .forEach(p -> party.join(p.getUniqueId()));
+                  .filter(p -> !party.hasUUID(p.getUniqueId()))
+                  .forEach(p -> party.join(p.getUniqueId()));
             return;
         }
         Player playerToForceInvite = Bukkit.getPlayer(target);

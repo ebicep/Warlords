@@ -7,9 +7,9 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.bukkit.ChatColor;
@@ -35,8 +35,8 @@ public class WeaponBindMenu {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         BidiMap<AbstractWeapon, Specializations> boundWeapons = new DualHashBidiMap<>();
         weaponInventory.stream()
-                .filter(AbstractWeapon::isBound)
-                .forEach(w -> boundWeapons.put(w, w.getSpecializations()));
+                       .filter(AbstractWeapon::isBound)
+                       .forEach(w -> boundWeapons.put(w, w.getSpecializations()));
         Specializations weaponSpec = selectedWeapon.getSpecializations();
 
         Menu menu = new Menu("Bind Weapons", 9 * 6);
@@ -75,18 +75,20 @@ public class WeaponBindMenu {
                                 column + i,
                                 row + 1,
                                 boundWeapon.generateItemStackInLore(ChatColor.GREEN + "Click to replace binding")
-                                        .enchant(Enchantment.OXYGEN, 1)
-                                        .get(),
+                                           .enchant(Enchantment.OXYGEN, 1)
+                                           .get(),
                                 (m, e) -> {
                                     boundWeapon.setBound(false);
                                     selectedWeapon.setBound(true);
 
-                                    player.spigot().sendMessage(
-                                            new ComponentBuilder(ChatColor.GRAY + "You unbounded ")
-                                                    .appendHoverItem(boundWeapon.getName(), boundWeapon.generateItemStack(false))
-                                                    .append(ChatColor.GRAY + " and bound ")
-                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack(false))
-                                                    .create()
+                                    player.sendMessage(
+                                            Component.text(ChatColor.GRAY + "You unbounded ")
+                                                     .append(Component.text(boundWeapon.getName())
+                                                                      .hoverEvent(boundWeapon.generateItemStack(false).asHoverEvent()))
+                                                     .append(Component.text(ChatColor.GRAY + " and bound "))
+                                                     .append(Component.text(selectedWeapon.getName())
+                                                                      .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
+                                                     )
                                     );
 
                                     //remove unbounded starter weapon as it is no longer needed
@@ -115,11 +117,11 @@ public class WeaponBindMenu {
                             row + 1,
                             spec == weaponSpec ?
                             new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE)
-                                            .name(ChatColor.GREEN + "Click to bind")
-                                            .get() :
+                                    .name(ChatColor.GREEN + "Click to bind")
+                                    .get() :
                             new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
-                                            .name(ChatColor.RED + "You cannot bind this weapon to " + spec.name)
-                                            .get(),
+                                    .name(ChatColor.RED + "You cannot bind this weapon to " + spec.name)
+                                    .get(),
                             (m, e) -> {
                                 if (spec == weaponSpec) {
                                     //bind the new weapon
@@ -127,10 +129,10 @@ public class WeaponBindMenu {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, databasePlayer, selectedWeapon);
 
-                                    player.spigot().sendMessage(
-                                            new ComponentBuilder(ChatColor.AQUA + "You bound ")
-                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack(false))
-                                                    .create()
+                                    player.sendMessage(
+                                            Component.text(ChatColor.AQUA + "You bound ")
+                                                     .append(Component.text(selectedWeapon.getName()))
+                                                     .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
                                     );
                                 }
                             }

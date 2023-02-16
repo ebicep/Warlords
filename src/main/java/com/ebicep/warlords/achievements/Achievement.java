@@ -3,6 +3,11 @@ package com.ebicep.warlords.achievements;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -22,9 +27,31 @@ public interface Achievement {
 
     Difficulty getDifficulty();
 
-    void sendAchievementUnlockMessage(Player player);
+    default void sendAchievementUnlockMessage(Player player) {
+        TextComponent component = Component.text(ChatColor.GREEN + ">>  Achievement Unlocked: ")
+                                           .append(Component.text(ChatColor.GOLD + getName())
+                                                            .hoverEvent(HoverEvent.showText(Component.text(
+                                                                    WordWrap.wrapWithNewline(ChatColor.GREEN + getDescription(), 200
+                                                                    )))))
+                                           .append(Component.text(ChatColor.GREEN + "  <<"));
+        ChatUtils.sendMessageToPlayer(player, component, ChatColor.GREEN, true);
+    }
 
-    void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
+    default void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
+        TextComponent component = Component.text(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: ")
+                                           .append(Component.text(ChatColor.GOLD + getName())
+                                                            .hoverEvent(HoverEvent.showText(Component.text(
+                                                                    WordWrap.wrapWithNewline(ChatColor.GREEN + getDescription(), 200
+                                                                    )))))
+                                           .append(Component.text(ChatColor.GREEN + "  <<"));
+        warlordsEntity.getGame().warlordsPlayers()
+                      //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())
+                      .filter(wp -> wp != warlordsEntity)
+                      .filter(wp -> wp.getEntity() instanceof Player)
+                      .map(wp -> (Player) wp.getEntity())
+                      .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, component, ChatColor.GREEN, true));
+
+    }
 
     enum Difficulty {
         EASY("Easy", ChatColor.GREEN),

@@ -143,9 +143,6 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
             }
             Location location = target.getLocation().clone();
             Vector oldVectorToSubtract = target.getCurrentVector().clone();
-            if (oldVectorToSubtract == null) {
-                return location;
-            }
             if (!self.getWorld().equals(target.getWorld())) {
                 return location;
             }

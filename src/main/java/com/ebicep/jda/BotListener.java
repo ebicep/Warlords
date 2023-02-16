@@ -91,12 +91,8 @@ public class BotListener extends ListenerAdapter implements Listener {
     private void readBalanceStatuses(MessageReceivedEvent event, Message message) {
         TextChannel textChannel = event.getTextChannel();
         switch (textChannel.getName().toLowerCase()) {
-            case "gs-teams", "bot-teams" -> {
-                readOnGoingBalance(message);
-            }
-            case "teams" -> {
-                readNewTeamPosted(message);
-            }
+            case "gs-teams", "bot-teams" -> readOnGoingBalance(message);
+            case "teams" -> readNewTeamPosted(message);
         }
     }
 

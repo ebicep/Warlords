@@ -9,9 +9,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -45,8 +45,9 @@ public class MasterworksFairMenu {
                 }
                 List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(MasterworksFairManager.currentFair);
                 Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
-                        .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
-                        .findFirst();
+                                                                                      .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid()
+                                                                                                                                                      .equals(uuid))
+                                                                                      .findFirst();
 
                 ItemBuilder itemBuilder;
                 if (playerEntry.isEmpty()) {
@@ -114,8 +115,9 @@ public class MasterworksFairMenu {
 
         List<MasterworksFairPlayerEntry> weaponPlayerEntries = weaponType.getPlayerEntries.apply(MasterworksFairManager.currentFair);
         Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
-                .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
-                .findFirst();
+                                                                              .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid()
+                                                                                                                                              .equals(uuid))
+                                                                              .findFirst();
 
         for (int i = 0; i < 45; i++) {
             int weaponNumber = ((page - 1) * 45) + i;
@@ -164,9 +166,9 @@ public class MasterworksFairMenu {
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                         MasterworksFairManager.sendMasterworksFairMessage(player,
-                                                new ComponentBuilder(ChatColor.GRAY + "Submitted ")
-                                                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                                        .append(ChatColor.GRAY + " to the Masterworks Fair!")
+                                                Component.text(ChatColor.GRAY + "Submitted ")
+                                                         .append(weapon.getHoverComponent(false))
+                                                         .append(Component.text(ChatColor.GRAY + " to the Masterworks Fair!"))
                                         );
 
                                         openMasterworksFairMenu(player);

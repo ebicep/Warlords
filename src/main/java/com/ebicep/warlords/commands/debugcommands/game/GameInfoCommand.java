@@ -24,7 +24,7 @@ public class GameInfoCommand extends BaseCommand {
         Game playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
             if (Objects.equals(game.getGame(), playerGame)) {
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Game info: " + game.getGame().toString(), true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Game info: " + game.getGame().toString());
                 break;
             }
         }
@@ -34,7 +34,7 @@ public class GameInfoCommand extends BaseCommand {
     @Description("Prints all game info")
     public void allGameInfo(CommandIssuer issuer) {
         for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
-            ChatChannels.sendDebugMessage(issuer, game.getMap() + " - " + game.getGame(), false);
+            ChatChannels.sendDebugMessage(issuer, game.getMap() + " - " + game.getGame());
         }
     }
 

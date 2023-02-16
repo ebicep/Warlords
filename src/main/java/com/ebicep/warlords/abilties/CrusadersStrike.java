@@ -70,8 +70,8 @@ public class CrusadersStrike extends AbstractStrikeBase {
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
         getStandingOnConsecrate(wp, nearPlayer).ifPresent(consecrate -> {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
+            minDamage.getAndUpdate(value -> value * (1 + consecrate.getStrikeDamageBoost() / 100f));
+            maxDamage.getAndUpdate(value -> value * (1 + consecrate.getStrikeDamageBoost() / 100f));
         });
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,

@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -31,19 +31,16 @@ public class WeaponStarPieceMenu {
                 confirmLore,
                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                 (m2, e2) -> {
-                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a star piece onto ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .append(ChatColor.GRAY + " and it became ");
+                    Component component = Component.text(ChatColor.GRAY + "You applied a star piece onto ")
+                                                   .append(weapon.getHoverComponent(false))
+                                                   .append(Component.text(ChatColor.GRAY + " and it became "));
 
                     weapon.setStarPiece(starPieceCurrency, weapon.generateRandomStatBonus());
                     weapon.getStarPieceBonusCost(starPieceCurrency).forEach(databasePlayerPvE::subtractCurrency);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                    player.spigot().sendMessage(
-                            componentBuilder
-                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                    .append(ChatColor.GRAY + "!")
-                                    .create()
+                    player.sendMessage(component.append(weapon.getHoverComponent(false))
+                                                .append(Component.text(ChatColor.GRAY + "!"))
                     );
 
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);

@@ -17,9 +17,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.google.common.util.concurrent.AtomicDouble;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
@@ -152,12 +152,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot()
-                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                              .append(ChatColor.GRAY + "!")
-                              .create()
-                      );
+                player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity())
+                                              .append(Component.text(killer.getName() + ChatColor.GRAY + " got lucky and found "))
+                                              .append(weapon.getHoverComponent(false))
+                                              .append(Component.text(ChatColor.GRAY + "!")));
             });
             killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }

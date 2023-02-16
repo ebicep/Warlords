@@ -8,8 +8,8 @@ import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -117,12 +117,10 @@ public class WeaponSkillBoostMenu {
         }
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.spigot().sendMessage(
-                new ComponentBuilder(ChatColor.GRAY + "Changed ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")
-                        .create()
-        );
+        player.sendMessage(Component.text(ChatColor.GRAY + "Changed ")
+                                    .append(weapon.getHoverComponent(false))
+                                    .append(Component.text(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")));
+
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 

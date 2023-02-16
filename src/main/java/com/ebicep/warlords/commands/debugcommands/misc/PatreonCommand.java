@@ -35,8 +35,7 @@ public class PatreonCommand extends BaseCommand {
                     given ? ChatColor.GREEN + "Gave " +
                             ChatColor.LIGHT_PURPLE + finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
                             ChatColor.GREEN + " Patreon reward to " + ChatColor.AQUA + databasePlayer.getName() :
-                    ChatColor.AQUA + databasePlayer.getName() + ChatColor.RED + " has already received their monthly Patreon reward",
-                    true
+                    ChatColor.AQUA + databasePlayer.getName() + ChatColor.RED + " has already received their monthly Patreon reward"
             );
             PatreonReward.givePatreonFutureMessage(databasePlayer, month, finalYear);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

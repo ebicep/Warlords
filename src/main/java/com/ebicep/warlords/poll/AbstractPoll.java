@@ -1,10 +1,9 @@
 package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,6 +25,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
         String toString = poll.toString();
         return toString.substring(toString.indexOf("@") + 1);
     }
+
     protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
     protected String id;
     protected String question;
@@ -83,9 +83,9 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     public List<Player> getPlayersAllowedToVote() {
         List<UUID> uuids = getUUIDsAllowedToVote();
         return Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(player -> uuids.contains(player.getUniqueId()))
-                .collect(Collectors.toList());
+                     .stream()
+                     .filter(player -> uuids.contains(player.getUniqueId()))
+                     .collect(Collectors.toList());
     }
 
     private void sendPollAnnouncement(boolean first) {
@@ -96,19 +96,15 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             }
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
-                TextComponent message = new TextComponent(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()
-                ));
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/poll answer " + id + " " + (i + 1)));
-                player.spigot().sendMessage(message);
+                player.sendMessage(Component.text(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i))
+                                            .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + "Click here to vote for " + options.get(i))))
+                                            .clickEvent(ClickEvent.runCommand("/poll answer " + id + " " + (i + 1)))
+                );
             }
             if (!infiniteVotingTime) {
-                player.spigot().sendMessage(
-                        new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - ")
-                                .append(ChatColor.YELLOW + id)
-                                .appendClickEvent(ClickEvent.Action.SUGGEST_COMMAND, id)
-                                .create()
+                player.sendMessage(Component.text(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - " + id)
+                                            .append(Component.text(ChatColor.YELLOW + id)
+                                                             .clickEvent(ClickEvent.suggestCommand(id)))
                 );
             } else {
                 player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
@@ -156,7 +152,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
             for (UUID nonVoter : nonVoters) {
                 playersThatDidntVote.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(nonVoter).getName())
-                        .append(ChatColor.GRAY).append(", ");
+                                    .append(ChatColor.GRAY).append(", ");
             }
             playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
             if (sendNonVoterMessage(player)) {

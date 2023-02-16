@@ -6,9 +6,10 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -331,23 +332,15 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         String prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : "";
         game.forEachOnlinePlayer((p, t) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
-                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
-                        .appendHoverItem(ChatColor.GOLD + ability.getName() + " - §c§l" + upgrade.getName() + "§e!",
-                                new ItemBuilder(Material.STONE)
-                                        .name("§c§l" + upgrade.getName())
-                                        .lore(ChatColor.GREEN + upgrade.getDescription())
-                                        .get()
-                        )
-                        .create());
+                p.sendMessage(Component.text(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
+                                       .append(Component.text(ChatColor.GOLD + ability.getName() + " - §c§l" + upgrade.getName() + "§e!")
+                                                        .hoverEvent(HoverEvent.showText(Component.text("§c§l" + upgrade.getName() + "\n" + upgrade.getDescription()))))
+                );
             } else {
-                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
-                        .appendHoverItem(ChatColor.GOLD + ability.getName() + " - " + upgrade.getName() + "§e!",
-                                new ItemBuilder(Material.STONE)
-                                        .name(ChatColor.GOLD + upgrade.getName())
-                                        .lore(ChatColor.GREEN + upgrade.getDescription())
-                                        .get()
-                        )
-                        .create());
+                p.sendMessage(Component.text(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
+                                       .append(Component.text(ChatColor.GOLD + ability.getName() + " - " + upgrade.getName() + "§e!")
+                                                        .hoverEvent(HoverEvent.showText(Component.text("§c§l" + upgrade.getName() + "\n" + upgrade.getDescription()))))
+                );
             }
         });
     }

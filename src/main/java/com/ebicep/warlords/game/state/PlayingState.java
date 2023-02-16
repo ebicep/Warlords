@@ -76,8 +76,7 @@ public class PlayingState implements State, TimerDebugAble {
                 .findAny()
                 .ifPresent(gameHolder -> {
                     ChatChannels.sendDebugMessage((CommandIssuer) null,
-                            ChatColor.LIGHT_PURPLE + "Started Game: " + game.getGameMode() + " - " + gameHolder.getName(),
-                            true
+                            ChatColor.LIGHT_PURPLE + "Started Game: " + game.getGameMode() + " - " + gameHolder.getName()
                     );
                 });
         this.game.setAcceptsSpectators(true);
@@ -294,13 +293,13 @@ public class PlayingState implements State, TimerDebugAble {
                                                                                                                        .getCurrentCooldown() + .5));
                     if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
-                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
+                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
                         });
                     } else {
                         game.spectators().forEach(uuid -> {
                             Player player = Bukkit.getPlayer(uuid);
                             if (player != null && WarlordsPlusCommand.UUIDS.contains(player.getUniqueId())) {
-                                player.sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
+                                player.sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
                             }
                         });
                     }

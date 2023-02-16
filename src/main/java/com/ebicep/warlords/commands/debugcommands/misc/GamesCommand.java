@@ -271,7 +271,7 @@ public class GamesCommand extends BaseCommand {
     @Subcommand("reload")
     @Description("Reloads game holograms")
     public void reload(CommandIssuer issuer) {
-        sendDebugMessage(issuer, ChatColor.GREEN + "Reloading Game Holograms", true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Reloading Game Holograms");
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
         previousGames.forEach(DatabaseGameBase::createHolograms);
         Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
@@ -284,22 +284,22 @@ public class GamesCommand extends BaseCommand {
         for (int i = 0; i < previousGames.size(); i++) {
             stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
         }
-        sendDebugMessage(issuer, stringBuilder.toString(), true);
+        sendDebugMessage(issuer, stringBuilder.toString());
     }
 
     @Subcommand("edit")
     @Conditions("database:game")
     @Description("Opens game editor from date")
     public void edit(Player player, String date) {
-        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date, true);
+        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date);
 
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.gameService.findByDate(date))
                 .syncLast(databaseGameBase -> {
                     if (databaseGameBase == null) {
-                        sendDebugMessage(player, ChatColor.RED + "Game not found", true);
+                        sendDebugMessage(player, ChatColor.RED + "Game not found");
                     } else {
-                        sendDebugMessage(player, ChatColor.GREEN + "Game found", true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Game found");
                         openGameEditorMenu(player, databaseGameBase);
                     }
 
@@ -311,7 +311,7 @@ public class GamesCommand extends BaseCommand {
     @Description("Adds game to database")
     public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
         DatabaseGameBase.addGameToDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
@@ -320,21 +320,21 @@ public class GamesCommand extends BaseCommand {
     @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Removing game " + databaseGame.getDate(), true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Removing game " + databaseGame.getDate());
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
     @Subcommand("getnames")
     public void getNames(CommandIssuer issuer) {
         for (String playerName : PLAYER_NAMES) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.AQUA + playerName, false);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.AQUA + playerName);
         }
     }
 
     @Subcommand("setcounted")
     public void setCounted(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber, boolean counted) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Setting game " + databaseGame.getDate() + " to counted: " + counted, true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Setting game " + databaseGame.getDate() + " to counted: " + counted);
         databaseGame.setCounted(counted);
         DatabaseManager.updateGameAsync(databaseGame);
     }

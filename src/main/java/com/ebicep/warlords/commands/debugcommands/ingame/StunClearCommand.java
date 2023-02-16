@@ -16,7 +16,7 @@ public class StunClearCommand extends BaseCommand {
     @Default
     public void clear(CommandIssuer issuer) {
         WarlordsPlayer.STUNNED_PLAYERS.clear();
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Cleared WarlordsPlayer Stun List", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Cleared WarlordsPlayer Stun List");
     }
 
 }

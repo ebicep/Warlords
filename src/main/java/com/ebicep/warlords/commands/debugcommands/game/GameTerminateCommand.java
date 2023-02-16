@@ -46,8 +46,7 @@ public class GameTerminateCommand extends BaseCommand {
                 game.setNextState(new EndState(game, null));
                 ChatChannels.sendDebugMessage(issuer,
                         ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap()
-                                                                                                                       .getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"),
-                        true
+                                                                                                                       .getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s")
                 );
             }
         }
@@ -55,16 +54,16 @@ public class GameTerminateCommand extends BaseCommand {
                 issuer,
                 ChatColor.RED + "(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
                         inactiveGames.stream()
-                                .map(GameHolder::getName)
-                                .collect(Collectors.joining(", ")),
-                true);
+                                     .map(GameHolder::getName)
+                                     .collect(Collectors.joining(", "))
+        );
         ChatChannels.sendDebugMessage(
                 issuer,
                 ChatColor.RED + "(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
                         otherStateGames.stream()
-                                .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
-                                .collect(Collectors.joining(", ")),
-                true);
+                                       .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
+                                       .collect(Collectors.joining(", "))
+        );
     }
 
     @Default
@@ -75,7 +74,7 @@ public class GameTerminateCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 game.setNextState(new EndState(game, null));
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName(), true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName());
                 break;
             }
         }

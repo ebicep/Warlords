@@ -31,13 +31,12 @@ public class GameKillCommand extends BaseCommand {
             if (gamePredicate.test(gameHolder)) {
                 ChatChannels.sendDebugMessage(issuer,
                         ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " - " + gameHolder.getMap() + " - " + gameHolder.getGame()
-                                .playersCount() + " players",
-                        true
+                                                                                                                                                     .playersCount() + " players"
                 );
                 gameHolder.forceEndGame();
             }
         }
-        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames);
     }
 
     @Default
@@ -47,7 +46,7 @@ public class GameKillCommand extends BaseCommand {
         for (GameHolder game : Warlords.getGameManager().getGames()) {
             if (Objects.equals(game.getGame(), playerGame)) {
                 game.forceEndGame();
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Killed own game " + game.getName(), true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Killed own game " + game.getName());
                 break;
             }
         }
@@ -60,7 +59,7 @@ public class GameKillCommand extends BaseCommand {
         for (GameHolder game : Warlords.getGameManager().getGames()) {
             game.forceEndGame();
         }
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Killed all games", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Killed all games");
     }
 
     @Subcommand("map")

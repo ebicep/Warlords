@@ -6,5 +6,13 @@
         <language minSize="468" name="Java" />
       </Languages>
     </inspection_tool>
+    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignorableAnnotations">
+        <set>
+          <option value="co.aikar.commands.annotation.Subcommand" />
+          <option value="org.junit.jupiter.api.Nested" />
+        </set>
+      </option>
+    </inspection_tool>
   </profile>
 </component>

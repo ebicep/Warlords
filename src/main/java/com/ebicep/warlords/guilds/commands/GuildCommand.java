@@ -17,13 +17,12 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -448,9 +447,8 @@ public class GuildCommand extends BaseCommand {
             }
             ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
             ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " created a guild party!");
-            TextComponent message = new TextComponent(ChatColor.GOLD.toString() + ChatColor.BOLD + "Click here to join!");
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + player.getName()));
-            ChatUtils.sendCenteredMessageWithEvents(onlinePlayer, Collections.singletonList(message));
+            ChatUtils.sendCenteredMessage(onlinePlayer, Component.text(ChatColor.GOLD.toString() + ChatColor.BOLD + "Click here to join!")
+                                                                 .clickEvent(ClickEvent.runCommand("/party join " + player.getName())));
             ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
         }
     }
@@ -585,7 +583,7 @@ public class GuildCommand extends BaseCommand {
         @CommandPermission("warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards");
         }
 
     }

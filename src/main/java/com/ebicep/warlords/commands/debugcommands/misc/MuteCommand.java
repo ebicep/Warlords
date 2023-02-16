@@ -29,11 +29,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (MUTED_PLAYERS.getOrDefault(uuid, false)) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted");
             return;
         }
         MUTED_PLAYERS.put(uuid, true);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name);
     }
 
     @CommandAlias("unmute")
@@ -43,11 +43,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (!MUTED_PLAYERS.getOrDefault(uuid, false)) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted");
             return;
         }
         MUTED_PLAYERS.put(uuid, false);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name);
     }
 
     @CommandAlias("mutelist")
@@ -58,9 +58,9 @@ public class MuteCommand extends BaseCommand {
                 .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
                 .collect(Collectors.joining(","));
         if (mutedList.isEmpty()) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players");
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList, true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
         }
     }
 

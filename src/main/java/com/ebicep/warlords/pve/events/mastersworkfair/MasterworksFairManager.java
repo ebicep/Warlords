@@ -4,9 +4,8 @@ import com.ebicep.customentities.npc.traits.MasterworksFairTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -64,10 +63,8 @@ public class MasterworksFairManager {
         player.sendMessage(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > " + message);
     }
 
-    public static void sendMasterworksFairMessage(Player player, ComponentBuilder components) {
-        BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > ")
-                .create();
-        player.spigot().sendMessage(components.prependAndCreate(baseComponents));
+    public static void sendMasterworksFairMessage(Player player, Component component) {
+        player.sendMessage(Component.text(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > ").append(component));
     }
 
     public static void createFair() {

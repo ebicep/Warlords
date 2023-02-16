@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -120,6 +121,10 @@ public abstract class AbstractWeapon {
         return itemBuilder
                 .lore(lore)
                 .get();
+    }
+
+    public Component getHoverComponent(boolean enchantIfBound) {
+        return Component.text(getName()).hoverEvent(generateItemStack(enchantIfBound));
     }
 
     public String getName() {

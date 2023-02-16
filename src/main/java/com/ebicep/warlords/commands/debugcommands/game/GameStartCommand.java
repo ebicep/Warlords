@@ -138,27 +138,25 @@ public class GameStartCommand {
     public static void startGameFromDebugMenu(Player player, boolean excludeStarter, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         startGame(player, excludeStarter, entryEditor.andThen(queueEntryBuilder -> queueEntryBuilder.setOnResult((result, game) -> {
             if (game == null) {
-                sendDebugMessage(player, ChatColor.RED + "Engine failed to find a game server suitable for your request:", false);
-                sendDebugMessage(player, ChatColor.GRAY + result.toString(), false);
+                sendDebugMessage(player, ChatColor.RED + "Engine failed to find a game server suitable for your request:");
+                sendDebugMessage(player, ChatColor.GRAY + result.toString());
             } else {
                 sendDebugMessage(player,
                         ChatColor.GREEN + "Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-                                " a game with the following parameters:",
-                        false
+                                " a game with the following parameters:"
                 );
-                sendDebugMessage(player, ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()), false);
-                sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName(), false);
+                sendDebugMessage(player, ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
+                sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName());
                 sendDebugMessage(player,
                         ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons()
-                                .stream()
-                                .map(e -> toTitleHumanCase(e.name()))
-                                .collect(Collectors.joining(", ")),
-                        false
+                                                                                  .stream()
+                                                                                  .map(e -> toTitleHumanCase(e.name()))
+                                                                                  .collect(Collectors.joining(", "))
                 );
-                sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers(), false);
-                sendDebugMessage(player, ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers(), false);
-                sendDebugMessage(player, ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople(), false);
-                sendDebugMessage(player, ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId(), false);
+                sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
+                sendDebugMessage(player, ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());
+                sendDebugMessage(player, ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
+                sendDebugMessage(player, ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
             }
         })));
     }

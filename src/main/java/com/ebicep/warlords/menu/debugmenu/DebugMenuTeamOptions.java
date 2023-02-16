@@ -130,7 +130,7 @@ public class DebugMenuTeamOptions {
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(), (m, e) -> {
                     warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100, false));
-                    sendDebugMessage(player, ChatColor.GREEN + "Killed all " + team.name + " players", true);
+                    sendDebugMessage(player, ChatColor.GREEN + "Killed all " + team.name + " players");
                 });
         menu.openForPlayer(player);
     }

@@ -260,7 +260,7 @@ public class DebugMenuGameOptions {
                         } else {
                             game.addFrozenCause("Debug");
                         }
-                        sendDebugMessage(player, player.getName() + " froze game " + game.getGameId(), true);
+                        sendDebugMessage(player, player.getName() + " froze game " + game.getGameId());
                     }
             );
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
@@ -305,7 +305,7 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         timerDebugAble.skipTimer();
-                        sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId(), true);
+                        sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId());
                     }
             );
             menu.setItem(5, 1,
@@ -327,7 +327,7 @@ public class DebugMenuGameOptions {
                                             throw new Exception();
                                         }
                                         ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                        sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time, true);
+                                        sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time);
                                     } catch (Exception exception) {
                                         p.sendMessage(ChatColor.RED + "Invalid time");
                                     }
@@ -362,7 +362,7 @@ public class DebugMenuGameOptions {
                                         throw new NumberFormatException();
                                     }
                                     game.setPoints(team, score);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score, true);
+                                    sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score);
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid score");
                                 }

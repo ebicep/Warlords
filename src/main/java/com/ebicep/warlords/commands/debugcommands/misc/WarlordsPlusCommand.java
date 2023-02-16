@@ -24,30 +24,30 @@ public class WarlordsPlusCommand extends BaseCommand {
     @Subcommand("add")
     public void add(CommandIssuer issuer, @Flags("other") Player player) {
         if (UUIDS.contains(player.getUniqueId())) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player already has access", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player already has access");
             return;
         }
         UUIDS.add(player.getUniqueId());
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Added player to access list", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Added player to access list");
     }
 
     @Subcommand("remove")
     public void remove(CommandIssuer issuer, @Flags("other") Player player) {
         if (!UUIDS.contains(player.getUniqueId())) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player does not have access", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Player does not have access");
             return;
         }
         UUIDS.remove(player.getUniqueId());
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Removed player from access list", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Removed player from access list");
     }
 
     @Subcommand("toggle")
     public void toggle(CommandIssuer issuer) {
         enabled = !enabled;
         if (enabled) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "WPS Enabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "WPS Enabled");
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "WPS Disabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "WPS Disabled");
         }
     }
 
@@ -55,11 +55,10 @@ public class WarlordsPlusCommand extends BaseCommand {
     public void list(CommandIssuer issuer) {
         ChatChannels.sendDebugMessage(issuer,
                 ChatColor.GREEN + UUIDS.stream()
-                        .map(Bukkit::getOfflinePlayer)
-                        .filter(Objects::nonNull)
-                        .map(OfflinePlayer::getName)
-                        .collect(Collectors.joining(", ")),
-                true
+                                       .map(Bukkit::getOfflinePlayer)
+                                       .filter(Objects::nonNull)
+                                       .map(OfflinePlayer::getName)
+                                       .collect(Collectors.joining(", "))
         );
     }
 

@@ -28,7 +28,7 @@ public class ImposterCommand extends BaseCommand {
         for (Option option : warlordsPlayer.getGame().getOptions()) {
             if (option instanceof ImposterModeOption) {
                 ((ImposterModeOption) option).assignImpostersWithAnimation(0);
-                ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Imposters assigned", true);
+                ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Imposters assigned");
                 return;
             }
         }

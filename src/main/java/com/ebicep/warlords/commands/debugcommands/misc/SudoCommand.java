@@ -19,8 +19,7 @@ public class SudoCommand extends BaseCommand {
     @Default
     public void sudo(CommandIssuer issuer, @Flags("other") Player player, String toSay) {
         ChatChannels.sendDebugMessage(issuer,
-                ChatColor.GREEN + "Sudo say " + ChatColor.AQUA + player.getName() + ChatColor.GRAY + " - " + ChatColor.RESET + toSay,
-                false
+                ChatColor.GREEN + "Sudo say " + ChatColor.AQUA + player.getName() + ChatColor.GRAY + " - " + ChatColor.RESET + toSay
         );
         new BukkitRunnable() {
             @Override

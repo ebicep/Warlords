@@ -8,8 +8,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -52,7 +52,7 @@ public class WeaponSkinSelectorMenu {
                                 .lore(
                                         ChatColor.GRAY + "This skin is locked to a weapon",
                                         ChatColor.GRAY + "of " + weaponsPvE.getChatColorName()
-                                                .toUpperCase() + ChatColor.GRAY + " rarity of higher."
+                                                                           .toUpperCase() + ChatColor.GRAY + " rarity of higher."
                                 )
                                 .get(),
                         (m, e) -> {
@@ -67,8 +67,8 @@ public class WeaponSkinSelectorMenu {
                                 ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
                                 "",
                                 isUnlocked ?
-                                        ChatColor.AQUA + "Cost: " + ChatColor.GREEN + "Unlocked" :
-                                        ChatColor.AQUA + "Cost: \n" + ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
+                                ChatColor.AQUA + "Cost: " + ChatColor.GREEN + "Unlocked" :
+                                ChatColor.AQUA + "Cost: \n" + ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
                         );
                 if (weapon.getSelectedWeaponSkin() == weaponSkin) {
                     itemBuilder.addLore(
@@ -162,10 +162,8 @@ public class WeaponSkinSelectorMenu {
             databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, weapon.getRarity().fairyEssenceCost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(Component.text(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for ")
+                                        .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 

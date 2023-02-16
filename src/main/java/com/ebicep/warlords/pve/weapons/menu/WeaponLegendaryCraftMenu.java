@@ -8,9 +8,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -63,16 +63,13 @@ public class WeaponLegendaryCraftMenu {
                                 player.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.1f);
                                 Utils.playGlobalSound(loc, "legendaryfind", 500, 1);
                                 EffectUtils.strikeLightning(loc, false, 3);
-                                player.getPlayer().spigot().sendMessage(
-                                        new ComponentBuilder(ChatColor.GRAY + "Crafted Legendary Weapon: ")
-                                                .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                                .create()
+                                player.sendMessage(Component.text(ChatColor.GRAY + "Crafted Legendary Weapon: ")
+                                                            .append(weapon.getHoverComponent(false))
                                 );
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                                    onlinePlayer.spigot().sendMessage(
-                                            new ComponentBuilder(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GRAY + " crafted ")
-                                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                                    .create()
+                                    onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player)
+                                                                        .append(Component.text(player.getName() + ChatColor.GRAY + " crafted "))
+                                                                        .append(weapon.getHoverComponent(false))
                                     );
                                 }
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

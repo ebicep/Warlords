@@ -16,10 +16,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
-import net.md_5.bungee.api.chat.ClickEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -39,10 +38,10 @@ public class MasterworksFairCommand extends BaseCommand {
     @Description("Ends the current masterworks fair event")
     public void end(CommandIssuer issuer, Boolean awardThroughRewardsInventory, @Default("5") @Conditions("limits:min=1,max=5") Integer startMinuteDelay) {
         if (currentFair == null) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end");
             return;
         }
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay);
         currentFair.setEnded(true);
         resetFair(currentFair, awardThroughRewardsInventory, startMinuteDelay);
     }
@@ -55,16 +54,16 @@ public class MasterworksFairCommand extends BaseCommand {
                 .syncLast(fairs -> {
                     if (fairNumber == null) {
                         fairs.get(fairs.size() - 2).sendResults(true);
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current results", true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current results");
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
-                                .filter(fair -> fair.getFairNumber() == fairNumber)
-                                .findFirst();
+                                                                                .filter(fair -> fair.getFairNumber() == fairNumber)
+                                                                                .findFirst();
                         if (fairOptional.isPresent()) {
                             fairOptional.get().sendResults(true);
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " results", true);
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " results");
                         } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber, true);
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber);
                         }
                     }
                 })
@@ -79,16 +78,16 @@ public class MasterworksFairCommand extends BaseCommand {
                 .syncLast(fairs -> {
                     if (fairNumber == null) {
                         fairs.get(fairs.size() - 2).sendRewards(true);
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current rewards", true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current rewards");
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
-                                .filter(fair -> fair.getFairNumber() == fairNumber)
-                                .findFirst();
+                                                                                .filter(fair -> fair.getFairNumber() == fairNumber)
+                                                                                .findFirst();
                         if (fairOptional.isPresent()) {
                             fairOptional.get().sendRewards(true);
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " rewards", true);
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " rewards");
                         } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber, true);
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber);
                         }
                     }
                 })
@@ -98,19 +97,19 @@ public class MasterworksFairCommand extends BaseCommand {
     @Subcommand("validate")
     @Description("Validates the masterworks fair event, making sure players got their rewards")
     public void validate(CommandIssuer issuer, Instant instant) {
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Locating fair with start date " + instant, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Locating fair with start date " + instant);
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(fairs -> {
                     MasterworksFair masterworksFair = fairs.stream()
-                            .filter(fair -> fair.getStartDate().equals(instant))
-                            .findFirst()
-                            .orElse(null);
+                                                           .filter(fair -> fair.getStartDate().equals(instant))
+                                                           .findFirst()
+                                                           .orElse(null);
                     if (masterworksFair == null) {
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair with start date " + instant, true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair with start date " + instant);
                         return;
                     } else {
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Found fair with start date " + instant, true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Found fair with start date " + instant);
                     }
                     int fairNumber = masterworksFair.getFairNumber();
                     HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
@@ -151,8 +150,8 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
                                                     WeaponsPvE rarity = masterworksFairEntry.getRarity();
                                                     if (pveStats.getMasterworksFairEntries()
-                                                            .stream()
-                                                            .anyMatch(entry -> entry.getFairNumber() == masterworksFairEntry.getFairNumber() && entry.getRarity() == rarity)
+                                                                .stream()
+                                                                .anyMatch(entry -> entry.getFairNumber() == masterworksFairEntry.getFairNumber() && entry.getRarity() == rarity)
                                                     ) {
                                                         continue;
                                                     }
@@ -163,8 +162,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                                     ChatChannels.sendDebugMessage(
                                                             (CommandIssuer) null,
                                                             ChatColor.GREEN + "Validating Fair - Gave " + ChatColor.AQUA + databasePlayer.getName() +
-                                                                    ChatColor.GREEN + " their " + rarity.getChatColorName() + ChatColor.GREEN + " reward",
-                                                            false
+                                                                    ChatColor.GREEN + " their " + rarity.getChatColorName() + ChatColor.GREEN + " reward"
                                                     );
                                                 }
                                                 if (resent) {
@@ -198,22 +196,22 @@ public class MasterworksFairCommand extends BaseCommand {
                         fairNumber.set(masterworksFair.getFairNumber());
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
-                                .filter(f -> f.getFairNumber() == fairNum)
-                                .findFirst();
+                                                                                .filter(f -> f.getFairNumber() == fairNum)
+                                                                                .findFirst();
                         if (fairOptional.isPresent()) {
                             masterworksFair = fairOptional.get();
                             fairNumber.set(masterworksFair.getFairNumber());
                         } else {
-                            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Could not find fair #" + fairNum, true);
+                            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Could not find fair #" + fairNum);
                             return;
                         }
                     }
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Masterworks Fair #" + fairNumber.get() + " Participants:", false);
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + " - Common", false);
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Masterworks Fair #" + fairNumber.get() + " Participants:");
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + " - Common");
                     sendFairEntry(player, masterworksFair.getCommonPlayerEntries());
-                    ChatChannels.sendDebugMessage(player, ChatColor.BLUE + " - Rare", false);
+                    ChatChannels.sendDebugMessage(player, ChatColor.BLUE + " - Rare");
                     sendFairEntry(player, masterworksFair.getRarePlayerEntries());
-                    ChatChannels.sendDebugMessage(player, ChatColor.DARK_PURPLE + " - Epic", false);
+                    ChatChannels.sendDebugMessage(player, ChatColor.DARK_PURPLE + " - Epic");
                     sendFairEntry(player, masterworksFair.getEpicPlayerEntries());
                 })
                 .execute();
@@ -224,12 +222,12 @@ public class MasterworksFairCommand extends BaseCommand {
         Collections.reverse(entries);
         for (int i = 0; i < entries.size(); i++) {
             MasterworksFairPlayerEntry entry = entries.get(i);
-            ChatChannels.playerSpigotSendMessage(player,
+            ChatChannels.playerSendMessage(player,
                     ChatChannels.DEBUG,
-                    new ComponentBuilder(ChatColor.GRAY + "   " + (i + 1) + ". " +
-                            ChatColor.AQUA + Bukkit.getOfflinePlayer(entry.getUuid()).getName())
-                            .append(ChatColor.GRAY + " (" + entry.getUuid() + ")")
-                            .appendClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "" + entry.getUuid())
+                    Component.text(ChatColor.GRAY + "   " + (i + 1) + ". " + ChatColor.AQUA + Bukkit.getOfflinePlayer(entry.getUuid()).getName())
+                             .append(Component.text(ChatColor.GRAY + " (" + entry.getUuid() + ")")
+                                              .clickEvent(net.kyori.adventure.text.event.ClickEvent.suggestCommand("" + entry.getUuid()))
+                             )
             );
         }
     }

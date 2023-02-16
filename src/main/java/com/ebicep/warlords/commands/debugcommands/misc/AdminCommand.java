@@ -30,10 +30,10 @@ public class AdminCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             if (BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
                 BYPASSED_PLAYER_CURRENCIES.remove(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Disabled Bypassing Currencies", true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Disabled Bypassing Currencies");
             } else {
                 BYPASSED_PLAYER_CURRENCIES.add(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Enabled Bypassing Currencies", true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Enabled Bypassing Currencies");
             }
         });
     }
@@ -42,14 +42,14 @@ public class AdminCommand extends BaseCommand {
     @Description("Prevents games from being started")
     public void disableGames(CommandIssuer issuer) {
         GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disabled Games = " + GameManager.gameStartingDisabled, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disabled Games = " + GameManager.gameStartingDisabled);
     }
 
     @Subcommand("disablerestartcheck")
     @Description("Removes restart check that prevents games from being started")
     public void disableRestartCheck(CommandIssuer issuer) {
         DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Restart Check = " + DISABLE_RESTART_CHECK, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Restart Check = " + DISABLE_RESTART_CHECK);
     }
 
     @Subcommand("removenearbyentities")

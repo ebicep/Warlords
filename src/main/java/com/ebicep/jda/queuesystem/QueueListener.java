@@ -44,15 +44,9 @@ public class QueueListener extends ListenerAdapter {
             UUID playerUUID = offlinePlayer.getUniqueId();
 
             switch (Objects.requireNonNull(event.getSubcommandName())) {
-                case "refresh" -> {
-                    refreshQueue(event);
-                }
-                case "join" -> {
-                    joinQueue(event, member, textChannel, playerName, playerUUID);
-                }
-                case "leave" -> {
-                    leaveQueue(event, playerName, playerUUID);
-                }
+                case "refresh" -> refreshQueue(event);
+                case "join" -> joinQueue(event, member, textChannel, playerName, playerUUID);
+                case "leave" -> leaveQueue(event, playerName, playerUUID);
             }
         }
     }

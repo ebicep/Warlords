@@ -18,9 +18,9 @@ public class ServerStatusCommand extends BaseCommand {
     public void serverStatus(CommandIssuer issuer, @Values("@enabledisable") String option) {
         ServerStatusCommand.enabled = option.equals("enable");
         if (ServerStatusCommand.enabled) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Server status is now enabled.", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Server status is now enabled.");
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Server status is now disabled.", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Server status is now disabled.");
         }
     }
 

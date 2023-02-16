@@ -6,8 +6,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -62,10 +62,8 @@ public class WeaponUpgradeMenu {
             weapon.upgrade();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon: ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(Component.text(ChatColor.GRAY + "Upgraded Weapon: ")
+                                        .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }

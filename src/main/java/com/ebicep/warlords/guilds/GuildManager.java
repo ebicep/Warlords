@@ -7,10 +7,9 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogInvite;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -120,12 +119,11 @@ public class GuildManager {
 
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
         ChatUtils.sendCenteredMessage(to, ChatColor.AQUA + from.getName() + ChatColor.YELLOW + " has invited you to join their guild!");
-        TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept. " + ChatColor.GOLD + "Click here to join " + guild.getName());
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(ChatColor.GREEN + "Click to join " + guild.getName()).create()
-        ));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild join " + guild.getName()));
-        ChatUtils.sendCenteredMessageWithEvents(to, Collections.singletonList(message));
+        ChatUtils.sendCenteredMessage(to,
+                Component.text(ChatColor.YELLOW + "You have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept. " + ChatColor.GOLD + "Click here to join " + guild.getName())
+                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + "Click to join " + guild.getName())))
+                         .clickEvent(ClickEvent.runCommand("/guild join " + guild.getName()))
+        );
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
     }
 
@@ -144,27 +142,7 @@ public class GuildManager {
                      .findFirst();
     }
 
-    static class GuildInvite {
-        private final UUID uuid;
-        private final Guild guild;
-
-        public GuildInvite(UUID uuid, Guild guild) {
-            this.uuid = uuid;
-            this.guild = guild;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public Guild getGuild() {
-            return guild;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(uuid, guild);
-        }
+    record GuildInvite(UUID uuid, Guild guild) {
 
         @Override
         public boolean equals(Object o) {

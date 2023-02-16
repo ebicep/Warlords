@@ -23,7 +23,7 @@ public class PacketUtils {
         try {
             PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
         } catch (InvocationTargetException e) {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending entity destroy packet", true);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending entity destroy packet");
             throw new RuntimeException(e);
         }
     }
@@ -35,7 +35,7 @@ public class PacketUtils {
                         PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
                 );
             } catch (InvocationTargetException e) {
-                ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending right click packet", true);
+                ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending right click packet");
                 throw new RuntimeException(e);
             }
         }
