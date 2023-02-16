@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -243,9 +244,9 @@ public class WeaponTitleMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            LinkedHashMap<Currencies, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
-            for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
-                databasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
+            LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
+            for (Map.Entry<Enum<? extends Spendable>, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                ((Spendable) currenciesLongEntry.getKey()).subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
             }
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

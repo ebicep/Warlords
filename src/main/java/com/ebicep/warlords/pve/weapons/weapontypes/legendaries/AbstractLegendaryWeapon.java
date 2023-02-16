@@ -5,7 +5,9 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
@@ -589,24 +591,45 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     public List<String> getTitleUpgradeCostLore() {
-        LinkedHashMap<Currencies, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
+        LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         List<String> lore = new ArrayList<>();
         if (upgradeCost.isEmpty()) {
             lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
             lore.add("");
             lore.add(ChatColor.AQUA + "Upgrade Cost: ");
-            upgradeCost.forEach((currencies, aLong) -> {
-                lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
+            upgradeCost.forEach((anEnum, aLong) -> {
+                lore.add(ChatColor.GRAY + " - " + ((Spendable) anEnum).getCostColoredName(aLong));
             });
         }
         return lore;
     }
 
-    public LinkedHashMap<Currencies, Long> getTitleUpgradeCost(int tier) {
-        return new LinkedHashMap<>() {{
-            put(Currencies.COIN, 1L);
-        }};
+    public LinkedHashMap<Enum<? extends Spendable>, Long> getTitleUpgradeCost(int tier) {
+        LinkedHashMap<Enum<? extends Spendable>, Long> cost = new LinkedHashMap<>();
+        switch (tier) {
+            case 1:
+                cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
+                cost.put(MobDrops.ZENITH_STAR, 2L);
+                break;
+            case 2:
+                cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
+                cost.put(MobDrops.ZENITH_STAR, 4L);
+                break;
+            case 3:
+                cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
+                cost.put(MobDrops.ZENITH_STAR, 8L);
+                break;
+            case 4:
+                cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
+                cost.put(MobDrops.ZENITH_STAR, 16L);
+                break;
+        }
+        return cost;
     }
 
 }

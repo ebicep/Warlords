@@ -1,7 +1,45 @@
 package com.ebicep.warlords.pve.mobs;
 
-public enum MobDrops {
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.util.java.NumberFormat;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-    ZENITH_STAR
+public enum MobDrops implements Spendable {
+
+    ZENITH_STAR(
+            "Zenith Start",
+            ChatColor.WHITE,
+            new ItemStack(Material.NETHER_STAR)
+    ),
+
+    ;
+
+    public final String name;
+    public final ChatColor chatColor;
+    public final ItemStack item;
+
+    MobDrops(String name, ChatColor chatColor, ItemStack item) {
+        this.name = name;
+        this.chatColor = chatColor;
+        this.item = item;
+    }
+
+
+    @Override
+    public void addToPlayer(DatabasePlayer databasePlayer, long amount) {
+        databasePlayer.getPveStats().addMobDrops(this, amount);
+    }
+
+    @Override
+    public String getCostColoredName(long cost) {
+        return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
+    }
+
+    public boolean pluralIncludeS() {
+        return true;
+    }
 
 }

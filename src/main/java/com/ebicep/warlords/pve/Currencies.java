@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public enum Currencies {
+public enum Currencies implements Spendable {
 
     SYNTHETIC_SHARD(
             "Synthetic Shard",
@@ -189,10 +190,17 @@ public enum Currencies {
         this.item = item;
     }
 
+    @Override
+    public void addToPlayer(DatabasePlayer databasePlayer, long amount) {
+        databasePlayer.getPveStats().addCurrency(this, amount);
+    }
+
     public String getColoredName() {
         return chatColor + name;
     }
 
+
+    @Override
     public String getCostColoredName(long cost) {
         return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
     }
