@@ -328,7 +328,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                // add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new EventShopReward(3, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1, 300_000));
                 add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
                 add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
@@ -339,16 +339,108 @@ public enum GameEvents {
                 add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
                 add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
                 add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 3, 500_000));
             }}
     ) {
         @Override
         public LinkedHashMap<Currencies, Long> getRewards(int position) {
-            return null;
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 500_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 5L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 200_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 2L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 25_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
         }
 
         @Override
         public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            return null;
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 150_000L);
+                    put("Experience", 150_000L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 100_000L);
+                    put("Experience", 100_000L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 75_000L);
+                    put("Experience", 75_000L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 50_000L);
+                    put("Experience", 50_000L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put("Coins", 20_000L);
+                put("Experience", 20_000L);
+            }};
         }
 
         @Override

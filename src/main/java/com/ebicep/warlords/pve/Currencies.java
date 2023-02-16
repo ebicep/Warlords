@@ -90,6 +90,16 @@ public enum Currencies implements Spendable {
             ChatColor.YELLOW,
             new ItemStack(Material.SNOW_BALL)
     ),
+    TITLE_TOKEN_PHARAOHS_REVENGE(
+            "Pharaoh's Revenge Title Token",
+            ChatColor.YELLOW,
+            new ItemStack(Material.SNOW_BALL)
+    ),
+    LIMIT_BREAKER(
+            "Limit Breaker",
+            ChatColor.BLACK,
+            new ItemStack(Material.WATCH)
+    ),
 
     ;
 
