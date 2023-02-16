@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
@@ -108,6 +109,40 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             }
         }.runTaskLater(20);
 
+        int playerCount = option.playerCount();
+        for (int i = 0; i < playerCount; i++) {
+            EventNarmerAcolyte acolyte = new EventNarmerAcolyte(warlordsNPC.getLocation());
+            option.spawnNewMob(acolyte);
+            acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
+            acolytes.add(acolyte.getWarlordsNPC());
+        }
+
+        int berserkerSpawnCount = 5;
+        if (playerCount == 3) {
+            berserkerSpawnCount = 7;
+        } else if (playerCount == 4) {
+            berserkerSpawnCount = 9;
+        }
+        Mobs bersekerToSpawn = null;
+        switch (currentWave) {
+            case 5:
+                bersekerToSpawn = Mobs.BASIC_BERSERK_ZOMBIE;
+                break;
+            case 10:
+            case 15:
+                bersekerToSpawn = Mobs.ELITE_BERSERK_ZOMBIE;
+                break;
+            case 20:
+            case 25:
+                bersekerToSpawn = Mobs.ENVOY_BERSERKER_ZOMBIE;
+                break;
+        }
+        if (bersekerToSpawn != null) {
+            for (int i = 0; i < berserkerSpawnCount; i++) {
+                AbstractMob<?> berserker = bersekerToSpawn.createMob.apply(warlordsNPC.getLocation());
+                option.spawnNewMob(berserker);
+            }
+        }
 
         for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new BasicZombie(location));
@@ -229,37 +264,35 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
 
-        if (ancestors.isEmpty()) {
-            if (acolytes.size() < playerCount && ticksUntilNewAcolyte <= 0) {
-                EventNarmerAcolyte acolyte = new EventNarmerAcolyte(loc);
-                option.spawnNewMob(acolyte);
-                acolytes.add(acolyte.getWarlordsNPC());
-                ticksUntilNewAcolyte = 300;
-            }
+        if (acolytes.size() < playerCount && ticksUntilNewAcolyte <= 0) {
+            EventNarmerAcolyte acolyte = new EventNarmerAcolyte(loc);
+            option.spawnNewMob(acolyte);
+            acolytes.add(acolyte.getWarlordsNPC());
+            ticksUntilNewAcolyte = 300;
+        }
 
-            if (ticksUntilNewAcolyte > 0) {
-                ticksUntilNewAcolyte--;
-            }
+        if (ticksUntilNewAcolyte > 0) {
+            ticksUntilNewAcolyte--;
+        }
 
-            if (acolyteDeathTickWindow > 0) {
-                acolyteDeathTickWindow--;
+        if (acolyteDeathTickWindow > 0) {
+            acolyteDeathTickWindow--;
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.RED + "Death Wish",
-                                ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
-                                0, acolyteDeathTickWindow, 0
-                        );
-                    }
+            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                if (we.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle(
+                            (Player) we.getEntity(),
+                            ChatColor.RED + "Death Wish",
+                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
+                            0, acolyteDeathTickWindow, 0
+                    );
                 }
             }
+        }
 
-            if (ticksElapsed % 15 == 0) {
-                for (WarlordsEntity acolyte : acolytes) {
-                    EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
-                }
+        if (ticksElapsed % 15 == 0) {
+            for (WarlordsEntity acolyte : acolytes) {
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
             }
         }
 

@@ -41,4 +41,8 @@ public class LegendaryWeaponTitleInfo {
     public int getUpgradeLevel() {
         return upgradeLevel;
     }
+
+    public void setUpgradeLevel(int upgradeLevel) {
+        this.upgradeLevel = upgradeLevel;
+    }
 }

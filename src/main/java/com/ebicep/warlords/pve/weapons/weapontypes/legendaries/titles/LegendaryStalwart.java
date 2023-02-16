@@ -7,17 +7,25 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
-    public static int REDUCTION_DURATION = 5;
-    public static int COOLDOWN = 30;
+    public static final int UNDER_HP_CHECK = 80;
+    public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
+    public static final int EVERY_HP_PERCENT = 10;
+    public static final float EVERY_HP_PERCENT_DECREASE_PER_UPGRADE = .5f;
+
+    public static final int REDUCTION_DURATION = 5;
+    public static final int COOLDOWN = 30;
 
     public LegendaryStalwart() {
     }
@@ -32,15 +40,38 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "For every 10% of HP under 80%, gain an additional 7.5% damage reduction. Maximum 30% Damage Reduction." +
+        return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
+                " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
+                ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
                 "\n\nIf your HP is currently higher than 80% and you will die from the next source of damage, your " +
                 "health will be set to 5% of your max HP and gain 99% damage reduction for 5 seconds. Can be triggered every 30 seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 160;
     }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
+        // 80 - 10 = skip +70% hp = .7
+        // 85 - 9.5 = skip +75.5% hp = .75.5
+        float upperBoundHP = (getUnderHpCheck() - getEveryHpPercent()) / 100;
         AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
 
         player.getCooldownManager().addCooldown(
@@ -58,14 +89,12 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (player.getHealth() >= player.getMaxHealth() * .7) {
+                        if (player.getHealth() >= player.getMaxHealth() * upperBoundHP) {
                             return currentDamageValue;
                         }
-                        if (player.getHealth() <= player.getMaxHealth() * .4) {
-                            return currentDamageValue * .7f;
-                        }
-                        float percentBelowMax = 1 - player.getHealth() / player.getMaxHealth();
-                        float reduction = (float) (((int) (percentBelowMax * 10) - 2) * .075);
+                        float currentHpPercent = player.getHealth() / player.getMaxHealth();
+                        int timesToReduce = (int) ((getUnderHpCheck() - currentHpPercent) / getEveryHpPercent());
+                        float reduction = Math.min(timesToReduce * .075f, .8f);
                         return currentDamageValue * (1 - reduction);
                     }
 
@@ -112,11 +141,6 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 160;
-    }
-
-    @Override
     protected float getMeleeDamageMinValue() {
         return 140;
     }
@@ -139,5 +163,13 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     @Override
     protected float getSpeedBonusValue() {
         return 7;
+    }
+
+    private float getEveryHpPercent() {
+        return EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    private int getUnderHpCheck() {
+        return UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel();
     }
 }

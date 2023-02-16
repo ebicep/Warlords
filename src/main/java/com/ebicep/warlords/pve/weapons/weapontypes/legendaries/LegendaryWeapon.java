@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.util.java.Pair;
+
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryWeapon extends AbstractLegendaryWeapon {
@@ -18,6 +21,11 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return null;
     }
 
     @Override

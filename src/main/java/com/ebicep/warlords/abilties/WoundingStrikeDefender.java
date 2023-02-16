@@ -128,7 +128,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         we.getCooldownManager().removeCooldownByName(name + " Resistance");
         we.getCooldownManager().addCooldown(linkedCooldown);
         for (WarlordsEntity teammate : teammates) {
-            we.getCooldownManager().removeCooldownByName(name + " Resistance");
+            teammate.getCooldownManager().removeCooldownByName(name + " Resistance");
             teammate.getCooldownManager().addCooldown(linkedCooldown);
         }
     }

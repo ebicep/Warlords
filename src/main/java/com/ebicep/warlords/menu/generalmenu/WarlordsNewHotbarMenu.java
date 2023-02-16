@@ -199,11 +199,14 @@ public class WarlordsNewHotbarMenu {
                                 }
 
                                 AbstractPlayerClass apc = spec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                        .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
+                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings
+                                        .getWeaponSkins()
+                                        .getOrDefault(spec, Weapons.FELFLAME_BLADE)
+                                        .getItem()))
+                                        .name("§aWeapon Skin Preview")
                                         .lore("")
-                                        .get());
-
+                                        .get()
+                                );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
                                 databasePlayer.setLastSpec(spec);
 
@@ -265,12 +268,12 @@ public class WarlordsNewHotbarMenu {
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
                 LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
                 List<String> lore = rewardForLevel.entrySet()
-                        .stream()
-                        .map(currenciesLongEntry -> {
-                            Currencies currency = currenciesLongEntry.getKey();
-                            Long value = currenciesLongEntry.getValue();
-                            return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
-                        }).collect(Collectors.toList());
+                                                  .stream()
+                                                  .map(currenciesLongEntry -> {
+                                                      Currencies currency = currenciesLongEntry.getKey();
+                                                      Long value = currenciesLongEntry.getValue();
+                                                      return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
+                                                  }).collect(Collectors.toList());
                 lore.add(0, "");
                 lore.add("");
                 AtomicBoolean claimed = new AtomicBoolean(false);
@@ -454,11 +457,13 @@ public class WarlordsNewHotbarMenu {
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
+                                player.getInventory().setItem(1, new ItemBuilder(apc
+                                        .getWeapon()
+                                        .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                                        .name("§aWeapon Skin Preview")
                                         .lore("")
-                                        .get());
-
+                                        .get()
+                                );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                             } else {
                                 player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
@@ -535,9 +540,9 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
             menu.setItem(2,
                     apc.getWeapon()
-                            .getItem(playerSettings.getWeaponSkins()
-                                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
-                                    .getItem()),
+                       .getItem(playerSettings.getWeaponSkins()
+                                              .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
+                                              .getItem()),
                     ACTION_DO_NOTHING
             );
             menu.setItem(3, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
@@ -551,9 +556,9 @@ public class WarlordsNewHotbarMenu {
 
         public static void openArmorMenu(Player player, int pageNumber) {
             boolean onBlueTeam = Warlords.getGameManager()
-                    .getPlayerGame(player.getUniqueId())
-                    .map(g -> g.getPlayerTeam(player.getUniqueId()))
-                    .orElse(Team.BLUE) == Team.BLUE;
+                                         .getPlayerGame(player.getUniqueId())
+                                         .map(g -> g.getPlayerTeam(player.getUniqueId()))
+                                         .orElse(Team.BLUE) == Team.BLUE;
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
             List<ArmorManager.Helmets> selectedHelmet = playerSettings.getHelmets();
 
@@ -779,7 +784,8 @@ public class WarlordsNewHotbarMenu {
                 Menu menu = new Menu("PvE Menu", 9 * 4);
 
                 List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-                Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                Optional<AbstractWeapon> optionalWeapon = weapons
+                        .stream()
                         .filter(AbstractWeapon::isBound)
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
                         .findFirst();
@@ -788,7 +794,13 @@ public class WarlordsNewHotbarMenu {
                     itemStack = optionalWeapon.get().generateItemStack(false);
                 }
 
-                menu.setItem(1, 1, itemStack, (m, e) -> WeaponManagerMenu.openWeaponInventoryFromExternal(player, false));
+                menu.setItem(1, 1, itemStack, (m, e) -> {
+                    if (e.isRightClick() && optionalWeapon.isPresent()) {
+                        WeaponManagerMenu.openWeaponEditor(player, databasePlayer, optionalWeapon.get());
+                    } else {
+                        WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
+                    }
+                });
                 menu.setItem(2, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));

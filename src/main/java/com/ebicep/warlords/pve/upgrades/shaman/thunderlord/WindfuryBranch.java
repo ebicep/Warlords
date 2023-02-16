@@ -9,7 +9,6 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
 
     float weaponDamage = ability.getWeaponDamage();
     float cooldown = ability.getCooldown();
-    int procChance = ability.getProcChance();
     int maxHits = ability.getMaxHits();
 
     public WindfuryBranch(AbilityTree abilityTree, Windfury ability) {
@@ -56,7 +55,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                 "+4% Proc chance",
                 5000,
                 () -> {
-                    ability.setProcChance(procChance + 4);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -64,7 +63,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                 "+8% Proc chance",
                 10000,
                 () -> {
-                    ability.setProcChance(procChance + 8);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -72,7 +71,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                 "+12% Proc chance",
                 15000,
                 () -> {
-                    ability.setProcChance(procChance + 12);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -80,7 +79,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                 "+16% Proc chance\n+1 Windfury hit",
                 20000,
                 () -> {
-                    ability.setProcChance(procChance + 16);
+                    ability.setProcChance(ability.getProcChance() + 4);
                     ability.setMaxHits(maxHits + 1);
                 }
         ));

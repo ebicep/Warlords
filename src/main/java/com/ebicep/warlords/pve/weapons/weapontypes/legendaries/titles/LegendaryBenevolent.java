@@ -4,14 +4,18 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryBenevolent extends AbstractLegendaryWeapon {
 
-    private static final int HEALING_INCREASE = 25;
+    private static final int HEALING_INCREASE = 20;
+    private static final float HEALING_INCREASE_PER_UPGRADE = 7.5f;
 
     public LegendaryBenevolent() {
     }
@@ -26,7 +30,15 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase healing provided by " + HEALING_INCREASE + "%.";
+        return "Increase healing provided by " + formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                formatTitleUpgrade(HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+        ));
     }
 
     @Override
@@ -42,8 +54,9 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
                 if (event.isHealingInstance() && event.getAttacker().equals(player)) {
-                    event.setMin(event.getMin() * (1 + HEALING_INCREASE / 100f));
-                    event.setMax(event.getMax() * (1 + HEALING_INCREASE / 100f));
+                    float healingIncrease = 1 + (HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
+                    event.setMin(event.getMin() * healingIncrease);
+                    event.setMax(event.getMax() * healingIncrease);
                 }
             }
         });

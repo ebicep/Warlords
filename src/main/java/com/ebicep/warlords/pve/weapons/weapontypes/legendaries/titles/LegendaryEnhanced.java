@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -19,6 +20,7 @@ import java.util.*;
 public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     private static final int TICKS_TO_ADD = 40;
+    private static final int TICKS_TO_ADD_PER_UPGRADE = 10;
     private static final List<String> EFFECTED_ABILITIES = new ArrayList<>() {{
         add("BRN");
         add("WND");
@@ -42,7 +44,16 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase the duration of negative effects to enemies by 2s and active abilities of allies by 2s whenever you target an ally with a blue rune (Slot 4).";
+        String effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
+        return "Increase the duration of negative effects to enemies by " + effectDuration + " and active abilities of allies by " + effectDuration + " whenever you target an ally with a blue rune (Slot 4).";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s"),
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevelUpgraded()) / 20f, "s")
+        ));
     }
 
     @Override
@@ -78,7 +89,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 }
                 if (EFFECTED_ABILITIES.contains(cooldown.getNameAbbreviation())) {
                     regularCooldown.setEnhanced(true);
-                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
+                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
                 }
             }
 
@@ -101,7 +112,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                     return;
                 }
                 event.setEnhanced(true);
-                event.getDuration().set(event.getDuration().get() + TICKS_TO_ADD);
+                event.getDuration().set(event.getDuration().get() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
             }
 
             @EventHandler
@@ -125,7 +136,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                                                              return;
                                                          }
                                                          regularCooldown.setEnhanced(true);
-                                                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
+                                                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
                                                      });
                                 });
             }

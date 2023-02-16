@@ -39,8 +39,16 @@ public interface CustomEntity<T extends EntityInsentient> {
         get().goalSelector = new PathfinderGoalSelector(world != null && world.methodProfiler != null ? world.methodProfiler : null);
     }
 
+    default void addGoalAI(int priority, PathfinderGoal pathfinderGoal) {
+        get().goalSelector.a(priority, pathfinderGoal);
+    }
+
     default void resetTargetAI(World world) {
         get().targetSelector = new PathfinderGoalSelector(world != null && world.methodProfiler != null ? world.methodProfiler : null);
+    }
+
+    default void addTargetAI(int priority, PathfinderGoal pathfinderGoal) {
+        get().targetSelector.a(priority, pathfinderGoal);
     }
 
     default void giveBaseAI() {

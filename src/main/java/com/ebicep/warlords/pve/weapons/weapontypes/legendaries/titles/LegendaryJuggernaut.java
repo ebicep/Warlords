@@ -9,10 +9,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,6 +38,11 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Gain 10% Damage and Health every 100 kills. Capped at 500 kills.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return null;
     }
 
     @Override

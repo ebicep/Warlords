@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -204,5 +205,60 @@ public class WeaponTitleMenu {
 
         return titledWeapon;
     }
+
+    public static void openWeaponTitleUpgradeMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        if (weapon == null) {
+            return;
+        }
+
+        Menu menu = new Menu("Upgrade Weapon Title", 9 * 3);
+
+        menu.setItem(2, 1,
+                weapon.getUpgradedTitleItem(),
+                (m, e) -> {
+                    upgradeWeaponTitle(player, databasePlayer, weapon);
+                    WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
+                }
+        );
+
+        menu.setItem(4, 1,
+                weapon.generateItemStack(false),
+                (m, e) -> {
+                }
+        );
+
+        menu.setItem(6, 1,
+                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                        .name(ChatColor.RED + "Deny")
+                        .lore(ChatColor.GRAY + "Go back.")
+                        .get(),
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
+        );
+
+        menu.openForPlayer(player);
+
+    }
+
+    public static void upgradeWeaponTitle(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        if (weapon == null) {
+            return;
+        }
+        if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
+            LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
+            for (Map.Entry<Enum<? extends Spendable>, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                ((Spendable) currenciesLongEntry.getKey()).subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+            }
+            weapon.upgradeTitleLevel();
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            player.spigot().sendMessage(
+                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon Title: ")
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                            .create()
+            );
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        }
+    }
+
 
 }
