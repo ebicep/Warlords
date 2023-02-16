@@ -11,6 +11,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -210,6 +211,13 @@ public class WaveDefenseOption implements Option, PveOption {
                 waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
                                 .getWeaponsFound()
                                 .add(event.getWeapon());
+            }
+
+            @EventHandler
+            public void onMobDrop(WarlordsGiveMobDropEvent event) {
+                waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
+                                .getMobDropsGained()
+                                .merge(event.getMobDrop(), 1L, Long::sum);
             }
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

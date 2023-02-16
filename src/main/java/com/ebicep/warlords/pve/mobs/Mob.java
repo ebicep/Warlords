@@ -1,11 +1,14 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.util.java.RandomCollection;
+
+import java.util.HashMap;
 
 public interface Mob {
 
@@ -25,9 +28,8 @@ public interface Mob {
                 .next();
     }
 
-//    MobDrops
-//
-//    double mobDropRate();
-
+    default HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
+        return new HashMap<>();
+    }
 
 }
