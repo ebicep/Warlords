@@ -609,23 +609,29 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         LinkedHashMap<Enum<? extends Spendable>, Long> cost = new LinkedHashMap<>();
         switch (tier) {
             case 1:
+                cost.put(Currencies.COIN, 500_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
                 cost.put(MobDrops.ZENITH_STAR, 2L);
                 break;
             case 2:
+                cost.put(Currencies.COIN, 1_000_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
                 cost.put(MobDrops.ZENITH_STAR, 4L);
                 break;
             case 3:
+                cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
+                cost.put(Currencies.LIMIT_BREAKER, 1L);
                 cost.put(MobDrops.ZENITH_STAR, 8L);
                 break;
             case 4:
+                cost.put(Currencies.COIN, 4_000_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
+                cost.put(Currencies.LIMIT_BREAKER, 2L);
                 cost.put(MobDrops.ZENITH_STAR, 16L);
                 break;
         }
