@@ -137,11 +137,12 @@ public class WaveDefenseStats {
     }
 
     public static class PlayerWaveDefenseStats {
-        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
+        private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
         private final HashMap<MobDrops, Long> mobDropsGained = new HashMap<>();
         private final HashMap<Integer, Long> waveDamage = new HashMap<>();
         private long legendFragmentGain = 0;
+        private int weaponsAutoSalvaged = 0;
 
         public List<AbstractWeapon> getWeaponsFound() {
             return weaponsFound;

@@ -38,6 +38,10 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 
 public class WeaponManagerMenu {
 
+    public static final int MAX_WEAPONS_PER_PAGE = 45;
+    public static final int MAX_WEAPONS_PAGE = MAX_WEAPONS_PER_PAGE * 5;
+    public static final int MAX_WEAPONS_PAGE_PATREON = MAX_WEAPONS_PER_PAGE * 10;
+
     public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
@@ -71,8 +75,8 @@ public class WeaponManagerMenu {
 
         Menu menu = new Menu("Weapon Inventory", 9 * 6);
 
-        for (int i = 0; i < 45; i++) {
-            int weaponNumber = ((page - 1) * 45) + i;
+        for (int i = 0; i < MAX_WEAPONS_PER_PAGE; i++) {
+            int weaponNumber = ((page - 1) * MAX_WEAPONS_PER_PAGE) + i;
             if (weaponNumber < weaponInventory.size()) {
                 AbstractWeapon abstractWeapon = weaponInventory.get(weaponNumber);
 
@@ -100,7 +104,7 @@ public class WeaponManagerMenu {
                     }
             );
         }
-        if (weaponInventory.size() > (page * 45)) {
+        if (weaponInventory.size() > (page * MAX_WEAPONS_PER_PAGE)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
