@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
@@ -30,6 +32,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -43,6 +46,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -343,6 +348,17 @@ public enum GameEvents {
             }}
     ) {
         @Override
+        public void initialize() {
+            super.initialize();
+            Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+                }
+            }, Warlords.getInstance());
+        }
+
+        @Override
         public LinkedHashMap<Currencies, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
@@ -547,7 +563,7 @@ public enum GameEvents {
 
     public final String name;
     public final Currencies currency;
-    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion;
+    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
@@ -556,7 +572,7 @@ public enum GameEvents {
     GameEvents(
             String name,
             Currencies currency,
-            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion,
+            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction,
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
@@ -564,7 +580,7 @@ public enum GameEvents {
     ) {
         this.name = name;
         this.currency = currency;
-        this.updateStatsFuntion = updateStatsFuntion;
+        this.updateStatsFunction = updateStatsFunction;
         this.eventsStatsFunction = eventsStatsFunction;
         this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
@@ -576,6 +592,10 @@ public enum GameEvents {
     public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
 
     public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
+
+    public void initialize() {
+        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Initializing " + name + " event...");
+    }
 
     public void createNPC() {
         NPCManager.registerTrait(GameEventTrait.class, "GameEventTrait");

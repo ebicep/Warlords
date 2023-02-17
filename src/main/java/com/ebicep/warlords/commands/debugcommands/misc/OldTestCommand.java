@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.menu.MenuEventListener;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.pve.Currencies;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,9 +20,12 @@ public class OldTestCommand implements CommandExecutor {
             }
         }
 
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            System.out.println(onlinePlayer.getName());
-            System.out.println(onlinePlayer.getMetadata(MenuEventListener.METADATA_CUSTOM_INVENTORY));
+        if (commandSender instanceof Player) {
+            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
+                for (Currencies value : Currencies.VALUES) {
+                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
+                }
+            });
         }
 //
 //        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {

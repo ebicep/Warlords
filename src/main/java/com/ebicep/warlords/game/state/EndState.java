@@ -27,6 +27,7 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -622,19 +623,32 @@ public class EndState implements State, TimerDebugAble {
                 for (AbstractWeapon weapon : weaponsFound) {
                     weaponsFoundByType.get(weapon.getRarity()).add(weapon);
                 }
-                weaponsFoundByType.forEach((rarity, weapons) -> {
-                    int amountFound = weapons.size();
-                    if (amountFound > 0) {
-                        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                                .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
-                                        weapons.stream()
-                                               .map(AbstractWeapon::getName)
-                                               .collect(Collectors.joining("\n"))
-                                )
-                                .create()
-                        );
-                    }
+                DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+                    List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+                    weaponsFoundByType.forEach((rarity, weapons) -> {
+                        int amountFound = weapons.size();
+                        if (amountFound > 0) {
+                            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
+                                            weapons.stream()
+                                                   .map(abstractWeapon -> {
+                                                       String output = abstractWeapon.getName();
+                                                       if (abstractWeapon instanceof WeaponScore) {
+                                                           output += ChatColor.YELLOW + " (" + NumberFormat.formatOptionalHundredths(((WeaponScore) abstractWeapon).getWeaponScore()) + ")";
+                                                       }
+                                                       if (!weaponInventory.contains(abstractWeapon)) {
+                                                           output += ChatColor.WHITE + " (Auto Salvaged)";
+                                                       }
+                                                       return output;
+                                                   })
+                                                   .collect(Collectors.joining("\n"))
+                                    )
+                                    .create()
+                            );
+                        }
+                    });
                 });
+
             }
 
             long fragmentGain = playerWaveDefenseStats.getLegendFragmentGain();

@@ -85,12 +85,12 @@ public class RareWeapon extends AbstractTierTwoWeapon implements Salvageable, We
 
     @Override
     public int getMinSalvageAmount() {
-        return 10;
+        return 13;
     }
 
     @Override
     public int getMaxSalvageAmount() {
-        return 12;
+        return 15;
     }
 
 }

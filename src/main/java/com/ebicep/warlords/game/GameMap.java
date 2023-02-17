@@ -2702,7 +2702,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent1",
-            5,
+            0,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -2947,7 +2947,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent2",
-            5,
+            0,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3033,7 +3033,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent3",
-            5,
+            6,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override

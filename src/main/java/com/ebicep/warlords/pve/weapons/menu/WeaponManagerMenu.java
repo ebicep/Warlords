@@ -39,8 +39,8 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 public class WeaponManagerMenu {
 
     public static final int MAX_WEAPONS_PER_PAGE = 45;
-    public static final int MAX_WEAPONS_PAGE = MAX_WEAPONS_PER_PAGE * 5;
-    public static final int MAX_WEAPONS_PAGE_PATREON = MAX_WEAPONS_PER_PAGE * 10;
+    public static final int MAX_WEAPONS = MAX_WEAPONS_PER_PAGE * 5;
+    public static final int MAX_WEAPONS_PATREON = MAX_WEAPONS_PER_PAGE * 10;
 
     public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
@@ -194,11 +194,10 @@ public class WeaponManagerMenu {
                         .name(ChatColor.DARK_AQUA + "Your Drops")
                         .lore(
                                 Currencies.STAR_PIECES.stream()
-                                                      .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
-                                                              starPiece) != 1 ? "s" : ""))
+                                                      .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
                                                       .collect(Collectors.joining("\n")),
                                 "",
-                                ChatColor.WHITE.toString() + skillBoostModifiers + " " + Currencies.SKILL_BOOST_MODIFIER.getColoredName() + (skillBoostModifiers != 1 ? "s" : "")
+                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(skillBoostModifiers)
                         )
                         .get(),
                 (m, e) -> {

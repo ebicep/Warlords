@@ -150,14 +150,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
                     format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
         }
-//        String passiveEffect = getPassiveEffect();
-//        if (!passiveEffect.isEmpty()) {
-//            upgradeLore.addAll(Arrays.asList(
-//                    "",
-//                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-//                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
-//            ));
-//        }
 
         return upgradeLore;
     }
@@ -568,7 +560,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             return null;
         }
         for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
-            passiveEffect = passiveEffect.replace(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
+            passiveEffect = passiveEffect.replaceAll(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
         }
         List<String> upgradeLore = new ArrayList<>(Arrays.asList(
                 ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",

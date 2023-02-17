@@ -163,11 +163,11 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
 
     @Override
     public int getMinSalvageAmount() {
-        return 42;
+        return 53;
     }
 
     @Override
     public int getMaxSalvageAmount() {
-        return 48;
+        return 59;
     }
 }

@@ -22,10 +22,7 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -801,7 +798,19 @@ public class WarlordsNewHotbarMenu {
                         WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
                     }
                 });
-                menu.setItem(2, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(2, 1,
+                        new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
+                                .name("§aMob Drops")
+                                .lore(databasePlayer.getPveStats()
+                                                    .getMobDrops()
+                                                    .entrySet()
+                                                    .stream()
+                                                    .map(mobDropsLongEntry -> mobDropsLongEntry.getKey().getCostColoredName(mobDropsLongEntry.getValue()))
+                                                    .collect(Collectors.joining("\n")))
+                                .get(),
+                        (m, e) -> {}
+                );
+                menu.setItem(3, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

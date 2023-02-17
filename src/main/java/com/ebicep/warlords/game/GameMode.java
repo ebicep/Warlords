@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -257,7 +258,7 @@ public enum GameMode {
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -371,7 +372,7 @@ public enum GameMode {
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
-                if (DatabaseGameEvent.currentGameEvent == null) {
+                if (DatabaseGameEvent.currentGameEvent == null || DatabaseGameEvent.currentGameEvent.getEndDate().isBefore(Instant.now())) {
                     return null;
                 }
                 return DatabaseGameEvent.currentGameEvent.getEvent().createDatabaseGame.apply(game, warlordsGameTriggerWinEvent, aBoolean);

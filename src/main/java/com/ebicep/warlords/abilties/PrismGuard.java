@@ -5,7 +5,7 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -180,7 +180,8 @@ public class PrismGuard extends AbstractAbility {
                                 .aliveTeammatesOfExcludingSelf(wp)
                         ) {
                             if (!playersHit.contains(bubblePlayer)) {
-                                Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, Set.of(bubblePlayer)));
+                                Bukkit.getPluginManager()
+                                      .callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
                             }
                             playersHit.add(bubblePlayer);
                             bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class, false);

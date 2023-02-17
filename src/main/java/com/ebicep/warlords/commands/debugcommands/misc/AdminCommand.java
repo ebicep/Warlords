@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameManager;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -56,8 +57,22 @@ public class AdminCommand extends BaseCommand {
     @Description("Removes all nearby entities in range")
     public void removeEntitiesNearBy(Player player, @Conditions("limits:min=1,max=20") Integer range) {
         player.getWorld()
-                .getNearbyEntities(player.getLocation(), range, range, range)
-                .forEach(Entity::remove);
+              .getNearbyEntities(player.getLocation(), range, range, range)
+              .forEach(Entity::remove);
+    }
+
+    @Subcommand("banspec")
+    @Description("Bans a specialization from being used")
+    public void banSpec(Player player, Specializations spec) {
+        spec.setBanned(true);
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Banned " + spec.name, true);
+    }
+
+    @Subcommand("unbanspec")
+    @Description("Unbans a specialization from being used")
+    public void unbanSpec(Player player, Specializations spec) {
+        spec.setBanned(false);
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Unbanned " + spec.name, true);
     }
 
     @HelpCommand
