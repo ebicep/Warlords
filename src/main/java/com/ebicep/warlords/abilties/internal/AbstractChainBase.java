@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,7 +39,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
             entitiesHit.remove(null);
 
-            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(warlordsPlayer, name, entitiesHit));
+            Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent(warlordsPlayer, name, entitiesHit));
 
             return true;
         }

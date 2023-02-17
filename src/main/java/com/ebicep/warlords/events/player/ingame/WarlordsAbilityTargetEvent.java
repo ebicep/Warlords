@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-public class WarlordsBlueAbilityTargetEvent extends AbstractWarlordsEntityEvent {
+public class WarlordsAbilityTargetEvent extends AbstractWarlordsEntityEvent {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
@@ -16,13 +16,13 @@ public class WarlordsBlueAbilityTargetEvent extends AbstractWarlordsEntityEvent 
     private final String abilityName;
     private final Set<WarlordsEntity> targets;
 
-    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, WarlordsEntity... targets) {
+    public WarlordsAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, WarlordsEntity... targets) {
         super(player);
         this.abilityName = abilityName;
         this.targets = Set.of(targets);
     }
 
-    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, Set<WarlordsEntity> targets) {
+    public WarlordsAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, Set<WarlordsEntity> targets) {
         super(player);
         this.abilityName = abilityName;
         this.targets = targets;
@@ -39,5 +39,16 @@ public class WarlordsBlueAbilityTargetEvent extends AbstractWarlordsEntityEvent 
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+
+    public static class WarlordsBlueAbilityTargetEvent extends WarlordsAbilityTargetEvent {
+        public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, WarlordsEntity... targets) {
+            super(player, abilityName, targets);
+        }
+
+        public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, Set<WarlordsEntity> targets) {
+            super(player, abilityName, targets);
+        }
     }
 }

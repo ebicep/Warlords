@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -94,7 +94,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
             }
 
             @EventHandler
-            public void onBlueAbilityTarget(WarlordsBlueAbilityTargetEvent event) {
+            public void onBlueAbilityTarget(WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent event) {
                 if (!event.getPlayer().equals(player)) {
                     return;
                 }

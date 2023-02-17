@@ -560,7 +560,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             return null;
         }
         for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
-            passiveEffect = passiveEffect.replace(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
+            passiveEffect = passiveEffect.replaceAll(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
         }
         List<String> upgradeLore = new ArrayList<>(Arrays.asList(
                 ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",

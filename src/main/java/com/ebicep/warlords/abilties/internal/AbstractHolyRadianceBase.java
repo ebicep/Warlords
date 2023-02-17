@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.HammerOfLight;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -67,7 +67,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
-        Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
+        Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);

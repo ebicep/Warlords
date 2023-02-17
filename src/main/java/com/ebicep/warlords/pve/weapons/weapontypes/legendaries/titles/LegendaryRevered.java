@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -23,7 +23,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     public static final int DURATION = 5;
     public static final float DURATION_INCREASE_PER_UPGRADE = .25f;
     private static final String COOLDOWN_NAME = "Revered";
-    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("Chain Heal", "Remedic Chains", "Intervene");
+    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("Chain Heal", "Remedic Chains", "Intervene", "Heart To Heart");
 
     public LegendaryRevered() {
     }
@@ -47,7 +47,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
 
         player.getGame().registerEvents(new Listener() {
             @EventHandler
-            public void onBlueAbilityTarget(WarlordsBlueAbilityTargetEvent event) {
+            public void onBlueAbilityTarget(WarlordsAbilityTargetEvent event) {
                 if (!event.getPlayer().equals(player)) {
                     return;
                 }
@@ -64,14 +64,14 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "If the equipping player is connected to another player by means of chain heal, soul shackle, intervene, remedic chains, they will both have their damage increased by "
-                + formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + " for "
-                + formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s") + ".";
+        return "If the equipping player is connected to another player by means of Chain Heal, Heart To Heart, Intervene, Remedic Chains, they will both have their damage increased by " +
+                formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + " for " +
+                formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s") + ".";
     }
 
     @Override
     public LegendaryTitles getTitle() {
-        return LegendaryTitles.BENEVOLENT;
+        return LegendaryTitles.REVERED;
     }
 
     @Override
@@ -122,8 +122,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
                 ),
                 new Pair<>(
                         formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s"),
-                        formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "s"
-                        )
+                        formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "s")
                 )
         );
     }
@@ -149,7 +148,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
                 cooldownManager -> {
 
                 },
-                (int) (DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel() * 20)
+                (int) ((DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel()) * 20)
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

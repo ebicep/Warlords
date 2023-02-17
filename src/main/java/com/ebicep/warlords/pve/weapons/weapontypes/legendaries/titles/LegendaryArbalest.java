@@ -64,7 +64,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
 
     @Override
     public LegendaryTitles getTitle() {
-        return LegendaryTitles.BENEVOLENT;
+        return LegendaryTitles.ARBALEST;
     }
 
     @Override
