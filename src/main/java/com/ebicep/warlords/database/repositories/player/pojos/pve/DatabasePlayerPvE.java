@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -43,11 +44,12 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
 
@@ -155,8 +157,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 for (AbstractWeapon weapon : weaponsToSalvage) {
                     if (weapon instanceof Salvageable) {
                         Salvageable salvageable = (Salvageable) weapon;
-                        int randomSalvageAmount = ThreadLocalRandom.current().nextInt(salvageable.getMinSalvageAmount(), salvageable.getMaxSalvageAmount() + 1);
-                        addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount / 2);
+                        AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
+                        Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
+                        addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
                     }
                 }
             } else {

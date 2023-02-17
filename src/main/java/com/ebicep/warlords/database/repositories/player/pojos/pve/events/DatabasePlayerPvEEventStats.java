@@ -41,7 +41,7 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
-            currentGameEvent.getEvent().updateStatsFuntion.apply(this).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            currentGameEvent.getEvent().updateStatsFunction.apply(this).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
             //GUILDS
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
