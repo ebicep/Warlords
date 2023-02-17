@@ -352,7 +352,11 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         if (!currencies.containsKey(currency)) {
             currencies.put(currency, 0L);
         }
-        this.currencies.put(currency, this.currencies.get(currency) + amount);
+        if (currency == Currencies.MYSTERIOUS_TOKEN) {
+            this.currencies.put(currency, Math.min(100, this.currencies.get(currency) + amount));
+        } else {
+            this.currencies.put(currency, this.currencies.get(currency) + amount);
+        }
         CustomScoreboard.reloadPvEScoreboard(this);
 
         if (amount >= 0) {
