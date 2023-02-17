@@ -194,11 +194,10 @@ public class WeaponManagerMenu {
                         .name(ChatColor.DARK_AQUA + "Your Drops")
                         .lore(
                                 Currencies.STAR_PIECES.stream()
-                                                      .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
-                                                              starPiece) != 1 ? "s" : ""))
+                                                      .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
                                                       .collect(Collectors.joining("\n")),
                                 "",
-                                ChatColor.WHITE.toString() + skillBoostModifiers + " " + Currencies.SKILL_BOOST_MODIFIER.getColoredName() + (skillBoostModifiers != 1 ? "s" : "")
+                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(skillBoostModifiers)
                         )
                         .get(),
                 (m, e) -> {

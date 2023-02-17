@@ -414,6 +414,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         return this.mobDrops.getOrDefault(mobDrops, 0L);
     }
 
+    public Map<MobDrops, Long> getMobDrops() {
+        return mobDrops;
+    }
+
     public void addMobDrops(MobDrops mobDrops, long amount) {
         if (!this.mobDrops.containsKey(mobDrops)) {
             this.mobDrops.put(mobDrops, amount);

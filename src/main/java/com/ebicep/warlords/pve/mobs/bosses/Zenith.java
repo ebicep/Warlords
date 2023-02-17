@@ -163,6 +163,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        dropMobDrop(killer);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                     .withColor(Color.WHITE)

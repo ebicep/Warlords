@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public enum MobDrops implements Spendable {
 
     ZENITH_STAR(
-            "Zenith Start",
+            "Zenith Star",
             ChatColor.WHITE,
             new ItemStack(Material.NETHER_STAR)
     ),
