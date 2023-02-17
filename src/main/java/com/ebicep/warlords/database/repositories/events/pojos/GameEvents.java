@@ -353,7 +353,7 @@ public enum GameEvents {
             Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
                 @EventHandler
                 public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
-                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.5));
+                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
                 }
             }, Warlords.getInstance());
         }

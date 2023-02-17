@@ -209,6 +209,23 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         //LEGEND FRAGMENTS
         addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
 
+        DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
+        //TODO REMOVE
+        int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
+        switch (difficulty) {
+            case NORMAL:
+            case HARD:
+                if (wavesCleared >= 25) {
+                    addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                }
+                break;
+            case ENDLESS:
+                if (wavesCleared >= 50) {
+                    addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                }
+                break;
+        }
+
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
@@ -237,7 +254,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             }
 
         } else {
-            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
+            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(difficulty);
             if (difficultyStats != null) {
                 difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             } else {
@@ -322,6 +339,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.addCurrency(currency, (long) amount);
     }
 
+    public void addOneCurrency(Currencies currency) {
+        this.addCurrency(currency, 1L);
+    }
+
     public void addCurrency(Currencies currency, Long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return;
@@ -367,10 +388,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         generalEventMode.addEventPointsSpent(-amount);
         //event in event mode
         eventMode.addEventPointsSpent(-amount);
-    }
-
-    public void addOneCurrency(Currencies currency) {
-        this.addCurrency(currency, 1L);
     }
 
     public void subtractOneCurrency(Currencies currency) {

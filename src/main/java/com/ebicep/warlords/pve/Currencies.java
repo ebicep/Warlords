@@ -100,6 +100,11 @@ public enum Currencies implements Spendable {
             ChatColor.BLACK,
             new ItemStack(Material.WATCH)
     ),
+    MYSTERIOUS_TOKEN(
+            "Mysterious Token",
+            ChatColor.MAGIC,
+            new ItemStack(Material.BEDROCK)
+    ),
 
     ;
 
