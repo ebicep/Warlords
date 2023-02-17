@@ -2046,6 +2046,9 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(55, new SimpleWave(45, 5 * SECOND, null)
                             //basic
@@ -2079,6 +2082,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.05, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.CHESSKING)
@@ -2116,6 +2122,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.07, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(65, new SimpleWave(50, 5 * SECOND, null)
                             //basic
@@ -2150,6 +2159,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.1, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ILLUMINA)
@@ -2187,6 +2199,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.1, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.4, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(75, new SimpleWave(55, 5 * SECOND, null)
                             //basic
@@ -2222,9 +2237,12 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.5, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(80, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.TORMENT)
+                            .add(Mobs.MITHRA)
                     )
                     .add(81, new SimpleWave(60, 5 * SECOND, null)
                             //basic
@@ -2260,6 +2278,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.5, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(85, new SimpleWave(60, 5 * SECOND, null)
                             //basic
@@ -2295,6 +2316,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.3, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(90, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
@@ -2333,6 +2357,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.4, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(95, new SimpleWave(65, 5 * SECOND, null)
                             //basic
@@ -2368,6 +2395,9 @@ public enum GameMap {
                             // forgotten
                             .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.5, Mobs.FORGOTTEN_LANCER)
+                            .add(0.01, Mobs.RANGE_ONLY_SKELETON)
+                            .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
+                            .add(0.01, Mobs.WITHER_SKELETON)
                     )
                     .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.VOID)
