@@ -208,6 +208,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
         //LEGEND FRAGMENTS
         addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
+        //MOB DROPS
+        gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
         DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
         //TODO REMOVE

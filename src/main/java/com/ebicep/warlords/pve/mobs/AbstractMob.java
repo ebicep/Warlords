@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -190,6 +191,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
             AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.get(difficultyIndex));
             if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
+                Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(killer, drop));
+
                 killer.getGame().forEachOnlinePlayer((player, team) -> {
                     player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
                             ChatColor.GRAY + " obtained a " +
