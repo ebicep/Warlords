@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -30,8 +31,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -154,14 +157,47 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot().sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "!")
-                        .create()
-                );
+                player.spigot()
+                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                              .append(ChatColor.GRAY + "!")
+                              .create()
+                      );
             });
             killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
         }
+    }
+
+    public void dropMobDrop(WarlordsEntity killer) {
+        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
+            return;
+        }
+        HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
+        if (mobDrops.isEmpty()) {
+            return;
+        }
+        PveOption pveOption = killer.getGame()
+                                    .getOptions()
+                                    .stream()
+                                    .filter(PveOption.class::isInstance)
+                                    .map(PveOption.class::cast)
+                                    .findFirst().orElse(null);
+        if (pveOption == null) {
+            return;
+        }
+        DifficultyIndex difficultyIndex = pveOption.getDifficulty();
+        mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
+            AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.get(difficultyIndex));
+            if (ThreadLocalRandom.current().nextDouble(0, 100) < dropRate.get()) {
+                killer.getGame().forEachOnlinePlayer((player, team) -> {
+                    player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
+                            ChatColor.GRAY + " obtained a " +
+                            drop.chatColor + drop.name
+                    );
+                });
+                killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            }
+        });
     }
 
     public EntityLiving getTarget() {
