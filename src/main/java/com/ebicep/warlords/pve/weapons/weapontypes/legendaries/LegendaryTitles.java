@@ -22,6 +22,7 @@ public enum LegendaryTitles {
     GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, 13),
     JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, 14),
     ARBALEST("Arbalest", LegendaryArbalest.class, LegendaryArbalest::new, LegendaryArbalest::new, 15),
+    REVERED("Revered", LegendaryRevered.class, LegendaryRevered::new, LegendaryRevered::new, 0),
 
     ;
 

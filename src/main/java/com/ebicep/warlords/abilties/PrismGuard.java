@@ -180,7 +180,7 @@ public class PrismGuard extends AbstractAbility {
                                 .aliveTeammatesOfExcludingSelf(wp)
                         ) {
                             if (!playersHit.contains(bubblePlayer)) {
-                                Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, Set.of(bubblePlayer)));
+                                Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
                             }
                             playersHit.add(bubblePlayer);
                             bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class, false);

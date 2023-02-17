@@ -21,15 +21,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     private static final int TICKS_TO_ADD = 40;
     private static final int TICKS_TO_ADD_PER_UPGRADE = 10;
-    private static final List<String> EFFECTED_ABILITIES = new ArrayList<>() {{
-        add("BRN");
-        add("WND");
-        add("BLEED");
-        add("CRIP");
-        add("SILENCE");
-        add("LCH");
-        add("AVE MARK");
-    }};
+    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("BRN", "WND", "BLEED", "CRIP", "SILENCE", "LCH", "AVE MARK");
 
     public LegendaryEnhanced() {
     }
@@ -40,20 +32,6 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     public LegendaryEnhanced(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        String effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
-        return "Increase the duration of negative effects to enemies by " + effectDuration + " and active abilities of allies by " + effectDuration + " whenever you target an ally with a blue rune (Slot 4).";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s"),
-                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevelUpgraded()) / 20f, "s")
-        ));
     }
 
     @Override
@@ -145,6 +123,12 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        String effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
+        return "Increase the duration of negative effects to enemies by " + effectDuration + " and active abilities of allies by " + effectDuration + " whenever you target an ally with a blue rune (Slot 4).";
+    }
+
+    @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.ENHANCED;
     }
@@ -152,16 +136,6 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMinValue() {
         return 155;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
     }
 
     @Override
@@ -177,5 +151,23 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerSecondBonusValue() {
         return 3;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s"),
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevelUpgraded()) / 20f, "s")
+        ));
     }
 }

@@ -67,7 +67,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
-        Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, warlordsEntities));
+        Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);

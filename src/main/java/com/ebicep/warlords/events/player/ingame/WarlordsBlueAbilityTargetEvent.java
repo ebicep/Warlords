@@ -13,16 +13,23 @@ public class WarlordsBlueAbilityTargetEvent extends AbstractWarlordsEntityEvent 
         return handlers;
     }
 
+    private final String abilityName;
     private final Set<WarlordsEntity> targets;
 
-    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, WarlordsEntity... targets) {
+    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, WarlordsEntity... targets) {
         super(player);
+        this.abilityName = abilityName;
         this.targets = Set.of(targets);
     }
 
-    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, Set<WarlordsEntity> targets) {
+    public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, Set<WarlordsEntity> targets) {
         super(player);
+        this.abilityName = abilityName;
         this.targets = targets;
+    }
+
+    public String getAbilityName() {
+        return abilityName;
     }
 
     public Set<WarlordsEntity> getTargets() {

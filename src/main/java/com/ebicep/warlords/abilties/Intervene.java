@@ -175,7 +175,7 @@ public class Intervene extends AbstractAbility {
 
             wp.updateBlueItem();
 
-            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, veneTarget));
+            Bukkit.getPluginManager().callEvent(new WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));
 
             return true;
         }
