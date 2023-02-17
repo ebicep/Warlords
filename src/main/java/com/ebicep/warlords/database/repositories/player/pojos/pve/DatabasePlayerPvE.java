@@ -37,7 +37,9 @@ import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
@@ -45,6 +47,7 @@ import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
 
@@ -79,6 +82,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //REWARDS
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
+    @Field("patreon")
+    private boolean currentlyPatreon = false;
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
     @Field("compensation_rewards")
@@ -135,8 +140,28 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             guild.queueUpdate();
         }
         //WEAPONS
+        List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
         if (multiplier > 0) {
-            weaponInventory.addAll(gamePlayerPvE.getWeaponsFound());
+            int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
+            int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
+            int weaponsFoundSize = weaponsFound.size();
+            int newWeaponInventorySize = currentWeaponInventorySize + weaponsFoundSize;
+            if (newWeaponInventorySize >= maxWeaponInventorySize) {
+                List<AbstractWeapon> weaponsToKeep = weaponsFound.subList(0, Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize));
+                List<AbstractWeapon> weaponsToSalvage = weaponsFound.subList(Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize),
+                        weaponsFoundSize
+                );
+                weaponInventory.addAll(weaponsToKeep);
+                for (AbstractWeapon weapon : weaponsToSalvage) {
+                    if (weapon instanceof Salvageable) {
+                        Salvageable salvageable = (Salvageable) weapon;
+                        int randomSalvageAmount = ThreadLocalRandom.current().nextInt(salvageable.getMinSalvageAmount(), salvageable.getMaxSalvageAmount() + 1);
+                        addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount / 2);
+                    }
+                }
+            } else {
+                weaponInventory.addAll(weaponsFound);
+            }
 
             //QUESTS
             for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
@@ -148,7 +173,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         } else {
             if (playersCollection == PlayersCollections.LIFETIME) {
                 //need to search by uuid incase weapon got upgraded or changed
-                List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
                 for (AbstractWeapon weapon : weaponsFound) {
                     boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
                     if (!removed && weapon instanceof Salvageable) {
@@ -396,5 +420,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         } else {
             this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
         }
+    }
+
+    public boolean isCurrentlyPatreon() {
+        return currentlyPatreon;
+    }
+
+    public void setCurrentlyPatreon(boolean currentlyPatreon) {
+        this.currentlyPatreon = currentlyPatreon;
     }
 }

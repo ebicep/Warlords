@@ -39,8 +39,8 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 public class WeaponManagerMenu {
 
     public static final int MAX_WEAPONS_PER_PAGE = 45;
-    public static final int MAX_WEAPONS_PAGE = MAX_WEAPONS_PER_PAGE * 5;
-    public static final int MAX_WEAPONS_PAGE_PATREON = MAX_WEAPONS_PER_PAGE * 10;
+    public static final int MAX_WEAPONS = MAX_WEAPONS_PER_PAGE * 5;
+    public static final int MAX_WEAPONS_PATREON = MAX_WEAPONS_PER_PAGE * 10;
 
     public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
