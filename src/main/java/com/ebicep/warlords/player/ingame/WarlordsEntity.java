@@ -2379,12 +2379,12 @@ public abstract class WarlordsEntity {
         this.canCrit = canCrit;
     }
 
-    public int getBlocksTravelledCM() {
-        return blocksTravelledCM;
-    }
-
     public void setBlocksTravelledCM(int blocksTravelledCM) {
         this.blocksTravelledCM = blocksTravelledCM;
+    }
+
+    public int getBlocksTravelled() {
+        return blocksTravelledCM / 100;
     }
 
     public float getWalkSpeed() {

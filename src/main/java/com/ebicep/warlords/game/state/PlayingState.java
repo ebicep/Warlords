@@ -132,6 +132,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
+                Utils.resetPlayerMovementStatistics(p);
             }
         });
         toRemove.forEach(this.game::removePlayer);

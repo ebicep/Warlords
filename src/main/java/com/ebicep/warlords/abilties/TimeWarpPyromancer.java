@@ -50,6 +50,7 @@ public class TimeWarpPyromancer extends AbstractAbility {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
+        int startingBlocksTravelled = wp.getBlocksTravelled();
         RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -102,7 +103,7 @@ public class TimeWarpPyromancer extends AbstractAbility {
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (pveUpgrade) {
-                    return currentCritChance + warpTrail.size();
+                    return currentCritChance + (wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
                 return currentCritChance;
             }
@@ -110,7 +111,7 @@ public class TimeWarpPyromancer extends AbstractAbility {
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                 if (pveUpgrade) {
-                    return currentCritMultiplier + warpTrail.size();
+                    return currentCritMultiplier + (wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
                 return currentCritMultiplier;
             }
