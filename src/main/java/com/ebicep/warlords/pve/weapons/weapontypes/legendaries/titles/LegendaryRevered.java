@@ -64,7 +64,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "If the equipping player is connected to another player by means of Chain Heal, Heart To Heart, Intervene, Remedic Chains, they will both have their damage increased by " +
+        return "If the equipping player is connected to another player by means of Chain Heal, Heart To Heart, Intervene, Remedic Chains, both players will have their damage increased by " +
                 formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + " for " +
                 formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s") + ".";
     }
