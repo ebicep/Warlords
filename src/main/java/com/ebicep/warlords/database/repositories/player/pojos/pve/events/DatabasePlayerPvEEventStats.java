@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
                 } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
                     points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier;
                 } else {
-                    points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier;
+                    points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier;
                 }
                 guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points);
                 guildPlayer.addEventPoints(currentGameEvent.getEvent(),

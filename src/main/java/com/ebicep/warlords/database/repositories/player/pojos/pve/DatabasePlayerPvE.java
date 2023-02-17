@@ -250,7 +250,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     break;
                 case NARMER:
                     if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
-                        addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier);
+                        addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier);
                     }
                     break;
             }
