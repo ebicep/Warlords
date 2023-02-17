@@ -34,6 +34,12 @@ public enum DifficultyIndex {
             Integer.MAX_VALUE,
             1.25f
     ),
+    BOSS_RUSH("Boss Rush",
+            "",
+            ChatColor.RED,
+            8,
+            1
+    ),
     EVENT("Event",
             "",
             ChatColor.BLUE,

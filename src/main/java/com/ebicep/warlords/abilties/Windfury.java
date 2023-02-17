@@ -103,7 +103,7 @@ public class Windfury extends AbstractAbility {
                             @Override
                             public void run() {
                                 Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                                float healthDamage = victim.getMaxHealth() * 0.005f;
+                                float healthDamage = victim.getMaxHealth() * 0.01f;
                                 if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
                                     healthDamage = DamageCheck.MINIMUM_DAMAGE;
                                 }

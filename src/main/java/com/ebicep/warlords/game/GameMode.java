@@ -222,7 +222,7 @@ public enum GameMode {
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -275,6 +275,43 @@ public enum GameMode {
                     10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Let the onslaught begin!"
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+            options.add(new BasicScoreboardOption());
+
+            return options;
+        }
+    },
+    BOSS_RUSH(
+            "Boss Rush",
+            "PVE",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            DatabaseGamePvE::new,
+            GamesCollections.PVE,
+            1,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Survive against waves of",
+                    color + "monsters!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Kill all bosses in order to win!"
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());

@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TimeWarpCryomancer extends AbstractAbility {
 
@@ -50,7 +49,6 @@ public class TimeWarpCryomancer extends AbstractAbility {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
-        AtomicInteger critCounter = new AtomicInteger();
         RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
