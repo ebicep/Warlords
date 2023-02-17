@@ -150,14 +150,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
                     format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
         }
-//        String passiveEffect = getPassiveEffect();
-//        if (!passiveEffect.isEmpty()) {
-//            upgradeLore.addAll(Arrays.asList(
-//                    "",
-//                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-//                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
-//            ));
-//        }
 
         return upgradeLore;
     }
