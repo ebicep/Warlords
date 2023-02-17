@@ -333,7 +333,7 @@ public class CustomScoreboard {
                             "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
                             "    ",
                             "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                            "    " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                            "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
                     );
                 },
                 () -> {
