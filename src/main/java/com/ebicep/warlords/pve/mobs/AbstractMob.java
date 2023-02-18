@@ -189,7 +189,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
         DifficultyIndex difficultyIndex = pveOption.getDifficulty();
         mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-            AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.get(difficultyIndex));
+            AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
             if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
                 Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(killer, drop));
 
