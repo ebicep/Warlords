@@ -5,6 +5,8 @@ import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -19,6 +21,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 public class EventDjet extends AbstractZombie implements BossMob {
 
@@ -29,11 +32,11 @@ public class EventDjet extends AbstractZombie implements BossMob {
                 "Djet",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
-                        null,
-                        null,
-                        null,
-                        null
+                        SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
+                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
+                        Weapons.WALKING_STICK.getItem()
                 ),
                 9000,
                 0.32f,
