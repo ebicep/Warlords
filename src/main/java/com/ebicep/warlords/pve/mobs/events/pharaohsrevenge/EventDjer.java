@@ -5,6 +5,8 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -16,6 +18,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,11 +45,11 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 "Djer",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
-                        null,
-                        null,
-                        null,
-                        null
+                        SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
+                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
+                        Weapons.WALKING_STICK.getItem()
                 ),
                 9000,
                 0.32f,
