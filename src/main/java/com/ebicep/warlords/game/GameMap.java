@@ -3357,6 +3357,7 @@ public enum GameMap {
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(1, 60)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.CONQUERING_ENERGY));
 
