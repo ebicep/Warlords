@@ -34,6 +34,11 @@ public enum MobDrops implements Spendable {
     }
 
     @Override
+    public Long getFromPlayer(DatabasePlayer databasePlayer) {
+        return databasePlayer.getPveStats().getMobDrops(this);
+    }
+
+    @Override
     public String getCostColoredName(long cost) {
         return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
     }

@@ -304,7 +304,7 @@ public class Guild {
             for (int i = 0, guildPlayersSize = guildPlayers.size(); i < guildPlayersSize; i++) {
                 GuildPlayer player = guildPlayers.get(i);
                 sb.append(player.getListName()).append(" ");
-                if (i % 6 == 0) {
+                if (i % 6 == 0 && i != 0) {
                     sb.append("\n ");
                 }
             }

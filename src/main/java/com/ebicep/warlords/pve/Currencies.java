@@ -97,7 +97,7 @@ public enum Currencies implements Spendable {
     ),
     LIMIT_BREAKER(
             "Limit Breaker",
-            ChatColor.BLACK,
+            ChatColor.DARK_GRAY,
             new ItemStack(Material.WATCH)
     ),
     MYSTERIOUS_TOKEN(
@@ -208,6 +208,11 @@ public enum Currencies implements Spendable {
     @Override
     public void addToPlayer(DatabasePlayer databasePlayer, long amount) {
         databasePlayer.getPveStats().addCurrency(this, amount);
+    }
+
+    @Override
+    public Long getFromPlayer(DatabasePlayer databasePlayer) {
+        return databasePlayer.getPveStats().getCurrencyValue(this);
     }
 
     public String getColoredName() {

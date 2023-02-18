@@ -333,7 +333,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(3, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1, 300_000));
+                add(new EventShopReward(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
                 add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
                 add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
@@ -344,7 +344,7 @@ public enum GameEvents {
                 add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
                 add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
                 add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
-                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 3, 500_000));
+                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override

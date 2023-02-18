@@ -379,7 +379,7 @@ public enum GameMode {
             },
             GamesCollections.EVENT_PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

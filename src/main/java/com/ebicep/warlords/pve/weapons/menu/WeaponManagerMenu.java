@@ -9,6 +9,7 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -197,7 +198,8 @@ public class WeaponManagerMenu {
                                                       .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
                                                       .collect(Collectors.joining("\n")),
                                 "",
-                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(skillBoostModifiers)
+                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(skillBoostModifiers),
+                                Currencies.LIMIT_BREAKER.getCostColoredName(skillBoostModifiers)
                         )
                         .get(),
                 (m, e) -> {
@@ -457,9 +459,27 @@ public class WeaponManagerMenu {
                         if (e.isLeftClick()) {
                             WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, legendaryWeapon, 1);
                         } else if (e.isRightClick()) {
-                            if (legendaryWeapon.getTitleLevelUpgraded() >= 4) {
+                            if (legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded()) == null) {
+                                player.sendMessage(ChatColor.RED + "This title level upgrade is currently unavailable!");
+                                return;
+                            }
+                            if (legendaryWeapon.getTitleLevel() >= 4) {
                                 player.sendMessage(ChatColor.RED + "You can't upgrade this weapon title anymore.");
                                 return;
+                            }
+                            if (legendaryWeapon.getTitleLevelUpgraded() > legendaryWeapon.getUpgradeLevel()) {
+                                player.sendMessage(ChatColor.RED + "You need to upgrade your weapon to upgrade its title.");
+                                return;
+                            }
+                            for (Map.Entry<Enum<? extends Spendable>, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
+                                                                                                           .entrySet()
+                            ) {
+                                Spendable spendable = (Spendable) enumLongEntry.getKey();
+                                Long currencyCost = enumLongEntry.getValue();
+                                if (spendable.getFromPlayer(databasePlayer) < currencyCost) {
+                                    player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(currencyCost) + ChatColor.RED + " to upgrade this title!");
+                                    return;
+                                }
                             }
                             WeaponTitleMenu.openWeaponTitleUpgradeMenu(player, databasePlayer, legendaryWeapon);
                         }

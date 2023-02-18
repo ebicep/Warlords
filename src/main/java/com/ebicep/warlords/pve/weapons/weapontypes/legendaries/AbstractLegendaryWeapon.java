@@ -585,7 +585,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public List<String> getTitleUpgradeCostLore() {
         LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         List<String> lore = new ArrayList<>();
-        if (upgradeCost.isEmpty()) {
+        if (upgradeCost == null) {
+            lore.add(ChatColor.RED + "Unavailable!");
+        } else if (upgradeCost.isEmpty()) {
             lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
             lore.add("");

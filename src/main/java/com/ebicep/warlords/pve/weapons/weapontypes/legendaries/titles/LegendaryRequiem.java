@@ -10,12 +10,14 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -171,5 +173,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     @Override
     protected float getSpeedBonusValue() {
         return 8;
+    }
+
+    @Override
+    public LinkedHashMap<Enum<? extends Spendable>, Long> getTitleUpgradeCost(int tier) {
+        return null;
     }
 }

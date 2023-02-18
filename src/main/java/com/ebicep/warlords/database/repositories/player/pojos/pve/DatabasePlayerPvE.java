@@ -211,21 +211,23 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         //MOB DROPS
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-        DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
-        //TODO REMOVE
-        int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
-        switch (difficulty) {
-            case NORMAL:
-            case HARD:
-                if (wavesCleared >= 25) {
-                    addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
-                }
-                break;
-            case ENDLESS:
-                if (wavesCleared >= 50) {
-                    addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
-                }
-                break;
+        if (databaseGame instanceof DatabaseGamePvE) {
+            DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
+            //TODO REMOVE
+            int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
+            switch (difficulty) {
+                case NORMAL:
+                case HARD:
+                    if (wavesCleared >= 25) {
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                    }
+                    break;
+                case ENDLESS:
+                    if (wavesCleared >= 50) {
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                    }
+                    break;
+            }
         }
 
         //UPDATE UNIVERSAL EXPERIENCE
@@ -256,7 +258,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             }
 
         } else {
-            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(difficulty);
+            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
             if (difficultyStats != null) {
                 difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             } else {
