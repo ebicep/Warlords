@@ -136,7 +136,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                     abilityCooldown--;
                     return;
                 }
-                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get())) {
+                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Divine 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
@@ -151,7 +151,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                         abilityEnergyCost(-1);
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Divine Ability",
-                                "POOP",
+                                "DIVINE",
                                 LegendaryDivine.class,
                                 null,
                                 player,
