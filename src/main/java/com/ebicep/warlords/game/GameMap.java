@@ -1687,7 +1687,7 @@ public enum GameMap {
 
             options.add(new CurrencyOnEventOption()
                     .onKill(250)
-                    .onPerWaveClear(5, 2000)
+                    .onPerWaveClear(10, 1500)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(15, 10 * SECOND, null)
