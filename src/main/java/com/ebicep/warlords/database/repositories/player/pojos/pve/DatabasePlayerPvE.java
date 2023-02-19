@@ -219,12 +219,12 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 case NORMAL:
                 case HARD:
                     if (wavesCleared >= 25) {
-                        addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
                     }
                     break;
                 case ENDLESS:
                     if (wavesCleared >= 50) {
-                        addCurrency(Currencies.MYSTERIOUS_TOKEN, 1);
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
                     }
                     break;
             }

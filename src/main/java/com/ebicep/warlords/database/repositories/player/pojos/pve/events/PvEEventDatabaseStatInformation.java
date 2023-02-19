@@ -46,6 +46,8 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
         }
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, databaseGamePlayerPvEEvent.getPoints());
+        } else if (highestEventPointsGame == databaseGamePlayerPvEEvent.getPoints()) {
+            this.highestEventPointsGame = 0;
         }
     }
 

@@ -32,7 +32,11 @@ public class PvEEventNarmersTombDatabaseStatInformation extends PvEEventBoltaroD
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventNarmersTomb;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        this.highestWaveCleared = Math.max((((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
+        if (multiplier > 0) {
+            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
+        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared()) {
+            this.highestWaveCleared = 0;
+        }
         this.totalWavesCleared += ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier;
     }
 

@@ -57,10 +57,10 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
                 } else {
                     points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier;
                 }
-                guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points);
+                guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points * multiplier);
                 guildPlayer.addEventPoints(currentGameEvent.getEvent(),
                         currentGameEvent.getStartDateSecond(),
-                        points
+                        points * multiplier
                 );
                 guild.queueUpdate();
             }
