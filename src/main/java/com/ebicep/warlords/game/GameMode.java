@@ -328,7 +328,7 @@ public enum GameMode {
     RAID(
             "Raid",
             "RAID",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            new ItemStack(Material.ZOMBIE_HEAD),
             null,
             null,
             4,
