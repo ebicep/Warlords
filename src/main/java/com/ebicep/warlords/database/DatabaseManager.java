@@ -12,6 +12,7 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
+import com.ebicep.warlords.database.repositories.items.ItemService;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -20,6 +21,7 @@ import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.pve.items.Items;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -94,6 +96,7 @@ public class DatabaseManager {
         NPCManager.createDatabaseRequiredNPCs();
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
+        }
 
         Items.reload();
 

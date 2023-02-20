@@ -77,6 +77,10 @@ public enum DifficultyIndex {
         this.rewardsMultiplier = rewardsMultiplier;
     }
 
+    public DifficultyIndex next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
+    }
+
     public String getName() {
         return name;
     }

@@ -170,23 +170,6 @@ public enum Specializations {
         }
     }
 
-    public final String name;
-    public final List<String> aliases;
-    public final Supplier<AbstractPlayerClass> create;
-    public final String description;
-    public final SpecType specType;
-    public final List<SkillBoosts> skillBoosts;
-    private boolean banned = false;
-
-    Specializations(String name, List<String> aliases, Supplier<AbstractPlayerClass> create, String description, SpecType specType, SkillBoosts... skillBoosts) {
-        this.name = name;
-        this.aliases = aliases;
-        this.create = create;
-        this.description = description;
-        this.specType = specType;
-        this.skillBoosts = Arrays.asList(skillBoosts);
-    }
-
     public static Specializations getSpecFromName(String name) {
         if (name == null) {
             return PYROMANCER;
@@ -236,11 +219,39 @@ public enum Specializations {
         //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
+    public final String name;
+    public final List<String> aliases;
+    public final Supplier<AbstractPlayerClass> create;
+    public final String description;
+    public final SpecType specType;
+    public final List<SkillBoosts> skillBoosts;
+    private boolean banned = false;
+
+    Specializations(
+            String name,
+            List<String> aliases,
+            Supplier<AbstractPlayerClass> create,
+            String description,
+            SpecType specType,
+            SkillBoosts... skillBoosts
+    ) {
+        this.name = name;
+        this.aliases = aliases;
+        this.create = create;
+        this.description = description;
+        this.specType = specType;
+        this.skillBoosts = Arrays.asList(skillBoosts);
+    }
+
     public boolean isBanned() {
         return banned;
     }
 
     public void setBanned(boolean banned) {
         this.banned = banned;
+    }
+
+    public Specializations next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 }
