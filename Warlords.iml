@@ -12,9 +12,4 @@
   <component name="MavenCustomPomFilePath">
     <option name="mavenPomFileUrl" value="file://$MODULE_DIR$/dependency-reduced-pom.xml" />
   </component>
-  <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/run" />
-    </content>
-  </component>
 </module>
