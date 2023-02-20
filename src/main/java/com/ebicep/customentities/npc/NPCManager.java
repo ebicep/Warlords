@@ -183,7 +183,7 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.ARMOR_STAND, "mysterious-token");
         npc.addTrait(MysteriousTokenTrait.class);
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
         armorStandTrait.setVisible(false);
         armorStandTrait.setGravity(false);

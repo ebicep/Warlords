@@ -22,7 +22,10 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -800,7 +803,7 @@ public class WarlordsNewHotbarMenu {
                     }
                 });
                 menu.setItem(2, 1,
-                        new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
+                        new ItemBuilder(Material.ZOMBIE_HEAD)
                                 .name("§aMob Drops")
                                 .lore(databasePlayer.getPveStats()
                                                     .getMobDrops()

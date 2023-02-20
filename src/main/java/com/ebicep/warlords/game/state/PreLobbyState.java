@@ -643,53 +643,6 @@ public class PreLobbyState implements State, TimerDebugAble {
         this.timer = this.maxTimer;
     }
 
-    @Override
-    public void onPlayerJoinGame(OfflinePlayer op, boolean asSpectator) {
-        if (!asSpectator) {
-            Team team = PlayerSettings.getPlayerSettings(op.getUniqueId()).getWantedTeam();
-            Team finalTeam = team == null ? Team.BLUE : team;
-            game.setPlayerTeam(op, finalTeam );
-            List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
-            LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(finalTeam)).collect(Utils.randomElement());
-            if (location == null) {
-                location = lobbies.stream().collect(Utils.randomElement()); 
-            }
-            if (location != null) {
-                Warlords.setRejoinPoint(op.getUniqueId(), location.getLocation());
-            }
-        }
-    }
-
-    @Override
-    public void onPlayerReJoinGame(Player player) {
-        State.super.onPlayerReJoinGame(player);
-        Team team = game.getPlayerTeam(player.getUniqueId());
-        player.getActivePotionEffects().clear();
-        player.getInventory().clear();
-
-        if (team == null) {
-            player.setAllowFlight(true);
-            player.setGameMode(GameMode.SPECTATOR);
-        } else {
-            player.setAllowFlight(false);
-            player.setGameMode(GameMode.ADVENTURE);
-
-            for (PreGameItemOption item : items) {
-                if (item != null) {
-                    player.getInventory().setItem(item.getSlot(), item.getItem(game, player));
-                }
-            }
-        }
-        
-        LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
-        if (location != null) {
-            player.teleport(location.getLocation());
-            Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
-        } else {
-            System.out.println("Unable to warp player to lobby!, no lobby marker found");
-        }
-    }
-
     public int getTimer() {
         return timer;
     }

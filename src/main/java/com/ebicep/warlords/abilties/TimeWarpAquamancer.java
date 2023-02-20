@@ -11,9 +11,9 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -148,8 +148,17 @@ public class TimeWarpAquamancer extends AbstractAbility {
                                                     });
                                     }
                                     if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
-                                        ParticleEffect.DRIP_WATER.display(1, 0, 1, 0.1F, 5, baseLocation.clone().add(0, 4, 0), 500);
-
+                                        baseLocation.getWorld().spawnParticle(
+                                                Particle.DRIP_WATER,
+                                                baseLocation.clone().add(0, 4, 0),
+                                                5,
+                                                1,
+                                                0,
+                                                1,
+                                                0.1,
+                                                null,
+                                                true
+                                        );
                                     }
                                 })
                         ));

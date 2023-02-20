@@ -49,7 +49,7 @@ public class MysteriousTokenTrait extends WarlordsTrait {
         );
 
         menu.fillEmptySlots(
-                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
                         .name(" ")
                         .get(),
                 (m, e) -> {

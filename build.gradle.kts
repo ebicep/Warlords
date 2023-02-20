@@ -86,6 +86,7 @@ dependencies {
         exclude(group = "*", module = "*")
     }
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("net.luckperms:api:5.4")
 }
 
 publishing {

@@ -291,7 +291,7 @@ public enum GameMode {
     BOSS_RUSH(
             "Boss Rush",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            new ItemStack(Material.ZOMBIE_HEAD),
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,

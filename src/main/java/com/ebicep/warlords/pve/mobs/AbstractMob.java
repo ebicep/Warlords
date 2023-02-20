@@ -196,7 +196,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                             ChatColor.GRAY + "!"
                     );
                 });
-                killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
             }
         });
     }

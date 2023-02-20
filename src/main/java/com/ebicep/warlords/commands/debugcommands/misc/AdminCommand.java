@@ -65,14 +65,14 @@ public class AdminCommand extends BaseCommand {
     @Description("Bans a specialization from being used")
     public void banSpec(Player player, Specializations spec) {
         spec.setBanned(true);
-        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Banned " + spec.name, true);
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Banned " + spec.name);
     }
 
     @Subcommand("unbanspec")
     @Description("Unbans a specialization from being used")
     public void unbanSpec(Player player, Specializations spec) {
         spec.setBanned(false);
-        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Unbanned " + spec.name, true);
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Unbanned " + spec.name);
     }
 
     @HelpCommand

@@ -22,9 +22,9 @@ public enum LegendaryTitles {
     ENHANCED("Enhanced", LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, Material.BROWN_STAINED_GLASS_PANE),
     GRADIENT("Gradient", LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, Material.GREEN_STAINED_GLASS_PANE),
     JUGGERNAUT("Juggernaut", LegendaryJuggernaut.class, LegendaryJuggernaut::new, LegendaryJuggernaut::new, Material.RED_STAINED_GLASS_PANE),
-    ARBALEST("Arbalest", LegendaryArbalest.class, LegendaryArbalest::new, LegendaryArbalest::new, 15),
-    REVERED("Revered", LegendaryRevered.class, LegendaryRevered::new, LegendaryRevered::new, 0),
-    VALIANT("Valiant", LegendaryValiant.class, LegendaryValiant::new, LegendaryValiant::new, 1),
+    ARBALEST("Arbalest", LegendaryArbalest.class, LegendaryArbalest::new, LegendaryArbalest::new, Material.BLACK_STAINED_GLASS_PANE),
+    REVERED("Revered", LegendaryRevered.class, LegendaryRevered::new, LegendaryRevered::new, Material.WHITE_STAINED_GLASS_PANE),
+    VALIANT("Valiant", LegendaryValiant.class, LegendaryValiant::new, LegendaryValiant::new, Material.ORANGE_STAINED_GLASS_PANE),
 
     ;
 

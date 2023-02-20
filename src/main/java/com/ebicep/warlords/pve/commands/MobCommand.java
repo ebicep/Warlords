@@ -133,9 +133,8 @@ public class MobCommand extends BaseCommand {
                 databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
             });
             ChatChannels.playerSendMessage(player,
-                    ChatColor.GREEN + "Gave yourself " + mobDrop.getCostColoredName(amount),
                     ChatChannels.DEBUG,
-                    true
+                    ChatColor.GREEN + "Gave yourself " + mobDrop.getCostColoredName(amount)
             );
         }
 

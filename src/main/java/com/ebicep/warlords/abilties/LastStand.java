@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -218,7 +219,7 @@ public class LastStand extends AbstractAbility {
                         0,
                         0,
                         0,
-                        null,
+                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
                         true
                 );
             }
