@@ -7,6 +7,9 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -14,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TreasureHuntOption implements Option, PveOption {
+public class TreasureHuntOption implements Option, PveOption, Listener {
 
     private Game game;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
@@ -27,6 +30,11 @@ public class TreasureHuntOption implements Option, PveOption {
 
     @Override
     public void start(@Nonnull Game game) {
+
+    }
+
+    @EventHandler
+    public void onEvent(PlayerInteractEvent event) {
 
     }
 
