@@ -2,16 +2,20 @@ package com.ebicep.warlords.pve.weapons.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import org.bukkit.Bukkit;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WeaponSalvageMenu {
 
@@ -54,13 +58,14 @@ public class WeaponSalvageMenu {
         if (weapon == null) {
             return;
         }
-        int salvageAmount = weapon.getSalvageAmount();
+        AtomicInteger salvageAmount = new AtomicInteger(weapon.getSalvageAmount());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
+            Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(salvageAmount));
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
-            databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount);
+            databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount.get());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.sendMessage(Component.text(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
+            player.sendMessage(Component.text(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount.get() + " Synthetic Shard" + (salvageAmount.get() == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
                                         .append(weapon.getHoverComponent(false)));
 
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);

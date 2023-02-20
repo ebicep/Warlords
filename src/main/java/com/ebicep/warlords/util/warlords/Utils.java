@@ -266,11 +266,13 @@ public class Utils {
 
     public static void resetPlayerMovementStatistics(Player player) {
         player.setStatistic(Statistic.WALK_ONE_CM, 0);
+        player.setStatistic(Statistic.JUMP, 0);
+        player.setStatistic(Statistic.FALL_ONE_CM, 0);
         player.setStatistic(Statistic.HORSE_ONE_CM, 0);
     }
 
     public static int getPlayerMovementStatistics(Player player) {
-        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM);
+        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM) + (player.getStatistic(Statistic.JUMP) * 200) + player.getStatistic(Statistic.FALL_ONE_CM);
         int horseStatistic = player.getStatistic(Statistic.HORSE_ONE_CM);
         return walkStatistic + horseStatistic;
     }

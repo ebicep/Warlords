@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -28,8 +30,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -132,6 +136,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         dropWeapon(killer);
+        //dropMobDrop(killer);
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -159,6 +164,41 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             });
             killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
+    }
+
+    public void dropMobDrop(WarlordsEntity killer) {
+        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
+            return;
+        }
+        HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
+        if (mobDrops.isEmpty()) {
+            return;
+        }
+        PveOption pveOption = killer.getGame()
+                                    .getOptions()
+                                    .stream()
+                                    .filter(PveOption.class::isInstance)
+                                    .map(PveOption.class::cast)
+                                    .findFirst().orElse(null);
+        if (pveOption == null) {
+            return;
+        }
+        DifficultyIndex difficultyIndex = pveOption.getDifficulty();
+        mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
+            AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
+            if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
+                Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(killer, drop));
+
+                killer.getGame().forEachOnlinePlayer((player, team) -> {
+                    player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
+                            ChatColor.GRAY + " obtained a " +
+                            drop.chatColor + drop.name +
+                            ChatColor.GRAY + "!"
+                    );
+                });
+                killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            }
+        });
     }
 
     public net.minecraft.world.entity.LivingEntity getTarget() {

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense.commands;
+package com.ebicep.warlords.pve.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
@@ -6,11 +6,13 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.world.entity.Mob;
@@ -120,6 +122,23 @@ public class MobCommand extends BaseCommand {
                 return;
             }
         }
+    }
+
+    @Subcommand("drops")
+    public class MobDropCommand extends BaseCommand {
+
+        @Subcommand("add")
+        public void add(Player player, MobDrops mobDrop, Integer amount) {
+            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+                databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
+            });
+            ChatChannels.playerSendMessage(player,
+                    ChatColor.GREEN + "Gave yourself " + mobDrop.getCostColoredName(amount),
+                    ChatChannels.DEBUG,
+                    true
+            );
+        }
+
     }
 
     @HelpCommand

@@ -1,13 +1,19 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -15,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TimeWarpCryomancer extends AbstractAbility {
 
@@ -50,7 +56,23 @@ public class TimeWarpCryomancer extends AbstractAbility {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
-        AtomicInteger critCounter = new AtomicInteger();
+
+
+        AtomicReference<ArmorStand> cryoPod = new AtomicReference<>(null);
+        if (pveUpgrade) {
+            cryoPod.set(wp.getWorld().spawn(warpLocation, ArmorStand.class));
+            cryoPod.get().setVisible(false);
+            cryoPod.get().setGravity(false);
+
+            PlayerFilter.entitiesAround(warpLocation, 10, 10, 10)
+                        .aliveEnemiesOf(wp)
+                        .forEach(warlordsEntity -> {
+                            if (warlordsEntity instanceof WarlordsNPC) {
+                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(cryoPod.get());
+                            }
+                        });
+        }
+
         RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -79,6 +101,41 @@ public class TimeWarpCryomancer extends AbstractAbility {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
+
+                    if (pveUpgrade && cryoPod.get() != null) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarpCryomancer>(
+                                "Frostbite Leap",
+                                "WARP RES",
+                                TimeWarpCryomancer.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager2 -> {
+                                },
+                                cooldownManager2 -> {
+                                },
+                                5 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                })
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * .2f;
+                            }
+                        });
+                        PlayerFilter.entitiesAround(warpLocation, 5, 5, 5)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsEntity -> {
+                                        if (warlordsEntity instanceof WarlordsNPC) {
+                                            warlordsEntity.addSpeedModifier(wp, "Frostbite Leap", -80, 60);
+                                        }
+                                    });
+                    }
+                },
+                cooldownManager -> {
+                    if (pveUpgrade && cryoPod.get() != null) {
+                        cryoPod.get().remove();
+                    }
                 },
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -127,6 +184,25 @@ public class TimeWarpCryomancer extends AbstractAbility {
                                     true
                             );
 
+                        }
+
+                        if (pveUpgrade && cryoPod.get() != null) {
+                            EffectUtils.playCylinderAnimation(warpLocation, .7, ParticleEffect.CLOUD, 1);
+                            points = 24;
+                            radius = .85;
+                            for (int e = 0; e < points; e++) {
+                                double angle = 2 * Math.PI * e / points;
+                                Location point = warpLocation.clone().add(radius * Math.sin(angle), 2.1, radius * Math.cos(angle));
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 100, 100), point, 500);
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 100, 100), point, 500);
+                            }
+//                            PlayerFilter.entitiesAround(warpLocation, 10, 10, 10)
+//                                        .aliveEnemiesOf(wp)
+//                                        .forEach(warlordsEntity -> {
+//                                            if (warlordsEntity instanceof WarlordsNPC) {
+//                                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(cryoPod.get());
+//                                            }
+//                                        });
                         }
                     }
                 })

@@ -21,6 +21,7 @@ import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
+import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -242,6 +243,7 @@ public class WarlordsEvents implements Listener {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
                 }
+                PermissionHandler.checkForPatreon(databasePlayer, player.hasPermission("group.patreon"));
             }, () -> {
                 if (!fromGame) {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");

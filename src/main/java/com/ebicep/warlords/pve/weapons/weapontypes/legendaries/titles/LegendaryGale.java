@@ -125,8 +125,8 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         public void updateDescription(Player player) {
             description = "Increase movement speed by " + ChatColor.YELLOW + "40% " + ChatColor.GRAY +
                     ", decrease energy consumption of all abilities by " +
-                    ChatColor.YELLOW + abilityEnergyDecrease + ChatColor.GRAY + ", and gain " +
-                    ChatColor.YELLOW + knockbackResistance + "% " + ChatColor.GRAY + "knockback resistance.";
+                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease) + ChatColor.GRAY + ", and gain " +
+                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "% " + ChatColor.GRAY + "knockback resistance.";
         }
 
         @Override

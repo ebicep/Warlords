@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands.misc;
+package com.ebicep.warlords.pve.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;

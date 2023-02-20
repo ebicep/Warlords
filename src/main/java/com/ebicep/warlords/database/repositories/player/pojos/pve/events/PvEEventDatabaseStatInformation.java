@@ -42,10 +42,12 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
         } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
             this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 15_000) * multiplier;
         } else {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 915_000) * multiplier;
+            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 100_000) * multiplier;
         }
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, databaseGamePlayerPvEEvent.getPoints());
+        } else if (highestEventPointsGame == databaseGamePlayerPvEEvent.getPoints()) {
+            this.highestEventPointsGame = 0;
         }
     }
 

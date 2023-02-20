@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import org.bukkit.Bukkit;
@@ -136,13 +137,19 @@ public class WaveDefenseStats {
     }
 
     public static class PlayerWaveDefenseStats {
-        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
+        private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
+        private final HashMap<MobDrops, Long> mobDropsGained = new HashMap<>();
         private final HashMap<Integer, Long> waveDamage = new HashMap<>();
         private long legendFragmentGain = 0;
+        private int weaponsAutoSalvaged = 0;
 
         public List<AbstractWeapon> getWeaponsFound() {
             return weaponsFound;
+        }
+
+        public HashMap<MobDrops, Long> getMobDropsGained() {
+            return mobDropsGained;
         }
 
         public long getLegendFragmentGain() {

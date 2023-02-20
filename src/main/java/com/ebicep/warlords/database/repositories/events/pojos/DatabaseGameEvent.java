@@ -120,6 +120,7 @@ public class DatabaseGameEvent {
         if (GameEvents.npc != null) {
             GameEvents.npc.destroy();
         }
+        getEvent().initialize();
         ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
         getEvent().createNPC();
     }

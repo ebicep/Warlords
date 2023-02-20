@@ -15,37 +15,37 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+15% Weapon damage\n-5% Cooldown reduction",
+                "+25% Weapon damage\n-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 15);
+                    ability.setWeaponDamage(weaponDamage + 25);
                     ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+30% Weapon damage\n-10% Cooldown reduction",
+                "+50% Weapon damage\n-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 30);
+                    ability.setWeaponDamage(weaponDamage + 50);
                     ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+45% Weapon damage\n-15% Cooldown reduction",
+                "+75% Weapon damage\n-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 45);
+                    ability.setWeaponDamage(weaponDamage + 75);
                     ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+60% Weapon Damage\n-20% Cooldown reduction",
+                "+100% Weapon Damage\n-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 60);
+                    ability.setWeaponDamage(weaponDamage + 100);
                     ability.setCooldown(cooldown * 0.8f);
                 }
         ));
@@ -88,7 +88,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
                 """
-                        Each hit deals 0.5% of the target's max health as bonus damage.
+                        Each hit deals 1% of the target's max health as bonus damage.
 
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,

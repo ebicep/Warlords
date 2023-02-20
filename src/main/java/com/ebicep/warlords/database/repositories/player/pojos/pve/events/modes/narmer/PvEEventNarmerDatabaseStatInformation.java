@@ -53,10 +53,12 @@ public class PvEEventNarmerDatabaseStatInformation extends AbstractDatabaseStatI
         gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
         if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 915_000) * multiplier;
+            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 100_000) * multiplier;
         }
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayerPvEEvent.getPoints());
+        } else if (this.highestEventPointsGame == gamePlayerPvEEvent.getPoints()) {
+            this.highestEventPointsGame = 0;
         }
     }
 

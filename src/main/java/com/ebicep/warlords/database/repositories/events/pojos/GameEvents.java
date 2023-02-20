@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
@@ -30,6 +32,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -43,6 +46,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -328,7 +333,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                // add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new EventShopReward(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
                 add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
                 add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
@@ -339,16 +344,119 @@ public enum GameEvents {
                 add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
                 add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
                 add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override
+        public void initialize() {
+            super.initialize();
+            Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+                }
+            }, Warlords.getInstance());
+        }
+
+        @Override
         public LinkedHashMap<Currencies, Long> getRewards(int position) {
-            return null;
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 500_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 5L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 200_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 2L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 25_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
         }
 
         @Override
         public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            return null;
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 150_000L);
+                    put("Experience", 150_000L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 100_000L);
+                    put("Experience", 100_000L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 75_000L);
+                    put("Experience", 75_000L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put("Coins", 50_000L);
+                    put("Experience", 50_000L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put("Coins", 20_000L);
+                put("Experience", 20_000L);
+            }};
         }
 
         @Override
@@ -455,7 +563,7 @@ public enum GameEvents {
 
     public final String name;
     public final Currencies currency;
-    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion;
+    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
@@ -464,7 +572,7 @@ public enum GameEvents {
     GameEvents(
             String name,
             Currencies currency,
-            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFuntion,
+            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction,
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
@@ -472,7 +580,7 @@ public enum GameEvents {
     ) {
         this.name = name;
         this.currency = currency;
-        this.updateStatsFuntion = updateStatsFuntion;
+        this.updateStatsFunction = updateStatsFunction;
         this.eventsStatsFunction = eventsStatsFunction;
         this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
@@ -484,6 +592,10 @@ public enum GameEvents {
     public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
 
     public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
+
+    public void initialize() {
+        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Initializing " + name + " event...");
+    }
 
     public void createNPC() {
         NPCManager.registerTrait(GameEventTrait.class, "GameEventTrait");

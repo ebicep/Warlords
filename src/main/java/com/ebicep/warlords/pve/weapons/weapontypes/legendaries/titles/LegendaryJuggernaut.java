@@ -13,16 +13,13 @@ import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
 
     public static final int BOOST = 10;
-    public static final int BOOST_CAP = 5;
-    public static final int KILLS_PER_BOOST = 100;
+    public static final float BOOST_INCREASE_PER_UPGRADE = 1.25f;
+    public static final List<Integer> KILL_MILESTONES = Arrays.asList(100, 200, 400, 800, 1600);
 
     public LegendaryJuggernaut() {
     }
@@ -36,13 +33,10 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain 10% Damage and Health every 100 kills. Capped at 500 kills.";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return null;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
+        return baseCost;
     }
 
     @Override
@@ -55,57 +49,61 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
         super.applyToWarlordsPlayer(player);
 
         player.getGame().registerEvents(new Listener() {
-
-            final AtomicInteger killCounter = new AtomicInteger();
-            final AtomicInteger boosts = new AtomicInteger();
-            final float healthBoost = player.getMaxBaseHealth() * BOOST / 100f;
-            PermanentCooldown<LegendaryJuggernaut> cooldown = null;
-
+            final float healthBoost = player.getMaxBaseHealth() * getCalculatedBoost();
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                if (boosts.get() > BOOST_CAP) {
-                    return;
-                }
                 WarlordsEntity killer = event.getKiller();
 
                 if (killer == player) {
-                    if (killCounter.incrementAndGet() >= KILLS_PER_BOOST) {
-                        killCounter.set(0);
-                        if (boosts.incrementAndGet() > BOOST_CAP) {
-                            return;
-                        }
-                        boostDamageHealth();
+                    if (KILL_MILESTONES.contains(player.getMinuteStats().total().getKills())) {
+                        player.setMaxBaseHealth(player.getMaxBaseHealth() + healthBoost);
                     }
                 }
             }
-
-            private void boostDamageHealth() {
-                if (cooldown == null || !player.getCooldownManager().hasCooldown(cooldown)) {
-                    player.getCooldownManager().addCooldown(cooldown = new PermanentCooldown<>(
-                            "Juggernaut 1",
-                            null,
-                            LegendaryJuggernaut.class,
-                            null,
-                            player,
-                            CooldownTypes.WEAPON,
-                            cooldownManager -> {
-                            },
-                            false
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * (1 + boosts.get() * BOOST / 100f);
-                        }
-
-                    });
-                } else {
-                    cooldown.setName("Juggernaut " + boosts.get());
-                }
-                player.setMaxBaseHealth(player.getMaxBaseHealth() + healthBoost);
-            }
         });
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Juggernaut",
+                null,
+                LegendaryJuggernaut.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                int playerKills = player.getMinuteStats().total().getKills();
+                for (int i = KILL_MILESTONES.size() - 1; i >= 0; i--) {
+                    int killMilestone = KILL_MILESTONES.get(i);
+                    if (playerKills >= killMilestone) {
+                        return currentDamageValue * (1 + (getBoost() * (i + 1)) / 100f);
+                    }
+                }
+                return currentDamageValue;
+            }
 
+        });
+    }
 
+    private float getBoost() {
+        return BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    private float getCalculatedBoost() {
+        return getBoost() / 100f;
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Gain a " + formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%") +
+                " Damage and Health boost when you hit the following kill milestones:\n" +
+                "100 Kills\n" +
+                "200 Kills\n" +
+                "400 Kills\n" +
+                "800 Kills\n" +
+                "1600 Kills";
     }
 
     @Override
@@ -115,16 +113,6 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
 
     @Override
     protected float getMeleeDamageMinValue() {
-        return 180;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
         return 180;
     }
 
@@ -139,9 +127,20 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
-        return baseCost;
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+        ));
     }
 }

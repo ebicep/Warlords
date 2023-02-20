@@ -155,7 +155,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                     abilityCooldown--;
                     return;
                 }
-                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get())) {
+                if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Fervent 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
@@ -164,7 +164,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Fervent Ability",
-                                "POOP",
+                                "FERVENT",
                                 LegendaryFervent.class,
                                 null,
                                 player,

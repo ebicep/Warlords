@@ -1879,12 +1879,17 @@ public abstract class WarlordsEntity {
         }
         if ((int) energyGiven != 0) {
             if (getEntity() instanceof Player) {
-                PlayerSettings settings = PlayerSettings.getPlayerSettings(getUuid());
-                if (settings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                PlayerSettings receiverSettings = PlayerSettings.getPlayerSettings(getUuid());
+                PlayerSettings giverSettings = PlayerSettings.getPlayerSettings(giver.getUuid());
+                if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
                     if (this == giver) {
                         sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
                     } else {
                         sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
+                    }
+                }
+                if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                    if (this != giver) {
                         giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
                     }
                 }
@@ -2396,12 +2401,12 @@ public abstract class WarlordsEntity {
         this.canCrit = canCrit;
     }
 
-    public int getBlocksTravelledCM() {
-        return blocksTravelledCM;
-    }
-
     public void setBlocksTravelledCM(int blocksTravelledCM) {
         this.blocksTravelledCM = blocksTravelledCM;
+    }
+
+    public int getBlocksTravelled() {
+        return blocksTravelledCM / 100;
     }
 
     public float getWalkSpeed() {

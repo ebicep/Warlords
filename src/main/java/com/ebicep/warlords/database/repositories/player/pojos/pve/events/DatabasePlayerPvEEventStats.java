@@ -41,7 +41,7 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
-            currentGameEvent.getEvent().updateStatsFuntion.apply(this).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            currentGameEvent.getEvent().updateStatsFunction.apply(this).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
 
             //GUILDS
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
@@ -55,12 +55,12 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
                 } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
                     points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier;
                 } else {
-                    points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 915_000) * multiplier;
+                    points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier;
                 }
-                guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points);
+                guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points * multiplier);
                 guildPlayer.addEventPoints(currentGameEvent.getEvent(),
                         currentGameEvent.getStartDateSecond(),
-                        points
+                        points * multiplier
                 );
                 guild.queueUpdate();
             }

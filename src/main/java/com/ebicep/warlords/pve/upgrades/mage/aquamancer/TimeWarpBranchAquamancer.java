@@ -81,7 +81,9 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
         masterUpgrade = new Upgrade(
                 "Dimensional Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp.",
+                "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp and now leave a water altar " +
+                        "when warping back that grants allies immunity to debuffs and slowness effects while near it. " +
+                        "Lasts up to 10 seconds, based on how many blocks you travelled during Time Warp.",
                 50000,
                 () -> {
                     ability.setDuration(ability.getDuration() * 2);

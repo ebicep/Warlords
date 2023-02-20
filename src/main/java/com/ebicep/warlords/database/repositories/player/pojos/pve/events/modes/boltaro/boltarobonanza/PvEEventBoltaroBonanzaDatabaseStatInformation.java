@@ -38,6 +38,10 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
             if (this.highestSplit < split) {
                 this.highestSplit = split;
             }
+        } else {
+            if (this.highestSplit == split) {
+                this.highestSplit = 0;
+            }
         }
     }
 

@@ -56,28 +56,50 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
-        if (multiplier > 0) {
-            if (databaseGame instanceof WavesCleared wavesCleared) {
+        if (databaseGame instanceof WavesCleared) {
+            WavesCleared wavesCleared = (WavesCleared) databaseGame;
+            if (multiplier > 0) {
                 this.highestWaveCleared = Math.max(wavesCleared.getWavesCleared(), this.highestWaveCleared);
-                if (databaseGame instanceof TimeElapsed timeElapsed && databaseGame instanceof Difficulty difficulty) {
+            } else if (this.highestWaveCleared == wavesCleared.getWavesCleared()) {
+                this.highestWaveCleared = 0;
+            }
+            if (databaseGame instanceof TimeElapsed && databaseGame instanceof Difficulty) {
+                TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
+                Difficulty difficulty = (Difficulty) databaseGame;
+                if (multiplier > 0) {
                     if (wavesCleared.getWavesCleared() == difficulty.getDifficulty().getMaxWaves() &&
-                            (this.fastestGameFinished == 0 || timeElapsed.getTimeElapsed() < fastestGameFinished)) {
+                            (this.fastestGameFinished == 0 || timeElapsed.getTimeElapsed() < fastestGameFinished)
+                    ) {
                         this.fastestGameFinished = timeElapsed.getTimeElapsed();
                     }
+                } else if (this.fastestGameFinished == timeElapsed.getTimeElapsed()) {
+                    this.fastestGameFinished = 0;
                 }
             }
-            if (gamePlayer instanceof MostDamageInRound mostDamageInRound) {
+        }
+        if (gamePlayer instanceof MostDamageInRound) {
+            MostDamageInRound mostDamageInRound = (MostDamageInRound) gamePlayer;
+            if (multiplier > 0) {
                 this.mostDamageInRound = Math.max(this.mostDamageInRound, mostDamageInRound.getMostDamageInRound());
+            } else if (this.mostDamageInRound == mostDamageInRound.getMostDamageInRound()) {
+                this.mostDamageInRound = 0;
             }
-            if (gamePlayer instanceof MostDamageInWave mostDamageInWave) {
+        }
+        if (gamePlayer instanceof MostDamageInWave) {
+            MostDamageInWave mostDamageInWave = (MostDamageInWave) gamePlayer;
+            if (multiplier > 0) {
                 this.mostDamageInWave = Math.max(this.mostDamageInWave, mostDamageInWave.getMostDamageInWave());
+            } else if (this.mostDamageInWave == mostDamageInWave.getMostDamageInWave()) {
+                this.mostDamageInWave = 0;
             }
         }
 
-        if (databaseGame instanceof WavesCleared wavesCleared) {
+        if (databaseGame instanceof WavesCleared) {
+            WavesCleared wavesCleared = (WavesCleared) databaseGame;
             this.totalWavesCleared += wavesCleared.getWavesCleared() * multiplier;
         }
-        if (databaseGame instanceof TimeElapsed timeElapsed) {
+        if (databaseGame instanceof TimeElapsed) {
+            TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
             this.totalTimePlayed += (long) timeElapsed.getTimeElapsed() * multiplier;
         }
     }

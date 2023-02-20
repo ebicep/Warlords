@@ -11,14 +11,14 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.trait.HologramTrait;
-import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.SkinTrait;
-import net.citizensnpcs.trait.VillagerProfession;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
+import org.bukkit.inventory.ItemStack;
 
 public class NPCManager {
 
@@ -79,6 +79,7 @@ public class NPCManager {
                     createLegendaryWeaponNPC();
                     createQuestMenuNPC();
                     createStarPieceSynthesizerNPC();
+                    createMysteriousTokenNPC();
                 })
                 .execute();
     }
@@ -174,6 +175,23 @@ public class NPCManager {
         lookClose.toggle();
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
+    }
+
+    public static void createMysteriousTokenNPC() {
+        registerTrait(MysteriousTokenTrait.class, "MysteriousTokenTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.ARMOR_STAND, "mysterious-token");
+        npc.addTrait(MysteriousTokenTrait.class);
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setVisible(false);
+        armorStandTrait.setGravity(false);
+//        armorStandTrait.setMarker(true);
+        Equipment equipment = npc.getOrAddTrait(Equipment.class);
+        equipment.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BEDROCK));
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2532.5, 48.5, 746.8, 90, 0));
     }
 
 

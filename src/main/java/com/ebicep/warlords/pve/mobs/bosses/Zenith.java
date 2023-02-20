@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EnvoyLegionnaire;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
@@ -19,6 +20,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
@@ -152,6 +155,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        dropMobDrop(killer);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                     .withColor(Color.WHITE)
@@ -190,5 +194,16 @@ public class Zenith extends AbstractZombie implements BossMob {
                 }
             }
         }.runTaskLater(tickDelay);
+    }
+
+    @Override
+    public HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
+        return new HashMap<>() {{
+            put(MobDrops.ZENITH_STAR, new HashMap<>() {{
+                put(DifficultyIndex.NORMAL, .01);
+                put(DifficultyIndex.HARD, .02);
+                put(DifficultyIndex.ENDLESS, .05);
+            }});
+        }};
     }
 }

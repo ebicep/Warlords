@@ -8,7 +8,6 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -142,8 +141,6 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
                 Player player = entry.getKey();
                 player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 5, 1);
                 sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
-
-                Utils.resetPlayerMovementStatistics(player);
             }
         }
     }

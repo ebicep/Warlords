@@ -5,6 +5,11 @@ import javax.annotation.Nonnull;
 // https://minecraft-heads.com/
 //
 public enum SkullID {
+    // https://minecraft-heads.com/custom-heads/humanoid/50492-ethereal-wither-skull
+    ETHEREAL_WITHER_SKULL(
+            "c415a3d8-b9a0-48b7-b170-a447634e1b0c",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjExNzc3OTE2ZTc1NjQ0M2UzMGEwNDNmMmJjOWNjZTBkMGZlNjI0YmQ2MTkyZDdiYTIzZjk2YTFkNzFiOWYzZiJ9fX0=="
+    ),
     // https://prnt.sc/jxuV7HjNusRu
     GRADIENT_SOUL(
             "e6ebaea8-d746-4bf2-8509-5b0949bf023a",

@@ -111,7 +111,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = ChatColor.YELLOW + "+" + energyPerSecond + ChatColor.GRAY + " energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
+            description = ChatColor.YELLOW + "+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond) + ChatColor.GRAY + " energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
         }
 
         @Override
