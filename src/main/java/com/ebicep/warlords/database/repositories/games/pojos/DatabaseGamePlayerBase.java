@@ -74,11 +74,11 @@ public class DatabaseGamePlayerBase {
                                         .map(s -> s.substring(0, s.indexOf(".") + 2))
                                         .collect(Collectors.joining(",", "", ","));
         this.zLocations = warlordsPlayer.getLocations()
-                .stream()
-                .map(Location::getZ)
-                .map(String::valueOf)
-                .map(s -> s.substring(0, s.indexOf(".") + 2))
-                .collect(Collectors.joining(",", "", ","));
+                                        .stream()
+                                        .map(Location::getZ)
+                                        .map(String::valueOf)
+                                        .map(s -> s.substring(0, s.indexOf(".") + 2))
+                                        .collect(Collectors.joining(",", "", ","));
         this.totalKills = warlordsPlayer.getMinuteStats().total().getKills();
         this.totalAssists = warlordsPlayer.getMinuteStats().total().getAssists();
         this.totalDeaths = warlordsPlayer.getMinuteStats().total().getDeaths();

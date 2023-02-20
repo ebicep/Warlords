@@ -62,7 +62,7 @@ public class Liliath extends AbstractZombie implements BossMob {
         if (test) {
             Location loc = warlordsNPC.getLocation();
             int counter = 0;
-            if (ticksElapsed % 4 == 0 ) {
+            if (ticksElapsed % 4 == 0) {
                 counter++;
                 loc.setYaw(counter);
                 EffectUtils.playHelixAnimation(loc, 20, Particle.FLAME, 1, 8);

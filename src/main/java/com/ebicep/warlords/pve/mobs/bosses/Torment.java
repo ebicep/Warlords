@@ -85,6 +85,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
         if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 0.2 * counter, 255, 30, 30, counter, 4);
@@ -141,8 +142,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
                                     );
                                 }
                             }
-                        }
-                )));
+                        })));
             }
         }
     }

@@ -50,6 +50,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
 
         player.getGame().registerEvents(new Listener() {
             final float healthBoost = player.getMaxBaseHealth() * getCalculatedBoost();
+
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
                 WarlordsEntity killer = event.getKiller();

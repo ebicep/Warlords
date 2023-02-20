@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs;
 
+import com.ebicep.warlords.game.option.raid.bosses.Physira;
 import com.ebicep.warlords.pve.mobs.blaze.Blaze;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;

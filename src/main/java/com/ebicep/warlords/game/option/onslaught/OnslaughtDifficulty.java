@@ -11,9 +11,7 @@ public enum OnslaughtDifficulty {
     NIGHTMARE(ChatColor.LIGHT_PURPLE + "NIGHTMARE"),
     INSOMNIA(ChatColor.DARK_PURPLE + "INSOMNIA"),
     VANGUARD(ChatColor.DARK_GRAY + "VANGUARD"),
-    MAX(ChatColor.BLACK.toString() + ChatColor.MAGIC + "?????")
-
-    ;
+    MAX(ChatColor.BLACK.toString() + ChatColor.MAGIC + "?????");
 
     private final String name;
 

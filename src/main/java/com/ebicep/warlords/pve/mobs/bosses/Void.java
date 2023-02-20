@@ -206,13 +206,13 @@ public class Void extends AbstractSkeleton implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         for (int i = 0; i < 3; i++) {
-            EffectUtils.strikeLightningInCylinder(deathLocation, 8,false);
+            EffectUtils.strikeLightningInCylinder(deathLocation, 8, false);
         }
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.BLACK)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .withTrail()
+                                                                       .build());
     }
 
     private void immolation(PveOption option, Location loc) {
@@ -335,6 +335,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
+
             @Override
             public void run() {
                 if (warlordsNPC.isDead()) {

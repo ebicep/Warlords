@@ -51,7 +51,9 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
         Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 1, 0.5f);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
-        if (we == null) return;
+        if (we == null) {
+            return;
+        }
         EffectUtils.playSphereAnimation(location, 8, Particle.FLAME, 1);
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(we, 10, 10, 10)

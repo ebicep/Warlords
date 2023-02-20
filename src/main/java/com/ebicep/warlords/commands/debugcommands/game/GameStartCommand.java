@@ -68,6 +68,25 @@ public class GameStartCommand {
         );
     }
 
+    public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
+            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            return;
+        }
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.RAID)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                }
+                            });
+                })
+        );
+
+    }
+
     public static void startGame(
             Player player,
             boolean excludeStarter,

@@ -325,6 +325,42 @@ public enum GameMode {
             return options;
         }
     },
+    RAID(
+            "Raid",
+            "RAID",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,
+            null,
+            4,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Face the ultimate challenge in",
+                    color + "the raid trials!",
+                    ""
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the raid trials begin."
+            ));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+
+            return options;
+        }
+    },
     DEBUG(
             "Sandbox",
             "SandBox",

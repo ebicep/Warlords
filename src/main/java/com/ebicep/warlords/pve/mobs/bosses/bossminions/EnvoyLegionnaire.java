@@ -46,7 +46,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
         WarlordsEntity zenith = PlayerFilter
                 .playingGame(warlordsNPC.getGame())
                 .filter(we -> we.getName()
-                .equals("Zenith"))
+                                .equals("Zenith"))
                 .findFirstOrNull();
 
         if (ticksElapsed % 200 == 0) {
@@ -82,9 +82,9 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.ORANGE)
-                .with(FireworkEffect.Type.BALL)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.ORANGE)
+                                                                       .with(FireworkEffect.Type.BALL)
+                                                                       .withTrail()
+                                                                       .build());
     }
 }

@@ -83,7 +83,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         if (ticksElapsed % 100 == 0) {
             if (skipNextAttack) {
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
-                        .aliveEnemiesOf(getWarlordsNPC())
+                            .aliveEnemiesOf(getWarlordsNPC())
                         .forEach(enemyPlayer -> enemyPlayer.sendMessage(ChatColor.RED + "Ghoulcaller's Fury has been silenced!"));
                 skipNextAttack = false;
             } else {
@@ -175,10 +175,10 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.GRAY)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.GRAY)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .withTrail()
+                                                                       .build());
     }
 
     private void spawnTormentedSouls(PveOption option, int amount) {

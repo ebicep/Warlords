@@ -6,7 +6,10 @@ public enum MobTier {
 
     BASE(ChatColor.YELLOW + "✻"),
     ELITE(ChatColor.GOLD.toString() + ChatColor.BOLD + "❈❈"),
-    BOSS(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "✪✪✪");
+    BOSS(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "✪✪✪"),
+    RAID_BOSS(ChatColor.DARK_GRAY.toString() + ChatColor.BOLD + "❂❂❂❂")
+
+    ;
 
     private final String symbol;
 

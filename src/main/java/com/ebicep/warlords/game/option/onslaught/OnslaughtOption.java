@@ -299,6 +299,7 @@ public class OnslaughtOption implements Option, PveOption {
 
         new GameRunnable(game) {
             int counter = 0;
+
             @Override
             public void run() {
                 ticksElapsed.getAndIncrement();
@@ -429,8 +430,8 @@ public class OnslaughtOption implements Option, PveOption {
                     "❤ " + (int) we.getHealth()) +
                     ChatColor.RESET + " / " +
                     ChatColor.RED + "⚔ " + we.getMinuteStats()
-                        .total()
-                        .getKills());
+                                             .total()
+                                             .getKills());
         }
 
         return list;

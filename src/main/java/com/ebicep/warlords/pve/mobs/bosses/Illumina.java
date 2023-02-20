@@ -192,9 +192,9 @@ public class Illumina extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.BLUE)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                       .withColor(Color.BLUE)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 

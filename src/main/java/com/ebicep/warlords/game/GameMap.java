@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pvp.*;
+import com.ebicep.warlords.game.option.raid.RaidOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.wavedefense.CoinGainOption;
@@ -2640,6 +2641,36 @@ public enum GameMap {
             return options;
         }
     },
+    THE_OBSIDIAN_TRAIL_RAID(
+            "§c§lThe Obsidian Trail",
+            8,
+            4,
+            60 * SECOND,
+            "TheObsidianTrail",
+            1,
+            GameMode.RAID
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(711.5, 7, 179.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(711.5, 7, 179.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(711.5, 7, 179.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(711.5, 7, 179.5), Team.RED));
+
+            options.add(new RaidOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
     DEBUG(
             "Practice",
             300,
@@ -3316,29 +3347,29 @@ public enum GameMap {
             options.add(new NarmersTombOption());
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
-                    .reduceScoreOnAllDeath(30, Team.BLUE)
-                    .onPerWaveClear(1, 500)
-                    .onPerWaveClear(5, 2000)
-                    .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
-                    .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.IRON_GOLEM, 20)
-                    .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
-                    .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
-                    .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
-                    .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
-                    .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
-                    .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
-                    .onPerMobKill(Mobs.EXILED_SKELETON, 40)
-                    .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
-                    .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
-                    .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
-                    .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
-                    .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
-                    .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
-                    .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
-                    .onPerMobKill(Mobs.EVENT_NARMER, 500)
+                            .reduceScoreOnAllDeath(30, Team.BLUE)
+                            .onPerWaveClear(1, 500)
+                            .onPerWaveClear(5, 2000)
+                            .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
+                            .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.IRON_GOLEM, 20)
+                            .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
+                            .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
+                            .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_SKELETON, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
+                            .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
+                            .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER, 500)
                     //.cap(50_000)
             );
             options.add(new CurrencyOnEventOption()

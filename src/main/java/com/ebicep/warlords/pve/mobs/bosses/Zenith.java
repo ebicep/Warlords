@@ -158,9 +158,9 @@ public class Zenith extends AbstractZombie implements BossMob {
         dropMobDrop(killer);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .with(FireworkEffect.Type.BALL_LARGE)
-                    .build());
+                                                                           .withColor(Color.WHITE)
+                                                                           .with(FireworkEffect.Type.BALL_LARGE)
+                                                                           .build());
         }
 
         EffectUtils.strikeLightning(deathLocation, false, 5);

@@ -65,9 +65,9 @@ public class DrainingMiasma extends AbstractAbility {
         EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.SLIME, 1);
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                .withColor(Color.LIME)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                          .withColor(Color.LIME)
+                                                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                                                          .build());
 
         if (pveUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);

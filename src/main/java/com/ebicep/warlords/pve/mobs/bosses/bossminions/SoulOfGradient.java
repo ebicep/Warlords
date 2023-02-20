@@ -42,9 +42,9 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                                   .withColor(Color.WHITE)
+                                                                                   .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                   .build());
     }
 
     @Override
