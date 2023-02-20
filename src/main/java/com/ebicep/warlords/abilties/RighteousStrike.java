@@ -61,7 +61,7 @@ public class RighteousStrike extends AbstractStrikeBase {
                 critMultiplier,
                 false
         );
-        //if (finalEvent.isPresent()) {
+
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, (int) (abilityReductionInTicks * 1.6f));
@@ -69,6 +69,7 @@ public class RighteousStrike extends AbstractStrikeBase {
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
+
         if (pveUpgrade) {
             SoulShackle.shacklePlayer(wp, nearPlayer, 200);
             for (WarlordsEntity we : PlayerFilter

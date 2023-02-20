@@ -5,13 +5,11 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.game.option.raid.bosses.Physira;
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -19,7 +17,6 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 public class RaidOption implements Option {
 
@@ -71,7 +68,7 @@ public class RaidOption implements Option {
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
+        //abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.add(abstractMob);
     }

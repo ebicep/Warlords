@@ -8,6 +8,7 @@ import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -40,6 +41,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
     private List<AbstractWeapon> weaponsFound = new ArrayList<>();
     @Field("legend_fragments_gain")
     private long legendFragmentsGained;
+    @Field("mob_drops_gained")
+    private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
     @Field("quests_completed")
     private List<Quests> questsCompleted = new ArrayList<>();
 
@@ -75,6 +78,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
                                                   .sum();
         this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
+        this.mobDropsGained = new HashMap<>(playerWaveDefenseStats.getMobDropsGained());
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
@@ -130,6 +134,10 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
 
     public long getLegendFragmentsGained() {
         return legendFragmentsGained;
+    }
+
+    public Map<MobDrops, Long> getMobDropsGained() {
+        return mobDropsGained;
     }
 
     public List<Quests> getQuestsCompleted() {

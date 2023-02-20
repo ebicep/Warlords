@@ -81,7 +81,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         masterUpgrade = new Upgrade(
                 "Dante’s Inferno",
                 "Inferno - Master Upgrade",
-                "Inferno cooldown gets reduced by 0.5 seconds for each critical hit (max 40 hits)",
+                "Inferno's cooldown gets reduced by 0.5 seconds and duration gets increased by 0.25 seconds for each critical hit (max 40 hits)",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

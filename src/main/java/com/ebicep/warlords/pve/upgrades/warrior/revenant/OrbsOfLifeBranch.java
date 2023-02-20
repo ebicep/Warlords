@@ -15,38 +15,38 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+7.5% Healing",
+                "+12.5% Healing",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.075f);
-                    ability.setMaxDamageHeal(maxHealing * 1.075f);
+                    ability.setMinDamageHeal(minHealing * 1.125f);
+                    ability.setMaxDamageHeal(maxHealing * 1.125f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+15% Healing",
+                "+25% Healing",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.15f);
-                    ability.setMaxDamageHeal(maxHealing * 1.15f);
+                    ability.setMinDamageHeal(minHealing * 1.25f);
+                    ability.setMaxDamageHeal(maxHealing * 1.25f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+22.5% Healing",
+                "+37.5% Healing",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.225f);
-                    ability.setMaxDamageHeal(maxHealing * 1.225f);
+                    ability.setMinDamageHeal(minHealing * 1.375f);
+                    ability.setMaxDamageHeal(maxHealing * 1.375f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+30% Healing",
+                "+50% Healing",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(maxHealing * 1.3f);
+                    ability.setMinDamageHeal(minHealing * 1.5f);
+                    ability.setMaxDamageHeal(maxHealing * 1.5f);
                 }
         ));
 

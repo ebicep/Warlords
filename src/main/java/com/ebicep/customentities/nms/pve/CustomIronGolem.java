@@ -10,7 +10,7 @@ public class CustomIronGolem extends EntityIronGolem implements CustomEntity<Cus
     public CustomIronGolem(World world) {
         super(world);
         resetAI(world);
-        giveBaseAI(1.0, 0.6, 20);
+        giveBaseAI(1.0, 0.6, 100);
     }
 
     public CustomIronGolem(org.bukkit.World world) {
@@ -33,4 +33,18 @@ public class CustomIronGolem extends EntityIronGolem implements CustomEntity<Cus
 
     }
 
+    private boolean stunned;
+
+    @Override
+    public void collide(Entity entity) {
+        if (stunned) {
+            return;
+        }
+        super.collide(entity);
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
+    }
 }

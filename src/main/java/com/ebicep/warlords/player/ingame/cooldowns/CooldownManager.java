@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -348,10 +349,12 @@ public class CooldownManager {
         abstractCooldowns.remove(abstractCooldown);
     }
 
-    public void removeCooldown(Class<?> cooldownClass) {
+    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
             if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownClass(), cooldownClass)) {
-                cd.getOnRemoveForce().accept(this);
+                if (!noForce) {
+                    cd.getOnRemoveForce().accept(this);
+                }
                 abstractCooldowns.remove(cd);
             }
         });
@@ -429,25 +432,25 @@ public class CooldownManager {
                 counter++;
             }
         }
-//        incrementCooldown(
-//                new RegularCooldown<Void>("KB Resistance",
-//                        "KB",
-//                        null,
-//                        null,
-//                        this.warlordsEntity,
-//                        CooldownTypes.BUFF,
-//                        cooldownManager -> {
-//                        },
-//                        counter * 20
-//                ) {
-//                    @Override
-//                    public void multiplyKB(Vector currentVector) {
-//                        currentVector.multiply(0.75);
-//                    }
-//                },
-//                (int) (counter * 1.2 * 20),
-//                (int) (3.6 * 20)
-//        );
+        incrementCooldown(
+                new RegularCooldown<Void>("KB Resistance",
+                        "KB",
+                        null,
+                        null,
+                        this.warlordsEntity,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        counter * 20
+                ) {
+                    @Override
+                    public void multiplyKB(Vector currentVector) {
+                        currentVector.multiply(0.75);
+                    }
+                },
+                (int) (counter * 1.2 * 20),
+                (int) (3.6 * 20)
+        );
         return counter;
     }
 

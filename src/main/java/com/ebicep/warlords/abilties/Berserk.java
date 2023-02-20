@@ -53,7 +53,7 @@ public class Berserk extends AbstractAbility {
         Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, duration * 20, "BASE");
 
         Berserk tempBerserk = new Berserk();
-        wp.getCooldownManager().removeCooldown(Berserk.class);
+        wp.getCooldownManager().removeCooldown(Berserk.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
                 name,
                 "BERS",

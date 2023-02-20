@@ -1,5 +1,8 @@
 package com.ebicep.warlords.menu.generalmenu;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -19,10 +22,7 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -196,11 +196,14 @@ public class WarlordsNewHotbarMenu {
                                 }
 
                                 AbstractPlayerClass apc = spec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                        .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
+                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings
+                                        .getWeaponSkins()
+                                        .getOrDefault(spec, Weapons.FELFLAME_BLADE)
+                                        .getItem()))
+                                        .name("§aWeapon Skin Preview")
                                         .lore("")
-                                        .get());
-
+                                        .get()
+                                );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
                                 databasePlayer.setLastSpec(spec);
 
@@ -262,12 +265,12 @@ public class WarlordsNewHotbarMenu {
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
                 LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
                 List<String> lore = rewardForLevel.entrySet()
-                        .stream()
-                        .map(currenciesLongEntry -> {
-                            Currencies currency = currenciesLongEntry.getKey();
-                            Long value = currenciesLongEntry.getValue();
-                            return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
-                        }).collect(Collectors.toList());
+                                                  .stream()
+                                                  .map(currenciesLongEntry -> {
+                                                      Currencies currency = currenciesLongEntry.getKey();
+                                                      Long value = currenciesLongEntry.getValue();
+                                                      return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
+                                                  }).collect(Collectors.toList());
                 lore.add(0, "");
                 lore.add("");
                 AtomicBoolean claimed = new AtomicBoolean(false);
@@ -451,11 +454,13 @@ public class WarlordsNewHotbarMenu {
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
+                                player.getInventory().setItem(1, new ItemBuilder(apc
+                                        .getWeapon()
+                                        .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                                        .name("§aWeapon Skin Preview")
                                         .lore("")
-                                        .get());
-
+                                        .get()
+                                );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                             } else {
                                 player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
@@ -532,9 +537,9 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
             menu.setItem(2,
                     apc.getWeapon()
-                            .getItem(playerSettings.getWeaponSkins()
-                                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
-                                    .getItem()),
+                       .getItem(playerSettings.getWeaponSkins()
+                                              .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
+                                              .getItem()),
                     ACTION_DO_NOTHING
             );
             menu.setItem(3, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
@@ -548,9 +553,9 @@ public class WarlordsNewHotbarMenu {
 
         public static void openArmorMenu(Player player, int pageNumber) {
             boolean onBlueTeam = Warlords.getGameManager()
-                    .getPlayerGame(player.getUniqueId())
-                    .map(g -> g.getPlayerTeam(player.getUniqueId()))
-                    .orElse(Team.BLUE) == Team.BLUE;
+                                         .getPlayerGame(player.getUniqueId())
+                                         .map(g -> g.getPlayerTeam(player.getUniqueId()))
+                                         .orElse(Team.BLUE) == Team.BLUE;
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
             List<ArmorManager.Helmets> selectedHelmet = playerSettings.getHelmets();
 
@@ -776,7 +781,8 @@ public class WarlordsNewHotbarMenu {
                 Menu menu = new Menu("PvE Menu", 9 * 4);
 
                 List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-                Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                Optional<AbstractWeapon> optionalWeapon = weapons
+                        .stream()
                         .filter(AbstractWeapon::isBound)
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
                         .findFirst();
@@ -785,8 +791,26 @@ public class WarlordsNewHotbarMenu {
                     itemStack = optionalWeapon.get().generateItemStack(false);
                 }
 
-                menu.setItem(1, 1, itemStack, (m, e) -> WeaponManagerMenu.openWeaponInventoryFromExternal(player, false));
-                menu.setItem(2, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(1, 1, itemStack, (m, e) -> {
+                    if (e.isRightClick() && optionalWeapon.isPresent()) {
+                        WeaponManagerMenu.openWeaponEditor(player, databasePlayer, optionalWeapon.get());
+                    } else {
+                        WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
+                    }
+                });
+                menu.setItem(2, 1,
+                        new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
+                                .name("§aMob Drops")
+                                .lore(databasePlayer.getPveStats()
+                                                    .getMobDrops()
+                                                    .entrySet()
+                                                    .stream()
+                                                    .map(mobDropsLongEntry -> mobDropsLongEntry.getKey().getCostColoredName(mobDropsLongEntry.getValue()))
+                                                    .collect(Collectors.joining("\n")))
+                                .get(),
+                        (m, e) -> {}
+                );
+                menu.setItem(3, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -797,7 +821,8 @@ public class WarlordsNewHotbarMenu {
 
     }
 
-    public static class SettingsMenu {
+    @CommandAlias("settings|setting")
+    public static class SettingsMenu extends BaseCommand {
 
         public static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
                 .name(ChatColor.AQUA + "Settings")
@@ -807,7 +832,12 @@ public class WarlordsNewHotbarMenu {
                 .name(ChatColor.GREEN + "Particle Quality")
                 .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
                 .get();
+        public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
+                .name(ChatColor.GREEN + "Chat Settings")
+                .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Configure which chat messages you see in-game", 150))
+                .get();
 
+        @Default
         public static void openSettingsMenu(Player player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
 
@@ -834,6 +864,14 @@ public class WarlordsNewHotbarMenu {
                     (m, e) -> {
                         player.performCommand("flagmessagemode");
                         openSettingsMenu(player);
+                    }
+            );
+            menu.setItem(
+                    7,
+                    1,
+                    MENU_SETTINGS_CHAT_SETTINGS,
+                    (m, e) -> {
+                        Settings.ChatSettings.openChatSettingsMenu(player);
                     }
             );
 

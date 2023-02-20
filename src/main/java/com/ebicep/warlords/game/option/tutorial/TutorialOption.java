@@ -9,8 +9,6 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
@@ -18,6 +16,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -344,7 +344,7 @@ public class TutorialOption implements Option {
                             );
                             for (Location loc : locations) {
                                 AbstractMob<?> mob = Mobs.BASIC_ZOMBIE.createMob.apply(loc);
-                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID())));
+                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }
                             sendTutorialMessage(p,

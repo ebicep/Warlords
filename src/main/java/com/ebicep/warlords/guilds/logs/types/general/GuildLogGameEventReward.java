@@ -33,7 +33,7 @@ public class GuildLogGameEventReward extends AbstractGuildLog {
 
     @Override
     public String getLog() { //Fighter's Glory #1 awarded - 50000 coins, 50000 experience
-        return ChatColor.RED + event.name + " Event #" + placement + ChatColor.YELLOW + getAction() +
+        return ChatColor.RED + " " + event.name + " Event #" + placement + " " + ChatColor.YELLOW + getAction() +
                 ChatColor.DARK_GRAY + " - " + rewards.entrySet()
                                                      .stream()
                                                      .map(entry -> ChatColor.GREEN.toString() + entry.getValue() + " " + ChatColor.GOLD + entry.getKey())

@@ -358,7 +358,7 @@ public class CustomScoreboard {
                 "Absorbed: " + ChatColor.GOLD + "N/A",
                 "    ",
                 "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
+                "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION//"    " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
         );
     }
 

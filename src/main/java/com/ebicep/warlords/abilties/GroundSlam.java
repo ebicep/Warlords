@@ -55,7 +55,7 @@ public class GroundSlam extends AbstractAbility {
         activateAbility(wp, player, 1);
 
         if (pveUpgrade) {
-            wp.setVelocity(new Vector(0, 1.2, 0), true);
+            wp.setVelocity(name, new Vector(0, 1.2, 0), true);
             new GameRunnable(wp.getGame()) {
                 boolean wasOnGround = true;
                 int counter = 0;
@@ -128,7 +128,7 @@ public class GroundSlam extends AbstractAbility {
                             currentPlayersHit.add(slamTarget);
                             final Location loc = slamTarget.getLocation();
                             final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
-                            slamTarget.setVelocity(v, false, false);
+                            slamTarget.setVelocity(name, v, false, false);
 
                             slamTarget.addDamageInstance(
                                     wp,

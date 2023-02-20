@@ -24,12 +24,32 @@ import java.util.UUID;
 public abstract class AbstractWeapon {
 
     protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
+    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
 
     static {
         DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
         DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT.setPositivePrefix("+");
         DECIMAL_FORMAT.setNegativePrefix("-");
+
+        DECIMAL_FORMAT_TITLE.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_TITLE.setRoundingMode(RoundingMode.HALF_UP);
+    }
+
+    protected static String format(double value) {
+        return DECIMAL_FORMAT.format(value);
+    }
+
+    protected static String formatTitleUpgrade(double value, String append) {
+        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + append + ChatColor.GRAY;
+    }
+
+    protected static String formatTitleUpgrade(String prepend, double value) {
+        return ChatColor.GREEN + prepend + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    }
+
+    protected static String formatTitleUpgrade(double value) {
+        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
     }
 
     protected UUID uuid = UUID.randomUUID();
@@ -57,10 +77,6 @@ public abstract class AbstractWeapon {
     public AbstractWeapon(WarlordsPlayer warlordsPlayer) {
         generateStats();
         this.specialization = warlordsPlayer.getSpecClass();
-    }
-
-    protected static String format(double value) {
-        return DECIMAL_FORMAT.format(value);
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
@@ -106,16 +122,16 @@ public abstract class AbstractWeapon {
                 .get();
     }
 
+    public String getName() {
+        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    }
+
     public abstract List<String> getBaseStats();
 
     public abstract List<String> getLore();
 
     public List<String> getLoreAddons() {
         return new ArrayList<>();
-    }
-
-    public String getName() {
-        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
     }
 
     public abstract ChatColor getChatColor();

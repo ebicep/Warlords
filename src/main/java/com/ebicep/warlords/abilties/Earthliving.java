@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -20,6 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Earthliving extends AbstractAbility {
 
@@ -27,7 +29,7 @@ public class Earthliving extends AbstractAbility {
     public int playersHealed = 0;
 
     private final int duration = 8;
-    private int procChance = 40;
+    private float procChance = 40;
     private int maxAllies = 2;
     private int weaponDamage = 240;
     private int maxHits = 1;
@@ -38,7 +40,7 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a §e" + procChance +
+        description = "Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a §e" + format(procChance) +
                 "% §7chance to heal you and §e2 §7nearby allies for §a" + weaponDamage +
                 "% §7weapon damage. Lasts §6" + duration + " §7seconds." +
                 "\n\nThe first hit is guaranteed to activate Earthliving.";
@@ -91,7 +93,7 @@ public class Earthliving extends AbstractAbility {
                     WarlordsEntity victim = event.getPlayer();
                     WarlordsEntity attacker = event.getAttacker();
 
-                    int earthlivingActivate = (int) (Math.random() * 100);
+                    double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
                     if (firstProc[0]) {
                         firstProc[0] = false;
                         earthlivingActivate = 0;
@@ -191,7 +193,10 @@ public class Earthliving extends AbstractAbility {
                 },
                 2 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    target.addSpeedModifier(giver, "Earthliving Slow", -99, 1, "BASE");
+                    if (target instanceof WarlordsNPC) {
+                        ((WarlordsNPC) target).setStunTicks(2);
+                    }
+                    //target.addSpeedModifier(giver, "Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
@@ -200,11 +205,11 @@ public class Earthliving extends AbstractAbility {
         );
     }
 
-    public int getProcChance() {
+    public float getProcChance() {
         return procChance;
     }
 
-    public void setProcChance(int procChance) {
+    public void setProcChance(float procChance) {
         this.procChance = procChance;
     }
 

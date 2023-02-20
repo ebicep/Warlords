@@ -10,11 +10,11 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import org.bukkit.ChatColor;
@@ -34,7 +34,7 @@ public class EventPointsOption implements Option, Listener {
     private final HashMap<Class<?>, Integer> perMobKill = new HashMap<>();
     private int onKill = 0;
     private int reduceScoreOnAllDeath = 0; //percentage 30 = reduce 30%
-    private int cap;
+    private int cap = Integer.MAX_VALUE;
 
     public EventPointsOption() {
     }

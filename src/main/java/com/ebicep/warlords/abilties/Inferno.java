@@ -51,7 +51,7 @@ public class Inferno extends AbstractAbility {
 
         Inferno tempInferno = new Inferno();
         if (pveUpgrade) {
-            wp.getCooldownManager().removeCooldown(Inferno.class);
+            wp.getCooldownManager().removeCooldown(Inferno.class, false);
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<Inferno>(
                 name,
@@ -101,6 +101,7 @@ public class Inferno extends AbstractAbility {
                 if (pveUpgrade) {
                     if (isCrit && !(finalMaxHits <= 0)) {
                         subtractCooldown(0.5f);
+                        setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
                     }
                     wp.updateOrangeItem();

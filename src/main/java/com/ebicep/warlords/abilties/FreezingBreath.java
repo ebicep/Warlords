@@ -128,7 +128,7 @@ public class FreezingBreath extends AbstractAbility {
     }
 
     private void damageReductionOnHit(WarlordsEntity we, int counter) {
-        we.getCooldownManager().removeCooldown(FreezingBreath.class);
+        we.getCooldownManager().removeCooldown(FreezingBreath.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<FreezingBreath>(
                 name,
                 "FRZ RES",

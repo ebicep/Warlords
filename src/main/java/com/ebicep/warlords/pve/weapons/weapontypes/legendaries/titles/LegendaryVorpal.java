@@ -1,15 +1,27 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.abilties.Earthliving;
+import com.ebicep.warlords.abilties.Windfury;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryVorpal extends AbstractLegendaryWeapon {
+
+    private static final int MELEE_DAMAGE_BOOST = 20;
+    private static final float MELEE_DAMAGE_BOOST_PER_UPGRADE = 7.5f;
+    private static final int PROC_CHANCE_INCREASE = 5;
+    private static final float PROC_CHANCE_INCREASE_PER_UPGRADE = 2.5f;
 
     public LegendaryVorpal() {
     }
@@ -24,7 +36,22 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
+        return "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by " +
+                formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " and proc chance by " +
+                formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override
@@ -35,6 +62,20 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
+
+        float meleeDamageBoost = 1 + (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
+        float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
+
+        for (AbstractAbility ability : player.getSpec().getAbilities()) {
+            if (ability instanceof Windfury) {
+                Windfury windfury = (Windfury) ability;
+                windfury.setProcChance(windfury.getProcChance() + procChanceIncrease);
+            } else if (ability instanceof Earthliving) {
+                Earthliving earthliving = (Earthliving) ability;
+                earthliving.setProcChance(earthliving.getProcChance() + procChanceIncrease);
+            }
+        }
+
         player.getGame().registerEvents(new Listener() {
             int meleeCounter = 0;
 
@@ -43,14 +84,30 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
                 if (event.getAttacker() != player || event.getPlayer() == player) {
                     return;
                 }
+
                 String ability = event.getAbility();
-                if (!ability.isEmpty() && !ability.equals("Windfury Weapon") && !ability.equals("Earthliving Weapon")) {
+                CooldownManager cooldownManager = player.getCooldownManager();
+                if (cooldownManager.hasCooldownFromName("Windfury Weapon") && ability.equals("Windfury Weapon")) {
+                    event.setMin(event.getMin() * meleeDamageBoost);
+                    event.setMax(event.getMax() * meleeDamageBoost);
                     return;
                 }
-                if (event.isHealingInstance() && !ability.equals("Earthliving Weapon")) {
+                if (cooldownManager.hasCooldownFromName("Earthliving Weapon") && ability.equals("Earthliving Weapon")) {
+                    event.setMin(event.getMin() * meleeDamageBoost);
+                    event.setMax(event.getMax() * meleeDamageBoost);
+                    return;
+                }
+                if (!ability.isEmpty()) {
                     return;
                 }
                 meleeCounter++;
+                if (cooldownManager.hasCooldownFromName("Windfury Weapon") ||
+                        cooldownManager.hasCooldownFromName("Earthliving Weapon") ||
+                        cooldownManager.hasCooldownFromName("Soulbinding Weapon")
+                ) {
+                    event.setMin(event.getMin() * meleeDamageBoost);
+                    event.setMax(event.getMax() * meleeDamageBoost);
+                }
                 if (meleeCounter % 5 == 0) {
                     event.setMin(event.getMin() * 7);
                     event.setMax(event.getMax() * 7);

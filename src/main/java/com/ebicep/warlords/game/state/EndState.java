@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.state;
 
-import com.ebicep.warlords.abilties.RecklessCharge;
 import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -24,9 +23,11 @@ import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -42,10 +43,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -80,7 +78,7 @@ public class EndState implements State, TimerDebugAble {
             });
             return;
         }
-        RecklessCharge.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
+        WarlordsPlayer.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
 
         List<Option> options = game.getOptions();
         for (Option option : options) {
@@ -256,6 +254,7 @@ public class EndState implements State, TimerDebugAble {
                     WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                     showCoinSummary(waveDefenseOption, players);
                     showWeaponSummary(waveDefenseOption, players);
+                    showMobDropSummary(waveDefenseOption, players);
                     showQuestSummary(waveDefenseOption, players);
                     break;
                 }
@@ -624,19 +623,32 @@ public class EndState implements State, TimerDebugAble {
                 for (AbstractWeapon weapon : weaponsFound) {
                     weaponsFoundByType.get(weapon.getRarity()).add(weapon);
                 }
-                weaponsFoundByType.forEach((rarity, weapons) -> {
-                    int amountFound = weapons.size();
-                    if (amountFound > 0) {
-                        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                                .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
-                                        weapons.stream()
-                                               .map(AbstractWeapon::getName)
-                                               .collect(Collectors.joining("\n"))
-                                )
-                                .create()
-                        );
-                    }
+                DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+                    List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+                    weaponsFoundByType.forEach((rarity, weapons) -> {
+                        int amountFound = weapons.size();
+                        if (amountFound > 0) {
+                            ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
+                                            weapons.stream()
+                                                   .map(abstractWeapon -> {
+                                                       String output = abstractWeapon.getName();
+                                                       if (abstractWeapon instanceof WeaponScore) {
+                                                           output += ChatColor.YELLOW + " (" + NumberFormat.formatOptionalHundredths(((WeaponScore) abstractWeapon).getWeaponScore()) + ")";
+                                                       }
+                                                       if (!weaponInventory.contains(abstractWeapon)) {
+                                                           output += ChatColor.WHITE + " (Auto Salvaged)";
+                                                       }
+                                                       return output;
+                                                   })
+                                                   .collect(Collectors.joining("\n"))
+                                    )
+                                    .create()
+                            );
+                        }
+                    });
                 });
+
             }
 
             long fragmentGain = playerWaveDefenseStats.getLegendFragmentGain();
@@ -648,6 +660,36 @@ public class EndState implements State, TimerDebugAble {
             }
         }
     }
+
+    private void showMobDropSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ MOB DROPS SUMMARY ✚", true);
+
+
+        for (WarlordsPlayer wp : players) {
+            Player player = Bukkit.getPlayer(wp.getUuid());
+            if (player == null) {
+                continue;
+            }
+            WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats().getPlayerWaveDefenseStats(wp.getUuid());
+            HashMap<MobDrops, Long> weaponsFound = playerWaveDefenseStats.getMobDropsGained();
+            if (weaponsFound.isEmpty()) {
+                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not get any mob drops in this game!");
+            } else {
+                List<MobDrops> mobDrops = new ArrayList<>(weaponsFound.keySet());
+                mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal)); // TODO TEST
+                for (MobDrops mobDrop : mobDrops) {
+                    long amountFound = weaponsFound.get(mobDrop);
+                    ChatUtils.sendMessage(player,
+                            true,
+                            mobDrop.getCostColoredName(amountFound)
+                    );
+                }
+            }
+        }
+
+    }
+
 
     private void showQuestSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
         for (WarlordsPlayer wp : players) {

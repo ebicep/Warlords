@@ -153,6 +153,20 @@ public class EffectUtils {
         }
     }
 
+    public static void playCylinderAnimation(Location location, double cylinderRadius, int red, int green, int blue, int cylinderDots, int cylinderHeight) {
+        Location particleLoc = location.clone();
+        for (int i = 0; i < cylinderHeight; i++) {
+            for (int j = 0; j < cylinderDots; j++) {
+                double angle = j / 10D * Math.PI * 2;
+                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(location.getY() + i / 5D);
+                particleLoc.setZ(location.getZ() + Math.cos(angle) * cylinderRadius);
+
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), particleLoc, 500);
+            }
+        }
+    }
+
     /**
      * @param player         what player should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.

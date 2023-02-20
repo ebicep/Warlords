@@ -222,6 +222,18 @@ public class DeathsDebt extends AbstractTotemBase {
                                 Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" +
                                 Math.round(ticksLeft / 20f) + " §7seconds left."
                         );
+
+                        if (wp.isInPve()) {
+                            for (WarlordsEntity we : PlayerFilter
+                                    .entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(wp)
+                            ) {
+                                if (we instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                                }
+                            }
+                        }
                     }
                 })
         ) {

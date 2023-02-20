@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -79,8 +79,8 @@ public class GameFreezeOption implements Option, Listener {
                     game.clearFrozenCauses();
                     game.setUnfreezeCooldown(false);
                     for (Option option : game.getOptions()) {
-                        if (option instanceof WaveDefenseOption) {
-                            ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
+                        if (option instanceof PveOption) {
+                            ((PveOption) option).getMobs().forEach(abstractMob -> {
                                 EntityInsentient entityInsentient = abstractMob.getEntity().get();
                                 NBTTagCompound tag = entityInsentient.getNBTTag();
                                 if (tag == null) {
@@ -134,8 +134,8 @@ public class GameFreezeOption implements Option, Listener {
             throw new IllegalStateException("Game is not marked as frozen");
         }
         for (Option option : game.getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                ((WaveDefenseOption) option).getMobs().forEach(abstractMob -> {
+            if (option instanceof PveOption) {
+                ((PveOption) option).getMobs().forEach(abstractMob -> {
                     EntityInsentient entityInsentient = abstractMob.getEntity().get();
                     NBTTagCompound tag = entityInsentient.getNBTTag();
                     if (tag == null) {

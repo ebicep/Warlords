@@ -66,19 +66,19 @@ public class DatabaseGamePlayerBase {
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
         this.skillBoost = PlayerSettings.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForClass();
-        this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
+        this.blocksTravelled = warlordsPlayer.getBlocksTravelled();
         this.xLocations = warlordsPlayer.getLocations()
-                .stream()
-                .map(Location::getX)
-                .map(String::valueOf)
-                .map(s -> s.substring(0, s.indexOf(".") + 2))
-                .collect(Collectors.joining(",", "", ","));
+                                        .stream()
+                                        .map(Location::getX)
+                                        .map(String::valueOf)
+                                        .map(s -> s.substring(0, s.indexOf(".") + 2))
+                                        .collect(Collectors.joining(",", "", ","));
         this.zLocations = warlordsPlayer.getLocations()
-                .stream()
-                .map(Location::getZ)
-                .map(String::valueOf)
-                .map(s -> s.substring(0, s.indexOf(".") + 2))
-                .collect(Collectors.joining(",", "", ","));
+                                        .stream()
+                                        .map(Location::getZ)
+                                        .map(String::valueOf)
+                                        .map(s -> s.substring(0, s.indexOf(".") + 2))
+                                        .collect(Collectors.joining(",", "", ","));
         this.totalKills = warlordsPlayer.getMinuteStats().total().getKills();
         this.totalAssists = warlordsPlayer.getMinuteStats().total().getAssists();
         this.totalDeaths = warlordsPlayer.getMinuteStats().total().getDeaths();

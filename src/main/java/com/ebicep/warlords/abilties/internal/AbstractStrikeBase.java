@@ -75,7 +75,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
         final Vector v = giver.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(y);
-        kbTarget.setVelocity(v, false);
+        kbTarget.setVelocity(name, v, false);
     }
 
     public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget) {

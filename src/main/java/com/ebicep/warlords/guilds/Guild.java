@@ -40,7 +40,7 @@ public class Guild {
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST && (pveStats.getNormalStats().getWins() + pveStats.getHardStats()
-                .getWins()) >= 10;
+                                                                                                                                .getWins()) >= 10;
     };
 
     public static int getConversionRatio(Guild guild) {
@@ -163,12 +163,6 @@ public class Guild {
         }
     }
 
-    public void sendGuildMessageWithEventsToOnlinePlayers(ComponentBuilder componentBuilder, boolean centered) {
-        for (Player onlinePlayer : getOnlinePlayers()) {
-            ChatUtils.sendMessageToPlayer(onlinePlayer, componentBuilder.create(), ChatColor.GREEN, centered);
-        }
-    }
-
     public void log(AbstractGuildLog guildLog) {
         auditLog.add(guildLog);
     }
@@ -179,12 +173,18 @@ public class Guild {
 
     public List<Player> getOnlinePlayers() {
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> guildPlayerUUIDCache.containsKey(player.getUniqueId()))
-                .collect(Collectors.toList());
+                     .filter(player -> guildPlayerUUIDCache.containsKey(player.getUniqueId()))
+                     .collect(Collectors.toList());
     }
 
     public void setDefaultRole(String defaultRole) {
         this.defaultRole = defaultRole;
+    }
+
+    public void sendGuildMessageWithEventsToOnlinePlayers(ComponentBuilder componentBuilder, boolean centered) {
+        for (Player onlinePlayer : getOnlinePlayers()) {
+            ChatUtils.sendMessageToPlayer(onlinePlayer, componentBuilder.create(), ChatColor.GREEN, centered);
+        }
     }
 
     public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
@@ -249,7 +249,7 @@ public class Guild {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i - 1).getPlayers().add(target.getUUID());
                 sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to " + roles.get(i - 1)
-                        .getRoleName(), true);
+                                                                                                                                      .getRoleName(), true);
                 log(new GuildLogPromote(sender.getUUID(),
                         target.getUUID(),
                         roles.get(i).getRoleName(),
@@ -269,7 +269,7 @@ public class Guild {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i + 1).getPlayers().add(target.getUUID());
                 sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to " + roles.get(i + 1)
-                        .getRoleName(), true);
+                                                                                                                                     .getRoleName(), true);
                 log(new GuildLogDemote(sender.getUUID(),
                         target.getUUID(),
                         roles.get(i).getRoleName(),
@@ -298,9 +298,16 @@ public class Guild {
                 continue;
             }
             sb.append(ChatColor.GREEN).append(ChatColor.BOLD).append(" = ").append(role.getRoleName()).append(" =\n ");
-            players.stream()
-                    .filter(player -> role.getPlayers().contains(player.getUUID()))
-                    .forEach(player -> sb.append(player.getListName()).append(" "));
+            List<GuildPlayer> guildPlayers = players.stream()
+                                                    .filter(player -> role.getPlayers().contains(player.getUUID()))
+                                                    .collect(Collectors.toList());
+            for (int i = 0, guildPlayersSize = guildPlayers.size(); i < guildPlayersSize; i++) {
+                GuildPlayer player = guildPlayers.get(i);
+                sb.append(player.getListName()).append(" ");
+                if (i % 6 == 0 && i != 0) {
+                    sb.append("\n ");
+                }
+            }
             sb.append("\n \n");
         }
         sb.append(" \n");
@@ -312,12 +319,12 @@ public class Guild {
 
     public List<Player> getOnlinePlayersWithPermission(GuildPermissions permission) {
         Set<UUID> uuidsWithPermission = players.stream()
-                .filter(guildPlayer -> playerHasPermission(guildPlayer, permission))
-                .map(GuildPlayer::getUUID)
-                .collect(Collectors.toSet());
+                                               .filter(guildPlayer -> playerHasPermission(guildPlayer, permission))
+                                               .map(GuildPlayer::getUUID)
+                                               .collect(Collectors.toSet());
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> uuidsWithPermission.contains(player.getUniqueId()))
-                .collect(Collectors.toList());
+                     .filter(player -> uuidsWithPermission.contains(player.getUniqueId()))
+                     .collect(Collectors.toList());
     }
 
     public boolean playerHasPermission(GuildPlayer guildPlayer, GuildPermissions permission) {

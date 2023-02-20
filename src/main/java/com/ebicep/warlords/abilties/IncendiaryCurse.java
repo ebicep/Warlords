@@ -162,7 +162,7 @@ public class IncendiaryCurse extends AbstractAbility {
                                     .with(FireworkEffect.Type.BALL_LARGE)
                                     .build());
 
-                            nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class);
+                            nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     name,
                                     "INCEN",

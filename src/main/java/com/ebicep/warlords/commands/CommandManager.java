@@ -18,9 +18,7 @@ import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.tutorial.TutorialCommand;
 import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
-import com.ebicep.warlords.game.option.wavedefense.commands.MobCommand;
 import com.ebicep.warlords.game.option.wavedefense.commands.WaveCommand;
-import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -28,6 +26,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.commands.GuildCommand;
 import com.ebicep.warlords.guilds.commands.GuildDebugCommand;
 import com.ebicep.warlords.guilds.commands.GuildPlayerWrapper;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -42,8 +41,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.commands.CompensateCommand;
+import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.commands.MyPositionCommand;
+import com.ebicep.warlords.pve.commands.PvECurrencyCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -494,7 +496,7 @@ public class CommandManager {
 
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
-        manager.registerCommand(new RecklessChargeStunClearCommand());
+        manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
         manager.registerCommand(new ToggleAFKDetectionCommand());
@@ -560,6 +562,8 @@ public class CommandManager {
         manager.registerCommand(new MasterworksFairCommand());
 
         manager.registerCommand(new TutorialCommand());
+
+        manager.registerCommand(new WarlordsNewHotbarMenu.SettingsMenu());
     }
 
     @Nullable

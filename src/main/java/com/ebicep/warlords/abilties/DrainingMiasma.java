@@ -4,17 +4,19 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -29,13 +31,15 @@ public class DrainingMiasma extends AbstractAbility {
 
     public int playersHit = 0;
 
-    private final int maxHealthDamage = 4;
+    private int maxHealthDamage = 4;
     private int duration = 5;
     private int leechDuration = 5;
     private int enemyHitRadius = 8;
+    private float leechSelfAmount = 25;
+    private float leechAllyAmount = 15;
 
     public DrainingMiasma() {
-        super("Draining Miasma", 0, 0, 50, 40);
+        super("Draining Miasma", 50, 50, 50, 40);
     }
 
     @Override
@@ -59,15 +63,24 @@ public class DrainingMiasma extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
 
-        Utils.playGlobalSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
-        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
 
-        EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
+        EffectUtils.playSphereAnimation(wp.getLocation(), 6, ParticleEffect.SLIME, 1);
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                .withColor(Color.LIME)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                          .withColor(Color.LIME)
+                                                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                                                          .build());
+
+        if (pveUpgrade) {
+            Utils.playGlobalSound(wp.getLocation(), Sound.WITHER_SPAWN, 10, 1);
+            EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, ParticleEffect.SLIME, 1);
+            FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+                                                                              .withColor(Color.WHITE)
+                                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                                              .build());
+        }
 
         int hitCounter = 0;
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
@@ -77,6 +90,7 @@ public class DrainingMiasma extends AbstractAbility {
         ) {
             hitCounter++;
             Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -25, 3 * 20, "BASE");
+            miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     name,
                     "MIAS",
@@ -120,8 +134,8 @@ public class DrainingMiasma extends AbstractAbility {
                             miasmaTarget.addDamageInstance(
                                     wp,
                                     name,
-                                    50 + healthDamage,
-                                    50 + healthDamage,
+                                    minDamageHeal + healthDamage,
+                                    maxDamageHeal + healthDamage,
                                     0,
                                     100,
                                     false
@@ -131,12 +145,53 @@ public class DrainingMiasma extends AbstractAbility {
             );
             playersHit += hitCounter;
 
+            if (pveUpgrade) {
+                miasmaTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        "Liquidizing Miasma",
+                        "LIQ",
+                        DrainingMiasma.class,
+                        new DrainingMiasma(),
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                            new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.SAPLING, (byte) 2).play();
+                            for (WarlordsEntity target : PlayerFilter
+                                    .entitiesAround(miasmaTarget, 6, 6, 6)
+                                    .aliveEnemiesOf(wp)
+                            ) {
+                                float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
+                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                }
+                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                }
+                                target.addDamageInstance(
+                                        wp,
+                                        name,
+                                        minDamageHeal + healthDamage,
+                                        maxDamageHeal + healthDamage,
+                                        0,
+                                        100,
+                                        false
+                                );
+                            }
+                        },
+                        true
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 0.75f;
+                    }
+                });
+            }
+
             ImpalingStrike.giveLeechCooldown(
                     wp,
                     miasmaTarget,
                     leechDuration,
-                    0.25f,
-                    0.15f,
+                    leechSelfAmount / 100f,
+                    leechAllyAmount / 100f,
                     warlordsDamageHealingFinalEvent -> {
                         tempDrainingMiasma.numberOfLeechProcd++;
                     }
@@ -144,37 +199,11 @@ public class DrainingMiasma extends AbstractAbility {
 
         }
 
-        if (pveUpgrade) {
-            increaseDamageOnHit(wp, hitCounter);
-        }
-
         return true;
     }
 
     public int getEnemyHitRadius() {
         return enemyHitRadius;
-    }
-
-    private void increaseDamageOnHit(WarlordsEntity we, int hitCounter) {
-        we.getCooldownManager().addCooldown(new RegularCooldown<DrainingMiasma>(
-                "Impaling Boost",
-                "IMP BOOST",
-                DrainingMiasma.class,
-                new DrainingMiasma(),
-                we,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                duration * 20
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getAbility().equals("Impaling Strike")) {
-                    return currentDamageValue * (1 + (0.04f * hitCounter));
-                }
-                return currentDamageValue;
-            }
-        });
     }
 
     public void setEnemyHitRadius(int enemyHitRadius) {
@@ -198,4 +227,27 @@ public class DrainingMiasma extends AbstractAbility {
     }
 
 
+    public int getMaxHealthDamage() {
+        return maxHealthDamage;
+    }
+
+    public void setMaxHealthDamage(int maxHealthDamage) {
+        this.maxHealthDamage = maxHealthDamage;
+    }
+
+    public float getLeechSelfAmount() {
+        return leechSelfAmount;
+    }
+
+    public void setLeechSelfAmount(float leechSelfAmount) {
+        this.leechSelfAmount = leechSelfAmount;
+    }
+
+    public float getLeechAllyAmount() {
+        return leechAllyAmount;
+    }
+
+    public void setLeechAllyAmount(float leechAllyAmount) {
+        this.leechAllyAmount = leechAllyAmount;
+    }
 }

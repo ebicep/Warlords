@@ -72,7 +72,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
-        wp.getCooldownManager().removeCooldown(ChainLightning.class);
+        wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
                 name,
                 "CHAIN",
@@ -153,14 +153,14 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             switch (playersSize) {
                 case 0:
                     // We hit the first player
-                    damageMultiplier = pveUpgrade ? 1.06f : 1f;
+                    damageMultiplier = pveUpgrade ? 1.1f : 1f;
                     break;
                 case 1:
                     // We hit the second player
-                    damageMultiplier = pveUpgrade ? 1.12f : .85f;
+                    damageMultiplier = pveUpgrade ? 1.2f : .85f;
                     break;
                 default:
-                    damageMultiplier = pveUpgrade ? 1.18f : .7f;
+                    damageMultiplier = pveUpgrade ? 1.3f : .7f;
                     break;
             }
 

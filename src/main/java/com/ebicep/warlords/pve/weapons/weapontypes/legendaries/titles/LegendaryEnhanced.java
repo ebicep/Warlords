@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsBlueAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -19,15 +20,8 @@ import java.util.*;
 public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     private static final int TICKS_TO_ADD = 40;
-    private static final List<String> EFFECTED_ABILITIES = new ArrayList<>() {{
-        add("BRN");
-        add("WND");
-        add("BLEED");
-        add("CRIP");
-        add("SILENCE");
-        add("LCH");
-        add("AVE MARK");
-    }};
+    private static final int TICKS_TO_ADD_PER_UPGRADE = 10;
+    private static final List<String> EFFECTED_ABILITIES = Arrays.asList("BRN", "WND", "BLEED", "CRIP", "SILENCE", "LCH", "AVE MARK");
 
     public LegendaryEnhanced() {
     }
@@ -38,11 +32,6 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     public LegendaryEnhanced(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Increase the duration of negative effects to enemies by 2s and active abilities of allies by 2s whenever you target an ally with a blue rune (Slot 4).";
     }
 
     @Override
@@ -78,7 +67,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 }
                 if (EFFECTED_ABILITIES.contains(cooldown.getNameAbbreviation())) {
                     regularCooldown.setEnhanced(true);
-                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
+                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
                 }
             }
 
@@ -101,11 +90,11 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                     return;
                 }
                 event.setEnhanced(true);
-                event.getDuration().set(event.getDuration().get() + TICKS_TO_ADD);
+                event.getDuration().set(event.getDuration().get() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
             }
 
             @EventHandler
-            public void onBlueAbilityTarget(WarlordsBlueAbilityTargetEvent event) {
+            public void onBlueAbilityTarget(WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent event) {
                 if (!event.getPlayer().equals(player)) {
                     return;
                 }
@@ -125,12 +114,18 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                                                              return;
                                                          }
                                                          regularCooldown.setEnhanced(true);
-                                                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD);
+                                                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
                                                      });
                                 });
             }
 
         });
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        String effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
+        return "Increase the duration of negative effects to enemies by " + effectDuration + " and active abilities of allies by " + effectDuration + " whenever you target an ally with a blue rune (Slot 4).";
     }
 
     @Override
@@ -141,16 +136,6 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMinValue() {
         return 155;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
     }
 
     @Override
@@ -166,5 +151,23 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerSecondBonusValue() {
         return 3;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s"),
+                formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevelUpgraded()) / 20f, "s")
+        ));
     }
 }

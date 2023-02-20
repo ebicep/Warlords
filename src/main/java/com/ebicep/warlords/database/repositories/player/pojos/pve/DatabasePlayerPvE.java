@@ -13,11 +13,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -29,20 +31,25 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
 
@@ -77,6 +84,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //REWARDS
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
+    @Field("patreon")
+    private boolean currentlyPatreon = false;
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
     @Field("compensation_rewards")
@@ -93,6 +102,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             put(value, 0L);
         }
     }};
+    //MOB DROPS
+    @Field("mob_drops")
+    private Map<MobDrops, Long> mobDrops = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
     @Field("quests_completed")
@@ -130,8 +142,29 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             guild.queueUpdate();
         }
         //WEAPONS
+        List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
         if (multiplier > 0) {
-            weaponInventory.addAll(gamePlayerPvE.getWeaponsFound());
+            int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
+            int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
+            int weaponsFoundSize = weaponsFound.size();
+            int newWeaponInventorySize = currentWeaponInventorySize + weaponsFoundSize;
+            if (newWeaponInventorySize >= maxWeaponInventorySize) {
+                List<AbstractWeapon> weaponsToKeep = weaponsFound.subList(0, Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize));
+                List<AbstractWeapon> weaponsToSalvage = weaponsFound.subList(Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize),
+                        weaponsFoundSize
+                );
+                weaponInventory.addAll(weaponsToKeep);
+                for (AbstractWeapon weapon : weaponsToSalvage) {
+                    if (weapon instanceof Salvageable) {
+                        Salvageable salvageable = (Salvageable) weapon;
+                        AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
+                        Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
+                        addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
+                    }
+                }
+            } else {
+                weaponInventory.addAll(weaponsFound);
+            }
 
             //QUESTS
             for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
@@ -143,7 +176,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         } else {
             if (playersCollection == PlayersCollections.LIFETIME) {
                 //need to search by uuid incase weapon got upgraded or changed
-                List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
                 for (AbstractWeapon weapon : weaponsFound) {
                     boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
                     if (!removed && weapon instanceof Salvageable) {
@@ -176,6 +208,27 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
         //LEGEND FRAGMENTS
         addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
+        //MOB DROPS
+        gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
+
+        if (databaseGame instanceof DatabaseGamePvE) {
+            DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
+            //TODO REMOVE
+            int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
+            switch (difficulty) {
+                case NORMAL:
+                case HARD:
+                    if (wavesCleared >= 25) {
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
+                    }
+                    break;
+                case ENDLESS:
+                    if (wavesCleared >= 50) {
+                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
+                    }
+                    break;
+            }
+        }
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
@@ -194,9 +247,12 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
                         addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
                     } else {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO,
-                                Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier
-                        );
+                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier);
+                    }
+                    break;
+                case NARMER:
+                    if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
+                        addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier);
                     }
                     break;
             }
@@ -287,6 +343,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         this.addCurrency(currency, (long) amount);
     }
 
+    public void addOneCurrency(Currencies currency) {
+        this.addCurrency(currency, 1L);
+    }
+
     public void addCurrency(Currencies currency, Long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return;
@@ -294,7 +354,11 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         if (!currencies.containsKey(currency)) {
             currencies.put(currency, 0L);
         }
-        this.currencies.put(currency, this.currencies.get(currency) + amount);
+        if (currency == Currencies.MYSTERIOUS_TOKEN) {
+            this.currencies.put(currency, Math.min(100, this.currencies.get(currency) + amount));
+        } else {
+            this.currencies.put(currency, this.currencies.get(currency) + amount);
+        }
         CustomScoreboard.reloadPvEScoreboard(this);
 
         if (amount >= 0) {
@@ -332,10 +396,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         generalEventMode.addEventPointsSpent(-amount);
         //event in event mode
         eventMode.addEventPointsSpent(-amount);
-    }
-
-    public void addOneCurrency(Currencies currency) {
-        this.addCurrency(currency, 1L);
     }
 
     public void subtractOneCurrency(Currencies currency) {
@@ -376,5 +436,29 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public DatabasePlayerPvEEventStats getEventStats() {
         return eventStats;
+    }
+
+    public long getMobDrops(MobDrops mobDrops) {
+        return this.mobDrops.getOrDefault(mobDrops, 0L);
+    }
+
+    public Map<MobDrops, Long> getMobDrops() {
+        return mobDrops;
+    }
+
+    public void addMobDrops(MobDrops mobDrops, long amount) {
+        if (!this.mobDrops.containsKey(mobDrops)) {
+            this.mobDrops.put(mobDrops, amount);
+        } else {
+            this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
+        }
+    }
+
+    public boolean isCurrentlyPatreon() {
+        return currentlyPatreon;
+    }
+
+    public void setCurrentlyPatreon(boolean currentlyPatreon) {
+        this.currentlyPatreon = currentlyPatreon;
     }
 }

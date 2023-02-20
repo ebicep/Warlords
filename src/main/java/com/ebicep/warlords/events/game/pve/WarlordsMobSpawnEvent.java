@@ -2,7 +2,7 @@ package com.ebicep.warlords.events.game.pve;
 
 import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.event.HandlerList;
 
 public class WarlordsMobSpawnEvent extends AbstractWarlordsGameEvent {

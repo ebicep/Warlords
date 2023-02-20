@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.events;
 
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -7,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.TextOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -71,6 +73,11 @@ public class FieldEffect implements Option {
         }.runTaskTimer(0, 0);
     }
 
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        fieldEffects.forEach(fieldEffect -> fieldEffect.onWarlordsEntityCreated(player));
+    }
+
     public enum FieldEffects {
 
         WARRIORS_TRIUMPH("Warrior's Triumph",
@@ -115,8 +122,38 @@ public class FieldEffect implements Option {
                     }
                 });
             }
+        },
+        CONQUERING_ENERGY("Conquering Energy",
+                "Reduce EPS by 10, base EPH increased by 150%. Melee damage increased by 50%."
+        ) {
+            @Override
+            public void onStart(Game game) {
+                game.registerEvents(new Listener() {
 
-        };
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                            return;
+                        }
+                        if (event.getAbility().isEmpty()) {
+                            event.setMin(event.getMin() * 1.5f);
+                            event.setMax(event.getMax() * 1.5f);
+                        }
+                    }
+
+                });
+            }
+
+            @Override
+            public void onWarlordsEntityCreated(WarlordsEntity player) {
+                if (player instanceof WarlordsPlayer) {
+                    AbstractPlayerClass spec = player.getSpec();
+                    spec.setEnergyPerSec(spec.getEnergyPerSec() - 10);
+                    spec.setEnergyOnHit(spec.getEnergyOnHit() * 2.5f);
+                }
+            }
+        },
+        ;
 
         public final String name;
         public final String description;
@@ -127,6 +164,10 @@ public class FieldEffect implements Option {
         }
 
         public void onStart(Game game) {
+
+        }
+
+        public void onWarlordsEntityCreated(WarlordsEntity player) {
 
         }
 

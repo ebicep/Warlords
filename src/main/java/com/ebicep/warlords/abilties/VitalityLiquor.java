@@ -125,7 +125,7 @@ public class VitalityLiquor extends AbstractAbility {
                                             false,
                                             false
                                     );
-                                    allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class);
+                                    allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
                                     allyTarget.getCooldownManager().addCooldown(new RegularCooldown<VitalityLiquor>(
                                             "Vitality Liquor",
                                             "VITAL",

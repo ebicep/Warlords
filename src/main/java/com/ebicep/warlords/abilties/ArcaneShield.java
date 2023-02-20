@@ -5,11 +5,12 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
@@ -71,12 +72,13 @@ public class ArcaneShield extends AbstractAbility {
                     if (pveUpgrade) {
                         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
                         EffectUtils.strikeLightning(wp.getLocation(), false);
-                        for (WarlordsEntity we : PlayerFilter
+                        for (WarlordsNPC we : PlayerFilterGeneric
                                 .entitiesAround(wp, 6, 6, 6)
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
+                                .warlordsNPCs()
                         ) {
-                            we.addSpeedModifier(wp, "Arcane Aegis", -99, 6 * 20);
+                            we.setStunTicks(6 * 20);
                         }
                     }
                 },

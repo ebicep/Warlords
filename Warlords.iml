@@ -99,5 +99,6 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-cache:2.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.3.15" level="project" />
     <orderEntry type="library" name="Maven: co.aikar:acf-paper:0.5.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.luckperms:api:5.4" level="project" />
   </component>
 </module>

@@ -135,6 +135,7 @@ public enum Specializations {
     public final String description;
     public final SpecType specType;
     public final List<SkillBoosts> skillBoosts;
+    private boolean banned = false;
 
     Specializations(String name, List<String> aliases, Supplier<AbstractPlayerClass> create, String description, SpecType specType, SkillBoosts... skillBoosts) {
         this.name = name;
@@ -194,4 +195,11 @@ public enum Specializations {
         //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
+    }
 }

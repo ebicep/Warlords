@@ -19,6 +19,8 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -40,6 +42,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -92,8 +95,32 @@ public class PlayingState implements State, TimerDebugAble {
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
 
         List<UUID> toRemove = new ArrayList<>();
+        AtomicBoolean closeGame = new AtomicBoolean(false);
         this.game.forEachOfflinePlayer((player, team) -> {
+            Player p = player.getPlayer();
             if (team != null && (!com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode()) || player.isOnline())) {
+                if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+                    Specializations selectedSpec = playerSettings.getSelectedSpec();
+                    if (selectedSpec.isBanned()) {
+                        for (Specializations value : Specializations.VALUES) {
+                            if (value.isBanned()) {
+                                continue;
+                            }
+                            if (p != null) {
+                                p.sendMessage(ChatColor.RED + selectedSpec.name + " is currently disabled. Your specialization has been changed.");
+                            }
+                            playerSettings.setSelectedSpec(value);
+                            break;
+                        }
+                        if (playerSettings.getSelectedSpec().isBanned()) {
+                            if (p != null) {
+                                p.sendMessage(ChatColor.RED + "All specializations are currently disabled. Game closing.");
+                            }
+                            closeGame.set(true);
+                        }
+                    }
+                }
                 Warlords.addPlayer(new WarlordsPlayer(
                         player,
                         this.getGame(),
@@ -103,12 +130,22 @@ public class PlayingState implements State, TimerDebugAble {
                 toRemove.add(player.getUniqueId());
                 return;
             }
-            Player p = player.getPlayer();
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
+                Utils.resetPlayerMovementStatistics(p);
             }
         });
         toRemove.forEach(this.game::removePlayer);
+
+        if (closeGame.get()) {
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    game.close();
+                }
+            }.runTaskLater(Warlords.getInstance(), 20);
+        }
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(wp.getUuid());

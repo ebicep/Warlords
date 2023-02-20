@@ -3,11 +3,17 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LegendaryGradient extends AbstractLegendaryWeapon {
+
+    private static final int REGEN_TICK_INTERVAL = 100;
+    private static final float REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE = 8;
 
     public LegendaryGradient() {
     }
@@ -22,7 +28,15 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Perpetually regenerate 5% of your health every 5 seconds.";
+        return "Perpetually regenerate 7% of your health every " + formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20) + " seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20),
+                formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevelUpgraded()) / 20)
+        ));
     }
 
     @Override
@@ -36,15 +50,21 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
 
         new GameRunnable(player.getGame()) {
 
+            int ticksElapsed = 0;
+
             @Override
             public void run() {
                 if (player.isDead()) {
+                    ticksElapsed = 0;
                     return;
                 }
-                float healValue = player.getMaxHealth() * .05f;
-                player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
+                ticksElapsed++;
+                if (ticksElapsed % (REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) == 0) {
+                    float healValue = player.getMaxHealth() * .07f;
+                    player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
+                }
             }
-        }.runTaskTimer(0, 5 * 20);
+        }.runTaskTimer(0, 0);
     }
 
     @Override
@@ -55,11 +75,6 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMinValue() {
         return 140;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
     }
 
     @Override
@@ -78,6 +93,11 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
     protected float getEnergyPerSecondBonusValue() {
         return 3;
     }
@@ -85,6 +105,11 @@ public class LegendaryGradient extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerHitBonusValue() {
         return 3;
+    }
+
+    @Override
+    protected float getSkillCritChanceBonusValue() {
+        return 5;
     }
 
     @Override

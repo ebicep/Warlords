@@ -14,10 +14,10 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilties.OrbsOfLife;
-import com.ebicep.warlords.abilties.RecklessCharge;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.commands.CommandManager;
@@ -36,9 +36,11 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
+import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -58,6 +60,9 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.event.EventBus;
+import net.luckperms.api.event.user.track.UserTrackEvent;
 import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
 import org.bukkit.GameMode;
 import org.bukkit.*;
@@ -67,6 +72,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -308,7 +314,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
-        getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
+        getServer().getPluginManager().registerEvents(new WarlordsPlayer(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
@@ -354,6 +360,12 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            LuckPerms api = provider.getProvider();
+            EventBus eventBus = api.getEventBus();
+            eventBus.subscribe(this, UserTrackEvent.class, PermissionHandler::listenToNewPatreons);
+        }
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             UUID uuid = player.getUniqueId();
@@ -504,10 +516,6 @@ public class Warlords extends JavaPlugin {
 
     public static <T> TaskChain<T> newChain() {
         return taskChainFactory.newChain();
-    }
-
-    public static boolean onCustomServer() {
-        return !serverIP.equals("51.81.49.127");
     }
 
     public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
@@ -696,11 +704,18 @@ public class Warlords extends JavaPlugin {
                                             PlayerFilter.entitiesAround(wp, 6, 6, 6)
                                                         .aliveEnemiesOf(wp)
                                                         .forEach(enemy -> {
+                                                            float healthDamage = enemy.getMaxHealth() * .02f;
+                                                            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                                                healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                                            }
+                                                            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                                                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                                            }
                                                             enemy.addDamageInstance(
                                                                     wp,
                                                                     "Undying Army",
-                                                                    458 + (enemy.getMaxHealth() * .02f),
-                                                                    612 + (enemy.getMaxHealth() * .02f),
+                                                                    458 + healthDamage,
+                                                                    612 + healthDamage,
                                                                     0,
                                                                     100,
                                                                     false
@@ -764,6 +779,14 @@ public class Warlords extends JavaPlugin {
                     // Melee Cooldown
                     if (wp.getHitCooldown() > 0) {
                         wp.setHitCooldown(wp.getHitCooldown() - 1);
+                    }
+
+                    //NPC STUN
+                    if (wp instanceof WarlordsNPC) {
+                        WarlordsNPC npc = (WarlordsNPC) wp;
+                        if (npc.getStunTicks() > 0) {
+                            npc.setStunTicks(npc.getStunTicks() - 1, true);
+                        }
                     }
 
                     // Orbs of Life

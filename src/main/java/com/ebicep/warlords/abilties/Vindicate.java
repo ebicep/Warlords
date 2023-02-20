@@ -111,7 +111,7 @@ public class Vindicate extends AbstractAbility {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveUpgrade) {
-                    Utils.addKnockback(wp.getLocation(), event.getAttacker(), -1, 0.15);
+                    Utils.addKnockback(name, wp.getLocation(), event.getAttacker(), -1, 0.15);
                     event.getAttacker().addDamageInstance(
                             event.getPlayer(),
                             name,

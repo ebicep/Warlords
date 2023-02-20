@@ -32,8 +32,8 @@ public class GuildRoleMenu {
                         .name(ChatColor.GREEN + "Create a new role")
                         .get(),
                 (m, e) -> {
-                    if (guildRoles.size() >= 6) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You can only have a maximum of 5 roles.");
+                    if (guildRoles.size() >= 8) {
+                        Guild.sendGuildMessage(player, ChatColor.RED + "You can only have a maximum of 7 roles.");
                         return;
                     }
                     SignGUI.open(player, new String[]{"", "^^^^^^", "Enter new", "role name"}, (p, lines) -> {

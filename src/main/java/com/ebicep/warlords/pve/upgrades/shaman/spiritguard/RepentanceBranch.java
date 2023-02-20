@@ -82,7 +82,7 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
         masterUpgrade = new Upgrade(
                 "Revengeance",
                 "Repentance - Master Upgrade",
-                "Repentance's pool decay per second is reduced by 80% and the energy conversion based on damage taken is increased by 50%",
+                "Repentance's pool decay per second is reduced by 80% and the energy conversion based on damage taken is increased by 50%.",
                 50000,
                 () -> {
                     ability.setPoolDecay((int) (ability.getPoolDecay() * 0.2f));

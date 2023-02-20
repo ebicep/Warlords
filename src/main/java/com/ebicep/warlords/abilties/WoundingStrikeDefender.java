@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -15,9 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WoundingStrikeDefender extends AbstractStrikeBase {
 
@@ -71,7 +71,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
         }
         if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
-            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeDefender>(
                     name,
                     "WND",
@@ -99,8 +99,13 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
     }
 
     private void damageReductionOnCrit(WarlordsEntity we, WarlordsEntity nearPlayer) {
-        RegularCooldown<?> cooldown = new RegularCooldown<>(
-                name,
+        Set<WarlordsEntity> teammates = PlayerFilter
+                .entitiesAround(nearPlayer, 6, 6, 6)
+                .aliveTeammatesOfExcludingSelf(we)
+                .stream()
+                .collect(Collectors.toSet());
+        LinkedCooldown<?> linkedCooldown = new LinkedCooldown<>(
+                name + " Resistance",
                 "STRIKE RES",
                 WoundingStrikeDefender.class,
                 new WoundingStrikeDefender(),
@@ -108,7 +113,11 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                5 * 20
+                cooldownManager -> {
+                },
+                5 * 20,
+                Collections.emptyList(),
+                teammates
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -116,14 +125,11 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
             }
         };
 
-        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-        we.getCooldownManager().addCooldown(cooldown);
-        for (WarlordsEntity target : PlayerFilter
-                .entitiesAround(nearPlayer, 6, 6, 6)
-                .aliveTeammatesOfExcludingSelf(we)
-        ) {
-            target.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-            target.getCooldownManager().addCooldown(cooldown);
+        we.getCooldownManager().removeCooldownByName(name + " Resistance");
+        we.getCooldownManager().addCooldown(linkedCooldown);
+        for (WarlordsEntity teammate : teammates) {
+            teammate.getCooldownManager().removeCooldownByName(name + " Resistance");
+            teammate.getCooldownManager().addCooldown(linkedCooldown);
         }
     }
 

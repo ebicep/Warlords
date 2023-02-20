@@ -203,7 +203,7 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        hit.getCooldownManager().removeCooldown(WaterBolt.class);
+        hit.getCooldownManager().removeCooldown(WaterBolt.class, false);
         hit.getCooldownManager().addCooldown(new RegularCooldown<WaterBolt>(
                 name,
                 "BOLT DMG",

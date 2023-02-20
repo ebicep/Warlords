@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -43,12 +44,13 @@ public class TimeWarpPyromancer extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
+        int startingBlocksTravelled = wp.getBlocksTravelled();
         RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -60,8 +62,8 @@ public class TimeWarpPyromancer extends AbstractAbility {
                     if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                         return;
                     }
-                    timesSuccessful++;
 
+                    timesSuccessful++;
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
                     wp.addHealingInstance(
@@ -97,7 +99,23 @@ public class TimeWarpPyromancer extends AbstractAbility {
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (pveUpgrade) {
+                    return currentCritChance + (wp.getBlocksTravelled() - startingBlocksTravelled);
+                }
+                return currentCritChance;
+            }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (pveUpgrade) {
+                    return currentCritMultiplier + (wp.getBlocksTravelled() - startingBlocksTravelled);
+                }
+                return currentCritMultiplier;
+            }
+        };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
         if (pveUpgrade) {

@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> {
 
     int weaponDamage = ability.getWeaponDamage();
-    int procChance = ability.getProcChance();
     int maxHits = ability.getMaxHits();
     float cooldown = ability.getCooldown();
 
@@ -57,7 +56,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                 "+2% Proc chance",
                 5000,
                 () -> {
-                    ability.setProcChance(procChance + 2);
+                    ability.setProcChance(ability.getProcChance() + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -65,7 +64,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                 "+4% Proc chance",
                 10000,
                 () -> {
-                    ability.setProcChance(procChance + 4);
+                    ability.setProcChance(ability.getProcChance() + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -73,7 +72,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                 "+6% Proc chance",
                 15000,
                 () -> {
-                    ability.setProcChance(procChance + 6);
+                    ability.setProcChance(ability.getProcChance() + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -81,7 +80,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                 "+8% Proc chance\n+1 Earthliving Weapon hit",
                 20000,
                 () -> {
-                    ability.setProcChance(procChance + 8);
+                    ability.setProcChance(ability.getProcChance() + 2);
                     ability.setMaxHits(maxHits + 1);
                 }
         ));

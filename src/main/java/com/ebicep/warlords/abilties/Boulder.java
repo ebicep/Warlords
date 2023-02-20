@@ -161,7 +161,7 @@ public class Boulder extends AbstractAbility {
                                 } else {
                                     v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
                                 }
-                                p.setVelocity(v, false, false);
+                                p.setVelocity(name, v, false, false);
                                 p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             }
 

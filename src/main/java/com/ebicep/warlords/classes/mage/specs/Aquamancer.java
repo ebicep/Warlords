@@ -6,8 +6,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
-import com.ebicep.warlords.pve.upgrades.mage.TimeWarpBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
+import com.ebicep.warlords.pve.upgrades.mage.aquamancer.TimeWarpBranchAquamancer;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
 
@@ -25,7 +25,7 @@ public class Aquamancer extends AbstractMage {
                 0,
                 new WaterBolt(),
                 new WaterBreath(),
-                new TimeWarp(),
+                new TimeWarpAquamancer(),
                 new ArcaneShield(),
                 new HealingRain()
         );
@@ -37,7 +37,7 @@ public class Aquamancer extends AbstractMage {
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
         branch.add(new WaterBoltBranch(abilityTree, (WaterBolt) weapon));
         branch.add(new WaterBreathBranch(abilityTree, (WaterBreath) red));
-        branch.add(new TimeWarpBranch(abilityTree, (TimeWarp) purple));
+        branch.add(new TimeWarpBranchAquamancer(abilityTree, (TimeWarpAquamancer) purple));
         branch.add(new ArcaneShieldBranch(abilityTree, (ArcaneShield) blue));
         branch.add(new HealingRainBranch(abilityTree, (HealingRain) orange));
     }

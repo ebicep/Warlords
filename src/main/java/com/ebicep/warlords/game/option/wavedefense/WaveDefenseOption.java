@@ -11,18 +11,18 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.game.option.wavedefense.commands.MobCommand;
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
@@ -34,6 +34,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.commands.MobCommand;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
@@ -70,7 +73,7 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
-public class WaveDefenseOption implements Option {
+public class WaveDefenseOption implements Option, PveOption {
     private static final int SCOREBOARD_PRIORITY = 5;
     SimpleScoreboardHandler scoreboard;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
@@ -119,6 +122,14 @@ public class WaveDefenseOption implements Option {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
+        CoinGainOption coinGainOption = game
+                .getOptions()
+                .stream()
+                .filter(CoinGainOption.class::isInstance)
+                .map(CoinGainOption.class::cast)
+                .findAny()
+                .orElse(null);
+
         game.registerEvents(new Listener() {
 
             @EventHandler
@@ -175,8 +186,15 @@ public class WaveDefenseOption implements Option {
                             we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
                         }
 
-                        if (CoinGainOption.BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
-                            waveDefenseStats.getBossesKilled().merge(mobToRemove.getName(), 1L, Long::sum);
+                        if (coinGainOption == null) {
+                            return;
+                        }
+                        if (coinGainOption.getMobCoinValues()
+                                          .values()
+                                          .stream()
+                                          .anyMatch(stringLongLinkedHashMap -> stringLongLinkedHashMap.containsKey(mobToRemove.getName()))
+                        ) {
+                            waveDefenseStats.getMobsKilled().merge(mobToRemove.getName(), 1L, Long::sum);
                         }
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
@@ -192,6 +210,13 @@ public class WaveDefenseOption implements Option {
                 waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
                                 .getWeaponsFound()
                                 .add(event.getWeapon());
+            }
+
+            @EventHandler
+            public void onMobDrop(WarlordsGiveMobDropEvent event) {
+                waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
+                                .getMobDropsGained()
+                                .merge(event.getMobDrop(), 1L, Long::sum);
             }
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -573,6 +598,9 @@ public class WaveDefenseOption implements Option {
             case 5:
             case 6:
                 return 2;
+            case 7:
+            case 8:
+                return 2.5f;
         }
 
         return 1;
@@ -621,11 +649,9 @@ public class WaveDefenseOption implements Option {
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC warlordsNPC = abstractMob.toNPC(game, team, UUID.randomUUID());
+                WarlordsNPC npc = abstractMob.toNPC(game, team, UUID.randomUUID(), WaveDefenseOption.this::modifyStats);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-                //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn internal mob " + abstractMob.getName() + " - " + ticksElapsed.get
-                // () + " - " + mobs.size());
-                return warlordsNPC;
+                return npc;
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
@@ -655,22 +681,74 @@ public class WaveDefenseOption implements Option {
                 return lastLocation;
             }
 
-        }.runTaskTimer(currentWave.getDelay(), 10);
+        }.runTaskTimer(currentWave.getDelay(), 8);
     }
 
-    public void spawnNewMob(AbstractMob<?> abstractMob) {
-        abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
-        game.addNPC(abstractMob.getWarlordsNPC());
-        mobs.put(abstractMob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
-        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Spawn external mob " + abstractMob.getName() + " - " + ticksElapsed.get() + " -
-        // " + mobs.size());
+    private void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
+
+        boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
+        /*
+         * Base scale of 600
+         *
+         * The higher the scale is the longer it takes to increase per interval.
+         */
+        double scale = isEndless ? 1200.0 : 600.0;
+        long playerCount = game.warlordsPlayers().count();
+        // Flag check whether mob is a boss.
+        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+        // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
+        double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
+        // Divide scale based on wave count.
+        double modifier = waveCounter / modifiedScale + 1;
+
+        // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
+        int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
+        int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
+        float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), modifier);
+        // Increase boss health by 25% for each player in game instance.
+        float bossMultiplier = 1 + (0.25f * playerCount);
+
+        // Multiply damage/health by given difficulty.
+        float difficultyMultiplier;
+        switch (difficulty) {
+            case EASY:
+                difficultyMultiplier = 0.75f;
+                break;
+            case HARD:
+                difficultyMultiplier = 1.5f;
+                break;
+            default:
+                difficultyMultiplier = 1;
+                break;
+        }
+
+        // Final health value after applying all modifiers.
+        float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+        warlordsNPC.setMaxBaseHealth(finalHealth);
+        warlordsNPC.setMaxHealth(finalHealth);
+        warlordsNPC.setHealth(finalHealth);
+
+        int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
+        int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
+        warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
+        warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }
 
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
     public Set<AbstractMob<?>> getMobs() {
         return mobs.keySet();
     }
 
+    @Override
     public int getWaveCounter() {
         return waveCounter;
     }
@@ -695,6 +773,7 @@ public class WaveDefenseOption implements Option {
         return waves;
     }
 
+    @Override
     @Nonnull
     public Game getGame() {
         return game;
@@ -716,6 +795,12 @@ public class WaveDefenseOption implements Option {
         return waveDefenseStats;
     }
 
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
+    }
+
+    @Override
     public DifficultyIndex getDifficulty() {
         return difficulty;
     }

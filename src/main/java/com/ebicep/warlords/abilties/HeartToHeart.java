@@ -3,12 +3,16 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -65,6 +69,7 @@ public class HeartToHeart extends AbstractAbility {
                     .lookingAtFirst(wp)
             ) {
                 activateAbility(wp, heartTarget);
+                Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent(wp, name, heartTarget));
                 return true;
             }
         } else {
@@ -146,13 +151,15 @@ public class HeartToHeart extends AbstractAbility {
                 }
 
                 if (pveUpgrade) {
-                    for (WarlordsEntity we : PlayerFilter
+                    for (WarlordsNPC we : PlayerFilterGeneric
                             .entitiesAround(wp, 3, 3, 3)
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
+                            .warlordsNPCs()
                     ) {
                         playersHit.add(we);
-                        we.addSpeedModifier(wp, "Heart Slowness", -99, GameRunnable.SECOND, "BASE");
+                        we.setStunTicks(GameRunnable.SECOND);
+                        //we.addSpeedModifier(wp, "Heart Slowness", -99, GameRunnable.SECOND, "BASE");
                         we.addDamageInstance(
                                 wp,
                                 name,
@@ -166,7 +173,7 @@ public class HeartToHeart extends AbstractAbility {
                 }
 
                 if (timer >= 8) {
-                    wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2), false);
+                    wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), false);
                     wp.addHealingInstance(
                             wp,
                             name,

@@ -1,6 +1,10 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,6 +22,39 @@ public class ChatUtils {
     public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
 
     private static final int CENTER_PX = 164;
+
+    public static void sendTitleToGamePlayers(Game game, String title, String subtitle) {
+        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        title,
+                        subtitle,
+                        20, 30, 20
+                );
+            }
+        }
+    }
+
+    public static void sendTitleToGamePlayers(
+            Game game,
+            String title,
+            String subtitle,
+            int fadeIn,
+            int stay,
+            int fadeOut
+    ) {
+        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        title,
+                        subtitle,
+                        fadeIn, stay, fadeOut
+                );
+            }
+        }
+    }
 
     public static void sendMessage(Player player, boolean centered, String message) {
         if (centered) {

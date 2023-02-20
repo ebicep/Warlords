@@ -271,11 +271,13 @@ public class Utils {
 
     public static void resetPlayerMovementStatistics(Player player) {
         player.setStatistic(Statistic.WALK_ONE_CM, 0);
+        player.setStatistic(Statistic.JUMP, 0);
+        player.setStatistic(Statistic.FALL_ONE_CM, 0);
         player.setStatistic(Statistic.HORSE_ONE_CM, 0);
     }
 
     public static int getPlayerMovementStatistics(Player player) {
-        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM);
+        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM) + (player.getStatistic(Statistic.JUMP) * 200) + player.getStatistic(Statistic.FALL_ONE_CM);
         int horseStatistic = player.getStatistic(Statistic.HORSE_ONE_CM);
         return walkStatistic + horseStatistic;
     }
@@ -625,18 +627,26 @@ public class Utils {
     }
 
     /**
+     * @param from
      * @param vectorLocation initial center point
-     * @param target which target to apply the knockback on
-     * @param multiplier how much the vector should be multiplied by
-     * @param yBoost how high should the target be raised in Y level
+     * @param target         which target to apply the knockback on
+     * @param multiplier     how much the vector should be multiplied by
+     * @param yBoost         how high should the target be raised in Y level
      */
-    public static void addKnockback(Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost) {
+    public static void addKnockback(String from, Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost) {
         Vector v = vectorLocation.toVector().subtract(target.getLocation().toVector()).normalize().multiply(multiplier).setY(yBoost);
-        target.setVelocity(v, false);
+        target.setVelocity(from, v, false);
     }
 
-    public static void addKnockback(Location vectorLocation, @Nonnull WarlordsEntity target, double multiplier, double yBoost, boolean ignoreModifiers) {
+    public static void addKnockback(
+            String from,
+            Location vectorLocation,
+            @Nonnull WarlordsEntity target,
+            double multiplier,
+            double yBoost,
+            boolean ignoreModifiers
+    ) {
         Vector v = vectorLocation.toVector().subtract(target.getLocation().toVector()).normalize().multiply(multiplier).setY(yBoost);
-        target.setVelocity(v, ignoreModifiers);
+        target.setVelocity(from, v, ignoreModifiers);
     }
 }

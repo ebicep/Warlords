@@ -110,6 +110,30 @@ public class SpiritLink extends AbstractChainBase {
                             healNearPlayers(wp, chainPlayerTwo);
                         }
 
+                        if (pveUpgrade) {
+                            for (WarlordsEntity chainPlayerThree : PlayerFilter
+                                    .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
+                                    .aliveEnemiesOf(wp)
+                                    .excluding(nearPlayer, chainPlayerTwo)
+                                    .soulBindedFirst(wp)
+                            ) {
+                                playersHit++;
+                                if (chainPlayerTwo.onHorse()) {
+                                    numberOfDismounts++;
+                                }
+                                chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
+                                chainPlayerThree.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
+                                hitCounter.add(chainPlayerThree);
+
+                                numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerThree);
+                                for (int i = 0; i < numberOfHeals; i++) {
+                                    healNearPlayers(wp, chainPlayerThree);
+                                }
+
+                                break;
+                            }
+                        }
+
                         break;
                     }
                     break;

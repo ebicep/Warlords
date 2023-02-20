@@ -125,7 +125,7 @@ public class SoulShackle extends AbstractAbility {
     }
 
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
-        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
+        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
         if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
             if (shackleTarget.getEntity() instanceof Player) {
                 PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, tickDuration, 0);

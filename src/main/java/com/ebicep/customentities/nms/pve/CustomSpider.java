@@ -8,7 +8,7 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
     public CustomSpider(World world) {
         super(world);
         resetAI(world);
-        giveBaseAI(1.0, 0.8, 20);
+        giveBaseAI(1.0, 0.8, 100);
 
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
 //        this.goalSelector.a(4, new PathfinderGoalSpiderMeleeAttack(this, EntityHuman.class));
@@ -27,6 +27,21 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
     @Override
     public CustomSpider get() {
         return this;
+    }
+
+    private boolean stunned;
+
+    @Override
+    public void collide(Entity entity) {
+        if (stunned) {
+            return;
+        }
+        super.collide(entity);
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
     }
 
     static class PathfinderGoalSpiderMeleeAttack extends PathfinderGoalMeleeAttack {
