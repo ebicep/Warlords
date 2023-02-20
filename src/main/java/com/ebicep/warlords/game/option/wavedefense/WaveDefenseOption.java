@@ -1,28 +1,28 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemsManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
-import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
-import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.BoundingBoxOption;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.game.option.WeaponOption;
-import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.items.Items;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -43,8 +44,10 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.server.v1_8_R3.*;
@@ -433,6 +436,8 @@ public class WaveDefenseOption implements Option, PveOption {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
+            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+
             player.setInPve(true);
             if (player.getEntity() instanceof Player) {
                 game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
@@ -440,22 +445,51 @@ public class WaveDefenseOption implements Option, PveOption {
                 player.updateArmor();
             }
             DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                Optional<AbstractWeapon> optionalWeapon = databasePlayer
-                        .getPveStats()
+                //weapons
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                Optional<AbstractWeapon> optionalWeapon = pveStats
                         .getWeaponInventory()
                         .stream()
                         .filter(AbstractWeapon::isBound)
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
                         .findFirst();
                 optionalWeapon.ifPresent(abstractWeapon -> {
-                    WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
-
-                    ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
                     player.updateEntity();
                     player.getSpec().updateCustomStats();
                 });
+                //items
+                ItemsManager itemsManager = pveStats.getItemsManager();
+                List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
+                int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
+                loadouts.removeIf(itemLoadout -> itemLoadout.getDifficulty() != null && itemLoadout.getDifficulty() != difficulty);
+                loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
+                loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
+                for (ItemLoadout loadout : loadouts) {
+                    List<UUID> items = loadout.getItems();
+                    List<Items> applied = new ArrayList<>();
+                    for (ItemEntry itemEntry : itemsManager.getItemInventory()) {
+                        if (items.contains(itemEntry.getUUID())) {
+                            Items item = itemEntry.getItem();
+                            applied.add(item);
+                            item.applyToPlayer(warlordsPlayer);
+                        }
+                    }
+                    if (!applied.isEmpty()) {
+                        player.sendSpigotMessage(new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
+                                .appendHoverText(ChatColor.GOLD + loadout.getName(),
+                                        applied.stream()
+                                                .map(i -> ChatColor.GREEN + i.getName() + "\n" +
+                                                        ChatColor.DARK_GRAY + " - " + WordWrap.wrapWithNewline(ChatColor.GRAY + i.getDescription(), 150))
+                                                .collect(Collectors.joining("\n"))
+                                )
+                                .create()
+                        );
+                    }
+                    break;
+                }
             });
         }
     }

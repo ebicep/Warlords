@@ -12,6 +12,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class SkullUtils {
 
     public static ItemStack getSkullFrom(SkullID skullID) {
+        return getSkullFrom(skullID.getId(), skullID.getTextureId());
+    }
+
+    public static ItemStack getSkullFrom(String id, String textureId) {
         net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(
                 new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal())
         );
@@ -24,11 +28,11 @@ public class SkullUtils {
         }
 
         NBTTagCompound skullOwner = new NBTTagCompound();
-        skullOwner.set("Id", new NBTTagString(skullID.getId()));
+        skullOwner.set("Id", new NBTTagString(id));
         NBTTagCompound properties = new NBTTagCompound();
         NBTTagList textures = new NBTTagList();
         NBTTagCompound value = new NBTTagCompound();
-        value.set("Value", new NBTTagString(skullID.getTextureId()));
+        value.set("Value", new NBTTagString(textureId));
         textures.add(value);
         properties.set("textures", textures);
         skullOwner.set("Properties", properties);

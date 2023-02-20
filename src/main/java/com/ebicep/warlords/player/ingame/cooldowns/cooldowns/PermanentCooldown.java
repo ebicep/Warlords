@@ -43,7 +43,7 @@ public class PermanentCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public String getNameAbbreviation() {
-        if (nameAbbreviation == null) {
+        if (nameAbbreviation == null || nameAbbreviation.isEmpty()) {
             return null;
         }
 

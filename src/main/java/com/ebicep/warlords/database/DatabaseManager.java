@@ -65,6 +65,7 @@ public class DatabaseManager {
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
     public static GameEventsService gameEventsService;
+    public static ItemService itemService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -85,6 +86,7 @@ public class DatabaseManager {
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
+            itemService = context.getBean("itemService", ItemService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -92,7 +94,9 @@ public class DatabaseManager {
         NPCManager.createDatabaseRequiredNPCs();
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
-        }
+
+        Items.reload();
+
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {

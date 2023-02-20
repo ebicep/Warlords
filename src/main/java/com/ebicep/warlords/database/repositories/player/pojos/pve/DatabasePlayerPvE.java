@@ -95,6 +95,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
+    //ITEMS
+    @Field("item_manager")
+    private ItemsManager itemsManager = new ItemsManager();
 
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
@@ -303,6 +306,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public List<AbstractWeapon> getWeaponInventory() {
         return weaponInventory;
+    }
+
+    public ItemsManager getItemsManager() {
+        return itemsManager;
     }
 
     public List<MasterworksFairEntry> getMasterworksFairEntries() {

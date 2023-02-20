@@ -99,16 +99,28 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DatabasePlayer that = (DatabasePlayer) o;
         return uuid.equals(that.uuid);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(uuid);
+    public String toString() {
+        return "DatabasePlayer{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     @Override
@@ -220,14 +232,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Override
     public DatabaseBaseGeneral[] getClasses() {
         return new DatabaseBaseGeneral[]{mage, warrior, paladin, shaman, rogue};
-    }
-
-    @Override
-    public String toString() {
-        return "DatabasePlayer{" +
-                "uuid='" + uuid + '\'' +
-                ", name='" + name + '\'' +
-                '}';
     }
 
     public String getName() {

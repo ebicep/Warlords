@@ -55,6 +55,8 @@ public enum DifficultyIndex {
             HARD,
             ENDLESS
     };
+    public static final DifficultyIndex[] VALUES = values();
+
     private final String name;
     private final String description;
     private final ChatColor difficultyColor;
