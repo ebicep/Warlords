@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.onslaught;
 import org.bukkit.ChatColor;
 
 public enum OnslaughtDifficulty {
+
     EASY(ChatColor.GREEN + "EASY"),
     MEDIUM(ChatColor.YELLOW + "MEDIUM"),
     HARD(ChatColor.GOLD + "HARD"),
