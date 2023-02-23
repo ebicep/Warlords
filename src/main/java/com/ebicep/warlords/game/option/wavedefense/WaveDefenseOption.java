@@ -695,14 +695,13 @@ public class WaveDefenseOption implements Option, PveOption {
          * The higher the scale is the longer it takes to increase per interval.
          */
         double scale = isEndless ? 1200.0 : 600.0;
-        long playerCount = game.warlordsPlayers().count();
+        int playerCount = playerCount();
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
         double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
         // Divide scale based on wave count.
         double modifier = waveCounter / modifiedScale + 1;
-
         // Multiply health & min/max melee damage by waveCounter + 1 ^ base damage.
         int minMeleeDamage = (int) Math.pow(warlordsNPC.getMinMeleeDamage(), modifier);
         int maxMeleeDamage = (int) Math.pow(warlordsNPC.getMaxMeleeDamage(), modifier);
