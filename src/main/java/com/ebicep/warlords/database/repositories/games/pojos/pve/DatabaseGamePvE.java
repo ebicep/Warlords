@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -78,9 +79,11 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
 
     @Override
     public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines()
-                .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
-                        (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
+        HologramLines hologramLines = hologram.getLines();
+        hologramLines.appendText(ChatColor.GRAY + date);
+        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + " - " + Utils.formatTimeLeft(timeElapsed / 20));
+        hologramLines.appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
+                (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
 
     }
 
