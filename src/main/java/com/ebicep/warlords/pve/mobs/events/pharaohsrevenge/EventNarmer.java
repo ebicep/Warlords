@@ -123,7 +123,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         } else if (playerCount == 4) {
             berserkerSpawnCount = 9;
         }
-        Mobs bersekerToSpawn = null;
+        Mobs bersekerToSpawn = currentWave % 5 == 0 ? Mobs.ENVOY_BERSERKER_ZOMBIE : null;
         switch (currentWave) {
             case 5:
                 bersekerToSpawn = Mobs.BASIC_BERSERK_ZOMBIE;
@@ -131,10 +131,6 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             case 10:
             case 15:
                 bersekerToSpawn = Mobs.ELITE_BERSERK_ZOMBIE;
-                break;
-            case 20:
-            case 25:
-                bersekerToSpawn = Mobs.ENVOY_BERSERKER_ZOMBIE;
                 break;
         }
         if (bersekerToSpawn != null) {
