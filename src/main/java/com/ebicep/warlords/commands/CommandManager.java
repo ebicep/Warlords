@@ -40,10 +40,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
-import com.ebicep.warlords.pve.commands.CompensateCommand;
-import com.ebicep.warlords.pve.commands.MobCommand;
-import com.ebicep.warlords.pve.commands.MyPositionCommand;
-import com.ebicep.warlords.pve.commands.PvECurrencyCommand;
+import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.quests.QuestCommand;
@@ -564,6 +561,8 @@ public class CommandManager {
         manager.registerCommand(new TutorialCommand());
 
         manager.registerCommand(new WarlordsNewHotbarMenu.SettingsMenu());
+
+        manager.registerCommand(new AbilityTreeCommand());
     }
 
     @Nullable

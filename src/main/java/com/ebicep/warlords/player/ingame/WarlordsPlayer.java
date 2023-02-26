@@ -117,6 +117,13 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public WarlordsPlayer(Player player, Specializations specialization) {
         super(player, specialization);
+        PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        this.cosmeticSettings = new CosmeticSettings(
+                settings.getWeaponSkinForSelectedSpec(),
+                settings.getHelmet(settings.getSelectedSpec()),
+                settings.getArmorSet(settings.getSelectedSpec())
+        );
+        resetAbilityTree();
     }
 
     public WarlordsPlayer(
@@ -371,7 +378,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public ItemStack getItemStackForAbility(AbstractAbility ability) {
         if (ability == spec.getWeapon()) {
-            return cosmeticSettings.getWeaponSkin().getItem();
+            if (weapon == null) {
+                return cosmeticSettings.getWeaponSkin().getItem();
+            } else {
+                return weapon.getSelectedWeaponSkin().getItem();
+            }
         } else if (ability == spec.getRed()) {
             return RED_ABILITY;
         } else if (ability == spec.getPurple()) {
