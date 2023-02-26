@@ -16,6 +16,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -810,12 +811,11 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(2, 1,
                         new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
                                 .name("§aMob Drops")
-                                .lore(databasePlayer.getPveStats()
-                                                    .getMobDrops()
-                                                    .entrySet()
-                                                    .stream()
-                                                    .map(mobDropsLongEntry -> mobDropsLongEntry.getKey().getCostColoredName(mobDropsLongEntry.getValue()))
-                                                    .collect(Collectors.joining("\n")))
+                                .lore(Arrays.stream(MobDrops.VALUES)
+                                            .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
+                                                                                               .getMobDrops()
+                                                                                               .getOrDefault(drop, 0L)))
+                                            .collect(Collectors.joining("\n")))
                                 .get(),
                         (m, e) -> {}
                 );
