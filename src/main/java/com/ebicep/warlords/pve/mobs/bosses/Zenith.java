@@ -210,7 +210,7 @@ public class Zenith extends AbstractZombie implements BossMob {
             put(MobDrops.ZENITH_STAR, new HashMap<>() {{
                 put(DifficultyIndex.NORMAL, .01);
                 put(DifficultyIndex.HARD, .02);
-                put(DifficultyIndex.ENDLESS, .05);
+                put(DifficultyIndex.ENDLESS, .02);
             }});
         }};
     }
