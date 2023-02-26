@@ -30,12 +30,19 @@ public class CurrencyOnEventOption implements Option, Listener {
     }};
     private int currencyOnKill = 100;
     private int startingCurrency = 0;
+    private boolean scaleWithPlayerCount = false;
 
     public CurrencyOnEventOption() {
     }
 
     public CurrencyOnEventOption onKill(int currencyOnKill) {
         this.currencyOnKill = currencyOnKill;
+        return this;
+    }
+
+    public CurrencyOnEventOption onKill(int currencyOnKill, boolean scaleWithPlayerCount) {
+        this.currencyOnKill = currencyOnKill;
+        this.scaleWithPlayerCount = scaleWithPlayerCount;
         return this;
     }
 
@@ -87,7 +94,12 @@ public class CurrencyOnEventOption implements Option, Listener {
                 .aliveEnemiesOf(mob)
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                player.addCurrency(currencyOnKill);
+                if (scaleWithPlayerCount) {
+                    int finalCurrency = (int) (currencyOnKill - (20 * player.getGame().warlordsPlayers().count()));
+                    player.addCurrency(finalCurrency);
+                } else {
+                    player.addCurrency(currencyOnKill);
+                }
             }
         }
     }

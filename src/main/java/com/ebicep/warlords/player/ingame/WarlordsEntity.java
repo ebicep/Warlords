@@ -135,6 +135,13 @@ public abstract class WarlordsEntity {
         deathLocation = null;
     }
 
+    public WarlordsEntity(Player player, Specializations specialization) {
+        this();
+        this.entity = player;
+        this.specClass = specialization;
+        this.spec = specClass.create.get();
+    }
+
     /**
      * @param uuid
      * @param name

@@ -115,6 +115,10 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         super();
     }
 
+    public WarlordsPlayer(Player player, Specializations specialization) {
+        super(player, specialization);
+    }
+
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
             @Nonnull Game game,
