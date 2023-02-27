@@ -88,14 +88,16 @@ public class CurrencyOnEventOption implements Option, Listener {
         if (currencyOnKill == 0) {
             return;
         }
+
         WarlordsEntity mob = event.getPlayer();
         for (WarlordsEntity player : PlayerFilter
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
         ) {
             if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                if (scaleWithPlayerCount) {
-                    int finalCurrency = (int) (currencyOnKill - (20 * player.getGame().warlordsPlayers().count()));
+                int playerCount = (int) player.getGame().warlordsPlayers().count();
+                if (scaleWithPlayerCount && playerCount > 2) {
+                    int finalCurrency = currencyOnKill - (20 * playerCount);
                     player.addCurrency(finalCurrency);
                 } else {
                     player.addCurrency(currencyOnKill);

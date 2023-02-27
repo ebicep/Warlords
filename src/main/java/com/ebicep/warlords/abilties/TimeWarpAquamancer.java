@@ -140,7 +140,7 @@ public class TimeWarpAquamancer extends AbstractAbility {
                                 // 50 blocks = 10s, 40 blocks = 8s, 30 blocks = 6s, 20 blocks = 4s, 10 blocks = 2s
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksElapsed % 4 == 0) {
-                                        PlayerFilter.entitiesAround(baseLocation, 2.5, 3, 2.5)
+                                        PlayerFilter.entitiesAround(baseLocation, 5, 4, 5)
                                                     .aliveTeammatesOf(wp)
                                                     .forEach(warlordsEntity -> {
                                                         warlordsEntity.getSpeed().removeSlownessModifiers();

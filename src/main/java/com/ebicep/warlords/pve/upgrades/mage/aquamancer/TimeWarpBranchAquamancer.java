@@ -79,7 +79,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
         ));
 
         masterUpgrade = new Upgrade(
-                "Dimensional Leap",
+                "Monsoon Leap",
                 "Time Warp - Master Upgrade",
                 "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp and now leave a water altar " +
                         "when warping back that grants allies immunity to debuffs and slowness effects while near it. " +

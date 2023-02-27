@@ -98,7 +98,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Gain a " + formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%") +
-                " Damage and Health boost when you hit the following kill milestones:\n" +
+                " Damage and Health boost when you hit the following kill milestones:\n\n" +
                 "100 Kills\n" +
                 "200 Kills\n" +
                 "400 Kills\n" +
