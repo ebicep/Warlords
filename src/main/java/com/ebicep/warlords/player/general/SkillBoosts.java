@@ -34,8 +34,8 @@ public enum SkillBoosts {
             "§aIncrease the amount of health you restore with Time Warp by §c10% §aand reduce the cooldown by §c50%.",
             TimeWarpPyromancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarp) {
-                    ((TimeWarp) abstractAbility).setWarpHealPercentage(40);
+                if (abstractAbility instanceof TimeWarpPyromancer) {
+                    ((TimeWarpPyromancer) abstractAbility).setWarpHealPercentage(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
@@ -88,9 +88,9 @@ public enum SkillBoosts {
     TIME_WARP_CRYOMANCER("Time Warp",
             "§7Reduce the cooldown of Time Warp §7by 40%",
             "§aReduce the cooldown of Time Warp §aby §c40%",
-            TimeWarp.class,
+            TimeWarpCryomancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarp) {
+                if (abstractAbility instanceof TimeWarpCryomancer) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
@@ -142,9 +142,9 @@ public enum SkillBoosts {
     TIME_WARP_AQUAMANCER("Time Warp",
             "§7Reduce the cooldown of Time Warp §7by 50%",
             "§aReduce the cooldown of Time Warp §aby §c50%",
-            TimeWarp.class,
+            TimeWarpAquamancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarp) {
+                if (abstractAbility instanceof TimeWarpAquamancer) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }

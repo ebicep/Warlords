@@ -227,7 +227,6 @@ public class OnslaughtOption implements Option, PveOption {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-
                 return Collections.singletonList("Difficulty: " + currentMobSet.getMessage());
             }
         });
