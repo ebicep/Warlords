@@ -67,16 +67,11 @@ public class AvengersStrike extends AbstractStrikeBase {
         float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC) {
             if (pveUpgrade) {
-                switch (((WarlordsNPC) nearPlayer).getMobTier()) {
-                    case BASE:
-                        multiplier = 1.4f;
-                        break;
-                    case ELITE:
-                        multiplier = 1.2f;
-                        break;
+                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.BASE) {
+                    multiplier = 1.4f;
                 }
 
-                if (((WarlordsNPC) nearPlayer).getMob().getMobTier() == MobTier.ELITE) {
+                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.ELITE) {
                     healthDamage = nearPlayer.getMaxHealth() * 0.005f;
                 }
             }
@@ -117,8 +112,8 @@ public class AvengersStrike extends AbstractStrikeBase {
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        (minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
-                        (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                        ((minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
+                        ((maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
                         critChance,
                         critMultiplier,
                         false,
