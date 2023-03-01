@@ -563,6 +563,8 @@ public class CommandManager {
         manager.registerCommand(new WarlordsNewHotbarMenu.SettingsMenu());
 
         manager.registerCommand(new AbilityTreeCommand());
+
+        manager.registerCommand(new GameJoinCommand());
     }
 
     @Nullable
