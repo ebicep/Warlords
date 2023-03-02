@@ -64,13 +64,6 @@ repositories {
     }
 }
 
-//compileJava {
-//    options.compilerArgs.add("-parameters")
-//    options.fork = true
-//    options.forkOptions.executable = 'javac'
-//}
-//
-
 dependencies {
     paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     implementation("com.flowpowered:flow-nbt:2.0.2")

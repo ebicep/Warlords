@@ -10,7 +10,6 @@ import net.luckperms.api.node.types.PermissionNode;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PermissionHandler {
     public static void listenToNewPatreons(UserTrackEvent event) {
@@ -19,7 +18,7 @@ public class PermissionHandler {
                                        .filter(NodeType.PERMISSION::matches)
                                        .map(NodeType.PERMISSION::cast)
                                        .map(PermissionNode::getPermission)
-                                       .collect(Collectors.toList());
+                                       .toList();
         DatabaseManager.getPlayer(user.getUniqueId(), databasePlayer -> checkForPatreon(databasePlayer, permissions.contains("group.patreon")));
     }
 

@@ -3,8 +3,6 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.pve.Currencies;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

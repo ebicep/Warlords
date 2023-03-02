@@ -4,7 +4,6 @@ import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.ChatColor;
@@ -43,17 +42,8 @@ public class RaidMenu {
                     (m, e) -> {
                         GameMap map = null;
                         switch (finalI) {
-                            case 0:
-                                map = GameMap.THE_OBSIDIAN_TRAIL_RAID;
-                                break;
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                            case 5:
-                            case 6:
-                                player.sendMessage(ChatColor.RED + "WIP");
-                                break;
+                            case 0 -> map = GameMap.THE_OBSIDIAN_TRAIL_RAID;
+                            case 1, 2, 3, 4, 5, 6 -> player.sendMessage(ChatColor.RED + "WIP");
                         }
 
                         GameMap finalMap = map;

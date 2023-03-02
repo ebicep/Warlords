@@ -26,7 +26,7 @@ public class GameJoinCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 if (game.getPlayers().get(player.getUniqueId()) != null) {
-                    ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already in this game!", true);
+                    ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already in this game!");
                     return;
                 }
                 WarlordsPlayer warlordsPlayer = new WarlordsPlayer(

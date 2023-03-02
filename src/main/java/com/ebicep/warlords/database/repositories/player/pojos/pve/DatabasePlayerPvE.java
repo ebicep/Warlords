@@ -155,8 +155,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 );
                 weaponInventory.addAll(weaponsToKeep);
                 for (AbstractWeapon weapon : weaponsToSalvage) {
-                    if (weapon instanceof Salvageable) {
-                        Salvageable salvageable = (Salvageable) weapon;
+                    if (weapon instanceof Salvageable salvageable) {
                         AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
                         Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
                         addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
@@ -216,17 +215,16 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             //TODO REMOVE
             int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
             switch (difficulty) {
-                case NORMAL:
-                case HARD:
+                case NORMAL, HARD -> {
                     if (wavesCleared >= 25) {
                         addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
                     }
-                    break;
-                case ENDLESS:
+                }
+                case ENDLESS -> {
                     if (wavesCleared >= 50) {
                         addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
                     }
-                    break;
+                }
             }
         }
 

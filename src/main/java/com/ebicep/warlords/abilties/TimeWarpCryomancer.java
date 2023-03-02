@@ -103,7 +103,7 @@ public class TimeWarpCryomancer extends AbstractAbility {
                     warpTrail.clear();
 
                     if (pveUpgrade && cryoPod.get() != null) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarpCryomancer>(
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Frostbite Leap",
                                 "WARP RES",
                                 TimeWarpCryomancer.class,
