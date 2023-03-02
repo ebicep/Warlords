@@ -210,6 +210,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             if (this.entity instanceof Player) {
                 ((Player) this.entity).getInventory().setHeldItemSlot(0);
                 this.entity = spawnJimmy(loc, this.entity.getEquipment());
+                Warlords.setRejoinPoint(uuid, loc);
             }
         } else {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event

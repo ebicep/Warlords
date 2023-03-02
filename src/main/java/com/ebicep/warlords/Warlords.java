@@ -997,9 +997,11 @@ public class Warlords extends JavaPlugin {
             Game game1 = players.get(p.getUniqueId());
             if (p != player) {
                 if (game1 == game) {
+                    System.out.println("Showing " + p.getName() + " to " + player.getName());
                     p.showPlayer(player);
                     player.showPlayer(p);
                 } else {
+                    System.out.println("Hiding " + p.getName() + " from " + player.getName());
                     p.hidePlayer(player);
                     player.hidePlayer(p);
                 }
