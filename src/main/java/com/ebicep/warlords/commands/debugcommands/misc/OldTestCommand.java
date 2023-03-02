@@ -1,8 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.Currencies;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +26,9 @@ public class OldTestCommand implements CommandExecutor {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
 //                }
 //            });
-            WarlordsPlayer warlordsPlayer = new WarlordsPlayer();
+            WarlordsPlayer warlordsPlayer = new WarlordsPlayer((Player) commandSender,
+                    PlayerSettings.getPlayerSettings(((Player) commandSender)).getSelectedSpec()
+            );
             warlordsPlayer.getAbilityTree().openAbilityTree();
         }
 //

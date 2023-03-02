@@ -137,9 +137,11 @@ public abstract class WarlordsEntity {
 
     public WarlordsEntity(Player player, Specializations specialization) {
         this();
+        this.name = player.getName();
+        this.uuid = player.getUniqueId();
         this.entity = player;
         this.specClass = specialization;
-        this.spec = specClass.create.get();
+        this.spec = specialization.create.get();
     }
 
     /**

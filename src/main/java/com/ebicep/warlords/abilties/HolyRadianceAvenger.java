@@ -83,6 +83,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         critMultiplier
                 );
 
+                markTarget.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
                 markTarget.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
                         name,
                         "AVE MARK",
@@ -145,6 +146,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 critChance,
                 critMultiplier
         );
+        target.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
                 name,
                 "AVE MARK",

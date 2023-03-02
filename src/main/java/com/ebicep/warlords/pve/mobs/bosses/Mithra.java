@@ -103,8 +103,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         this.cancel();
                     }
 
-                    warlordsNPC.setStunTicks(100);
-                    //warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
+                    warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
                     flameBurstBarrage(multiplier, 8);
                 }
             }.runTaskLater(40);
@@ -165,8 +164,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     }
 
     private void immolation(PveOption option, Location loc) {
-        warlordsNPC.setStunTicks(250);
-        //warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
+        warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
         }
