@@ -87,6 +87,17 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         super();
     }
 
+    public WarlordsPlayer(Player player, Specializations specialization) {
+        super(player, specialization);
+        PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        this.cosmeticSettings = new CosmeticSettings(
+                settings.getWeaponSkinForSelectedSpec(),
+                settings.getHelmet(settings.getSelectedSpec()),
+                settings.getArmorSet(settings.getSelectedSpec())
+        );
+        resetAbilityTree();
+    }
+
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
             @Nonnull Game game,
@@ -184,6 +195,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             if (this.entity instanceof Player) {
                 ((Player) this.entity).getInventory().setHeldItemSlot(0);
                 this.entity = spawnJimmy(loc, this.entity.getEquipment());
+                Warlords.setRejoinPoint(uuid, loc);
             }
         } else {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
@@ -348,7 +360,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public ItemStack getItemStackForAbility(AbstractAbility ability) {
         if (ability == spec.getWeapon()) {
-            return cosmeticSettings.getWeaponSkin().getItem();
+            if (weapon == null) {
+                return cosmeticSettings.getWeaponSkin().getItem();
+            } else {
+                return weapon.getSelectedWeaponSkin().getItem();
+            }
         } else if (ability == spec.getRed()) {
             return RED_ABILITY;
         } else if (ability == spec.getPurple()) {

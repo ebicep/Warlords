@@ -1687,8 +1687,8 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
-                    .onKill(250)
-                    .onPerWaveClear(10, 1500)
+                    .onKill(250, true)
+                    .onPerWaveClear(5, 1000)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(15, 10 * SECOND, null)

@@ -15,6 +15,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -779,6 +781,14 @@ public class WarlordsNewHotbarMenu {
                         ChatColor.YELLOW + "Click to view!"
                 )
                 .get();
+        public static final ItemStack ABILITY_TREE_MENU = new ItemBuilder(Material.GOLD_NUGGET)
+                .name(ChatColor.GREEN + "Upgrade Talisman")
+                .lore(
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View your ability upgrades.", 160),
+                        "",
+                        ChatColor.YELLOW + "Click to view!"
+                )
+                .get();
 
         public static void openPvEMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
@@ -805,16 +815,16 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(2, 1,
                         new ItemBuilder(Material.ZOMBIE_HEAD)
                                 .name("§aMob Drops")
-                                .lore(databasePlayer.getPveStats()
-                                                    .getMobDrops()
-                                                    .entrySet()
-                                                    .stream()
-                                                    .map(mobDropsLongEntry -> mobDropsLongEntry.getKey().getCostColoredName(mobDropsLongEntry.getValue()))
-                                                    .collect(Collectors.joining("\n")))
+                                .lore(Arrays.stream(MobDrops.VALUES)
+                                            .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
+                                                                                               .getMobDrops()
+                                                                                               .getOrDefault(drop, 0L)))
+                                            .collect(Collectors.joining("\n")))
                                 .get(),
                         (m, e) -> {}
                 );
                 menu.setItem(3, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(4, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

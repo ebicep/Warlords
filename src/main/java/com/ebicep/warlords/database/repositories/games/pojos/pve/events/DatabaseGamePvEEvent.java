@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -50,9 +51,9 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
 
     @Override
     public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
+        HologramLines hologramLines = hologram.getLines();
+        hologramLines.appendText(ChatColor.GRAY + date);
+        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override

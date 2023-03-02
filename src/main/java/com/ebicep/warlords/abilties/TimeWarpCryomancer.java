@@ -64,7 +64,7 @@ public class TimeWarpCryomancer extends AbstractAbility {
             cryoPod.get().setVisible(false);
             cryoPod.get().setGravity(false);
 
-            PlayerFilter.entitiesAround(warpLocation, 10, 10, 10)
+            PlayerFilter.entitiesAround(warpLocation, 15, 15, 15)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsEntity -> {
                             if (warlordsEntity instanceof WarlordsNPC) {

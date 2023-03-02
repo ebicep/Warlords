@@ -145,11 +145,6 @@ public class PlayingState implements State, TimerDebugAble {
             }.runTaskLater(Warlords.getInstance(), 20);
         }
 
-        this.game.forEachOfflineWarlordsPlayer(wp -> {
-            CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(wp.getUuid());
-            updateBasedOnGameState(customScoreboard, wp);
-        });
-
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {

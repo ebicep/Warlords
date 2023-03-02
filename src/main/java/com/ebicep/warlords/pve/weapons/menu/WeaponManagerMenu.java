@@ -189,7 +189,6 @@ public class WeaponManagerMenu {
                     );
                 }
         );
-        Long skillBoostModifiers = databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER);
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.DARK_AQUA + "Your Drops")
@@ -198,8 +197,8 @@ public class WeaponManagerMenu {
                                                       .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
                                                       .collect(Collectors.joining("\n")),
                                 "",
-                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(skillBoostModifiers),
-                                Currencies.LIMIT_BREAKER.getCostColoredName(skillBoostModifiers)
+                                Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER)),
+                                Currencies.LIMIT_BREAKER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.LIMIT_BREAKER))
                         )
                         .get(),
                 (m, e) -> {

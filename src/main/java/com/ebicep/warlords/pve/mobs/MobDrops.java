@@ -17,6 +17,8 @@ public enum MobDrops implements Spendable {
 
     ;
 
+    public static final MobDrops[] VALUES = values();
+
     public final String name;
     public final ChatColor chatColor;
     public final ItemStack item;

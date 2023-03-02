@@ -126,7 +126,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             case 5 -> Mobs.BASIC_BERSERK_ZOMBIE;
             case 10, 15 -> Mobs.ELITE_BERSERK_ZOMBIE;
             case 20, 25 -> Mobs.ENVOY_BERSERKER_ZOMBIE;
-            default -> null;
+            default -> currentWave % 5 == 0 ? Mobs.ENVOY_BERSERKER_ZOMBIE : null;
         };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {
