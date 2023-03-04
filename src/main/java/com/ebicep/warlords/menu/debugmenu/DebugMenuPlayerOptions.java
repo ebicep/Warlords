@@ -210,9 +210,9 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> {
                     if (GameMode.isWaveDefense(target.getGame().getGameMode())) {
                         if (PermissionHandler.isAdmin(player)) {
-                            player.sendMessage(ChatColor.RED + "Changing spec is not advised.");
+                            sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.", true);
                         } else {
-                            player.sendMessage(ChatColor.RED + "Cannot change spec in wave defense.");
+                            sendDebugMessage(player, ChatColor.RED + "Cannot change spec in wave defense.", true);
                             return;
                         }
                     }
