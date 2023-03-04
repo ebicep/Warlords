@@ -1,26 +1,14 @@
 package com.ebicep.warlords.pve.items;
 
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemsManager;
-import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.ebicep.warlords.menu.Menu.*;
 
 public class ItemsMenu {
 
+
     public static void openItemMenu(Player player, int page) {
+        /*
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             Menu menu = new Menu("Items", 9 * 6);
 
@@ -109,9 +97,12 @@ public class ItemsMenu {
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
+
+         */
     }
 
     public static void openItemLoadoutMenu(Player player, ItemLoadout itemLoadout, int page) {
+        /*
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             Menu menu = new Menu("Loadout: " + itemLoadout.getName(), 9 * 6);
 
@@ -347,9 +338,12 @@ public class ItemsMenu {
             );
             menu.openForPlayer(player);
         });
+
+         */
     }
 
     public static void openItemEquipMenu(Player player, ItemLoadout itemLoadout, int page, ItemAttribute attribute, ItemEntry previousEntry) {
+        /*
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             Menu menu = new Menu(attribute.name + " Items", 9 * 6);
 
@@ -415,6 +409,8 @@ public class ItemsMenu {
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
+
+         */
     }
 
 }

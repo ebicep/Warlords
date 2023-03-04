@@ -2,10 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemsManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
@@ -39,7 +36,6 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
-import com.ebicep.warlords.pve.items.Items;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -48,10 +44,8 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.server.v1_8_R3.*;
@@ -465,6 +459,7 @@ public class WaveDefenseOption implements Option, PveOption {
                     player.getSpec().updateCustomStats();
                 });
                 //items
+                /*
                 ItemsManager itemsManager = pveStats.getItemsManager();
                 List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
                 int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
@@ -494,6 +489,8 @@ public class WaveDefenseOption implements Option, PveOption {
                     }
                     break;
                 }
+
+                 */
             });
         }
     }
