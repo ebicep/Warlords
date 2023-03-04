@@ -18,4 +18,14 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
         return tier.gauntletStatRange;
     }
 
+    @Override
+    public ItemGauntletModifier.Blessings[] getBlessings() {
+        return ItemGauntletModifier.Blessings.VALUES;
+    }
+
+    @Override
+    public ItemGauntletModifier.Curses[] getCurses() {
+        return ItemGauntletModifier.Curses.VALUES;
+    }
+
 }

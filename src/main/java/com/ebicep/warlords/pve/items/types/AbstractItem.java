@@ -1,9 +1,9 @@
 package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.items.modifiers.ItemBlessing;
-import com.ebicep.warlords.pve.items.modifiers.ItemCurse;
+import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -13,15 +13,15 @@ import java.util.UUID;
 
 public abstract class AbstractItem<
         T extends Enum<T> & ItemStatPool<T>,
-        R extends Enum<R> & ItemBlessing<R>,
-        U extends Enum<U> & ItemCurse<U>> {
+        R extends Enum<R> & ItemModifier<R>,
+        U extends Enum<U> & ItemModifier<U>> {
 
     protected UUID uuid;
     protected Instant obtained = Instant.now();
     protected ItemTier tier;
+    @Field("stat_pool")
     protected Map<T, Float> statPool = new HashMap<>();
-    protected R blessing;
-    protected U curse;
+    protected int modifier;
 
     public AbstractItem(UUID uuid, ItemTier tier, Set<T> statPool) {
         this.uuid = uuid;
@@ -33,5 +33,14 @@ public abstract class AbstractItem<
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
+
+    public abstract R[] getBlessings();
+
+    public abstract U[] getCurses();
+
+    public int getModifier() {
+        return modifier;
+    }
+
 
 }

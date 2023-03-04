@@ -18,4 +18,14 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
         return tier.bucklerStatRange;
     }
 
+    @Override
+    public ItemBucklerModifier.Blessings[] getBlessings() {
+        return ItemBucklerModifier.Blessings.VALUES;
+    }
+
+    @Override
+    public ItemBucklerModifier.Curses[] getCurses() {
+        return ItemBucklerModifier.Curses.VALUES;
+    }
+
 }

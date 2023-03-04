@@ -18,4 +18,14 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
         return tier.tomeStatRange;
     }
 
+    @Override
+    public ItemTomeModifier.Blessings[] getBlessings() {
+        return ItemTomeModifier.Blessings.VALUES;
+    }
+
+    @Override
+    public ItemTomeModifier.Curses[] getCurses() {
+        return ItemTomeModifier.Curses.VALUES;
+    }
+
 }
