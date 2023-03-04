@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
-import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -26,11 +25,11 @@ public class ItemLoadout {
 
     public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
-        for (ItemEntry itemEntry : itemsManager.getItemInventory()) {
-            if (items.contains(itemEntry.getUUID())) {
-                weight += itemEntry.getItem().getWeight();
-            }
-        }
+//        for (ItemEntry itemEntry : itemsManager.getItemInventory()) {
+//            if (items.contains(itemEntry.getUUID())) {
+//                weight += itemEntry.getItem().getWeight();
+//            }
+//        }
         return weight;
     }
 

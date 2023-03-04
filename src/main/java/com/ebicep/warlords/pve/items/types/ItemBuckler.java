@@ -19,6 +19,11 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
     }
 
     @Override
+    public ItemTypes getType() {
+        return ItemTypes.BUCKLER;
+    }
+
+    @Override
     public ItemBucklerModifier.Blessings[] getBlessings() {
         return ItemBucklerModifier.Blessings.VALUES;
     }

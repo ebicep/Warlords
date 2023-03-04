@@ -48,5 +48,15 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
         return VALUES;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Operation getOperation() {
+        return Operation.MULTIPLY;
+    }
+
     public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value);
 }

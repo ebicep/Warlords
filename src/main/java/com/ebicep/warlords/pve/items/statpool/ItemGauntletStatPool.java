@@ -37,6 +37,11 @@ public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool> {
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.getSpeed().addBaseModifier(value);
         }
+
+        @Override
+        public Operation getOperation() {
+            return Operation.MULTIPLY;
+        }
     },
 
     ;
@@ -51,6 +56,16 @@ public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool> {
     @Override
     public ItemGauntletStatPool[] getPool() {
         return VALUES;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Operation getOperation() {
+        return Operation.ADD;
     }
 
     public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value);

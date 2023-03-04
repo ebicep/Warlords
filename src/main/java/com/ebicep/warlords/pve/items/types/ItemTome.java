@@ -19,6 +19,11 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
     }
 
     @Override
+    public ItemTypes getType() {
+        return ItemTypes.TOME;
+    }
+
+    @Override
     public ItemTomeModifier.Blessings[] getBlessings() {
         return ItemTomeModifier.Blessings.VALUES;
     }

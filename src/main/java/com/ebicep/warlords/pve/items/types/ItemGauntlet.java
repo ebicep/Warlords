@@ -19,6 +19,11 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
     }
 
     @Override
+    public ItemTypes getType() {
+        return ItemTypes.GAUNTLET;
+    }
+
+    @Override
     public ItemGauntletModifier.Blessings[] getBlessings() {
         return ItemGauntletModifier.Blessings.VALUES;
     }

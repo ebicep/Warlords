@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
-import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.items.legacy.Items;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class ItemsManager {
     }
 
     @Field("item_inventory")
-    private List<ItemEntry> itemInventory = new ArrayList<>();
+    private List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>();
     private List<ItemLoadout> loadouts = new ArrayList<>() {{
         add(new ItemLoadout("Default"));
     }};
@@ -33,12 +32,12 @@ public class ItemsManager {
     public ItemsManager() {
     }
 
-    public List<ItemEntry> getItemInventory() {
+    public List<AbstractItem<?, ?, ?>> getItemInventory() {
         return itemInventory;
     }
 
-    public void addItem(Items items) {
-        this.itemInventory.add(new ItemEntry(items));
+    public void addItem(AbstractItem<?, ?, ?> item) {
+        this.itemInventory.add(item);
     }
 
     public List<ItemLoadout> getLoadouts() {

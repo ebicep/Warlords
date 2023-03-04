@@ -3,17 +3,27 @@ package com.ebicep.warlords.pve.items.modifiers;
 public class ItemBucklerModifier {
 
     public enum Blessings implements ItemModifier<Blessings> {
-        DWARFISH,
-        TINY,
-        COMPACT,
-        FEATHERY,
-        DIAPHANOUS;
+        DWARFISH("Dwarfish"),
+        TINY("Tiny"),
+        COMPACT("Compact"),
+        FEATHERY("Feathery"),
+        DIAPHANOUS("Diaphanous");
 
         public static final Blessings[] VALUES = values();
+        public final String name;
+
+        Blessings(String name) {
+            this.name = name;
+        }
 
         @Override
         public Blessings[] getValues() {
             return VALUES;
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override
@@ -23,17 +33,27 @@ public class ItemBucklerModifier {
     }
 
     public enum Curses implements ItemModifier<Curses> {
-        LARGE,
-        MASSIVE,
-        KINGLY,
-        COLOSSAL,
-        GARGANTUAN;
+        LARGE("Large"),
+        MASSIVE("Massive"),
+        KINGLY("Kingly"),
+        COLOSSAL("Colossal"),
+        GARGANTUAN("Gargantuan");
 
         public static final Curses[] VALUES = values();
+        public final String name;
+
+        Curses(String name) {
+            this.name = name;
+        }
 
         @Override
         public Curses[] getValues() {
             return VALUES;
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override

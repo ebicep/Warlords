@@ -48,6 +48,16 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
         return VALUES;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Operation getOperation() {
+        return Operation.MULTIPLY;
+    }
+
     public abstract void applyToAbility(AbstractAbility ability, float value);
 
 

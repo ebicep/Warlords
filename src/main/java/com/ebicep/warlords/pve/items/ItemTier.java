@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
+import org.bukkit.ChatColor;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,6 +13,7 @@ public enum ItemTier {
 
     ALPHA(
             "Alpha",
+            ChatColor.BLUE,
             .1,
             .001,
             .55,
@@ -44,6 +46,7 @@ public enum ItemTier {
     },
     BETA(
             "Beta",
+            ChatColor.GREEN,
             .05,
             .0005,
             .45,
@@ -76,6 +79,7 @@ public enum ItemTier {
     },
     GAMMA(
             "Gamma",
+            ChatColor.RED,
             .01,
             .0001,
             .35,
@@ -108,6 +112,7 @@ public enum ItemTier {
     },
     DELTA(
             "Delta",
+            ChatColor.YELLOW,
             .001,
             .00001,
             .35,
@@ -140,6 +145,7 @@ public enum ItemTier {
     },
     OMEGA(
             "Omega",
+            ChatColor.GOLD,
             0,
             0,
             0,
@@ -202,6 +208,7 @@ public enum ItemTier {
     }
 
     public final String name;
+    public final ChatColor chatColor;
     public final double dropChance;
     public final double killDropChance;
     public final double cursedChance;
@@ -211,12 +218,13 @@ public enum ItemTier {
     public final HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange;
 
     ItemTier(
-            String name, double dropChance, double killDropChance, double cursedChance, double blessedChance,
+            String name, ChatColor chatColor, double dropChance, double killDropChance, double cursedChance, double blessedChance,
             HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange,
             HashMap<ItemTomeStatPool, StatRange> tomeStatRange,
             HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange
     ) {
         this.name = name;
+        this.chatColor = chatColor;
         this.dropChance = dropChance;
         this.killDropChance = killDropChance;
         this.cursedChance = cursedChance;
@@ -227,6 +235,10 @@ public enum ItemTier {
     }
 
     public abstract <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool);
+
+    public String getColoredName() {
+        return chatColor + name;
+    }
 
     public static class StatRange {
 

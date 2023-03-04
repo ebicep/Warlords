@@ -5,10 +5,9 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.items.pojos.Item;
-import com.ebicep.warlords.pve.items.legacy.Items;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.ItemTypes;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
@@ -25,10 +24,11 @@ public class ItemsCommand extends BaseCommand {
         ItemsMenu.openItemMenu(player, 1);
     }
 
-    @Subcommand("spawn")
-    public void spawn(Player player, Items item, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
+    @Subcommand("generate")
+    public void generate(Player player, ItemTypes type, ItemTier tier, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
+                AbstractItem<?, ?, ?> item = type.create.apply(player.getUniqueId(), tier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
@@ -38,27 +38,41 @@ public class ItemsCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("reload")
-    public void reload(CommandIssuer issuer) {
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Reloading items...", true);
-        Items.reload();
-    }
 
-    @Subcommand("list")
-    public void list(CommandIssuer issuer) {
-        Items.printAll(issuer);
-    }
-
-    @Subcommand("createall")
-    public void createAll(CommandIssuer issuer) {
-        Warlords.newChain()
-                .async(() -> {
-                    for (Items item : Items.VALUES) {
-                        DatabaseManager.itemService.create(new Item(item));
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Created item: " + ChatColor.YELLOW + item, true);
-                    }
-                }).execute();
-    }
+//    @Subcommand("spawn")
+//    public void spawn(Player player, Items item, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
+//        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+//            for (int i = 0; i < amount; i++) {
+//                databasePlayer.getPveStats().getItemsManager().addItem(item);
+//                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+//                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
+//                                .appendHoverItem(item.getName(), item.generateItemStack())
+//                );
+//            }
+//        });
+//    }
+//
+//    @Subcommand("reload")
+//    public void reload(CommandIssuer issuer) {
+//        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Reloading items...", true);
+//        Items.reload();
+//    }
+//
+//    @Subcommand("list")
+//    public void list(CommandIssuer issuer) {
+//        Items.printAll(issuer);
+//    }
+//
+//    @Subcommand("createall")
+//    public void createAll(CommandIssuer issuer) {
+//        Warlords.newChain()
+//                .async(() -> {
+//                    for (Items item : Items.VALUES) {
+//                        DatabaseManager.itemService.create(new Item(item));
+//                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Created item: " + ChatColor.YELLOW + item, true);
+//                    }
+//                }).execute();
+//    }
 
 
     @HelpCommand
