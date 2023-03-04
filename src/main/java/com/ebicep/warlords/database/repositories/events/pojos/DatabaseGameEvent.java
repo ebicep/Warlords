@@ -81,6 +81,8 @@ public class DatabaseGameEvent {
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
+                        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
+                                                                                                                .until(Instant.now(), ChronoUnit.DAYS));
                         if (gameEvent.getEndDate().isAfter(Instant.now().minus(7, ChronoUnit.DAYS))) {
                             currentGameEvent = gameEvent;
                             currentGameEvent.start();
