@@ -12,7 +12,6 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
-import com.ebicep.warlords.database.repositories.items.ItemService;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -21,7 +20,6 @@ import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.pve.items.legacy.Items;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -67,7 +65,6 @@ public class DatabaseManager {
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
     public static GameEventsService gameEventsService;
-    public static ItemService itemService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -88,7 +85,6 @@ public class DatabaseManager {
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
-            itemService = context.getBean("itemService", ItemService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -97,8 +93,6 @@ public class DatabaseManager {
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
         }
-
-        Items.reload();
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {

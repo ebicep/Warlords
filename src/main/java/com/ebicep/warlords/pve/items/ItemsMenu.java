@@ -1,8 +1,6 @@
 package com.ebicep.warlords.pve.items;
 
-import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
-import com.ebicep.warlords.pve.items.legacy.ItemAttribute;
 import org.bukkit.entity.Player;
 
 public class ItemsMenu {
@@ -337,77 +335,6 @@ public class ItemsMenu {
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
-            menu.openForPlayer(player);
-        });
-
-         */
-    }
-
-    public static void openItemEquipMenu(Player player, ItemLoadout itemLoadout, int page, ItemAttribute attribute, ItemEntry previousEntry) {
-        /*
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu(attribute.name + " Items", 9 * 6);
-
-            List<ItemEntry> inventory = databasePlayer.getPveStats().getItemsManager().getItemInventory();
-            Set<ItemFamily> families = new HashSet<>();
-            for (ItemEntry itemEntry : inventory) {
-                if (itemLoadout.getItems().contains(itemEntry.getUUID())) {
-                    families.add(itemEntry.getItem().getFamily());
-                }
-            }
-            List<ItemEntry> itemInventory = inventory
-                    .stream()
-                    .filter(itemEntry -> itemEntry.getItem().getAttribute() == attribute)
-                    .filter(itemEntry -> !itemLoadout.getItems().contains(itemEntry.getUUID()))
-                    .filter(itemEntry -> !families.contains(itemEntry.getItem().getFamily()))
-                    .collect(Collectors.toList());
-
-            int x = 0;
-            int y = 0;
-            for (int i = 0; i < 45; i++) {
-                int itemNumber = ((page - 1) * 45) + i;
-                if (itemNumber < itemInventory.size()) {
-                    ItemEntry itemEntry = itemInventory.get(itemNumber);
-                    menu.setItem(x, y,
-                            itemEntry.getItem().generateItemStack(),
-                            (m, e) -> {
-                                if (previousEntry != null) {
-                                    itemLoadout.getItems().remove(previousEntry.getUUID());
-                                }
-                                itemLoadout.getItems().add(itemEntry.getUUID());
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openItemLoadoutMenu(player, itemLoadout, 1);
-                            }
-                    );
-                    x++;
-                    if (x == 9) {
-                        x = 0;
-                        y++;
-                    }
-                }
-            }
-
-            if (page - 1 > 0) {
-                menu.setItem(0, 5,
-                        new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                                .get(),
-                        (m, e) -> openItemLoadoutMenu(player, itemLoadout, page - 1)
-                );
-            }
-            if (itemInventory.size() > (page * 45)) {
-                menu.setItem(8, 5,
-                        new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                                .get(),
-                        (m, e) -> openItemLoadoutMenu(player, itemLoadout, page + 1)
-                );
-            }
-
-            menu.setItem(3, 5, MENU_BACK, (m, e) -> openItemLoadoutMenu(player, itemLoadout, 1));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
 
