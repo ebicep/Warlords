@@ -2,6 +2,7 @@ package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
@@ -46,7 +47,9 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 public class DebugMenuPlayerOptions {
 
     public static void openPlayerMenu(Player player, WarlordsEntity target) {
-        if (target == null) return;
+        if (target == null) {
+            return;
+        }
         String targetName = target.getName();
         String coloredName = target.getColoredName();
 
@@ -102,7 +105,7 @@ public class DebugMenuPlayerOptions {
         );
         firstRow.add(new ItemBuilder(Material.WOOL, 1, (short) (PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? 14 : 11))
                         .name(ChatColor.GREEN + "Swap to the " + (PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
+                                                                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
                         .get(),
                 (m, e) -> {
                     Game game = target.getGame();
@@ -115,12 +118,20 @@ public class DebugMenuPlayerOptions {
                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                     if (randomLobbyLocation != null) {
                         Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
+                                                                        .getOppositeLocation(game,
+                                                                                currentTeam,
+                                                                                otherTeam,
+                                                                                target.getLocation(),
+                                                                                randomLobbyLocation.getLocation()
+                                                                        );
                         target.teleport(teleportDestination);
                     }
                     target.updateArmor();
                     openPlayerMenu(player, target);
-                    sendDebugMessage(player, ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team", true);
+                    sendDebugMessage(player,
+                            ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team",
+                            true
+                    );
                 }
         );
 
@@ -195,7 +206,13 @@ public class DebugMenuPlayerOptions {
         secondRow.add(new ItemBuilder(Material.NETHER_STAR)
                         .name(ChatColor.GREEN + "Change Spec")
                         .get(),
-                (m, e) -> PlayerOptionMenus.openSpecMenu(player, target)
+                (m, e) -> {
+                    if (GameMode.isWaveDefense(target.getGame().getGameMode())) {
+                        player.sendMessage(ChatColor.RED + "Cannot change spec in wave defense.");
+                        return;
+                    }
+                    PlayerOptionMenus.openSpecMenu(player, target);
+                }
         );
 
         for (int i = 0; i < secondRow.size(); i++) {
@@ -303,17 +320,22 @@ public class DebugMenuPlayerOptions {
                                             cooldown.cooldownType,
                                             cooldownManager -> {
                                             },
-                                            amountNumber * 20);
+                                            amountNumber * 20
+                                    );
                                     if (cooldown == StatusEffectCooldowns.SPEED) {
                                         target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
                                     }
-                                    sendDebugMessage(player, ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name, true);
+                                    sendDebugMessage(player,
+                                            ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name,
+                                            true
+                                    );
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid number");
                                 }
                                 openCooldownsMenu(player, target);
                             });
-                        });
+                        }
+                );
             }
             menu.setItem(3, menuY - 1, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
             menu.setItem(4, menuY - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -365,8 +387,8 @@ public class DebugMenuPlayerOptions {
                                         info -> info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer() == target ?
                                                 GroundFlagLocation.of(info.getFlag()) :
                                                 info == holder.getInfo() ?
-                                                        PlayerFlagLocation.of(info.getFlag(), target) :
-                                                        null
+                                                PlayerFlagLocation.of(info.getFlag(), target) :
+                                                null
                                 );
                                 sendDebugMessage(player, ChatColor.GREEN + "Picked up the flag for " + target.getColoredName(), true);
                             }
@@ -411,7 +433,10 @@ public class DebugMenuPlayerOptions {
                                         if (target.getCarriedFlag() != null) {
                                             PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
                                             flag.setPickUpTicks(amountNumber * 60);
-                                            sendDebugMessage(player, ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%", true);
+                                            sendDebugMessage(player,
+                                                    ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%",
+                                                    true
+                                            );
                                         }
                                     } catch (NumberFormatException exception) {
                                         p.sendMessage(ChatColor.RED + "Invalid number");
@@ -443,7 +468,8 @@ public class DebugMenuPlayerOptions {
                                 .name(ChatColor.GREEN + group.name)
                                 .get(),
                         (m, e) -> {
-                        });
+                        }
+                );
                 List<Specializations> aClasses = group.subclasses;
                 for (int j = 0; j < aClasses.size(); j++) {
                     int finalJ = j;
@@ -482,7 +508,10 @@ public class DebugMenuPlayerOptions {
 
                             target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             openSpecMenu(player, target);
-                            sendDebugMessage(player, ChatColor.GREEN + "Changed " + target.getColoredName() + ChatColor.GREEN + "'s spec to " + selectedSpec.name, true);
+                            sendDebugMessage(player,
+                                    ChatColor.GREEN + "Changed " + target.getColoredName() + ChatColor.GREEN + "'s spec to " + selectedSpec.name,
+                                    true
+                            );
                         }
                 );
 
@@ -516,15 +545,17 @@ public class DebugMenuPlayerOptions {
                 for (int i = 0; i < abstractCooldowns.size(); i++) {
                     if (i % 7 == 0) {
                         yLevel++;
-                        if (yLevel > 4) break;
+                        if (yLevel > 4) {
+                            break;
+                        }
                     }
                     AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
                     menu.setItem((i % 7) + 1, yLevel,
                             new ItemBuilder(Utils.getWoolFromIndex(i))
                                     .name(ChatColor.GOLD + abstractCooldown.getName())
                                     .lore(abstractCooldown instanceof RegularCooldown ?
-                                                    ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0) + "s" :
-                                                    ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + "N/A",
+                                          ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0) + "s" :
+                                          ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + "N/A",
                                             ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
                                     )
                                     .get(),
@@ -556,7 +587,10 @@ public class DebugMenuPlayerOptions {
                                     }
                                 }
                             }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                            sendDebugMessage(player, ChatColor.GREEN + "Removed " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName() + " cooldown", true);
+                            sendDebugMessage(player,
+                                    ChatColor.GREEN + "Removed " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName() + " cooldown",
+                                    true
+                            );
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.REDSTONE)
@@ -577,7 +611,10 @@ public class DebugMenuPlayerOptions {
                                 try {
                                     int amountNumber = Integer.parseInt(amount);
                                     ((RegularCooldown<?>) abstractCooldown).subtractTime(-amountNumber * 20);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName(), true);
+                                    sendDebugMessage(player,
+                                            ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName(),
+                                            true
+                                    );
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid number");
                                 }
