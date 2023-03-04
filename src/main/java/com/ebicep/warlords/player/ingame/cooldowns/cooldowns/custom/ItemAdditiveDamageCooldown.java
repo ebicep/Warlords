@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.pve.items.Items;
+import com.ebicep.warlords.pve.items.legacy.Items;
 
 public class ItemAdditiveDamageCooldown extends PermanentCooldown<Items> {
 

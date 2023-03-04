@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items;
+package com.ebicep.warlords.pve.items.legacy;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;

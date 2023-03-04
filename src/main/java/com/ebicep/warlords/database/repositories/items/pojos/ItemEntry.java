@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.items.pojos;
 
-import com.ebicep.warlords.pve.items.Items;
+import com.ebicep.warlords.pve.items.legacy.Items;
 
 import java.time.Instant;
 import java.util.UUID;

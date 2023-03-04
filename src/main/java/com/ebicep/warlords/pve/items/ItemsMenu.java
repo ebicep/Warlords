@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.database.repositories.items.pojos.ItemEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
+import com.ebicep.warlords.pve.items.legacy.ItemAttribute;
 import org.bukkit.entity.Player;
 
 public class ItemsMenu {

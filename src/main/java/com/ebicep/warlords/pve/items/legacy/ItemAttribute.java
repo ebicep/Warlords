@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items;
+package com.ebicep.warlords.pve.items.legacy;
 
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;

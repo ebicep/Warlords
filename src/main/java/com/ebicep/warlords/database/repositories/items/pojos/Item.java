@@ -1,9 +1,9 @@
 package com.ebicep.warlords.database.repositories.items.pojos;
 
 import com.ebicep.warlords.player.general.WeaponsRarity;
-import com.ebicep.warlords.pve.items.ItemAttribute;
-import com.ebicep.warlords.pve.items.ItemFamily;
-import com.ebicep.warlords.pve.items.Items;
+import com.ebicep.warlords.pve.items.legacy.ItemAttribute;
+import com.ebicep.warlords.pve.items.legacy.ItemFamily;
+import com.ebicep.warlords.pve.items.legacy.Items;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;

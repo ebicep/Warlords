@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items;
+package com.ebicep.warlords.pve.items.legacy;
 
 public enum ItemFamily {
 

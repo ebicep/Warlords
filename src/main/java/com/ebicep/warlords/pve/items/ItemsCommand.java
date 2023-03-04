@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.items.pojos.Item;
+import com.ebicep.warlords.pve.items.legacy.Items;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
