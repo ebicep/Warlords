@@ -4,12 +4,14 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 
 public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
 
-    DAMAGE_HEALING("Damage & Healing") {
+    DAMAGE("Damage") {
         @Override
         public void applyToAbility(AbstractAbility ability, float value) {
-            float calculatedValue = 1 + value / 100;
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * calculatedValue);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * calculatedValue);
+        }
+    },
+    HEALING("Healing") {
+        @Override
+        public void applyToAbility(AbstractAbility ability, float value) {
         }
     },
     CRIT_CHANCE("Crit Chance") {

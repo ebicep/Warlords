@@ -43,15 +43,15 @@ public class WeaponManagerMenu {
     public static final int MAX_WEAPONS = MAX_WEAPONS_PER_PAGE * 5;
     public static final int MAX_WEAPONS_PATREON = MAX_WEAPONS_PER_PAGE * 10;
 
-    public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
+    public static final HashMap<UUID, PlayerWeaponMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
 
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
-            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings());
+            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setOpenedFromNPC(fromNPC);
             menuSettings.setWeaponInventory(weaponInventory);
             menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
@@ -62,8 +62,8 @@ public class WeaponManagerMenu {
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
-        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
-        PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings());
+        PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
         menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
@@ -402,8 +402,8 @@ public class WeaponManagerMenu {
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon) {
-            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerMenuSettings());
-            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
+            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerWeaponMenuSettings());
+            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
             AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
@@ -534,8 +534,8 @@ public class WeaponManagerMenu {
 
     public enum SortOptions {
 
-        DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
-        RARITY("Rarity", (o1, o2) -> o1.getRarity().compareTo(o2.getRarity())),
+        DATE("Date", Comparator.comparing(AbstractWeapon::getDate)),
+        RARITY("Rarity", Comparator.comparing(AbstractWeapon::getRarity)),
         WEAPON_SCORE("Weapon Score", (o1, o2) -> {
             //first check if implements WeaponScore
             if (o1 instanceof WeaponScore && o2 instanceof WeaponScore) {
@@ -591,7 +591,7 @@ public class WeaponManagerMenu {
 
     }
 
-    static class PlayerMenuSettings {
+    static class PlayerWeaponMenuSettings {
         private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();

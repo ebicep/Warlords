@@ -19,6 +19,7 @@ public enum ItemTypes {
 
     ;
 
+    public static final ItemTypes[] VALUES = values();
     public final String name;
     public final BiFunction<UUID, ItemTier, AbstractItem<?, ?, ?>> create;
 

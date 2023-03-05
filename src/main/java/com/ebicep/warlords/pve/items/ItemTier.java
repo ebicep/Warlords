@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 
 import java.util.*;
@@ -11,9 +12,27 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public enum ItemTier {
 
+    ALL(
+            "None",
+            ChatColor.BLACK,
+            null,
+            0,
+            0,
+            0,
+            0,
+            null,
+            null,
+            null
+    ) {
+        @Override
+        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
+            return null;
+        }
+    },
     ALPHA(
             "Alpha",
-            ChatColor.BLUE,
+            ChatColor.GREEN,
+            new Pair<>(7, 15),
             .1,
             .001,
             .55,
@@ -26,7 +45,8 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE_HEALING, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
@@ -46,7 +66,8 @@ public enum ItemTier {
     },
     BETA(
             "Beta",
-            ChatColor.GREEN,
+            ChatColor.BLUE,
+            new Pair<>(15, 30),
             .05,
             .0005,
             .45,
@@ -59,7 +80,8 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE_HEALING, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
@@ -79,7 +101,8 @@ public enum ItemTier {
     },
     GAMMA(
             "Gamma",
-            ChatColor.RED,
+            ChatColor.LIGHT_PURPLE,
+            new Pair<>(20, 40),
             .01,
             .0001,
             .35,
@@ -92,7 +115,8 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE_HEALING, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
@@ -113,6 +137,7 @@ public enum ItemTier {
     DELTA(
             "Delta",
             ChatColor.YELLOW,
+            new Pair<>(25, 50),
             .001,
             .00001,
             .35,
@@ -125,7 +150,8 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE_HEALING, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
@@ -145,7 +171,8 @@ public enum ItemTier {
     },
     OMEGA(
             "Omega",
-            ChatColor.GOLD,
+            ChatColor.GRAY,
+            new Pair<>(30, 60),
             0,
             0,
             0,
@@ -158,7 +185,8 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE_HEALING, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
+                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
@@ -207,8 +235,13 @@ public enum ItemTier {
         }
     }
 
+    public static final ItemTier[] VALUES = values();
+    public static final ItemTier[] VALID_VALUES = Arrays.stream(VALUES)
+                                                        .filter(itemTier -> itemTier != ALL)
+                                                        .toArray(ItemTier[]::new);
     public final String name;
     public final ChatColor chatColor;
+    public final Pair<Integer, Integer> weightRange;
     public final double dropChance;
     public final double killDropChance;
     public final double cursedChance;
@@ -218,13 +251,20 @@ public enum ItemTier {
     public final HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange;
 
     ItemTier(
-            String name, ChatColor chatColor, double dropChance, double killDropChance, double cursedChance, double blessedChance,
+            String name,
+            ChatColor chatColor,
+            Pair<Integer, Integer> weightRange,
+            double dropChance,
+            double killDropChance,
+            double cursedChance,
+            double blessedChance,
             HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange,
             HashMap<ItemTomeStatPool, StatRange> tomeStatRange,
             HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange
     ) {
         this.name = name;
         this.chatColor = chatColor;
+        this.weightRange = weightRange;
         this.dropChance = dropChance;
         this.killDropChance = killDropChance;
         this.cursedChance = cursedChance;
@@ -240,14 +280,26 @@ public enum ItemTier {
         return chatColor + name;
     }
 
+    public ItemTier next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
+    }
+
     public static class StatRange {
 
-        public final double min;
-        public final double max;
+        private final double min;
+        private final double max;
 
         public StatRange(double min, double max) {
             this.min = min;
             this.max = max;
+        }
+
+        public double getMin() {
+            return min;
+        }
+
+        public double getMax() {
+            return max;
         }
 
         public double generateValue() {

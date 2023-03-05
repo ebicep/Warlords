@@ -4,6 +4,9 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,14 +14,20 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractItem<
         T extends Enum<T> & ItemStatPool<T>,
         R extends Enum<R> & ItemModifier<R>,
         U extends Enum<U> & ItemModifier<U>> {
 
+    private static double getAverageValue(double min, double max, double current) {
+        return (current - min) / (max - min);
+    }
+
     protected UUID uuid;
-    protected Instant obtained = Instant.now();
+    @Field("obtained_date")
+    protected Instant obtainedDate = Instant.now();
     protected ItemTier tier;
     @Field("stat_pool")
     protected Map<T, Float> statPool = new HashMap<>();
@@ -31,17 +40,25 @@ public abstract class AbstractItem<
         for (T t : statPool) {
             this.statPool.put(t, (float) tierStatRanges.get(t).generateValue());
         }
+        Integer result = new RandomCollection<Integer>()
+                .add(tier.blessedChance, 1)
+                .add(tier.cursedChance, -1)
+                .add(100 - tier.blessedChance - tier.cursedChance, 0)
+                .next();
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
-
-    public abstract ItemTypes getType();
 
     public ItemStack generateItemStack() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
                 .name(getName())
                 .lore("")
-                .addLore(getStatPoolLore());
+                .addLore(getStatPoolLore())
+                .addLore(
+                        "",
+                        getItemScoreString(),
+                        getWeightString()
+                );
         return itemBuilder.get();
     }
 
@@ -60,13 +77,68 @@ public abstract class AbstractItem<
 
     public List<String> getStatPoolLore() {
         List<String> lore = new ArrayList<>();
-        statPool.forEach((stat, value) -> lore.add(stat.getValueFormatted(value)));
+        statPool.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Enum::ordinal))
+                .forEachOrdered(stat -> lore.add(stat.getValueFormatted(statPool.get(stat))));
         return lore;
     }
 
     public abstract R[] getBlessings();
 
     public abstract U[] getCurses();
+
+    public abstract ItemTypes getType();
+
+    public float getItemScore() {
+        List<Double> averageScores = getItemScoreAverageValues();
+        double sum = 0;
+        for (Double d : averageScores) {
+            sum += d;
+        }
+        return Math.round(sum / averageScores.size() * 10000) / 100f;
+    }
+
+    public List<Double> getItemScoreAverageValues() {
+        HashMap<T, ItemTier.StatRange> statRanges = getTierStatRanges();
+        return statPool.entrySet()
+                       .stream()
+                       .map(statValue -> {
+                           ItemTier.StatRange statRange = statRanges.get(statValue.getKey());
+                           return getAverageValue(statRange.getMin(), statRange.getMax(), statValue.getValue());
+                       })
+                       .collect(Collectors.toList());
+    }
+
+    private String getItemScoreString() {
+        return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
+    }
+
+    public int getWeight() {
+        float itemScore = getItemScore();
+        Pair<Integer, Integer> weightRange = tier.weightRange;
+        int weight = weightRange.getB();
+        double rangeIncrement = 100d / (weightRange.getB() - weightRange.getA());
+        for (double weightCheck = rangeIncrement / 2; weightCheck < 100 + rangeIncrement; weightCheck += rangeIncrement) {
+            if (weightCheck - rangeIncrement <= itemScore && itemScore < weightCheck) {
+                return weight;
+            }
+            weight--;
+        }
+        return 100;
+    }
+
+    private String getWeightString() {
+        return ChatColor.GRAY + "Weight: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeight());
+    }
+
+    public Instant getObtainedDate() {
+        return obtainedDate;
+    }
+
+    public ItemTier getTier() {
+        return tier;
+    }
 
     public int getModifier() {
         return modifier;
