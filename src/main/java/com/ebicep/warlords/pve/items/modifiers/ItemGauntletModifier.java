@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.items.modifiers;
 
+import com.ebicep.warlords.util.java.NumberFormat;
+import org.bukkit.ChatColor;
+
 public class ItemGauntletModifier {
 
     public enum Blessings implements ItemModifier<Blessings> {
@@ -27,6 +30,11 @@ public class ItemGauntletModifier {
         }
 
         @Override
+        public String getDescription() {
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability block reach and distance travelled";
+        }
+
+        @Override
         public float getIncreasePerTier() {
             return 5;
         }
@@ -36,7 +44,7 @@ public class ItemGauntletModifier {
         DINKY("Dinky"),
         MEEK("Meek"),
         KIND("Kind"),
-        GRACFUL("Gracful"),
+        GRACEFUL("Graceful"),
         FRIENDLY("Friendly");
 
         public static final Curses[] VALUES = values();
@@ -54,6 +62,11 @@ public class ItemGauntletModifier {
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getDescription() {
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability block reach and distance travelled";
         }
 
         @Override

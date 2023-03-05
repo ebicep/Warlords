@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -23,21 +24,15 @@ import java.util.UUID;
  */
 public abstract class AbstractWeapon {
 
-    protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
     protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
 
     static {
-        DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
-        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-        DECIMAL_FORMAT.setPositivePrefix("+");
-        DECIMAL_FORMAT.setNegativePrefix("-");
-
         DECIMAL_FORMAT_TITLE.setDecimalSeparatorAlwaysShown(false);
         DECIMAL_FORMAT_TITLE.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     protected static String format(double value) {
-        return DECIMAL_FORMAT.format(value);
+        return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value);
     }
 
     protected static String formatTitleUpgrade(double value, String append) {

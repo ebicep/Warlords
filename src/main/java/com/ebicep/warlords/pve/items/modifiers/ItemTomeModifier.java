@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.items.modifiers;
 
+import com.ebicep.warlords.util.java.NumberFormat;
+import org.bukkit.ChatColor;
+
 public class ItemTomeModifier {
 
     public enum Blessings implements ItemModifier<Blessings> {
@@ -24,6 +27,11 @@ public class ItemTomeModifier {
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getDescription() {
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability duration";
         }
 
         @Override
@@ -54,6 +62,11 @@ public class ItemTomeModifier {
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getDescription() {
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability duration";
         }
 
         @Override

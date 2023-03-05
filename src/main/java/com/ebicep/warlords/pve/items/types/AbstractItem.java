@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -43,8 +44,16 @@ public abstract class AbstractItem<
         Integer result = new RandomCollection<Integer>()
                 .add(tier.blessedChance, 1)
                 .add(tier.cursedChance, -1)
-                .add(100 - tier.blessedChance - tier.cursedChance, 0)
+                .add(1 - tier.blessedChance - tier.cursedChance, 0)
                 .next();
+        switch (result) {
+            case 1:
+                this.modifier = ItemModifier.BLESSING_TIER_CHANCE.next();
+                break;
+            case -1:
+                this.modifier = -ItemModifier.CURSE_TIER_CHANCE.next();
+                break;
+        }
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
@@ -59,6 +68,25 @@ public abstract class AbstractItem<
                         getItemScoreString(),
                         getWeightString()
                 );
+        if (modifier != 0) {
+            if (modifier > 0) {
+                R blessing = getBlessings()[modifier - 1];
+                itemBuilder.addLore(
+                        "",
+                        ChatColor.GREEN + "Blessed (" + blessing.getName() + ")",
+                        WordWrap.wrapWithNewline(blessing.getDescription(), 150),
+                        ""
+                );
+            } else {
+                U curse = getCurses()[-modifier - 1];
+                itemBuilder.addLore(
+                        "",
+                        ChatColor.RED + "Cursed (" + curse.getName() + ")",
+                        WordWrap.wrapWithNewline(curse.getDescription(), 150),
+                        ""
+                );
+            }
+        }
         return itemBuilder.get();
     }
 
@@ -66,9 +94,9 @@ public abstract class AbstractItem<
         String name = "";
         if (modifier != 0) {
             if (modifier > 0) {
-                name += ChatColor.GREEN + getBlessings()[modifier - 1].getName();
+                name += ChatColor.GREEN + "Blessed ";
             } else {
-                name += ChatColor.RED + getCurses()[-modifier - 1].getName();
+                name += ChatColor.RED + "Cursed ";
             }
         }
         name += tier.getColoredName() + " " + ChatColor.GRAY + getType().name;

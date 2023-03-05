@@ -105,7 +105,10 @@ public class ItemsMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
-                    (m, e) -> openItemMenuInternal(player, databasePlayer)
+                    (m, e) -> {
+                        menuSettings.setPage(page - 1);
+                        openItemMenuInternal(player, databasePlayer);
+                    }
             );
         }
         if (itemInventory.size() > (page * 36)) {
@@ -114,7 +117,10 @@ public class ItemsMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
-                    (m, e) -> openItemMenuInternal(player, databasePlayer)
+                    (m, e) -> {
+                        menuSettings.setPage(page + 1);
+                        openItemMenuInternal(player, databasePlayer);
+                    }
             );
         }
         menu.setItem(1, 5,

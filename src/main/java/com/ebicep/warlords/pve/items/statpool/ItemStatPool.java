@@ -1,18 +1,9 @@
 package com.ebicep.warlords.pve.items.statpool;
 
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-
 public interface ItemStatPool<T extends Enum<T>> {
-
-    DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##") {{
-        setDecimalSeparatorAlwaysShown(false);
-        setRoundingMode(RoundingMode.HALF_UP);
-        setPositivePrefix("+");
-        setNegativePrefix("-");
-    }};
 
     T[] getPool();
 
@@ -25,7 +16,7 @@ public interface ItemStatPool<T extends Enum<T>> {
     Operation getOperation();
 
     default String formatValue(float value) {
-        return DECIMAL_FORMAT.format(value);
+        return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value);
     }
 
     enum Operation {
