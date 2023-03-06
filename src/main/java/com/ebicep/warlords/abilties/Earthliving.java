@@ -170,7 +170,7 @@ public class Earthliving extends AbstractAbility {
                     Utils.playGlobalSound(target.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.2f);
                     new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.SAPLING, (byte) 2).play();
                     for (WarlordsEntity ally : PlayerFilter
-                            .entitiesAround(target, 6, 6, 6)
+                            .entitiesAround(target, 10, 10, 10)
                             .aliveTeammatesOf(giver)
                             .closestFirst(target)
                     ) {

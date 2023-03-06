@@ -127,7 +127,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     if (ticksElapsed % 20 == 0) {
                         cooldownCounter.set(ticksElapsed);
-                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
+                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveUpgrade ? 0.4f : 0.9f);
 
                         ParticleEffect.VILLAGER_HAPPY.display(
                                 0.4F,
