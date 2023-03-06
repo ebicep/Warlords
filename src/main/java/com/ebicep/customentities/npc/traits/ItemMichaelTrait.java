@@ -13,4 +13,5 @@ public class ItemMichaelTrait extends WarlordsTrait {
     public void rightClick(NPCRightClickEvent event) {
 
     }
+
 }

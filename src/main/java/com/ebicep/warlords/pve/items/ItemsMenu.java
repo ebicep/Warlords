@@ -88,7 +88,7 @@ public class ItemsMenu {
                 menu.setItem(x, y,
                         item.generateItemStack(),
                         (m, e) -> {
-
+                            openItemEditorMenu(player, databasePlayer, item);
                         }
                 );
                 x++;
@@ -472,6 +472,42 @@ public class ItemsMenu {
         });
 
          */
+    }
+
+    public static void openItemEditorMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
+        Menu menu = new Menu("Item Editor", 9 * 5);
+
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.BOOK)
+                        .name(ChatColor.GREEN + "Your Blessings")
+                        .get(),
+                (m, e) -> {
+                }
+        );
+
+        menu.setItem(1, 1,
+                new ItemBuilder(Material.PAPER)
+                        .name(ChatColor.GREEN + "Buy a Blessing")
+                        .get(),
+                (m, e) -> {
+                }
+        );
+        menu.setItem(4, 1,
+                new ItemBuilder(Material.ANVIL)
+                        .name(ChatColor.GREEN + "Apply a Blessing")
+                        .get(),
+                (m, e) -> {
+                }
+        );
+        menu.setItem(7, 1,
+                new ItemBuilder(Material.EMPTY_MAP)
+                        .name(ChatColor.GREEN + "Remove a Curse")
+                        .get(),
+                (m, e) -> {
+                }
+        );
+
+        menu.openForPlayer(player);
     }
 
     public enum SortOptions {
