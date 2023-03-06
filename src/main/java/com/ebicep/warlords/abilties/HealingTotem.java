@@ -37,6 +37,7 @@ public class HealingTotem extends AbstractTotemBase {
     private int radius = 7;
     private int duration = 6;
     private int crippleDuration = 6;
+    private int healingIncrement = 35;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -50,7 +51,7 @@ public class HealingTotem extends AbstractTotemBase {
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
                 " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health every second. " +
-                "The healing will gradually increase by §a35% §7 (Up to " + (35 * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
+                "The healing will gradually increase by §a35% §7 (Up to " + (healingIncrement * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
                 "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
                 crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
     }
@@ -92,7 +93,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
-                    float healMultiplier = Math.min(1 + (.35f * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
+                    float healMultiplier = Math.min(1 + (convertToPercent(healingIncrement) * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -163,7 +164,7 @@ public class HealingTotem extends AbstractTotemBase {
                         circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                        float healMultiplier = 1 + (.35f * (ticksElapsed / 20f));
+                        float healMultiplier = 1 + (convertToPercent(healingIncrement) * (ticksElapsed / 20f));
                         PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
                                 .forEach(teammate -> {
@@ -185,6 +186,8 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
+                                        enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
+                                        enemy.getSpec().setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
                                         enemy.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
                                                 "Totem Crippling",
                                                 "CRIP",
@@ -272,5 +275,11 @@ public class HealingTotem extends AbstractTotemBase {
         this.crippleDuration = crippleDuration;
     }
 
+    public int getHealingIncrement() {
+        return healingIncrement;
+    }
 
+    public void setHealingIncrement(int healingIncrement) {
+        this.healingIncrement = healingIncrement;
+    }
 }
