@@ -80,6 +80,7 @@ public class NPCManager {
                     createQuestMenuNPC();
                     createStarPieceSynthesizerNPC();
                     createMysteriousTokenNPC();
+                    createItemMichaelNPC();
                 })
                 .execute();
     }
@@ -192,6 +193,18 @@ public class NPCManager {
         equipment.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BEDROCK));
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2532.5, 48.5, 746.8, 90, 0));
+    }
+
+    public static void createItemMichaelNPC() {
+        registerTrait(ItemMichaelTrait.class, "ItemMichaelTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-michael");
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BLACKSMITH);
+        npc.addTrait(ItemMichaelTrait.class);
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2539.5, 50, 740.5, 90, 0));
     }
 
 
