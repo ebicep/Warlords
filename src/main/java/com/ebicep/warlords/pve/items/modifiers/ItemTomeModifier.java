@@ -66,7 +66,7 @@ public class ItemTomeModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability duration";
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " ability duration";
         }
 
         @Override
