@@ -158,15 +158,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
 
-            killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot()
-                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                              .append(ChatColor.GRAY + "!")
-                              .create()
-                      );
-            });
-            killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            if (killer.getEntity() instanceof Player) {
+                killer.getGame().forEachOnlinePlayer((player, team) -> {
+                    player.spigot()
+                          .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                                  .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                                  .append(ChatColor.GRAY + "!")
+                                  .create()
+                          );
+                });
+                killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            }
         }
     }
 

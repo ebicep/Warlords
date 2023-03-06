@@ -223,6 +223,9 @@ public abstract class WarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
+        if (isDead()) {
+            return Optional.empty();
+        }
         StringBuilder debugMessage = new StringBuilder(ChatColor.AQUA + "Pre Event:");
         appendDebugMessageEvent(debugMessage, event);
         Bukkit.getPluginManager().callEvent(event);
