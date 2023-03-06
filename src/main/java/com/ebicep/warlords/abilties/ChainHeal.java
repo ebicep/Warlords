@@ -1,18 +1,20 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class ChainHeal extends AbstractChainBase {
@@ -45,7 +47,7 @@ public class ChainHeal extends AbstractChainBase {
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player p) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity chainTarget : PlayerFilter
-                .entitiesAround(p, radius, radius, radius)
+                .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
@@ -72,6 +74,11 @@ public class ChainHeal extends AbstractChainBase {
                         false
                 );
 
+                if (pveUpgrade) {
+                    critStatsOnHit(wp);
+                    critStatsOnHit(chainTarget);
+                }
+
                 chain(p.getLocation(), chainTarget.getLocation());
                 hitCounter.add(chainTarget);
 
@@ -93,26 +100,7 @@ public class ChainHeal extends AbstractChainBase {
                     );
 
                     if (pveUpgrade) {
-                        for (WarlordsEntity bounceTargetTwo : PlayerFilter
-                                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
-                                .aliveTeammatesOf(wp)
-                                .excluding(wp, chainTarget, bounceTarget)
-                        ) {
-                            chain(bounceTarget.getLocation(), bounceTargetTwo.getLocation());
-                            bounceTargetTwo.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false,
-                                    false
-                            );
-
-                            hitCounter.add(bounceTargetTwo);
-                            break;
-                        }
+                        critStatsOnHit(bounceTarget);
                     }
 
                     hitCounter.add(bounceTarget);
@@ -139,6 +127,57 @@ public class ChainHeal extends AbstractChainBase {
 
         wp.updateRedItem(player);
         wp.updateBlueItem(player);
+    }
+
+    private void critStatsOnHit(WarlordsEntity we) {
+        we.getCooldownManager().removeCooldown(ChainHeal.class, false);
+        we.getCooldownManager().addCooldown(new RegularCooldown<ChainHeal>(
+                name,
+                "CHAIN CRIT",
+                ChainHeal.class,
+                new ChainHeal(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                8 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 6 == 0) {
+                        Location loc = we.getLocation().add(0, 1.2, 0);
+                        ParticleEffect.VILLAGER_HAPPY.display(
+                                0.5F,
+                                0.3F,
+                                0.5F,
+                                0.01F,
+                                1,
+                                loc,
+                                500
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public boolean distinct() {
+                return true;
+            }
+
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                    return currentCritChance;
+                }
+
+                return currentCritChance + 10;
+            }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                    return currentCritMultiplier;
+                }
+                return currentCritMultiplier + 30;
+            }
+        });
     }
 
     @Override
