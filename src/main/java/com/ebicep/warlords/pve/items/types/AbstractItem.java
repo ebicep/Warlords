@@ -6,7 +6,6 @@ import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -144,16 +143,51 @@ public abstract class AbstractItem<
 
     public int getWeight() {
         float itemScore = getItemScore();
-        Pair<Integer, Integer> weightRange = tier.weightRange;
-        int weight = weightRange.getB();
-        double rangeIncrement = 100d / (weightRange.getB() - weightRange.getA());
-        for (double weightCheck = rangeIncrement / 2; weightCheck < 100 + rangeIncrement; weightCheck += rangeIncrement) {
-            if (weightCheck - rangeIncrement <= itemScore && itemScore < weightCheck) {
+        ItemTier.WeightRange weightRange = tier.weightRange;
+        int min = weightRange.getMin();
+        int normal = weightRange.getNormal();
+        int max = weightRange.getMax();
+
+        if (itemScore <= 10) {
+            return max;
+        }
+        if (45 <= itemScore && itemScore <= 55) {
+            return normal;
+        }
+        if (itemScore >= 90) {
+            return min;
+        }
+
+        int weight = max;
+        // score: 10 - normal
+        double midToTopIncrement = 35d / (max - normal - 1);
+        for (double weightCheck = 10; weightCheck < 45; weightCheck += midToTopIncrement) {
+            weight--;
+            if (weightCheck <= itemScore && itemScore < weightCheck + midToTopIncrement) {
                 return weight;
             }
-            weight--;
+            // safety check
+            if (weight < 0) {
+                return 1000;
+            }
         }
-        return 100;
+
+        // account for normal weight
+        weight--;
+
+        // score: normal - 90
+        double bottomToMidIncrement = 35d / (normal - min - 1);
+        for (double weightCheck = 55; weightCheck < 90; weightCheck += bottomToMidIncrement) {
+            weight--;
+            if (weightCheck <= itemScore && itemScore < weightCheck + bottomToMidIncrement) {
+                return weight;
+            }
+            // safety check
+            if (weight < 0) {
+                return 1000;
+            }
+        }
+        return 1000;
     }
 
     private String getWeightString() {

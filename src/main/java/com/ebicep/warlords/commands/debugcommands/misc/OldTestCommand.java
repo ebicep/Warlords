@@ -1,7 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.ItemTier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,11 +25,19 @@ public class OldTestCommand implements CommandExecutor {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
 //                }
 //            });
-            WarlordsPlayer warlordsPlayer = new WarlordsPlayer((Player) commandSender,
-                    PlayerSettings.getPlayerSettings(((Player) commandSender)).getSelectedSpec()
-            );
-            warlordsPlayer.getAbilityTree().openAbilityTree();
         }
+
+        for (ItemTier tier : ItemTier.VALID_VALUES) {
+            System.out.println("Tier: " + tier.name);
+            System.out.println("Bottom to Mid Increment: " + getBottomToMidIncrement(tier.weightRange, tier.weightRange.getNormal()));
+            System.out.println("Mid to Top Increment: " + getMidToTopIncrement(tier.weightRange, tier.weightRange.getNormal()));
+            //int i = 89;
+            for (int i = 0; i < 100; i += 5) {
+                System.out.println(tier.name + " - " + i + " = " + getWeight(i, tier));
+            }
+            //break;
+        }
+
 //
 //        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
 //            System.out.println(game.getMap() + " - " + game.getGame());
@@ -123,5 +130,61 @@ public class OldTestCommand implements CommandExecutor {
 
         return true;
     }
+
+    private static double getWeight(float itemScore, ItemTier tier) {
+        ItemTier.WeightRange weightRange = tier.weightRange;
+        if (itemScore <= 10) {
+            return weightRange.getMax();
+        }
+        if (45 <= itemScore && itemScore <= 55) {
+            return weightRange.getNormal();
+        }
+        if (itemScore >= 90) {
+            return weightRange.getMin();
+        }
+        int weight = weightRange.getMax();
+        double midWeight = weightRange.getNormal();
+        // 10-mid
+        double bottomToMidIncrement = getBottomToMidIncrement(weightRange, midWeight);
+        // 10-mid
+        double midToTopIncrement = getMidToTopIncrement(weightRange, midWeight);
+        for (double weightCheck = 10; weightCheck < 45; weightCheck += midToTopIncrement) {
+            weight--;
+//            System.out.println("Weight: " + weight);
+//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + midToTopIncrement));
+            if (weightCheck <= itemScore && itemScore < weightCheck + midToTopIncrement) {
+                return weight;
+            }
+            if (weight < 0) {
+                return 100;
+            }
+        }
+        weight--;
+        for (double weightCheck = 55; weightCheck < 90; weightCheck += bottomToMidIncrement) {
+            weight--;
+//            System.out.println("Weight: " + weight);
+//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + bottomToMidIncrement));
+            if (weightCheck <= itemScore && itemScore < weightCheck + bottomToMidIncrement) {
+                return weight;
+            }
+            if (weight < 0) {
+                return 100;
+            }
+        }
+        return 100;
+    }
+
+    private static double getBottomToMidIncrement(ItemTier.WeightRange weightRange, double midWeight) {
+//        System.out.println("35 / (" + midWeight + " - " + weightRange.getMin() + " - 1)");
+//        System.out.println("35 / " + (midWeight - weightRange.getMin() - 1));
+        return 35d / (midWeight - weightRange.getMin() - 1);
+    }
+
+    private static double getMidToTopIncrement(ItemTier.WeightRange weightRange, double midWeight) {
+//        System.out.println("35 / (" + weightRange.getMax() + " - " + midWeight + " - 1)");
+//        System.out.println("35 / " + (weightRange.getMax() - midWeight - 1));
+        return 35d / (weightRange.getMax() - midWeight - 1);
+    }
+
 
 }

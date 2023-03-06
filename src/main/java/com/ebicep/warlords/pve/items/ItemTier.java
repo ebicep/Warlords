@@ -4,7 +4,6 @@ import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
-import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 
 import java.util.*;
@@ -32,7 +31,7 @@ public enum ItemTier {
     ALPHA(
             "Alpha",
             ChatColor.GREEN,
-            new Pair<>(7, 15),
+            new WeightRange(7, 10, 15),
             .1,
             .001,
             .55,
@@ -67,7 +66,7 @@ public enum ItemTier {
     BETA(
             "Beta",
             ChatColor.BLUE,
-            new Pair<>(15, 30),
+            new WeightRange(15, 20, 30),
             .05,
             .0005,
             .45,
@@ -102,7 +101,7 @@ public enum ItemTier {
     GAMMA(
             "Gamma",
             ChatColor.LIGHT_PURPLE,
-            new Pair<>(20, 40),
+            new WeightRange(22, 30, 45),
             .01,
             .0001,
             .35,
@@ -137,7 +136,7 @@ public enum ItemTier {
     DELTA(
             "Delta",
             ChatColor.YELLOW,
-            new Pair<>(25, 50),
+            new WeightRange(30, 40, 60),
             .001,
             .00001,
             .35,
@@ -172,7 +171,7 @@ public enum ItemTier {
     OMEGA(
             "Omega",
             ChatColor.GRAY,
-            new Pair<>(30, 60),
+            new WeightRange(37, 50, 75),
             0,
             0,
             0,
@@ -207,6 +206,11 @@ public enum ItemTier {
 
     ;
 
+    public static final ItemTier[] VALUES = values();
+    public static final ItemTier[] VALID_VALUES = Arrays.stream(VALUES)
+                                                        .filter(itemTier -> itemTier != ALL)
+                                                        .toArray(ItemTier[]::new);
+
     private static <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPoolWithSettings(
             T[] pool,
             int initialPool,
@@ -235,13 +239,9 @@ public enum ItemTier {
         }
     }
 
-    public static final ItemTier[] VALUES = values();
-    public static final ItemTier[] VALID_VALUES = Arrays.stream(VALUES)
-                                                        .filter(itemTier -> itemTier != ALL)
-                                                        .toArray(ItemTier[]::new);
     public final String name;
     public final ChatColor chatColor;
-    public final Pair<Integer, Integer> weightRange;
+    public final WeightRange weightRange;
     public final double dropChance;
     public final double killDropChance;
     public final double cursedChance;
@@ -253,7 +253,7 @@ public enum ItemTier {
     ItemTier(
             String name,
             ChatColor chatColor,
-            Pair<Integer, Integer> weightRange,
+            WeightRange weightRange,
             double dropChance,
             double killDropChance,
             double cursedChance,
@@ -306,6 +306,30 @@ public enum ItemTier {
             return ThreadLocalRandom.current().nextDouble(min, max);
         }
 
+    }
+
+    public static class WeightRange {
+        private final int min;
+        private final int normal;
+        private final int max;
+
+        public WeightRange(int min, int normal, int max) {
+            this.min = min;
+            this.normal = normal;
+            this.max = max;
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public int getNormal() {
+            return normal;
+        }
+
+        public int getMax() {
+            return max;
+        }
     }
 
 }
