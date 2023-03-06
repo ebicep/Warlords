@@ -286,24 +286,24 @@ public enum ItemTier {
 
     public static class StatRange {
 
-        private final double min;
-        private final double max;
+        private final int min;
+        private final int max;
 
-        public StatRange(double min, double max) {
+        public StatRange(int min, int max) {
             this.min = min;
             this.max = max;
         }
 
-        public double getMin() {
+        public int getMin() {
             return min;
         }
 
-        public double getMax() {
+        public int getMax() {
             return max;
         }
 
-        public double generateValue() {
-            return ThreadLocalRandom.current().nextDouble(min, max);
+        public int generateValue() {
+            return ThreadLocalRandom.current().nextInt(min, max);
         }
 
     }

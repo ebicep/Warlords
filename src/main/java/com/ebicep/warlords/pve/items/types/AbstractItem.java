@@ -30,7 +30,7 @@ public abstract class AbstractItem<
     protected Instant obtainedDate = Instant.now();
     protected ItemTier tier;
     @Field("stat_pool")
-    protected Map<T, Float> statPool = new HashMap<>();
+    protected Map<T, Integer> statPool = new HashMap<>();
     protected int modifier;
 
     public AbstractItem(UUID uuid, ItemTier tier, Set<T> statPool) {
@@ -38,7 +38,7 @@ public abstract class AbstractItem<
         this.tier = tier;
         HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
         for (T t : statPool) {
-            this.statPool.put(t, (float) tierStatRanges.get(t).generateValue());
+            this.statPool.put(t, tierStatRanges.get(t).generateValue());
         }
         Integer result = new RandomCollection<Integer>()
                 .add(tier.blessedChance, 1)

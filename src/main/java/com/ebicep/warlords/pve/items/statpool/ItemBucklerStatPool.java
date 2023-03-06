@@ -6,31 +6,31 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
 
     DAMAGE_RED("Damage Reduction") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
-            warlordsPlayer.getSpec().setDamageResistance((int) (warlordsPlayer.getSpec().getDamageResistance() + value));
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+            warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() + value);
         }
     },
     AGGRO_PRIO("Aggression Priority") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
             // TODO
         }
     },
     THORNS("Thorns") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
             // TODO
         }
     },
     KB_RES("Knockback Resistance") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
             // TODO
         }
     },
     RES_SPEED("Respawn Speed") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
             // TODO
         }
     },
@@ -58,5 +58,5 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
         return Operation.MULTIPLY;
     }
 
-    public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value);
+    public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value);
 }

@@ -6,32 +6,32 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
 
     DAMAGE("Damage") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value) {
+        public void applyToAbility(AbstractAbility ability, int value) {
         }
     },
     HEALING("Healing") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value) {
+        public void applyToAbility(AbstractAbility ability, int value) {
         }
     },
     CRIT_CHANCE("Crit Chance") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value) {
-            float calculatedValue = 1 + value / 100;
+        public void applyToAbility(AbstractAbility ability, int value) {
+            float calculatedValue = 1 + value / 100f;
             ability.setCritChance(ability.getCritChance() * calculatedValue);
         }
     },
     CRIT_MULTI("Crit Multiplier") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value) {
-            float calculatedValue = 1 + value / 100;
+        public void applyToAbility(AbstractAbility ability, int value) {
+            float calculatedValue = 1 + value / 100f;
             ability.setCritMultiplier(ability.getCritMultiplier() * calculatedValue);
         }
     },
     CD_RED("Cooldown Reduction") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value) {
-            float calculatedValue = 1 + (100 - value) / 100;
+        public void applyToAbility(AbstractAbility ability, int value) {
+            float calculatedValue = 1 + (100 - value) / 100f;
             ability.setCooldown(ability.getCooldown() * calculatedValue);
         }
     },
@@ -60,7 +60,7 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
         return Operation.MULTIPLY;
     }
 
-    public abstract void applyToAbility(AbstractAbility ability, float value);
+    public abstract void applyToAbility(AbstractAbility ability, int value);
 
 
 }
