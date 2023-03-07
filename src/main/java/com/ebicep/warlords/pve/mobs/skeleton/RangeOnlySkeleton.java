@@ -17,8 +17,6 @@ import org.bukkit.Material;
 
 public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
 
-    int speedCounter;
-
     public RangeOnlySkeleton(Location spawnLocation) {
         super(
                 spawnLocation,
@@ -65,7 +63,7 @@ public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().addSpeedModifier(warlordsNPC, "Melee Speed", speedCounter, 2);
+
     }
 
     @Override
@@ -75,8 +73,6 @@ public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (!Utils.isProjectile(event.getAbility())) {
-            speedCounter += 2;
-        }
+
     }
 }

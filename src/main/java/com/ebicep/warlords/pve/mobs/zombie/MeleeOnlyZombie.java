@@ -17,8 +17,6 @@ import org.bukkit.Material;
 
 public class MeleeOnlyZombie extends AbstractZombie implements EliteMob {
 
-    int speedCounter;
-
     public MeleeOnlyZombie(Location spawnLocation) {
         super(
                 spawnLocation,
@@ -65,7 +63,6 @@ public class MeleeOnlyZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().addSpeedModifier(warlordsNPC, "Projectile Speed", speedCounter, 2);
     }
 
     @Override
@@ -75,8 +72,5 @@ public class MeleeOnlyZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (Utils.isProjectile(event.getAbility())) {
-            speedCounter += 2;
-        }
     }
 }
