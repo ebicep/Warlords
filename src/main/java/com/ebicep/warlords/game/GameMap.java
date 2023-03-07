@@ -3320,29 +3320,29 @@ public enum GameMap {
             options.add(new NarmersTombOption());
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
-                    .reduceScoreOnAllDeath(30, Team.BLUE)
-                    .onPerWaveClear(1, 500)
-                    .onPerWaveClear(5, 2000)
-                    .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
-                    .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
-                    .onPerMobKill(Mobs.IRON_GOLEM, 20)
-                    .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
-                    .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
-                    .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
-                    .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
-                    .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
-                    .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
-                    .onPerMobKill(Mobs.EXILED_SKELETON, 40)
-                    .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
-                    .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
-                    .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
-                    .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
-                    .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
-                    .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
-                    .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
-                    .onPerMobKill(Mobs.EVENT_NARMER, 500)
+                            .reduceScoreOnAllDeath(30, Team.BLUE)
+                            .onPerWaveClear(1, 500)
+                            .onPerWaveClear(5, 2000)
+                            .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
+                            .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.IRON_GOLEM, 20)
+                            .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
+                            .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
+                            .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_SKELETON, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
+                            .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
+                            .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER, 500)
                     //.cap(50_000)
             );
             options.add(new CurrencyOnEventOption()
@@ -3360,6 +3360,121 @@ public enum GameMap {
                     .guildExpPerXSec(1, 60)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.CONQUERING_ENERGY));
+
+            return options;
+        }
+
+    },
+    ILLUSION_RIFT_EVENT_4(
+            "Spiders Burrow",
+            4,
+            1,
+            120 * SECOND,
+            "IllusionRiftEvent4",
+            6,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Spiders Dwelling",
+                    "",
+                    color + "Kill mobs to gain event points!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Kill as many mobs as possible!"
+            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
+
+            options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
+
+            //options.add(new RespawnOption(20));
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+
+                    ,
+                    DifficultyIndex.EVENT,
+                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Spiders Dwelling")
+            ) {
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    switch (playerCount) {
+                        case 3:
+                            return 1.25f;
+                        case 4:
+                            return 1.5f;
+                    }
+                    return 1;
+                }
+            });
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new NarmersTombOption());
+            options.add(new SafeZoneOption());
+            options.add(new EventPointsOption()
+                            .reduceScoreOnAllDeath(30, Team.BLUE)
+                            .onPerWaveClear(1, 500)
+                            .onPerWaveClear(5, 2000)
+                            .onPerMobKill(Mobs.BASIC_ZOMBIE, 5)
+                            .onPerMobKill(Mobs.BASIC_PIG_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.BASIC_BERSERK_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
+                            .onPerMobKill(Mobs.IRON_GOLEM, 20)
+                            .onPerMobKill(Mobs.ELITE_BERSERK_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 20)
+                            .onPerMobKill(Mobs.ELITE_ZOMBIE, 25)
+                            .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 40)
+                            .onPerMobKill(Mobs.ENVOY_ZOMBIE, 40)
+                            .onPerMobKill(Mobs.EXILED_SKELETON, 40)
+                            .onPerMobKill(Mobs.EXILED_ZOMBIE_LAVA, 40)
+                            .onPerMobKill(Mobs.EXILED_VOID_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_LANCER, 45)
+                            .onPerMobKill(Mobs.FORGOTTEN_ZOMBIE, 50)
+                            .onPerMobKill(Mobs.EVENT_NARMER_ACOLYTE, 100)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJER, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER_DJET, 150)
+                            .onPerMobKill(Mobs.EVENT_NARMER, 500)
+                    //.cap(50_000)
+            );
+//            options.add(new CurrencyOnEventOption()
+//                    .startWith(120000)
+//                    .onKill(500)
+//                    .setPerWaveClear(5, 10000)
+//            );
+//            options.add(new CoinGainOption()
+//                    .clearMobCoinValueAndSet("Narmer's Killed", "Narmer", 100)
+//                    .guildCoinInsigniaConvertBonus(1000)
+//                    .guildCoinPerXSec(1, 1)
+//            );
+//            options.add(new ExperienceGainOption()
+//                    .playerExpPerXSec(15, 10)
+//                    .guildExpPerXSec(1, 60)
+//            );
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.ARACHNOPHOBIA));
 
             return options;
         }

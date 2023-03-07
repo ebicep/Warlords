@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.TextOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -151,6 +152,38 @@ public class FieldEffect implements Option {
                     spec.setEnergyPerSec(spec.getEnergyPerSec() - 10);
                     spec.setEnergyOnHit(spec.getEnergyOnHit() * 2.5f);
                 }
+            }
+        },
+        ARACHNOPHOBIA("Arachnophobia",
+                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders. " +
+                        "Ability cooldowns are reduced by .5s for waves 1-5, " +
+                        "1s for waves 6-10, 1.5s for waves 11-15, " +
+                        "and so on until wave 25 with a reduction of 2.5s."
+        ) {
+            @Override
+            public void onStart(Game game) {
+                game.registerEvents(new Listener() {
+
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                            return;
+                        }
+                        if (!(event.getPlayer() instanceof WarlordsNPC)) {
+                            return;
+                        }
+                        //if(((WarlordsNPC) event.getPlayer()).getMob() instanceof ) {
+                        event.setMin(event.getMin() * 1.3f);
+                        event.setMax(event.getMax() * 1.3f);
+                        //}
+
+                        if (event.getAbility().contains("Strike")) {
+                            event.setMin(event.getMin() * 1.3f);
+                            event.setMax(event.getMax() * 1.3f);
+                        }
+                    }
+
+                });
             }
         },
         ;
