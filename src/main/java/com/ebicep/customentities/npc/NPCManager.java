@@ -33,7 +33,10 @@ public class NPCManager {
         Warlords.newChain()
                 .sync(() -> {
                     createGameNPC();
-                    createPvENPC();
+                    createWaveDefenseNPC();
+                    createOnslaughtNPC();
+                    createTreasureHuntNPC();
+                    createBossRushNPC();
                 })
                 .execute();
     }
@@ -46,10 +49,10 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 741.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 738.5, 45, 0));
     }
 
-    private static void createPvENPC() {
+    private static void createWaveDefenseNPC() {
         registerTrait(PvEStartTrait.class, "PveStartTrait");
 
         NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "pve-mode");
@@ -57,7 +60,40 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 747.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 741.5, 90, 0));
+    }
+
+    private static void createOnslaughtNPC() {
+        registerTrait(OnslaughtStartTrait.class, "OnslaughtStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "onslaught-mode");
+        npc.addTrait(OnslaughtStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 744.5, 90, 0));
+    }
+
+    private static void createTreasureHuntNPC() {
+        registerTrait(TreasureHuntStartTrait.class, "TreasureHuntStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "treasure-hunt-mode");
+        npc.addTrait(TreasureHuntStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 747.5, 90, 0));
+    }
+
+    private static void createBossRushNPC() {
+        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "boss-rush-mode");
+        npc.addTrait(BossRushStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 750.5, 135, 0));
     }
 
     public static void registerTrait(Class<? extends Trait> trait, String traitName) {
@@ -204,7 +240,7 @@ public class NPCManager {
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2539.5, 50, 740.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2546.5, 50, 740.5, 90, 0));
     }
 
 

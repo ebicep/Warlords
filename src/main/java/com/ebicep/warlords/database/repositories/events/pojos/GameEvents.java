@@ -604,7 +604,7 @@ public enum GameEvents {
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2539.5, 50, 744.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2569.5, 50, 744.5, 90, 0));
     }
 
     public void editNPC(NPC npc) {

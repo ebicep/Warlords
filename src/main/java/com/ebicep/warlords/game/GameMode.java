@@ -222,7 +222,7 @@ public enum GameMode {
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -258,7 +258,7 @@ public enum GameMode {
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
