@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.events.spidersburrow.CaveSpiderPoisonous;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
@@ -172,11 +173,9 @@ public class FieldEffect implements Option {
                         if (!(event.getPlayer() instanceof WarlordsNPC)) {
                             return;
                         }
-                        //if(((WarlordsNPC) event.getPlayer()).getMob() instanceof ) {
-                        event.setMin(event.getMin() * 1.3f);
-                        event.setMax(event.getMax() * 1.3f);
-                        //}
-
+                        if (!(((WarlordsNPC) event.getPlayer()).getMob() instanceof CaveSpiderPoisonous)) {
+                            return;
+                        }
                         if (event.getAbility().contains("Strike")) {
                             event.setMin(event.getMin() * 1.3f);
                             event.setMax(event.getMax() * 1.3f);
