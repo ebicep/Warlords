@@ -24,7 +24,7 @@ public class BossRushStartTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onRightClick(NPCRightClickEvent event) {
+    public void rightClick(NPCRightClickEvent event) {
         event.getClicker().getPlayer().sendMessage(ChatColor.RED + "Boss Rush is currently in development, check back later!");
     }
 

@@ -25,7 +25,7 @@ public class TreasureHuntStartTrait extends WarlordsTrait {
     }
 
     @Override
-    public void onRightClick(NPCRightClickEvent event) {
+    public void rightClick(NPCRightClickEvent event) {
         event.getClicker().getPlayer().sendMessage(ChatColor.RED + "Treasure Hunt is currently in development, check back later!");
     }
 
