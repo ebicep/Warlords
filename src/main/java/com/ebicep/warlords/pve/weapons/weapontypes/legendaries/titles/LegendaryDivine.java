@@ -54,7 +54,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
+        return Arrays.asList(
+                new Pair<>(
                         formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
@@ -145,7 +146,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCost() > 0) {
-                                abilityEnergyCostReduction.put(ability, ability.getEnergyCost() * 0.25f);
+                                abilityEnergyCostReduction.put(ability, ability.getEnergyCost() * 0.4f);
                             }
                         }
                         abilityEnergyCost(-1);
@@ -161,7 +162,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                                 cooldownManager -> {
                                     abilityEnergyCost(1);
                                 },
-                                5 * 20
+                                6 * 20
                         ) {
                             @Override
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
