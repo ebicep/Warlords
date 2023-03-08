@@ -188,6 +188,7 @@ public class HealingTotem extends AbstractTotemBase {
                                     .forEach(enemy -> {
                                         enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
                                         enemy.getSpec().setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
+                                        EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                         enemy.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
                                                 "Totem Crippling",
                                                 "CRIP",

@@ -152,7 +152,7 @@ public class DrainingMiasma extends AbstractAbility {
                         DrainingMiasma.class,
                         new DrainingMiasma(),
                         wp,
-                        CooldownTypes.ABILITY,
+                        CooldownTypes.DEBUFF,
                         cooldownManager -> {
                             new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.SAPLING, (byte) 2).play();
                             for (WarlordsEntity target : PlayerFilter

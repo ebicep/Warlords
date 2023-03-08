@@ -11,7 +11,6 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
     float maxHealing = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
     int radius = ability.getRadius();
-    int duration = ability.getDuration();
 
     public HealingTotemBranch(AbilityTree abilityTree, HealingTotem ability) {
         super(abilityTree, ability);
@@ -86,13 +85,13 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         masterUpgrade = new Upgrade(
                 "Healing Obelisk",
                 "Healing Totem - Master Upgrade",
-                "Double the duration of Healing Totem but reduce the incremental healing by 25%.\n\nAll enemies within" +
+                "Double the duration of Healing Totem but reduce the incremental healing by 15%.\n\nAll enemies within" +
                         " the radius of Healing Totem are perpetually slowed and crippled, reducing their movement" +
                         " speed and damage dealt by 50%. Additionally, reduce their passive damage" +
                         " resistance by 5% for each second they are in range.",
                 50000,
                 () -> {
-                    ability.setHealingIncrement(10);
+                    ability.setHealingIncrement(20);
                     ability.setDuration(ability.getDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
