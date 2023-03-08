@@ -118,7 +118,8 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
+        return Arrays.asList(
+                new Pair<>(
                         formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),

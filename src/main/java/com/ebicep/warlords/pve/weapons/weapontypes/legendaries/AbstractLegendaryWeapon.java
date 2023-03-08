@@ -241,8 +241,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return skillCritMultiplierBonus;
     }
 
-    protected abstract float getMeleeDamageMaxValue();
-
     @Override
     public void generateStats() {
 
@@ -514,6 +512,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     protected abstract float getMeleeDamageMinValue();
+
+    protected abstract float getMeleeDamageMaxValue();
 
     public WeaponStats getStarPieceStat() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPieceStat();
