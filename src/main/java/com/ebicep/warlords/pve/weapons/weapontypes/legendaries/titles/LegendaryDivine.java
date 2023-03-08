@@ -47,7 +47,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
-                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 25% energy cost reduction for all abilities, " +
+                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, " +
                 formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " increased damage, and " +
                 formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()) + " EPS for 6 seconds. Can be triggered every 40 seconds.";
     }
