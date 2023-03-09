@@ -152,38 +152,6 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            if (position == 1) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 150_000L);
-                    put("Experience", 150_000L);
-                }};
-            }
-            if (position == 2) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 100_000L);
-                    put("Experience", 100_000L);
-                }};
-            }
-            if (position == 3) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 75_000L);
-                    put("Experience", 75_000L);
-                }};
-            }
-            if (4 <= position && position <= 10) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 50_000L);
-                    put("Experience", 50_000L);
-                }};
-            }
-            return new LinkedHashMap<>() {{
-                put("Coins", 20_000L);
-                put("Experience", 20_000L);
-            }};
-        }
-
-        @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
             long eventStart = currentGameEvent.getStartDateSecond();
             EventLeaderboard lairBoard = new EventLeaderboard(
@@ -431,38 +399,6 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            if (position == 1) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 150_000L);
-                    put("Experience", 150_000L);
-                }};
-            }
-            if (position == 2) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 100_000L);
-                    put("Experience", 100_000L);
-                }};
-            }
-            if (position == 3) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 75_000L);
-                    put("Experience", 75_000L);
-                }};
-            }
-            if (4 <= position && position <= 10) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 50_000L);
-                    put("Experience", 50_000L);
-                }};
-            }
-            return new LinkedHashMap<>() {{
-                put("Coins", 20_000L);
-                put("Experience", 20_000L);
-            }};
-        }
-
-        @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
             long eventStart = currentGameEvent.getStartDateSecond();
             EventLeaderboard lairBoard = new EventLeaderboard(
@@ -669,38 +605,6 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            if (position == 1) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 150_000L);
-                    put("Experience", 150_000L);
-                }};
-            }
-            if (position == 2) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 100_000L);
-                    put("Experience", 100_000L);
-                }};
-            }
-            if (position == 3) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 75_000L);
-                    put("Experience", 75_000L);
-                }};
-            }
-            if (4 <= position && position <= 10) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 50_000L);
-                    put("Experience", 50_000L);
-                }};
-            }
-            return new LinkedHashMap<>() {{
-                put("Coins", 20_000L);
-                put("Experience", 20_000L);
-            }};
-        }
-
-        @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
             long eventStart = currentGameEvent.getStartDateSecond();
             EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
@@ -832,7 +736,36 @@ public enum GameEvents {
 
     public abstract LinkedHashMap<Currencies, Long> getRewards(int position);
 
-    public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
+    public LinkedHashMap<String, Long> getGuildRewards(int position) {
+        if (position == 1) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 150_000L);
+                put("Experience", 150_000L);
+            }};
+        }
+        if (position == 2) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 100_000L);
+                put("Experience", 100_000L);
+            }};
+        }
+        if (position == 3) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 75_000L);
+                put("Experience", 75_000L);
+            }};
+        }
+        if (4 <= position && position <= 10) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 50_000L);
+                put("Experience", 50_000L);
+            }};
+        }
+        return new LinkedHashMap<>() {{
+            put("Coins", 20_000L);
+            put("Experience", 20_000L);
+        }};
+    }
 
     public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
 
