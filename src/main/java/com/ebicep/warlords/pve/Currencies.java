@@ -100,6 +100,11 @@ public enum Currencies implements Spendable {
             ChatColor.YELLOW,
             new ItemStack(Material.SNOW_BALL)
     ),
+    TITLE_TOKEN_SPIDERS_BURROW(
+            "Spiders Burrow Title Token",
+            ChatColor.YELLOW,
+            new ItemStack(Material.SNOW_BALL)
+    ),
     LIMIT_BREAKER(
             "Limit Breaker",
             ChatColor.DARK_GRAY,

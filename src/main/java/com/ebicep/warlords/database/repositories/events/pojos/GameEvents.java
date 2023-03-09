@@ -574,7 +574,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
+                add(new EventShopReward(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3, 300_000));
                 add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
                 add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
@@ -609,7 +609,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 3L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 5L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 5L);
                 }};
             }
             if (position == 2) {
@@ -620,7 +620,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 2L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
                 }};
             }
             if (position == 3) {
@@ -631,7 +631,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 1L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 2L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 2L);
                 }};
             }
             if (4 <= position && position <= 10) {
@@ -642,7 +642,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
                 }};
             }
             if (11 <= position && position <= 20) {

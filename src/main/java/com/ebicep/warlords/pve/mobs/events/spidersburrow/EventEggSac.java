@@ -4,16 +4,16 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
-import com.ebicep.warlords.pve.mobs.spider.AbstractCaveSpider;
+import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 
-public class EventCaveSpiderPoisonous extends AbstractCaveSpider implements BasicMob {
+public class EventEggSac extends AbstractZombie implements BossMob {
 
-    public EventCaveSpiderPoisonous(Location spawnLocation) {
+    public EventEggSac(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Poisonous Spider",
+                "Egg Sac",
                 MobTier.BASE,
                 null,
                 4000,

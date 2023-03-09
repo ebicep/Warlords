@@ -104,6 +104,7 @@ public enum Mobs {
     EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
     EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
     EVENT_NARMER_DJET(EventDjet.class, EventDjet::new),
+    EVENT_MITHRA(EventMithra.class, EventMithra::new),
     EVENT_MITHRA_FORSAKEN_FROST(EventForsakenFrost.class, EventForsakenFrost::new),
     EVENT_MITHRA_FORSAKEN_FOLIAGE(EventForsakenFoliage.class, EventForsakenFoliage::new),
     EVENT_MITHRA_FORSAKEN_SHRIEKER(EventForsakenShrieker.class, EventForsakenShrieker::new),
@@ -111,7 +112,8 @@ public enum Mobs {
     EVENT_MITHRA_FORSAKEN_CRUOR(EventForsakenCruor.class, EventForsakenCruor::new),
     EVENT_MITHRA_FORSAKEN_DEGRADER(EventForsakenDegrader.class, EventForsakenDegrader::new),
     EVENT_MITHRA_FORSAKEN_ABERRATION(EventForsakenAberration.class, EventForsakenAberration::new),
-
+    EVENT_MITHRA_POISONOUS_SPIDER(EventPoisonousSpider.class, EventPoisonousSpider::new),
+    EVENT_MITHRA_EGG_SAC(EventEggSac.class, EventEggSac::new),
 
     ;
 
