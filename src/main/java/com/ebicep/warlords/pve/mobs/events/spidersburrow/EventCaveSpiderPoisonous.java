@@ -8,9 +8,9 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.pve.mobs.spider.AbstractCaveSpider;
 import org.bukkit.Location;
 
-public class CaveSpiderPoisonous extends AbstractCaveSpider implements BasicMob {
+public class EventCaveSpiderPoisonous extends AbstractCaveSpider implements BasicMob {
 
-    public CaveSpiderPoisonous(Location spawnLocation) {
+    public EventCaveSpiderPoisonous(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Poisonous Spider",

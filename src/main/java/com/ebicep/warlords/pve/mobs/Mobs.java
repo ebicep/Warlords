@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
+import com.ebicep.warlords.pve.mobs.events.spidersburrow.*;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.magmacube.MagmaCube;
 import com.ebicep.warlords.pve.mobs.pigzombie.BasicPigZombie;
@@ -103,6 +104,13 @@ public enum Mobs {
     EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
     EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
     EVENT_NARMER_DJET(EventDjet.class, EventDjet::new),
+    EVENT_MITHRA_FORSAKEN_FROST(EventSpiderForsakenFrost.class, EventSpiderForsakenFrost::new),
+    EVENT_MITHRA_FORSAKEN_FOLIAGE(EventSpiderForsakenFoliage.class, EventSpiderForsakenFoliage::new),
+    EVENT_MITHRA_FORSAKEN_SHRIEKER(EventSpiderForsakenShrieker.class, EventSpiderForsakenShrieker::new),
+    EVENT_MITHRA_FORSAKEN_RESPITE(EventSpiderForsakenRespite.class, EventSpiderForsakenRespite::new),
+    EVENT_MITHRA_FORSAKEN_CRUOR(EventSpiderForsakenCruor.class, EventSpiderForsakenCruor::new),
+    EVENT_MITHRA_FORSAKEN_DEGRADER(EventSpiderForsakenDegrader.class, EventSpiderForsakenDegrader::new),
+    EVENT_MITHRA_FORSAKEN_ABERRATION(EventSpiderForsakenAberration.class, EventSpiderForsakenAberration::new),
 
 
     ;

@@ -9,9 +9,6 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -19,7 +16,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -70,27 +66,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
-                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
-                        name,
-                        "CRIP",
-                        CripplingStrike.class,
-                        new CripplingStrike(),
-                        warlordsNPC,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        cooldownManager -> {
-                            if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                                warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-                            }
-                        },
-                        3 * 20
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * .9f;
-                    }
-                });
+                CripplingStrike.cripple(warlordsNPC, warlordsPlayer, name, 3 * 20);
             }
         }
     }

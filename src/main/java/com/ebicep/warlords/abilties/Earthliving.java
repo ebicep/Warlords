@@ -28,7 +28,7 @@ public class Earthliving extends AbstractAbility {
     public int timesProcd = 0;
     public int playersHealed = 0;
 
-    private final int duration = 8;
+    private int duration = 8;
     private float procChance = 40;
     private int maxAllies = 2;
     private int weaponDamage = 240;
@@ -59,7 +59,7 @@ public class Earthliving extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
         Earthliving tempEarthliving = new Earthliving();
         final boolean[] firstProc = {true};
@@ -237,7 +237,9 @@ public class Earthliving extends AbstractAbility {
         this.maxHits = maxHits;
     }
 
-
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }
 
 

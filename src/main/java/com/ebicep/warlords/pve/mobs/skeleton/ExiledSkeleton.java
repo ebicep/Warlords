@@ -110,7 +110,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
+        receiver.getCooldownManager().removePreviousWounding();
         receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
                 name,
                 "WND",
