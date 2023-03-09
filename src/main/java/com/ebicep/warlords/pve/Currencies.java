@@ -85,6 +85,11 @@ public enum Currencies implements Spendable {
             ChatColor.YELLOW,
             new ItemStack(Material.DOUBLE_PLANT)
     ),
+    EVENT_POINTS_MITHRA(
+            "Mithra Event Point",
+            ChatColor.YELLOW,
+            new ItemStack(Material.DOUBLE_PLANT)
+    ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
             ChatColor.YELLOW,

@@ -10,6 +10,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerStats;
 import com.ebicep.warlords.game.GameMode;
@@ -27,6 +29,8 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();
     @Field("narmer")
     private DatabasePlayerPvEEventNarmerStats narmerStats = new DatabasePlayerPvEEventNarmerStats();
+    @Field("mithra")
+    private DatabasePlayerPvEEventMithraStats mithraStats = new DatabasePlayerPvEEventMithraStats();
 
     @Override
     public void updateCustomStats(
@@ -83,14 +87,13 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
         return narmerStats.getEventStats();
     }
 
+    public DatabasePlayerPvEEventMithraStats getMithraStats() {
+        return mithraStats;
+    }
+
+    public Map<Long, DatabasePlayerPvEEventMithraDifficultyStats> getMithraEventStats() {
+        return mithraStats.getEventStats();
+    }
+
 
 }
-
-/*
-event_stats
-> total shit
-  > event_1
-    > date_1
-    > date_2
-  > event_2
- */
