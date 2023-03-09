@@ -60,32 +60,28 @@ public abstract class AbstractItem<
     public ItemStack generateItemStack() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
                 .name(getName())
-                .lore("")
-                .addLore(getStatPoolLore())
-                .addLore(
-                        "",
-                        getItemScoreString(),
-                        getWeightString()
-                );
+                .lore("");
+        itemBuilder.addLore(getStatPoolLore());
         if (modifier != 0) {
             if (modifier > 0) {
                 R blessing = getBlessings()[modifier - 1];
                 itemBuilder.addLore(
                         "",
-                        ChatColor.GREEN + "Blessed (" + blessing.getName() + ")",
-                        WordWrap.wrapWithNewline(blessing.getDescription(), 150),
-                        ""
+                        WordWrap.wrapWithNewline(blessing.getDescription(), 150)
                 );
             } else {
                 U curse = getCurses()[-modifier - 1];
                 itemBuilder.addLore(
                         "",
-                        ChatColor.RED + "Cursed (" + curse.getName() + ")",
-                        WordWrap.wrapWithNewline(curse.getDescription(), 150),
-                        ""
+                        WordWrap.wrapWithNewline(curse.getDescription(), 150)
                 );
             }
         }
+        itemBuilder.addLore(
+                "",
+                getItemScoreString(),
+                getWeightString()
+        );
         return itemBuilder.get();
     }
 
@@ -93,9 +89,9 @@ public abstract class AbstractItem<
         String name = "";
         if (modifier != 0) {
             if (modifier > 0) {
-                name += ChatColor.GREEN + "Blessed ";
+                name += ChatColor.GREEN + getBlessings()[modifier - 1].getName() + " ";
             } else {
-                name += ChatColor.RED + "Cursed ";
+                name += ChatColor.RED + getCurses()[-modifier - 1].getName() + " ";
             }
         }
         name += tier.getColoredName() + " " + ChatColor.GRAY + getType().name;

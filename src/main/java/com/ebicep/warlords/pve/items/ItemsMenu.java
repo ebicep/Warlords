@@ -2,8 +2,6 @@ package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemLoadout;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.ItemsManager;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -159,6 +157,25 @@ public class ItemsMenu {
                         .get(),
                 (m, e) -> {}
         );
+        addItemMenuSettings(player, databasePlayer, menuSettings, sortedBy, filterBy, addonFilter, menu);
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+//        if (menuSettings.isOpenedFromNPC()) {
+//            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+//        } else {
+//            menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
+//        }
+        menu.openForPlayer(player);
+    }
+
+    private static void addItemMenuSettings(
+            Player player,
+            DatabasePlayer databasePlayer,
+            PlayerItemMenuSettings menuSettings,
+            SortOptions sortedBy,
+            ItemTier filterBy,
+            int addonFilter,
+            Menu menu
+    ) {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.GREEN + "Reset Settings")
@@ -224,13 +241,6 @@ public class ItemsMenu {
                     openItemMenuInternal(player, databasePlayer);
                 }
         );
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-//        if (menuSettings.isOpenedFromNPC()) {
-//            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-//        } else {
-//            menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
-//        }
-        menu.openForPlayer(player);
     }
 
     public static void openItemLoadoutMenu(Player player, ItemLoadout itemLoadout, int page) {
@@ -497,6 +507,7 @@ public class ItemsMenu {
                         .name(ChatColor.GREEN + "Apply a Blessing")
                         .get(),
                 (m, e) -> {
+
                 }
         );
         menu.setItem(7, 1,
@@ -507,8 +518,167 @@ public class ItemsMenu {
                 }
         );
 
+
         menu.openForPlayer(player);
     }
+
+    /*
+    public static void openApplyBlessingAnvilMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item, Integer blessing) {
+        ItemStack selectedItem;
+        ItemStack selectedBlessing;
+        if (item != null) {
+            selectedItem = new ItemBuilder(item.generateItemStack())
+                    .addLore(
+                            "",
+                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
+                    )
+                    .get();
+            if (blessing != null) {
+                ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
+                selectedBlessing = new ItemBuilder(Material.PAPER)
+                        .name(itemBlessing.getName())
+                        .addLore(
+                                ChatColor.GREEN + itemBlessing.getDescription(),
+                                "",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                        )
+                        .get();
+            } else {
+                selectedBlessing = new ItemBuilder(Material.PAPER)
+                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing")
+                        .get();
+            }
+        } else {
+            selectedItem = new ItemBuilder(Material.SKULL_ITEM)
+                    .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
+                    .get();
+            selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
+                    .name(ChatColor.RED + "Select an item first")
+                    .get();
+        }
+        new AnvilGUI.Builder()
+                .itemLeft(selectedItem)
+                .onLeftInputClick(p -> {
+                    openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), new PreviousAnvilMenuData(item, blessing));
+                })
+                .itemRight(selectedBlessing)
+                .onRightInputClick(p -> {
+                    openApplyBlessingBlessingSelectMenu(player, databasePlayer, new PreviousAnvilMenuData(item, blessing));
+                })
+                .plugin(Warlords.getInstance())
+                .open(player);
+
+    }
+
+    private static void openApplyBlessingItemSelectMenu(
+            Player player,
+            DatabasePlayer databasePlayer,
+            PlayerItemMenuSettings menuSettings,
+            PreviousAnvilMenuData previousAnvilMenuData
+    ) {
+        int page = menuSettings.getPage();
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        menuSettings.sort(playerSettings.getSelectedSpec(), Specializations.getClass(playerSettings.getSelectedSpec()));
+        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
+
+        Menu menu = new Menu("Select an Item", 9 * 5);
+
+        SortOptions sortedBy = menuSettings.getSortOption();
+        ItemTier filterBy = menuSettings.getTierFilter();
+        int addonFilter = menuSettings.getAddonFilter();
+
+        int x = 0;
+        int y = 1;
+        for (int i = 0; i < 45; i++) {
+            int itemNumber = ((page - 1) * 45) + i;
+            if (itemNumber < itemInventory.size()) {
+                AbstractItem<?, ?, ?> item = itemInventory.get(itemNumber);
+                menu.setItem(x, y,
+                        new ItemBuilder(item.generateItemStack())
+                                .addLore(
+                                        "",
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                                )
+                                .get(),
+                        (m, e) -> {
+                            openApplyBlessingAnvilMenu(player, databasePlayer, item, previousAnvilMenuData.getBlessing());
+                        }
+                );
+                x++;
+                if (x == 9) {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
+        if (page - 1 > 0) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .get(),
+                    (m, e) -> {
+                        menuSettings.setPage(page - 1);
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, previousAnvilMenuData);
+                    }
+            );
+        }
+        if (itemInventory.size() > (page * 45)) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .get(),
+                    (m, e) -> {
+                        menuSettings.setPage(page + 1);
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, previousAnvilMenuData);
+                    }
+            );
+        }
+
+        addItemMenuSettings(player, databasePlayer, menuSettings, sortedBy, filterBy, addonFilter, menu);
+
+        menu.setItem(4, 5,
+                MENU_BACK,
+                (m, e) -> {
+                    openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), previousAnvilMenuData.getBlessing());
+                }
+        );
+    }
+
+    private static void openApplyBlessingBlessingSelectMenu(
+            Player player,
+            DatabasePlayer databasePlayer,
+            PreviousAnvilMenuData previousAnvilMenuData
+    ) {
+        Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
+        for (int i = 0; i < 5; i++) {
+            int finalI = i;
+            Integer blessingAmount = databasePlayer.getPveStats().getItemsManager().getBlessingAmount(i + 1);
+            menu.setItem(i + 2, 1,
+                    new ItemBuilder(Material.PAPER)
+                            .name(ChatColor.GREEN + "Tier " + (i + 1))
+                            .lore(
+                                    ChatColor.GRAY + "Amount: " + blessingAmount,
+                                    "",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (true || blessingAmount > 0) {
+                            openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), finalI);
+                        }
+                    }
+            );
+        }
+        menu.setItem(4, 3,
+                MENU_BACK,
+                (m, e) -> {
+                    openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), previousAnvilMenuData.getBlessing());
+                }
+        );
+    }
+     */
 
     public enum SortOptions {
         DATE("Date", Comparator.comparing(AbstractItem::getObtainedDate)),
@@ -528,6 +698,26 @@ public class ItemsMenu {
             return VALUES[(ordinal() + 1) % VALUES.length];
         }
     }
+
+    /*
+    private static class PreviousAnvilMenuData {
+        private final AbstractItem<?, ?, ?> item;
+        private final Integer blessing;
+
+        public PreviousAnvilMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
+            this.item = item;
+            this.blessing = blessing;
+        }
+
+        public AbstractItem<?, ?, ?> getItem() {
+            return item;
+        }
+
+        public Integer getBlessing() {
+            return blessing;
+        }
+    }
+     */
 
     static class PlayerItemMenuSettings {
         public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};

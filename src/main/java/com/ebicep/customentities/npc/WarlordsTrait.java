@@ -17,7 +17,7 @@ public abstract class WarlordsTrait extends Trait {
     }
 
     @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
+    private void onRightClick(NPCRightClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
             if (!Warlords.getInstance().isEnabled()) {
                 // Fix old NPC standing around on Windows + plugin reload after new deployment
@@ -29,7 +29,7 @@ public abstract class WarlordsTrait extends Trait {
     }
 
     @EventHandler
-    public void onLeftClick(NPCLeftClickEvent event) {
+    private void onLeftClick(NPCLeftClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
             if (!Warlords.getInstance().isEnabled()) {
                 // Fix old NPC standing around on Windows + plugin reload after new deployment

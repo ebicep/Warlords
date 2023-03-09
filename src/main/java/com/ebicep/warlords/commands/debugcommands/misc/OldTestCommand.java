@@ -1,10 +1,13 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -27,16 +30,20 @@ public class OldTestCommand implements CommandExecutor {
 //            });
         }
 
-        for (ItemTier tier : ItemTier.VALID_VALUES) {
-            System.out.println("Tier: " + tier.name);
-            System.out.println("Bottom to Mid Increment: " + getBottomToMidIncrement(tier.weightRange, tier.weightRange.getNormal()));
-            System.out.println("Mid to Top Increment: " + getMidToTopIncrement(tier.weightRange, tier.weightRange.getNormal()));
-            //int i = 89;
-            for (int i = 0; i < 100; i += 5) {
-                System.out.println(tier.name + " - " + i + " = " + getWeight(i, tier));
-            }
-            //break;
+        for (Mobs value : Mobs.values()) {
+            System.out.println(value.createMob.apply(SPAWN_POINT).getName());
         }
+//
+//        for (ItemTier tier : ItemTier.VALID_VALUES) {
+//            System.out.println("Tier: " + tier.name);
+//            System.out.println("Bottom to Mid Increment: " + getBottomToMidIncrement(tier.weightRange, tier.weightRange.getNormal()));
+//            System.out.println("Mid to Top Increment: " + getMidToTopIncrement(tier.weightRange, tier.weightRange.getNormal()));
+//            //int i = 89;
+//            for (int i = 0; i < 100; i += 5) {
+//                System.out.println(tier.name + " - " + i + " = " + getWeight(i, tier));
+//            }
+//            //break;
+//        }
 
 //
 //        for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {

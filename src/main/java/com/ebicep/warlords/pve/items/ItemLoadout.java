@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve;
+package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;

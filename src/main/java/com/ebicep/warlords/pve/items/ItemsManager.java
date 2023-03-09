@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve;
+package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
@@ -6,7 +6,9 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemsManager {
 
@@ -28,6 +30,7 @@ public class ItemsManager {
     private List<ItemLoadout> loadouts = new ArrayList<>() {{
         add(new ItemLoadout("Default"));
     }};
+    private Map<Integer, Integer> blessings = new HashMap<>();
 
     public ItemsManager() {
     }
@@ -44,4 +47,11 @@ public class ItemsManager {
         return loadouts;
     }
 
+    public Integer getBlessingAmount(int tier) {
+        return blessings.getOrDefault(tier, 0);
+    }
+
+    public void addBlessing(int tier) {
+        blessings.merge(tier, 1, Integer::sum);
+    }
 }
