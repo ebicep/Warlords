@@ -20,19 +20,19 @@ import java.util.*;
 
 public enum Quests {
 
-    DAILY_300_KA("Tribute",
-            "Get 300 Kills/Assists in 1 game",
+    DAILY_150_KA("Tribute",
+            "Get 150 Kills/Assists in 1 game",
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.SYNTHETIC_SHARD, 30L);
                 put(Currencies.COIN, 7500L);
+                put(Currencies.SYNTHETIC_SHARD, 30L);
             }}
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
-            return total.getKills() + total.getAssists() >= 300;
+            return total.getKills() + total.getAssists() >= 150;
         }
     },
     DAILY_2_PLAYS("Motivate",
@@ -40,8 +40,8 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.SYNTHETIC_SHARD, 30L);
                 put(Currencies.COIN, 7500L);
+                put(Currencies.SYNTHETIC_SHARD, 30L);
             }}
     ) {
         @Override
@@ -64,13 +64,27 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.SYNTHETIC_SHARD, 50L);
                 put(Currencies.COIN, 15000L);
+                put(Currencies.SYNTHETIC_SHARD, 50L);
             }}
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getWins() >= 1 || waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
+        }
+    },
+    DAILY_20_WAVE_CLEAR("Wave Clearer",
+            "Clear a total of 20 waves",
+            PlayersCollections.DAILY,
+            null,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 7500L);
+                put(Currencies.SYNTHETIC_SHARD, 30L);
+            }}
+    ) {
+        @Override
+        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            return databasePlayer.getPveStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
         }
     },
 
@@ -79,8 +93,8 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.SYNTHETIC_SHARD, 300L);
                 put(Currencies.COIN, 50000L);
+                put(Currencies.SYNTHETIC_SHARD, 300L);
             }}
     ) {
         @Override
@@ -103,8 +117,8 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.SYNTHETIC_SHARD, 150L);
                 put(Currencies.COIN, 25000L);
+                put(Currencies.SYNTHETIC_SHARD, 150L);
             }}
     ) {
         @Override
