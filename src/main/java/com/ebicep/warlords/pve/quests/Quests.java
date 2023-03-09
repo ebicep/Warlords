@@ -86,6 +86,16 @@ public enum Quests {
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
         }
+
+        @Override
+        public String getProgress(DatabasePlayer databasePlayer) {
+            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getTotalWavesCleared() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        }
+
+        @Override
+        public String getNoProgress() {
+            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        }
     },
 
     WEEKLY_20_PLAYS("Devotion",
