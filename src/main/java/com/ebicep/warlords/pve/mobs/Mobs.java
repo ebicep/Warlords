@@ -104,13 +104,13 @@ public enum Mobs {
     EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
     EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
     EVENT_NARMER_DJET(EventDjet.class, EventDjet::new),
-    EVENT_MITHRA_FORSAKEN_FROST(EventSpiderForsakenFrost.class, EventSpiderForsakenFrost::new),
-    EVENT_MITHRA_FORSAKEN_FOLIAGE(EventSpiderForsakenFoliage.class, EventSpiderForsakenFoliage::new),
-    EVENT_MITHRA_FORSAKEN_SHRIEKER(EventSpiderForsakenShrieker.class, EventSpiderForsakenShrieker::new),
-    EVENT_MITHRA_FORSAKEN_RESPITE(EventSpiderForsakenRespite.class, EventSpiderForsakenRespite::new),
-    EVENT_MITHRA_FORSAKEN_CRUOR(EventSpiderForsakenCruor.class, EventSpiderForsakenCruor::new),
-    EVENT_MITHRA_FORSAKEN_DEGRADER(EventSpiderForsakenDegrader.class, EventSpiderForsakenDegrader::new),
-    EVENT_MITHRA_FORSAKEN_ABERRATION(EventSpiderForsakenAberration.class, EventSpiderForsakenAberration::new),
+    EVENT_MITHRA_FORSAKEN_FROST(EventForsakenFrost.class, EventForsakenFrost::new),
+    EVENT_MITHRA_FORSAKEN_FOLIAGE(EventForsakenFoliage.class, EventForsakenFoliage::new),
+    EVENT_MITHRA_FORSAKEN_SHRIEKER(EventForsakenShrieker.class, EventForsakenShrieker::new),
+    EVENT_MITHRA_FORSAKEN_RESPITE(EventForsakenRespite.class, EventForsakenRespite::new),
+    EVENT_MITHRA_FORSAKEN_CRUOR(EventForsakenCruor.class, EventForsakenCruor::new),
+    EVENT_MITHRA_FORSAKEN_DEGRADER(EventForsakenDegrader.class, EventForsakenDegrader::new),
+    EVENT_MITHRA_FORSAKEN_ABERRATION(EventForsakenAberration.class, EventForsakenAberration::new),
 
 
     ;

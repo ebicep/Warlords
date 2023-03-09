@@ -145,6 +145,41 @@ public enum SkullID {
             "009a87cf-a01b-4f26-ba2b-75dbee0cea98",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZThmNWRjOTI3OTIzMjc5MTI3YTlkMmFkZTg2NDMyZjk4Nzc2MDljYjlmODM4NTRhNWI4OTJiZjdjYWQ5ZGYyZiJ9fX0="
     ),
+    //https://minecraft-heads.com/custom-heads/monsters/40957-white-spider
+    WHITE_SPIDER(
+            "5ca9d769-742d-4483-a8c5-1e42502bb779",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ1Y2ViMjBiMGExYjNmNDU4ZWE0NTA0Y2QwYzI3MTJkYjJmZTk3OTRmY2Q3YTVlMTgwMTI3YTQ4ZWMyNjQ3MyJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/44568-jungle-spider
+    JUNGLE_SPIDER(
+            "d822d63c-c59a-42e5-8f60-0b4b4bc323fd",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2I1Y2NjZjRhYjExNDFjMzZmZmZiZmViZDZkMDlmMjVmMTBjODUxMmI1Y2JmMGMxNzRlMGQ1MzhjNmEzMThmMiJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/52049-deep-dark-crawler
+    DEEP_DARK_CRAWLER(
+            "da308d95-f9c7-4406-9e49-48f6c5bb4125",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODk4ZTJmODU0YzJkMmRlNzU5NWIyMWJjMmY5MzYyMDA2ZWE3MmNiNjExODFkMmE5OWUwNjExY2Q3NDkwNzY5MyJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/49995-spider-skull
+    SPIDER(
+            "80a7a6fd-ea9d-421f-9909-c2aa99789a93",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg1YzFlZTYxZjJiZDQ0M2MwYTllNjE3ZjM3MjAzY2RmZjQ0MGJmYTJkMDBiNmRkMzZmZjgzNGNkODcwMmQ5In19fQ="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/23540-blood-spider
+    BLOOD_SPIDER(
+            "bf0be255-89ce-415a-b7ca-037424dce343",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODMwMDk4NmVkMGEwNGVhNzk5MDRmNmFlNTNmNDllZDNhMGZmNWIxZGY2MmJiYTYyMmVjYmQzNzc3ZjE1NmRmOCJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/2533-decapitated-spider
+    DECAPITATED_SPIDER(
+            "0dd94060-fd14-486c-9339-2a896dbd991d",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ3YmVlNDJmZGE1ZmUyYjhhZTI2ZmNmNDE0MGNhNTRkNWQzMzRiMmFlMWZlZDlmMWMwOGJhZWI2M2E3ZiJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/humanoid/48315-spider-spirit
+    SPIDER_SPIRIT(
+            "bded57c8-92a5-409b-9b6e-45788ce5c291",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU3MWFmMGM5MjEyMzM3OTdkODU1YzUyMDBhOTBlOTVhMWQ3YzdhNDAxY2FhMThiYjdmZWEwMjFmY2E0OTE1MyJ9fX0="
+    ),
 
     ;
 
