@@ -29,9 +29,10 @@ public class GroundSlam extends AbstractAbility {
 
     private int slamSize = 6;
     private float velocity = 1.25f;
+    private boolean trueDamage = false;
 
-    public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public GroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+        super("Ground Slam", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
     @Override
@@ -51,8 +52,8 @@ public class GroundSlam extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
-        activateAbility(wp, player, 1);
+        Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
+        activateAbility(wp, 1);
 
         if (pveUpgrade) {
             wp.setVelocity(name, new Vector(0, 1.2, 0), true);
@@ -68,7 +69,7 @@ public class GroundSlam extends AbstractAbility {
                         this.cancel();
                     }
 
-                    boolean hitGround = player.isOnGround();
+                    boolean hitGround = wp.getEntity().isOnGround();
 
                     if (wasOnGround && !hitGround) {
                         wasOnGround = false;
@@ -79,7 +80,7 @@ public class GroundSlam extends AbstractAbility {
 
                         Utils.playGlobalSound(wp.getLocation(), Sound.IRONGOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
-                        activateAbility(wp, player, 1.5f);
+                        activateAbility(wp, 1.5f);
                         this.cancel();
                     }
                 }
@@ -88,17 +89,17 @@ public class GroundSlam extends AbstractAbility {
         return true;
     }
 
-    private void activateAbility(@Nonnull WarlordsEntity wp, @Nonnull Player player, float damageMultiplier) {
+    private void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
-        Location location = player.getLocation();
+        Location location = wp.getLocation();
 
         for (int i = 0; i < slamSize; i++) {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
 
-        fallingBlockLocations.get(0).add(player.getLocation());
+        fallingBlockLocations.get(0).add(wp.getLocation());
 
         new GameRunnable(wp.getGame()) {
             @Override
@@ -137,7 +138,7 @@ public class GroundSlam extends AbstractAbility {
                                     maxDamageHeal * damageMultiplier,
                                     critChance,
                                     critMultiplier,
-                                    false
+                                    trueDamage
                             );
                         }
                     }
@@ -244,6 +245,10 @@ public class GroundSlam extends AbstractAbility {
 
     public void setVelocity(float velocity) {
         this.velocity = velocity;
+    }
+
+    public void setTrueDamage(boolean trueDamage) {
+        this.trueDamage = trueDamage;
     }
 }
 

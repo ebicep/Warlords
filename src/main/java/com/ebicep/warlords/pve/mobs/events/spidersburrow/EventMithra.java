@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilties.GroundSlam;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -19,14 +20,20 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventMithra extends AbstractZombie implements BossMob {
 
-    private boolean flamePhaseTrigger = false;
-    private boolean flamePhaseTriggerTwo = false;
     private boolean preventBarrage = false;
+    private boolean entangledState = false;
+    private List<EventEggSac> eggSacs = new ArrayList<>();
 
     public EventMithra(Location spawnLocation) {
         super(spawnLocation,
@@ -63,6 +70,18 @@ public class EventMithra extends AbstractZombie implements BossMob {
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new Spider(spawnLocation));
         }
+
+        option.getGame().registerEvents(new Listener() {
+
+            @EventHandler
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                if (entangledState) {
+                    if (event.getPlayer().equals(warlordsNPC) || event.getAttacker().equals(warlordsNPC)) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -109,16 +128,30 @@ public class EventMithra extends AbstractZombie implements BossMob {
             }.runTaskLater(40);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.7f) && !flamePhaseTrigger) {
-            flamePhaseTrigger = true;
-            preventBarrage = true;
-            immolation(option, loc);
-        }
+        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledState) {
+            entangledState = true;
+            GroundSlam groundSlam = new GroundSlam(1000, 1000, 0, 0, 0, 0);
+            groundSlam.setTrueDamage(true);
+            groundSlam.onActivate(warlordsNPC, null);
+            new GameRunnable(warlordsNPC.getGame()) {
+                int ticksElapsed = 0;
+                List<Block> webs = new ArrayList<>();
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
-            flamePhaseTriggerTwo = true;
-            preventBarrage = true;
-            immolation(option, loc);
+                @Override
+                public void run() {
+                    int ticksLeft = 200 - ticksElapsed;
+                    for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                        if (we.getEntity() instanceof Player) {
+                            PacketUtils.sendTitle(
+                                    (Player) we.getEntity(),
+                                    ChatColor.RED + "Entangled",
+                                    ChatColor.YELLOW.toString() + ticksLeft / 20f,
+                                    0, ticksLeft, 0
+                            );
+                        }
+                    }
+                }
+            }.runTaskTimer(30, 0);
         }
     }
 
@@ -161,86 +194,5 @@ public class EventMithra extends AbstractZombie implements BossMob {
                 }
             }
         }.runTaskTimer(0, delayBetweenShots);
-    }
-
-    private void immolation(PveOption option, Location loc) {
-        warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
-        for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
-        }
-
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + "PREPARE TO DIE",
-                        ChatColor.LIGHT_PURPLE + "Immolation Spell",
-                        20, 60, 20
-                );
-            }
-        }
-
-        float damage;
-        switch (option.getDifficulty()) {
-            case ENDLESS:
-            case HARD:
-                damage = 200;
-                break;
-            case EASY:
-                damage = 50;
-                break;
-            default:
-                damage = 100;
-                break;
-        }
-        new GameRunnable(warlordsNPC.getGame()) {
-            int counter = 0;
-
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead()) {
-                    this.cancel();
-                    return;
-                }
-
-                counter++;
-                double radius = (2 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
-                for (WarlordsEntity flameTarget : PlayerFilter
-                        .entitiesAround(warlordsNPC, radius, radius, radius)
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
-                    flameTarget.addDamageInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage,
-                            damage,
-                            0,
-                            100,
-                            false
-                    );
-
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage * 0.5f,
-                            damage * 0.5f,
-                            0,
-                            100,
-                            false,
-                            false
-                    );
-                }
-
-                if (counter == 50) {
-                    preventBarrage = false;
-                    this.cancel();
-                    warlordsNPC.getSpeed().addBaseModifier(70);
-                }
-            }
-        }.runTaskTimer(40, 5);
     }
 }
