@@ -8,11 +8,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.spider.Spider;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -28,11 +29,12 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class EventMithra extends AbstractZombie implements BossMob {
 
-    private boolean preventBarrage = false;
     private boolean entangledState = false;
+    private boolean enragedState = false;
     private List<EventEggSac> eggSacs = new ArrayList<>();
 
     public EventMithra(Location spawnLocation) {
@@ -111,23 +113,6 @@ public class EventMithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 200 == 0 && !preventBarrage) {
-            int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 7 : 10;
-            Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
-            Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
-            new GameRunnable(warlordsNPC.getGame()) {
-                @Override
-                public void run() {
-                    if (warlordsNPC.isDead()) {
-                        this.cancel();
-                    }
-
-                    warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 100);
-                    flameBurstBarrage(multiplier, 8);
-                }
-            }.runTaskLater(40);
-        }
-
         if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledState) {
             entangledState = true;
             GroundSlam groundSlam = new GroundSlam(1000, 1000, 0, 0, 0, 0);
@@ -135,10 +120,48 @@ public class EventMithra extends AbstractZombie implements BossMob {
             groundSlam.onActivate(warlordsNPC, null);
             new GameRunnable(warlordsNPC.getGame()) {
                 int ticksElapsed = 0;
-                List<Block> webs = new ArrayList<>();
+                final List<Block> webs = new ArrayList<>();
 
                 @Override
                 public void run() {
+                    if (ticksElapsed == 0) {
+                        List<Location> cube = new ArrayList<>();
+                        LocationBuilder startingCorner = new LocationBuilder(warlordsNPC.getLocation())
+                                .backward(2)
+                                .left(2);
+                        cube.add(startingCorner.clone());
+                        for (int y = 0; y < 5; y++) {
+                            for (int i = 0; i < 5; i++) {
+                                for (int k = 0; k < 5; k++) {
+                                    startingCorner.forward(1);
+                                    cube.add(startingCorner.clone());
+                                }
+                                startingCorner.backward(5);
+                                startingCorner.right(1);
+                            }
+                            startingCorner.addY(1);
+                        }
+                        cube.forEach(location -> {
+                            Block blockAt = warlordsNPC.getWorld().getBlockAt(location);
+                            if (blockAt.getType() != Material.AIR) {
+                                webs.add(blockAt);
+                            }
+                        });
+                        for (Block block : webs) {
+                            block.setType(Material.WEB);
+                        }
+
+                        // TODO check valid spawns
+                        LocationBuilder spawnLocation = new LocationBuilder(warlordsNPC.getLocation());
+                        for (int i = 0; i < playerCount; i++) {
+                            spawnLocation.pitch(ThreadLocalRandom.current().nextInt(0, 360));
+                            spawnLocation.forward(2);
+                            EventEggSac eggSac = new EventEggSac(spawnLocation);
+                            eggSacs.add(eggSac);
+                            option.spawnNewMob(eggSac);
+                        }
+                    }
+
                     int ticksLeft = 200 - ticksElapsed;
                     for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
                         if (we.getEntity() instanceof Player) {
@@ -150,8 +173,44 @@ public class EventMithra extends AbstractZombie implements BossMob {
                             );
                         }
                     }
+
+                    if (++ticksElapsed >= 200) {
+                        entangledState = false;
+                        for (Block b : webs) {
+                            b.setType(Material.AIR);
+                        }
+                        // check egg sacs
+                        float healthGain = warlordsNPC.getMaxBaseHealth() * .05f;
+                        for (EventEggSac eggSac : eggSacs) {
+                            if (option.getMobs().contains(eggSac)) {
+                                WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
+                                Location location = eggSacWarlordsNPC.getLocation();
+                                eggSacWarlordsNPC.die(eggSacWarlordsNPC);
+                                for (int i = 0; i < 3; i++) {
+                                    option.spawnNewMob(new EventPoisonousSpider(location));
+                                }
+                                warlordsNPC.addHealingInstance(
+                                        warlordsNPC,
+                                        "Entangled",
+                                        healthGain,
+                                        healthGain,
+                                        0,
+                                        0,
+                                        false,
+                                        false
+                                );
+                            }
+                        }
+                        this.cancel();
+                    }
+
                 }
             }.runTaskTimer(30, 0);
+        }
+
+        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .3 && !enragedState) {
+            enragedState = true;
+
         }
     }
 
@@ -173,26 +232,5 @@ public class EventMithra extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
-    }
-
-    private void flameBurstBarrage(int delayBetweenShots, int amountOfShots) {
-        new GameRunnable(warlordsNPC.getGame()) {
-            int counter = 0;
-
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead() || preventBarrage) {
-                    this.cancel();
-                    return;
-                }
-
-                counter++;
-                warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
-
-                if (counter == amountOfShots) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, delayBetweenShots);
     }
 }

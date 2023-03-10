@@ -16,11 +16,11 @@ public class EventEggSac extends AbstractZombie implements BossMob {
                 "Egg Sac",
                 MobTier.BASE,
                 null,
-                4000,
-                17.14f,
+                10000,
                 0,
-                750,
-                850
+                0,
+                0,
+                0
         );
     }
 
