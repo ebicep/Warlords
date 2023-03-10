@@ -12,8 +12,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
@@ -246,21 +244,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         if (databaseGame instanceof DatabaseGamePvEEvent) {
             assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
             eventStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-            switch (((DatabaseGamePvEEvent) databaseGame).getEvent()) {
-                case BOLTARO:
-                    if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 50_000) * multiplier);
-                    } else {
-                        addCurrency(Currencies.EVENT_POINTS_BOLTARO, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 15_000) * multiplier);
-                    }
-                    break;
-                case NARMER:
-                    if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
-                        addCurrency(Currencies.EVENT_POINTS_NARMER, Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), 100_000) * multiplier);
-                    }
-                    break;
-            }
-
+            addCurrency(
+                    ((DatabaseGamePvEEvent) databaseGame).getEvent().currency,
+                    Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), ((DatabaseGamePvEEvent) databaseGame).getPointLimit()) * multiplier
+            );
         } else {
             PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
             if (difficultyStats != null) {

@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -73,9 +73,8 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
             ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
 
-        //TODO
         //MODES
-        if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
+        if (databaseGame instanceof DatabaseGamePvEEventSpidersDwelling) {
             this.spidersDwellingStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         }
     }

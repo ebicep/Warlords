@@ -180,8 +180,16 @@ public enum SkullID {
             "bded57c8-92a5-409b-9b6e-45788ce5c291",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU3MWFmMGM5MjEyMzM3OTdkODU1YzUyMDBhOTBlOTVhMWQ3YzdhNDAxY2FhMThiYjdmZWEwMjFmY2E0OTE1MyJ9fX0="
     ),
-
-    ;
+    //https://minecraft-heads.com/custom-heads/decoration/45040-spider-egg-sac
+    EGG_SAC(
+            "7424d4ae-1103-468f-a4b9-2da89c2d7816",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTI4NmE2Mjg4NjRlZmVjNzZkMjFmMWJmYjg0ZDE4MDliMzAyZGVhYjcyOGI4ZGFiNmJlODA0NjdiN2U2ZmNlOCJ9fX0"
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/315-cave-spider
+    CAVE_SPIDER(
+            "39173a7a-c957-4ec1-ac1a-43e5a64983df",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDE2NDVkZmQ3N2QwOTkyMzEwN2IzNDk2ZTk0ZWViNWMzMDMyOWY5N2VmYzk2ZWQ3NmUyMjZlOTgyMjQifX19"
+    );
 
     private final String id;
     private final String textureId;

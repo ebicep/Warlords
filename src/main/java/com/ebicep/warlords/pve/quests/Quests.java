@@ -19,7 +19,17 @@ import java.time.Instant;
 import java.util.*;
 
 public enum Quests {
-
+    DAILY_300_KA("Tribute [LEGACY]",
+            "Get 150 Kills/Assists in 1 game",
+            null,
+            null,
+            null
+    ) {
+        @Override
+        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            return false;
+        }
+    },
     DAILY_150_KA("Tribute",
             "Get 150 Kills/Assists in 1 game",
             PlayersCollections.DAILY,
@@ -154,6 +164,9 @@ public enum Quests {
         List<Quests> questsCompleted = new ArrayList<>();
 
         for (Quests quest : VALUES) {
+            if (quest.time == null) {
+                continue;
+            }
             if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
                 continue;
             }
@@ -191,14 +204,6 @@ public enum Quests {
         this.rewards = rewards;
     }
 
-    public String getProgress(DatabasePlayer databasePlayer) {
-        return ChatColor.GREEN + "Started";
-    }
-
-    public String getNoProgress() {
-        return ChatColor.GREEN + "Started";
-    }
-
     public ItemStack getItemStack(DatabasePlayer databasePlayer, boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
                 .name(ChatColor.GREEN + time.name + ": " + name)
@@ -207,7 +212,7 @@ public enum Quests {
                         ChatColor.GRAY + description,
                         "",
                         ChatColor.GRAY + "Progress: " + (completed ? ChatColor.GREEN + "Completed" :
-                                databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
+                                                         databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
                         "",
                         ChatColor.GRAY + "Rewards:"
                 );
@@ -218,6 +223,14 @@ public enum Quests {
         }
         return itemBuilder.get();
 
+    }
+
+    public String getNoProgress() {
+        return ChatColor.GREEN + "Started";
+    }
+
+    public String getProgress(DatabasePlayer databasePlayer) {
+        return ChatColor.GREEN + "Started";
     }
 
     public String getHoverText() {

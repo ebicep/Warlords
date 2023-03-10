@@ -3,8 +3,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePlayerPvEEventNarmersTomb;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePlayerPvEEventSpidersDwelling;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.PvEEventBoltaroDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -28,17 +28,16 @@ public class PvEEventSpidersDwellingDatabaseStatInformation extends PvEEventBolt
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvEEventNarmersTomb;
-        assert gamePlayer instanceof DatabaseGamePlayerPvEEventNarmersTomb;
+        assert databaseGame instanceof DatabaseGamePvEEventSpidersDwelling;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEEventSpidersDwelling;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        //TODO
         if (multiplier > 0) {
-            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
-        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared()) {
+            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
+        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared()) {
             this.highestWaveCleared = 0;
         }
-        this.totalWavesCleared += ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier;
+        this.totalWavesCleared += ((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared() * multiplier;
     }
 
     public void setHighestWaveCleared(int highestWaveCleared) {

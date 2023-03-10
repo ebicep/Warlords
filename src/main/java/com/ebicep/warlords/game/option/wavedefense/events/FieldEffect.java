@@ -156,10 +156,7 @@ public class FieldEffect implements Option {
             }
         },
         ARACHNOPHOBIA("Arachnophobia",
-                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders. " +
-                        "Ability cooldowns are reduced by .5s for waves 1-5, " +
-                        "1s for waves 6-10, 1.5s for waves 11-15, " +
-                        "and so on until wave 25 with a reduction of 2.5s."
+                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders."
         ) {
             @Override
             public void onStart(Game game) {
@@ -181,6 +178,18 @@ public class FieldEffect implements Option {
                             event.setMax(event.getMax() * 1.3f);
                         }
                     }
+
+//                    @EventHandler
+//                    public void onWaveClear(WarlordsGameWaveClearEvent event) {
+//                        int waveCleared = event.getWaveCleared();
+//                        if (waveCleared != 0 && waveCleared % 5 == 0 && waveCleared <= 25) {
+//                            game.warlordsPlayers().forEach(warlordsPlayer -> {
+//                                for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+//                                    ability.setCooldown(ability.getCooldown() - .5f);
+//                                }
+//                            });
+//                        }
+//                    }
 
                 });
             }

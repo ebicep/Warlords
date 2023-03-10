@@ -6,7 +6,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.pve.SkullID;
+import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 public class EventPoisonousSpider extends AbstractZombie implements BossMob {
 
@@ -14,10 +19,16 @@ public class EventPoisonousSpider extends AbstractZombie implements BossMob {
         super(
                 spawnLocation,
                 "Poisonous Spider",
-                MobTier.BASE,
-                null,
+                MobTier.BOSS,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.CAVE_SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
+                        null
+                ),
                 4000,
-                17.14f,
+                .55f,
                 0,
                 750,
                 850
@@ -31,7 +42,20 @@ public class EventPoisonousSpider extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-
+        // Poisons enemies every 3s dealing 375-500 true damage.
+        if (ticksElapsed % 60 == 0) {
+            PlayerFilterGeneric.playingGame(option.getGame())
+                               .enemiesOf(warlordsNPC)
+                               .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
+                                       warlordsNPC,
+                                       "Poison",
+                                       375,
+                                       500,
+                                       0,
+                                       0,
+                                       true
+                               ));
+        }
     }
 
     @Override

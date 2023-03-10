@@ -67,6 +67,11 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
+    public int getPointLimit() {
+        return 15_000;
+    }
+
+    @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltaroBonanza -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,

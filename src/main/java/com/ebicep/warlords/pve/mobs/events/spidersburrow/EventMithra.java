@@ -9,6 +9,8 @@ import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.spider.Spider;
@@ -27,15 +29,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EventMithra extends AbstractZombie implements BossMob {
 
-    private boolean entangledState = false;
+    private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.0");
+    private final List<EventEggSac> eggSacs = new ArrayList<>();
+    private boolean entangledStateComplete = false;
+    private boolean inEntangledState = false;
     private boolean enragedState = false;
-    private List<EventEggSac> eggSacs = new ArrayList<>();
 
     public EventMithra(Location spawnLocation) {
         super(spawnLocation,
@@ -77,8 +83,11 @@ public class EventMithra extends AbstractZombie implements BossMob {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (entangledState) {
-                    if (event.getPlayer().equals(warlordsNPC) || event.getAttacker().equals(warlordsNPC)) {
+                if (inEntangledState) {
+                    if (!event.getPlayer().equals(warlordsNPC) && !event.getAttacker().equals(warlordsNPC)) {
+                        return;
+                    }
+                    if (!event.getAbility().equals("Ground Slam")) {
                         event.setCancelled(true);
                     }
                 }
@@ -113,105 +122,173 @@ public class EventMithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledState) {
-            entangledState = true;
-            GroundSlam groundSlam = new GroundSlam(1000, 1000, 0, 0, 0, 0);
-            groundSlam.setTrueDamage(true);
-            groundSlam.onActivate(warlordsNPC, null);
+        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledStateComplete) {
+            entangledStateComplete = true;
+            inEntangledState = true;
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SLIME_ATTACK, 2, 1.5f);
+            groundSlam();
             new GameRunnable(warlordsNPC.getGame()) {
-                int ticksElapsed = 0;
                 final List<Block> webs = new ArrayList<>();
+                int ticksElapsed = 0;
 
                 @Override
                 public void run() {
                     if (ticksElapsed == 0) {
-                        List<Location> cube = new ArrayList<>();
-                        LocationBuilder startingCorner = new LocationBuilder(warlordsNPC.getLocation())
-                                .backward(2)
-                                .left(2);
-                        cube.add(startingCorner.clone());
-                        for (int y = 0; y < 5; y++) {
-                            for (int i = 0; i < 5; i++) {
-                                for (int k = 0; k < 5; k++) {
-                                    startingCorner.forward(1);
-                                    cube.add(startingCorner.clone());
-                                }
-                                startingCorner.backward(5);
-                                startingCorner.right(1);
-                            }
-                            startingCorner.addY(1);
-                        }
-                        cube.forEach(location -> {
-                            Block blockAt = warlordsNPC.getWorld().getBlockAt(location);
-                            if (blockAt.getType() != Material.AIR) {
-                                webs.add(blockAt);
-                            }
-                        });
-                        for (Block block : webs) {
-                            block.setType(Material.WEB);
-                        }
-
+                        warlordsNPC.setStunTicks(195);
+                        spawnWebs();
                         // TODO check valid spawns
-                        LocationBuilder spawnLocation = new LocationBuilder(warlordsNPC.getLocation());
-                        for (int i = 0; i < playerCount; i++) {
-                            spawnLocation.pitch(ThreadLocalRandom.current().nextInt(0, 360));
-                            spawnLocation.forward(2);
-                            EventEggSac eggSac = new EventEggSac(spawnLocation);
-                            eggSacs.add(eggSac);
-                            option.spawnNewMob(eggSac);
-                        }
+                        spawnEggSacs();
                     }
 
-                    int ticksLeft = 200 - ticksElapsed;
-                    for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                        if (we.getEntity() instanceof Player) {
+                    if (ticksElapsed % 2 == 0) {
+                        int ticksLeft = 200 - ticksElapsed;
+                        option.getGame().onlinePlayers().forEach(playerTeamEntry -> {
                             PacketUtils.sendTitle(
-                                    (Player) we.getEntity(),
+                                    playerTeamEntry.getKey(),
                                     ChatColor.RED + "Entangled",
-                                    ChatColor.YELLOW.toString() + ticksLeft / 20f,
+                                    ChatColor.YELLOW + TIME_FORMAT.format(ticksLeft / 20f),
                                     0, ticksLeft, 0
                             );
-                        }
+                        });
                     }
 
                     if (++ticksElapsed >= 200) {
-                        entangledState = false;
-                        for (Block b : webs) {
-                            b.setType(Material.AIR);
-                        }
+                        inEntangledState = false;
+                        setBlocks(Material.AIR);
                         // check egg sacs
-                        float healthGain = warlordsNPC.getMaxBaseHealth() * .05f;
-                        for (EventEggSac eggSac : eggSacs) {
-                            if (option.getMobs().contains(eggSac)) {
-                                WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
-                                Location location = eggSacWarlordsNPC.getLocation();
-                                eggSacWarlordsNPC.die(eggSacWarlordsNPC);
-                                for (int i = 0; i < 3; i++) {
-                                    option.spawnNewMob(new EventPoisonousSpider(location));
-                                }
-                                warlordsNPC.addHealingInstance(
-                                        warlordsNPC,
-                                        "Entangled",
-                                        healthGain,
-                                        healthGain,
-                                        0,
-                                        0,
-                                        false,
-                                        false
-                                );
-                            }
-                        }
+                        checkUnbrokenEggSacs();
                         this.cancel();
                     }
 
                 }
-            }.runTaskTimer(30, 0);
+
+                private void spawnWebs() {
+                    List<Location> cube = getCubeLocations();
+                    cube.forEach(location -> {
+                        Block blockAt = warlordsNPC.getWorld().getBlockAt(location);
+                        if (blockAt.getType() == Material.AIR) {
+                            webs.add(blockAt);
+                        }
+                    });
+                    setBlocks(Material.WEB);
+                }
+
+                private void spawnEggSacs() {
+                    LocationBuilder startingLocation = new LocationBuilder(warlordsNPC.getLocation())
+                            .yaw(0)
+                            .pitch(0);
+                    for (int i = 0; i < playerCount + 1; i++) {
+                        LocationBuilder spawnLocation = startingLocation.clone();
+                        spawnLocation.yaw(ThreadLocalRandom.current().nextInt(0, 360));
+                        spawnLocation.forward(3);
+                        EventEggSac eggSac = new EventEggSac(spawnLocation);
+                        eggSacs.add(eggSac);
+                        option.spawnNewMob(eggSac);
+                    }
+                }
+
+                private void setBlocks(Material material) {
+                    for (Block b : webs) {
+                        b.setType(material);
+                    }
+                }
+
+                private void checkUnbrokenEggSacs() {
+                    float healthGain = warlordsNPC.getMaxBaseHealth() * .05f;
+                    for (EventEggSac eggSac : eggSacs) {
+                        if (!option.getMobs().contains(eggSac)) {
+                            continue;
+                        }
+                        WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
+                        eggSacWarlordsNPC.die(eggSacWarlordsNPC);
+                        Location location = eggSacWarlordsNPC.getLocation();
+                        if (EventEggSac.ARMOR_STAND) {
+                            location.add(0, 1.31, 0);
+                        }
+                        for (int i = 0; i < 3; i++) {
+                            option.spawnNewMob(new EventPoisonousSpider(location));
+                        }
+                        warlordsNPC.addHealingInstance(
+                                warlordsNPC,
+                                "Entangled",
+                                healthGain,
+                                healthGain,
+                                0,
+                                0,
+                                false,
+                                false
+                        );
+                    }
+                }
+
+                @Nonnull
+                private List<Location> getCubeLocations() {
+                    List<Location> cube = new ArrayList<>();
+                    LocationBuilder startingCorner = new LocationBuilder(warlordsNPC.getLocation())
+                            .yaw(0)
+                            .pitch(0)
+                            .backward(3)
+                            .left(2);
+                    //cube.add(startingCorner.clone());
+                    for (int y = 0; y < 4; y++) {
+                        for (int i = 0; i < 5; i++) {
+                            for (int k = 0; k < 5; k++) {
+                                startingCorner.forward(1);
+                                cube.add(startingCorner.clone());
+                            }
+                            startingCorner.backward(5);
+                            startingCorner.right(1);
+                        }
+                        startingCorner.left(5);
+                        startingCorner.addY(1);
+                    }
+                    return cube;
+                }
+            }.runTaskTimer(0, 0);
         }
 
         if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .3 && !enragedState) {
             enragedState = true;
-
+            Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.berserk.activation", 2, .5f);
+            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Enraged",
+                    null,
+                    EventMithra.class,
+                    null,
+                    warlordsNPC,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    false,
+                    (cooldown, ticks) -> {
+                        if (ticks % 3 == 0) {
+                            ParticleEffect.VILLAGER_ANGRY.display(
+                                    0,
+                                    0,
+                                    0,
+                                    0.1f,
+                                    1,
+                                    warlordsNPC.getLocation().add(0, 1.75, 0),
+                                    500
+                            );
+                        }
+                    }
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 1.15f;
+                }
+            });
+            warlordsNPC.getSpec().setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
+            warlordsNPC.getSpeed().addBaseModifier(5);
         }
+    }
+
+    private void groundSlam() {
+        GroundSlam groundSlam = new GroundSlam(1000, 1000, 0, 0, 0, 0);
+        groundSlam.setTrueDamage(true);
+        groundSlam.setSlamSize(9);
+        groundSlam.onActivate(warlordsNPC, null);
     }
 
     @Override

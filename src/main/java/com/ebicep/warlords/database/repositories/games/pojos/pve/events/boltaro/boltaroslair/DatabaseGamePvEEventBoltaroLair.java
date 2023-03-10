@@ -68,6 +68,11 @@ public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent implem
     }
 
     @Override
+    public int getPointLimit() {
+        return 50_000;
+    }
+
+    @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltarosLair -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,

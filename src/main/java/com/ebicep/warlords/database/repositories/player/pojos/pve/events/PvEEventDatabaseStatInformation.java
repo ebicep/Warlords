@@ -6,8 +6,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -37,13 +35,7 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
         DatabaseGamePvEEvent databaseGamePvEEvent = (DatabaseGamePvEEvent) databaseGame;
         DatabaseGamePlayerPvEEvent databaseGamePlayerPvEEvent = (DatabaseGamePlayerPvEEvent) gamePlayer;
 
-        if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 50_000) * multiplier;
-        } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 15_000) * multiplier;
-        } else {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 100_000) * multiplier;
-        }
+        this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), databaseGamePvEEvent.getPointLimit()) * multiplier;
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, databaseGamePlayerPvEEvent.getPoints());
         } else if (highestEventPointsGame == databaseGamePlayerPvEEvent.getPoints()) {

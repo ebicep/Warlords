@@ -38,10 +38,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -446,9 +443,7 @@ public class WarlordsEvents implements Listener {
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                         break;
                     default:
-                        if (heldItemSlot == 0 ||
-                                PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE
-                        ) {
+                        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
                             if (heldItemSlot == 8 && wp instanceof WarlordsPlayer) {
                                 WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
@@ -469,6 +464,30 @@ public class WarlordsEvents implements Listener {
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {
 
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
+        if (e.getRightClicked().getType() != EntityType.ARMOR_STAND) {
+            return;
+        }
+        Player player = e.getPlayer();
+        WarlordsEntity wp = Warlords.getPlayer(player);
+        if (wp == null) {
+            return;
+        }
+        int heldItemSlot = player.getInventory().getHeldItemSlot();
+        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer) {
+                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                if (weapon instanceof AbstractLegendaryWeapon) {
+                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                }
+            } else {
+                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
             }
         }
     }

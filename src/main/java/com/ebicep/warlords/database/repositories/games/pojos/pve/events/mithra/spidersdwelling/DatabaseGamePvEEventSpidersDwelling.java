@@ -64,7 +64,7 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
 
     @Override
     public GameEvents getEvent() {
-        return GameEvents.NARMER;
+        return GameEvents.MITHRA;
     }
 
     @Override

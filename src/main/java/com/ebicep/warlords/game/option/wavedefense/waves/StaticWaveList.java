@@ -15,6 +15,20 @@ public class StaticWaveList implements WaveList {
         return this;
     }
 
+    public StaticWaveList loop(int loopAmount, int waveToLoop, int increment) {
+        for (int i = 0; i < loopAmount; i++) {
+            waves.put(waveToLoop + increment * i, waves.get(waveToLoop));
+        }
+        return this;
+    }
+
+    public StaticWaveList print() {
+        waves.keySet().stream().sorted(Integer::compareTo).forEachOrdered(integer -> {
+            System.out.println(integer + ": " + waves.get(integer).getMonsterCount());
+        });
+        return this;
+    }
+
     @Override
     public Wave getWave(int wave, Random random) {
         lastWave = waves.getOrDefault(wave, lastWave);

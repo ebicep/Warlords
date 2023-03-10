@@ -41,6 +41,10 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
 
     public abstract GameEvents getEvent();
 
+    public int getPointLimit() {
+        return 100_000;
+    }
+
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
     }

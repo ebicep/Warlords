@@ -5,7 +5,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -52,10 +51,8 @@ public class PvEEventMithraDatabaseStatInformation extends AbstractDatabaseStatI
         gamePlayerPvEEvent.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
-        //TODO
-        if (databaseGame instanceof DatabaseGamePvEEventNarmersTomb) {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 100_000) * multiplier;
-        }
+        this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), databaseGamePvEEvent.getPointLimit()) * multiplier;
+
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayerPvEEvent.getPoints());
         } else if (this.highestEventPointsGame == gamePlayerPvEEvent.getPoints()) {
