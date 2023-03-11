@@ -3,21 +3,15 @@ package com.ebicep.warlords.game.option.wavedefense.waves;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
-import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
-import static com.ebicep.warlords.pve.mobs.Mobs.BASIC_ZOMBIE;
 
 public class SimpleWave implements Wave {
 
     private int delay;
-    private double totalWeight;
-    private final List<Pair<Double, Mobs>> entries = new ArrayList<>();
+    private final RandomCollection<SpawnSettings> randomCollection = new RandomCollection<>();
     private final int count;
     private final String message;
     private MobTier mobTier;
@@ -42,43 +36,46 @@ public class SimpleWave implements Wave {
     }
 
     public SimpleWave add(Mobs factory) {
-        return add(entries.isEmpty() ? 1 : totalWeight / entries.size(), factory);
+        return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory);
+    }
+
+    public SimpleWave add(Mobs factory, Location customSpawnLocation) {
+        return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory, customSpawnLocation);
     }
 
     public SimpleWave add(double baseWeight, Mobs factory) {
-        totalWeight += baseWeight;
-        entries.add(new Pair<>(baseWeight, factory));
+        randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, null));
+        return this;
+    }
+
+    public SimpleWave add(double baseWeight, Mobs factory, Location customSpawnLocation) {
+        randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, customSpawnLocation));
         return this;
     }
 
     @Override
     public AbstractMob<?> spawnRandomMonster(Location loc) {
-        double index = ThreadLocalRandom.current().nextDouble() * totalWeight;
-        for (Pair<Double, Mobs> entry : entries) {
-            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
-                loc.getWorld().spigot().strikeLightningEffect(loc, false);
-            }
-            if (index < entry.getA()) {
-                return entry.getB().createMob.apply(loc);
-            }
-            index -= entry.getA();
+        SpawnSettings spawnSettings = randomCollection.next();
+        if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
+            loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }
-        return BASIC_ZOMBIE.createMob.apply(loc);
+        return spawnSettings.getMob().createMob.apply(spawnSettings.getLocation() == null ? loc : spawnSettings.getLocation());
     }
 
     @Override
     public AbstractMob<?> spawnMonster(Location loc) {
-        double index = totalWeight;
-        for (Pair<Double, Mobs> entry : entries) {
-            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
-                loc.getWorld().spigot().strikeLightningEffect(loc, false);
-            }
-            if (index < entry.getA()) {
-                return entry.getB().createMob.apply(loc);
-            }
-            index -= entry.getA();
-        }
-        return BASIC_ZOMBIE.createMob.apply(loc);
+        //TODO this always spawns the same mob?
+//        double index = totalWeight;
+//        for (SpawnSettings entry : entries) {
+//            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
+//                loc.getWorld().spigot().strikeLightningEffect(loc, false);
+//            }
+//            if (index < entry.getWeight()) {
+//                return entry.getMob().createMob.apply(loc);
+//            }
+//            index -= entry.getWeight();
+//        }
+        return spawnRandomMonster(loc);
     }
 
     @Override
@@ -98,5 +95,29 @@ public class SimpleWave implements Wave {
 
     public MobTier getMobTier() {
         return mobTier;
+    }
+
+    static class SpawnSettings {
+        private final double weight;
+        private final Mobs mob;
+        private final Location location;
+
+        SpawnSettings(double weight, Mobs mob, Location location) {
+            this.weight = weight;
+            this.mob = mob;
+            this.location = location;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public Mobs getMob() {
+            return mob;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
     }
 }

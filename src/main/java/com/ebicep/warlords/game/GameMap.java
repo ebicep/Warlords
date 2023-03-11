@@ -33,6 +33,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
@@ -3390,7 +3391,7 @@ public enum GameMap {
                             .add(0.05, Mobs.FORGOTTEN_LANCER)
                             .add(0.05, Mobs.EXILED_ZOMBIE_RIFT)
                     ).add(25, new SimpleWave(1, 0, "Boss", MobTier.BOSS)
-                            .add(Mobs.EVENT_MITHRA)
+                            .add(Mobs.EVENT_MITHRA, new Location(loc.getWorld(), 4.5, 22, -2.5))
                     )
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)

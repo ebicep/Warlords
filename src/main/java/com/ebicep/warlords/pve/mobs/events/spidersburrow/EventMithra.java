@@ -32,8 +32,8 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class EventMithra extends AbstractZombie implements BossMob {
 
@@ -128,6 +128,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SLIME_ATTACK, 2, 1.5f);
             groundSlam();
             new GameRunnable(warlordsNPC.getGame()) {
+                private World world = warlordsNPC.getWorld();
                 final List<Block> webs = new ArrayList<>();
                 int ticksElapsed = 0;
 
@@ -165,7 +166,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                 private void spawnWebs() {
                     List<Location> cube = getCubeLocations();
                     cube.forEach(location -> {
-                        Block blockAt = warlordsNPC.getWorld().getBlockAt(location);
+                        Block blockAt = world.getBlockAt(location);
                         if (blockAt.getType() == Material.AIR) {
                             webs.add(blockAt);
                         }
@@ -174,13 +175,14 @@ public class EventMithra extends AbstractZombie implements BossMob {
                 }
 
                 private void spawnEggSacs() {
-                    LocationBuilder startingLocation = new LocationBuilder(warlordsNPC.getLocation())
-                            .yaw(0)
-                            .pitch(0);
-                    for (int i = 0; i < playerCount + 1; i++) {
-                        LocationBuilder spawnLocation = startingLocation.clone();
-                        spawnLocation.yaw(ThreadLocalRandom.current().nextInt(0, 360));
-                        spawnLocation.forward(3);
+                    List<Location> spawnLocations = new ArrayList<>();
+                    spawnLocations.add(new Location(world, 11.5, 22, 3.5, 135, 0));
+                    spawnLocations.add(new Location(world, 11.5, 22, -8.5, 45, 0));
+                    spawnLocations.add(new Location(world, -3.5, 22, -8.5, -45, 0));
+                    spawnLocations.add(new Location(world, -3.5, 22, 3.5, -135, 0));
+                    Collections.shuffle(spawnLocations);
+                    for (int i = 0; i < playerCount; i++) {
+                        Location spawnLocation = spawnLocations.remove(0);
                         EventEggSac eggSac = new EventEggSac(spawnLocation);
                         eggSacs.add(eggSac);
                         option.spawnNewMob(eggSac);
