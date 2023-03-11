@@ -15,13 +15,13 @@ import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class EventForsakenAberration extends AbstractZombie implements BossMob {
+public class EventForsakenApparition extends AbstractZombie implements BossMob {
 
 
-    public EventForsakenAberration(Location spawnLocation) {
+    public EventForsakenApparition(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Forsaken Aberration",
+                "Forsaken Apparition",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
