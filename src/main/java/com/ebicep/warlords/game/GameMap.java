@@ -3345,7 +3345,7 @@ public enum GameMap {
                             .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.05, Mobs.ENVOY_ZOMBIE)
                             .add(0.05, Mobs.SLIME_ZOMBIE)
-                            .add(Mobs.ELITE_ZOMBIE)
+                            .add(0.2, Mobs.ELITE_ZOMBIE)
                     )
                     .add(15, new SimpleWave(16, 0, "Boss", MobTier.BOSS)
                             .add(0.2, Mobs.EVENT_MITHRA_FORSAKEN_FROST)
