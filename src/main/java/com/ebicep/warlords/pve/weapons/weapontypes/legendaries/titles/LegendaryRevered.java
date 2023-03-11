@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public class LegendaryRevered extends AbstractLegendaryWeapon {
 
-    public static final int DAMAGE_INCREASE = 25;
-    public static final float DAMAGE_INCREASE_PER_UPGRADE = 5;
+    public static final int DAMAGE_INCREASE = 10;
+    public static final float DAMAGE_INCREASE_PER_UPGRADE = 2.5f;
     public static final int DURATION = 5;
     public static final float DURATION_INCREASE_PER_UPGRADE = .25f;
     private static final String COOLDOWN_NAME = "Revered";
