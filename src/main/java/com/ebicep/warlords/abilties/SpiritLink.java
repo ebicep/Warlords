@@ -179,12 +179,12 @@ public class SpiritLink extends AbstractChainBase {
 
     private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer) {
         //adding .25 to totem, cap 6 sec
-        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterName("Spirits Respite")
-                .findFirst()
-                .ifPresent(regularCooldown -> {
-                    regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
-                });
+//        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+//                .filterName("Spirits Respite")
+//                .findFirst()
+//                .ifPresent(regularCooldown -> {
+//                    regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
+//                });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, 0, 100, false, false);
         for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
