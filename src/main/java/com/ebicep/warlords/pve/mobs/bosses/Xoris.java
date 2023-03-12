@@ -19,14 +19,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class Liliath extends AbstractZombie implements BossMob {
+public class Xoris extends AbstractZombie implements BossMob {
 
     boolean test = false;
 
-    public Liliath(Location spawnLocation) {
+    public Xoris(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Liliath",
+                "Xoris",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),

@@ -35,7 +35,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 30),
                         Weapons.TENDERIZER.getItem()
                 ),
-                10000,
+                25000,
                 0.15f,
                 0,
                 2000,

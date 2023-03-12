@@ -140,10 +140,12 @@ public class Zenith extends AbstractZombie implements BossMob {
                     }
 
                     counter++;
-                    FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                                                                                            .withColor(Color.WHITE)
-                                                                                            .with(FireworkEffect.Type.BURST)
-                                                                                            .build());
+                    FireWorkEffectPlayer.playFirework(
+                            receiver.getLocation(),
+                            FireworkEffect.builder()
+                            .withColor(Color.WHITE)
+                            .with(FireworkEffect.Type.BURST)
+                            .build());
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
