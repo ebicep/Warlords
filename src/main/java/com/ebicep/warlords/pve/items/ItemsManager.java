@@ -1,28 +1,54 @@
 package com.ebicep.warlords.pve.items;
 
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemsManager {
 
+    /**
+     * 6(x1^1/3) + ((x2 + 1) / 100) * 25 + x3 + (x4 / x4Total) * 25 + x5* + x6
+     * <p>
+     * if equation > 100, set to 100. (100 Weight Cap)
+     * <p>
+     * Almost all of these have decimals. In such cases, Round Down
+     * x1: Total Player Wins. Currently, Rich would have +47 weight from this.
+     * x2: Average Player Level. Find the mean of the set of classes we have (pal, mag, war, sha, rog).
+     * x3: Total Prestiges. Simply add.
+     * x4: Achievements. Divide Achievements Earned by Total Achievements.
+     * x5: "Hi-Scores". This one's complicated. Will explain thoroughly after this message.
+     * x6: Patreon Bonus. Either +5 or +10.
+     *
+     * @param databasePlayer The player to get the weight of
+     * @param selectedSpec   The spec that the player is currently using
+     * @return The weight of the player
+     */
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
-        int weight = 20;
-        for (Specializations spec : Specializations.VALUES) {
-            int prestige = databasePlayer.getSpec(spec).getPrestige();
-            if (selectedSpec == spec) {
-                weight += 2 * prestige;
-            } else {
-                weight += prestige;
-            }
+        int weight = 0;
+        // x1
+        weight += Math.pow(databasePlayer.getPveStats().getWins(), 1.0 / 3.0) * 6;
+        // x2
+        int totalPlayerClassLevel = Arrays.stream(databasePlayer.getClasses())
+                                          .mapToInt(AbstractDatabaseStatInformation::getLevel)
+                                          .sum();
+        weight += ((totalPlayerClassLevel + 1) / 5) / 4;
+        // x3
+        weight += Arrays.stream(Specializations.VALUES)
+                        .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
+                        .sum();
+        // x4
+        // TODO
+        // x5
+        // TODO
+        // x6
+        if (databasePlayer.getPveStats().isCurrentlyPatreon()) {
+            weight += 5;
         }
-        return Math.min(weight, 40);
+        return Math.min(weight, 100);
     }
 
     @Field("item_inventory")
