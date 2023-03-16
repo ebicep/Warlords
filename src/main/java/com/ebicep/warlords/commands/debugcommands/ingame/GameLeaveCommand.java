@@ -13,6 +13,7 @@ public class GameLeaveCommand extends BaseCommand {
     @Description("Leave your current game if an in game player")
     public void leaveGame(@Conditions("requireGame") WarlordsPlayer warlordsPlayer) {
         Game game = warlordsPlayer.getGame();
+        game.getCachedPlayers().add(warlordsPlayer);
         game.removePlayer(warlordsPlayer.getUuid());
     }
 
