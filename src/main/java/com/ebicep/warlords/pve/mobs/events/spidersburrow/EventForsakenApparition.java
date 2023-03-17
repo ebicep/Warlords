@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class EventForsakenApparition extends AbstractZombie implements BossMob {
 
+    private boolean damaged = false;
 
     public EventForsakenApparition(Location spawnLocation) {
         super(
@@ -25,10 +26,10 @@ public class EventForsakenApparition extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 140, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 64, 140, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 64, 140, 255),
+                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
                 ),
                 2200,
                 0.45f,
@@ -55,9 +56,12 @@ public class EventForsakenApparition extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        // When this spider takes damage, it turns invisible, giving it a 15% increase to movement
-        self.getSpeed().addBaseModifier(15);
-        self.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 10 * 15, 0, true, false));
+        if (!damaged) {
+            damaged = true;
+            // When this spider takes damage, it turns invisible, giving it a 15% increase to damage and a 15% resistance boost.
+            self.getSpec().setDamageResistance(15);
+            self.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 60 * 15, 0, true, false));
+        }
     }
 
 }

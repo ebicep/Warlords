@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,10 +29,10 @@ public class EventForsakenCruor extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BLOOD_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 20, 20),
+                        Weapons.ARMBLADE.getItem()
                 ),
                 2200,
                 0.45f,
@@ -48,34 +49,42 @@ public class EventForsakenCruor extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-
+        if (ticksElapsed % 140 == 0) {
+            PlayerFilterGeneric.playingGameWarlordsPlayers(option.getGame())
+                               .enemiesOf(warlordsNPC)
+                               .forEach(receiver -> {
+                                   receiver.getCooldownManager().removePreviousWounding();
+                                   receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+                                           name,
+                                           "WND",
+                                           WoundingStrikeBerserker.class,
+                                           new WoundingStrikeBerserker(),
+                                           warlordsNPC,
+                                           CooldownTypes.DEBUFF,
+                                           cooldownManager -> {
+                                           },
+                                           cooldownManager -> {
+                                               if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND")
+                                                                                                               .stream()
+                                                                                                               .count() == 1) {
+                                                   receiver.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                                               }
+                                           },
+                                           3 * 20
+                                   ) {
+                                       @Override
+                                       public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                           return currentHealValue * .5f;
+                                       }
+                                   });
+                               });
+        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         // Applies wounding to enemies for 3s.
-        receiver.getCooldownManager().removePreviousWounding();
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
-                name,
-                "WND",
-                WoundingStrikeBerserker.class,
-                new WoundingStrikeBerserker(),
-                attacker,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
-                    }
-                },
-                5 * 20
-        ) {
-            @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
-            }
-        });
+
     }
 
     @Override

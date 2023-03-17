@@ -24,10 +24,10 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.JUNGLE_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 14, 87, 9),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 14, 87, 9),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 14, 87, 9),
+                        Weapons.NEW_LEAF_SPEAR.getItem()
                 ),
                 2200,
                 0.45f,

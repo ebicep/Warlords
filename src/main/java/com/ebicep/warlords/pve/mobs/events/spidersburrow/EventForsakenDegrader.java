@@ -24,10 +24,10 @@ public class EventForsakenDegrader extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DECAPITATED_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 5, 5, 5),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 5, 5, 5),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 5, 5, 5),
+                        Weapons.DRAKEFANG.getItem()
                 ),
                 2200,
                 0.45f,

@@ -24,10 +24,10 @@ public class EventForsakenFrost extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.WHITE_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+                        Weapons.FROSTBITE.getItem()
                 ),
                 2200,
                 0.45f,

@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,10 +25,10 @@ public class EventForsakenRespite extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 120),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 1200),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 120),
+                        Weapons.NOMEGUSTA.getItem()
                 ),
                 2200,
                 0.45f,
@@ -44,22 +45,27 @@ public class EventForsakenRespite extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        // Applies leech to enemies for 3s. Occurs every 7s.
+        if (ticksElapsed % 140 == 0) {
+            PlayerFilterGeneric.playingGameWarlordsPlayers(option.getGame())
+                               .enemiesOf(warlordsNPC)
+                               .forEach(warlordsPlayer ->
+                                       ImpalingStrike.giveLeechCooldown(
+                                               warlordsNPC,
+                                               warlordsPlayer,
+                                               3 * 20,
+                                               .25f,
+                                               .15f,
+                                               warlordsDamageHealingFinalEvent -> {
 
+                                               }
+                                       ));
+        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        // Applies leech to enemies for 3s.
-        ImpalingStrike.giveLeechCooldown(
-                warlordsNPC,
-                attacker,
-                3 * 20,
-                .25f,
-                .15f,
-                warlordsDamageHealingFinalEvent -> {
 
-                }
-        );
     }
 
     @Override

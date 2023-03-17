@@ -26,9 +26,9 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 87, 9, 86),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 87, 9, 86),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 87, 9, 86),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
                 2200,
@@ -51,7 +51,7 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMob {
             PlayerFilterGeneric.entitiesAround(warlordsNPC, 10, 10, 10)
                                .enemiesOf(warlordsNPC)
                                .warlordsPlayers()
-                               .forEach(warlordsPlayer -> warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0, true, false)));
+                               .forEach(warlordsPlayer -> warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, true, false)));
         }
     }
 
