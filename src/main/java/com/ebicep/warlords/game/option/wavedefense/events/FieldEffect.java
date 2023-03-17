@@ -156,7 +156,7 @@ public class FieldEffect implements Option {
             }
         },
         ARACHNOPHOBIA("Arachnophobia",
-                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders."
+                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders. All healing abilities are increased by 15%."
         ) {
             @Override
             public void onStart(Game game) {
@@ -167,15 +167,20 @@ public class FieldEffect implements Option {
                         if (!(event.getAttacker() instanceof WarlordsPlayer)) {
                             return;
                         }
-                        if (!(event.getPlayer() instanceof WarlordsNPC)) {
-                            return;
-                        }
-                        if (!(((WarlordsNPC) event.getPlayer()).getMob() instanceof EventPoisonousSpider)) {
-                            return;
-                        }
-                        if (event.getAbility().contains("Strike")) {
-                            event.setMin(event.getMin() * 1.3f);
-                            event.setMax(event.getMax() * 1.3f);
+                        if (event.isDamageInstance()) {
+                            if (!(event.getPlayer() instanceof WarlordsNPC)) {
+                                return;
+                            }
+                            if (!(((WarlordsNPC) event.getPlayer()).getMob() instanceof EventPoisonousSpider)) {
+                                return;
+                            }
+                            if (event.getAbility().contains("Strike")) {
+                                event.setMin(event.getMin() * 1.3f);
+                                event.setMax(event.getMax() * 1.3f);
+                            }
+                        } else if (event.isHealingInstance()) {
+                            event.setMin(event.getMin() * 1.15f);
+                            event.setMax(event.getMax() * 1.15f);
                         }
                     }
 
