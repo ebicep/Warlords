@@ -42,8 +42,8 @@ import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
-import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.items.ItemsCommand;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -493,6 +493,7 @@ public class CommandManager {
         manager.registerCommand(new PrivateGameTerminateCommand());
 
         manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());

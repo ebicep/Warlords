@@ -14,6 +14,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
@@ -216,10 +217,15 @@ public class CustomScoreboard {
 
     public void updateLobbyPlayerNamesInternal() {
         Player player = Bukkit.getPlayer(uuid);
-        if (player == null || !player.getWorld().getName().equals("MainLobby")) {
+        if (player == null) {
             return;
         }
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(uuid);
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            WarlordsEntity onlinePlayerWE = Warlords.getPlayer(onlinePlayer);
+            if (warlordsEntity != null && onlinePlayerWE != null && warlordsEntity.getGame().equals(onlinePlayerWE.getGame())) {
+                continue;
+            }
             String name = onlinePlayer.getName();
             if (scoreboard.getTeam(name) == null) {
                 scoreboard.registerNewTeam(name);
