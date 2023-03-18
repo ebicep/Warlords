@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
@@ -139,14 +140,19 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
             public void run() {
                 if (passiveCooldown > 0) {
                     passiveCooldown--;
+                    if (passiveCooldown <= 0) {
+                        shiftTickTime = 0;
+                    }
                     return;
                 }
                 if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Divine 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCost() > 0) {

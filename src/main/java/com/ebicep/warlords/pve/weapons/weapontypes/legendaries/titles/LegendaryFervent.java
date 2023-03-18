@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
@@ -158,14 +159,19 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
             public void run() {
                 if (passiveCooldown > 0) {
                     passiveCooldown--;
+                    if (passiveCooldown <= 0) {
+                        shiftTickTime = 0;
+                    }
                     return;
                 }
                 if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Fervent 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Fervent Ability",
@@ -180,7 +186,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
                         ));
-                        passiveCooldown = 40 * GameRunnable.SECOND;
+                        passiveCooldown = 5 * GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;
