@@ -126,7 +126,7 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Heals a player based on the amount or sender if there is no target")
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addHealingInstance(target, "DEBUG", amount, amount, 0, 100, false, false);
+        target.addHealingInstance(target, "God", amount, amount, 0, 100, false, false);
         target.setRegenTimer(10);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!", true);
     }

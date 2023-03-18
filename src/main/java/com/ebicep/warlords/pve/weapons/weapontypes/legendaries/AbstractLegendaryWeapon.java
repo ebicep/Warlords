@@ -288,6 +288,22 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 }
             }.runTaskTimer(20, 0);
         }
+        if (this instanceof PassiveCooldown) {
+            new GameRunnable(player.getGame()) {
+
+                @Override
+                public void run() {
+                    int cooldown = ((PassiveCooldown) AbstractLegendaryWeapon.this).getSecondCooldown();
+                    int amount = cooldown > 0 ? cooldown : 1;
+                    if (player.getEntity() instanceof Player) {
+                        ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+                        if (item != null) {
+                            item.setAmount(amount);
+                        }
+                    }
+                }
+            }.runTaskTimer(20, 10);
+        }
     }
 
     @Override
@@ -513,8 +529,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     protected abstract float getMeleeDamageMinValue();
 
-    protected abstract float getMeleeDamageMaxValue();
-
     public WeaponStats getStarPieceStat() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPieceStat();
     }
@@ -545,6 +559,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public int getStarPieceBonusValue() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
     }
+
+    protected abstract float getMeleeDamageMaxValue();
 
     protected abstract float getCritChanceValue();
 

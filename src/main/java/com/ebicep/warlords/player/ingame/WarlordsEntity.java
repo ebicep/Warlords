@@ -702,7 +702,7 @@ public abstract class WarlordsEntity {
                 }
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
-                if (isEnemy(attacker)) {
+                //if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
                     cancelHealingPowerUp();
                     removeHorse();
@@ -725,7 +725,7 @@ public abstract class WarlordsEntity {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                         //appendDebugMessage(debugMessage, 2, abstractCooldown);
                     }
-                }
+                //}
 
                 regenTimer = 10;
                 updateHealth();

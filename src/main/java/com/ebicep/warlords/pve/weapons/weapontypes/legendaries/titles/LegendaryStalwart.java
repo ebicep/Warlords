@@ -7,8 +7,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
+import org.springframework.data.annotation.Transient;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryStalwart extends AbstractLegendaryWeapon {
+public class LegendaryStalwart extends AbstractLegendaryWeapon implements PassiveCooldown {
 
     public static final int UNDER_HP_CHECK = 80;
     public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
@@ -26,6 +28,9 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
     public static final int REDUCTION_DURATION = 5;
     public static final int COOLDOWN = 30;
+
+    @Transient
+    private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
 
     public LegendaryStalwart() {
     }
@@ -73,7 +78,6 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
         // 80 - 10 = skip +70% hp = .7
         // 85 - 9.5 = skip +75.5% hp = .75.5
         float upperBoundHP = (getUnderHpCheck() - getEveryHpPercent()) / 100;
-        AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
 
         player.getCooldownManager().addCooldown(
                 new PermanentCooldown<>(
@@ -172,5 +176,13 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
     private int getUnderHpCheck() {
         return UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    @Override
+    public int getTickCooldown() {
+        if (Instant.now().isBefore(lastActivated.get())) {
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get()) * 20;
+        }
+        return 0;
     }
 }

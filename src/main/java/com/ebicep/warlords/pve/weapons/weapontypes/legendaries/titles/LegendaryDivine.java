@@ -8,10 +8,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryDivine extends AbstractLegendaryWeapon {
+public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveCooldown {
 
     public static final int DAMAGE_BOOST = 5;
     public static final int TARGETS_TO_HIT = 40;
@@ -32,6 +34,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int ABILITY_EPS_PER_UPGRADE = 5;
 
     public static final int MAX_STACKS = 3;
+
+    @Transient
+    private int passiveCooldown = 0;
 
     public LegendaryDivine() {
     }
@@ -128,13 +133,12 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
         new GameRunnable(player.getGame()) {
 
             int shiftTickTime = 0;
-            int abilityCooldown = 0;
             HashMap<AbstractAbility, Float> abilityEnergyCostReduction = new HashMap<>();
 
             @Override
             public void run() {
-                if (abilityCooldown > 0) {
-                    abilityCooldown--;
+                if (passiveCooldown > 0) {
+                    passiveCooldown--;
                     return;
                 }
                 if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Divine 3")) {
@@ -174,7 +178,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                                 return energyGainPerTick + 2.5f;
                             }
                         });
-                        abilityCooldown = 40 * GameRunnable.SECOND;
+                        passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;
@@ -231,5 +235,10 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     @Override
     protected float getSkillCritChanceBonusValue() {
         return 5;
+    }
+
+    @Override
+    public int getTickCooldown() {
+        return passiveCooldown;
     }
 }

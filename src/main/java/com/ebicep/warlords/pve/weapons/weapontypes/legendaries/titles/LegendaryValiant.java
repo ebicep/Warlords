@@ -40,7 +40,6 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
-        System.out.println(player.getHealth() / player.getMaxHealth() * (HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel()));
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Valiant",
                 null,
