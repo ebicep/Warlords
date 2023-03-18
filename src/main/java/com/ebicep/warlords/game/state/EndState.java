@@ -628,8 +628,9 @@ public class EndState implements State, TimerDebugAble {
                     weaponsFoundByType.forEach((rarity, weapons) -> {
                         int amountFound = weapons.size();
                         if (amountFound > 0) {
+                            boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
                             ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"),
+                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : ""),
                                             weapons.stream()
                                                    .map(abstractWeapon -> {
                                                        String output = abstractWeapon.getName();
