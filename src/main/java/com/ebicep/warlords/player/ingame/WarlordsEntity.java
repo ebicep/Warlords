@@ -1395,7 +1395,6 @@ public abstract class WarlordsEntity {
 
     public void cancelHealingPowerUp() {
         if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
-            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
             this.getCooldownManager().removeCooldown(HealingPowerup.class, false);
         }
     }
