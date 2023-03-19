@@ -120,6 +120,7 @@ public class SpectateCommand extends BaseCommand {
     }
 
     @Subcommand("gametoggle")
+    @CommandPermission("group.administrator")
     @Description("Toggles spectating for current game")
     public void disableSpectating(@Conditions("requireGame") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
