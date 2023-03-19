@@ -112,9 +112,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             }
             return playersHit;
         }
-        /**
-         * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
-         */
+
         boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
