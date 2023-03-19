@@ -201,7 +201,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private Optional<CapacitorTotem> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
-                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
+                .filter(totem -> totem.getTotem().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
+                        && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
     }
 
