@@ -82,7 +82,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                4 * 20
+                4 * 20 + 10
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
