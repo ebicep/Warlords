@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.addons.ItemAddonSpecBonus;
+import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -16,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,7 +88,6 @@ public class ItemsMenu {
                 menu.setItem(x, y,
                         item.generateItemStack(),
                         (m, e) -> {
-                            openItemEditorMenu(player, databasePlayer, item);
                         }
                 );
                 x++;
@@ -484,8 +485,8 @@ public class ItemsMenu {
          */
     }
 
-    public static void openItemEditorMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
-        Menu menu = new Menu("Item Editor", 9 * 5);
+    public static void openMichaelItemMenu(Player player, DatabasePlayer databasePlayer) {
+        Menu menu = new Menu("Michael", 9 * 6);
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
@@ -522,8 +523,10 @@ public class ItemsMenu {
         menu.openForPlayer(player);
     }
 
-    /*
-    public static void openApplyBlessingAnvilMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item, Integer blessing) {
+
+    public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
+        AbstractItem<?, ?, ?> item = menuData.getItem();
+        Integer blessing = menuData.getBlessing();
         ItemStack selectedItem;
         ItemStack selectedBlessing;
         if (item != null) {
@@ -556,25 +559,29 @@ public class ItemsMenu {
                     .name(ChatColor.RED + "Select an item first")
                     .get();
         }
-        new AnvilGUI.Builder()
-                .itemLeft(selectedItem)
-                .onLeftInputClick(p -> {
-                    openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), new PreviousAnvilMenuData(item, blessing));
-                })
-                .itemRight(selectedBlessing)
-                .onRightInputClick(p -> {
-                    openApplyBlessingBlessingSelectMenu(player, databasePlayer, new PreviousAnvilMenuData(item, blessing));
-                })
-                .plugin(Warlords.getInstance())
-                .open(player);
 
+        Menu menu = new Menu("Apply a Blessing", 9 * 6);
+        menu.setItem(1, 1,
+                selectedItem,
+                (m, e) -> {
+                    openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), menuData);
+                }
+        );
+        menu.setItem(4, 1,
+                selectedBlessing,
+                (m, e) -> {
+                    openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
+                }
+        );
+        //TODO APPLY ITEM
+        menu.openForPlayer(player);
     }
 
     private static void openApplyBlessingItemSelectMenu(
             Player player,
             DatabasePlayer databasePlayer,
             PlayerItemMenuSettings menuSettings,
-            PreviousAnvilMenuData previousAnvilMenuData
+            ApplyBlessingMenuData menuData
     ) {
         int page = menuSettings.getPage();
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
@@ -601,7 +608,8 @@ public class ItemsMenu {
                                 )
                                 .get(),
                         (m, e) -> {
-                            openApplyBlessingAnvilMenu(player, databasePlayer, item, previousAnvilMenuData.getBlessing());
+                            menuData.setItem(item);
+                            openApplyBlessingMenu(player, databasePlayer, menuData);
                         }
                 );
                 x++;
@@ -619,7 +627,7 @@ public class ItemsMenu {
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
-                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, previousAnvilMenuData);
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
                     }
             );
         }
@@ -631,7 +639,7 @@ public class ItemsMenu {
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);
-                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, previousAnvilMenuData);
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
                     }
             );
         }
@@ -639,9 +647,9 @@ public class ItemsMenu {
         addItemMenuSettings(player, databasePlayer, menuSettings, sortedBy, filterBy, addonFilter, menu);
 
         menu.setItem(4, 5,
-                MENU_BACK,
+                Menu.MENU_BACK,
                 (m, e) -> {
-                    openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), previousAnvilMenuData.getBlessing());
+                    openApplyBlessingMenu(player, databasePlayer, menuData);
                 }
         );
     }
@@ -649,7 +657,7 @@ public class ItemsMenu {
     private static void openApplyBlessingBlessingSelectMenu(
             Player player,
             DatabasePlayer databasePlayer,
-            PreviousAnvilMenuData previousAnvilMenuData
+            ApplyBlessingMenuData menuData
     ) {
         Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
         for (int i = 0; i < 5; i++) {
@@ -666,19 +674,20 @@ public class ItemsMenu {
                             .get(),
                     (m, e) -> {
                         if (true || blessingAmount > 0) {
-                            openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), finalI);
+                            menuData.setBlessing(finalI + 1);
+                            openApplyBlessingMenu(player, databasePlayer, menuData);
                         }
                     }
             );
         }
         menu.setItem(4, 3,
-                MENU_BACK,
+                Menu.MENU_BACK,
                 (m, e) -> {
-                    openApplyBlessingAnvilMenu(player, databasePlayer, previousAnvilMenuData.getItem(), previousAnvilMenuData.getBlessing());
+                    openApplyBlessingMenu(player, databasePlayer, menuData);
                 }
         );
     }
-     */
+
 
     public enum SortOptions {
         DATE("Date", Comparator.comparing(AbstractItem::getObtainedDate)),
@@ -699,12 +708,12 @@ public class ItemsMenu {
         }
     }
 
-    /*
-    private static class PreviousAnvilMenuData {
-        private final AbstractItem<?, ?, ?> item;
-        private final Integer blessing;
 
-        public PreviousAnvilMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
+    private static class ApplyBlessingMenuData {
+        private AbstractItem<?, ?, ?> item;
+        private Integer blessing;
+
+        public ApplyBlessingMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
             this.item = item;
             this.blessing = blessing;
         }
@@ -713,11 +722,19 @@ public class ItemsMenu {
             return item;
         }
 
+        public void setItem(AbstractItem<?, ?, ?> item) {
+            this.item = item;
+        }
+
         public Integer getBlessing() {
             return blessing;
         }
+
+        public void setBlessing(Integer blessing) {
+            this.blessing = blessing;
+        }
     }
-     */
+
 
     static class PlayerItemMenuSettings {
         public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};
