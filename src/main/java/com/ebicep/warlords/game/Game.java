@@ -87,7 +87,7 @@ public final class Game implements Runnable, AutoCloseable {
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
-
+    private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
@@ -897,5 +897,9 @@ public final class Game implements Runnable, AutoCloseable {
         int oldPoints = oldPointsObj;
         this.points.put(team, points);
         Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, points));
+    }
+
+    public Set<WarlordsPlayer> getCachedPlayers() {
+        return cachedPlayers;
     }
 }

@@ -29,11 +29,16 @@ public class GameJoinCommand extends BaseCommand {
                     ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already in this game!", true);
                     return;
                 }
-                WarlordsPlayer warlordsPlayer = new WarlordsPlayer(
-                        player,
-                        game,
-                        team
-                );
+                WarlordsPlayer warlordsPlayer = game
+                        .getCachedPlayers()
+                        .stream()
+                        .filter(wp -> wp.getUuid().equals(player.getUniqueId()))
+                        .findFirst()
+                        .orElse(new WarlordsPlayer(
+                                player,
+                                game,
+                                team
+                        ));
                 Warlords.addPlayer(warlordsPlayer);
                 game.addPlayer(player, false);
                 game.setPlayerTeam(player, team);
