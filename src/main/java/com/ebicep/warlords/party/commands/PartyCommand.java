@@ -11,6 +11,7 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
 import com.ebicep.warlords.poll.polls.PartyPoll;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -26,6 +27,18 @@ import java.util.*;
 
 @CommandAlias("party|p")
 public class PartyCommand extends BaseCommand {
+
+    @Subcommand("listall")
+    @CommandPermission("group.administrator")
+    @Description("Lists the all party lists")
+    public void listAll(CommandIssuer issuer) {
+        List<Party> parties = PartyManager.PARTIES;
+        if (parties.isEmpty()) {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!", true);
+        } else {
+            parties.forEach(party -> issuer.sendMessage(party.getPartyList()));
+        }
+    }
 
     @CommandAlias("pl")
     @Subcommand("list")

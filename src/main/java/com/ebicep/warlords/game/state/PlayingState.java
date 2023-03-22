@@ -137,6 +137,10 @@ public class PlayingState implements State, TimerDebugAble {
         });
         toRemove.forEach(this.game::removePlayer);
 
+        if (game.warlordsPlayers().findAny().isEmpty()) {
+            closeGame.set(true);
+        }
+
         if (closeGame.get()) {
             new BukkitRunnable() {
 

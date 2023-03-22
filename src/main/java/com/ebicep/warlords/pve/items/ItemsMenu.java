@@ -523,169 +523,227 @@ public class ItemsMenu {
         menu.openForPlayer(player);
     }
 
+    static class ApplyBlessingMenu {
 
-    public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
-        AbstractItem<?, ?, ?> item = menuData.getItem();
-        Integer blessing = menuData.getBlessing();
-        ItemStack selectedItem;
-        ItemStack selectedBlessing;
-        if (item != null) {
-            selectedItem = new ItemBuilder(item.generateItemStack())
-                    .addLore(
-                            "",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
-                    )
-                    .get();
-            if (blessing != null) {
-                ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
-                selectedBlessing = new ItemBuilder(Material.PAPER)
-                        .name(itemBlessing.getName())
+        public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
+            AbstractItem<?, ?, ?> item = menuData.getItem();
+            Integer blessing = menuData.getBlessing();
+            ItemStack selectedItem;
+            ItemStack selectedBlessing;
+            if (item != null) {
+                selectedItem = new ItemBuilder(item.generateItemStack())
                         .addLore(
-                                ChatColor.GREEN + itemBlessing.getDescription(),
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
                         )
                         .get();
+                if (blessing != null) {
+                    ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
+                    selectedBlessing = new ItemBuilder(Material.PAPER)
+                            .name(itemBlessing.getName())
+                            .addLore(
+                                    ChatColor.GREEN + itemBlessing.getDescription(),
+                                    "",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                            )
+                            .get();
+                } else {
+                    selectedBlessing = new ItemBuilder(Material.PAPER)
+                            .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing")
+                            .get();
+                }
             } else {
-                selectedBlessing = new ItemBuilder(Material.PAPER)
-                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing")
+                selectedItem = new ItemBuilder(Material.SKULL_ITEM)
+                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
+                        .get();
+                selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
+                        .name(ChatColor.RED + "Select an item first")
                         .get();
             }
-        } else {
-            selectedItem = new ItemBuilder(Material.SKULL_ITEM)
-                    .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
-                    .get();
-            selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
-                    .name(ChatColor.RED + "Select an item first")
-                    .get();
+
+            Menu menu = new Menu("Apply a Blessing", 9 * 6);
+            menu.setItem(1, 1,
+                    selectedItem,
+                    (m, e) -> {
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), menuData);
+                    }
+            );
+            menu.setItem(4, 1,
+                    selectedBlessing,
+                    (m, e) -> {
+                        openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
+                    }
+            );
+            //TODO APPLY ITEM
+            menu.openForPlayer(player);
         }
 
-        Menu menu = new Menu("Apply a Blessing", 9 * 6);
-        menu.setItem(1, 1,
-                selectedItem,
-                (m, e) -> {
-                    openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), menuData);
+        private static void openApplyBlessingItemSelectMenu(
+                Player player,
+                DatabasePlayer databasePlayer,
+                PlayerItemMenuSettings menuSettings,
+                ApplyBlessingMenuData menuData
+        ) {
+            int page = menuSettings.getPage();
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+            menuSettings.sort(playerSettings.getSelectedSpec(), Specializations.getClass(playerSettings.getSelectedSpec()));
+            List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
+
+            Menu menu = new Menu("Select an Item", 9 * 5);
+
+            SortOptions sortedBy = menuSettings.getSortOption();
+            ItemTier filterBy = menuSettings.getTierFilter();
+            int addonFilter = menuSettings.getAddonFilter();
+
+            int x = 0;
+            int y = 1;
+            for (int i = 0; i < 45; i++) {
+                int itemNumber = ((page - 1) * 45) + i;
+                if (itemNumber < itemInventory.size()) {
+                    AbstractItem<?, ?, ?> item = itemInventory.get(itemNumber);
+                    menu.setItem(x, y,
+                            new ItemBuilder(item.generateItemStack())
+                                    .addLore(
+                                            "",
+                                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                                    )
+                                    .get(),
+                            (m, e) -> {
+                                menuData.setItem(item);
+                                openApplyBlessingMenu(player, databasePlayer, menuData);
+                            }
+                    );
+                    x++;
+                    if (x == 9) {
+                        x = 0;
+                        y++;
+                    }
                 }
-        );
-        menu.setItem(4, 1,
-                selectedBlessing,
-                (m, e) -> {
-                    openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
-                }
-        );
-        //TODO APPLY ITEM
-        menu.openForPlayer(player);
-    }
+            }
+            if (page - 1 > 0) {
+                menu.setItem(0, 5,
+                        new ItemBuilder(Material.ARROW)
+                                .name(ChatColor.GREEN + "Previous Page")
+                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                                .get(),
+                        (m, e) -> {
+                            menuSettings.setPage(page - 1);
+                            openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
+                        }
+                );
+            }
+            if (itemInventory.size() > (page * 45)) {
+                menu.setItem(8, 5,
+                        new ItemBuilder(Material.ARROW)
+                                .name(ChatColor.GREEN + "Next Page")
+                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                                .get(),
+                        (m, e) -> {
+                            menuSettings.setPage(page + 1);
+                            openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
+                        }
+                );
+            }
 
-    private static void openApplyBlessingItemSelectMenu(
-            Player player,
-            DatabasePlayer databasePlayer,
-            PlayerItemMenuSettings menuSettings,
-            ApplyBlessingMenuData menuData
-    ) {
-        int page = menuSettings.getPage();
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        menuSettings.sort(playerSettings.getSelectedSpec(), Specializations.getClass(playerSettings.getSelectedSpec()));
-        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
+            addItemMenuSettings(player, databasePlayer, menuSettings, sortedBy, filterBy, addonFilter, menu);
 
-        Menu menu = new Menu("Select an Item", 9 * 5);
+            menu.setItem(4, 5,
+                    Menu.MENU_BACK,
+                    (m, e) -> {
+                        openApplyBlessingMenu(player, databasePlayer, menuData);
+                    }
+            );
+        }
 
-        SortOptions sortedBy = menuSettings.getSortOption();
-        ItemTier filterBy = menuSettings.getTierFilter();
-        int addonFilter = menuSettings.getAddonFilter();
-
-        int x = 0;
-        int y = 1;
-        for (int i = 0; i < 45; i++) {
-            int itemNumber = ((page - 1) * 45) + i;
-            if (itemNumber < itemInventory.size()) {
-                AbstractItem<?, ?, ?> item = itemInventory.get(itemNumber);
-                menu.setItem(x, y,
-                        new ItemBuilder(item.generateItemStack())
-                                .addLore(
+        private static void openApplyBlessingBlessingSelectMenu(
+                Player player,
+                DatabasePlayer databasePlayer,
+                ApplyBlessingMenuData menuData
+        ) {
+            Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
+            for (int i = 0; i < 5; i++) {
+                int finalI = i;
+                Integer blessingAmount = databasePlayer.getPveStats().getItemsManager().getBlessingAmount(i + 1);
+                menu.setItem(i + 2, 1,
+                        new ItemBuilder(Material.PAPER)
+                                .name(ChatColor.GREEN + "Tier " + (i + 1))
+                                .lore(
+                                        ChatColor.GRAY + "Amount: " + blessingAmount,
                                         "",
                                         ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
                                 )
                                 .get(),
                         (m, e) -> {
-                            menuData.setItem(item);
-                            openApplyBlessingMenu(player, databasePlayer, menuData);
+                            if (true || blessingAmount > 0) {
+                                menuData.setBlessing(finalI + 1);
+                                openApplyBlessingMenu(player, databasePlayer, menuData);
+                            }
                         }
                 );
-                x++;
-                if (x == 9) {
-                    x = 0;
-                    y++;
-                }
+            }
+            menu.setItem(4, 3,
+                    Menu.MENU_BACK,
+                    (m, e) -> {
+                        openApplyBlessingMenu(player, databasePlayer, menuData);
+                    }
+            );
+        }
+
+        private static class ApplyBlessingMenuData {
+            private AbstractItem<?, ?, ?> item;
+            private Integer blessing;
+
+            public ApplyBlessingMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
+                this.item = item;
+                this.blessing = blessing;
+            }
+
+            public AbstractItem<?, ?, ?> getItem() {
+                return item;
+            }
+
+            public void setItem(AbstractItem<?, ?, ?> item) {
+                this.item = item;
+            }
+
+            public Integer getBlessing() {
+                return blessing;
+            }
+
+            public void setBlessing(Integer blessing) {
+                this.blessing = blessing;
             }
         }
-        if (page - 1 > 0) {
-            menu.setItem(0, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                            .get(),
-                    (m, e) -> {
-                        menuSettings.setPage(page - 1);
-                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
-                    }
-            );
-        }
-        if (itemInventory.size() > (page * 45)) {
-            menu.setItem(8, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                            .get(),
-                    (m, e) -> {
-                        menuSettings.setPage(page + 1);
-                        openApplyBlessingItemSelectMenu(player, databasePlayer, menuSettings, menuData);
-                    }
-            );
-        }
-
-        addItemMenuSettings(player, databasePlayer, menuSettings, sortedBy, filterBy, addonFilter, menu);
-
-        menu.setItem(4, 5,
-                Menu.MENU_BACK,
-                (m, e) -> {
-                    openApplyBlessingMenu(player, databasePlayer, menuData);
-                }
-        );
     }
 
-    private static void openApplyBlessingBlessingSelectMenu(
-            Player player,
-            DatabasePlayer databasePlayer,
-            ApplyBlessingMenuData menuData
-    ) {
-        Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
-        for (int i = 0; i < 5; i++) {
-            int finalI = i;
-            Integer blessingAmount = databasePlayer.getPveStats().getItemsManager().getBlessingAmount(i + 1);
-            menu.setItem(i + 2, 1,
-                    new ItemBuilder(Material.PAPER)
-                            .name(ChatColor.GREEN + "Tier " + (i + 1))
-                            .lore(
-                                    ChatColor.GRAY + "Amount: " + blessingAmount,
-                                    "",
-                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
-                            )
-                            .get(),
+    static class RemoveCurseMenu {
+
+        public static void removeACurseMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
+            ItemStack selectedItem;
+            if (item != null) {
+                selectedItem = new ItemBuilder(item.generateItemStack())
+                        .addLore(
+                                "",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
+                        )
+                        .get();
+            } else {
+                selectedItem = new ItemBuilder(Material.SKULL_ITEM)
+                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
+                        .get();
+            }
+
+            Menu menu = new Menu("Remove a Curse", 9 * 6);
+            menu.setItem(1, 1,
+                    selectedItem,
                     (m, e) -> {
-                        if (true || blessingAmount > 0) {
-                            menuData.setBlessing(finalI + 1);
-                            openApplyBlessingMenu(player, databasePlayer, menuData);
-                        }
+                        openApplyBlessingItemSelectMenu(player, databasePlayer, new PlayerItemMenuSettings(), menuData);
                     }
             );
+            //TODO APPLY ITEM
+
+            menu.openForPlayer(player);
         }
-        menu.setItem(4, 3,
-                Menu.MENU_BACK,
-                (m, e) -> {
-                    openApplyBlessingMenu(player, databasePlayer, menuData);
-                }
-        );
     }
 
 
@@ -705,33 +763,6 @@ public class ItemsMenu {
 
         public SortOptions next() {
             return VALUES[(ordinal() + 1) % VALUES.length];
-        }
-    }
-
-
-    private static class ApplyBlessingMenuData {
-        private AbstractItem<?, ?, ?> item;
-        private Integer blessing;
-
-        public ApplyBlessingMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
-            this.item = item;
-            this.blessing = blessing;
-        }
-
-        public AbstractItem<?, ?, ?> getItem() {
-            return item;
-        }
-
-        public void setItem(AbstractItem<?, ?, ?> item) {
-            this.item = item;
-        }
-
-        public Integer getBlessing() {
-            return blessing;
-        }
-
-        public void setBlessing(Integer blessing) {
-            this.blessing = blessing;
         }
     }
 
