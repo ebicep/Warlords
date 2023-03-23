@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemMichaelMenu {
     public static void openMichaelItemMenu(Player player, DatabasePlayer databasePlayer) {
-        Menu menu = new Menu("Michael", 9 * 6);
+        Menu menu = new Menu("Michael", 9 * 4);
 
-        menu.setItem(4, 0,
+        menu.setItem(1, 1,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Your Blessings")
                         .get(),
@@ -22,14 +22,14 @@ public class ItemMichaelMenu {
                 }
         );
 
-        menu.setItem(1, 1,
+        menu.setItem(3, 1,
                 new ItemBuilder(Material.PAPER)
                         .name(ChatColor.GREEN + "Buy a Blessing")
                         .get(),
                 (m, e) -> {
                 }
         );
-        menu.setItem(4, 1,
+        menu.setItem(5, 1,
                 new ItemBuilder(Material.ANVIL)
                         .name(ChatColor.GREEN + "Apply a Blessing")
                         .get(),
@@ -39,14 +39,14 @@ public class ItemMichaelMenu {
                 }
         );
         menu.setItem(7, 1,
-                new ItemBuilder(Material.EMPTY_MAP)
+                new ItemBuilder(Material.FIREBALL)
                         .name(ChatColor.GREEN + "Remove a Curse")
                         .get(),
                 (m, e) -> {
                 }
         );
 
-
+        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 

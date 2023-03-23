@@ -50,7 +50,7 @@ public class ItemCraftingMenu {
 
     public static void openItemCraftingMenu(Player player, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Enya", 9 * 4);
+            Menu menu = new Menu("Select Item to Craft", 9 * 4);
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BREWING_STAND_ITEM)
@@ -238,7 +238,7 @@ public class ItemCraftingMenu {
                                 Menu.openConfirmationMenu(player,
                                         "Confirm Item Craft",
                                         3,
-                                        Collections.singletonList(ChatColor.GRAY + "Craft Item"),
+                                        Collections.singletonList(ChatColor.GRAY + "Are you sure you want to craft?"),
                                         Collections.singletonList(ChatColor.GRAY + "Go back"),
                                         (m2, e2) -> {
                                             for (TierRequirement requirement : requirements) {
