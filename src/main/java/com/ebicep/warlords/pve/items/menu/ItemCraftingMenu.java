@@ -16,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -78,7 +77,7 @@ public class ItemCraftingMenu {
         List<TierRequirement> requirements = tierCostInfo.getRequirements();
         for (TierRequirement requirement : requirements) {
             ItemTier tier = requirement.getTier();
-            addItemTierRequirement(menu, tier, items.get(tier), requirement.getX(), requirement.getY(), (m, e) -> {
+            ItemMenuUtil.addItemTierRequirement(menu, tier, items.get(tier), requirement.getX(), requirement.getY(), (m, e) -> {
                 openItemSelectMenu(
                         player,
                         databasePlayer,
@@ -93,47 +92,16 @@ public class ItemCraftingMenu {
         }
 
         Pair<Integer, Integer> costLocation = tierCostInfo.getCostLocation();
-        addMobDropRequirement(databasePlayer, menu, itemTier, costLocation.getA(), costLocation.getB());
-        addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, databasePlayer.getPveStats(), itemTier);
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
+        ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
+        addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
+        ItemMenuUtil.addItemConfirmation(menu, () -> {
+            addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
+        });
 
         menu.setItem(4, 2, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, new HashMap<>()));
         menu.openForPlayer(player);
-    }
-
-    private static void addItemTierRequirement(
-            Menu menu,
-            ItemTier tier,
-            AbstractItem<?, ?, ?> item,
-            int x,
-            int y,
-            BiConsumer<Menu, InventoryClickEvent> onClick
-    ) {
-        ItemBuilder itemBuilder;
-        ItemStack glassPane;
-        if (item == null) {
-            itemBuilder = new ItemBuilder(tier.clayBlock)
-                    .name(ChatColor.GREEN + "Click to Equip Item");
-            glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-        } else {
-            itemBuilder = item.generateItemBuilder()
-                              .addLore(
-                                      "",
-                                      ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to swap this item"
-                              );
-            glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
-        }
-        menu.setItem(x, y,
-                itemBuilder.get(),
-                onClick
-        );
-        menu.setItem(x + 1, y,
-                new ItemBuilder(glassPane)
-                        .name(" ")
-                        .get(),
-                (m, e) -> {
-                }
-        );
     }
 
     private static void openItemSelectMenu(
@@ -166,42 +134,6 @@ public class ItemCraftingMenu {
         menu.open();
     }
 
-    private static void addMobDropRequirement(
-            DatabasePlayer databasePlayer,
-            Menu menu,
-            ItemTier tier,
-            int x,
-            int y
-    ) {
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
-        menu.setItem(x, y,
-                new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Mob Drops")
-                        .lore(Arrays.stream(MobDrops.VALUES)
-                                    .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
-                                                                                       .getMobDrops()
-                                                                                       .getOrDefault(drop, 0L)))
-                                    .collect(Collectors.joining("\n")))
-                        .addLore(tierCostInfo.getLore())
-                        .get(),
-                (m, e) -> {
-                }
-        );
-        boolean hasRequiredDrops = tierCostInfo
-                .getCost()
-                .entrySet()
-                .stream()
-                .allMatch(mobDropsLongEntry -> pveStats.getMobDrops(mobDropsLongEntry.getKey()) >= mobDropsLongEntry.getValue());
-        menu.setItem(x + 1, y,
-                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) (hasRequiredDrops ? 5 : 14))
-                        .name(" ")
-                        .get(),
-                (m, e) -> {
-                }
-        );
-    }
-
     private static void addCraftItemConfirmation(
             Player player,
             DatabasePlayer databasePlayer,
@@ -211,68 +143,54 @@ public class ItemCraftingMenu {
             DatabasePlayerPvE pveStats,
             ItemTier tier
     ) {
-        for (int i = 6; i < 9; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (i == 7 && j == 1) {
-                    menu.setItem(i, j,
-                            new ItemBuilder(tier.clayBlock)
-                                    .name(ChatColor.GREEN + "Click to Craft Item")
-                                    .get(),
-                            (m, e) -> {
+        menu.setItem(7, 1,
+                new ItemBuilder(tier.clayBlock)
+                        .name(ChatColor.GREEN + "Click to Craft Item")
+                        .get(),
+                (m, e) -> {
+                    for (TierRequirement requirement : requirements) {
+                        if (items.get(requirement.getTier()) == null) {
+                            player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
+                            return;
+                        }
+                    }
+                    TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
+                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                        MobDrops mobDrop = currenciesLongEntry.getKey();
+                        Long cost = currenciesLongEntry.getValue();
+                        if (pveStats.getMobDrops(mobDrop) < cost) {
+                            player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                            return;
+                        }
+                    }
+
+                    Menu.openConfirmationMenu(player,
+                            "Confirm Item Craft",
+                            3,
+                            Collections.singletonList(ChatColor.GRAY + "Are you sure you want to craft?"),
+                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            (m2, e2) -> {
                                 for (TierRequirement requirement : requirements) {
-                                    if (items.get(requirement.getTier()) == null) {
-                                        player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
-                                        return;
-                                    }
+                                    pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
                                 }
-                                TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
                                 for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
-                                    MobDrops mobDrop = currenciesLongEntry.getKey();
-                                    Long cost = currenciesLongEntry.getValue();
-                                    if (pveStats.getMobDrops(mobDrop) < cost) {
-                                        player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
-                                        return;
-                                    }
+                                    currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
 
-                                Menu.openConfirmationMenu(player,
-                                        "Confirm Item Craft",
-                                        3,
-                                        Collections.singletonList(ChatColor.GRAY + "Are you sure you want to craft?"),
-                                        Collections.singletonList(ChatColor.GRAY + "Go back"),
-                                        (m2, e2) -> {
-                                            for (TierRequirement requirement : requirements) {
-                                                pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
-                                            }
-                                            for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
-                                                currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
-                                            }
-
-                                            AbstractItem<?, ?, ?> craftedItem = ItemTypes.getRandom().create.apply(tier);
-                                            pveStats.getItemsManager().addItem(craftedItem);
-                                            AbstractItem.sendItemMessage(player,
-                                                    new ComponentBuilder(ChatColor.GRAY + "You crafted ")
-                                                            .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
-                                            );
-                                            player.closeInventory();
-                                        },
-                                        (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
-                                        (m2) -> {
-                                        }
+                                AbstractItem<?, ?, ?> craftedItem = ItemTypes.getRandom().create.apply(tier);
+                                pveStats.getItemsManager().addItem(craftedItem);
+                                AbstractItem.sendItemMessage(player,
+                                        new ComponentBuilder(ChatColor.GRAY + "You crafted ")
+                                                .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
                                 );
-                            }
-                    );
-                } else {
-                    menu.setItem(i, j,
-                            new ItemBuilder(Material.IRON_FENCE)
-                                    .name(" ")
-                                    .get(),
-                            (m, e) -> {
+                                player.closeInventory();
+                            },
+                            (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
+                            (m2) -> {
                             }
                     );
                 }
-            }
-        }
+        );
     }
 
     static class TierRequirement {
@@ -303,17 +221,11 @@ public class ItemCraftingMenu {
         private final LinkedHashMap<MobDrops, Long> cost;
         private final Pair<Integer, Integer> costLocation;
         private final List<TierRequirement> requirements;
-        private final List<String> lore;
 
         TierCostInfo(LinkedHashMap<MobDrops, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
             this.cost = cost;
             this.costLocation = costLocation;
             this.requirements = requirements;
-            this.lore = new ArrayList<>() {{
-                add("");
-                add(ChatColor.AQUA + "Craft Cost: ");
-                cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
-            }};
         }
 
         public LinkedHashMap<MobDrops, Long> getCost() {
@@ -328,9 +240,6 @@ public class ItemCraftingMenu {
             return requirements;
         }
 
-        public List<String> getLore() {
-            return lore;
-        }
     }
 
 }

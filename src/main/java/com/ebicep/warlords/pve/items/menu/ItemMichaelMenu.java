@@ -1,16 +1,24 @@
 package com.ebicep.warlords.pve.items.menu;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class ItemMichaelMenu {
+
     public static void openMichaelItemMenu(Player player, DatabasePlayer databasePlayer) {
         Menu menu = new Menu("Michael", 9 * 4);
 
@@ -52,6 +60,8 @@ public class ItemMichaelMenu {
 
     static class ApplyBlessingMenu {
 
+        private static final LinkedHashMap<MobDrops, Long> cost = new LinkedHashMap<>();
+
         public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
             AbstractItem<?, ?, ?> item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
@@ -88,8 +98,9 @@ public class ItemMichaelMenu {
                         .get();
             }
 
+
             Menu menu = new Menu("Apply a Blessing", 9 * 6);
-            menu.setItem(1, 1,
+            menu.setItem(2, 0,
                     selectedItem,
                     (m, e) -> {
                         openApplyBlessingItemSelectMenu(
@@ -100,13 +111,20 @@ public class ItemMichaelMenu {
                         );
                     }
             );
-            menu.setItem(4, 1,
+            ItemMenuUtil.addPaneRequirement(menu, 3, 0, item != null);
+            menu.setItem(2, 1,
                     selectedBlessing,
                     (m, e) -> {
                         openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
                     }
             );
-            //TODO APPLY ITEM
+            ItemMenuUtil.addPaneRequirement(menu, 3, 1, blessing != null);
+            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, new LinkedHashMap<>(), 2, 2);
+
+            ItemMenuUtil.addItemConfirmation(menu, () -> {
+                addCraftItemConfirmation(player, databasePlayer, menuData, menu);
+            });
+
             menu.openForPlayer(player);
         }
 
@@ -127,14 +145,13 @@ public class ItemMichaelMenu {
                             ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
                     ),
                     menuSettings,
-                    databasePlayer
-            );
-
-            menu.setItem(4, 5,
-                    Menu.MENU_BACK,
-                    (m, e) -> {
-                        openApplyBlessingMenu(player, databasePlayer, menuData);
-                    }
+                    databasePlayer,
+                    m -> m.setItem(4, 5,
+                            Menu.MENU_BACK,
+                            (m2, e2) -> {
+                                openApplyBlessingMenu(player, databasePlayer, menuData);
+                            }
+                    )
             );
 
             menu.open();
@@ -170,6 +187,54 @@ public class ItemMichaelMenu {
                     Menu.MENU_BACK,
                     (m, e) -> {
                         openApplyBlessingMenu(player, databasePlayer, menuData);
+                    }
+            );
+        }
+
+        private static void addCraftItemConfirmation(
+                Player player,
+                DatabasePlayer databasePlayer,
+                ApplyBlessingMenuData menuData,
+                Menu menu
+        ) {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            AbstractItem<?, ?, ?> item = menuData.getItem();
+            menu.setItem(7, 1,
+                    new ItemBuilder(item.generateItemStack()) //TODO CLONE
+                                                              //.name(ChatColor.GREEN + "Click to Craft Item")
+                                                              .get(),
+                    (m, e) -> {
+
+                        for (Map.Entry<MobDrops, Long> currenciesLongEntry : cost.entrySet()) {
+                            MobDrops mobDrop = currenciesLongEntry.getKey();
+                            Long cost = currenciesLongEntry.getValue();
+                            if (pveStats.getMobDrops(mobDrop) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                                return;
+                            }
+                        }
+
+                        Menu.openConfirmationMenu(player,
+                                "Confirm Item Craft",
+                                3,
+                                Collections.singletonList(ChatColor.GRAY + "Are you sure you want to bless?"),
+                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                (m2, e2) -> {
+                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : cost.entrySet()) {
+                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                    }
+
+
+                                    AbstractItem.sendItemMessage(player,
+                                            new ComponentBuilder(ChatColor.GRAY + "You blessed ")
+                                                    .appendHoverItem(item.getName(), item.generateItemStack())
+                                    );
+                                    player.closeInventory();
+                                },
+                                (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
+                                (m2) -> {
+                                }
+                        );
                     }
             );
         }
