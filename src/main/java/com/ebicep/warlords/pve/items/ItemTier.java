@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -15,6 +16,7 @@ public enum ItemTier {
     ALL(
             "None",
             ChatColor.BLACK,
+            null,
             null,
             null,
             0,
@@ -35,6 +37,7 @@ public enum ItemTier {
             "Alpha",
             ChatColor.GREEN,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 5),
+            new ItemStack(Material.STAINED_CLAY, 1, (short) 5),
             new WeightRange(7, 10, 15),
             .1,
             .001,
@@ -72,6 +75,7 @@ public enum ItemTier {
             "Beta",
             ChatColor.BLUE,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 3),
+            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 3),
             new WeightRange(15, 20, 30),
             .05,
             .0005,
@@ -109,6 +113,7 @@ public enum ItemTier {
             "Gamma",
             ChatColor.LIGHT_PURPLE,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 2),
+            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 2),
             new WeightRange(22, 30, 45),
             .01,
             .0001,
@@ -146,6 +151,7 @@ public enum ItemTier {
             "Delta",
             ChatColor.YELLOW,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 4),
+            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 4),
             new WeightRange(30, 40, 60),
             .001,
             .00001,
@@ -183,6 +189,7 @@ public enum ItemTier {
             "Omega",
             ChatColor.GRAY,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 1),
+            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
             new WeightRange(37, 50, 75),
             0,
             0,
@@ -255,6 +262,7 @@ public enum ItemTier {
     public final String name;
     public final ChatColor chatColor;
     public final ItemStack glassPane;
+    public final ItemStack clayBlock;
     public final WeightRange weightRange;
     public final double dropChance;
     public final double killDropChance;
@@ -268,7 +276,7 @@ public enum ItemTier {
     ItemTier(
             String name,
             ChatColor chatColor,
-            ItemStack glassPane, WeightRange weightRange,
+            ItemStack glassPane, ItemStack clayBlock, WeightRange weightRange,
             double dropChance,
             double killDropChance,
             double cursedChance,
@@ -281,6 +289,7 @@ public enum ItemTier {
         this.name = name;
         this.chatColor = chatColor;
         this.glassPane = glassPane;
+        this.clayBlock = clayBlock;
         this.weightRange = weightRange;
         this.dropChance = dropChance;
         this.killDropChance = killDropChance;

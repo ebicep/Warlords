@@ -75,6 +75,10 @@ public class ItemsManager {
         this.itemInventory.add(item);
     }
 
+    public void removeItem(AbstractItem<?, ?, ?> item) {
+        this.itemInventory.remove(item);
+    }
+
     public List<ItemLoadout> getLoadouts() {
         return loadouts;
     }

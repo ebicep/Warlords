@@ -5,11 +5,10 @@ import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
 
-    public ItemTome(UUID uuid, ItemTier tier) {
+    public ItemTome(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemTomeStatPool.VALUES));
     }
 

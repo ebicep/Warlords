@@ -3,12 +3,14 @@ package com.ebicep.warlords.pve.items.types;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -20,6 +22,14 @@ public abstract class AbstractItem<
         T extends Enum<T> & ItemStatPool<T>,
         R extends Enum<R> & ItemModifier<R>,
         U extends Enum<U> & ItemModifier<U>> {
+
+    public static void sendItemMessage(Player player, String message) {
+        player.sendMessage(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > " + message);
+    }
+
+    public static void sendItemMessage(Player player, ComponentBuilder message) {
+        player.spigot().sendMessage(message.prependAndCreate(new ComponentBuilder(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > ").create()));
+    }
 
     private static double getAverageValue(double min, double max, double current) {
         return (current - min) / (max - min);

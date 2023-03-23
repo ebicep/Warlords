@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.pve.items.menu.ItemCraftingMenu;
 import com.ebicep.warlords.pve.items.menu.ItemsMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemTypes;
@@ -15,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 @CommandAlias("items")
@@ -31,6 +33,11 @@ public class ItemsCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemsMenu.openItemLoadoutMenu(player, null));
     }
 
+    @Subcommand("forgemenu")
+    public void openForgingMenu(Player player, ItemTier tier) {
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openForgingMenu(player, databasePlayer, tier, new HashMap<>()));
+    }
+
     @Subcommand("generate")
     public void generate(Player player, ItemTypes type, ItemTier tier, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         if (tier == ItemTier.ALL) {
@@ -40,7 +47,7 @@ public class ItemsCommand extends BaseCommand {
         ItemTier finalTier = tier;
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                AbstractItem<?, ?, ?> item = type.create.apply(player.getUniqueId(), finalTier);
+                AbstractItem<?, ?, ?> item = type.create.apply(finalTier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
@@ -55,9 +62,8 @@ public class ItemsCommand extends BaseCommand {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                ItemTypes randomItemType = ItemTypes.VALUES[random.nextInt(ItemTypes.VALUES.length)];
                 ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
-                AbstractItem<?, ?, ?> item = randomItemType.create.apply(player.getUniqueId(), randomItemTier);
+                AbstractItem<?, ?, ?> item = ItemTypes.getRandom().create.apply(randomItemTier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")

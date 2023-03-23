@@ -5,11 +5,10 @@ import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerModifier.Blessings, ItemBucklerModifier.Curses> {
 
-    public ItemBuckler(UUID uuid, ItemTier tier) {
+    public ItemBuckler(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemBucklerStatPool.VALUES));
     }
 

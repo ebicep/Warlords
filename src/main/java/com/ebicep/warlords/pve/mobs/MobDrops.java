@@ -14,6 +14,11 @@ public enum MobDrops implements Spendable {
             ChatColor.WHITE,
             new ItemStack(Material.NETHER_STAR)
     ),
+    CELESTIAL_BRONZE(
+            "Celestial Bronze",
+            ChatColor.GOLD,
+            new ItemStack(Material.MONSTER_EGG, 1, (short) 101)
+    ),
 
     ;
 

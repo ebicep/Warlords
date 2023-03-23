@@ -5,11 +5,10 @@ import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
 
-    public ItemGauntlet(UUID uuid, ItemTier tier) {
+    public ItemGauntlet(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemGauntletStatPool.VALUES));
     }
 
