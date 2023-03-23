@@ -181,32 +181,34 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         if (mobDrops.isEmpty()) {
             return;
         }
-        PveOption pveOption = killer.getGame()
-                                    .getOptions()
-                                    .stream()
-                                    .filter(PveOption.class::isInstance)
-                                    .map(PveOption.class::cast)
-                                    .findFirst().orElse(null);
+        Game game = killer.getGame();
+        PveOption pveOption = game
+                .getOptions()
+                .stream()
+                .filter(PveOption.class::isInstance)
+                .map(PveOption.class::cast)
+                .findFirst()
+                .orElse(null);
         if (pveOption == null) {
             return;
         }
         DifficultyIndex difficultyIndex = pveOption.getDifficulty();
-        PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
                            .teammatesOf((WarlordsPlayer) killer)
-                           .forEach(warlordsEntity -> {
+                           .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
                                    AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
                                    if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
-                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(killer, drop));
+                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(warlordsPlayer, drop));
 
-                                       killer.getGame().forEachOnlinePlayer((player, team) -> {
-                                           player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
+                                       game.forEachOnlinePlayer((player, team) -> {
+                                           player.sendMessage(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
                                                    ChatColor.GRAY + " obtained a " +
                                                    drop.chatColor + drop.name +
                                                    ChatColor.GRAY + "!"
                                            );
                                        });
-                                       killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
                                    }
                                });
                            });

@@ -209,9 +209,10 @@ public class Zenith extends AbstractZombie implements BossMob {
     public HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>() {{
             put(MobDrops.ZENITH_STAR, new HashMap<>() {{
-                put(DifficultyIndex.NORMAL, .02);
-                put(DifficultyIndex.HARD, .04);
-                put(DifficultyIndex.ENDLESS, .04);
+                put(DifficultyIndex.EASY, .015);
+                put(DifficultyIndex.NORMAL, .025);
+                put(DifficultyIndex.HARD, .05);
+                put(DifficultyIndex.ENDLESS, .05);
             }});
         }};
     }

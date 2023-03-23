@@ -88,7 +88,6 @@ public final class Game implements Runnable, AutoCloseable {
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
-
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
