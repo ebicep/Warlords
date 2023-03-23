@@ -16,11 +16,17 @@ public class ItemsManager {
      * if equation > 100, set to 100. (100 Weight Cap)
      * <p>
      * Almost all of these have decimals. In such cases, Round Down
+     * <p>
      * x1: Total Player Wins. Currently, Rich would have +47 weight from this.
+     * <p>
      * x2: Average Player Level. Find the mean of the set of classes we have (pal, mag, war, sha, rog).
+     * <p>
      * x3: Total Prestiges. Simply add.
+     * <p>
      * x4: Achievements. Divide Achievements Earned by Total Achievements.
+     * <p>
      * x5: "Hi-Scores". This one's complicated. Will explain thoroughly after this message.
+     * <p>
      * x6: Patreon Bonus. Either +5 or +10.
      *
      * @param databasePlayer The player to get the weight of

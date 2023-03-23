@@ -10,7 +10,7 @@ import java.util.UUID;
 public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
 
     public ItemGauntlet(UUID uuid, ItemTier tier) {
-        super(uuid, tier, tier.generateStatPool(ItemGauntletStatPool.VALUES));
+        super(tier, tier.generateStatPool(ItemGauntletStatPool.VALUES));
     }
 
     @Override

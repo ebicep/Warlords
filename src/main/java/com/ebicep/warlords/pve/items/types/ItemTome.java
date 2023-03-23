@@ -10,7 +10,7 @@ import java.util.UUID;
 public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
 
     public ItemTome(UUID uuid, ItemTier tier) {
-        super(uuid, tier, tier.generateStatPool(ItemTomeStatPool.VALUES));
+        super(tier, tier.generateStatPool(ItemTomeStatPool.VALUES));
     }
 
     @Override

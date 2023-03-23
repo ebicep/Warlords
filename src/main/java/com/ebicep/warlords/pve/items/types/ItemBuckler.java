@@ -10,7 +10,7 @@ import java.util.UUID;
 public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerModifier.Blessings, ItemBucklerModifier.Curses> {
 
     public ItemBuckler(UUID uuid, ItemTier tier) {
-        super(uuid, tier, tier.generateStatPool(ItemBucklerStatPool.VALUES));
+        super(tier, tier.generateStatPool(ItemBucklerStatPool.VALUES));
     }
 
     @Override

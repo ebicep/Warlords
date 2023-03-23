@@ -25,7 +25,7 @@ public abstract class AbstractItem<
         return (current - min) / (max - min);
     }
 
-    protected UUID uuid;
+    protected UUID uuid = UUID.randomUUID();
     @Field("obtained_date")
     protected Instant obtainedDate = Instant.now();
     protected ItemTier tier;
@@ -33,8 +33,7 @@ public abstract class AbstractItem<
     protected Map<T, Integer> statPool = new HashMap<>();
     protected int modifier;
 
-    public AbstractItem(UUID uuid, ItemTier tier, Set<T> statPool) {
-        this.uuid = uuid;
+    public AbstractItem(ItemTier tier, Set<T> statPool) {
         this.tier = tier;
         HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
         for (T t : statPool) {
@@ -58,6 +57,10 @@ public abstract class AbstractItem<
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     public ItemStack generateItemStack() {
+        return generateItemBuilder().get();
+    }
+
+    public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
                 .name(getName())
                 .lore("");
@@ -82,7 +85,7 @@ public abstract class AbstractItem<
                 getItemScoreString(),
                 getWeightString()
         );
-        return itemBuilder.get();
+        return itemBuilder;
     }
 
     public String getName() {
@@ -188,6 +191,10 @@ public abstract class AbstractItem<
 
     private String getWeightString() {
         return ChatColor.GRAY + "Weight: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeight());
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     public Instant getObtainedDate() {

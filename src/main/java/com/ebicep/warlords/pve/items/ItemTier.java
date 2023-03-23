@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,13 +16,15 @@ public enum ItemTier {
             "None",
             ChatColor.BLACK,
             null,
+            null,
             0,
             0,
             0,
             0,
             null,
             null,
-            null
+            null,
+            0
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -31,6 +34,7 @@ public enum ItemTier {
     ALPHA(
             "Alpha",
             ChatColor.GREEN,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 5),
             new WeightRange(7, 10, 15),
             .1,
             .001,
@@ -56,7 +60,8 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
-            }}
+            }},
+            3
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -66,6 +71,7 @@ public enum ItemTier {
     BETA(
             "Beta",
             ChatColor.BLUE,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 3),
             new WeightRange(15, 20, 30),
             .05,
             .0005,
@@ -91,7 +97,8 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
-            }}
+            }},
+            2
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -101,6 +108,7 @@ public enum ItemTier {
     GAMMA(
             "Gamma",
             ChatColor.LIGHT_PURPLE,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 2),
             new WeightRange(22, 30, 45),
             .01,
             .0001,
@@ -126,7 +134,8 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
-            }}
+            }},
+            2
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -136,6 +145,7 @@ public enum ItemTier {
     DELTA(
             "Delta",
             ChatColor.YELLOW,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 4),
             new WeightRange(30, 40, 60),
             .001,
             .00001,
@@ -161,7 +171,8 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
-            }}
+            }},
+            1
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -171,6 +182,7 @@ public enum ItemTier {
     OMEGA(
             "Omega",
             ChatColor.GRAY,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 1),
             new WeightRange(37, 50, 75),
             0,
             0,
@@ -196,7 +208,8 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
-            }}
+            }},
+            1
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -241,6 +254,7 @@ public enum ItemTier {
 
     public final String name;
     public final ChatColor chatColor;
+    public final ItemStack glassPane;
     public final WeightRange weightRange;
     public final double dropChance;
     public final double killDropChance;
@@ -249,21 +263,24 @@ public enum ItemTier {
     public final HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange;
     public final HashMap<ItemTomeStatPool, StatRange> tomeStatRange;
     public final HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange;
+    public final int maxEquipped;
 
     ItemTier(
             String name,
             ChatColor chatColor,
-            WeightRange weightRange,
+            ItemStack glassPane, WeightRange weightRange,
             double dropChance,
             double killDropChance,
             double cursedChance,
             double blessedChance,
             HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange,
             HashMap<ItemTomeStatPool, StatRange> tomeStatRange,
-            HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange
+            HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange,
+            int maxEquipped
     ) {
         this.name = name;
         this.chatColor = chatColor;
+        this.glassPane = glassPane;
         this.weightRange = weightRange;
         this.dropChance = dropChance;
         this.killDropChance = killDropChance;
@@ -272,6 +289,7 @@ public enum ItemTier {
         this.gauntletStatRange = gauntletStatRange;
         this.tomeStatRange = tomeStatRange;
         this.bucklerStatRange = bucklerStatRange;
+        this.maxEquipped = maxEquipped;
     }
 
     public abstract <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool);
