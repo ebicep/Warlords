@@ -50,7 +50,7 @@ public class ItemCraftingMenu {
 
     public static void openItemCraftingMenu(Player player, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Enya", 9 * 3);
+            Menu menu = new Menu("Enya", 9 * 4);
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BREWING_STAND_ITEM)
@@ -66,6 +66,7 @@ public class ItemCraftingMenu {
                     (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.OMEGA, items)
             );
 
+            menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         });
     }
@@ -78,10 +79,16 @@ public class ItemCraftingMenu {
         for (TierRequirement requirement : requirements) {
             ItemTier tier = requirement.getTier();
             addItemTierRequirement(menu, tier, items.get(tier), requirement.getX(), requirement.getY(), (m, e) -> {
-                openItemSelectMenu(player, databasePlayer, tier, (i2, m2, e2) -> {
-                    items.put(tier, i2);
-                    openForgingMenu(player, databasePlayer, itemTier, items);
-                });
+                openItemSelectMenu(
+                        player,
+                        databasePlayer,
+                        tier,
+                        (m2, e2) -> openForgingMenu(player, databasePlayer, itemTier, items),
+                        (i2, m2, e2) -> {
+                            items.put(tier, i2);
+                            openForgingMenu(player, databasePlayer, itemTier, items);
+                        }
+                );
             });
         }
 
@@ -90,7 +97,7 @@ public class ItemCraftingMenu {
         addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, databasePlayer.getPveStats(), itemTier);
 
 
-        menu.setItem(4, 2, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, items));
+        menu.setItem(4, 2, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, new HashMap<>()));
         menu.openForPlayer(player);
     }
 
@@ -133,6 +140,7 @@ public class ItemCraftingMenu {
             Player player,
             DatabasePlayer databasePlayer,
             ItemTier tier,
+            BiConsumer<Menu, InventoryClickEvent> back,
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> onClick
     ) {
         ItemMenu menu = new ItemMenu(
@@ -150,7 +158,10 @@ public class ItemCraftingMenu {
                                                         .stream()
                                                         .filter(item -> item.getTier() == tier)
                                                         .collect(Collectors.toList())),
-                databasePlayer
+                databasePlayer,
+                m -> {
+                    m.setItem(4, 5, Menu.MENU_BACK, back);
+                }
         );
         menu.open();
     }
@@ -224,20 +235,31 @@ public class ItemCraftingMenu {
                                     }
                                 }
 
-                                for (TierRequirement requirement : requirements) {
-                                    pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
-                                }
-                                for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
-                                    currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
-                                }
+                                Menu.openConfirmationMenu(player,
+                                        "Confirm Item Craft",
+                                        3,
+                                        Collections.singletonList(ChatColor.GRAY + "Craft Item"),
+                                        Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                        (m2, e2) -> {
+                                            for (TierRequirement requirement : requirements) {
+                                                pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
+                                            }
+                                            for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                                                currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                            }
 
-                                AbstractItem<?, ?, ?> craftedItem = ItemTypes.getRandom().create.apply(tier);
-                                pveStats.getItemsManager().addItem(craftedItem);
-                                AbstractItem.sendItemMessage(player,
-                                        new ComponentBuilder(ChatColor.GREEN + "Crafted ")
-                                                .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
+                                            AbstractItem<?, ?, ?> craftedItem = ItemTypes.getRandom().create.apply(tier);
+                                            pveStats.getItemsManager().addItem(craftedItem);
+                                            AbstractItem.sendItemMessage(player,
+                                                    new ComponentBuilder(ChatColor.GRAY + "You crafted ")
+                                                            .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
+                                            );
+                                            player.closeInventory();
+                                        },
+                                        (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
+                                        (m2) -> {
+                                        }
                                 );
-                                player.closeInventory();
                             }
                     );
                 } else {

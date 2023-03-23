@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -27,9 +28,11 @@ public class ItemMenu extends Menu {
     private final UnaryOperator<ItemBuilder> editItem;
     private final PlayerItemMenuSettings menuSettings;
     private final DatabasePlayer databasePlayer;
+    private Consumer<Menu> menu;
 
     public ItemMenu(
-            Player player, String name,
+            Player player,
+            String name,
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
             UnaryOperator<ItemBuilder> editItem,
             PlayerItemMenuSettings menuSettings,
@@ -43,6 +46,20 @@ public class ItemMenu extends Menu {
         this.databasePlayer = databasePlayer;
     }
 
+    public ItemMenu(
+            Player player,
+            String name,
+            TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
+            UnaryOperator<ItemBuilder> editItem,
+            PlayerItemMenuSettings menuSettings,
+            DatabasePlayer databasePlayer,
+            Consumer<Menu> menu
+    ) {
+        this(player, name, itemClickAction, editItem, menuSettings, databasePlayer);
+        this.menu = menu;
+        menu.accept(this);
+    }
+
     public void open() {
         super.clear();
         menuSettings.sort();
@@ -53,6 +70,7 @@ public class ItemMenu extends Menu {
         addSortBySetting();
         addSortOrderSetting();
         addPageArrows();
+        menu.accept(this);
         super.openForPlayer(player);
     }
 
