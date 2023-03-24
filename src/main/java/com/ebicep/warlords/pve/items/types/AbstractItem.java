@@ -219,5 +219,7 @@ public abstract class AbstractItem<
         return modifier;
     }
 
-
+    public void setModifier(int modifier) {
+        this.modifier = modifier;
+    }
 }

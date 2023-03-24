@@ -96,7 +96,6 @@ public class ItemCraftingMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
         ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
-        addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         ItemMenuUtil.addItemConfirmation(menu, () -> {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
