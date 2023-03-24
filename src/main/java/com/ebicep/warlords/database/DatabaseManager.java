@@ -12,6 +12,7 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
+import com.ebicep.warlords.database.repositories.items.WeeklyBlessingsService;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -65,6 +66,7 @@ public class DatabaseManager {
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
     public static GameEventsService gameEventsService;
+    public static WeeklyBlessingsService weeklyBlessingsService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -85,6 +87,7 @@ public class DatabaseManager {
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
+            weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -110,7 +113,7 @@ public class DatabaseManager {
                 .sync(() -> {
                     GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
                     ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
-                    DatabaseTiming.checkStatsTimings();
+                    DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
                 })

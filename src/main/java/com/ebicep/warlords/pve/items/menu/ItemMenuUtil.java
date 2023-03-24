@@ -43,7 +43,7 @@ public class ItemMenuUtil {
                 itemBuilder.get(),
                 onClick
         );
-        addPaneRequirement(menu, x, y, item != null);
+        addPaneRequirement(menu, x + 1, y, item != null);
     }
 
     public static void addPaneRequirement(Menu menu, int x, int y, boolean requirementMet) {
@@ -65,7 +65,7 @@ public class ItemMenuUtil {
     ) {
         List<String> costLore = new ArrayList<>() {{
             add("");
-            add(ChatColor.AQUA + "Craft Cost: ");
+            add(ChatColor.AQUA + "Drops Cost: ");
             cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
         }};
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();

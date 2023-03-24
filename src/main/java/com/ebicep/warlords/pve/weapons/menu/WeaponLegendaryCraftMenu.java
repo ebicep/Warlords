@@ -18,19 +18,19 @@ import java.util.*;
 
 public class WeaponLegendaryCraftMenu {
 
-    public static LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>() {{
+    public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
         put(Currencies.COIN, 1000000L);
         put(Currencies.SYNTHETIC_SHARD, 10000L);
     }};
-    public static List<String> costLore = new ArrayList<>() {{
+    public static final List<String> COST_LORE = new ArrayList<>() {{
         add("");
         add(ChatColor.AQUA + "Craft Cost: ");
-        cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
+        COST.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
     }};
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost.entrySet()) {
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
                 player.sendMessage(ChatColor.RED + "You are not worthy of crafting a legendary weapon yet, bring me enough Synthetic Shards and Coins first!");
                 return;
@@ -42,12 +42,12 @@ public class WeaponLegendaryCraftMenu {
         menu.setItem(4, 2,
                 new ItemBuilder(Material.SULPHUR)
                         .name(ChatColor.GREEN + "Craft Legendary Weapon")
-                        .lore(costLore)
+                        .lore(COST_LORE)
                         .get(),
                 (m, e) -> {
                     List<String> confirmLore = new ArrayList<>();
                     confirmLore.add(ChatColor.GRAY + "Craft a Legendary Weapon");
-                    confirmLore.addAll(costLore);
+                    confirmLore.addAll(COST_LORE);
                     Menu.openConfirmationMenu(
                             player,
                             "Craft Legendary Weapon",
@@ -56,7 +56,7 @@ public class WeaponLegendaryCraftMenu {
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                             (m2, e2) -> {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
-                                cost.forEach(pveStats::subtractCurrency);
+                                COST.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 Location loc = player.getLocation();
                                 player.playSound(loc, Sound.NOTE_PLING, 500, 2);

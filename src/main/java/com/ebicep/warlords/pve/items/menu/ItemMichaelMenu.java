@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.menu;
 
+import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
@@ -13,9 +14,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
+import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
 public class ItemMichaelMenu {
 
@@ -25,6 +26,13 @@ public class ItemMichaelMenu {
         menu.setItem(1, 1,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Your Blessings")
+                        .lore(new ArrayList<>() {{
+                            for (int i = 1; i <= 5; i++) {
+                                add(ChatColor.GRAY + "Tier " + i + ": " + ChatColor.GREEN + databasePlayer.getPveStats()
+                                                                                                          .getItemsManager()
+                                                                                                          .getBlessingAmount(i));
+                            }
+                        }})
                         .get(),
                 (m, e) -> {
                 }
@@ -35,6 +43,7 @@ public class ItemMichaelMenu {
                         .name(ChatColor.GREEN + "Buy a Blessing")
                         .get(),
                 (m, e) -> {
+                    BuyABlessingMenu.openBuyABlessingMenu(player, databasePlayer);
                 }
         );
         menu.setItem(5, 1,
@@ -58,7 +67,122 @@ public class ItemMichaelMenu {
         menu.openForPlayer(player);
     }
 
-    static class ApplyBlessingMenu {
+    public static class YourBlessingsMenu {
+
+        public static void openYourBlessingsMenu(Player player, DatabasePlayer databasePlayer) {
+            Menu menu = new Menu("Your Blessings", 9 * 4);
+
+//            for (int tier = 1; tier <= 5; tier++) {
+//                menu.setItem(tier + 1, 1,
+//                        new ItemBuilder(Material.PAPER)
+//                                .name(ChatColor.GREEN + "Tier " + tier)
+//                                .lore(
+//                                        ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
+//                                )
+//                                .amount(tier)
+//                                .get(),
+//                        (m, e) -> {
+//
+//                        }
+//                );
+//            }
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.openForPlayer(player);
+        }
+
+    }
+
+    public static class BuyABlessingMenu {
+
+        private static final HashMap<Integer, LinkedHashMap<MobDrops, Integer>> COSTS = new HashMap<>();
+        private static final HashMap<Integer, List<String>> COSTS_LORE = new HashMap<>();
+
+        public static void initializeCosts(WeeklyBlessings weeklyBlessings) {
+            weeklyBlessings.getZenithCosts().forEach((tier, stars) -> {
+                COSTS.computeIfAbsent(tier, k -> new LinkedHashMap<>()).put(MobDrops.ZENITH_STAR, stars);
+            });
+            COSTS.get(4).put(MobDrops.CELESTIAL_BRONZE, 5);
+            COSTS.get(5).put(MobDrops.CELESTIAL_BRONZE, 10);
+
+            COSTS.forEach((tier, mobDropCosts) -> {
+                List<String> lore = COSTS_LORE.computeIfAbsent(tier, k -> new ArrayList<>());
+                lore.add("");
+                lore.add(ChatColor.AQUA + "Cost: ");
+                mobDropCosts.forEach((currency, amount) -> lore.add(ChatColor.GRAY + " - " + currency.getCostColoredName(amount)));
+            });
+        }
+
+        public static void openBuyABlessingMenu(Player player, DatabasePlayer databasePlayer) {
+            WeeklyBlessings currentWeeklyBlessings = WeeklyBlessings.currentWeeklyBlessings;
+            if (currentWeeklyBlessings == null) {
+                player.sendMessage(ChatColor.RED + "There are no weekly blessings available at this time.");
+                return;
+            }
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            Map<Integer, Integer> playerOrder = currentWeeklyBlessings.getPlayerOrders().computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+
+            Menu menu = new Menu("Buy a Blessing", 9 * 4);
+            for (int tier = 1; tier <= 5; tier++) {
+                int stock = currentWeeklyBlessings.getStock().getOrDefault(tier, 0) - playerOrder.getOrDefault(tier, 0);
+                int finalTier = tier;
+                List<String> lore = COSTS_LORE.get(tier);
+                menu.setItem(tier + 1, 1,
+                        new ItemBuilder(Material.PAPER)
+                                .name(ChatColor.GREEN + "Tier " + tier)
+                                .lore(
+                                        ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
+                                )
+                                .addLore(lore)
+                                .amount(tier)
+                                .get(),
+                        (m, e) -> {
+                            if (stock <= 0) {
+                                player.sendMessage(ChatColor.RED + "This blessing is out of stock!");
+                                return;
+                            }
+                            LinkedHashMap<MobDrops, Integer> tierCosts = COSTS.get(finalTier);
+                            for (Map.Entry<MobDrops, Integer> currenciesLongEntry : tierCosts.entrySet()) {
+                                MobDrops mobDrop = currenciesLongEntry.getKey();
+                                Integer cost = currenciesLongEntry.getValue();
+                                if (pveStats.getMobDrops(mobDrop) < cost) {
+                                    player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
+                                    return;
+                                }
+                            }
+                            Menu.openConfirmationMenu(
+                                    player,
+                                    "Buy Blessing",
+                                    3,
+                                    new ArrayList<>(lore) {{
+                                        add(0, ChatColor.GRAY + "Buy " + ChatColor.GREEN + "Tier " + finalTier + ChatColor.GRAY + " Blessing");
+                                    }},
+                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    (m2, e2) -> {
+                                        tierCosts.forEach((mobDrops, cost) -> pveStats.addMobDrops(mobDrops, -cost));
+                                        currentWeeklyBlessings.addPlayerOrder(player.getUniqueId(), finalTier);
+                                        pveStats.getItemsManager().addBlessingBought(finalTier);
+                                        pveStats.getItemsManager().addBlessing(finalTier);
+                                        player.closeInventory();
+                                        AbstractItem.sendItemMessage(player, ChatColor.GRAY + "You bought a " +
+                                                ChatColor.GREEN + "Tier " + finalTier + ChatColor.GRAY + " Blessing!"
+                                        );
+                                    },
+                                    (m2, e2) -> openBuyABlessingMenu(player, databasePlayer),
+                                    (m2) -> {
+                                    }
+                            );
+                        }
+                );
+            }
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.openForPlayer(player);
+        }
+
+    }
+
+    public static class ApplyBlessingMenu {
 
         private static final LinkedHashMap<MobDrops, Long> cost = new LinkedHashMap<>();
 
@@ -77,7 +201,7 @@ public class ItemMichaelMenu {
                 if (blessing != null) {
                     ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
                     selectedBlessing = new ItemBuilder(Material.PAPER)
-                            .name(itemBlessing.getName())
+                            .name(ChatColor.GREEN + itemBlessing.getName())
                             .addLore(
                                     ChatColor.GREEN + itemBlessing.getDescription(),
                                     "",
@@ -99,8 +223,8 @@ public class ItemMichaelMenu {
             }
 
 
-            Menu menu = new Menu("Apply a Blessing", 9 * 6);
-            menu.setItem(2, 0,
+            Menu menu = new Menu("Apply a Blessing", 9 * 3);
+            menu.setItem(1, 0,
                     selectedItem,
                     (m, e) -> {
                         openApplyBlessingItemSelectMenu(
@@ -111,20 +235,21 @@ public class ItemMichaelMenu {
                         );
                     }
             );
-            ItemMenuUtil.addPaneRequirement(menu, 3, 0, item != null);
-            menu.setItem(2, 1,
+            ItemMenuUtil.addPaneRequirement(menu, 2, 0, item != null);
+            menu.setItem(1, 1,
                     selectedBlessing,
                     (m, e) -> {
                         openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
                     }
             );
-            ItemMenuUtil.addPaneRequirement(menu, 3, 1, blessing != null);
-            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, new LinkedHashMap<>(), 2, 2);
+            ItemMenuUtil.addPaneRequirement(menu, 2, 1, blessing != null);
+            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, new LinkedHashMap<>(), 1, 2);
 
             ItemMenuUtil.addItemConfirmation(menu, () -> {
                 addCraftItemConfirmation(player, databasePlayer, menuData, menu);
             });
 
+            menu.setItem(4, 2, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.openForPlayer(player);
         }
 
@@ -189,6 +314,7 @@ public class ItemMichaelMenu {
                         openApplyBlessingMenu(player, databasePlayer, menuData);
                     }
             );
+            menu.openForPlayer(player);
         }
 
         private static void addCraftItemConfirmation(
@@ -199,17 +325,25 @@ public class ItemMichaelMenu {
         ) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             AbstractItem<?, ?, ?> item = menuData.getItem();
+            ItemBuilder itemBuilder;
+            if (item != null) {
+                itemBuilder = new ItemBuilder(item.generateItemStack());
+            } else {
+                itemBuilder = new ItemBuilder(new ItemStack(Material.STAINED_CLAY, 1, (short) 0))
+                        .name(ChatColor.GREEN + "Click to Apply Blessing");
+            }
             menu.setItem(7, 1,
-                    new ItemBuilder(item.generateItemStack()) //TODO CLONE
-                                                              //.name(ChatColor.GREEN + "Click to Craft Item")
-                                                              .get(),
+                    itemBuilder.get(),
                     (m, e) -> {
-
+                        if (item == null) {
+                            player.sendMessage(ChatColor.RED + "Select an item to bless first!");
+                            return;
+                        }
                         for (Map.Entry<MobDrops, Long> currenciesLongEntry : cost.entrySet()) {
                             MobDrops mobDrop = currenciesLongEntry.getKey();
                             Long cost = currenciesLongEntry.getValue();
                             if (pveStats.getMobDrops(mobDrop) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
                                 return;
                             }
                         }
@@ -269,7 +403,7 @@ public class ItemMichaelMenu {
         }
     }
 
-    static class RemoveCurseMenu {
+    public static class RemoveCurseMenu {
 
         public static void removeACurseMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
             ItemStack selectedItem;

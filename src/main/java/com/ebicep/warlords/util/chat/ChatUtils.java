@@ -288,6 +288,7 @@ public class ChatUtils {
         TIMINGS("Timings", ChatColor.DARK_GRAY),
         MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
         GAME_EVENTS("Events", ChatColor.DARK_RED),
+        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", ChatColor.DARK_RED),
 
         GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
 

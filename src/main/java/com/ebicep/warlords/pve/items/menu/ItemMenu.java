@@ -36,14 +36,12 @@ public class ItemMenu extends Menu {
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
             UnaryOperator<ItemBuilder> editItem,
             PlayerItemMenuSettings menuSettings,
-            DatabasePlayer databasePlayer
+            DatabasePlayer databasePlayer,
+            Consumer<Menu> menu
     ) {
-        super(name, 9 * 6);
-        this.player = player;
-        this.itemClickAction = itemClickAction;
-        this.editItem = editItem;
-        this.menuSettings = menuSettings;
-        this.databasePlayer = databasePlayer;
+        this(player, name, itemClickAction, editItem, menuSettings, databasePlayer);
+        this.menu = menu;
+        menu.accept(this);
     }
 
     public ItemMenu(
@@ -52,12 +50,14 @@ public class ItemMenu extends Menu {
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
             UnaryOperator<ItemBuilder> editItem,
             PlayerItemMenuSettings menuSettings,
-            DatabasePlayer databasePlayer,
-            Consumer<Menu> menu
+            DatabasePlayer databasePlayer
     ) {
-        this(player, name, itemClickAction, editItem, menuSettings, databasePlayer);
-        this.menu = menu;
-        menu.accept(this);
+        super(name, 9 * 6);
+        this.player = player;
+        this.itemClickAction = itemClickAction;
+        this.editItem = editItem;
+        this.menuSettings = menuSettings;
+        this.databasePlayer = databasePlayer;
     }
 
     public void open() {
@@ -70,7 +70,9 @@ public class ItemMenu extends Menu {
         addSortBySetting();
         addSortOrderSetting();
         addPageArrows();
-        menu.accept(this);
+        if (menu != null) {
+            menu.accept(this);
+        }
         super.openForPlayer(player);
     }
 
@@ -240,6 +242,8 @@ public class ItemMenu extends Menu {
 
     static class PlayerItemMenuSettings {
         public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};
+        private final Specializations selectedSpec;
+        private final Classes selectedClass;
         private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>();
@@ -248,8 +252,6 @@ public class ItemMenu extends Menu {
         private int addonFilter = 0; // 0 = none, 1 = spec, 2 = class
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
-        private final Specializations selectedSpec;
-        private final Classes selectedClass;
 
         PlayerItemMenuSettings(Specializations selectedSpec) {
             this.selectedSpec = selectedSpec;
@@ -259,6 +261,7 @@ public class ItemMenu extends Menu {
         PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
             this.selectedSpec = databasePlayer.getLastSpec();
             this.selectedClass = Specializations.getClass(databasePlayer.getLastSpec());
+            setItemInventory(new ArrayList<>(databasePlayer.getPveStats().getItemsManager().getItemInventory()));
         }
 
         public void reset() {

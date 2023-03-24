@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -143,16 +144,20 @@ public class ItemCraftingMenu {
             DatabasePlayerPvE pveStats,
             ItemTier tier
     ) {
+        boolean requirementsMet = requirements.stream().allMatch(requirement -> items.get(requirement.getTier()) != null);
+        boolean enoughMobDrops = TIER_COST_INFO.get(tier)
+                                               .getCost()
+                                               .entrySet()
+                                               .stream()
+                                               .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
         menu.setItem(7, 1,
-                new ItemBuilder(tier.clayBlock)
+                new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(ChatColor.GREEN + "Click to Craft Item")
                         .get(),
                 (m, e) -> {
-                    for (TierRequirement requirement : requirements) {
-                        if (items.get(requirement.getTier()) == null) {
-                            player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
-                            return;
-                        }
+                    if (!requirementsMet) {
+                        player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
+                        return;
                     }
                     TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
                     for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
@@ -167,7 +172,7 @@ public class ItemCraftingMenu {
                     Menu.openConfirmationMenu(player,
                             "Confirm Item Craft",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Are you sure you want to craft?"),
+                            Collections.singletonList(ChatColor.GRAY + "Craft " + tier.getColoredName() + ChatColor.GRAY + " Item"),
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                             (m2, e2) -> {
                                 for (TierRequirement requirement : requirements) {

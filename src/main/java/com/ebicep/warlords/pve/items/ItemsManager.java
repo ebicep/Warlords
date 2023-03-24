@@ -63,6 +63,8 @@ public class ItemsManager {
         add(new ItemLoadout("Default"));
     }};
     private Map<Integer, Integer> blessings = new HashMap<>();
+    @Field("blessings_bought")
+    private Map<Integer, Integer> blessingsBought = new HashMap<>();
 
     public ItemsManager() {
     }
@@ -89,5 +91,9 @@ public class ItemsManager {
 
     public void addBlessing(int tier) {
         blessings.merge(tier, 1, Integer::sum);
+    }
+
+    public void addBlessingBought(int tier) {
+        blessingsBought.merge(tier, 1, Integer::sum);
     }
 }

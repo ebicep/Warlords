@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
@@ -43,10 +44,10 @@ public class DatabaseTiming {
             "Flags Captured",
             "Flags Returned",
     };
-    public static AtomicBoolean resetWeekly = new AtomicBoolean(false);
-    public static AtomicBoolean resetDaily = new AtomicBoolean(false);
+    public static final AtomicBoolean RESET_WEEKLY = new AtomicBoolean(false);
+    public static final AtomicBoolean RESET_DAILY = new AtomicBoolean(false);
 
-    public static void checkStatsTimings() {
+    public static void checkTimings() {
         Instant currentDate = Instant.now();
         //WEEKLY
         Warlords.newChain()
@@ -71,7 +72,7 @@ public class DatabaseTiming {
                 })
                 .syncLast((reset) -> {
                     if (reset) {
-                        resetWeekly.set(true);
+                        RESET_WEEKLY.set(true);
 
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
@@ -85,6 +86,8 @@ public class DatabaseTiming {
                         }
                         GuildLeaderboardManager.recalculateLeaderboard(Timing.WEEKLY);
                     }
+                    //items blessings
+                    WeeklyBlessings.loadWeeklyBlessings();
                 })
                 .execute();
         //DAILY
@@ -110,7 +113,7 @@ public class DatabaseTiming {
                 })
                 .syncLast((reset) -> {
                     if (reset) {
-                        resetDaily.set(true);
+                        RESET_DAILY.set(true);
 
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
@@ -143,8 +146,8 @@ public class DatabaseTiming {
     }
 
     public static void checkLeaderboardResets() {
-        if (resetWeekly.get()) {
-            resetWeekly.set(false);
+        if (RESET_WEEKLY.get()) {
+            RESET_WEEKLY.set(false);
             try {
                 //adding new document with top weekly players
                 org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
@@ -180,8 +183,8 @@ public class DatabaseTiming {
                     .delay(10 * 20)
                     .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false)).execute();
         }
-        if (resetDaily.get()) {
-            resetDaily.set(false);
+        if (RESET_DAILY.get()) {
+            RESET_DAILY.set(false);
 
             try {
                 //clearing daily
