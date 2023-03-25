@@ -470,10 +470,10 @@ public class WeaponManagerMenu {
                                 player.sendMessage(ChatColor.RED + "You need to upgrade your weapon to upgrade its title.");
                                 return;
                             }
-                            for (Map.Entry<Enum<? extends Spendable>, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
-                                                                                                           .entrySet()
+                            for (Map.Entry<Spendable, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
+                                                                                           .entrySet()
                             ) {
-                                Spendable spendable = (Spendable) enumLongEntry.getKey();
+                                Spendable spendable = enumLongEntry.getKey();
                                 Long currencyCost = enumLongEntry.getValue();
                                 if (spendable.getFromPlayer(databasePlayer) < currencyCost) {
                                     player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(currencyCost) + ChatColor.RED + " to upgrade this title!");

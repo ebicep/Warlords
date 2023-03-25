@@ -176,7 +176,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public LinkedHashMap<Enum<? extends Spendable>, Long> getTitleUpgradeCost(int tier) {
+    public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
         return null;
     }
 }

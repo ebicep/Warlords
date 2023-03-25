@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
+import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemTypes;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -111,7 +113,7 @@ public class ItemCraftingMenu {
             BiConsumer<Menu, InventoryClickEvent> back,
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> onClick
     ) {
-        ItemMenu menu = new ItemMenu(
+        ItemSearchMenu menu = new ItemSearchMenu(
                 player,
                 "Select an Item",
                 onClick,
@@ -119,7 +121,7 @@ public class ItemCraftingMenu {
                         "",
                         ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
                 ),
-                new ItemMenu.PlayerItemMenuSettings(databasePlayer)
+                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
                         .setItemInventory(databasePlayer.getPveStats()
                                                         .getItemsManager()
                                                         .getItemInventory()

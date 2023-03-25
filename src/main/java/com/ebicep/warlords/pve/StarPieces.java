@@ -119,11 +119,7 @@ public enum StarPieces {
     }
 
     public List<String> getCostLore() {
-        List<String> costLore = new ArrayList<>();
-        costLore.add("");
-        costLore.add(ChatColor.AQUA + "Cost:");
-        synthesisCosts.forEach((currency, value) -> costLore.add(ChatColor.GRAY + " - " + currency.getCostColoredName(value)));
-        return costLore;
+        return PvEUtils.getCostLore(synthesisCosts);
     }
 
 }

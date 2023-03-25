@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items.menu;
+package com.ebicep.warlords.pve.items.menu.util;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class ItemMenu extends Menu {
+public class ItemSearchMenu extends Menu {
     private final Player player;
     private final TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction;
     private final UnaryOperator<ItemBuilder> editItem;
@@ -30,7 +30,7 @@ public class ItemMenu extends Menu {
     private final DatabasePlayer databasePlayer;
     private Consumer<Menu> menu;
 
-    public ItemMenu(
+    public ItemSearchMenu(
             Player player,
             String name,
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
@@ -44,7 +44,7 @@ public class ItemMenu extends Menu {
         menu.accept(this);
     }
 
-    public ItemMenu(
+    public ItemSearchMenu(
             Player player,
             String name,
             TriConsumer<AbstractItem<?, ?, ?>, Menu, InventoryClickEvent> itemClickAction,
@@ -240,7 +240,7 @@ public class ItemMenu extends Menu {
         }
     }
 
-    static class PlayerItemMenuSettings {
+    public static class PlayerItemMenuSettings {
         public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};
         private final Specializations selectedSpec;
         private final Classes selectedClass;
@@ -253,12 +253,12 @@ public class ItemMenu extends Menu {
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
-        PlayerItemMenuSettings(Specializations selectedSpec) {
+        public PlayerItemMenuSettings(Specializations selectedSpec) {
             this.selectedSpec = selectedSpec;
             this.selectedClass = Specializations.getClass(selectedSpec);
         }
 
-        PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
+        public PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
             this.selectedSpec = databasePlayer.getLastSpec();
             this.selectedClass = Specializations.getClass(databasePlayer.getLastSpec());
             setItemInventory(new ArrayList<>(databasePlayer.getPveStats().getItemsManager().getItemInventory()));

@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -26,7 +27,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 public class ItemsMenu {
 
-    public static final HashMap<UUID, ItemMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
+    public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
     public static void openItemMenuExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
@@ -34,8 +35,8 @@ public class ItemsMenu {
             ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
             List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
 
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemMenu.PlayerItemMenuSettings(databasePlayer));
-            ItemMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
+            ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setOpenedFromNPC(fromNPC);
             menuSettings.setItemInventory(itemInventory);
             menuSettings.sort();
@@ -47,10 +48,10 @@ public class ItemsMenu {
 
     public static void openItemMenuInternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
-        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemMenu.PlayerItemMenuSettings(databasePlayer));
-        ItemMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
+        ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
 
-        ItemMenu menu = new ItemMenu(
+        ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {},
                 itemBuilder -> itemBuilder,
@@ -360,7 +361,7 @@ public class ItemsMenu {
             ItemTier tier,
             AbstractItem<?, ?, ?> previousItem
     ) {
-        ItemMenu menu = new ItemMenu(
+        ItemSearchMenu menu = new ItemSearchMenu(
                 player, tier.name + " Items",
                 (i, m, e) -> {
                     if (previousItem != null) {
@@ -371,7 +372,7 @@ public class ItemsMenu {
                     openItemLoadoutMenu(player, itemLoadout);
                 },
                 itemBuilder -> itemBuilder,
-                new ItemMenu.PlayerItemMenuSettings(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
+                new ItemSearchMenu.PlayerItemMenuSettings(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
                         .setItemInventory(databasePlayer.getPveStats()
                                                         .getItemsManager()
                                                         .getItemInventory()

@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -22,11 +23,7 @@ public class WeaponLegendaryCraftMenu {
         put(Currencies.COIN, 1000000L);
         put(Currencies.SYNTHETIC_SHARD, 10000L);
     }};
-    public static final List<String> COST_LORE = new ArrayList<>() {{
-        add("");
-        add(ChatColor.AQUA + "Craft Cost: ");
-        COST.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
-    }};
+    public static final List<String> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost");
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();

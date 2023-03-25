@@ -23,6 +23,13 @@ public class ChatUtils {
 
     private static final int CENTER_PX = 164;
 
+    public static String addStrikeThrough(String message) {
+        for (ChatColor color : ChatColor.values()) {
+            message = message.replace(color.toString(), color.toString() + ChatColor.STRIKETHROUGH);
+        }
+        return message;
+    }
+
     public static void sendTitleToGamePlayers(Game game, String title, String subtitle) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
             if (we.getEntity() instanceof Player) {

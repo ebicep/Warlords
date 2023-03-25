@@ -259,9 +259,9 @@ public class WeaponTitleMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
-            for (Map.Entry<Enum<? extends Spendable>, Long> currenciesLongEntry : upgradeCost.entrySet()) {
-                ((Spendable) currenciesLongEntry.getKey()).subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+            LinkedHashMap<Spendable, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
+            for (Map.Entry<Spendable, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
             }
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

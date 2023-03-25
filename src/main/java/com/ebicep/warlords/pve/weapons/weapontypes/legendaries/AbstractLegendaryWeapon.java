@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -599,24 +600,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     public List<String> getTitleUpgradeCostLore() {
-        LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
-        List<String> lore = new ArrayList<>();
+        LinkedHashMap<Spendable, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         if (upgradeCost == null) {
-            lore.add(ChatColor.RED + "Unavailable!");
+            return Collections.singletonList(ChatColor.RED + "Unavailable!");
         } else if (upgradeCost.isEmpty()) {
-            lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
-            lore.add("");
-            lore.add(ChatColor.AQUA + "Upgrade Cost: ");
-            upgradeCost.forEach((anEnum, aLong) -> {
-                lore.add(ChatColor.GRAY + " - " + ((Spendable) anEnum).getCostColoredName(aLong));
-            });
+            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost: ");
         }
-        return lore;
     }
 
-    public LinkedHashMap<Enum<? extends Spendable>, Long> getTitleUpgradeCost(int tier) {
-        LinkedHashMap<Enum<? extends Spendable>, Long> cost = new LinkedHashMap<>();
+    public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
+        LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
         switch (tier) {
             case 1:
                 cost.put(Currencies.COIN, 500_000L);

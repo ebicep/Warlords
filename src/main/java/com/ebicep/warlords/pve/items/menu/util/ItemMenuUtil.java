@@ -1,8 +1,9 @@
-package com.ebicep.warlords.pve.items.menu;
+package com.ebicep.warlords.pve.items.menu.util;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -11,7 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,11 +67,7 @@ public class ItemMenuUtil {
             int x,
             int y
     ) {
-        List<String> costLore = new ArrayList<>() {{
-            add("");
-            add(ChatColor.AQUA + "Cost: ");
-            cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
-        }};
+        List<String> costLore = PvEUtils.getCostLore(cost);
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         menu.setItem(x, y,
                 new ItemBuilder(Material.BOOK)
