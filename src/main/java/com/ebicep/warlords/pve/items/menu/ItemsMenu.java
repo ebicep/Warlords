@@ -68,110 +68,78 @@ public class ItemsMenu {
         menu.open();
     }
 
-    public static void openItemLoadoutMenu(Player player, ItemLoadout loadout) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            AtomicReference<ItemLoadout> atomicItemLoadout = new AtomicReference<>(loadout);
-            if (atomicItemLoadout.get() == null) {
-                atomicItemLoadout.set(databasePlayer.getPveStats().getItemsManager().getLoadouts().get(0));
-            }
-            ItemLoadout itemLoadout = atomicItemLoadout.get();
-            Menu menu = new Menu("Loadout: " + itemLoadout.getName(), 9 * 6);
+    public static void openItemLoadoutMenu(Player player, ItemLoadout loadout, DatabasePlayer databasePlayer) {
+        AtomicReference<ItemLoadout> atomicItemLoadout = new AtomicReference<>(loadout);
+        if (atomicItemLoadout.get() == null) {
+            atomicItemLoadout.set(databasePlayer.getPveStats().getItemsManager().getLoadouts().get(0));
+        }
+        ItemLoadout itemLoadout = atomicItemLoadout.get();
+        Menu menu = new Menu("Loadout: " + itemLoadout.getName(), 9 * 6);
 
-            ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
-            List<ItemLoadout> loadouts = itemsManager.getLoadouts();
-            List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
-            List<AbstractItem<?, ?, ?>> equippedItems = itemInventory.stream()
-                                                                     .filter(itemEntry -> itemLoadout.getItems().contains(itemEntry.getUUID()))
-                                                                     .collect(Collectors.toList());
-            itemInventory.removeAll(equippedItems);
+        ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+        List<ItemLoadout> loadouts = itemsManager.getLoadouts();
+        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
+        List<AbstractItem<?, ?, ?>> equippedItems = itemInventory.stream()
+                                                                 .filter(itemEntry -> itemLoadout.getItems().contains(itemEntry.getUUID()))
+                                                                 .collect(Collectors.toList());
+        itemInventory.removeAll(equippedItems);
 
-            int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
-            int loadoutWeight = equippedItems.stream().mapToInt(AbstractItem::getWeight).sum();
-            double ratio = loadoutWeight * 8d / maxWeight;
-            for (int i = 0; i < 8; i++) {
-                ItemStack glassPane;
-                if (i <= ratio - 1) {
-                    glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
-                } else if (i != 0 && i <= ratio - .5) {
-                    glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4);
-                } else {
-                    glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
-                }
-                menu.setItem(i + 1, 0,
-                        new ItemBuilder(glassPane)
-                                .name(" ")
+        int loadoutWeight = equippedItems.stream().mapToInt(AbstractItem::getWeight).sum();
+        addWeightPercentageBar(player, databasePlayer, itemLoadout, menu, loadoutWeight);
+
+        int x = 0;
+        int y = 2;
+        for (ItemTier tier : ItemTier.VALUES) {
+            for (int j = 0; j < tier.maxEquipped; j++) {
+                menu.setItem(x, y,
+                        new ItemBuilder(tier.clayBlock)
+                                .name(tier.getColoredName() + " Item")
                                 .get(),
                         (m, e) -> {
-
                         }
                 );
-            }
-            menu.setItem(0, 0,
-                    new ItemBuilder(HeadUtils.getHead(player))
-                            .name(ChatColor.GRAY + "Max Weight: " + ChatColor.GREEN + maxWeight)
-                            .lore(ChatColor.GRAY + "Current Weight: " + ChatColor.GREEN + loadoutWeight)
-                            .get(),
-                    (m, e) -> {
-
+                boolean equipped = false;
+                for (AbstractItem<?, ?, ?> item : equippedItems) {
+                    if (item.getTier() != tier) {
+                        continue;
                     }
-            );
-
-            int x = 0;
-            int y = 2;
-            for (ItemTier tier : ItemTier.VALUES) {
-                for (int j = 0; j < tier.maxEquipped; j++) {
-                    boolean equipped = false;
-                    for (AbstractItem<?, ?, ?> item : equippedItems) {
-                        if (item.getTier() != tier) {
-                            continue;
-                        }
-                        menu.setItem(x, y,
-                                item.generateItemBuilder()
-                                    .addLore(
-                                            "",
-                                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to swap this item",
-                                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to unequip this item"
-                                    )
-                                    .get(),
-                                (m, e) -> {
-                                    if (e.isLeftClick()) {
-                                        openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
-                                    } else if (e.isRightClick()) {
-                                        itemLoadout.getItems().remove(item.getUUID());
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        openItemLoadoutMenu(player, itemLoadout);
-                                    }
+                    menu.setItem(x, y + 1,
+                            item.generateItemBuilder()
+                                .addLore(
+                                        "",
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to swap this item",
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to unequip this item"
+                                )
+                                .get(),
+                            (m, e) -> {
+                                if (e.isLeftClick()) {
+                                    openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
+                                } else if (e.isRightClick()) {
+                                    itemLoadout.getItems().remove(item.getUUID());
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                                 }
-                        );
-                        equipped = true;
-                        equippedItems.remove(item);
-                        break;
-                    }
-                    if (!equipped) {
-                        menu.setItem(x, y,
-                                new ItemBuilder(tier.glassPane)
-                                        .name(ChatColor.GREEN + "Click to Equip Item")
-                                        .get(),
-                                (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, tier, null)
-                        );
-                    }
-                    x++;
+                            }
+                    );
+                    equipped = true;
+                    equippedItems.remove(item);
+                    break;
                 }
-                if (x == 9) {
-                    x = 0;
-                    y++;
+                if (!equipped) {
+                    menu.setItem(x, y + 1,
+                            new ItemBuilder(ItemTier.ALL.clayBlock)
+                                    .name(ChatColor.GREEN + "Click to Equip Item")
+                                    .get(),
+                            (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, tier, null)
+                    );
                 }
+                x++;
             }
-            for (int i = 0; i < 9; i++) {
-                menu.setItem(i, 3,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-
-                        }
-                );
+            if (x == 9) {
+                x = 0;
+                y++;
             }
+        }
 
 //            for (int i = 0, loadoutsSize = loadouts.size(); i < loadoutsSize; i++) {
 //                ItemLoadout loadout = loadouts.get(i);
@@ -188,170 +156,188 @@ public class ItemsMenu {
 //                );
 //            }
 
-            menu.setItem(0, 5,
-                    new ItemBuilder(Material.WORKBENCH)
-                            .name(ChatColor.GREEN + "Create Loadout")
-                            .get(),
-                    (m, e) -> {
-                        if (itemsManager.getLoadouts().size() >= 9) {
-                            player.sendMessage(ChatColor.RED + "You can only have up to 9 loadouts!");
-                        } else {
-                            SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
-                                String name = lines[0];
-                                if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                    player.sendMessage(ChatColor.RED + "Invalid name!");
-                                    return;
-                                }
-                                if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                    player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
-                                    return;
-                                }
-                                ItemLoadout newLoadout = new ItemLoadout(name);
-                                loadouts.add(newLoadout);
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openItemLoadoutMenu(player, newLoadout);
-                            });
-                        }
-                    }
-            );
-            menu.setItem(1, 5,
-                    new ItemBuilder(Material.NAME_TAG)
-                            .name(ChatColor.GREEN + "Rename Loadout")
-                            .get(),
-                    (m, e) -> {
+        menu.setItem(1, 5,
+                new ItemBuilder(Material.WORKBENCH)
+                        .name(ChatColor.GREEN + "Create Loadout")
+                        .get(),
+                (m, e) -> {
+                    if (itemsManager.getLoadouts().size() >= 9) {
+                        player.sendMessage(ChatColor.RED + "You can only have up to 9 loadouts!");
+                    } else {
                         SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
                             String name = lines[0];
                             if (!name.matches("[a-zA-Z0-9 ]+")) {
                                 player.sendMessage(ChatColor.RED + "Invalid name!");
                                 return;
                             }
-                            if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                            if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
                                 player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
                                 return;
                             }
-                            itemLoadout.setName(name);
+                            ItemLoadout newLoadout = new ItemLoadout(name);
+                            loadouts.add(newLoadout);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            openItemLoadoutMenu(player, itemLoadout);
+                            openItemLoadoutMenu(player, newLoadout, databasePlayer);
                         });
                     }
-            );
-
-            menu.setItem(2, 5,
-                    new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(ChatColor.RED + "Delete Loadout")
-                            .get(),
-                    (m, e) -> {
-                        if (itemLoadout.getName().equals("Default")) {
-                            player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
+                }
+        );
+        menu.setItem(2, 5,
+                new ItemBuilder(Material.NAME_TAG)
+                        .name(ChatColor.GREEN + "Rename Loadout")
+                        .get(),
+                (m, e) -> {
+                    SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
+                        String name = lines[0];
+                        if (!name.matches("[a-zA-Z0-9 ]+")) {
+                            player.sendMessage(ChatColor.RED + "Invalid name!");
                             return;
                         }
-                        Menu.openConfirmationMenu(
-                                player,
-                                "Delete Loadout",
-                                3,
-                                Arrays.asList(
-                                        ChatColor.GRAY + "Delete Loadout: " + ChatColor.GOLD + itemLoadout.getName(),
-                                        "",
-                                        ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
-                                ),
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
-                                (m2, e2) -> {
-                                    loadouts.remove(itemLoadout);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openItemLoadoutMenu(player, null);
-                                },
-                                (m2, e2) -> openItemLoadoutMenu(player, itemLoadout),
-                                (m2) -> {
-                                }
-                        );
-                    }
-            );
+                        if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                            player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                            return;
+                        }
+                        itemLoadout.setName(name);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                    });
+                }
+        );
 
-            menu.setItem(3, 5,
-                    new ItemBuilder(Material.SIGN)
-                            .name(ChatColor.GREEN + "Loadout Weight: " + ChatColor.GOLD + loadoutWeight)
-                            .lore(ChatColor.GREEN + "Max Weights: ")
-                            .addLore(Arrays.stream(Specializations.VALUES)
-                                           .map(spec -> ChatColor.DARK_GRAY + " - " + (spec == databasePlayer.getLastSpec() ? ChatColor.GREEN : ChatColor.GRAY) +
-                                                   spec.name + ": " + ChatColor.GOLD + ItemsManager.getMaxWeight(databasePlayer, spec))
-                                           .collect(Collectors.joining("\n")))
+        menu.setItem(3, 5,
+                new ItemBuilder(Material.LAVA_BUCKET)
+                        .name(ChatColor.RED + "Delete Loadout")
+                        .get(),
+                (m, e) -> {
+                    if (itemLoadout.getName().equals("Default")) {
+                        player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
+                        return;
+                    }
+                    Menu.openConfirmationMenu(
+                            player,
+                            "Delete Loadout",
+                            3,
+                            Arrays.asList(
+                                    ChatColor.GRAY + "Delete Loadout: " + ChatColor.GOLD + itemLoadout.getName(),
+                                    "",
+                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
+                            ),
+                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            (m2, e2) -> {
+                                loadouts.remove(itemLoadout);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                openItemLoadoutMenu(player, null, databasePlayer);
+                            },
+                            (m2, e2) -> openItemLoadoutMenu(player, itemLoadout, databasePlayer),
+                            (m2) -> {
+                            }
+                    );
+                }
+        );
+
+        //menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemMenu(player, 1));
+        List<String> lore = new ArrayList<>();
+        for (int i = 0; i < loadouts.size(); i++) {
+            lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.GREEN : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
+        }
+        menu.setItem(5, 5,
+                new ItemBuilder(Material.TRIPWIRE_HOOK)
+                        .name(ChatColor.GREEN + "Change Loadout Priority")
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    int loadoutIndex = loadouts.indexOf(itemLoadout);
+                    int newLoadoutIndex;
+                    if (loadoutIndex == loadouts.size() - 1) {
+                        newLoadoutIndex = 0;
+                    } else {
+                        newLoadoutIndex = loadoutIndex + 1;
+                    }
+                    loadouts.remove(itemLoadout);
+                    loadouts.add(newLoadoutIndex, itemLoadout);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                }
+        );
+        lore.clear();
+        lore.add((itemLoadout.getDifficulty() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
+        DifficultyIndex[] difficulties = DifficultyIndex.VALUES;
+        for (DifficultyIndex value : difficulties) {
+            lore.add((itemLoadout.getDifficulty() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.getName());
+        }
+        menu.setItem(6, 5,
+                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                        .name(ChatColor.GREEN + "Bind to Difficulty")
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    if (itemLoadout.getDifficulty() == null) {
+                        itemLoadout.setDifficulty(DifficultyIndex.VALUES[0]);
+                    } else if (itemLoadout.getDifficulty().ordinal() == DifficultyIndex.VALUES.length - 1) {
+                        itemLoadout.setDifficulty(null);
+                    } else {
+                        itemLoadout.setDifficulty(itemLoadout.getDifficulty().next());
+                    }
+                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
+        );
+        lore.clear();
+        lore.add((itemLoadout.getSpec() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
+        Specializations[] specializations = Specializations.VALUES;
+        for (Specializations spec : specializations) {
+            lore.add((itemLoadout.getSpec() == spec ? ChatColor.GREEN : ChatColor.GRAY) + spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec));
+        }
+        menu.setItem(7, 5,
+                new ItemBuilder(Material.SLIME_BALL)
+                        .name(ChatColor.GREEN + "Bind to Specialization")
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    if (itemLoadout.getSpec() == null) {
+                        itemLoadout.setSpec(Specializations.VALUES[0]);
+                    } else if (itemLoadout.getSpec().ordinal() == Specializations.VALUES.length - 1) {
+                        itemLoadout.setSpec(null);
+                    } else {
+                        itemLoadout.setSpec(itemLoadout.getSpec().next());
+                    }
+                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                }
+        );
+        menu.openForPlayer(player);
+    }
+
+    private static void addWeightPercentageBar(Player player, DatabasePlayer databasePlayer, ItemLoadout itemLoadout, Menu menu, int loadoutWeight) {
+        int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
+        double ratio = loadoutWeight * 8d / maxWeight;
+        for (int i = 0; i < 8; i++) {
+            ItemStack glassPane;
+            if (i <= ratio - 1) {
+                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+            } else if (i != 0 && i <= ratio - .5) {
+                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4);
+            } else {
+                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+            }
+            menu.setItem(i + 1, 0,
+                    new ItemBuilder(glassPane)
+                            .name(" ")
                             .get(),
                     (m, e) -> {
 
                     }
             );
-            //menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemMenu(player, 1));
-            List<String> lore = new ArrayList<>();
-            for (int i = 0; i < loadouts.size(); i++) {
-                lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.GREEN : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
-            }
-            menu.setItem(5, 5,
-                    new ItemBuilder(Material.TRIPWIRE_HOOK)
-                            .name(ChatColor.GREEN + "Change Loadout Priority")
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        int loadoutIndex = loadouts.indexOf(itemLoadout);
-                        int newLoadoutIndex;
-                        if (loadoutIndex == loadouts.size() - 1) {
-                            newLoadoutIndex = 0;
-                        } else {
-                            newLoadoutIndex = loadoutIndex + 1;
-                        }
-                        loadouts.remove(itemLoadout);
-                        loadouts.add(newLoadoutIndex, itemLoadout);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        openItemLoadoutMenu(player, itemLoadout);
-                    }
-            );
-            lore.clear();
-            lore.add((itemLoadout.getDifficulty() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
-            DifficultyIndex[] difficulties = DifficultyIndex.VALUES;
-            for (DifficultyIndex value : difficulties) {
-                lore.add((itemLoadout.getDifficulty() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.getName());
-            }
-            menu.setItem(6, 5,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                            .name(ChatColor.GREEN + "Bind to Difficulty")
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        if (itemLoadout.getDifficulty() == null) {
-                            itemLoadout.setDifficulty(DifficultyIndex.VALUES[0]);
-                        } else if (itemLoadout.getDifficulty().ordinal() == DifficultyIndex.VALUES.length - 1) {
-                            itemLoadout.setDifficulty(null);
-                        } else {
-                            itemLoadout.setDifficulty(itemLoadout.getDifficulty().next());
-                        }
-                        openItemLoadoutMenu(player, itemLoadout);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    }
-            );
-            lore.clear();
-            lore.add((itemLoadout.getSpec() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
-            Specializations[] specializations = Specializations.VALUES;
-            for (Specializations value : specializations) {
-                lore.add((itemLoadout.getSpec() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.name);
-            }
-            menu.setItem(7, 5,
-                    new ItemBuilder(Material.SLIME_BALL)
-                            .name(ChatColor.GREEN + "Bind to Specialization")
-                            .lore(lore)
-                            .get(),
-                    (m, e) -> {
-                        if (itemLoadout.getSpec() == null) {
-                            itemLoadout.setSpec(Specializations.VALUES[0]);
-                        } else if (itemLoadout.getSpec().ordinal() == Specializations.VALUES.length - 1) {
-                            itemLoadout.setSpec(null);
-                        } else {
-                            itemLoadout.setSpec(itemLoadout.getSpec().next());
-                        }
-                        openItemLoadoutMenu(player, itemLoadout);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    }
-            );
-            menu.openForPlayer(player);
-        });
+        }
+        menu.setItem(0, 0,
+                new ItemBuilder(HeadUtils.getHead(player))
+                        .name(ChatColor.GRAY + "Max Weight: " + ChatColor.GREEN + maxWeight)
+                        .lore(ChatColor.GRAY + "Current Weight: " + ChatColor.GREEN + loadoutWeight)
+                        .get(),
+                (m, e) -> {
+
+                }
+        );
     }
 
     public static void openItemEquipMenu(
@@ -369,7 +355,7 @@ public class ItemsMenu {
                     }
                     itemLoadout.getItems().add(i.getUUID());
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    openItemLoadoutMenu(player, itemLoadout);
+                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                 },
                 itemBuilder -> itemBuilder,
                 new ItemSearchMenu.PlayerItemMenuSettings(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
@@ -379,7 +365,11 @@ public class ItemsMenu {
                                                         .stream()
                                                         .filter(item -> item.getTier() == tier && !itemLoadout.getItems().contains(item.getUUID()))
                                                         .collect(Collectors.toList())),
-                databasePlayer
+                databasePlayer,
+                m -> m.setItem(4, 5,
+                        Menu.MENU_BACK,
+                        (m2, e2) -> openItemLoadoutMenu(player, itemLoadout, databasePlayer)
+                )
         );
         menu.open();
     }

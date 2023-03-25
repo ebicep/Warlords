@@ -30,7 +30,7 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("equipmenu")
     public void equipMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemsMenu.openItemLoadoutMenu(player, null));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemsMenu.openItemLoadoutMenu(player, null, databasePlayer));
     }
 
     @Subcommand("forgemenu")
