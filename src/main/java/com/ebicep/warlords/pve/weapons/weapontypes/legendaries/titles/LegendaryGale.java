@@ -24,7 +24,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     private static final int ABILITY_ENERGY_DECREASE = 10;
     private static final float ABILITY_ENERGY_DECREASE_PER_UPGRADE = 2.5f;
-    private static final int ABILITY_ANTI_KB = 10;
+    private static final int ABILITY_ANTI_KB = 20;
     private static final int ABILITY_ANTI_KB_PER_UPGRADE = 5;
 
     @Transient
@@ -43,7 +43,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase movement speed by 40%, decrease energy consumption of all abilities by " +
+        return "Increase movement speed by 50%, decrease energy consumption of all abilities by " +
                 formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()) + ", and gain " +
                 formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%") +
                 " knockback resistance. Can be triggered every 30 seconds.";
@@ -159,7 +159,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         public void passive(WarlordsEntity player, int multiplier) {
-            player.getSpeed().addBaseModifier(40 * multiplier);
+            player.getSpeed().addBaseModifier(50 * multiplier);
             for (AbstractAbility ability : player.getSpec().getAbilities()) {
                 if (ability.getEnergyCost() > 0) {
                     ability.setEnergyCost(ability.getEnergyCost() - abilityEnergyDecrease * multiplier);
