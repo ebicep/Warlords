@@ -8,18 +8,23 @@ import java.util.HashMap;
 
 public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerModifier.Blessings, ItemBucklerModifier.Curses> {
 
+    public ItemBuckler() {
+    }
+
     public ItemBuckler(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemBucklerStatPool.VALUES));
     }
 
     @Override
-    public HashMap<ItemBucklerStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return tier.bucklerStatRange;
+    public ItemBuckler clone() {
+        ItemBuckler itemBuckler = new ItemBuckler();
+        itemBuckler.copyFrom(this);
+        return itemBuckler;
     }
 
     @Override
-    public ItemTypes getType() {
-        return ItemTypes.BUCKLER;
+    public HashMap<ItemBucklerStatPool, ItemTier.StatRange> getTierStatRanges() {
+        return tier.bucklerStatRange;
     }
 
     @Override
@@ -30,6 +35,11 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
     @Override
     public ItemBucklerModifier.Curses[] getCurses() {
         return ItemBucklerModifier.Curses.VALUES;
+    }
+
+    @Override
+    public ItemTypes getType() {
+        return ItemTypes.BUCKLER;
     }
 
 }

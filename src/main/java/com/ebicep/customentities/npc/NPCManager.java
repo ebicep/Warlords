@@ -117,6 +117,7 @@ public class NPCManager {
                     createStarPieceSynthesizerNPC();
                     createMysteriousTokenNPC();
                     createItemMichaelNPC();
+                    createItemEnyaNPC();
                 })
                 .execute();
     }
@@ -237,10 +238,28 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-michael");
         npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BLACKSMITH);
         npc.addTrait(ItemMichaelTrait.class);
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Mysterious Michael");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 50, 744.5, 90, 0));
+    }
+
+    public static void createItemEnyaNPC() {
+        registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-enya");
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BUTCHER);
+        npc.addTrait(ItemEnyaTrait.class);
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Ethical Enya");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 50, 748.5, 90, 0));
     }
 
 

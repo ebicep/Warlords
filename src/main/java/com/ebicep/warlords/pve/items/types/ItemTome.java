@@ -8,8 +8,18 @@ import java.util.HashMap;
 
 public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
 
+    public ItemTome() {
+    }
+
     public ItemTome(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemTomeStatPool.VALUES));
+    }
+
+    @Override
+    public ItemTome clone() {
+        ItemTome itemTome = new ItemTome();
+        itemTome.copyFrom(this);
+        return itemTome;
     }
 
     @Override

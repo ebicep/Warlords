@@ -71,7 +71,7 @@ public class ItemCraftingMenu {
         });
     }
 
-    public static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
+    private static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
         Menu menu = new Menu(itemTier.name + " Forging", 9 * 3);
 
         TierCostInfo tierCostInfo = TIER_COST_INFO.get(itemTier);

@@ -8,8 +8,18 @@ import java.util.HashMap;
 
 public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
 
+    public ItemGauntlet() {
+    }
+
     public ItemGauntlet(ItemTier tier) {
         super(tier, tier.generateStatPool(ItemGauntletStatPool.VALUES));
+    }
+
+    @Override
+    public ItemGauntlet clone() {
+        ItemGauntlet itemBuckler = new ItemGauntlet();
+        itemBuckler.copyFrom(this);
+        return itemBuckler;
     }
 
     @Override

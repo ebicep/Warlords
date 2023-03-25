@@ -42,6 +42,10 @@ public abstract class AbstractItem<
     @Field("stat_pool")
     protected Map<T, Integer> statPool = new HashMap<>();
     protected int modifier;
+    protected boolean modified; // can only act on non-modified items, else need to remove blessing/curse first to make it non-modified
+
+    public AbstractItem() {
+    }
 
     public AbstractItem(ItemTier tier, Set<T> statPool) {
         this.tier = tier;
@@ -56,12 +60,23 @@ public abstract class AbstractItem<
                 .next();
         switch (result) {
             case 1:
-                this.modifier = ItemModifier.BLESSING_TIER_CHANCE.next();
+                this.modifier = ItemModifier.GENERATE_BLESSING.next();
                 break;
             case -1:
-                this.modifier = -ItemModifier.CURSE_TIER_CHANCE.next();
+                this.modifier = -ItemModifier.GENERATE_CURSE.next();
                 break;
         }
+    }
+
+    public abstract AbstractItem<T, R, U> clone();
+
+    public void copyFrom(AbstractItem<T, R, U> item) {
+        this.uuid = item.uuid;
+        this.obtainedDate = item.obtainedDate;
+        this.tier = item.tier;
+        this.statPool = new HashMap<>(item.statPool);
+        this.modifier = item.modifier;
+        this.modified = item.modified;
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
@@ -219,7 +234,13 @@ public abstract class AbstractItem<
         return modifier;
     }
 
-    public void setModifier(int modifier) {
+    public AbstractItem<T, R, U> setModifier(int modifier) {
         this.modifier = modifier;
+        this.modified = true;
+        return this;
+    }
+
+    public boolean isModified() {
+        return modified;
     }
 }

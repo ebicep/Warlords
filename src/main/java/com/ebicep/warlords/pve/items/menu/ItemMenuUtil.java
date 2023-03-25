@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 
 public class ItemMenuUtil {
 
+    public static String getRequirementMetString(boolean requirementMet, String requirement) {
+        return (requirementMet ? ChatColor.GREEN + "✔" : ChatColor.RED + "✖") + ChatColor.GRAY + " " + requirement;
+    }
+
     public static void addItemTierRequirement(
             Menu menu,
             ItemTier tier,
@@ -65,7 +69,7 @@ public class ItemMenuUtil {
     ) {
         List<String> costLore = new ArrayList<>() {{
             add("");
-            add(ChatColor.AQUA + "Drops Cost: ");
+            add(ChatColor.AQUA + "Cost: ");
             cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
         }};
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();

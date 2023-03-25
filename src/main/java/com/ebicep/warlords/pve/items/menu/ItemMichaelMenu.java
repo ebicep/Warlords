@@ -5,11 +5,14 @@ import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,20 +26,15 @@ import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 public class ItemMichaelMenu {
 
     public static void openMichaelItemMenu(Player player, DatabasePlayer databasePlayer) {
-        Menu menu = new Menu("Michael", 9 * 4);
+        Menu menu = new Menu("Mysterious Michael", 9 * 4);
 
         menu.setItem(1, 1,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Your Blessings")
-                        .lore(new ArrayList<>() {{
-                            for (int i = 1; i <= 5; i++) {
-                                add(ChatColor.GRAY + "Tier " + i + ": " + ChatColor.GREEN + databasePlayer.getPveStats()
-                                                                                                          .getItemsManager()
-                                                                                                          .getBlessingAmount(i));
-                            }
-                        }})
+                        .lore()
                         .get(),
                 (m, e) -> {
+                    YourBlessingsMenu.openYourBlessingsMenu(player, databasePlayer);
                 }
         );
 
@@ -73,24 +71,52 @@ public class ItemMichaelMenu {
     public static class YourBlessingsMenu {
 
         public static void openYourBlessingsMenu(Player player, DatabasePlayer databasePlayer) {
-            Menu menu = new Menu("Your Blessings", 9 * 4);
+            Menu menu = new Menu("Your Blessings", 9 * 5);
 
-//            for (int tier = 1; tier <= 5; tier++) {
-//                menu.setItem(tier + 1, 1,
-//                        new ItemBuilder(Material.PAPER)
-//                                .name(ChatColor.GREEN + "Tier " + tier)
-//                                .lore(
-//                                        ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
-//                                )
-//                                .amount(tier)
-//                                .get(),
-//                        (m, e) -> {
-//
-//                        }
-//                );
-//            }
+            ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+            menu.setItem(1, 1,
+                    new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Found Blessings")
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "You can find blessings by killing mobs.", 150))
+                            .amount(itemsManager.getBlessingsFound().values().stream().mapToInt(Integer::intValue).sum())
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+            menu.setItem(1, 2,
+                    new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Bought Blessings")
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "You can buy blessings through Michael. " +
+                                    "Bought blessings have a guaranteed chance of applying its tier.", 150))
+                            .amount(itemsManager.getBlessingsBought().values().stream().mapToInt(Integer::intValue).sum())
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+            for (int tier = 1; tier <= 5; tier++) {
+                menu.setItem(tier + 1, 1,
+                        new ItemBuilder(Material.PAPER)
+                                .name(ChatColor.GREEN + "Tier " + tier)
+                                .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + itemsManager.getBlessingFoundAmount(tier))
+                                .amount(tier)
+                                .get(),
+                        (m, e) -> {
 
-            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+                        }
+                );
+                menu.setItem(tier + 1, 2,
+                        new ItemBuilder(Material.PAPER)
+                                .name(ChatColor.GREEN + "Tier " + tier)
+                                .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + itemsManager.getBlessingBoughtAmount(tier))
+                                .amount(tier)
+                                .get(),
+                        (m, e) -> {
+
+                        }
+                );
+            }
+
+            menu.setItem(4, 4, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.openForPlayer(player);
         }
 
@@ -198,15 +224,24 @@ public class ItemMichaelMenu {
                 selectedItem = new ItemBuilder(item.generateItemStack())
                         .addLore(
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different Item"
                         )
                         .get();
                 if (blessing != null) {
                     ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
+                    ItemModifier<?> itemCurse = item.getCurses()[blessing];
+                    int tier = blessing + 1;
                     selectedBlessing = new ItemBuilder(Material.PAPER)
-                            .name(ChatColor.GREEN + itemBlessing.getName())
+                            .name(ChatColor.GREEN + "Tier " + tier + " Blessing")
                             .addLore(
-                                    ChatColor.GREEN + itemBlessing.getDescription(),
+                                    "",
+                                    ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
+                                            ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.BLESSING_TIER_CHANCE.get(tier)) + "%",
+                                    "  " + ChatColor.GREEN + itemBlessing.getDescription(),
+                                    "",
+                                    ChatColor.RED + itemCurse.getName() + ChatColor.GRAY + " - " +
+                                            ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.CURSE_TIER_CHANCE.get(tier)) + "%",
+                                    "  " + ChatColor.GREEN + itemCurse.getDescription(),
                                     "",
                                     ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
                             )
@@ -218,10 +253,10 @@ public class ItemMichaelMenu {
                 }
             } else {
                 selectedItem = new ItemBuilder(Material.SKULL_ITEM)
-                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
+                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an Item")
                         .get();
                 selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
-                        .name(ChatColor.RED + "Select an item first")
+                        .name(ChatColor.RED + "Select an Item first")
                         .get();
             }
 
@@ -233,7 +268,13 @@ public class ItemMichaelMenu {
                         openApplyBlessingItemSelectMenu(
                                 player,
                                 databasePlayer,
-                                new ItemMenu.PlayerItemMenuSettings(databasePlayer),
+                                new ItemMenu.PlayerItemMenuSettings(databasePlayer)
+                                        .setItemInventory(databasePlayer.getPveStats()
+                                                                        .getItemsManager()
+                                                                        .getItemInventory()
+                                                                        .stream()
+                                                                        .filter(i -> !i.isModified())
+                                                                        .collect(Collectors.toList())),
                                 menuData
                         );
                     }
@@ -242,6 +283,10 @@ public class ItemMichaelMenu {
             menu.setItem(1, 1,
                     selectedBlessing,
                     (m, e) -> {
+                        if (item == null) {
+                            player.sendMessage(ChatColor.RED + "Select an Item first!");
+                            return;
+                        }
                         openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
                     }
             );
@@ -290,28 +335,84 @@ public class ItemMichaelMenu {
                 DatabasePlayer databasePlayer,
                 ApplyBlessingMenuData menuData
         ) {
-            Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
-            for (int i = 0; i < 5; i++) {
-                int finalI = i;
-                Integer blessingAmount = databasePlayer.getPveStats().getItemsManager().getBlessingAmount(i + 1);
-                menu.setItem(i + 2, 1,
+            Menu menu = new Menu("Select a Blessing Tier", 9 * 5);
+            ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+            menu.setItem(1, 1,
+                    new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Found Blessings")
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Chance of blessing, cursing, or doing nothing to an Item.", 150))
+                            .amount(itemsManager.getBlessingsFound().values().stream().mapToInt(Integer::intValue).sum())
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+            menu.setItem(1, 2,
+                    new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Bought Blessings")
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Guaranteed chance of blessing an Item.", 150))
+                            .amount(itemsManager.getBlessingsBought().values().stream().mapToInt(Integer::intValue).sum())
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+            for (int tier = 1; tier <= 5; tier++) {
+                int finalTier = tier;
+                Integer blessingFoundAmount = itemsManager.getBlessingFoundAmount(tier);
+                Integer blessingBoughtAmount = itemsManager.getBlessingBoughtAmount(tier);
+                menu.setItem(tier + 1, 1,
                         new ItemBuilder(Material.PAPER)
-                                .name(ChatColor.GREEN + "Tier " + (i + 1))
+                                .name(ChatColor.GREEN + "Tier " + tier)
                                 .lore(
-                                        ChatColor.GRAY + "Amount: " + blessingAmount,
+                                        ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingFoundAmount,
                                         "",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                                        ChatColor.GRAY + "Bless Chance: " +
+                                                ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.BLESSING_TIER_CHANCE.get(tier)) + "%",
+                                        ChatColor.GRAY + "Curse Chance: " +
+                                                ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.CURSE_TIER_CHANCE.get(tier)) + "%",
+                                        "",
+                                        blessingFoundAmount > 0 ?
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
+                                        ChatColor.RED + "You have no blessings of this tier"
                                 )
+                                .amount(tier)
                                 .get(),
                         (m, e) -> {
-                            if (true || blessingAmount > 0) {
-                                menuData.setBlessing(finalI + 1);
-                                openApplyBlessingMenu(player, databasePlayer, menuData);
+                            if (blessingFoundAmount <= 0) {
+                                player.sendMessage(ChatColor.RED + "You have no blessings of this tier!");
+                                return;
                             }
+                            menuData.setBlessing(finalTier - 1);
+                            menuData.setBlessingFound(true);
+                            openApplyBlessingMenu(player, databasePlayer, menuData);
+                        }
+                );
+                menu.setItem(tier + 1, 2,
+                        new ItemBuilder(Material.PAPER)
+                                .name(ChatColor.GREEN + "Tier " + tier)
+                                .lore(
+                                        ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount,
+                                        "",
+                                        ChatColor.GRAY + "Bless Chance: " + ChatColor.YELLOW + "100%",
+                                        ChatColor.GRAY + "Curse Chance: " + ChatColor.YELLOW + "0%",
+                                        "",
+                                        blessingBoughtAmount > 0 ?
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
+                                        ChatColor.RED + "You have no blessings of this tier"
+                                )
+                                .amount(tier)
+                                .get(),
+                        (m, e) -> {
+                            if (blessingBoughtAmount <= 0) {
+                                player.sendMessage(ChatColor.RED + "You have no blessings of this tier!");
+                                return;
+                            }
+                            menuData.setBlessing(finalTier - 1);
+                            menuData.setBlessingFound(false);
+                            openApplyBlessingMenu(player, databasePlayer, menuData);
                         }
                 );
             }
-            menu.setItem(4, 3,
+            menu.setItem(4, 4,
                     Menu.MENU_BACK,
                     (m, e) -> {
                         openApplyBlessingMenu(player, databasePlayer, menuData);
@@ -333,26 +434,26 @@ public class ItemMichaelMenu {
             boolean enoughMobDrops = COST.entrySet()
                                          .stream()
                                          .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
-            if (item != null && enoughMobDrops) {
-                itemBuilder = new ItemBuilder(item.generateItemStack());
+            if (item != null && blessing != null && enoughMobDrops) {
+                itemBuilder = item.generateItemBuilder()
+                                  .addLore(
+                                          "",
+                                          ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to Apply Blessing"
+                                  );
             } else {
                 itemBuilder = new ItemBuilder(Material.BARRIER)
-                        .name(ChatColor.GREEN + "Click to Apply Blessing");
+                        .name(ChatColor.GREEN + "Click to apply Blessing")
+                        .lore(
+                                ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
+                                ItemMenuUtil.getRequirementMetString(blessing != null, "Blessing Selected"),
+                                ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
+                        );
             }
             menu.setItem(7, 1,
                     itemBuilder.get(),
                     (m, e) -> {
-                        if (item == null) {
-                            player.sendMessage(ChatColor.RED + "Select an Item first!");
+                        if (item == null || blessing == null || !enoughMobDrops) {
                             return;
-                        }
-                        for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                            MobDrops mobDrop = currenciesLongEntry.getKey();
-                            Long cost = currenciesLongEntry.getValue();
-                            if (pveStats.getMobDrops(mobDrop) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
-                                return;
-                            }
                         }
 
                         Menu.openConfirmationMenu(player,
@@ -365,17 +466,14 @@ public class ItemMichaelMenu {
                                         currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                     }
 
-                                    String oldName = item.getName();
-                                    ItemStack oldItem = item.generateItemStack();
+                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You blessed ")
+                                            .appendHoverItem(item.getName(), item.generateItemStack())
+                                            .append(ChatColor.GRAY + " and it became ");
+
                                     item.setModifier(blessing);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                    AbstractItem.sendItemMessage(player,
-                                            new ComponentBuilder(ChatColor.GRAY + "You blessed ")
-                                                    .appendHoverItem(oldName, oldItem)
-                                                    .append(ChatColor.GRAY + " and it became ")
-                                                    .appendHoverItem(item.getName(), item.generateItemStack())
-                                    );
+                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
                                     player.closeInventory();
                                 },
                                 (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
@@ -389,13 +487,9 @@ public class ItemMichaelMenu {
         private static class ApplyBlessingMenuData {
             private AbstractItem<?, ?, ?> item;
             private Integer blessing;
+            private boolean blessingFound;
 
             public ApplyBlessingMenuData() {
-            }
-
-            public ApplyBlessingMenuData(AbstractItem<?, ?, ?> item, Integer blessing) {
-                this.item = item;
-                this.blessing = blessing;
             }
 
             public AbstractItem<?, ?, ?> getItem() {
@@ -412,6 +506,14 @@ public class ItemMichaelMenu {
 
             public void setBlessing(Integer blessing) {
                 this.blessing = blessing;
+            }
+
+            public boolean isBlessingFound() {
+                return blessingFound;
+            }
+
+            public void setBlessingFound(boolean blessingFound) {
+                this.blessingFound = blessingFound;
             }
         }
     }
@@ -503,7 +605,12 @@ public class ItemMichaelMenu {
                                          .stream()
                                          .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
             if (item != null && enoughMobDrops) {
-                itemBuilder = new ItemBuilder(item.generateItemStack());
+                itemBuilder = new ItemBuilder(item.clone().setModifier(0).generateItemStack())
+                        .addLore(
+                                "",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to remove Curse"
+                        );
+                ;
             } else {
                 itemBuilder = new ItemBuilder(Material.BARRIER)
                         .name(ChatColor.GREEN + "Click to Remove Curse");
@@ -534,17 +641,14 @@ public class ItemMichaelMenu {
                                         currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                     }
 
-                                    String oldName = item.getName();
-                                    ItemStack oldItem = item.generateItemStack();
+                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You remove the curse from ")
+                                            .appendHoverItem(item.getName(), item.generateItemStack())
+                                            .append(ChatColor.GRAY + " and it became ");
+
                                     item.setModifier(0);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                    AbstractItem.sendItemMessage(player,
-                                            new ComponentBuilder(ChatColor.GRAY + "You remove the curse from ")
-                                                    .appendHoverItem(oldName, oldItem)
-                                                    .append(ChatColor.GRAY + " and it became ")
-                                                    .appendHoverItem(item.getName(), item.generateItemStack())
-                                    );
+                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
                                     player.closeInventory();
                                 },
                                 (m2, e2) -> openRemoveACurseMenu(player, databasePlayer, item),

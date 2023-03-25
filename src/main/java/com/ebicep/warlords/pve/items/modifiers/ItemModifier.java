@@ -2,26 +2,36 @@ package com.ebicep.warlords.pve.items.modifiers;
 
 import com.ebicep.warlords.util.java.RandomCollection;
 
+import java.util.HashMap;
+
 public interface ItemModifier<T extends Enum<T>> {
 
-    RandomCollection<Integer> MICHAEL_BLESSING_TIER_CHANCE = new RandomCollection<Integer>()
-            .add(.79, 1)
-            .add(.18, 2)
-            .add(.0275, 3)
-            .add(.0175, 4)
-            .add(.0075, 5);
-    RandomCollection<Integer> BLESSING_TIER_CHANCE = new RandomCollection<Integer>()
-            .add(.29, 1)
-            .add(.10, 2)
-            .add(.05, 3)
-            .add(.025, 4)
-            .add(.01, 5);
-    RandomCollection<Integer> CURSE_TIER_CHANCE = new RandomCollection<Integer>()
-            .add(.05, 1)
-            .add(.125, 2)
-            .add(.25, 3)
-            .add(.75, 4)
-            .add(.025, 5);
+    HashMap<Integer, Double> BLESSING_TIER_CHANCE = new HashMap<>() {{
+        put(1, 29.0);
+        put(2, 10.0);
+        put(3, 5.0);
+        put(4, 2.5);
+        put(5, 1.0);
+    }};
+    HashMap<Integer, Double> CURSE_TIER_CHANCE = new HashMap<>() {{
+        put(1, 5.0);
+        put(2, 12.5);
+        put(3, 25.0);
+        put(4, 7.5);
+        put(5, 2.5);
+    }};
+    RandomCollection<Integer> GENERATE_BLESSING = new RandomCollection<Integer>()
+            .add(29, 1)
+            .add(10, 2)
+            .add(5, 3)
+            .add(2.5, 4)
+            .add(1, 5);
+    RandomCollection<Integer> GENERATE_CURSE = new RandomCollection<Integer>()
+            .add(5, 1)
+            .add(12.5, 2)
+            .add(25, 3)
+            .add(7.5, 4)
+            .add(2.5, 5);
 
     T[] getValues();
 

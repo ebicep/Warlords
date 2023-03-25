@@ -35,7 +35,31 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("forgemenu")
     public void openForgingMenu(Player player, ItemTier tier) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openForgingMenu(player, databasePlayer, tier, new HashMap<>()));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openItemCraftingMenu(player, new HashMap<>()));
+    }
+
+    @Subcommand("addfoundblessings")
+    public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=5") Integer tier, @Conditions("limits:min=1,max=10") Integer amount) {
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                    databasePlayer.getPveStats()
+                                  .getItemsManager()
+                                  .getBlessingsFound()
+                                  .merge(tier, amount, Integer::sum);
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " Tier " + tier + " found blessings", true);
+                }
+        );
+    }
+
+    @Subcommand("addboughtblessings")
+    public void addBoughtBlessings(Player player, @Conditions("limits:min=1,max=5") Integer tier, @Conditions("limits:min=1,max=10") Integer amount) {
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                    databasePlayer.getPveStats()
+                                  .getItemsManager()
+                                  .getBlessingsBought()
+                                  .merge(tier, amount, Integer::sum);
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " Tier " + tier + " bought blessings", true);
+                }
+        );
     }
 
     @Subcommand("generate")
