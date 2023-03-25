@@ -614,23 +614,17 @@ public class ItemMichaelMenu {
                 boolean removeCurse
         ) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            ItemBuilder itemBuilder;
             boolean enoughMobDrops = COST.entrySet()
                                          .stream()
                                          .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
-            if (item != null && enoughMobDrops) {
-                itemBuilder = new ItemBuilder(item.clone().setModifier(0).generateItemStack())
-                        .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to Purify"
-                        );
-                ;
-            } else {
-                itemBuilder = new ItemBuilder(Material.BARRIER)
-                        .name(ChatColor.GREEN + "Click to Purify Item");
-            }
             menu.setItem(7, 1,
-                    itemBuilder.get(),
+                    new ItemBuilder(item != null && enoughMobDrops ? Material.MILK_BUCKET : Material.BARRIER)
+                            .name(ChatColor.GREEN + "Click to Purify Item")
+                            .lore(
+                                    ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
+                                    ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
+                            )
+                            .get(),
                     (m, e) -> {
                         if (item == null) {
                             player.sendMessage(ChatColor.RED + "Select an Item first!");
