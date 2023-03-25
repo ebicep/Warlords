@@ -16,8 +16,8 @@ public enum ItemTier {
     ALL(
             "None",
             ChatColor.BLACK,
-            null,
-            null,
+            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 0),
+            new ItemStack(Material.STAINED_CLAY, 1, (short) 0),
             null,
             0,
             0,

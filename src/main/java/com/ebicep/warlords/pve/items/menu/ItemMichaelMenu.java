@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
@@ -222,15 +223,8 @@ public class ItemMichaelMenu {
         public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
             AbstractItem<?, ?, ?> item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
-            ItemStack selectedItem;
             ItemStack selectedBlessing;
             if (item != null) {
-                selectedItem = new ItemBuilder(item.generateItemStack())
-                        .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different Item"
-                        )
-                        .get();
                 if (blessing != null) {
                     selectedBlessing = new ItemBuilder(Material.PAPER)
                             .name(ChatColor.GREEN + "Tier " + (blessing + 1) + " Blessing")
@@ -246,9 +240,6 @@ public class ItemMichaelMenu {
                             .get();
                 }
             } else {
-                selectedItem = new ItemBuilder(Material.SKULL_ITEM)
-                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an Item")
-                        .get();
                 selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
                         .name(ChatColor.RED + "Select an Item first")
                         .get();
@@ -256,24 +247,26 @@ public class ItemMichaelMenu {
 
 
             Menu menu = new Menu("Apply a Blessing", 9 * 3);
-            menu.setItem(1, 0,
-                    selectedItem,
-                    (m, e) -> {
-                        openApplyBlessingItemSelectMenu(
-                                player,
-                                databasePlayer,
-                                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
-                                        .setItemInventory(databasePlayer.getPveStats()
-                                                                        .getItemsManager()
-                                                                        .getItemInventory()
-                                                                        .stream()
-                                                                        .filter(i -> !i.isModified())
-                                                                        .collect(Collectors.toList())),
-                                menuData
-                        );
-                    }
+            ItemMenuUtil.addItemTierRequirement(
+                    menu,
+                    ItemTier.ALL,
+                    item,
+                    1,
+                    0,
+                    (m, e) ->
+                            openApplyBlessingItemSelectMenu(
+                                    player,
+                                    databasePlayer,
+                                    new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
+                                            .setItemInventory(databasePlayer.getPveStats()
+                                                                            .getItemsManager()
+                                                                            .getItemInventory()
+                                                                            .stream()
+                                                                            .filter(i -> !i.isModified())
+                                                                            .collect(Collectors.toList())),
+                                    menuData
+                            )
             );
-            ItemMenuUtil.addPaneRequirement(menu, 2, 0, item != null);
             menu.setItem(1, 1,
                     selectedBlessing,
                     (m, e) -> {
@@ -551,40 +544,28 @@ public class ItemMichaelMenu {
         }
 
         private static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item, boolean removeCurse) {
-            ItemStack selectedItem;
-            if (item != null) {
-                selectedItem = new ItemBuilder(item.generateItemStack())
-                        .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different item"
-                        )
-                        .get();
-            } else {
-                selectedItem = new ItemBuilder(Material.SKULL_ITEM)
-                        .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select an item")
-                        .get();
-            }
-
             Menu menu = new Menu("Remove a " + (removeCurse ? "Curse" : "Blessing"), 9 * 3);
-            menu.setItem(0, 1,
-                    selectedItem,
-                    (m, e) -> {
-                        openItemSelectMenu(
-                                player,
-                                databasePlayer,
-                                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
-                                        .setItemInventory(databasePlayer.getPveStats()
-                                                                        .getItemsManager()
-                                                                        .getItemInventory()
-                                                                        .stream()
-                                                                        .filter(i -> removeCurse ? i.getModifier() < 0 : i.getModifier() > 0)
-                                                                        .collect(Collectors.toList())),
-                                item,
-                                removeCurse
-                        );
-                    }
+            ItemMenuUtil.addItemTierRequirement(
+                    menu,
+                    ItemTier.ALL,
+                    item,
+                    0,
+                    1,
+                    (m, e) ->
+                            openItemSelectMenu(
+                                    player,
+                                    databasePlayer,
+                                    new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
+                                            .setItemInventory(databasePlayer.getPveStats()
+                                                                            .getItemsManager()
+                                                                            .getItemInventory()
+                                                                            .stream()
+                                                                            .filter(i -> removeCurse ? i.getModifier() < 0 : i.getModifier() > 0)
+                                                                            .collect(Collectors.toList())),
+                                    item,
+                                    removeCurse
+                            )
             );
-            ItemMenuUtil.addPaneRequirement(menu, 1, 1, item != null);
             if (removeCurse) {
                 ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, COST, 2, 1);
             }

@@ -57,6 +57,7 @@ public class ItemCraftingMenu {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BREWING_STAND_ITEM)
                             .name(ChatColor.GREEN + "Delta Forging")
+                            .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
                             .get(),
                     (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, items)
             );
@@ -64,6 +65,7 @@ public class ItemCraftingMenu {
             menu.setItem(6, 1,
                     new ItemBuilder(Material.BREWING_STAND_ITEM)
                             .name(ChatColor.GREEN + "Omega Forging")
+                            .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
                             .get(),
                     (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.OMEGA, items)
             );
