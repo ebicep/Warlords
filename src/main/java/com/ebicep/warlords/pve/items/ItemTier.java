@@ -193,8 +193,8 @@ public enum ItemTier {
             new WeightRange(37, 50, 75),
             0,
             0,
-            .25,
-            .25,
+            0,
+            0,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
