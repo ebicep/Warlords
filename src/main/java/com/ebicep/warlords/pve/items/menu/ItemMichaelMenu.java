@@ -20,7 +20,9 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -114,6 +116,8 @@ public class ItemMichaelMenu {
                                 .name(ChatColor.GREEN + "Tier " + tier)
                                 .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + itemsManager.getBlessingBoughtAmount(tier))
                                 .amount(tier)
+                                .enchant(Enchantment.OXYGEN, 1)
+                                .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
                         (m, e) -> {
 
@@ -290,8 +294,13 @@ public class ItemMichaelMenu {
         ) {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
-                    (i, m, e) -> {
-                        menuData.setItem(i);
+                    (newItem, m, e) -> {
+                        AbstractItem<?, ?, ?> previousItem = menuData.getItem();
+                        //prevent non-normal item from being blessed with bought blessing
+                        if (previousItem != null && previousItem.getModifier() == 0 && newItem.getModifier() != 0 && !menuData.isBlessingFound()) {
+                            menuData.setBlessing(null);
+                        }
+                        menuData.setItem(newItem);
                         openApplyBlessingMenu(player, databasePlayer, menuData);
                     },
                     itemBuilder -> itemBuilder.addLore(
@@ -367,23 +376,27 @@ public class ItemMichaelMenu {
                             openApplyBlessingMenu(player, databasePlayer, menuData);
                         }
                 );
-                boolean normalItem = menuData.getItem().getModifier() != 0;
+                boolean normalItem = menuData.getItem().getModifier() == 0;
+                ItemBuilder itemBuilder = new ItemBuilder(normalItem ? Material.PAPER : Material.BARRIER)
+                        .name(ChatColor.GREEN + "Tier " + tier)
+                        .lore(
+                                ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount,
+                                "",
+                                ChatColor.GRAY + "Bless Chance: " + ChatColor.YELLOW + "100%",
+                                ChatColor.GRAY + "Curse Chance: " + ChatColor.YELLOW + "0%",
+                                "",
+                                normalItem ? blessingBoughtAmount > 0 ?
+                                             ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
+                                             ChatColor.RED + "You have no blessings of this tier" :
+                                ChatColor.RED + "Only applicable to non blessed/cursed items"
+                        )
+                        .amount(tier);
+                if (normalItem) {
+                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                }
                 menu.setItem(tier + 1, 2,
-                        new ItemBuilder(normalItem ? Material.PAPER : Material.BARRIER)
-                                .name(ChatColor.GREEN + "Tier " + tier)
-                                .lore(
-                                        ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount,
-                                        "",
-                                        ChatColor.GRAY + "Bless Chance: " + ChatColor.YELLOW + "100%",
-                                        ChatColor.GRAY + "Curse Chance: " + ChatColor.YELLOW + "0%",
-                                        "",
-                                        normalItem ? blessingBoughtAmount > 0 ?
-                                                     ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
-                                                     ChatColor.RED + "You have no blessings of this tier" :
-                                        ChatColor.RED + "Only applicable to non blessed/cursed items"
-                                )
-                                .amount(tier)
-                                .get(),
+                        itemBuilder.get(),
                         (m, e) -> {
                             if (!normalItem) {
                                 player.sendMessage(ChatColor.RED + "Only applicable to non blessed/cursed items");
@@ -486,11 +499,11 @@ public class ItemMichaelMenu {
                 return Arrays.asList(
                         "",
                         ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
-                                ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.BLESSING_TIER_CHANCE.get(tier)) + "%",
+                                ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(ItemModifier.BLESSING_TIER_CHANCE.get(tier)) : "100") + "%",
                         "  " + ChatColor.GREEN + itemBlessing.getDescription(),
                         "",
                         ChatColor.RED + itemCurse.getName() + ChatColor.GRAY + " - " +
-                                ChatColor.YELLOW + NumberFormat.formatOptionalTenths(ItemModifier.CURSE_TIER_CHANCE.get(tier)) + "%",
+                                ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(ItemModifier.CURSE_TIER_CHANCE.get(tier)) : "0") + "%",
                         "  " + ChatColor.GREEN + itemCurse.getDescription()
                 );
             }
