@@ -38,8 +38,8 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
     }
 
     @Override
-    public ItemTypes getType() {
-        return ItemTypes.BUCKLER;
+    public ItemType getType() {
+        return ItemType.BUCKLER;
     }
 
 }

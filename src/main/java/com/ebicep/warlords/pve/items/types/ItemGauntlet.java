@@ -28,8 +28,8 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
     }
 
     @Override
-    public ItemTypes getType() {
-        return ItemTypes.GAUNTLET;
+    public ItemType getType() {
+        return ItemType.GAUNTLET;
     }
 
     @Override

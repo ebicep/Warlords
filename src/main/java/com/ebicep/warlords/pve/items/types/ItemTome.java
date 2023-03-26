@@ -28,8 +28,8 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
     }
 
     @Override
-    public ItemTypes getType() {
-        return ItemTypes.TOME;
+    public ItemType getType() {
+        return ItemType.TOME;
     }
 
     @Override

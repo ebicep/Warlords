@@ -41,8 +41,8 @@ public enum ItemTier {
             new WeightRange(7, 10, 15),
             .1,
             .001,
-            .55,
-            0,
+            .65,
+            .05,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
@@ -79,8 +79,8 @@ public enum ItemTier {
             new WeightRange(15, 20, 30),
             .05,
             .0005,
-            .45,
-            0,
+            .55,
+            .10,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
@@ -117,8 +117,8 @@ public enum ItemTier {
             new WeightRange(22, 30, 45),
             .01,
             .0001,
-            .35,
-            0,
+            .45,
+            .10,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
@@ -156,7 +156,7 @@ public enum ItemTier {
             .001,
             .00001,
             .35,
-            .10,
+            .20,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
@@ -193,8 +193,8 @@ public enum ItemTier {
             new WeightRange(37, 50, 75),
             0,
             0,
-            0,
-            0,
+            .25,
+            .25,
             new HashMap<>() {{
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));

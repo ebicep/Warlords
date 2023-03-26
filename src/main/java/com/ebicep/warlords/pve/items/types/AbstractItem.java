@@ -139,7 +139,7 @@ public abstract class AbstractItem<
 
     public abstract U[] getCurses();
 
-    public abstract ItemTypes getType();
+    public abstract ItemType getType();
 
     public float getItemScore() {
         List<Double> averageScores = getItemScoreAverageValues();
