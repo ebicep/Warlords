@@ -42,7 +42,6 @@ public abstract class AbstractItem<
     @Field("stat_pool")
     protected Map<T, Integer> statPool = new HashMap<>();
     protected int modifier;
-    protected boolean modified; // can only act on non-modified items, else need to remove blessing/curse first to make it non-modified
 
     public AbstractItem() {
     }
@@ -53,6 +52,19 @@ public abstract class AbstractItem<
         for (T t : statPool) {
             this.statPool.put(t, tierStatRanges.get(t).generateValue());
         }
+        bless();
+    }
+
+    /**
+     * Ran when the item is first created or found blessing applied
+     * <p>
+     * Either blesses/curses/does nothing to the item based on the tier
+     * <p>
+     * Based on bless/curse this will generate a random tier
+     * <p>
+     * Random tier generated adds to current modifier (blessing is positive, curse is negative)
+     */
+    public void bless() {
         Integer result = new RandomCollection<Integer>()
                 .add(tier.blessedChance, 1)
                 .add(tier.cursedChance, -1)
@@ -60,13 +72,15 @@ public abstract class AbstractItem<
                 .next();
         switch (result) {
             case 1:
-                this.modifier = ItemModifier.GENERATE_BLESSING.next();
+                this.modifier = Math.min(this.modifier + ItemModifier.GENERATE_BLESSING.next(), 5);
                 break;
             case -1:
-                this.modifier = -ItemModifier.GENERATE_CURSE.next();
+                this.modifier = Math.max(this.modifier - ItemModifier.GENERATE_CURSE.next(), -5);
                 break;
         }
     }
+
+    public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     public abstract AbstractItem<T, R, U> clone();
 
@@ -76,10 +90,7 @@ public abstract class AbstractItem<
         this.tier = item.tier;
         this.statPool = new HashMap<>(item.statPool);
         this.modifier = item.modifier;
-        this.modified = item.modified;
     }
-
-    public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     public ItemStack generateItemStack() {
         return generateItemBuilder().get();
@@ -236,11 +247,7 @@ public abstract class AbstractItem<
 
     public AbstractItem<T, R, U> setModifier(int modifier) {
         this.modifier = modifier;
-        this.modified = true;
         return this;
     }
 
-    public boolean isModified() {
-        return modified;
-    }
 }

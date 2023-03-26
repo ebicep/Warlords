@@ -94,8 +94,12 @@ public class ItemsManager {
         return blessingsFound.getOrDefault(tier, 0);
     }
 
-    public void addBlessing(int tier) {
+    public void addBlessingFound(int tier) {
         blessingsFound.merge(tier, 1, Integer::sum);
+    }
+
+    public void subtractBlessingFound(int tier) {
+        blessingsFound.merge(tier, -1, Integer::sum);
     }
 
     public Map<Integer, Integer> getBlessingsBought() {
@@ -109,4 +113,9 @@ public class ItemsManager {
     public void addBlessingBought(int tier) {
         blessingsBought.merge(tier, 1, Integer::sum);
     }
+
+    public void subtractBlessingBought(int tier) {
+        blessingsBought.merge(tier, -1, Integer::sum);
+    }
+
 }

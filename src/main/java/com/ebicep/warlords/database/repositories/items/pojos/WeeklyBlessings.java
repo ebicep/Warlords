@@ -60,11 +60,11 @@ public class WeeklyBlessings {
     private Instant week = DateUtil.getResetDateLatestMonday();
     private Map<Integer, Integer> stock = new HashMap<>() {{
         RandomCollection<Integer> tierChances = new RandomCollection<Integer>()
-                .add(79, 1)
+                .add(78.75, 1)
                 .add(18, 2)
-                .add(2.75, 3)
-                .add(.175, 4)
-                .add(.075, 5);
+                .add(2.625, 3)
+                .add(.425, 4)
+                .add(.02, 5);
         for (int i = 0; i < 9; i++) {
             merge(tierChances.next(), 1, Integer::sum);
         }

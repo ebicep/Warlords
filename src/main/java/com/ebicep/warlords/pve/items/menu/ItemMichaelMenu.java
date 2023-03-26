@@ -62,10 +62,10 @@ public class ItemMichaelMenu {
         );
         menu.setItem(7, 1,
                 new ItemBuilder(Material.MILK_BUCKET)
-                        .name(ChatColor.GREEN + "Purify an Item")
+                        .name(ChatColor.GREEN + "Remove a Curse")
                         .get(),
                 (m, e) -> {
-                    PurifyItemMenu.openPurifyItemMenu(player, databasePlayer);
+                    PurifyItemMenu.openPurifyItemMenu(player, databasePlayer, null);
                 }
         );
 
@@ -196,7 +196,7 @@ public class ItemMichaelMenu {
                                         tierCosts.forEach((mobDrops, cost) -> pveStats.addMobDrops(mobDrops, -cost));
                                         currentWeeklyBlessings.addPlayerOrder(player.getUniqueId(), finalTier);
                                         pveStats.getItemsManager().addBlessingBought(finalTier);
-                                        pveStats.getItemsManager().addBlessing(finalTier);
+                                        pveStats.getItemsManager().addBlessingFound(finalTier);
                                         player.closeInventory();
                                         AbstractItem.sendItemMessage(player, ChatColor.GRAY + "You bought a " +
                                                 ChatColor.GREEN + "Tier " + finalTier + ChatColor.GRAY + " Blessing!"
@@ -254,16 +254,10 @@ public class ItemMichaelMenu {
                     1,
                     0,
                     (m, e) ->
-                            openApplyBlessingItemSelectMenu(
+                            openItemSelectMenu(
                                     player,
                                     databasePlayer,
-                                    new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
-                                            .setItemInventory(databasePlayer.getPveStats()
-                                                                            .getItemsManager()
-                                                                            .getItemInventory()
-                                                                            .stream()
-                                                                            .filter(i -> !i.isModified())
-                                                                            .collect(Collectors.toList())),
+                                    new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer),
                                     menuData
                             )
             );
@@ -274,7 +268,7 @@ public class ItemMichaelMenu {
                             player.sendMessage(ChatColor.RED + "Select an Item first!");
                             return;
                         }
-                        openApplyBlessingBlessingSelectMenu(player, databasePlayer, menuData);
+                        openBlessingSelectMenu(player, databasePlayer, menuData);
                     }
             );
             ItemMenuUtil.addPaneRequirement(menu, 2, 1, blessing != null);
@@ -288,7 +282,7 @@ public class ItemMichaelMenu {
             menu.openForPlayer(player);
         }
 
-        private static void openApplyBlessingItemSelectMenu(
+        private static void openItemSelectMenu(
                 Player player,
                 DatabasePlayer databasePlayer,
                 ItemSearchMenu.PlayerItemMenuSettings menuSettings,
@@ -317,7 +311,7 @@ public class ItemMichaelMenu {
             menu.open();
         }
 
-        private static void openApplyBlessingBlessingSelectMenu(
+        private static void openBlessingSelectMenu(
                 Player player,
                 DatabasePlayer databasePlayer,
                 ApplyBlessingMenuData menuData
@@ -373,8 +367,9 @@ public class ItemMichaelMenu {
                             openApplyBlessingMenu(player, databasePlayer, menuData);
                         }
                 );
+                boolean normalItem = menuData.getItem().getModifier() != 0;
                 menu.setItem(tier + 1, 2,
-                        new ItemBuilder(Material.PAPER)
+                        new ItemBuilder(normalItem ? Material.PAPER : Material.BARRIER)
                                 .name(ChatColor.GREEN + "Tier " + tier)
                                 .lore(
                                         ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount,
@@ -382,13 +377,18 @@ public class ItemMichaelMenu {
                                         ChatColor.GRAY + "Bless Chance: " + ChatColor.YELLOW + "100%",
                                         ChatColor.GRAY + "Curse Chance: " + ChatColor.YELLOW + "0%",
                                         "",
-                                        blessingBoughtAmount > 0 ?
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
-                                        ChatColor.RED + "You have no blessings of this tier"
+                                        normalItem ? blessingBoughtAmount > 0 ?
+                                                     ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select" :
+                                                     ChatColor.RED + "You have no blessings of this tier" :
+                                        ChatColor.RED + "Only applicable to non blessed/cursed items"
                                 )
                                 .amount(tier)
                                 .get(),
                         (m, e) -> {
+                            if (!normalItem) {
+                                player.sendMessage(ChatColor.RED + "Only applicable to non blessed/cursed items");
+                                return;
+                            }
                             if (blessingBoughtAmount <= 0) {
                                 player.sendMessage(ChatColor.RED + "You have no blessings of this tier!");
                                 return;
@@ -444,19 +444,24 @@ public class ItemMichaelMenu {
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
-                                    }
-
                                     ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You blessed ")
                                             .appendHoverItem(item.getName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
-                                    item.setModifier(blessing);
+                                    if (menuData.isBlessingFound()) {
+                                        pveStats.getItemsManager().subtractBlessingFound(blessing + 1);
+                                        item.bless();
+                                    } else {
+                                        pveStats.getItemsManager().subtractBlessingBought(blessing + 1);
+                                        item.setModifier(blessing);
+                                    }
+                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
+                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                    }
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    player.closeInventory();
 
                                     AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
-                                    player.closeInventory();
                                 },
                                 (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
                                 (m2) -> {
@@ -520,31 +525,8 @@ public class ItemMichaelMenu {
 
         private static final LinkedHashMap<MobDrops, Long> COST = new LinkedHashMap<>();
 
-        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer) {
-            Menu menu = new Menu("Purify Item", 9 * 4);
-
-            menu.setItem(2, 1,
-                    new ItemBuilder(Material.WATER_BUCKET)
-                            .name(ChatColor.GREEN + "Remove Blessing")
-                            .lore(ChatColor.GRAY + "Remove a Blessing from an Item")
-                            .get(),
-                    (m, e) -> openPurifyItemMenu(player, databasePlayer, null, false)
-            );
-
-            menu.setItem(6, 1,
-                    new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(ChatColor.GREEN + "Remove Curse")
-                            .lore(ChatColor.GRAY + "Remove a Curse from an Item")
-                            .get(),
-                    (m, e) -> openPurifyItemMenu(player, databasePlayer, null, true)
-            );
-
-            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
-            menu.openForPlayer(player);
-        }
-
-        private static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item, boolean removeCurse) {
-            Menu menu = new Menu("Remove a " + (removeCurse ? "Curse" : "Blessing"), 9 * 3);
+        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
+            Menu menu = new Menu("Remove a Curse", 9 * 3);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
                     ItemTier.ALL,
@@ -560,20 +542,17 @@ public class ItemMichaelMenu {
                                                                             .getItemsManager()
                                                                             .getItemInventory()
                                                                             .stream()
-                                                                            .filter(i -> removeCurse ? i.getModifier() < 0 : i.getModifier() > 0)
+                                                                            .filter(i -> i.getModifier() < 0)
                                                                             .collect(Collectors.toList())),
-                                    item,
-                                    removeCurse
+                                    item
                             )
             );
-            if (removeCurse) {
-                ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, COST, 2, 1);
-            }
+            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, COST, 2, 1);
             ItemMenuUtil.addItemConfirmation(menu, () -> {
-                addPurifyItemConfirmation(player, databasePlayer, item, menu, removeCurse);
+                addPurifyItemConfirmation(player, databasePlayer, item, menu);
             });
 
-            menu.setItem(4, 2, MENU_BACK, (m, e) -> openPurifyItemMenu(player, databasePlayer));
+            menu.setItem(4, 2, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.openForPlayer(player);
         }
 
@@ -581,13 +560,12 @@ public class ItemMichaelMenu {
                 Player player,
                 DatabasePlayer databasePlayer,
                 ItemSearchMenu.PlayerItemMenuSettings menuSettings,
-                AbstractItem<?, ?, ?> item,
-                boolean removeCurse
+                AbstractItem<?, ?, ?> item
         ) {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
                     (i, m, e) -> {
-                        openPurifyItemMenu(player, databasePlayer, i, removeCurse);
+                        openPurifyItemMenu(player, databasePlayer, i);
                     },
                     itemBuilder -> itemBuilder.addLore(
                             "",
@@ -598,7 +576,7 @@ public class ItemMichaelMenu {
                     m -> m.setItem(4, 5,
                             Menu.MENU_BACK,
                             (m2, e2) -> {
-                                openPurifyItemMenu(player, databasePlayer, item, removeCurse);
+                                openPurifyItemMenu(player, databasePlayer, item);
                             }
                     )
             );
@@ -610,8 +588,7 @@ public class ItemMichaelMenu {
                 Player player,
                 DatabasePlayer databasePlayer,
                 AbstractItem<?, ?, ?> item,
-                Menu menu,
-                boolean removeCurse
+                Menu menu
         ) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             boolean enoughMobDrops = COST.entrySet()
@@ -630,47 +607,39 @@ public class ItemMichaelMenu {
                             player.sendMessage(ChatColor.RED + "Select an Item first!");
                             return;
                         }
-                        if (removeCurse) {
-                            for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                                MobDrops mobDrop = currenciesLongEntry.getKey();
-                                Long cost = currenciesLongEntry.getValue();
-                                if (pveStats.getMobDrops(mobDrop) < cost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to purify this Item!");
-                                    return;
-                                }
+                        for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
+                            MobDrops mobDrop = currenciesLongEntry.getKey();
+                            Long cost = currenciesLongEntry.getValue();
+                            if (pveStats.getMobDrops(mobDrop) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to purify this Item!");
+                                return;
                             }
                         }
+
 
                         Menu.openConfirmationMenu(player,
                                 "Confirm Purification",
                                 3,
                                 new ArrayList<>() {{
-                                    if (removeCurse) {
-                                        add(ChatUtils.addStrikeThrough(item.getCurses()[-item.getModifier() - 1].getDescription()));
-                                        addAll(PvEUtils.getCostLore(COST));
-                                    } else {
-                                        add(ChatUtils.addStrikeThrough(item.getBlessings()[item.getModifier() - 1].getDescription()));
-                                    }
+                                    add(ChatUtils.addStrikeThrough(item.getCurses()[-item.getModifier() - 1].getDescription()));
+                                    addAll(PvEUtils.getCostLore(COST));
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    if (removeCurse) {
-                                        for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                                            currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
-                                        }
-                                    }
-
-                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You removed the " + (removeCurse ? "Curse" : "Blessing") + " from ")
+                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You removed the Curse from ")
                                             .appendHoverItem(item.getName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
-                                    item.setModifier(0);
+                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
+                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                    }
+                                    item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    player.closeInventory();
 
                                     AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
-                                    player.closeInventory();
                                 },
-                                (m2, e2) -> openPurifyItemMenu(player, databasePlayer, item, removeCurse),
+                                (m2, e2) -> openPurifyItemMenu(player, databasePlayer, item),
                                 (m2) -> {
                                 }
                         );
