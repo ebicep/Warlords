@@ -65,9 +65,9 @@ public class ItemMichaelMenu {
                         .name(ChatColor.GREEN + "Apply a Blessing")
                         .lore(
                                 WordWrap.wrapWithNewline(ChatColor.GRAY + "Items have different modified values which range from being:", 170),
-                                ChatColor.DARK_RED + "  - Most Cursed (-5)",
-                                ChatColor.WHITE + "  - Normal (0)",
-                                ChatColor.DARK_GREEN + "  - Most Blessed (+5)",
+                                ChatColor.GRAY + "  - " + ChatColor.DARK_RED + "Most Cursed (-5)",
+                                ChatColor.GRAY + "  - " + ChatColor.WHITE + "Normal (0)",
+                                ChatColor.GRAY + "  - " + ChatColor.DARK_GREEN + "Most Blessed (+5)",
                                 "",
                                 WordWrap.wrapWithNewline(ChatColor.GRAY + "Applying unknown blessings to an Item gives it a random blessing or curse, or does nothing. " +
                                                 "The chance of a blessing or curse is based on the tier of the blessing.",
@@ -533,6 +533,22 @@ public class ItemMichaelMenu {
                 }};
             }
 
+            private String getModifiedLore(int newModifier, double chance) {
+                if (newModifier == 0) {
+                    return ChatColor.WHITE + "Normal" + ChatColor.GRAY + " - " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%";
+                } else if (newModifier > 0) {
+                    ItemModifier<?> itemBlessing = item.getBlessings()[newModifier - 1];
+                    return ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
+                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "100") + "%" +
+                            "\n " + ChatColor.GREEN + itemBlessing.getDescription();
+                } else {
+                    ItemModifier<?> itemCurse = item.getCurses()[-newModifier - 1];
+                    return ChatColor.RED + itemCurse.getName() + ChatColor.GRAY + " - " +
+                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "0") + "%" +
+                            "\n " + ChatColor.GREEN + itemCurse.getDescription();
+                }
+            }
+
             public List<String> getBlessingCurseBoughtLore() {
                 if (!blessingFound) {
                     ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
@@ -551,22 +567,6 @@ public class ItemMichaelMenu {
                         "",
                         getModifiedLore(Math.max(modifier - tier, -5), item.getTier().cursedChance * 100)
                 );
-            }
-
-            private String getModifiedLore(int newModifier, double chance) {
-                if (newModifier == 0) {
-                    return ChatColor.WHITE + "Normal" + ChatColor.GRAY + " - " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%";
-                } else if (newModifier > 0) {
-                    ItemModifier<?> itemBlessing = item.getBlessings()[newModifier - 1];
-                    return ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
-                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "100") + "%" +
-                            "\n " + ChatColor.GREEN + itemBlessing.getDescription();
-                } else {
-                    ItemModifier<?> itemCurse = item.getCurses()[-newModifier - 1];
-                    return ChatColor.RED + itemCurse.getName() + ChatColor.GRAY + " - " +
-                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "0") + "%" +
-                            "\n " + ChatColor.GREEN + itemCurse.getDescription();
-                }
             }
 
             public AbstractItem<?, ?, ?> getItem() {
