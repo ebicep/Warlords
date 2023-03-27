@@ -47,6 +47,12 @@ public class DateUtil {
                 .toInstant();
     }
 
+    public static Instant getResetDateCurrentMonth() {
+        return OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .toInstant();
+    }
+
     public static String formatCurrentDateEST(String format) {
         return DateTimeFormatter.ofPattern(format).format(getCurrentDateEST());
     }

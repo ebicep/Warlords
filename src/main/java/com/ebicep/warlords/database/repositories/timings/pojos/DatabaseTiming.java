@@ -21,6 +21,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,11 +46,49 @@ public class DatabaseTiming {
             "Flags Captured",
             "Flags Returned",
     };
+    public static final AtomicBoolean RESET_MONTHly = new AtomicBoolean(false);
     public static final AtomicBoolean RESET_WEEKLY = new AtomicBoolean(false);
     public static final AtomicBoolean RESET_DAILY = new AtomicBoolean(false);
 
     public static void checkTimings() {
         Instant currentDate = Instant.now();
+        //MONTHLY
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Monthly Stats"))
+                .async(timing -> {
+                    if (timing == null) {
+                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Could not find Monthly Stats timing in database. Creating new timing.");
+                        DatabaseManager.timingsService.create(new DatabaseTiming("Monthly Stats", DateUtil.getResetDateCurrentMonth(), Timing.MONTHLY));
+                    } else {
+                        ZonedDateTime resetTime = timing.getLastReset().atZone(ZoneOffset.UTC);
+                        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+                        if (now.getYear() > resetTime.getYear() || now.getMonthValue() > resetTime.getMonthValue()) {
+                            //updating date to current
+                            timing.setLastReset(DateUtil.getResetDateCurrentMonth());
+                            DatabaseManager.timingsService.update(timing);
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Monthly information reset");
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .syncLast((reset) -> {
+                    if (reset) {
+
+                        //guilds
+                        for (Guild guild : GuildManager.GUILDS) {
+                            guild.setCoins(Timing.MONTHLY, 0);
+                            guild.setExperience(Timing.MONTHLY, 0);
+                            guild.getPlayers().forEach(guildPlayer -> {
+                                guildPlayer.setCoins(Timing.MONTHLY, 0L);
+                                guildPlayer.setExperience(Timing.MONTHLY, 0);
+                            });
+                            guild.queueUpdate();
+                        }
+                        GuildLeaderboardManager.recalculateLeaderboard(Timing.MONTHLY);
+                    }
+                })
+                .execute();
         //WEEKLY
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Weekly Stats"))
@@ -146,6 +186,33 @@ public class DatabaseTiming {
     }
 
     public static void checkLeaderboardResets() {
+        if (RESET_MONTHly.get()) {
+            RESET_MONTHly.set(false);
+            try {
+                //clearing weekly
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.playerService.renameCollection(
+                                    PlayersCollections.MONTHLY.collectionName,
+                                    PlayersCollections.MONTHLY.collectionName + "_Previous",
+                                    true
+                            );
+                            DatabaseManager.playerService.deleteAll(PlayersCollections.MONTHLY);
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous monthly stats and reset current monthly stats");
+                        })
+                        .execute();
+            } catch (Exception e) {
+                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing monthly collection");
+            }
+            //reloading boards
+            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.MONTHLY, databasePlayer -> {});
+            }
+            Warlords.newChain()
+                    .delay(10 * 20)
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.MONTHLY, false)).execute();
+        }
         if (RESET_WEEKLY.get()) {
             RESET_WEEKLY.set(false);
             try {
