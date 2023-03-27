@@ -21,7 +21,7 @@ public class ItemsManager {
      * <p>
      * x2: Average Player Level. Find the mean of the set of classes we have (pal, mag, war, sha, rog).
      * <p>
-     * x3: Total Prestiges. Simply add.
+     * x3: Prestiges calculation
      * <p>
      * x4: Achievements. Divide Achievements Earned by Total Achievements.
      * <p>
@@ -43,9 +43,7 @@ public class ItemsManager {
                                           .sum();
         weight += ((totalPlayerClassLevel + 1) / 5) / 4;
         // x3
-        weight += Arrays.stream(Specializations.VALUES)
-                        .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
-                        .sum();
+        weight += getPrestigeWeight(databasePlayer, selectedSpec);
         // x4
         // TODO
         // x5
@@ -55,6 +53,31 @@ public class ItemsManager {
             weight += 5;
         }
         return Math.min(weight, 100);
+    }
+
+    private static int getPrestigeWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
+        int weight = 0;
+        int prestige = databasePlayer.getSpec(selectedSpec).getPrestige();
+        if (prestige >= 1) {
+            weight += 5 + prestige - 1;
+        }
+        int lowestClassPrestige = Specializations.getClass(selectedSpec).subclasses
+                .stream()
+                .map(spec -> databasePlayer.getSpec(spec).getPrestige())
+                .min(Integer::compare)
+                .orElse(-1);
+        if (lowestClassPrestige != -1) {
+            weight += lowestClassPrestige * 5;
+        }
+        int lowestSpecTypePrestige = Arrays.stream(Specializations.VALUES)
+                                           .filter(spec -> spec.specType == selectedSpec.specType)
+                                           .map(spec -> databasePlayer.getSpec(spec).getPrestige())
+                                           .min(Integer::compare)
+                                           .orElse(-1);
+        if (lowestSpecTypePrestige != -1) {
+            weight += lowestSpecTypePrestige * 5;
+        }
+        return Math.min(25, weight);
     }
 
     @Field("item_inventory")
