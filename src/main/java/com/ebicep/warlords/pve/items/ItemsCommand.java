@@ -39,13 +39,12 @@ public class ItemsCommand extends BaseCommand {
     }
 
     @Subcommand("addfoundblessings")
-    public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=5") Integer tier, @Conditions("limits:min=1,max=10") Integer amount) {
+    public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
                     databasePlayer.getPveStats()
                                   .getItemsManager()
-                                  .getBlessingsFound()
-                                  .merge(tier, amount, Integer::sum);
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " Tier " + tier + " found blessings", true);
+                                  .addBlessingsFound(amount);
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " found blessings", true);
                 }
         );
     }

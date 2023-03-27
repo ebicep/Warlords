@@ -167,7 +167,7 @@ public class ItemEquipMenu {
         menu.setItem(1, 5,
                 new ItemBuilder(Material.BOOK_AND_QUILL)
                         .name(ChatColor.GREEN + "Create Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new possibleLoadout to customize your experience.", 150))
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new loadout to customize your experience.", 150))
                         .get(),
                 (m, e) -> {
                     if (itemsManager.getLoadouts().size() >= 9) {
@@ -180,7 +180,7 @@ public class ItemEquipMenu {
                                 return;
                             }
                             if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a possibleLoadout with that name!");
+                                player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
                                 return;
                             }
                             ItemLoadout newLoadout = new ItemLoadout(name);
@@ -194,9 +194,13 @@ public class ItemEquipMenu {
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Rename Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current possibleLoadout", 150))
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout", 150))
                         .get(),
                 (m, e) -> {
+                    if (itemLoadout.getName().equals("Default")) {
+                        player.sendMessage(ChatColor.RED + "You cannot rename the default loadout!");
+                        return;
+                    }
                     SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
                         String name = lines[0];
                         if (!name.matches("[a-zA-Z0-9 ]+")) {
@@ -204,7 +208,7 @@ public class ItemEquipMenu {
                             return;
                         }
                         if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                            player.sendMessage(ChatColor.RED + "You already have a possibleLoadout with that name!");
+                            player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
                             return;
                         }
                         itemLoadout.setName(name);
@@ -221,7 +225,7 @@ public class ItemEquipMenu {
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot delete the default possibleLoadout!");
+                        player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
                         return;
                     }
                     Menu.openConfirmationMenu(
@@ -254,7 +258,8 @@ public class ItemEquipMenu {
                 new ItemBuilder(Material.TRIPWIRE_HOOK)
                         .name(ChatColor.GREEN + "Change Loadout Priority")
                         .lore(
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current possibleLoadout, for when you have multiple loadouts with the same filters.",
+                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current loadout, for when you have " +
+                                                "multiple loadouts with the same filters.",
                                         170
                                 ),
                                 ""

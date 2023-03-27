@@ -102,6 +102,7 @@ public class WeeklyBlessings {
 
     public void addPlayerOrder(UUID uuid, int blessingTier) {
         playerOrders.computeIfAbsent(uuid, k -> new HashMap<>()).merge(blessingTier, 1, Integer::sum);
+        DatabaseManager.updateWeeklyBlessings(this);
     }
 
     public Map<Integer, Integer> getZenithCosts() {

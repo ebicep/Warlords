@@ -63,7 +63,7 @@ public class ItemsManager {
         add(new ItemLoadout("Default"));
     }};
     @Field("blessings_found")
-    private Map<Integer, Integer> blessingsFound = new HashMap<>();
+    private int blessingsFound;
     @Field("blessings_bought")
     private Map<Integer, Integer> blessingsBought = new HashMap<>();
 
@@ -86,20 +86,16 @@ public class ItemsManager {
         return loadouts;
     }
 
-    public Map<Integer, Integer> getBlessingsFound() {
+    public int getBlessingsFound() {
         return blessingsFound;
     }
 
-    public Integer getBlessingFoundAmount(int tier) {
-        return blessingsFound.getOrDefault(tier, 0);
+    public void addBlessingsFound(int amount) {
+        this.blessingsFound += amount;
     }
 
-    public void addBlessingFound(int tier) {
-        blessingsFound.merge(tier, 1, Integer::sum);
-    }
-
-    public void subtractBlessingFound(int tier) {
-        blessingsFound.merge(tier, -1, Integer::sum);
+    public void subtractBlessingsFound(int amount) {
+        this.blessingsFound -= amount;
     }
 
     public Map<Integer, Integer> getBlessingsBought() {

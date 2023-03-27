@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
 import com.ebicep.warlords.database.repositories.items.WeeklyBlessingsService;
+import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -326,5 +327,10 @@ public class DatabaseManager {
 
     public static ConcurrentHashMap<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {
         return CACHED_PLAYERS.get(playersCollections);
+    }
+
+    public static void updateWeeklyBlessings(WeeklyBlessings weeklyBlessings) {
+        Warlords.newChain()
+                .async(() -> weeklyBlessingsService.update(weeklyBlessings));
     }
 }
