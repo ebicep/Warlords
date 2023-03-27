@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -25,11 +26,11 @@ public class ItemLoadout {
 
     public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
-//        for (ItemEntry itemEntry : itemsManager.getItemInventory()) {
-//            if (items.contains(itemEntry.getUUID())) {
-//                weight += itemEntry.getItem().getWeight();
-//            }
-//        }
+        for (AbstractItem<?, ?, ?> item : itemsManager.getItemInventory()) {
+            if (items.contains(item.getUUID())) {
+                weight += item.getWeight();
+            }
+        }
         return weight;
     }
 
@@ -39,6 +40,10 @@ public class ItemLoadout {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Instant getCreationDate() {
+        return creationDate;
     }
 
     public List<UUID> getItems() {

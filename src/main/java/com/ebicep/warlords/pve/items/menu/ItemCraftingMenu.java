@@ -157,7 +157,7 @@ public class ItemCraftingMenu {
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(ChatColor.GREEN + "Click to Craft Item")
                         .lore(
-                                ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Items Selected"),
+                                ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                                 ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
                         )
                         .get(),

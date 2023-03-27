@@ -228,19 +228,17 @@ public class WeaponManagerMenu {
                                       .collect(Collectors.joining("\n")),
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change bind filter",
                                 "",
-                                selectedSpecFilter ? ChatColor.GRAY + "All Specs\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
+                                selectedSpecFilter ? ChatColor.GRAY + "None\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change spec filter"
                         )
                         .get(),
                 (m, e) -> {
                     if (e.isShiftClick()) {
                         menuSettings.toggleSelectedSpecFilter();
-                    } else {
-                        if (e.isLeftClick()) {
-                            menuSettings.setRarityFilter(filterBy.next());
-                        } else if (e.isRightClick()) {
-                            menuSettings.setBindFilterOption(bindFilterOption.next());
-                        }
+                    } else if (e.isLeftClick()) {
+                        menuSettings.setRarityFilter(filterBy.next());
+                    } else if (e.isRightClick()) {
+                        menuSettings.setBindFilterOption(bindFilterOption.next());
                     }
                     menuSettings.setPage(1);
                     openWeaponInventoryFromInternal(player, databasePlayer);
@@ -570,9 +568,9 @@ public class WeaponManagerMenu {
 
     public enum BindFilterOptions {
 
-        ALL("All", (weapon) -> true),
-        BOUND("Bound", (weapon) -> weapon.isBound()),
-        UNBOUND("Unbound", (weapon) -> !weapon.isBound()),
+        NONE("None", weapon -> true),
+        BOUND("Bound", weapon -> weapon.isBound()),
+        UNBOUND("Unbound", weapon -> !weapon.isBound()),
 
         ;
 
@@ -597,7 +595,7 @@ public class WeaponManagerMenu {
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
         private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
-        private BindFilterOptions bindFilterOption = BindFilterOptions.ALL;
+        private BindFilterOptions bindFilterOption = BindFilterOptions.NONE;
         private boolean selectedSpecFilter = false;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
@@ -607,7 +605,7 @@ public class WeaponManagerMenu {
         public void reset() {
             this.page = 1;
             this.rarityFilter = WeaponsPvE.NONE;
-            this.bindFilterOption = BindFilterOptions.ALL;
+            this.bindFilterOption = BindFilterOptions.NONE;
             this.selectedSpecFilter = false;
             this.sortOption = SortOptions.DATE;
             this.ascending = true;
@@ -618,7 +616,7 @@ public class WeaponManagerMenu {
             if (rarityFilter != WeaponsPvE.NONE) {
                 sortedWeaponInventory.removeIf(weapon -> weapon.getRarity() != rarityFilter);
             }
-            if (bindFilterOption != BindFilterOptions.ALL) {
+            if (bindFilterOption != BindFilterOptions.NONE) {
                 sortedWeaponInventory.removeIf(weapon -> !bindFilterOption.filter.test(weapon));
             }
             if (selectedSpecFilter) {

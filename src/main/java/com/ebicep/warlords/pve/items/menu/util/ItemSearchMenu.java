@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -128,6 +129,7 @@ public class ItemSearchMenu extends Menu {
     private void addFilterBySetting() {
         ItemTier filterBy = menuSettings.getTierFilter();
         int addonFilter = menuSettings.getAddonFilter();
+        ModifierFilter modifierFilter = menuSettings.getModifierFilter();
         StringBuilder addonFilterLore = new StringBuilder();
         String[] addonFilters = PlayerItemMenuSettings.ADDON_FILTERS;
         for (int i = 0; i < addonFilters.length; i++) {
@@ -143,15 +145,22 @@ public class ItemSearchMenu extends Menu {
                                       .collect(Collectors.joining("\n")),
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to change tier filter",
                                 "",
+                                Arrays.stream(ModifierFilter.VALUES)
+                                      .map(value -> (modifierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                      .collect(Collectors.joining("\n")),
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change modifier filter",
+                                "",
                                 addonFilterLore +
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change bonus filter"
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change bonus filter"
                         )
                         .get(),
                 (m, e) -> {
-                    if (e.isLeftClick()) {
+                    if (e.isShiftClick()) {
+                        menuSettings.nextAddonFilter();
+                    } else if (e.isLeftClick()) {
                         menuSettings.setTierFilter(filterBy.next());
                     } else if (e.isRightClick()) {
-                        menuSettings.nextAddonFilter();
+                        menuSettings.setModifierFilter(modifierFilter.next());
                     }
                     menuSettings.setPage(1);
                     open();
@@ -240,6 +249,28 @@ public class ItemSearchMenu extends Menu {
         }
     }
 
+    public enum ModifierFilter {
+        NONE("None", item -> true),
+        NORMAL("Normal", item -> item.getModifier() == 0),
+        BLESSED("Blessed", item -> item.getModifier() > 0),
+        CURSED("Cursed", item -> item.getModifier() < 0),
+
+        ;
+
+        private static final ModifierFilter[] VALUES = values();
+        public final String name;
+        public final Predicate<AbstractItem<?, ?, ?>> filter;
+
+        ModifierFilter(String name, Predicate<AbstractItem<?, ?, ?>> filter) {
+            this.name = name;
+            this.filter = filter;
+        }
+
+        public ModifierFilter next() {
+            return VALUES[(ordinal() + 1) % VALUES.length];
+        }
+    }
+
     public static class PlayerItemMenuSettings {
         public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};
         private final Specializations selectedSpec;
@@ -249,6 +280,7 @@ public class ItemSearchMenu extends Menu {
         private List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>();
         private List<AbstractItem<?, ?, ?>> sortedItemInventory = new ArrayList<>();
         private ItemTier tierFilter = ItemTier.ALL;
+        private ModifierFilter modifierFilter = ModifierFilter.NONE;
         private int addonFilter = 0; // 0 = none, 1 = spec, 2 = class
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
@@ -264,6 +296,12 @@ public class ItemSearchMenu extends Menu {
             setItemInventory(new ArrayList<>(databasePlayer.getPveStats().getItemsManager().getItemInventory()));
         }
 
+        public PlayerItemMenuSettings setItemInventory(List<AbstractItem<?, ?, ?>> itemInventory) {
+            this.itemInventory = itemInventory;
+            this.sortedItemInventory = new ArrayList<>(itemInventory);
+            return this;
+        }
+
         public void reset() {
             this.page = 1;
             this.tierFilter = ItemTier.ALL;
@@ -276,6 +314,9 @@ public class ItemSearchMenu extends Menu {
             sortedItemInventory = new ArrayList<>(itemInventory);
             if (tierFilter != ItemTier.ALL) {
                 sortedItemInventory.removeIf(item -> item.getTier() != tierFilter);
+            }
+            if (modifierFilter != ModifierFilter.NONE) {
+                sortedItemInventory.removeIf(weapon -> !modifierFilter.filter.test(weapon));
             }
             if (addonFilter != 0) {
                 if (addonFilter == 1) {
@@ -310,18 +351,20 @@ public class ItemSearchMenu extends Menu {
             return sortedItemInventory;
         }
 
-        public PlayerItemMenuSettings setItemInventory(List<AbstractItem<?, ?, ?>> itemInventory) {
-            this.itemInventory = itemInventory;
-            this.sortedItemInventory = new ArrayList<>(itemInventory);
-            return this;
-        }
-
         public ItemTier getTierFilter() {
             return tierFilter;
         }
 
         public void setTierFilter(ItemTier tierFilter) {
             this.tierFilter = tierFilter;
+        }
+
+        public ModifierFilter getModifierFilter() {
+            return modifierFilter;
+        }
+
+        public void setModifierFilter(ModifierFilter modifierFilter) {
+            this.modifierFilter = modifierFilter;
         }
 
         public int getAddonFilter() {

@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,11 +26,11 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
-public class ItemsMenu {
+public class ItemEquipMenu {
 
     public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
-    public static void openItemMenuExternal(Player player, boolean fromNPC) {
+    public static void openItemEquipMenuExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
@@ -41,12 +42,12 @@ public class ItemsMenu {
             menuSettings.setItemInventory(itemInventory);
             menuSettings.sort();
 
-            openItemMenuInternal(player, databasePlayer);
+            openItemEquipMenuInternal(player, databasePlayer);
         });
 
     }
 
-    public static void openItemMenuInternal(Player player, DatabasePlayer databasePlayer) {
+    public static void openItemEquipMenuInternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
         ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
@@ -68,8 +69,8 @@ public class ItemsMenu {
         menu.open();
     }
 
-    public static void openItemLoadoutMenu(Player player, ItemLoadout loadout, DatabasePlayer databasePlayer) {
-        AtomicReference<ItemLoadout> atomicItemLoadout = new AtomicReference<>(loadout);
+    public static void openItemLoadoutMenu(Player player, ItemLoadout possibleLoadout, DatabasePlayer databasePlayer) {
+        AtomicReference<ItemLoadout> atomicItemLoadout = new AtomicReference<>(possibleLoadout);
         if (atomicItemLoadout.get() == null) {
             atomicItemLoadout.set(databasePlayer.getPveStats().getItemsManager().getLoadouts().get(0));
         }
@@ -141,24 +142,32 @@ public class ItemsMenu {
             }
         }
 
-//            for (int i = 0, loadoutsSize = loadouts.size(); i < loadoutsSize; i++) {
-//                ItemLoadout loadout = loadouts.get(i);
-//                menu.addItem(new ItemBuilder(loadout.getName().equals("Default") ? Material.IRON_DOOR : Material.WOOD_DOOR)
-//                                .name(ChatColor.GREEN + "Loadout #" + (i + 1) + ": " + ChatColor.GOLD + loadout.getName())
-//                                .lore(
-//                                        ChatColor.GRAY + "Weight: " + ChatColor.GOLD + loadout.getWeight(itemsManager),
-//                                        ChatColor.GRAY + "Difficulty: " + ChatColor.GOLD + (loadout.getDifficulty() == null ? "Any" : loadout.getDifficulty()
-//                                                                                                                                             .getName()),
-//                                        ChatColor.GRAY + "Specialization: " + ChatColor.GOLD + (loadout.getSpec() == null ? "Any" : loadout.getSpec().name)
-//                                )
-//                                .get(),
-//                        (m, e) -> openItemLoadoutMenu(player, loadout)
-//                );
-//            }
-
+        List<String> lore = new ArrayList<>();
+        List<ItemLoadout> sortedLoadouts = loadouts.stream()
+                                                   .sorted(Comparator.comparing(ItemLoadout::getCreationDate))
+                                                   .collect(Collectors.toList());
+        for (int i = 0; i < sortedLoadouts.size(); i++) {
+            ItemLoadout l = sortedLoadouts.get(i);
+            DifficultyIndex difficulty = l.getDifficulty();
+            Specializations spec = l.getSpec();
+            lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + i + ". " + l.getName() +
+                    " (" + l.getWeight(itemsManager) + " | " + (difficulty == null ? "Any" : difficulty.getName()) + " | " + (spec == null ? "Any" : spec.name) + ")");
+        }
+        menu.setItem(0, 5,
+                new ItemBuilder(Material.BOOK)
+                        .name(ChatColor.GREEN + "Change Loadout (Weight | Difficulty | Spec)")
+                        .lore(lore)
+                        .get(),
+                (m, e) -> {
+                    int index = sortedLoadouts.indexOf(itemLoadout);
+                    int nextLoadout = index >= sortedLoadouts.size() - 1 ? 0 : index + 1;
+                    openItemLoadoutMenu(player, sortedLoadouts.get(nextLoadout), databasePlayer);
+                }
+        );
         menu.setItem(1, 5,
-                new ItemBuilder(Material.WORKBENCH)
+                new ItemBuilder(Material.BOOK_AND_QUILL)
                         .name(ChatColor.GREEN + "Create Loadout")
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new possibleLoadout to customize your experience.", 150))
                         .get(),
                 (m, e) -> {
                     if (itemsManager.getLoadouts().size() >= 9) {
@@ -171,7 +180,7 @@ public class ItemsMenu {
                                 return;
                             }
                             if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                player.sendMessage(ChatColor.RED + "You already have a possibleLoadout with that name!");
                                 return;
                             }
                             ItemLoadout newLoadout = new ItemLoadout(name);
@@ -185,6 +194,7 @@ public class ItemsMenu {
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Rename Loadout")
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current possibleLoadout", 150))
                         .get(),
                 (m, e) -> {
                     SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
@@ -194,7 +204,7 @@ public class ItemsMenu {
                             return;
                         }
                         if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                            player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                            player.sendMessage(ChatColor.RED + "You already have a possibleLoadout with that name!");
                             return;
                         }
                         itemLoadout.setName(name);
@@ -207,10 +217,11 @@ public class ItemsMenu {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.LAVA_BUCKET)
                         .name(ChatColor.RED + "Delete Loadout")
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout", 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
+                        player.sendMessage(ChatColor.RED + "You cannot delete the default possibleLoadout!");
                         return;
                     }
                     Menu.openConfirmationMenu(
@@ -235,15 +246,20 @@ public class ItemsMenu {
                 }
         );
 
-        //menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemMenu(player, 1));
-        List<String> lore = new ArrayList<>();
+        lore.clear();
         for (int i = 0; i < loadouts.size(); i++) {
-            lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.GREEN : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
+            lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
         }
         menu.setItem(5, 5,
                 new ItemBuilder(Material.TRIPWIRE_HOOK)
                         .name(ChatColor.GREEN + "Change Loadout Priority")
-                        .lore(lore)
+                        .lore(
+                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current possibleLoadout, for when you have multiple loadouts with the same filters.",
+                                        170
+                                ),
+                                ""
+                        )
+                        .addLore(lore)
                         .get(),
                 (m, e) -> {
                     int loadoutIndex = loadouts.indexOf(itemLoadout);
@@ -260,10 +276,10 @@ public class ItemsMenu {
                 }
         );
         lore.clear();
-        lore.add((itemLoadout.getDifficulty() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
+        lore.add((itemLoadout.getDifficulty() == null ? ChatColor.AQUA : ChatColor.GRAY) + "Any");
         DifficultyIndex[] difficulties = DifficultyIndex.VALUES;
         for (DifficultyIndex value : difficulties) {
-            lore.add((itemLoadout.getDifficulty() == value ? ChatColor.GREEN : ChatColor.GRAY) + value.getName());
+            lore.add((itemLoadout.getDifficulty() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.getName());
         }
         menu.setItem(6, 5,
                 new ItemBuilder(Material.REDSTONE_COMPARATOR)
@@ -283,10 +299,10 @@ public class ItemsMenu {
                 }
         );
         lore.clear();
-        lore.add((itemLoadout.getSpec() == null ? ChatColor.GREEN : ChatColor.GRAY) + "Any");
+        lore.add((itemLoadout.getSpec() == null ? ChatColor.AQUA : ChatColor.GRAY) + "Any");
         Specializations[] specializations = Specializations.VALUES;
         for (Specializations spec : specializations) {
-            lore.add((itemLoadout.getSpec() == spec ? ChatColor.GREEN : ChatColor.GRAY) + spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec));
+            lore.add((itemLoadout.getSpec() == spec ? ChatColor.AQUA : ChatColor.GRAY) + spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec));
         }
         menu.setItem(7, 5,
                 new ItemBuilder(Material.SLIME_BALL)

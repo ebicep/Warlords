@@ -112,7 +112,7 @@ public enum Specializations {
             LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON, LIGHTNING_ROD, CAPACITOR_TOTEM
     ),
     SPIRITGUARD("Spiritguard",
-            List.of("ew"),
+            List.of("sg"),
             Spiritguard::new,
             WordWrap.wrapWithNewline(
                     "§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death.",
@@ -122,7 +122,7 @@ public enum Specializations {
             FALLEN_SOULS, SPIRIT_LINK, SOULBINDING_WEAPON, REPENTANCE, DEATHS_DEBT
     ),
     EARTHWARDEN("Earthwarden",
-            List.of("sg"),
+            List.of("ew"),
             Earthwarden::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.", 200),
             SpecType.HEALER,

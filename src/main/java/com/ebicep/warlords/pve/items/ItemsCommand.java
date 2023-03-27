@@ -7,7 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.menu.ItemCraftingMenu;
-import com.ebicep.warlords.pve.items.menu.ItemsMenu;
+import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -25,12 +25,12 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("menu")
     public void menu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemsMenu.openItemMenuExternal(player, false));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemEquipMenuExternal(player, false));
     }
 
     @Subcommand("equipmenu")
     public void equipMenu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemsMenu.openItemLoadoutMenu(player, null, databasePlayer));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer));
     }
 
     @Subcommand("forgemenu")

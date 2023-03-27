@@ -52,8 +52,12 @@ public abstract class AbstractItem<
         for (T t : statPool) {
             this.statPool.put(t, tierStatRanges.get(t).generateValue());
         }
-        bless();
+        if (tier != ItemTier.OMEGA) {
+            bless(null);
+        }
     }
+
+    public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     /**
      * Ran when the item is first created or found blessing applied
@@ -64,23 +68,21 @@ public abstract class AbstractItem<
      * <p>
      * Random tier generated adds to current modifier (blessing is positive, curse is negative)
      */
-    public void bless() {
+    public void bless(Integer tier) {
         Integer result = new RandomCollection<Integer>()
-                .add(tier.blessedChance, 1)
-                .add(tier.cursedChance, -1)
-                .add(1 - tier.blessedChance - tier.cursedChance, 0)
+                .add(this.tier.blessedChance, 1)
+                .add(this.tier.cursedChance, -1)
+                .add(1 - this.tier.blessedChance - this.tier.cursedChance, 0)
                 .next();
         switch (result) {
             case 1:
-                this.modifier = Math.min(this.modifier + ItemModifier.GENERATE_BLESSING.next(), 5);
+                this.modifier = Math.min(this.modifier + (tier == null ? ItemModifier.GENERATE_BLESSING.next() : tier), 5);
                 break;
             case -1:
-                this.modifier = Math.max(this.modifier - ItemModifier.GENERATE_CURSE.next(), -5);
+                this.modifier = Math.max(this.modifier - (tier == null ? ItemModifier.GENERATE_CURSE.next() : tier), -5);
                 break;
         }
     }
-
-    public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     public abstract AbstractItem<T, R, U> clone();
 
