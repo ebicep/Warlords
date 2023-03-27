@@ -90,6 +90,8 @@ public enum PlayersCollections {
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
         switch (playersCollections) {
             case LIFETIME:
+                return MONTHLY;
+            case MONTHLY:
                 return SEASON_7;
             case SEASON_7:
                 return WEEKLY;
@@ -109,8 +111,10 @@ public enum PlayersCollections {
         switch (playersCollections) {
             case LIFETIME:
                 return DAILY;
-            case SEASON_7:
+            case MONTHLY:
                 return LIFETIME;
+            case SEASON_7:
+                return MONTHLY;
 //            case SEASON_5:
 //                return SEASON_6;
 //            case SEASON_4:
