@@ -6,8 +6,8 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseBaseGeneral;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
@@ -29,7 +29,7 @@ public class ItemsManager {
     );
 
     /**
-     * 6(x1^1/3) + ((x2 + 1) / 100) * 25 + x3 + (x4 / x4Total) * 25 + x5* + x6
+     * 5ln(x1 + 1) + ceil(50 - floor(12 * (e^-(x2mean / x2highest - 1) - 1)) + x3 + (x4 / x4Total) * 25 + x5* + x6
      * <p>
      * if equation > 100, set to 100. (100 Weight Cap)
      * <p>
@@ -54,30 +54,34 @@ public class ItemsManager {
      */
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         int weight = 0;
-        //System.out.println("Weight: " + weight);
+//        System.out.println("Weight: " + weight);
         // x1
-        weight += 6 * Math.pow(databasePlayer.getPveStats().getWins(), 1.0 / 3.0);
-        //System.out.println("Weight after x1: " + weight);
+        weight += 5 * Math.log(databasePlayer.getPveStats().getWins() + 1);
+//        System.out.println("Weight after x1: " + weight);
         // x2
-        int totalPlayerClassLevel = Arrays.stream(databasePlayer.getClasses())
-                                          .mapToInt(AbstractDatabaseStatInformation::getLevel)
-                                          .sum();
-        weight += ((totalPlayerClassLevel + 1) / 5) / 4;
-        //System.out.println("Weight after x2: " + weight);
+        int totalPlayerClassLevel = 0;
+        int highestPlayerClassLevel = 0;
+        for (DatabaseBaseGeneral databaseBaseGeneral : databasePlayer.getClasses()) {
+            int level = databaseBaseGeneral.getLevel();
+            totalPlayerClassLevel += level;
+            highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
+        }
+        weight += Math.ceil(50 - Math.floor(12 * (Math.exp(-((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
+//        System.out.println("Weight after x2: " + weight);
         // x3
         weight += getPrestigeWeight(databasePlayer, selectedSpec);
-        //System.out.println("Weight after x3: " + weight);
+//        System.out.println("Weight after x3: " + weight);
         // x4
         weight += getAchievementsWeight(databasePlayer);
-        //System.out.println("Weight after x4: " + weight);
+//        System.out.println("Weight after x4: " + weight);
         // x5
         weight += getHiScoreWeight(databasePlayer);
-        //System.out.println("Weight after x5: " + weight);
+//        System.out.println("Weight after x5: " + weight);
         // x6
         if (databasePlayer.getPveStats().isCurrentlyPatreon()) {
             weight += 5;
         }
-        //System.out.println("Weight after x6: " + weight);
+//        System.out.println("Weight after x6: " + weight);
         return Math.min(weight, 100);
     }
 
