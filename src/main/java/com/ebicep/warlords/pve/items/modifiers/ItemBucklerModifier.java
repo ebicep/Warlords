@@ -36,7 +36,7 @@ public class ItemBucklerModifier {
 
         @Override
         public float getIncreasePerTier() {
-            return 2.5f;
+            return 2;
         }
     }
 
@@ -71,7 +71,7 @@ public class ItemBucklerModifier {
 
         @Override
         public float getIncreasePerTier() {
-            return 2.5f;
+            return 2;
         }
 
     }
