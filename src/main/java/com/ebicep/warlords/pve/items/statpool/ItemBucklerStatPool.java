@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items.statpool;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
+public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool>, StatPoolWarlordsPlayer {
 
     DAMAGE_RED("Damage Reduction") {
         @Override

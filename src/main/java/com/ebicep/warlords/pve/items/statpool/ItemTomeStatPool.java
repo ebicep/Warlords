@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items.statpool;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 
-public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
+public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool>, StatPoolAbility {
 
     DAMAGE("Damage") {
         @Override

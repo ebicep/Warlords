@@ -23,6 +23,11 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
     }
 
     @Override
+    public Class<ItemBucklerStatPool> getStatPoolClass() {
+        return ItemBucklerStatPool.class;
+    }
+
+    @Override
     public HashMap<ItemBucklerStatPool, ItemTier.StatRange> getTierStatRanges() {
         return tier.bucklerStatRange;
     }

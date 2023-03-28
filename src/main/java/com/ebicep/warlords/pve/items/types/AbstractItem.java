@@ -94,6 +94,7 @@ public abstract class AbstractItem<
         this.modifier = item.modifier;
     }
 
+
     public ItemStack generateItemStack() {
         return generateItemBuilder().get();
     }
@@ -147,6 +148,8 @@ public abstract class AbstractItem<
                 .forEachOrdered(stat -> lore.add(stat.getValueFormatted(statPool.get(stat))));
         return lore;
     }
+
+    public abstract Class<T> getStatPoolClass();
 
     public abstract R[] getBlessings();
 
@@ -252,4 +255,7 @@ public abstract class AbstractItem<
         return this;
     }
 
+    public Map<T, Integer> getStatPool() {
+        return statPool;
+    }
 }

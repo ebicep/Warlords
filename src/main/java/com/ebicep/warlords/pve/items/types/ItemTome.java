@@ -23,6 +23,11 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
     }
 
     @Override
+    public Class<ItemTomeStatPool> getStatPoolClass() {
+        return ItemTomeStatPool.class;
+    }
+
+    @Override
     public HashMap<ItemTomeStatPool, ItemTier.StatRange> getTierStatRanges() {
         return tier.tomeStatRange;
     }

@@ -1,12 +1,17 @@
 package com.ebicep.warlords.pve.items;
 
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.items.statpool.StatPoolAbility;
+import com.ebicep.warlords.pve.items.statpool.StatPoolWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +37,27 @@ public class ItemLoadout {
             }
         }
         return weight;
+    }
+
+    public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
+        HashMap<StatPoolWarlordsPlayer, Integer> statPoolWarlordsPlayer = new HashMap<>();
+        itemsManager.getItemInventory()
+                    .stream()
+                    .filter(item -> items.contains(item.getUUID()))
+                    .filter(item -> item.getStatPoolClass().isAssignableFrom(StatPoolWarlordsPlayer.class))
+                    .forEach(item -> item.getStatPool()
+                                         .forEach((stat, tier) -> statPoolWarlordsPlayer.merge((StatPoolWarlordsPlayer) stat, tier, Integer::sum)));
+        statPoolWarlordsPlayer.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, tier));
+
+        HashMap<StatPoolAbility, Integer> statPoolAbility = new HashMap<>();
+        itemsManager.getItemInventory()
+                    .stream()
+                    .filter(item -> items.contains(item.getUUID()))
+                    .filter(item -> item.getStatPoolClass().isAssignableFrom(StatPoolAbility.class))
+                    .forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolAbility.merge((StatPoolAbility) stat, tier, Integer::sum)));
+        for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+            statPoolAbility.forEach((stat, tier) -> stat.applyToAbility(ability, tier));
+        }
     }
 
     public String getName() {

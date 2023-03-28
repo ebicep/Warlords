@@ -23,6 +23,11 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
     }
 
     @Override
+    public Class<ItemGauntletStatPool> getStatPoolClass() {
+        return ItemGauntletStatPool.class;
+    }
+
+    @Override
     public HashMap<ItemGauntletStatPool, ItemTier.StatRange> getTierStatRanges() {
         return tier.gauntletStatRange;
     }
