@@ -36,7 +36,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     private int inGameTick;
 
     public WarlordsDamageHealingFinalEvent(
-            WarlordsDamageHealingEvent warlordsDamageHealingEvent, WarlordsEntity player,
+            WarlordsDamageHealingEvent warlordsDamageHealingEvent,
+            WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
             float initialHealth,

@@ -42,8 +42,8 @@ public class EditStatsCommand extends BaseCommand {
                 player.sendMessage(ChatColor.GREEN + "Arguments: " + Arrays.toString(arguments));
                 Method[] methods = object.getClass().getMethods();
                 player.sendMessage(ChatColor.GREEN + "Methods: " + ChatColor.GRAY + Arrays.stream(methods)
-                        .map(Method::getName)
-                        .collect(Collectors.joining(", ")));
+                                                                                          .map(Method::getName)
+                                                                                          .collect(Collectors.joining(", ")));
                 String methodToFind = s;
                 if (arguments.length > 0) {
                     methodToFind = s.substring(0, s.indexOf("("));
@@ -60,6 +60,12 @@ public class EditStatsCommand extends BaseCommand {
                                     arguments[i] = Integer.parseInt((String) arguments[i]);
                                 } else if (methodArguments[i] == long.class) {
                                     arguments[i] = Long.parseLong((String) arguments[i]);
+                                } else if (methodArguments[i] == double.class) {
+                                    arguments[i] = Double.parseDouble((String) arguments[i]);
+                                } else if (methodArguments[i] == float.class) {
+                                    arguments[i] = Float.parseFloat((String) arguments[i]);
+                                } else if (methodArguments[i] == boolean.class) {
+                                    arguments[i] = Boolean.parseBoolean((String) arguments[i]);
                                 }
                             }
                             object = method.invoke(object, arguments);

@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
@@ -289,16 +290,20 @@ public abstract class DatabaseGameBase {
                     databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, activeCollection);
                 }
                 if (activeCollection == PlayersCollections.LIFETIME) {
-                    databasePlayer.addAchievements(
-                            Arrays.stream(TieredAchievements.values())
-                                  .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
-                                  .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
-                                  .filter(tieredAchievements -> databasePlayer.getAchievements()
-                                                                              .stream()
-                                                                              .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
-                                  .map(TieredAchievements.TieredAchievementRecord::new)
-                                  .collect(Collectors.toList())
-                    );
+                    List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays
+                            .stream(TieredAchievements.values())
+                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
+                            .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
+                            .filter(tieredAchievements -> databasePlayer.getAchievements()
+                                                                        .stream()
+                                                                        .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
+                            .map(TieredAchievements.TieredAchievementRecord::new)
+                            .collect(Collectors.toList());
+                    Player player = Bukkit.getOfflinePlayer(gamePlayer.getUuid()).getPlayer();
+                    if (player != null) {
+                        achievementRecords.forEach(record -> record.getAchievement().sendAchievementUnlockMessage(player));
+                    }
+                    databasePlayer.addAchievements(achievementRecords);
                 }
             });
         }

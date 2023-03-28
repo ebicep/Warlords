@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
+import java.util.function.Function;
 
 public interface Achievement {
 
@@ -27,18 +28,30 @@ public interface Achievement {
     void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
 
     enum Difficulty {
-        EASY("Easy", ChatColor.GREEN),
-        MEDIUM("Medium", ChatColor.GOLD),
-        HARD("Hard", ChatColor.RED),
+        EASY("Easy",
+                ChatColor.GREEN,
+                integer -> (int) Math.round(Math.pow(integer, 1 / 4.0))
+        ),
+        MEDIUM("Medium",
+                ChatColor.GOLD,
+                integer -> (int) Math.round(Math.pow(integer, 1 / 3.5))
+        ),
+        HARD("Hard",
+                ChatColor.RED,
+                integer -> (int) Math.round(Math.pow(integer, 1 / 3))
+        ),
 
         ;
 
+        public static final Difficulty[] VALUES = values();
         public final String name;
         public final ChatColor chatColor;
+        public final Function<Integer, Integer> weightFunction;
 
-        Difficulty(String name, ChatColor chatColor) {
+        Difficulty(String name, ChatColor chatColor, Function<Integer, Integer> weightFunction) {
             this.name = name;
             this.chatColor = chatColor;
+            this.weightFunction = weightFunction;
         }
 
         public String getColoredName() {
