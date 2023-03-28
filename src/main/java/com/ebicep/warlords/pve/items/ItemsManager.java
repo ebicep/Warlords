@@ -19,7 +19,7 @@ import java.util.*;
 
 public class ItemsManager {
 
-    private static final int[] TIER_ACHIEVEMENT_WEIGHTS = {5, 5, 10, 10, 20};
+    private static final int[] TIER_ACHIEVEMENT_WEIGHTS = {5, 5, 5, 5, 5};
     private static final List<String> HI_SCORE_LEADERBOARDS = List.of(
             "Fastest Win",
             "Highest Wave Cleared",
@@ -29,7 +29,7 @@ public class ItemsManager {
     );
 
     /**
-     * 5ln(x1 + 1) + ceil(50 - floor(12 * (e^-(x2mean / x2highest - 1) - 1)) + x3 + (x4 / x4Total) * 25 + x5* + x6
+     * 5ln(x1 + 1) + ceil(50 - 50(1.55^-(x2mean / x2highest - 1) - 1)) + x3 + (x4 / x4Total) * 25 + x5* + x6
      * <p>
      * if equation > 100, set to 100. (100 Weight Cap)
      * <p>
@@ -66,7 +66,7 @@ public class ItemsManager {
             totalPlayerClassLevel += level;
             highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
         }
-        weight += Math.ceil(50 - Math.floor(12 * (Math.exp(-((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
+        weight += Math.ceil(50 - 50 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1));
 //        System.out.println("Weight after x2: " + weight);
         // x3
         weight += getPrestigeWeight(databasePlayer, selectedSpec);
