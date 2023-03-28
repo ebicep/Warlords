@@ -91,7 +91,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
         masterUpgrade = new Upgrade(
                 "Blizzard",
                 "Freezing Breath - Master Upgrade",
-                "Unleash a blizzard typhoon in front of you, dealing 50% more damage.\n\nAdditionally, gain 4% damage reduction for each enemy hit, lasts 4 seconds. (up to 20%)",
+                "Unleash a blizzard typhoon in front of you, dealing 50% more damage.\n\nAdditionally, gain 5% damage reduction for each enemy hit, lasts 4 seconds. (up to 30%)",
                 50000,
                 () -> {
                     ability.setHitbox(ability.getHitbox() * 1.6f);

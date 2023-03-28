@@ -23,14 +23,14 @@ import java.util.List;
 public class IceBarrier extends AbstractAbility {
 
     private int duration = 6;
-    private int damageReductionPercent = 50;
+    private float damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
 
     public IceBarrier() {
         super("Ice Barrier", 0, 0, 46.98f, 0);
     }
 
-    public IceBarrier(int damageReductionPercent) {
+    public IceBarrier(float damageReductionPercent) {
         super("Ice Barrier", 0, 0, 46.98f, 0);
         this.damageReductionPercent = damageReductionPercent;
     }
@@ -134,11 +134,11 @@ public class IceBarrier extends AbstractAbility {
         return (100 - damageReductionPercent) / 100f;
     }
 
-    public int getDamageReductionPercent() {
+    public float getDamageReductionPercent() {
         return damageReductionPercent;
     }
 
-    public void setDamageReductionPercent(int damageReductionPercent) {
+    public void setDamageReductionPercent(float damageReductionPercent) {
         this.damageReductionPercent = damageReductionPercent;
     }
 

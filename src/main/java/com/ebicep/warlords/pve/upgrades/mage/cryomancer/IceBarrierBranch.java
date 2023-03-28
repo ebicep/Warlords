@@ -8,16 +8,16 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
     int duration = ability.getDuration();
-    int damageReductionPercent = ability.getDamageReductionPercent();
+    float damageReductionPercent = ability.getDamageReductionPercent();
 
     public IceBarrierBranch(AbilityTree abilityTree, IceBarrier ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "+10% Damage reduction",
+                "+7.5% Damage reduction",
                 5000,
                 () -> {
-                    ability.setDamageReductionPercent(damageReductionPercent + 10);
+                    ability.setDamageReductionPercent(damageReductionPercent + 7.5f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -30,19 +30,19 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "+20% Damage reduction",
+                "+22.5% Damage reduction",
                 15000,
                 () -> {
-                    ability.setDamageReductionPercent(damageReductionPercent + 20);
+                    ability.setDamageReductionPercent(damageReductionPercent + 22.5f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "+25% Damage reduction\n-10% Cooldown reduction",
+                "+30% Damage reduction\n-10% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.9f);
-                    ability.setDamageReductionPercent(damageReductionPercent + 25);
+                    ability.setDamageReductionPercent(damageReductionPercent + 30);
                 }
         ));
 
@@ -83,7 +83,8 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
         masterUpgrade = new Upgrade(
                 "Aggravating Hailstorm",
                 "Ice Barrier - Master Upgrade",
-                "Surround yourself in a glacial super shield, slowing all nearby enemies by 80% for 1 second. Additionally, reduce their damage reduction by 1% for each second in your glacial shield.",
+                "Surround yourself in a glacial super shield, slowing all nearby enemies by 80% for 1 second." +
+                        " Additionally, reduce their damage reduction by 1% for every 0.25 seconds in your glacial shield.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
