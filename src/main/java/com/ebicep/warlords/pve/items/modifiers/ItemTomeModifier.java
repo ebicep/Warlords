@@ -36,7 +36,7 @@ public class ItemTomeModifier {
 
         @Override
         public float getIncreasePerTier() {
-            return 5;
+            return 2;
         }
     }
 
@@ -71,7 +71,7 @@ public class ItemTomeModifier {
 
         @Override
         public float getIncreasePerTier() {
-            return 5;
+            return 2;
         }
 
     }
