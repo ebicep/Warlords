@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgroWarlordsEntity;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -115,7 +116,8 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 2, false, false, null));
+//            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 2, false, false, null));
+            entity.targetSelector.a(2, new PathfinderGoalTargetAgroWarlordsEntity((EntityCreature) entity));
         }
     }
 

@@ -30,4 +30,8 @@ public class RandomCollection<E> {
     public int getSize() {
         return map.size();
     }
+
+    public NavigableMap<Double, E> getMap() {
+        return map;
+    }
 }

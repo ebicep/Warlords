@@ -128,6 +128,7 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
+    private int bonusAgroWeight = 0;
 
 
     public WarlordsEntity() {
@@ -2630,5 +2631,13 @@ public abstract class WarlordsEntity {
 
     public void setShowDebugMessage(boolean showDebugMessage) {
         this.showDebugMessage = showDebugMessage;
+    }
+
+    public int getBonusAgroWeight() {
+        return bonusAgroWeight;
+    }
+
+    public void setAgroWeight(int agroWeight) {
+        this.bonusAgroWeight = agroWeight;
     }
 }

@@ -86,10 +86,8 @@ public class CapacitorTotem extends AbstractTotemBase {
                                 critMultiplier,
                                 false
                         ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                            System.out.println("Killed: " + warlordsDamageHealingFinalEvent.isDead());
                             if (warlordsDamageHealingFinalEvent.isDead()) {
                                 tempCapacitorTotem.addPlayersKilledWithFinalHit();
-                                System.out.println("Players killed with final hit: " + tempCapacitorTotem.getPlayersKilledWithFinalHit());
                                 if (tempCapacitorTotem.getPlayersKilledWithFinalHit() >= 15) {
                                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
                                 }
