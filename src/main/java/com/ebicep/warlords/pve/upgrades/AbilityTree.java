@@ -100,11 +100,18 @@ public class AbilityTree {
             ) {
                 return;
             }
+            boolean autoSave = databasePlayer.getPveStats().isAutoSaveUpgradeProfile();
             menu.setItem(
                     2,
                     4,
-                    new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + "Click to save auto upgrade queue to spec")
+                    new ItemBuilder(autoSave ? Material.BOOK_AND_QUILL : Material.BOOK)
+                            .name(ChatColor.GREEN + "Save auto upgrade queue to spec")
+                            .lore(
+                                    "",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GRAY + " to save",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
+                                            ChatColor.GRAY + " to " + (autoSave ? "disable" : "enable") + " auto save"
+                            )
                             .get(),
                     (m, e) -> {
                         autoUpgradeProfiles.clear();
