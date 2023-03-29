@@ -293,13 +293,13 @@ public class ItemMichaelMenu {
             }
 
 
-            Menu menu = new Menu("Apply a Blessing", 9 * 3);
+            Menu menu = new Menu("Apply a Blessing", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
                     ItemTier.ALL,
                     item,
                     1,
-                    0,
+                    1,
                     (m, e) ->
                             openItemSelectMenu(
                                     player,
@@ -308,7 +308,7 @@ public class ItemMichaelMenu {
                                     menuData
                             )
             );
-            menu.setItem(1, 1,
+            menu.setItem(1, 2,
                     selectedBlessing.get(),
                     (m, e) -> {
                         if (item == null) {
@@ -318,17 +318,17 @@ public class ItemMichaelMenu {
                         openBlessingSelectMenu(player, databasePlayer, menuData);
                     }
             );
-            ItemMenuUtil.addPaneRequirement(menu, 2, 1, blessing != null);
+            ItemMenuUtil.addPaneRequirement(menu, 2, 2, blessing != null);
 
             if (blessing != null && menuData.isBlessingFound()) {
-                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, FOUND_COST, 1, 2);
+                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, FOUND_COST, 1, 3);
             }
 
             ItemMenuUtil.addItemConfirmation(menu, () -> {
                 addCraftItemConfirmation(player, databasePlayer, menuData, menu);
             });
 
-            menu.setItem(4, 2, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.openForPlayer(player);
         }
 
@@ -485,7 +485,7 @@ public class ItemMichaelMenu {
             if (blessing != null && blessingFound) {
                 itemBuilder.addLore(ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Coins"));
             }
-            menu.setItem(7, 1,
+            menu.setItem(6, 2,
                     itemBuilder.get(),
                     (m, e) -> {
                         if (item == null || blessing == null || (blessingFound && !enoughCost)) {
@@ -622,12 +622,12 @@ public class ItemMichaelMenu {
     public static class RemoveACurseMenu {
 
         public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
-            Menu menu = new Menu("Remove a Curse", 9 * 3);
+            Menu menu = new Menu("Remove a Curse", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
                     ItemTier.ALL,
                     item,
-                    0,
+                    1,
                     1,
                     (m, e) ->
                             openItemSelectMenu(
@@ -644,13 +644,13 @@ public class ItemMichaelMenu {
                             )
             );
             if (item != null) {
-                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, item.getTier().removeCurseCost, 2, 1);
+                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, item.getTier().removeCurseCost, 1, 2);
             }
             ItemMenuUtil.addItemConfirmation(menu, () -> {
                 addPurifyItemConfirmation(player, databasePlayer, item, menu);
             });
 
-            menu.setItem(4, 2, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
             menu.openForPlayer(player);
         }
 
@@ -692,7 +692,7 @@ public class ItemMichaelMenu {
                     item.getTier().removeCurseCost.entrySet()
                                                   .stream()
                                                   .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
-            menu.setItem(7, 1,
+            menu.setItem(6, 2,
                     new ItemBuilder(item != null && enoughCost ? Material.MILK_BUCKET : Material.BARRIER)
                             .name(ChatColor.GREEN + "Click to Purify Item")
                             .lore(

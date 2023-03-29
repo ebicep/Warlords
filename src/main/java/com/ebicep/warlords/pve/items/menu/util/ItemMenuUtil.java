@@ -90,9 +90,9 @@ public class ItemMenuUtil {
             Menu menu,
             Runnable onCenterClick
     ) {
-        for (int i = 6; i < 9; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (i == 7 && j == 1) {
+        for (int i = 5; i < 8; i++) {
+            for (int j = 1; j < 4; j++) {
+                if (i == 6 && j == 2) {
                     onCenterClick.run();
                 } else {
                     menu.setItem(i, j,

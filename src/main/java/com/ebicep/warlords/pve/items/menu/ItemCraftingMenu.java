@@ -34,11 +34,11 @@ public class ItemCraftingMenu {
                     put(Currencies.SYNTHETIC_SHARD, 10_000L);
                     put(MobDrops.ZENITH_STAR, 2L);
                 }},
-                new Pair<>(2, 2),
+                new Pair<>(1, 4),
                 new ArrayList<>() {{
-                    add(new TierRequirement(ItemTier.ALPHA, 0, 0));
-                    add(new TierRequirement(ItemTier.BETA, 2, 0));
-                    add(new TierRequirement(ItemTier.GAMMA, 0, 2));
+                    add(new TierRequirement(ItemTier.ALPHA, 1, 1));
+                    add(new TierRequirement(ItemTier.BETA, 1, 2));
+                    add(new TierRequirement(ItemTier.GAMMA, 1, 3));
                 }}
         ));
         put(ItemTier.OMEGA, new TierCostInfo(
@@ -48,9 +48,9 @@ public class ItemCraftingMenu {
                     put(MobDrops.ZENITH_STAR, 10L);
                     put(MobDrops.CELESTIAL_BRONZE, 5L);
                 }},
-                new Pair<>(2, 1),
+                new Pair<>(1, 2),
                 new ArrayList<>() {{
-                    add(new TierRequirement(ItemTier.DELTA, 0, 1));
+                    add(new TierRequirement(ItemTier.DELTA, 1, 1));
                 }}
         ));
     }};
@@ -81,7 +81,7 @@ public class ItemCraftingMenu {
     }
 
     private static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
-        Menu menu = new Menu(itemTier.name + " Forging", 9 * 3);
+        Menu menu = new Menu(itemTier.name + " Forging", 9 * 6);
 
         TierCostInfo tierCostInfo = TIER_COST_INFO.get(itemTier);
         List<TierRequirement> requirements = tierCostInfo.getRequirements();
@@ -109,7 +109,7 @@ public class ItemCraftingMenu {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
 
-        menu.setItem(4, 2, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, new HashMap<>()));
+        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, new HashMap<>()));
         menu.openForPlayer(player);
     }
 
@@ -158,7 +158,7 @@ public class ItemCraftingMenu {
                                                .entrySet()
                                                .stream()
                                                .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
-        menu.setItem(7, 1,
+        menu.setItem(6, 2,
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(ChatColor.GREEN + "Click to Craft Item")
                         .lore(
