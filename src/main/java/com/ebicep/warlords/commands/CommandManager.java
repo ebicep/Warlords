@@ -492,6 +492,7 @@ public class CommandManager {
         manager.registerCommand(new PrivateGameTerminateCommand());
 
         manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
