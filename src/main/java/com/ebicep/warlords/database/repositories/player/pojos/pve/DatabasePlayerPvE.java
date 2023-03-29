@@ -113,6 +113,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private Map<Quests, Long> questsCompleted = new HashMap<>();
     @Field("auto_upgrade_profiles")
     private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
+    @Field("auto_save_upgrade_profile")
+    private boolean autoSaveUpgradeProfile;
 
 
     @Override
@@ -427,6 +429,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {
         return autoUpgradeProfiles;
+    }
+
+    public boolean isAutoSaveUpgradeProfile() {
+        return autoSaveUpgradeProfile;
+    }
+
+    public void setAutoSaveUpgradeProfile(boolean autoSaveUpgradeProfile) {
+        this.autoSaveUpgradeProfile = autoSaveUpgradeProfile;
     }
 
     public DatabasePlayerPvEEventStats getEventStats() {

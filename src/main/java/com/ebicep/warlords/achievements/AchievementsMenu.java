@@ -164,7 +164,8 @@ public class AchievementsMenu {
                                         achievement,
                                         (m2, e2) -> openAchievementsGameModeMenu(player, databasePlayer, gameMode, menuName,
                                                 recordClass, enumsValues
-                                        )
+                                        ),
+                                        1
                                 );
                             }
                         }
@@ -244,7 +245,8 @@ public class AchievementsMenu {
                                     achievement,
                                     (m2, e2) -> openAchievementsGameModeMenu(player, databasePlayer, gameMode, menuName,
                                             recordClass, enumsValues
-                                    )
+                                    ),
+                                    1
                             );
                         }
                     }
@@ -268,23 +270,27 @@ public class AchievementsMenu {
             DatabasePlayer databasePlayer,
             Class<T> recordClass,
             R achievement,
-            BiConsumer<Menu, InventoryClickEvent> menuBack
+            BiConsumer<Menu, InventoryClickEvent> menuBack,
+            int page
     ) {
         List<T> achievementRecords = databasePlayer.getAchievements().stream()
-                .filter(recordClass::isInstance)
-                .map(recordClass::cast)
-                .filter(t -> t.getAchievement() == achievement)
-                .collect(Collectors.toList());
+                                                   .filter(recordClass::isInstance)
+                                                   .map(recordClass::cast)
+                                                   .filter(t -> t.getAchievement() == achievement)
+                                                   .collect(Collectors.toList());
 
         Menu menu = new Menu("Achievement History ", 9 * 6);
 
-        int x = 0;
-        int y = 0;
-        for (T achievementRecord : achievementRecords) {
+        for (int i = 0; i < 45; i++) {
+            int achievementIndex = ((page - 1) * 45) + i;
+            if (achievementIndex >= achievementRecords.size()) {
+                break;
+            }
+            T achievementRecord = achievementRecords.get(achievementIndex);
 
             menu.setItem(
-                    x,
-                    y,
+                    i % 9,
+                    i / 9,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + achievement.getName())
                             .lore(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
@@ -292,15 +298,28 @@ public class AchievementsMenu {
                     (m, e) -> {
                     }
             );
-
-            x++;
-            if (x == 9) {
-                x = 0;
-                y++;
-                if (y == 4) { //TODO page system
-                    break;
-                }
-            }
+        }
+        if (page - 1 > 0) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .get(),
+                    (m, e) -> {
+                        openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page - 1);
+                    }
+            );
+        }
+        if (achievementRecords.size() > (page * 45)) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .get(),
+                    (m, e) -> {
+                        openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page + 1);
+                    }
+            );
         }
 
         menu.setItem(3, 5, MENU_BACK, menuBack);

@@ -50,7 +50,6 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPS, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
@@ -58,10 +57,8 @@ public enum ItemTier {
                 put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemBucklerStatPool.DAMAGE_RED, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
@@ -91,7 +88,6 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPS, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
@@ -99,10 +95,8 @@ public enum ItemTier {
                 put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemBucklerStatPool.DAMAGE_RED, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
@@ -133,7 +127,6 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPS, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
@@ -141,10 +134,8 @@ public enum ItemTier {
                 put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemBucklerStatPool.DAMAGE_RED, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
@@ -175,7 +166,6 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPS, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
@@ -183,10 +173,8 @@ public enum ItemTier {
                 put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemBucklerStatPool.DAMAGE_RED, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
@@ -217,7 +205,6 @@ public enum ItemTier {
                 put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPS, new ItemTier.StatRange(1, 5));
                 put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
@@ -225,10 +212,8 @@ public enum ItemTier {
                 put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
                 put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CD_RED, new ItemTier.StatRange(1, 5));
             }},
             new HashMap<>() {{
-                put(ItemBucklerStatPool.DAMAGE_RED, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));

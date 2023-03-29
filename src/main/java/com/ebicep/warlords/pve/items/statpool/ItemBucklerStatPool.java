@@ -5,12 +5,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditive
 
 public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
 
-    DAMAGE_RED("Damage Reduction") {
-        @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
-            warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() + value);
-        }
-    },
     AGGRO_PRIO("Aggression Priority") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {

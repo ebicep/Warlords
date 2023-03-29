@@ -782,17 +782,17 @@ public class Warlords extends JavaPlugin {
                     }
 
                     // Natural Regen
-                    int regenTickTimer = wp.getRegenTickTimer();
                     if (wp instanceof WarlordsPlayer) {
+                        int regenTickTimer = wp.getRegenTickTimer();
                         wp.setRegenTickTimer(regenTickTimer - 1);
-                    }
-                    if (regenTickTimer == 0) {
-                        wp.getHitBy().clear();
-                    }
-                    //negative regen tick timer means the player is regenning, cant check per second because not fine enough
-                    if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
-                        int healthToAdd = (int) (wp.getMaxHealth() / 55.3);
-                        wp.setHealth(Math.max(wp.getHealth(), Math.min(wp.getHealth() + healthToAdd, wp.getMaxHealth())));
+                        if (regenTickTimer == 0) {
+                            wp.getHitBy().clear();
+                        }
+                        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+                        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+                            int healthToAdd = (int) (wp.getMaxHealth() / 55.3);
+                            wp.setHealth(Math.max(wp.getHealth(), Math.min(wp.getHealth() + healthToAdd, wp.getMaxHealth())));
+                        }
                     }
 
                     //NPC STUN

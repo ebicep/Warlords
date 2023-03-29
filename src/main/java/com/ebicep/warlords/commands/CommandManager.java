@@ -485,14 +485,15 @@ public class CommandManager {
     }
 
     public static void registerCommands() {
-        manager.registerCommand(new DebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
         manager.registerCommand(new GameListCommand());
         manager.registerCommand(new GameTerminateCommand());
         manager.registerCommand(new PrivateGameTerminateCommand());
 
+        manager.registerCommand(new DebugCommand());
         manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new ForceActivateCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new StunClearCommand());

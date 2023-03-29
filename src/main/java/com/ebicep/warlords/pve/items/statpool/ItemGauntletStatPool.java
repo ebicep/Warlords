@@ -25,13 +25,6 @@ public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool> {
             playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + value);
         }
     },
-    EPS("Energy Per Second") {
-        @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + value);
-        }
-    },
     SPEED("Speed") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
