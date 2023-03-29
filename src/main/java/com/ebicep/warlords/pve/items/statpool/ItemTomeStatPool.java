@@ -32,13 +32,6 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
             ability.setCritMultiplier(ability.getCritMultiplier() * calculatedValue);
         }
     },
-    CD_RED("Cooldown Reduction") {
-        @Override
-        public void applyToAbility(AbstractAbility ability, int value) {
-            float calculatedValue = 1 + (100 - value) / 100f;
-            ability.setCooldown(ability.getCooldown() * calculatedValue);
-        }
-    },
 
     ;
 
