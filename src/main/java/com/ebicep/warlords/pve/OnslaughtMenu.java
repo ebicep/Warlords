@@ -9,7 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import static com.ebicep.warlords.menu.Menu.*;
+import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 public class OnslaughtMenu {
 
@@ -19,33 +20,13 @@ public class OnslaughtMenu {
                 3,
                 1,
                 new ItemBuilder(Material.BLAZE_POWDER).name(ChatColor.GREEN + "Start a private Onslaught game").get(),
-                (m, e) -> openDifficultyMenu(player, true)
-        );
-        menu.setItem(
-                5,
-                1,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR).name(ChatColor.GREEN + "Join a public Onslaught game").get(),
-                (m, e) -> openDifficultyMenu(player, false)
+                (m, e) -> GameStartCommand.startGamePvE(player, queueEntryBuilder ->
+                        queueEntryBuilder.setMap(GameMap.ILLUSION_PHANTOM)
+                                .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                )
         );
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openDifficultyMenu(Player player, boolean privateGame) {
-        Menu menu = new Menu("Difficulty Menu", 9 * 4);
-        if (privateGame) {
-            GameStartCommand.startGamePvE(player, queueEntryBuilder ->
-                    queueEntryBuilder.setMap(GameMap.ILLUSION_PHANTOM)
-                            .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
-
-            );
-        } else {
-            GameStartCommand.startGamePvE(player, queueEntryBuilder ->
-                    queueEntryBuilder.setMap(GameMap.ILLUSION_PHANTOM)
-
-            );
-        }
-        menu.setItem(3, 3, MENU_BACK, (m, e) -> openMenu(player));menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }

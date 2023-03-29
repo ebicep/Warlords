@@ -45,7 +45,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 30 == 0) {
             EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.CLOUD, 1);
         }
 
@@ -67,7 +67,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
             }
         }
 
-        if (ticksElapsed % 300 == 0) {
+        if (ticksElapsed % 400 == 0) {
             warlordsNPC.getBlueAbility().onActivate(warlordsNPC, null);
         }
     }
