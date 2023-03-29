@@ -103,7 +103,8 @@ public abstract class WarlordsEntity {
     private float health;
     private float maxHealth;
     private float maxBaseHealth;
-    private int regenTimer;
+    private int regenTickTimer;
+    private float regenTickTimerModifier;
     private int respawnTimer = -1;
     private boolean dead = false;
     private float energy = 0;
@@ -131,11 +132,6 @@ public abstract class WarlordsEntity {
     private int bonusAgroWeight = 0;
 
 
-    public WarlordsEntity() {
-        game = null;
-        deathLocation = null;
-    }
-
     public WarlordsEntity(Player player, Specializations specialization) {
         this();
         this.name = player.getName();
@@ -143,6 +139,11 @@ public abstract class WarlordsEntity {
         this.entity = player;
         this.specClass = specialization;
         this.spec = specialization.create.get();
+    }
+
+    public WarlordsEntity() {
+        game = null;
+        deathLocation = null;
     }
 
     /**
@@ -393,7 +394,7 @@ public abstract class WarlordsEntity {
             if (isMeleeHit) {
                 // True damage
                 sendTookDamageMessage(min, "melee damage");
-                regenTimer = 10;
+                resetRegenTimer();
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle(
@@ -412,7 +413,7 @@ public abstract class WarlordsEntity {
             } else {
                 // Fall Damage
                 sendTookDamageMessage(damageValue, "fall damage");
-                regenTimer = 10;
+                resetRegenTimer();
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     // Title card "YOU DIED!"
                     if (entity instanceof Player) {
@@ -498,7 +499,7 @@ public abstract class WarlordsEntity {
             damageValue *= (intervene.getDamageReduction() / 100f);
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
             intervenedBy.addAbsorbed(damageValue);
-            intervenedBy.setRegenTimer(10);
+            intervenedBy.resetRegenTimer();
             intervene.addDamagePrevented(damageValue);
             // Break Intervene if above damage threshold
             if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
@@ -704,31 +705,31 @@ public abstract class WarlordsEntity {
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
                 //if (isEnemy(attacker)) {
-                    hitBy.put(attacker, 10);
-                    cancelHealingPowerUp();
-                    removeHorse();
+                hitBy.put(attacker, 10);
+                cancelHealingPowerUp();
+                removeHorse();
 
-                    float finalDamageValue = damageValue;
-                    doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
-                    doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
+                float finalDamageValue = damageValue;
+                doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
+                doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
-                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
-                    //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
-                    //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                        abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
-                        //appendDebugMessage(debugMessage, 2, abstractCooldown);
-                    }
+                //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
+                //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
+                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
+                }
 
-                    //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                        abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
-                        //appendDebugMessage(debugMessage, 2, abstractCooldown);
-                    }
+                //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                    abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
+                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
+                }
                 //}
 
-                regenTimer = 10;
+                resetRegenTimer();
                 updateHealth();
 
                 // debt and healing
@@ -1464,7 +1465,7 @@ public abstract class WarlordsEntity {
             assisted.addAssist();
         });
         hitBy.clear();
-        regenTimer = 0;
+        regenTickTimer = 0;
         heal();
     }
 
@@ -1852,12 +1853,20 @@ public abstract class WarlordsEntity {
         this.health = this.maxBaseHealth;
     }
 
-    public int getRegenTimer() {
-        return regenTimer;
+    public int getRegenTickTimer() {
+        return regenTickTimer;
     }
 
-    public void setRegenTimer(int regenTimer) {
-        this.regenTimer = regenTimer;
+    public void setRegenTickTimer(int regenTickTimer) {
+        this.regenTickTimer = regenTickTimer;
+    }
+
+    public void resetRegenTimer() {
+        regenTickTimer = (int) (10 * 20 * regenTickTimerModifier);
+    }
+
+    public void setRegenTickTimerModifier(float regenTickTimerModifier) {
+        this.regenTickTimerModifier = regenTickTimerModifier;
     }
 
     public int getRespawnTimer() {
@@ -2473,6 +2482,10 @@ public abstract class WarlordsEntity {
         return this.compassTarget;
     }
 
+    public void runEveryTick() {
+        this.spec.runEveryTick();
+    }
+
     public void runEverySecond() {
         this.spec.runEverySecond();
         // Gives the player their respawn timer as display.
@@ -2554,10 +2567,6 @@ public abstract class WarlordsEntity {
 
     public abstract void updateEntity();
 
-    public void runEveryTick() {
-        this.spec.runEveryTick();
-    }
-
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();
@@ -2637,7 +2646,7 @@ public abstract class WarlordsEntity {
         return bonusAgroWeight;
     }
 
-    public void setAgroWeight(int agroWeight) {
+    public void setBonusAgroWeight(int agroWeight) {
         this.bonusAgroWeight = agroWeight;
     }
 }

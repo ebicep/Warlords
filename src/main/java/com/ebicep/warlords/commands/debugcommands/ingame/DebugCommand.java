@@ -127,7 +127,7 @@ public class DebugCommand extends BaseCommand {
     @Description("Heals a player based on the amount or sender if there is no target")
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addHealingInstance(target, "God", amount, amount, 0, 100, false, false);
-        target.setRegenTimer(10);
+        target.resetRegenTimer();
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!", true);
     }
 
@@ -136,7 +136,7 @@ public class DebugCommand extends BaseCommand {
     @Description("Damages a player based on the amount or sender if there is no target")
     public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addDamageInstance(target, "God", amount, amount, 0, 100, false);
-        target.setRegenTimer(10);
+        target.resetRegenTimer();
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!", true);
     }
 

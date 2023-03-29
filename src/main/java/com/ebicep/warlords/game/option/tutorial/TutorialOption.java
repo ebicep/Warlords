@@ -443,7 +443,7 @@ public class TutorialOption implements Option {
             testDummy.setTakeDamage(true);
             testDummy.setMaxBaseHealth(100);
             testDummy.setHealth(100);
-            testDummy.setRegenTimer(Integer.MAX_VALUE);
+            testDummy.setRegenTickTimer(Integer.MAX_VALUE);
             testDummy.updateHealth();
             testDummies.add(testDummy);
         }

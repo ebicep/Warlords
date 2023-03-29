@@ -781,6 +781,20 @@ public class Warlords extends JavaPlugin {
                         wp.setHitCooldown(wp.getHitCooldown() - 1);
                     }
 
+                    // Natural Regen
+                    int regenTickTimer = wp.getRegenTickTimer();
+                    if (wp instanceof WarlordsPlayer) {
+                        wp.setRegenTickTimer(regenTickTimer - 1);
+                    }
+                    if (regenTickTimer == 0) {
+                        wp.getHitBy().clear();
+                    }
+                    //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+                    if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+                        int healthToAdd = (int) (wp.getMaxHealth() / 55.3);
+                        wp.setHealth(Math.max(wp.getHealth(), Math.min(wp.getHealth() + healthToAdd, wp.getMaxHealth())));
+                    }
+
                     //NPC STUN
                     if (wp instanceof WarlordsNPC) {
                         WarlordsNPC npc = (WarlordsNPC) wp;
@@ -874,23 +888,6 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
                         wps.runEverySecond();
-                        // Natural Regen
-                        if (wps.getRegenTimer() != 0) {
-                            if (wps instanceof WarlordsPlayer) {
-                                wps.setRegenTimer(wps.getRegenTimer() - 1);
-                            }
-                            if (wps.getRegenTimer() == 0) {
-                                wps.getHitBy().clear();
-                            }
-                        } else {
-                            int healthToAdd = (int) (wps.getMaxHealth() / 55.3);
-                            wps.setHealth(Math.max(wps.getHealth(),
-                                    Math.min(wps.getHealth() + healthToAdd,
-                                            wps.getMaxHealth()
-                                    )
-                            ));
-                        }
-
                         // Cooldowns
 
                         // Checks whether the player has a flag cooldown.
@@ -915,7 +912,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Combat Timer - Logs combat time after 4 seconds.
-                        if (wps.getRegenTimer() > 6) {
+                        if (wps.getRegenTickTimer() > 6 * 20) {
                             wps.getMinuteStats().addTimeInCombat();
                         }
 

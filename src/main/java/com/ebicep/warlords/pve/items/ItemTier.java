@@ -65,7 +65,7 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
+                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
             }},
             3,
             new LinkedHashMap<>() {{
@@ -106,7 +106,7 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
+                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
             }},
             2,
             new LinkedHashMap<>() {{
@@ -148,7 +148,7 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
+                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
             }},
             2,
             new LinkedHashMap<>() {{
@@ -190,7 +190,7 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
+                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
             }},
             1,
             new LinkedHashMap<>() {{
@@ -232,7 +232,7 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
+                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
             }},
             1,
             new LinkedHashMap<>() {{

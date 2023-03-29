@@ -1,17 +1,21 @@
 package com.ebicep.warlords.pve.items.statpool;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
 
-public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool>, StatPoolAbility {
+public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
 
     DAMAGE("Damage") {
         @Override
-        public void applyToAbility(AbstractAbility ability, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+            ItemAdditiveCooldown.increaseDamage(warlordsPlayer, value);
         }
     },
     HEALING("Healing") {
         @Override
-        public void applyToAbility(AbstractAbility ability, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+            ItemAdditiveCooldown.increaseHealing(warlordsPlayer, value);
         }
     },
     CRIT_CHANCE("Crit Chance") {
@@ -59,8 +63,6 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool>, StatPool
     public Operation getOperation() {
         return Operation.MULTIPLY;
     }
-
-    public abstract void applyToAbility(AbstractAbility ability, int value);
 
 
 }

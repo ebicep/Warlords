@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.statpool;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
 
-public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool>, StatPoolWarlordsPlayer {
+public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
 
     DAMAGE_RED("Damage Reduction") {
         @Override
@@ -13,7 +14,7 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool>, St
     AGGRO_PRIO("Aggression Priority") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
-            // TODO
+            warlordsPlayer.setBonusAgroWeight(warlordsPlayer.getBonusAgroWeight() + value);
         }
     },
     THORNS("Thorns") {
@@ -25,13 +26,13 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool>, St
     KB_RES("Knockback Resistance") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
-            // TODO
+            ItemAdditiveCooldown.increaseKBRes(warlordsPlayer, value);
         }
     },
-    RES_SPEED("Respawn Speed") {
+    REGEN_TIMER("Shorter Regen Timer") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
-            // TODO
+            warlordsPlayer.setRegenTickTimerModifier((1 - value) / 100f);
         }
     },
     ;
@@ -58,5 +59,4 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool>, St
         return Operation.MULTIPLY;
     }
 
-    public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value);
 }

@@ -667,7 +667,7 @@ public class WarlordsEvents implements Listener {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
                             wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100, false);
-                            wp.setRegenTimer(10);
+                            wp.resetRegenTimer();
                         }
                     }
                 }
@@ -677,7 +677,7 @@ public class WarlordsEvents implements Listener {
                     WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null && !wp.getGame().isFrozen()) {
                         wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100, false);
-                        wp.setRegenTimer(10);
+                        wp.resetRegenTimer();
                     }
                 }
             }

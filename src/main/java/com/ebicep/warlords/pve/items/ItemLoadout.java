@@ -4,8 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.items.statpool.StatPoolAbility;
-import com.ebicep.warlords.pve.items.statpool.StatPoolWarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -50,20 +49,12 @@ public class ItemLoadout {
     }
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
-        HashMap<StatPoolWarlordsPlayer, Integer> statPoolWarlordsPlayer = new HashMap<>();
-        getActualItems(itemsManager)
-                .stream()
-                .filter(item -> item.getStatPoolClass().isAssignableFrom(StatPoolWarlordsPlayer.class))
-                .forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolWarlordsPlayer.merge((StatPoolWarlordsPlayer) stat, tier, Integer::sum)));
-        statPoolWarlordsPlayer.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, tier));
+        HashMap<ItemStatPool<?>, Integer> statPoolValues = new HashMap<>();
+        getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolValues.merge(stat, tier, Integer::sum)));
 
-        HashMap<StatPoolAbility, Integer> statPoolAbility = new HashMap<>();
-        getActualItems(itemsManager)
-                .stream()
-                .filter(item -> item.getStatPoolClass().isAssignableFrom(StatPoolAbility.class))
-                .forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolAbility.merge((StatPoolAbility) stat, tier, Integer::sum)));
+        statPoolValues.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, tier));
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            statPoolAbility.forEach((stat, tier) -> stat.applyToAbility(ability, tier));
+            statPoolValues.forEach((stat, tier) -> stat.applyToAbility(ability, tier));
         }
     }
 

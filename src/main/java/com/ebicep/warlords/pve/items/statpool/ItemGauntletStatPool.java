@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.items.statpool;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool>, StatPoolWarlordsPlayer {
+public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool> {
 
     HP("Health") {
         @Override
@@ -68,5 +68,4 @@ public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool>, 
         return Operation.ADD;
     }
 
-    public abstract void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value);
 }
