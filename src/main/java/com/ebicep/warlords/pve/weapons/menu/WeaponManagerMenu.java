@@ -48,12 +48,9 @@ public class WeaponManagerMenu {
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings());
+            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
             PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setOpenedFromNPC(fromNPC);
-            menuSettings.setWeaponInventory(weaponInventory);
             menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
 
             openWeaponInventoryFromInternal(player, databasePlayer);
@@ -62,7 +59,7 @@ public class WeaponManagerMenu {
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
-        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings());
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
         PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
         menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
@@ -400,7 +397,7 @@ public class WeaponManagerMenu {
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon) {
-            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerWeaponMenuSettings());
+            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerWeaponMenuSettings(databasePlayer));
             PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
@@ -601,6 +598,10 @@ public class WeaponManagerMenu {
         private boolean ascending = true; //ascending = smallest -> largest/recent
         private StarPieces selectedStarPiece = StarPieces.COMMON;
         private int weaponScoreSalvage = 70;
+
+        public PlayerWeaponMenuSettings(DatabasePlayer databasePlayer) {
+            setWeaponInventory(databasePlayer.getPveStats().getWeaponInventory());
+        }
 
         public void reset() {
             this.page = 1;
