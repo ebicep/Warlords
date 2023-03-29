@@ -3,11 +3,9 @@ package com.ebicep.warlords.database.repositories.items.pojos;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
-import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.RandomCollection;
-import com.ebicep.warlords.util.java.Utils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -45,7 +43,6 @@ public class WeeklyBlessings {
     }
 
     private static void onInitialize() {
-        ItemMichaelMenu.BuyABlessingMenu.initializeCosts(currentWeeklyBlessings);
         ChatUtils.MessageTypes.WEEKLY_BLESSINGS.sendMessage("Initialized Weekly Blessings - " + currentWeeklyBlessings);
     }
 
@@ -71,15 +68,6 @@ public class WeeklyBlessings {
     }};
     @Field("player_orders")
     private Map<UUID, Map<Integer, Integer>> playerOrders = new HashMap<>();
-    @Field("zenith_costs")
-    private Map<Integer, Integer> zenithCosts = new HashMap<>() {{
-        put(1, Utils.generateRandomValueBetweenInclusive(1, 3));
-        put(2, Utils.generateRandomValueBetweenInclusive(5, 8));
-        put(3, Utils.generateRandomValueBetweenInclusive(10, 15));
-        put(4, Utils.generateRandomValueBetweenInclusive(10, 15));
-        put(5, Utils.generateRandomValueBetweenInclusive(15, 25));
-    }};
-
     public WeeklyBlessings() {
     }
 
@@ -88,7 +76,6 @@ public class WeeklyBlessings {
         return "WeeklyBlessings{" +
                 "week=" + week +
                 ", stock=" + stock +
-                ", zenithCosts=" + zenithCosts +
                 '}';
     }
 
@@ -105,7 +92,4 @@ public class WeeklyBlessings {
         DatabaseManager.updateWeeklyBlessings(this);
     }
 
-    public Map<Integer, Integer> getZenithCosts() {
-        return zenithCosts;
-    }
 }

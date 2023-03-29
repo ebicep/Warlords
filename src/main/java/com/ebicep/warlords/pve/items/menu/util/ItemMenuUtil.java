@@ -1,22 +1,19 @@
 package com.ebicep.warlords.pve.items.menu.util;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class ItemMenuUtil {
 
@@ -60,34 +57,28 @@ public class ItemMenuUtil {
         );
     }
 
-    public static void addMobDropRequirement(
+    public static void addSpendableCostRequirement(
             DatabasePlayer databasePlayer,
             Menu menu,
-            LinkedHashMap<MobDrops, Long> cost,
+            LinkedHashMap<Spendable, Long> cost,
             int x,
             int y
     ) {
         List<String> costLore = PvEUtils.getCostLore(cost);
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         menu.setItem(x, y,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Mob Drops")
-                        .lore(Arrays.stream(MobDrops.VALUES)
-                                    .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
-                                                                                       .getMobDrops()
-                                                                                       .getOrDefault(drop, 0L)))
-                                    .collect(Collectors.joining("\n")))
-                        .addLore(costLore)
+                        .name(ChatColor.GREEN + "Cost")
+                        .lore(costLore)
                         .get(),
                 (m, e) -> {
                 }
         );
-        boolean hasRequiredDrops = cost
+        boolean hasRequiredCosts = cost
                 .entrySet()
                 .stream()
-                .allMatch(mobDropsLongEntry -> pveStats.getMobDrops(mobDropsLongEntry.getKey()) >= mobDropsLongEntry.getValue());
+                .allMatch(spendableLongEntry -> spendableLongEntry.getKey().getFromPlayer(databasePlayer) >= spendableLongEntry.getValue());
         menu.setItem(x + 1, y,
-                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) (hasRequiredDrops ? 5 : 14))
+                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) (hasRequiredCosts ? 5 : 14))
                         .name(" ")
                         .get(),
                 (m, e) -> {

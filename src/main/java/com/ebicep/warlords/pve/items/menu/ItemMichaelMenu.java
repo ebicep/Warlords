@@ -5,7 +5,9 @@ import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
@@ -90,7 +92,7 @@ public class ItemMichaelMenu {
                         .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Removing a Curse on an Item will lower its curse effectiveness by a tier.", 150))
                         .get(),
                 (m, e) -> {
-                    PurifyItemMenu.openPurifyItemMenu(player, databasePlayer, null);
+                    RemoveACurseMenu.openPurifyItemMenu(player, databasePlayer, null);
                 }
         );
 
@@ -153,23 +155,38 @@ public class ItemMichaelMenu {
 
     public static class BuyABlessingMenu {
 
-        private static final HashMap<Integer, LinkedHashMap<MobDrops, Integer>> COSTS = new HashMap<>();
-        private static final HashMap<Integer, List<String>> COSTS_LORE = new HashMap<>();
+        private static final HashMap<Integer, LinkedHashMap<Spendable, Long>> COSTS = new HashMap<>() {{
+            put(1, new LinkedHashMap<>() {{
 
-        public static void initializeCosts(WeeklyBlessings weeklyBlessings) {
-            weeklyBlessings.getZenithCosts().forEach((tier, stars) -> {
-                COSTS.computeIfAbsent(tier, k -> new LinkedHashMap<>()).put(MobDrops.ZENITH_STAR, stars);
-            });
-            COSTS.get(4).put(MobDrops.CELESTIAL_BRONZE, 5);
-            COSTS.get(5).put(MobDrops.CELESTIAL_BRONZE, 10);
+                put(Currencies.COIN, 500_000L);
+            }});
+            put(2, new LinkedHashMap<>() {{
 
-            COSTS.forEach((tier, mobDropCosts) -> {
-                List<String> lore = COSTS_LORE.computeIfAbsent(tier, k -> new ArrayList<>());
-                lore.add("");
-                lore.add(ChatColor.AQUA + "Cost: ");
-                mobDropCosts.forEach((currency, amount) -> lore.add(ChatColor.GRAY + " - " + currency.getCostColoredName(amount)));
+                put(Currencies.SYNTHETIC_SHARD, 15_000L);
+            }});
+            put(3, new LinkedHashMap<>() {{
+
+                put(Currencies.LEGEND_FRAGMENTS, 2_500L);
+            }});
+            put(4, new LinkedHashMap<>() {{
+
+                put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                put(MobDrops.ZENITH_STAR, 5L);
+            }});
+            put(5, new LinkedHashMap<>() {{
+
+                put(MobDrops.ZENITH_STAR, 10L);
+            }});
+        }};
+        private static final HashMap<Integer, List<String>> COSTS_LORE = new HashMap<>() {{
+            COSTS.forEach((tier, costs) -> {
+                put(tier, new ArrayList<>() {{
+                    add("");
+                    add(ChatColor.AQUA + "Cost: ");
+                    costs.forEach((currency, amount) -> add(ChatColor.GRAY + " - " + currency.getCostColoredName(amount)));
+                }});
             });
-        }
+        }};
 
         public static void openBuyABlessingMenu(Player player, DatabasePlayer databasePlayer) {
             WeeklyBlessings currentWeeklyBlessings = WeeklyBlessings.currentWeeklyBlessings;
@@ -201,12 +218,12 @@ public class ItemMichaelMenu {
                                 player.sendMessage(ChatColor.RED + "This blessing is out of stock!");
                                 return;
                             }
-                            LinkedHashMap<MobDrops, Integer> tierCosts = COSTS.get(finalTier);
-                            for (Map.Entry<MobDrops, Integer> currenciesLongEntry : tierCosts.entrySet()) {
-                                MobDrops mobDrop = currenciesLongEntry.getKey();
-                                Integer cost = currenciesLongEntry.getValue();
-                                if (pveStats.getMobDrops(mobDrop) < cost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
+                            LinkedHashMap<Spendable, Long> tierCosts = COSTS.get(finalTier);
+                            for (Map.Entry<Spendable, Long> spendableIntegerEntry : tierCosts.entrySet()) {
+                                Spendable spendable = spendableIntegerEntry.getKey();
+                                Long cost = spendableIntegerEntry.getValue();
+                                if (spendable.getFromPlayer(databasePlayer) < cost) {
+                                    player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
                                     return;
                                 }
                             }
@@ -220,7 +237,7 @@ public class ItemMichaelMenu {
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
                                         currentWeeklyBlessings.addPlayerOrder(player.getUniqueId(), finalTier);
-                                        tierCosts.forEach((mobDrops, cost) -> pveStats.addMobDrops(mobDrops, -cost));
+                                        tierCosts.forEach((spendable, cost) -> spendable.subtractFromPlayer(databasePlayer, cost));
                                         pveStats.getItemsManager().addBlessingBought(finalTier);
                                         player.closeInventory();
 
@@ -244,7 +261,9 @@ public class ItemMichaelMenu {
 
     public static class ApplyBlessingMenu {
 
-        private static final LinkedHashMap<MobDrops, Long> COST = new LinkedHashMap<>();
+        private static final LinkedHashMap<Spendable, Long> FOUND_COST = new LinkedHashMap<>() {{
+            put(Currencies.COIN, 50_000L);
+        }};
 
         public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
             AbstractItem<?, ?, ?> item = menuData.getItem();
@@ -300,7 +319,10 @@ public class ItemMichaelMenu {
                     }
             );
             ItemMenuUtil.addPaneRequirement(menu, 2, 1, blessing != null);
-            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, new LinkedHashMap<>(), 1, 2);
+
+            if (blessing != null && menuData.isBlessingFound()) {
+                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, FOUND_COST, 1, 2);
+            }
 
             ItemMenuUtil.addItemConfirmation(menu, () -> {
                 addCraftItemConfirmation(player, databasePlayer, menuData, menu);
@@ -450,21 +472,23 @@ public class ItemMichaelMenu {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             AbstractItem<?, ?, ?> item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
-            boolean enoughMobDrops = COST.entrySet()
-                                         .stream()
-                                         .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
-            ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && enoughMobDrops ? Material.ANVIL : Material.BARRIER))
+            boolean blessingFound = menuData.isBlessingFound();
+            boolean enoughCost = blessingFound && FOUND_COST.entrySet()
+                                                            .stream()
+                                                            .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
+            ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && blessingFound && enoughCost ? Material.ANVIL : Material.BARRIER))
                     .name(ChatColor.GREEN + "Click to Apply Blessing")
                     .lore(
                             ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
-                            ItemMenuUtil.getRequirementMetString(blessing != null, "Blessing Selected"),
-                            ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
+                            ItemMenuUtil.getRequirementMetString(blessing != null, "Blessing Selected")
                     );
-            boolean blessingFound = menuData.isBlessingFound();
+            if (blessing != null && blessingFound) {
+                itemBuilder.addLore(ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Coins"));
+            }
             menu.setItem(7, 1,
                     itemBuilder.get(),
                     (m, e) -> {
-                        if (item == null || blessing == null || !enoughMobDrops) {
+                        if (item == null || blessing == null || (blessingFound && !enoughCost)) {
                             return;
                         }
 
@@ -485,12 +509,12 @@ public class ItemMichaelMenu {
                                     if (blessingFound) {
                                         pveStats.getItemsManager().subtractBlessingsFound(1);
                                         item.bless(null);
+                                        for (Map.Entry<Spendable, Long> currenciesLongEntry : FOUND_COST.entrySet()) {
+                                            currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                        }
                                     } else {
                                         pveStats.getItemsManager().subtractBlessingBought(tier);
                                         item.setModifier(tier);
-                                    }
-                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                     }
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     player.closeInventory();
@@ -595,9 +619,7 @@ public class ItemMichaelMenu {
         }
     }
 
-    public static class PurifyItemMenu {
-
-        private static final LinkedHashMap<MobDrops, Long> COST = new LinkedHashMap<>();
+    public static class RemoveACurseMenu {
 
         public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
             Menu menu = new Menu("Remove a Curse", 9 * 3);
@@ -621,7 +643,9 @@ public class ItemMichaelMenu {
                                     item
                             )
             );
-            ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, COST, 2, 1);
+            if (item != null) {
+                ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, item.getTier().removeCurseCost, 2, 1);
+            }
             ItemMenuUtil.addItemConfirmation(menu, () -> {
                 addPurifyItemConfirmation(player, databasePlayer, item, menu);
             });
@@ -664,16 +688,16 @@ public class ItemMichaelMenu {
                 AbstractItem<?, ?, ?> item,
                 Menu menu
         ) {
-            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            boolean enoughMobDrops = COST.entrySet()
-                                         .stream()
-                                         .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
+            boolean enoughCost = item != null &&
+                    item.getTier().removeCurseCost.entrySet()
+                                                  .stream()
+                                                  .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
             menu.setItem(7, 1,
-                    new ItemBuilder(item != null && enoughMobDrops ? Material.MILK_BUCKET : Material.BARRIER)
+                    new ItemBuilder(item != null && enoughCost ? Material.MILK_BUCKET : Material.BARRIER)
                             .name(ChatColor.GREEN + "Click to Purify Item")
                             .lore(
                                     ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
-                                    ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
+                                    ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
                             )
                             .get(),
                     (m, e) -> {
@@ -681,11 +705,12 @@ public class ItemMichaelMenu {
                             player.sendMessage(ChatColor.RED + "Select an Item first!");
                             return;
                         }
-                        for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                            MobDrops mobDrop = currenciesLongEntry.getKey();
-                            Long cost = currenciesLongEntry.getValue();
-                            if (pveStats.getMobDrops(mobDrop) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to purify this Item!");
+                        LinkedHashMap<Spendable, Long> removeCurseCost = item.getTier().removeCurseCost;
+                        for (Map.Entry<Spendable, Long> spendableLongEntry : removeCurseCost.entrySet()) {
+                            Spendable spendable = spendableLongEntry.getKey();
+                            Long cost = spendableLongEntry.getValue();
+                            if (spendable.getFromPlayer(databasePlayer) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to purify this Item!");
                                 return;
                             }
                         }
@@ -700,16 +725,16 @@ public class ItemMichaelMenu {
                                     } else {
                                         add(item.getCurses()[-item.getModifier() - 1].getDescription() + ChatColor.DARK_GREEN + " > " + item.getCurses()[-item.getModifier() - 2].getDescription());
                                     }
-                                    addAll(PvEUtils.getCostLore(COST));
+                                    addAll(PvEUtils.getCostLore(removeCurseCost));
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You removed the Curse from ")
+                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You decreased the tier of curse from ")
                                             .appendHoverItem(item.getName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
-                                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : COST.entrySet()) {
-                                        currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+                                    for (Map.Entry<Spendable, Long> spendableLongEntry : removeCurseCost.entrySet()) {
+                                        spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
                                     }
                                     item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

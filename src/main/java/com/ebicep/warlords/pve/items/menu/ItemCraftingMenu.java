@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
@@ -29,7 +31,8 @@ public class ItemCraftingMenu {
     private static final HashMap<ItemTier, TierCostInfo> TIER_COST_INFO = new HashMap<>() {{
         put(ItemTier.DELTA, new TierCostInfo(
                 new LinkedHashMap<>() {{
-                    put(MobDrops.ZENITH_STAR, 1L);
+                    put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                    put(MobDrops.ZENITH_STAR, 2L);
                 }},
                 new Pair<>(2, 2),
                 new ArrayList<>() {{
@@ -40,8 +43,10 @@ public class ItemCraftingMenu {
         ));
         put(ItemTier.OMEGA, new TierCostInfo(
                 new LinkedHashMap<>() {{
-                    put(MobDrops.ZENITH_STAR, 1L);
-                    put(MobDrops.CELESTIAL_BRONZE, 1L);
+                    put(Currencies.SYNTHETIC_SHARD, 25_000L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(MobDrops.ZENITH_STAR, 10L);
+                    put(MobDrops.CELESTIAL_BRONZE, 5L);
                 }},
                 new Pair<>(2, 1),
                 new ArrayList<>() {{
@@ -99,7 +104,7 @@ public class ItemCraftingMenu {
         Pair<Integer, Integer> costLocation = tierCostInfo.getCostLocation();
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
-        ItemMenuUtil.addMobDropRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
+        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
         ItemMenuUtil.addItemConfirmation(menu, () -> {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
@@ -152,7 +157,7 @@ public class ItemCraftingMenu {
                                                .getCost()
                                                .entrySet()
                                                .stream()
-                                               .allMatch(entry -> pveStats.getMobDrops(entry.getKey()) >= entry.getValue());
+                                               .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         menu.setItem(7, 1,
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(ChatColor.GREEN + "Click to Craft Item")
@@ -167,11 +172,11 @@ public class ItemCraftingMenu {
                         return;
                     }
                     TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
-                    for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
-                        MobDrops mobDrop = currenciesLongEntry.getKey();
+                    for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                        Spendable spendable = currenciesLongEntry.getKey();
                         Long cost = currenciesLongEntry.getValue();
-                        if (pveStats.getMobDrops(mobDrop) < cost) {
-                            player.sendMessage(ChatColor.RED + "You need " + mobDrop.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                        if (spendable.getFromPlayer(databasePlayer) < cost) {
+                            player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
                             return;
                         }
                     }
@@ -185,7 +190,7 @@ public class ItemCraftingMenu {
                                 for (TierRequirement requirement : requirements) {
                                     pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
                                 }
-                                for (Map.Entry<MobDrops, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                                for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
 
@@ -230,17 +235,17 @@ public class ItemCraftingMenu {
     }
 
     static class TierCostInfo {
-        private final LinkedHashMap<MobDrops, Long> cost;
+        private final LinkedHashMap<Spendable, Long> cost;
         private final Pair<Integer, Integer> costLocation;
         private final List<TierRequirement> requirements;
 
-        TierCostInfo(LinkedHashMap<MobDrops, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
+        TierCostInfo(LinkedHashMap<Spendable, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
             this.cost = cost;
             this.costLocation = costLocation;
             this.requirements = requirements;
         }
 
-        public LinkedHashMap<MobDrops, Long> getCost() {
+        public LinkedHashMap<Spendable, Long> getCost() {
             return cost;
         }
 

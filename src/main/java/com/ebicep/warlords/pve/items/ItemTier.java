@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.items;
 
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
@@ -26,7 +28,8 @@ public enum ItemTier {
             null,
             null,
             null,
-            0
+            0,
+            null
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -64,7 +67,10 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
             }},
-            3
+            3,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+            }}
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -102,7 +108,11 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
             }},
-            2
+            2,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 25_000L);
+                put(Currencies.SYNTHETIC_SHARD, 100L);
+            }}
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -140,7 +150,11 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
             }},
-            2
+            2,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 75_000L);
+                put(Currencies.SYNTHETIC_SHARD, 250L);
+            }}
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -178,7 +192,11 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
             }},
-            1
+            1,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 125_000L);
+                put(Currencies.LEGEND_FRAGMENTS, 50L);
+            }}
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -216,7 +234,11 @@ public enum ItemTier {
                 put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
                 put(ItemBucklerStatPool.RES_SPEED, new ItemTier.StatRange(1, 5));
             }},
-            1
+            1,
+            new LinkedHashMap<>() {{
+                put(Currencies.COIN, 200_000L);
+                put(Currencies.LEGEND_FRAGMENTS, 200L);
+            }}
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -272,6 +294,7 @@ public enum ItemTier {
     public final HashMap<ItemTomeStatPool, StatRange> tomeStatRange;
     public final HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange;
     public final int maxEquipped;
+    public final LinkedHashMap<Spendable, Long> removeCurseCost;
 
     ItemTier(
             String name,
@@ -284,7 +307,8 @@ public enum ItemTier {
             HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange,
             HashMap<ItemTomeStatPool, StatRange> tomeStatRange,
             HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange,
-            int maxEquipped
+            int maxEquipped,
+            LinkedHashMap<Spendable, Long> removeCurseCost
     ) {
         this.name = name;
         this.chatColor = chatColor;
@@ -299,6 +323,7 @@ public enum ItemTier {
         this.tomeStatRange = tomeStatRange;
         this.bucklerStatRange = bucklerStatRange;
         this.maxEquipped = maxEquipped;
+        this.removeCurseCost = removeCurseCost;
     }
 
     public abstract <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool);
