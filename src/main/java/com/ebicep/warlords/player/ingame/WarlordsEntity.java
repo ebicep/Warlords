@@ -108,7 +108,6 @@ public abstract class WarlordsEntity {
     private int respawnTimer = -1;
     private boolean dead = false;
     private float energy = 0;
-    private float maxEnergy;
     private float horseCooldown = 0;
     private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
@@ -171,7 +170,6 @@ public abstract class WarlordsEntity {
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
         this.maxBaseHealth = this.maxHealth;
-        this.maxEnergy = this.spec.getMaxEnergy();
         this.speed = isInPve() ? new CalculateSpeed(this, this::setWalkSpeed,
                 13,
                 true
@@ -1798,8 +1796,7 @@ public abstract class WarlordsEntity {
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.maxBaseHealth = this.maxHealth;
         this.health = this.maxHealth;
-        this.maxEnergy = this.spec.getMaxEnergy();
-        this.energy = this.maxEnergy;
+        this.energy = this.spec.getMaxEnergy();
     }
 
     public float getHealth() {
@@ -1887,9 +1884,9 @@ public abstract class WarlordsEntity {
 
     public float addEnergy(WarlordsEntity giver, String ability, float amount) {
         float energyGiven = 0;
-        if (energy + amount > maxEnergy) {
-            energyGiven = maxEnergy - energy;
-            this.energy = maxEnergy;
+        if (energy + amount > getMaxEnergy()) {
+            energyGiven = getMaxEnergy() - energy;
+            this.energy = getMaxEnergy();
         } else if (energy + amount > 0) {
             energyGiven = amount;
             this.energy += amount;
@@ -1950,9 +1947,9 @@ public abstract class WarlordsEntity {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
-            if (energy - amount > maxEnergy) {
-                amountSubtracted = maxEnergy - energy;
-                energy = maxEnergy;
+            if (energy - amount > getMaxEnergy()) {
+                amountSubtracted = getMaxEnergy() - energy;
+                energy = getMaxEnergy();
             } else if (energy - amount < 0) {
                 amountSubtracted = energy;
                 energy = 0;
@@ -2554,11 +2551,7 @@ public abstract class WarlordsEntity {
     }
 
     public float getMaxEnergy() {
-        return maxEnergy;
-    }
-
-    public void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = maxEnergy;
+        return spec.getMaxEnergy();
     }
 
     public void teleport(Location location) {

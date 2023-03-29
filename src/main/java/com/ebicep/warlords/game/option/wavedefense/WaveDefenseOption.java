@@ -471,19 +471,19 @@ public class WaveDefenseOption implements Option, PveOption {
                 for (ItemLoadout loadout : loadouts) {
                     List<AbstractItem<?, ?, ?>> applied = loadout.getActualItems(itemsManager);
                     loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
-                    if (!applied.isEmpty()) {
-                        player.sendSpigotMessage(new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                .appendHoverText(ChatColor.GOLD + loadout.getName(),
-                                        applied.stream()
-                                               .map(i ->
-                                                       ChatColor.GREEN + i.getName() + "\n" +
-                                                               i.getStatPoolLore().stream()
-                                                                .map(lore -> ChatColor.GRAY + " - " + lore)
-                                                                .collect(Collectors.joining("\n"))
-                                               )
-                                               .collect(Collectors.joining("\n"))
-                                )
-                                .create()
+                    if (!applied.isEmpty() && player.getEntity() instanceof Player) {
+                        AbstractItem.sendItemMessage((Player) player.getEntity(),
+                                new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
+                                        .appendHoverText(ChatColor.GOLD + loadout.getName(),
+                                                applied.stream()
+                                                       .map(i ->
+                                                               ChatColor.GREEN + i.getName() + "\n" +
+                                                                       i.getStatPoolLore().stream()
+                                                                        .map(lore -> ChatColor.GRAY + " - " + lore)
+                                                                        .collect(Collectors.joining("\n"))
+                                                       )
+                                                       .collect(Collectors.joining("\n"))
+                                        )
                         );
                     }
                     break;
@@ -767,29 +767,6 @@ public class WaveDefenseOption implements Option, PveOption {
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }
 
-    @Override
-    public void spawnNewMob(AbstractMob<?> mob) {
-        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    @Override
-    public Set<AbstractMob<?>> getMobs() {
-        return mobs.keySet();
-    }
-
-    @Override
-    public int getWaveCounter() {
-        return waveCounter;
-    }
-
-    public void setWaveCounter(int waveCounter) {
-        this.waveCounter = waveCounter - 1;
-        newWave();
-    }
-
     public int getWavesCleared() {
         if (waveCounter <= 1) {
             return 0;
@@ -811,6 +788,39 @@ public class WaveDefenseOption implements Option, PveOption {
         return game;
     }
 
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
+    }
+
+    @Override
+    public int getWaveCounter() {
+        return waveCounter;
+    }
+
+    public void setWaveCounter(int waveCounter) {
+        this.waveCounter = waveCounter - 1;
+        newWave();
+    }
+
+    @Override
+    public DifficultyIndex getDifficulty() {
+        return difficulty;
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs.keySet();
+    }
+
     public int getMaxWave() {
         return maxWave;
     }
@@ -825,15 +835,5 @@ public class WaveDefenseOption implements Option, PveOption {
 
     public WaveDefenseStats getWaveDefenseStats() {
         return waveDefenseStats;
-    }
-
-    @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
-    public DifficultyIndex getDifficulty() {
-        return difficulty;
     }
 }
