@@ -112,8 +112,8 @@ public class AvengersStrike extends AbstractStrikeBase {
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        ((minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
-                        ((maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
+                        ((minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
                         critChance,
                         critMultiplier,
                         false,

@@ -101,7 +101,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         masterUpgrade = new Upgrade(
                 "Avenger's Slash",
                 "Avenger's Strike - Master Upgrade",
-                "-5 Additional energy cost.\n\nAvenger's Strike hits 2 additional enemies for 40% of the original strike damage." +
+                "-5 Additional energy cost.\n\nAvenger's Strike hits 2 additional enemies for 50% of the original strike damage." +
                         "\n\nDeal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.",
                 50000,
                 () -> {
