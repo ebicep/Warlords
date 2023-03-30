@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;

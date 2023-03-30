@@ -10,9 +10,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;

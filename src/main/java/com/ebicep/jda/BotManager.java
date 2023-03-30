@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;

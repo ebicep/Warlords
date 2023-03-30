@@ -13,12 +13,12 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
+import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
-import com.ebicep.warlords.game.option.tutorial.TutorialOption;
-import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;

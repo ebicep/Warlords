@@ -3,7 +3,7 @@ package com.ebicep.customentities.nms.pve;
 import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgroWarlordsEntity;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;

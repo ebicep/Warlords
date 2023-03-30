@@ -4,9 +4,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.wavedefense.CoinGainOption;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.option.pve.wavedefense.CoinGainOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;

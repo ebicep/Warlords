@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
