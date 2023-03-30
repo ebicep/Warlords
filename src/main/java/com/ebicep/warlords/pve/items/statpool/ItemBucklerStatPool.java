@@ -10,25 +10,25 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
 
     AGGRO_PRIO("Aggression Priority") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.setBonusAgroWeight(warlordsPlayer.getBonusAgroWeight() + value);
         }
     },
     THORNS("Thorns") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             // TODO
         }
     },
     KB_RES("Knockback Resistance") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             ItemAdditiveCooldown.increaseKBRes(warlordsPlayer, value);
         }
     },
     REGEN_TIMER("Shorter Regen Timer") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.setRegenTickTimerModifier((1 - value) / 100f);
         }
     },

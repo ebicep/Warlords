@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 
 public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
 
-    public static void increaseDamage(WarlordsPlayer warlordsPlayer, int damageBoost) {
+    public static void increaseDamage(WarlordsPlayer warlordsPlayer, float damageBoost) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
             if (cooldown instanceof ItemAdditiveCooldown) {
                 ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
@@ -22,11 +22,11 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
         warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, damageBoost, 0, 0));
     }
 
-    public void addDamageBoost(int damageBoost) {
+    public void addDamageBoost(float damageBoost) {
         this.damageMultiplier += damageBoost / 100f;
     }
 
-    public static void increaseHealing(WarlordsPlayer warlordsPlayer, int healBoost) {
+    public static void increaseHealing(WarlordsPlayer warlordsPlayer, float healBoost) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
             if (cooldown instanceof ItemAdditiveCooldown) {
                 ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
@@ -37,11 +37,11 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
         warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, healBoost, 0));
     }
 
-    public void addHealBoost(int healBoost) {
+    public void addHealBoost(float healBoost) {
         this.healMultiplier += healBoost / 100f;
     }
 
-    public static void increaseKBRes(WarlordsPlayer warlordsPlayer, int kbRes) {
+    public static void increaseKBRes(WarlordsPlayer warlordsPlayer, float kbRes) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
             if (cooldown instanceof ItemAdditiveCooldown) {
                 ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
@@ -52,7 +52,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
         warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, 0, kbRes));
     }
 
-    public void addKBRes(int kbRes) {
+    public void addKBRes(float kbRes) {
         this.kbMultiplier -= kbRes / 200f; //200 because kb is halved since it reduces too much
     }
 
@@ -60,7 +60,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
     private float healMultiplier = 1;
     private float kbMultiplier = 1;
 
-    public ItemAdditiveCooldown(WarlordsEntity from, int damageBoost, int healBoost, int kbRes) {
+    public ItemAdditiveCooldown(WarlordsEntity from, float damageBoost, float healBoost, float kbRes) {
         super(
                 "Item Tome Damage",
                 null,

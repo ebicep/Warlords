@@ -10,27 +10,27 @@ public enum ItemGauntletStatPool implements ItemStatPool<ItemGauntletStatPool> {
 
     HP("Health") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.setMaxBaseHealth(warlordsPlayer.getMaxBaseHealth() + value);
         }
     },
     MAX_ENERGY("Max Energy") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setMaxEnergy(playerClass.getMaxEnergy() + value);
+            playerClass.setMaxEnergy(playerClass.getMaxEnergy() + (int) value);
         }
     },
     EPH("Energy Per Hit") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
             playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + value);
         }
     },
     SPEED("Speed") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.getSpeed().addBaseModifier(value);
         }
 

@@ -52,9 +52,9 @@ public class ItemLoadout {
         HashMap<ItemStatPool<?>, Integer> statPoolValues = new HashMap<>();
         getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolValues.merge(stat, tier, Integer::sum)));
 
-        statPoolValues.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, tier));
+        statPoolValues.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, (float) tier / stat.getDecimalPlace().value));
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            statPoolValues.forEach((stat, tier) -> stat.applyToAbility(ability, tier));
+            statPoolValues.forEach((stat, tier) -> stat.applyToAbility(ability, (float) tier / stat.getDecimalPlace().value));
         }
     }
 

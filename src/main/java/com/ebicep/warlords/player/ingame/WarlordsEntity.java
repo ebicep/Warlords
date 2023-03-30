@@ -128,7 +128,7 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
-    private int bonusAgroWeight = 0;
+    private float bonusAgroWeight = 0;
 
 
     public WarlordsEntity(Player player, Specializations specialization) {
@@ -2635,11 +2635,11 @@ public abstract class WarlordsEntity {
         this.showDebugMessage = showDebugMessage;
     }
 
-    public int getBonusAgroWeight() {
+    public float getBonusAgroWeight() {
         return bonusAgroWeight;
     }
 
-    public void setBonusAgroWeight(int agroWeight) {
+    public void setBonusAgroWeight(float agroWeight) {
         this.bonusAgroWeight = agroWeight;
     }
 }

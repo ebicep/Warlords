@@ -11,26 +11,26 @@ public enum ItemTomeStatPool implements ItemStatPool<ItemTomeStatPool> {
 
     DAMAGE("Damage") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             ItemAdditiveCooldown.increaseDamage(warlordsPlayer, value);
         }
     },
     HEALING("Healing") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, int value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             ItemAdditiveCooldown.increaseHealing(warlordsPlayer, value);
         }
     },
     CRIT_CHANCE("Crit Chance") {
         @Override
-        public void applyToAbility(AbstractAbility ability, int value) {
+        public void applyToAbility(AbstractAbility ability, float value) {
             float calculatedValue = 1 + value / 100f;
             ability.setCritChance(ability.getCritChance() * calculatedValue);
         }
     },
     CRIT_MULTI("Crit Multiplier") {
         @Override
-        public void applyToAbility(AbstractAbility ability, int value) {
+        public void applyToAbility(AbstractAbility ability, float value) {
             float calculatedValue = 1 + value / 100f;
             ability.setCritMultiplier(ability.getCritMultiplier() * calculatedValue);
         }
