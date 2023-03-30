@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobDropEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.PveOption;
@@ -36,7 +37,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -197,7 +197,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .teammatesOf((WarlordsPlayer) killer)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
+                                   Bukkit.getPluginManager().callEvent(new WarlordsMobDropEvent(warlordsPlayer, dropRate));
                                    if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(warlordsPlayer, drop));
 

@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.CurrencyOnEventOption;
@@ -1295,6 +1296,7 @@ public enum GameMap {
                     ),
                     DifficultyIndex.HARD
             ));
+            options.add(new ItemOption());
             options.add(new CoinGainOption()
                     .guildCoinInsigniaConvertBonus(2000)
             );
@@ -1475,6 +1477,7 @@ public enum GameMap {
                     ),
                     DifficultyIndex.NORMAL
             ));
+            options.add(new ItemOption());
             options.add(new CoinGainOption()
                     .guildCoinInsigniaConvertBonus(1000)
             );
@@ -1641,6 +1644,7 @@ public enum GameMap {
                     ),
                     DifficultyIndex.EASY
             ));
+            options.add(new ItemOption());
             options.add(new CoinGainOption()
                     .guildCoinInsigniaConvertBonus(750)
             );
@@ -2631,6 +2635,7 @@ public enum GameMap {
 
                     DifficultyIndex.ENDLESS
             ));
+            options.add(new ItemOption());
             options.add(new CoinGainOption()
                     .guildCoinInsigniaConvertBonus(1500)
             );
@@ -2868,6 +2873,7 @@ public enum GameMap {
                     return 1;
                 }
             });
+            options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new BoltarosLairOption());
             options.add(new SafeZoneOption());
@@ -2966,6 +2972,7 @@ public enum GameMap {
                     DifficultyIndex.EVENT,
                     (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza")
             ));
+            options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
             options.add(new SafeZoneOption());
             options.add(new BoltaroBonanzaOption());
@@ -3175,6 +3182,7 @@ public enum GameMap {
                     return 1;
                 }
             });
+            options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new NarmersTombOption());
             options.add(new SafeZoneOption());
@@ -3410,6 +3418,7 @@ public enum GameMap {
                     return 1;
                 }
             });
+            options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new SpidersDwellingOption());
             options.add(new SafeZoneOption());
@@ -3613,6 +3622,7 @@ public enum GameMap {
                             .add(0.2, Mobs.FORGOTTEN_ZOMBIE)
                     )
             ));
+            options.add(new ItemOption());
 
             return options;
         }
@@ -3669,6 +3679,7 @@ public enum GameMap {
                     ),
                     DifficultyIndex.NORMAL
             ));
+            options.add(new ItemOption());
 
             return options;
         }

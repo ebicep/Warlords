@@ -36,9 +36,6 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
-import com.ebicep.warlords.pve.items.ItemLoadout;
-import com.ebicep.warlords.pve.items.ItemsManager;
-import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -47,7 +44,6 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -461,33 +457,6 @@ public class WaveDefenseOption implements Option, PveOption {
                     player.updateEntity();
                     player.getSpec().updateCustomStats();
                 });
-                //items
-                ItemsManager itemsManager = pveStats.getItemsManager();
-                List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
-                int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
-                loadouts.removeIf(itemLoadout -> itemLoadout.getDifficulty() != null && itemLoadout.getDifficulty() != difficulty);
-                loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
-                loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
-                for (ItemLoadout loadout : loadouts) {
-                    List<AbstractItem<?, ?, ?>> applied = loadout.getActualItems(itemsManager);
-                    loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
-                    if (!applied.isEmpty() && player.getEntity() instanceof Player) {
-                        AbstractItem.sendItemMessage((Player) player.getEntity(),
-                                new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                        .appendHoverText(ChatColor.GOLD + loadout.getName(),
-                                                applied.stream()
-                                                       .map(i ->
-                                                               ChatColor.GREEN + i.getName() + "\n" +
-                                                                       i.getStatPoolLore().stream()
-                                                                        .map(lore -> ChatColor.GRAY + " - " + lore)
-                                                                        .collect(Collectors.joining("\n"))
-                                                       )
-                                                       .collect(Collectors.joining("\n"))
-                                        )
-                        );
-                    }
-                    break;
-                }
             });
         }
     }
