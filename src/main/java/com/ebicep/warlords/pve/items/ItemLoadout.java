@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.ItemBuckler;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -30,12 +31,17 @@ public class ItemLoadout {
 
     public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
-        for (AbstractItem<?, ?, ?> item : itemsManager.getItemInventory()) {
-            if (items.contains(item.getUUID())) {
-                weight += item.getWeight();
+
+        List<AbstractItem<?, ?, ?>> actualItems = getActualItems(itemsManager);
+        int weightModifier = 0;
+        for (AbstractItem<?, ?, ?> actualItem : actualItems) {
+            weight += actualItem.getWeight();
+            if (actualItem instanceof ItemBuckler) {
+                weightModifier += actualItem.getModifier();
             }
         }
-        return weight;
+
+        return (int) (weight * weightModifier / 100f);
     }
 
     public List<AbstractItem<?, ?, ?>> getActualItems(ItemsManager itemsManager) {
