@@ -9,6 +9,7 @@ public class LightInfusionAvengerBranch extends AbstractUpgradeBranch<LightInfus
 
     int speedBuff = ability.getSpeedBuff();
     float cooldown = ability.getCooldown();
+    int energyGiven = ability.getEnergyGiven();
     int duration = ability.getDuration();
 
     public LightInfusionAvengerBranch(AbilityTree abilityTree, LightInfusionAvenger ability) {
@@ -16,35 +17,34 @@ public class LightInfusionAvengerBranch extends AbstractUpgradeBranch<LightInfus
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "+1.5s Duration",
-                2500,
+                "+10 Energy given",
+                5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setEnergyGiven(energyGiven + 10);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier II",
-                "+3s Duration",
-                5000,
+                "+20 Energy given",
+                10000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setEnergyGiven(energyGiven + 20);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "+4.5s Duration",
-                7500,
+                "+30 Energy given",
+                15000,
                 () -> {
-                    ability.setDuration(duration + 5);
+                    ability.setEnergyGiven(energyGiven + 30);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "+6s Duration\n+20 Energy given",
-                10000,
+                "+40 Energy given",
+                20000,
                 () -> {
-                    ability.setDuration(duration + 6);
-                    ability.setEnergyGiven(ability.getEnergyGiven() + 20);
+                    ability.setEnergyGiven(energyGiven + 40);
                 }
         ));
 
