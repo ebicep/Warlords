@@ -13,6 +13,11 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
             warlordsPlayer.setBonusAgroWeight(warlordsPlayer.getBonusAgroWeight() + value);
         }
+
+        @Override
+        public Operation getOperation() {
+            return Operation.ADD;
+        }
     },
     THORNS("Thorns") {
         @Override
