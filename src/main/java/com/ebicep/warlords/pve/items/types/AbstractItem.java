@@ -12,11 +12,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractItem<
         T extends Enum<T> & ItemStatPool<T>,
@@ -40,17 +41,19 @@ public abstract class AbstractItem<
     protected Instant obtainedDate = Instant.now();
     protected ItemTier tier;
     @Field("stat_pool")
-    protected Map<T, Integer> statPool = new HashMap<>();
+    protected Map<T, Float> statPoolDistribution = new HashMap<>();
+    @Transient
+    protected Map<T, Integer> statPoolValues;
     protected int modifier;
 
     public AbstractItem() {
     }
 
-    public AbstractItem(ItemTier tier, Set<T> statPool) {
+    public AbstractItem(ItemTier tier) {
         this.tier = tier;
         HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
-        for (T t : statPool) {
-            this.statPool.put(t, tierStatRanges.get(t).generateValue());
+        for (Map.Entry<T, ItemTier.StatRange> entry : tierStatRanges.entrySet()) {
+            this.statPoolDistribution.put(entry.getKey(), (float) getRandomValueNormalDistribution());
         }
         if (tier != ItemTier.OMEGA) {
             bless(null);
@@ -58,6 +61,14 @@ public abstract class AbstractItem<
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
+
+    private static double getRandomValueNormalDistribution() {
+        double mean = 0.5;
+        double stdDev = 0.15;
+        double random = ThreadLocalRandom.current().nextGaussian() * stdDev + mean;
+        // Clamp to [0, 1]
+        return Math.max(0, Math.min(1, random));
+    }
 
     /**
      * Ran when the item is first created or found blessing applied
@@ -90,7 +101,7 @@ public abstract class AbstractItem<
         this.uuid = item.uuid;
         this.obtainedDate = item.obtainedDate;
         this.tier = item.tier;
-        this.statPool = new HashMap<>(item.statPool);
+        this.statPoolDistribution = new HashMap<>(item.statPoolDistribution);
         this.modifier = item.modifier;
     }
 
@@ -142,6 +153,7 @@ public abstract class AbstractItem<
 
     public List<String> getStatPoolLore() {
         List<String> lore = new ArrayList<>();
+        Map<T, Integer> statPool = getStatPool();
         statPool.keySet()
                 .stream()
                 .sorted(Comparator.comparingInt(Enum::ordinal))
@@ -149,40 +161,47 @@ public abstract class AbstractItem<
         return lore;
     }
 
-    public abstract Class<T> getStatPoolClass();
-
     public abstract R[] getBlessings();
 
     public abstract U[] getCurses();
-
-    public abstract ItemType getType();
-
-    public float getItemScore() {
-        List<Double> averageScores = getItemScoreAverageValues();
-        double sum = 0;
-        for (Double d : averageScores) {
-            sum += d;
-        }
-        return Math.round(sum / averageScores.size() * 10000) / 100f;
-    }
-
-    public List<Double> getItemScoreAverageValues() {
-        HashMap<T, ItemTier.StatRange> statRanges = getTierStatRanges();
-        return statPool.entrySet()
-                       .stream()
-                       .map(statValue -> {
-                           ItemTier.StatRange statRange = statRanges.get(statValue.getKey());
-                           return getAverageValue(statRange.getMin(), statRange.getMax(), statValue.getValue());
-                       })
-                       .collect(Collectors.toList());
-    }
 
     private String getItemScoreString() {
         return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
     }
 
+    private String getWeightString() {
+        return ChatColor.GRAY + "Weight: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeight());
+    }
+
+    public abstract ItemType getType();
+
+    public Map<T, Integer> getStatPool() {
+        if (statPoolValues == null) {
+            statPoolValues = new HashMap<>();
+            HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
+            statPoolDistribution.forEach((stat, distribution) -> {
+                ItemTier.StatRange statRange = tierStatRanges.get(stat);
+                double tieredDistribution = distribution + tier.statDistributionModifier;
+                // clamp to [0, 1]
+                tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
+                int max = statRange.getMax() * stat.getDecimalPlace().value;
+                int min = statRange.getMin() * stat.getDecimalPlace().value;
+                statPoolValues.put(stat, (int) ((max - min) * tieredDistribution + min));
+            });
+        }
+        return statPoolValues;
+    }
+
+    public float getItemScore() {
+        double sum = 0;
+        for (Map.Entry<T, Float> statDistribution : statPoolDistribution.entrySet()) {
+            sum += statDistribution.getValue();
+        }
+        return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
+    }
+
     public int getWeight() {
-        float itemScore = getItemScore();
+        float itemScore = getWeightScore();
         ItemTier.WeightRange weightRange = tier.weightRange;
         int min = weightRange.getMin();
         int normal = weightRange.getNormal();
@@ -230,9 +249,16 @@ public abstract class AbstractItem<
         return 1000;
     }
 
-    private String getWeightString() {
-        return ChatColor.GRAY + "Weight: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeight());
+    public float getWeightScore() {
+        double sum = 0;
+        for (Map.Entry<T, Float> statDistribution : statPoolDistribution.entrySet()) {
+            float value = statDistribution.getValue() + tier.statDistributionModifier;
+            sum += Math.max(0, Math.min(1, value));
+        }
+        return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
     }
+
+    public abstract Class<T> getStatPoolClass();
 
     public UUID getUUID() {
         return uuid;
@@ -253,9 +279,5 @@ public abstract class AbstractItem<
     public AbstractItem<T, R, U> setModifier(int modifier) {
         this.modifier = modifier;
         return this;
-    }
-
-    public Map<T, Integer> getStatPool() {
-        return statPool;
     }
 }

@@ -12,7 +12,7 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
     }
 
     public ItemBuckler(ItemTier tier) {
-        super(tier, tier.generateStatPool(ItemBucklerStatPool.VALUES));
+        super(tier);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ItemBuckler extends AbstractItem<ItemBucklerStatPool, ItemBucklerMo
 
     @Override
     public HashMap<ItemBucklerStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return tier.bucklerStatRange;
+        return ItemBucklerStatPool.STAT_RANGES;
     }
 
     @Override

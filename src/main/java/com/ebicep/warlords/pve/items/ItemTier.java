@@ -2,10 +2,7 @@ package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
-import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
-import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -20,14 +17,12 @@ public enum ItemTier {
             ChatColor.BLACK,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 0),
             new ItemStack(Material.STAINED_CLAY, 1, (short) 0),
+            0,
             null,
             0,
             0,
             0,
             0,
-            null,
-            null,
-            null,
             0,
             null
     ) {
@@ -41,29 +36,12 @@ public enum ItemTier {
             ChatColor.GREEN,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 5),
             new ItemStack(Material.STAINED_CLAY, 1, (short) 5),
+            -.20f,
             new WeightRange(7, 10, 15),
             .1,
             .001,
             .65,
             .05,
-            new HashMap<>() {{
-                put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
-            }},
             3,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 10_000L);
@@ -79,29 +57,12 @@ public enum ItemTier {
             ChatColor.BLUE,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 3),
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 3),
+            -.10f,
             new WeightRange(15, 20, 30),
             .05,
             .0005,
             .55,
             .10,
-            new HashMap<>() {{
-                put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
-            }},
             2,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 25_000L);
@@ -118,29 +79,12 @@ public enum ItemTier {
             ChatColor.LIGHT_PURPLE,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 2),
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 2),
+            0,
             new WeightRange(22, 30, 45),
             .01,
             .0001,
             .45,
             .10,
-            new HashMap<>() {{
-                put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
-            }},
             2,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 75_000L);
@@ -157,29 +101,12 @@ public enum ItemTier {
             ChatColor.YELLOW,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 4),
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 4),
+            .10f,
             new WeightRange(30, 40, 60),
             .001,
             .00001,
             .35,
             .20,
-            new HashMap<>() {{
-                put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
-            }},
             1,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 125_000L);
@@ -196,29 +123,12 @@ public enum ItemTier {
             ChatColor.GRAY,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 1),
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
+            .20f,
             new WeightRange(37, 50, 75),
             0,
             0,
             .25,
             .25,
-            new HashMap<>() {{
-                put(ItemGauntletStatPool.HP, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.MAX_ENERGY, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.EPH, new ItemTier.StatRange(1, 5));
-                put(ItemGauntletStatPool.SPEED, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemTomeStatPool.DAMAGE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.HEALING, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_CHANCE, new ItemTier.StatRange(1, 5));
-                put(ItemTomeStatPool.CRIT_MULTI, new ItemTier.StatRange(1, 5));
-            }},
-            new HashMap<>() {{
-                put(ItemBucklerStatPool.AGGRO_PRIO, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.THORNS, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.KB_RES, new ItemTier.StatRange(1, 5));
-                put(ItemBucklerStatPool.REGEN_TIMER, new ItemTier.StatRange(1, 5));
-            }},
             1,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 200_000L);
@@ -270,28 +180,26 @@ public enum ItemTier {
     public final ChatColor chatColor;
     public final ItemStack glassPane;
     public final ItemStack clayBlock;
+    public final float statDistributionModifier;
     public final WeightRange weightRange;
     public final double dropChance;
     public final double killDropChance;
     public final double cursedChance;
     public final double blessedChance;
-    public final HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange;
-    public final HashMap<ItemTomeStatPool, StatRange> tomeStatRange;
-    public final HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange;
     public final int maxEquipped;
     public final LinkedHashMap<Spendable, Long> removeCurseCost;
 
     ItemTier(
             String name,
             ChatColor chatColor,
-            ItemStack glassPane, ItemStack clayBlock, WeightRange weightRange,
+            ItemStack glassPane,
+            ItemStack clayBlock,
+            float statDistributionModifier,
+            WeightRange weightRange,
             double dropChance,
             double killDropChance,
             double cursedChance,
             double blessedChance,
-            HashMap<ItemGauntletStatPool, StatRange> gauntletStatRange,
-            HashMap<ItemTomeStatPool, StatRange> tomeStatRange,
-            HashMap<ItemBucklerStatPool, StatRange> bucklerStatRange,
             int maxEquipped,
             LinkedHashMap<Spendable, Long> removeCurseCost
     ) {
@@ -299,14 +207,12 @@ public enum ItemTier {
         this.chatColor = chatColor;
         this.glassPane = glassPane;
         this.clayBlock = clayBlock;
+        this.statDistributionModifier = statDistributionModifier;
         this.weightRange = weightRange;
         this.dropChance = dropChance;
         this.killDropChance = killDropChance;
         this.cursedChance = cursedChance;
         this.blessedChance = blessedChance;
-        this.gauntletStatRange = gauntletStatRange;
-        this.tomeStatRange = tomeStatRange;
-        this.bucklerStatRange = bucklerStatRange;
         this.maxEquipped = maxEquipped;
         this.removeCurseCost = removeCurseCost;
     }
@@ -337,10 +243,6 @@ public enum ItemTier {
 
         public int getMax() {
             return max;
-        }
-
-        public int generateValue() {
-            return ThreadLocalRandom.current().nextInt(min, max);
         }
 
     }

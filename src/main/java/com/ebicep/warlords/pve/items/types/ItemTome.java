@@ -12,7 +12,7 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
     }
 
     public ItemTome(ItemTier tier) {
-        super(tier, tier.generateStatPool(ItemTomeStatPool.VALUES));
+        super(tier);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
 
     @Override
     public HashMap<ItemTomeStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return tier.tomeStatRange;
+        return ItemTomeStatPool.STAT_RANGES;
     }
 
     @Override

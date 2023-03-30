@@ -12,7 +12,7 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
     }
 
     public ItemGauntlet(ItemTier tier) {
-        super(tier, tier.generateStatPool(ItemGauntletStatPool.VALUES));
+        super(tier);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
 
     @Override
     public HashMap<ItemGauntletStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return tier.gauntletStatRange;
+        return ItemGauntletStatPool.STAT_RANGES;
     }
 
     @Override
