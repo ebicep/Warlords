@@ -10,7 +10,6 @@ public class LightInfusionAvengerBranch extends AbstractUpgradeBranch<LightInfus
     int speedBuff = ability.getSpeedBuff();
     float cooldown = ability.getCooldown();
     int energyGiven = ability.getEnergyGiven();
-    int duration = ability.getDuration();
 
     public LightInfusionAvengerBranch(AbilityTree abilityTree, LightInfusionAvenger ability) {
 

@@ -428,7 +428,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusionCrusader) abstractAbility).setDuration(((LightInfusionCrusader) abstractAbility).getDuration() + 3);
+                    LightInfusionCrusader lightInfusion = (LightInfusionCrusader) abstractAbility;
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
@@ -485,7 +486,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusionProtector) abstractAbility).setDuration(6);
+                    LightInfusionProtector lightInfusion = (LightInfusionProtector) abstractAbility;
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
