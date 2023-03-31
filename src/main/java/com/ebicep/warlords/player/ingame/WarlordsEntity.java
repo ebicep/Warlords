@@ -104,7 +104,7 @@ public abstract class WarlordsEntity {
     private float maxHealth;
     private float maxBaseHealth;
     private int regenTickTimer;
-    private float regenTickTimerModifier;
+    private float regenTickTimerModifier = 1;
     private int respawnTimer = -1;
     private boolean dead = false;
     private float energy = 0;
@@ -1859,7 +1859,7 @@ public abstract class WarlordsEntity {
     }
 
     public void resetRegenTimer() {
-        regenTickTimer = (int) (10 * 20 * regenTickTimerModifier);
+        regenTickTimer = (int) (200 * regenTickTimerModifier);
     }
 
     public void setRegenTickTimerModifier(float regenTickTimerModifier) {

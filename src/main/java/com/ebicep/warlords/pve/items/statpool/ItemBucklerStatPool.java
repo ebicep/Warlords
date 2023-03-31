@@ -34,7 +34,7 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
     REGEN_TIMER("Shorter Regen Timer") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
-            warlordsPlayer.setRegenTickTimerModifier((1 - value) / 100f);
+            warlordsPlayer.setRegenTickTimerModifier(1 - value / 100f);
         }
     },
     ;

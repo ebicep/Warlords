@@ -66,6 +66,8 @@ public class ItemLoadout {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             statPoolValues.forEach((stat, tier) -> stat.applyToAbility(ability, (float) tier / stat.getDecimalPlace().value));
         }
+
+        warlordsPlayer.updateInventory(false);
     }
 
     public String getName() {
