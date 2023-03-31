@@ -79,14 +79,9 @@ public class ItemEquipMenu {
 
         ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
-        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
-        List<AbstractItem<?, ?, ?>> equippedItems = itemInventory.stream()
-                                                                 .filter(itemEntry -> itemLoadout.getItems().contains(itemEntry.getUUID()))
-                                                                 .collect(Collectors.toList());
-        itemInventory.removeAll(equippedItems);
+        List<AbstractItem<?, ?, ?>> equippedItems = itemLoadout.getActualItems(itemsManager);
 
-        int loadoutWeight = equippedItems.stream().mapToInt(AbstractItem::getWeight).sum();
-        addWeightPercentageBar(player, databasePlayer, itemLoadout, menu, loadoutWeight);
+        addWeightPercentageBar(player, databasePlayer, itemLoadout, menu, itemLoadout.getWeight(itemsManager).getA());
 
         int x = 0;
         int y = 2;

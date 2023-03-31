@@ -77,7 +77,7 @@ public class ItemOption implements Option {
             int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getDifficulty() != null && itemLoadout.getDifficulty() != pveOption.getDifficulty());
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
-            loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
+            loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager).getA() > maxWeight);
             if (loadouts.isEmpty()) {
                 return;
             }

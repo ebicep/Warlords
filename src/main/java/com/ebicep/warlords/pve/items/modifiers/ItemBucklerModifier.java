@@ -33,7 +33,7 @@ public class ItemBucklerModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format((ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
         }
 
     }
@@ -64,7 +64,7 @@ public class ItemBucklerModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(-(ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
         }
 
     }
