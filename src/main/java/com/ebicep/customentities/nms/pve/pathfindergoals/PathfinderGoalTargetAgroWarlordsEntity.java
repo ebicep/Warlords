@@ -17,9 +17,14 @@ import java.util.List;
  * <p>
  * All warlords players have an extra agro weight
  * <p>
- * When mob spawns, list of players created containing the closest player and any other players within the distance to closest + 5
+ * Closest player weight = 100 + agro bonus
  * <p>
- * Random target is chosen from list weighted with the closest having 100 agro + extra and other players having 25 agro + extra
+ * Block distance to the closest player is x
+ * <p>
+ * All other players have 100 + agro bonus - 10(distance - x). So every block away from distance to closest player is 10 agro less
+ * <p>
+ * ex. (w=100,d=20), (w=50,d=25), (w=0,d>=30)
+ * Random target is chosen from weighted list
  */
 public class PathfinderGoalTargetAgroWarlordsEntity extends PathfinderGoalTarget {
     public static final int EXTRA_RANGE_CHECK = 5;
@@ -53,15 +58,15 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends PathfinderGoalTarget
         }
         EntityLiving closestEntity = list.get(0);
         double distanceToClosest = this.e.h(closestEntity); // getDistanceSqToEntity
-        list.removeIf(entity -> {
-            double distance = this.e.h(entity);
-            return distance > distanceToClosest + EXTRA_RANGE_CHECK * 2;
-        });
         RandomCollection<EntityLiving> randomCollection = new RandomCollection<>();
         for (EntityLiving entity : list) {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
             if (warlordsEntity != null) {
-                randomCollection.add(entity == closestEntity ? 100 + warlordsEntity.getBonusAgroWeight() : 25 + warlordsEntity.getBonusAgroWeight(), entity);
+                randomCollection.add(entity == closestEntity ?
+                                     1000 + warlordsEntity.getBonusAgroWeight() :
+                                     1000 + warlordsEntity.getBonusAgroWeight() - 10 * (e.h(entity) - distanceToClosest),
+                        entity
+                );
             }
         }
         if (randomCollection.getSize() == 0) {
