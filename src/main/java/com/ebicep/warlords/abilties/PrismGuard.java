@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
-public class PrismGuard extends AbstractAbility {
+public class PrismGuard extends AbstractAbility implements Duration {
 
     public int timesProjectilesReduced = 0;
     public int timesOtherReduced = 0;
@@ -34,7 +35,7 @@ public class PrismGuard extends AbstractAbility {
 
     private final int damageReduction = 3;
     private int bubbleRadius = 4;
-    private int duration = 6;
+    private int tickDuration = 120;
     private int bubbleHealing = 200;
     private float bubbleMissingHealing = 1.5f;
     private int projectileDamageReduction = 75;
@@ -45,11 +46,11 @@ public class PrismGuard extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Create a bubble shield around you that lasts §6" + duration +
+        description = "Create a bubble shield around you that lasts §6" + format(tickDuration / 20f) +
                 " §7seconds. All projectiles that pass through the barrier have their damage reduced by §c" + projectileDamageReduction +
-                "%§7.\nAfter §6" + duration + " §7seconds the bubble will burst, healing you and all allies for §a" + bubbleHealing +
+                "%§7.\nAfter §6" + format(tickDuration / 20f) + " §7seconds the bubble will burst, healing you and all allies for §a" + bubbleHealing +
                 " §7+ §a" + bubbleMissingHealing + "% §7missing health and grant §e" + damageReduction +
-                "% §7damage reduction (max 30%) for §6" + duration + " §7seconds based on how many hits you took while Prism Guard was active.";
+                "% §7damage reduction (max 30%) for §6" + format(tickDuration / 20f) + " §7seconds based on how many hits you took while Prism Guard was active.";
     }
 
     @Override
@@ -133,7 +134,7 @@ public class PrismGuard extends AbstractAbility {
                             String s = wp == entity ? "Your " : wp.getName() + "'s ";
                             entity.sendMessage(
                                     WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
-                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + duration + " §7seconds!"
+                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + tickDuration + " §7seconds!"
                             );
                             entity.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                     "Prism Guard",
@@ -144,7 +145,7 @@ public class PrismGuard extends AbstractAbility {
                                     CooldownTypes.ABILITY,
                                     cm -> {
                                     },
-                                    duration * 20
+                                    tickDuration
                             ) {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -157,7 +158,7 @@ public class PrismGuard extends AbstractAbility {
                         }
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed < 5) {
                         return;
@@ -287,12 +288,12 @@ public class PrismGuard extends AbstractAbility {
         this.bubbleHealing = bubbleHealing;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getBubbleRadius() {

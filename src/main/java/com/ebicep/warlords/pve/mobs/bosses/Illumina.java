@@ -77,7 +77,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         PrismGuard prismGuard = new PrismGuard();
-        prismGuard.setDuration(10);
+        prismGuard.setTickDuration(200);
         warlordsNPC.getSpec().setBlue(prismGuard);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);

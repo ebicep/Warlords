@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
@@ -55,7 +55,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+1s Duration",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -63,7 +63,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+2s Duration",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -71,7 +71,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+3s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,7 +79,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+4s Duration",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
 
