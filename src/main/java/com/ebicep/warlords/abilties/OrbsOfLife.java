@@ -43,7 +43,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
 
     private final List<Orb> spawnedOrbs = new ArrayList<>();
     private final int floatingOrbRadius = 20;
-    private int tickDuration = 14;
+    private int tickDuration = 280;
     private int orbTickMultiplier = 1;
 
     public OrbsOfLife() {

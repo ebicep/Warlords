@@ -69,7 +69,7 @@ public class HammerOfLight extends AbstractAbility implements Duration {
     protected float amountHealed = 0;
     private boolean isCrownOfLight = false;
     private Location location;
-    private int tickDuration = 10;
+    private int tickDuration = 200;
     private float minDamage = 178;
     private float maxDamage = 244;
 

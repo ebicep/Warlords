@@ -29,7 +29,7 @@ public class Earthliving extends AbstractAbility implements Duration {
     public int timesProcd = 0;
     public int playersHealed = 0;
 
-    private int tickDuration = 8;
+    private int tickDuration = 160;
     private float procChance = 40;
     private int maxAllies = 2;
     private int weaponDamage = 240;

@@ -32,7 +32,7 @@ public class LastStand extends AbstractAbility implements Duration {
     protected float amountPrevented = 0;
 
     private final int radius = 7;
-    private int tickDuration = 12; // ally is half, if need specific duration then add a "bonusAllyDuration" variable to add to half, needed for syncing
+    private int tickDuration = 240; // ally is half, if need specific duration then add a "bonusAllyDuration" variable to add to half, needed for syncing
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
 

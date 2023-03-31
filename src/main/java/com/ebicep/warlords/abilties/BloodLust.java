@@ -21,7 +21,7 @@ public class BloodLust extends AbstractAbility implements Duration {
 
     public float amountHealed = 0;
 
-    private int tickDuration = 15;
+    private int tickDuration = 300;
     private int damageConvertPercent = 65;
     private float maxConversionAmount = 400;
     private int maxConversionPercent = 100;

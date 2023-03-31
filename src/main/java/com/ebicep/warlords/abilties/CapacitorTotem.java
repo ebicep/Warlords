@@ -29,7 +29,7 @@ public class CapacitorTotem extends AbstractTotemBase implements Duration {
 
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
-    private int tickDuration = 8;
+    private int tickDuration = 160;
     private double radius = 6;
 
     public CapacitorTotem() {

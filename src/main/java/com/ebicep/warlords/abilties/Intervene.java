@@ -27,7 +27,7 @@ public class Intervene extends AbstractAbility implements Duration {
     public int playersIntervened = 0;
     public int carriersIntervened = 0;
 
-    private int tickDuration = 5;
+    private int tickDuration = 100;
     private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;

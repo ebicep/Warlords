@@ -18,7 +18,7 @@ import java.util.List;
 public class Repentance extends AbstractAbility implements Duration {
 
     private float pool = 0;
-    private int tickDuration = 12;
+    private int tickDuration = 240;
     private int poolDecay = 60;
     private int damageConvertPercent = 10;
     private float energyConvertPercent = 3.5f;

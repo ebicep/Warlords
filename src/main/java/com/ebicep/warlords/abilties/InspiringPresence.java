@@ -29,7 +29,7 @@ public class InspiringPresence extends AbstractAbility implements Duration {
 
     private int speedBuff = 30;
     private double radius = 10;
-    private int tickDuration = 12;
+    private int tickDuration = 240;
     private int energyPerSecond = 10;
 
     public InspiringPresence() {

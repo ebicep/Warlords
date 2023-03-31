@@ -36,7 +36,7 @@ public class HealingTotem extends AbstractTotemBase implements Duration {
     protected float amountHealed = 0;
 
     private int radius = 7;
-    private int tickDuration = 6;
+    private int tickDuration = 120;
     private int crippleDuration = 6;
     private int healingIncrement = 35;
 

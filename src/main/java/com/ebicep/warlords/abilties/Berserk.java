@@ -21,7 +21,7 @@ public class Berserk extends AbstractAbility implements Duration {
     public int hitsDoneAmplified = 0;
     public int hitsTakenAmplified = 0;
 
-    private int tickDuration = 18;
+    private int tickDuration = 360;
     private int speedBuff = 30;
     private float damageIncrease = 30;
     private float damageTakenIncrease = 10;

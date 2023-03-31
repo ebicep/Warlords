@@ -24,7 +24,7 @@ public class Windfury extends AbstractAbility implements Duration {
 
     public int timesProcd = 0;
 
-    private int tickDuration = 8;
+    private int tickDuration = 160;
     private float procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;

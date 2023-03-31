@@ -30,7 +30,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
     private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
-    private int tickDuration = 12;
+    private int tickDuration = 240;
     private float bindDuration = 2;
 
     public Soulbinding() {

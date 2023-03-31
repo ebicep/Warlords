@@ -36,7 +36,7 @@ public class UndyingArmy extends AbstractAbility implements Duration {
 
     private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
     private int radius = 15;
-    private int tickDuration = 10;
+    private int tickDuration = 200;
     private int maxArmyAllies = 6;
     private int maxHealthDamage = 10;
     private float flatHealing = 100;

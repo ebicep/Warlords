@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -32,12 +33,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DeathsDebt extends AbstractTotemBase {
+public class DeathsDebt extends AbstractTotemBase implements Duration {
 
     public int playersDamaged = 0;
     public int playersHealed = 0;
 
-    private int tickDuration = 4;
+    private int tickDuration = 80;
     private float delayedDamage = 0;
     private int respiteRadius = 10;
     private int debtRadius = 8;
@@ -348,5 +349,15 @@ public class DeathsDebt extends AbstractTotemBase {
 
     public void setDamagePercent(float damagePercent) {
         this.damagePercent = damagePercent;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }
