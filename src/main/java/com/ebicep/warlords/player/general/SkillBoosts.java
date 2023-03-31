@@ -336,8 +336,9 @@ public enum SkillBoosts {
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
-                    ((UndyingArmy) abstractAbility).setDuration(15);
-                    ((UndyingArmy) abstractAbility).setMaxHealthDamage(((UndyingArmy) abstractAbility).getMaxHealthDamage() - 5);
+                    UndyingArmy undyingArmy = (UndyingArmy) abstractAbility;
+                    undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 100);
+                    undyingArmy.setMaxHealthDamage(undyingArmy.getMaxHealthDamage() - 5);
                 }
             }
     ),
