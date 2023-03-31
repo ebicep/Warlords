@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
     int critMultiplierIncrease = ability.getCritMultiplierIncrease();
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
 
     public InfernoBranch(AbilityTree abilityTree, Inferno ability) {
         super(abilityTree, ability);
@@ -50,7 +50,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "+1s Duration",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -58,7 +58,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "+2s Duration",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -66,7 +66,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "+3s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -74,7 +74,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "+4s Duration",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
 

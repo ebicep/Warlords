@@ -112,7 +112,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
                     ((IceBarrier) abstractAbility).setDamageReductionPercent(55);
-                    ((IceBarrier) abstractAbility).setDuration(((IceBarrier) abstractAbility).getDuration() + 2);
+                    ((IceBarrier) abstractAbility).setTickDuration(((IceBarrier) abstractAbility).getTickDuration() + 40);
                 }
             }
     ),
@@ -166,7 +166,7 @@ public enum SkillBoosts {
             HealingRain.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain) {
-                    ((HealingRain) abstractAbility).setDuration(16);
+                    ((HealingRain) abstractAbility).setTickDuration(((HealingRain) abstractAbility).getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }

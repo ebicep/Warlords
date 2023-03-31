@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -25,11 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 
-public class HealingRain extends AbstractAbility {
+public class HealingRain extends AbstractAbility implements Duration {
 
     public int playersHealed = 0;
 
-    private int duration = 12;
+    private int tickDuration = 12;
     private int radius = 8;
 
     public HealingRain() {
@@ -39,7 +40,7 @@ public class HealingRain extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted location that will restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "health every 0.5 seconds to allies. Lasts §6" + duration + " §7seconds." +
+                "health every 0.5 seconds to allies. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nYou may move Healing Rain to your location using your SNEAK key." +
                 "\n\n§7Healing Rain can overheal allies for up to §a10% §7of their max health as bonus health §7for §6" +
                 Overheal.OVERHEAL_DURATION + " §7seconds.";
@@ -94,15 +95,15 @@ public class HealingRain extends AbstractAbility {
                         ) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
                             FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
-                                    .withColor(Color.AQUA)
-                                    .with(FireworkEffect.Type.BURST)
-                                    .build());
+                                                                                                       .withColor(Color.AQUA)
+                                                                                                       .with(FireworkEffect.Type.BURST)
+                                                                                                       .build());
                             strikeInRain(wp, enemyInRain);
                         }
                     }
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
                         for (WarlordsEntity teammateInRain : PlayerFilter
@@ -200,12 +201,14 @@ public class HealingRain extends AbstractAbility {
         this.radius = radius;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
 

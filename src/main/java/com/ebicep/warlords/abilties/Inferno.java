@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Inferno extends AbstractAbility {
+public class Inferno extends AbstractAbility implements Duration {
 
     public int hitsAmplified = 0;
 
     private int maxHits = 40;
-    private int duration = 18;
+    private int tickDuration = 360;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
 
@@ -33,7 +34,7 @@ public class Inferno extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Combust into a molten inferno, increasing your Crit Chance by §c" + critChanceIncrease +
                 "% §7and your Crit Multiplier by §c" + critMultiplierIncrease +
-                "%§7. Lasts §6" + duration + " §7seconds.";
+                "%§7. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -62,7 +63,7 @@ public class Inferno extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation().add(0, 1.2, 0);
@@ -133,12 +134,14 @@ public class Inferno extends AbstractAbility {
     }
 
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getMaxHits() {

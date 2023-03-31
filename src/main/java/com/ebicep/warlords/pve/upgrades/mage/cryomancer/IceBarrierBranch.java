@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
     float damageReductionPercent = ability.getDamageReductionPercent();
 
     public IceBarrierBranch(AbilityTree abilityTree, IceBarrier ability) {
@@ -51,7 +51,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                 "+1s Duration",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -59,7 +59,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                 "+2s Duration",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -67,7 +67,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                 "+3s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -75,7 +75,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                 "+4s Duration\n+20% Slowness on melee hit.",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                     ability.setSlownessOnMeleeHit(ability.getSlownessOnMeleeHit() + 20);
                 }
         ));
