@@ -9,12 +9,12 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEven
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.PveOption;
 import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;

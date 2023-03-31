@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option;
+package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.DifficultyIndex;
