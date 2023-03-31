@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BloodLust extends AbstractAbility {
+public class BloodLust extends AbstractAbility implements Duration {
 
     public float amountHealed = 0;
 
-    private int duration = 15;
+    private int tickDuration = 15;
     private int damageConvertPercent = 65;
     private float maxConversionAmount = 400;
     private int maxConversionPercent = 100;
@@ -36,7 +37,7 @@ public class BloodLust extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "You lust for blood, healing yourself for §a" + damageConvertPercent + "% §7of all the damage you deal. Lasts §6" + duration + " §7seconds.";
+        description = "You lust for blood, healing yourself for §a" + damageConvertPercent + "% §7of all the damage you deal. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -62,17 +63,17 @@ public class BloodLust extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 3 == 0) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                        wp.getLocation().add(
-                                                (Math.random() - 0.5) * 1,
-                                                1.2,
-                                                (Math.random() - 0.5) * 1
-                                        ),
-                                        500
+                    if (ticksElapsed % 3 == 0) {
+                        ParticleEffect.REDSTONE.display(
+                                new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                wp.getLocation().add(
+                                        (Math.random() - 0.5) * 1,
+                                        1.2,
+                                        (Math.random() - 0.5) * 1
+                                ),
+                                500
                                 );
                             }
                         }
@@ -134,12 +135,12 @@ public class BloodLust extends AbstractAbility {
         this.amountHealed += amountHealed;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     @Override

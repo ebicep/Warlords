@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class OrbsOfLife extends AbstractAbility {
+public class OrbsOfLife extends AbstractAbility implements Duration {
 
     public static final double SPAWN_RADIUS = 1.15;
     public static float ORB_HEALING = 225;
@@ -41,8 +42,8 @@ public class OrbsOfLife extends AbstractAbility {
     public int orbsProduced = 0;
 
     private final List<Orb> spawnedOrbs = new ArrayList<>();
-    private final int duration = 14;
     private final int floatingOrbRadius = 20;
+    private int tickDuration = 14;
     private int orbTickMultiplier = 1;
 
     public OrbsOfLife() {
@@ -60,7 +61,7 @@ public class OrbsOfLife extends AbstractAbility {
                 "\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts §68 " +
                 "§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that picks it up. Other nearby allies recover §a" +
                 format(minDamageHeal) + " §7health. After 1.5 seconds the healing will increase by §a40% §7over 6.5 seconds. " +
-                "Lasts §6" + duration + " §7seconds." +
+                "Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nYou may SNEAK to make the orbs levitate towards you or the nearest ally in a §e" + floatingOrbRadius + " §7block radius.";
     }
 
@@ -93,7 +94,7 @@ public class OrbsOfLife extends AbstractAbility {
                     orbs.forEach(Orb::remove);
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
         ) {
             @Override
@@ -271,6 +272,16 @@ public class OrbsOfLife extends AbstractAbility {
 
     public void setOrbTickMultiplier(int orbTickMultiplier) {
         this.orbTickMultiplier = orbTickMultiplier;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public static class Orb extends EntityExperienceOrb {

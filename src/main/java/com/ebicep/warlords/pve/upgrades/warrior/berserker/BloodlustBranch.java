@@ -88,7 +88,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "+5s Duration\n\nWhile Blood Lust is active, increase all damage against bleeding or wounded targets by 40%",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() + 5);
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.setPveUpgrade(true);
                 }
         );
