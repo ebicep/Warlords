@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -78,7 +79,7 @@ public class SeismicWave extends AbstractAbility {
                     if (waveTarget.hasFlag()) {
                         carrierHit++;
                     }
-                    if (waveTarget.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(waveTarget)) {
+                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class) && FlagHolder.playerTryingToPick(waveTarget)) {
                         warpsKnockbacked++;
                     }
 

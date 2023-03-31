@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -152,7 +153,7 @@ public class Boulder extends AbstractAbility {
                                 if (p.hasFlag()) {
                                     carrierHit++;
                                 }
-                                if (p.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                                if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class) && FlagHolder.playerTryingToPick(p)) {
                                     warpsKnockbacked++;
                                 }
                                 Vector v;

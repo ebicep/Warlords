@@ -1,7 +1,11 @@
 package com.ebicep.warlords.game.option.pve.tutorial;
 
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.ArcaneShield;
+import com.ebicep.warlords.abilties.AvengersStrike;
+import com.ebicep.warlords.abilties.Fireball;
+import com.ebicep.warlords.abilties.FlameBurst;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -116,7 +120,7 @@ public class TutorialOption implements Option {
                                 }
                                 break;
                             case 2:
-                                if (ability instanceof TimeWarp && stageSectionCounter.get() >= 1) {
+                                if (ability instanceof AbstractTimeWarpBase && stageSectionCounter.get() >= 1) {
                                     event.setCancelled(false);
                                     new GameRunnable(game) {
 

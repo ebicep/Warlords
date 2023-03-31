@@ -45,6 +45,11 @@ public class CooldownManager {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass().equals(cooldownClass));
     }
 
+    public boolean hasCooldownExtends(Class<?> cooldownClass) {
+        return abstractCooldowns.stream()
+                                .anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldownClass.isAssignableFrom(cooldown.getCooldownClass()));
+    }
+
     public boolean hasCooldown(Object cooldownObject) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
