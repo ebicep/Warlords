@@ -148,7 +148,7 @@ public class RemedicChains extends AbstractAbility implements Duration {
                         healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
                     }
                 },
-                tickDuration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 8 != 0) {
                         return;

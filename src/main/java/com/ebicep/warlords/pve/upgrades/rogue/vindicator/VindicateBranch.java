@@ -7,8 +7,8 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
 
-    int duration = ability.getVindicateDuration();
-    int resistDuration = ability.getVindicateSelfDuration();
+    int duration = ability.getTickDuration();
+    int resistDuration = ability.getDamageReductionTickDuration();
     float damageReduction = ability.getVindicateDamageReduction();
 
     public VindicateBranch(AbilityTree abilityTree, Vindicate ability) {
@@ -52,8 +52,8 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "+1s Duration",
                 5000,
                 () -> {
-                    ability.setVindicateDuration(duration + 1);
-                    ability.setVindicateSelfDuration(resistDuration + 1);
+                    ability.setTickDuration(duration + 20);
+                    ability.setDamageReductionTickDuration(resistDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -61,8 +61,8 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "+2s Duration",
                 10000,
                 () -> {
-                    ability.setVindicateDuration(duration + 2);
-                    ability.setVindicateSelfDuration(resistDuration + 2);
+                    ability.setTickDuration(duration + 40);
+                    ability.setDamageReductionTickDuration(resistDuration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -70,8 +70,8 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "+3s Duration",
                 15000,
                 () -> {
-                    ability.setVindicateDuration(duration + 3);
-                    ability.setVindicateSelfDuration(resistDuration + 3);
+                    ability.setTickDuration(duration + 60);
+                    ability.setDamageReductionTickDuration(resistDuration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,8 +79,8 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "+4s Duration",
                 20000,
                 () -> {
-                    ability.setVindicateDuration(duration + 4);
-                    ability.setVindicateSelfDuration(resistDuration + 4);
+                    ability.setTickDuration(duration + 80);
+                    ability.setDamageReductionTickDuration(resistDuration + 80);
                 }
         ));
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -23,13 +24,13 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class Vindicate extends AbstractAbility {
+public class Vindicate extends AbstractAbility implements Duration {
 
     public int debuffsRemovedOnCast = 0;
 
     private final int radius = 8;
-    private int vindicateDuration = 12;
-    private int vindicateSelfDuration = 8;
+    private int vindTickDuration = 240;
+    private int damageReductionTickDuration = 160;
     private float vindicateDamageReduction = 30;
     private static int knockbackResistance = 50;
 
@@ -40,8 +41,9 @@ public class Vindicate extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "All allies within an §e" + radius + " §7block radius gain the status §6VIND§7, which clears all de-buffs. In addition, the status " +
-                "§6VIND §7prevents allies from being affected by de-buffs and grants §6" + knockbackResistance + "% §7knockback resistance for §6" + vindicateDuration +
-                " §7seconds. You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
+                "§6VIND §7prevents allies from being affected by de-buffs and grants §6" + knockbackResistance + "% §7knockback resistance for §6" +
+                format(vindTickDuration / 20f) + " §7seconds. You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" +
+                format(damageReductionTickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -86,7 +88,7 @@ public class Vindicate extends AbstractAbility {
                         ChatColor.GRAY + wp.getName() + "'s" +
                         ChatColor.YELLOW + " Vindicate" +
                         ChatColor.GRAY + " is now protecting you from de-buffs for " +
-                        ChatColor.GOLD + vindicateDuration +
+                        ChatColor.GOLD + vindTickDuration +
                         ChatColor.GRAY + " seconds!"
                 );
             }
@@ -94,7 +96,7 @@ public class Vindicate extends AbstractAbility {
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
             debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
-            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindicateDuration * 20);
+            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindTickDuration);
         }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
@@ -106,7 +108,7 @@ public class Vindicate extends AbstractAbility {
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                vindicateSelfDuration * 20
+                damageReductionTickDuration
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -170,19 +172,19 @@ public class Vindicate extends AbstractAbility {
     }
 
 
-    public int getVindicateDuration() {
-        return vindicateDuration;
+    public int getTickDuration() {
+        return vindTickDuration;
     }
 
-    public void setVindicateDuration(int vindicateDuration) {
-        this.vindicateDuration = vindicateDuration;
+    public void setTickDuration(int tickDuration) {
+        this.vindTickDuration = tickDuration;
     }
 
-    public int getVindicateSelfDuration() {
-        return vindicateSelfDuration;
+    public int getDamageReductionTickDuration() {
+        return damageReductionTickDuration;
     }
 
-    public void setVindicateSelfDuration(int vindicateSelfDuration) {
-        this.vindicateSelfDuration = vindicateSelfDuration;
+    public void setDamageReductionTickDuration(int damageReductionTickDuration) {
+        this.damageReductionTickDuration = damageReductionTickDuration;
     }
 }

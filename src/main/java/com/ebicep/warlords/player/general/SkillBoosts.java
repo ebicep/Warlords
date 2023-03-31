@@ -733,7 +733,7 @@ public enum SkillBoosts {
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
-                    ((OrderOfEviscerate) abstractAbility).setDuration(12);
+                    ((OrderOfEviscerate) abstractAbility).setTickDuration(((OrderOfEviscerate) abstractAbility).getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
