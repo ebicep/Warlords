@@ -288,10 +288,12 @@ public class PrismGuard extends AbstractAbility implements Duration {
         this.bubbleHealing = bubbleHealing;
     }
 
+    @Override
     public int getTickDuration() {
         return tickDuration;
     }
 
+    @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
