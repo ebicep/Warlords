@@ -30,7 +30,7 @@ public class HealingRain extends AbstractAbility implements Duration {
 
     public int playersHealed = 0;
 
-    private int tickDuration = 12;
+    private int tickDuration = 240;
     private int radius = 8;
 
     public HealingRain() {
