@@ -36,33 +36,6 @@ public abstract class AbstractItem<
         return (current - min) / (max - min);
     }
 
-    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool) {
-        return getStatPoolLore(statPool, "");
-    }
-
-    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool, String prefix) {
-        List<String> lore = new ArrayList<>();
-        statPool.keySet()
-                .stream()
-                .sorted(Comparator.comparingInt(Enum::ordinal))
-                .forEachOrdered(stat -> lore.add(prefix + stat.getValueFormatted(statPool.get(stat))));
-        return lore;
-    }
-
-    public static <R extends Enum<R> & ItemModifier<R>, U extends Enum<U> & ItemModifier<U>> String getModifierCalculatedLore(
-            R[] blessings,
-            U[] curses,
-            float modifierCalculated
-    ) {
-        if (modifierCalculated > 0) {
-            R blessing = blessings[0];
-            return WordWrap.wrapWithNewline(blessing.getDescriptionCalculated(modifierCalculated), 150);
-        } else {
-            U curse = curses[0];
-            return WordWrap.wrapWithNewline(curse.getDescriptionCalculated(modifierCalculated), 150);
-        }
-    }
-
     protected UUID uuid = UUID.randomUUID();
     @Field("obtained_date")
     protected Instant obtainedDate = Instant.now();
@@ -132,7 +105,6 @@ public abstract class AbstractItem<
         this.modifier = item.modifier;
     }
 
-
     public ItemStack generateItemStack() {
         return generateItemBuilder().get();
     }
@@ -173,9 +145,34 @@ public abstract class AbstractItem<
         return getStatPoolLore(getStatPool());
     }
 
+    public static <R extends Enum<R> & ItemModifier<R>, U extends Enum<U> & ItemModifier<U>> String getModifierCalculatedLore(
+            R[] blessings,
+            U[] curses,
+            float modifierCalculated
+    ) {
+        if (modifierCalculated > 0) {
+            R blessing = blessings[0];
+            return WordWrap.wrapWithNewline(blessing.getDescriptionCalculated(modifierCalculated), 150);
+        } else {
+            U curse = curses[0];
+            return WordWrap.wrapWithNewline(curse.getDescriptionCalculated(modifierCalculated), 150);
+        }
+    }
+
     public abstract R[] getBlessings();
 
     public abstract U[] getCurses();
+
+    public float getModifierCalculated() {
+        if (modifier == 0) {
+            return 0;
+        }
+        if (modifier > 0) {
+            return modifier * getBlessings()[modifier - 1].getIncreasePerTier();
+        } else {
+            return modifier * getCurses()[-modifier - 1].getIncreasePerTier();
+        }
+    }
 
     private String getItemScoreString() {
         return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
@@ -186,6 +183,10 @@ public abstract class AbstractItem<
     }
 
     public abstract ItemType getType();
+
+    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool) {
+        return getStatPoolLore(statPool, "");
+    }
 
     public Map<T, Integer> getStatPool() {
         if (statPoolValues == null) {
@@ -198,7 +199,10 @@ public abstract class AbstractItem<
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
                 int max = statRange.getMax() * stat.getDecimalPlace().value;
                 int min = statRange.getMin() * stat.getDecimalPlace().value;
-                statPoolValues.put(stat, (int) ((max - min) * tieredDistribution + min));
+                int value = (int) ((max - min) * tieredDistribution + min);
+                // floor value
+                value = value / stat.getDecimalPlace().value * stat.getDecimalPlace().value;
+                statPoolValues.put(stat, value);
             });
         }
         return statPoolValues;
@@ -261,6 +265,15 @@ public abstract class AbstractItem<
         return 1000;
     }
 
+    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool, String prefix) {
+        List<String> lore = new ArrayList<>();
+        statPool.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Enum::ordinal))
+                .forEachOrdered(stat -> lore.add(prefix + stat.getValueFormatted(statPool.get(stat))));
+        return lore;
+    }
+
     public float getWeightScore() {
         double sum = 0;
         for (Map.Entry<T, Float> statDistribution : statPoolDistribution.entrySet()) {
@@ -286,17 +299,6 @@ public abstract class AbstractItem<
 
     public int getModifier() {
         return modifier;
-    }
-
-    public float getModifierCalculated() {
-        if (modifier == 0) {
-            return 0;
-        }
-        if (modifier > 0) {
-            return modifier * getBlessings()[modifier - 1].getIncreasePerTier();
-        } else {
-            return modifier * getCurses()[-modifier - 1].getIncreasePerTier();
-        }
     }
 
     public AbstractItem<T, R, U> setModifier(int modifier) {
