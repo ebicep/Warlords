@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HealingTotem extends AbstractTotemBase {
+public class HealingTotem extends AbstractTotemBase implements Duration {
 
     public int playersHealed = 0;
     public int playersCrippled = 0;
@@ -35,7 +36,7 @@ public class HealingTotem extends AbstractTotemBase {
     protected float amountHealed = 0;
 
     private int radius = 7;
-    private int duration = 6;
+    private int tickDuration = 6;
     private int crippleDuration = 6;
     private int healingIncrement = 35;
 
@@ -51,7 +52,8 @@ public class HealingTotem extends AbstractTotemBase {
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
                 " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health every second. " +
-                "The healing will gradually increase by §a35% §7 (Up to " + (healingIncrement * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
+                "The healing will gradually increase by §a35% §7 (Up to " + Math.round(healingIncrement * tickDuration / 20f) + "%) every second. Lasts §6" + format(
+                tickDuration / 20f) + " §7seconds." +
                 "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
                 crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
     }
@@ -119,7 +121,7 @@ public class HealingTotem extends AbstractTotemBase {
                     totemStand.remove();
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksElapsed % 10 == 0) {
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
@@ -260,12 +262,14 @@ public class HealingTotem extends AbstractTotemBase {
         this.radius = radius;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getCrippleDuration() {
