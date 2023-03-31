@@ -42,7 +42,7 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMob {
         // Attacks are converted into Earth Living with double the proc chance as standard.
         Earthliving earthliving = new Earthliving();
         earthliving.setProcChance(earthliving.getProcChance() * 2);
-        earthliving.setDuration(60 * 15);
+        earthliving.setTickDuration(18000);
         earthliving.onActivate(warlordsNPC, null);
     }
 

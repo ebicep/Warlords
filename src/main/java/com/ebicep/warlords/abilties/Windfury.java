@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -19,11 +20,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Windfury extends AbstractAbility {
+public class Windfury extends AbstractAbility implements Duration {
 
     public int timesProcd = 0;
 
-    private final int duration = 8;
+    private int tickDuration = 8;
     private float procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;
@@ -36,7 +37,7 @@ public class Windfury extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Imbue your weapon with the power of the wind, causing each of your melee attacks to have a §e" + format(procChance) +
                 "% §7chance to hit §e" + maxHits + " §7additional times for §c" + format(weaponDamage) +
-                "% §7weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts §6" + duration + " §7seconds.";
+                "% §7weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -65,7 +66,7 @@ public class Windfury extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.CRIT.display(
@@ -163,4 +164,13 @@ public class Windfury extends AbstractAbility {
     }
 
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
 }
