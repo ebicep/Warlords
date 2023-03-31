@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPresence> {
 
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
     int energyPerSecond = ability.getEnergyPerSecond();
     double radius = ability.getRadius();
 
@@ -51,7 +51,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "+1s Duration\n+1.5 Blocks hit radius",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                     ability.setRadius(radius + 1.5);
                 }
         ));
@@ -60,7 +60,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "+2s Duration\n+3 Blocks hit radius",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                     ability.setRadius(radius + 3);
                 }
         ));
@@ -69,7 +69,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "+3s Duration\n+4.5 Blocks hit radius",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                     ability.setRadius(radius + 4.5);
                 }
         ));
@@ -78,7 +78,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "+4s Duration\n+6 Blocks hit radius",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                     ability.setRadius(radius + 6);
                 }
         ));

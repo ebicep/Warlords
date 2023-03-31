@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -27,7 +28,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class HammerOfLight extends AbstractAbility {
+public class HammerOfLight extends AbstractAbility implements Duration {
 
     private static final int RADIUS = 6;
 
@@ -68,7 +69,7 @@ public class HammerOfLight extends AbstractAbility {
     protected float amountHealed = 0;
     private boolean isCrownOfLight = false;
     private Location location;
-    private int duration = 10;
+    private int tickDuration = 10;
     private float minDamage = 178;
     private float maxDamage = 244;
 
@@ -86,7 +87,7 @@ public class HammerOfLight extends AbstractAbility {
         description = "Throw down a Hammer of Light on the ground, dealing" + formatRangeDamage(minDamage, maxDamage) +
                 "damage every second to nearby enemies and healing nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
                 "every second in a §e" + RADIUS + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
-                "Hammer of Light. Lasts §6" + duration + " §7seconds." +
+                "Hammer of Light. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nYou may SNEAK to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
                 "increasing the healing §7by §a50% §7and reducing the energy cost of your Protector's Strike by " +
                 "§e10 §7energy. You cannot put the Hammer of Light back down after you converted it.";
@@ -151,7 +152,7 @@ public class HammerOfLight extends AbstractAbility {
                     particleTask.cancel();
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
                         if (tempHammerOfLight.isCrownOfLight()) {
@@ -350,12 +351,14 @@ public class HammerOfLight extends AbstractAbility {
         }.runTaskLater(delay);
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public float getMinDamage() {

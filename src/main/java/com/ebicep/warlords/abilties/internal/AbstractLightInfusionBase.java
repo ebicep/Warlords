@@ -20,7 +20,7 @@ public abstract class AbstractLightInfusionBase extends AbstractAbility implemen
     public void updateDescription(Player player) {
         description = "You become infused with light, restoring §a" + energyGiven +
                 " §7energy and increasing your movement speed by §e" + speedBuff +
-                "% §7for §6" + (tickDuration / 20) + " §7seconds"; //TODO decimal thing
+                "% §7for §6" + format(tickDuration / 20f) + " §7seconds";
     }
 
     @Override

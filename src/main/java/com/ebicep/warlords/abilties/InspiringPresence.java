@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -19,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class InspiringPresence extends AbstractAbility {
+public class InspiringPresence extends AbstractAbility implements Duration {
 
     public int playersHit = 0;
 
@@ -28,7 +29,7 @@ public class InspiringPresence extends AbstractAbility {
 
     private int speedBuff = 30;
     private double radius = 10;
-    private int duration = 12;
+    private int tickDuration = 12;
     private int energyPerSecond = 10;
 
     public InspiringPresence() {
@@ -38,7 +39,7 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Your presence on the battlefield inspires your allies, increasing their energy regeneration by §e" + energyPerSecond +
-                " §7per second and their movement by §e" + speedBuff + "% §7for §6" + duration + " §7seconds." +
+                " §7per second and their movement by §e" + speedBuff + "% §7for §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nHas a maximum range of §e" + format(radius) + " §7blocks.";
     }
 
@@ -55,7 +56,7 @@ public class InspiringPresence extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
 
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
 
         InspiringPresence tempPresence = new InspiringPresence();
         wp.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
@@ -71,7 +72,7 @@ public class InspiringPresence extends AbstractAbility {
                     cancelSpeed.run();
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
@@ -107,7 +108,7 @@ public class InspiringPresence extends AbstractAbility {
                     ChatColor.GRAY + "!"
             );
 
-            Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, duration * 20, "BASE");
+            Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
             presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
                     name,
                     "PRES",
@@ -120,7 +121,7 @@ public class InspiringPresence extends AbstractAbility {
                     cooldownManager -> {
                         cancelAllySpeed.run();
                     },
-                    duration * 20
+                    tickDuration
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
@@ -151,12 +152,14 @@ public class InspiringPresence extends AbstractAbility {
         return playersAffected;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getEnergyPerSecond() {

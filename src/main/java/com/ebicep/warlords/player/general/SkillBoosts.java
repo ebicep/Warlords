@@ -393,7 +393,7 @@ public enum SkillBoosts {
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
-                    ((AvengersWrath) abstractAbility).setDuration(((AvengersWrath) abstractAbility).getDuration() + 5);
+                    ((AvengersWrath) abstractAbility).setTickDuration(((AvengersWrath) abstractAbility).getTickDuration() + 100);
                     ((AvengersWrath) abstractAbility).setEnergyPerSecond(((AvengersWrath) abstractAbility).getEnergyPerSecond() + 10);
                 }
             }
