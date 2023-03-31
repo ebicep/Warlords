@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -81,8 +82,20 @@ public class ItemEquipMenu {
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
         List<AbstractItem<?, ?, ?>> equippedItems = itemLoadout.getActualItems(itemsManager);
 
-        addWeightPercentageBar(player, databasePlayer, itemLoadout, menu, itemLoadout.getWeight(itemsManager).getA());
-
+        int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
+        int loadoutWeight = itemLoadout.getWeight(itemsManager);
+        menu.setItem(0, 0,
+                new ItemBuilder(HeadUtils.getHead(player))
+                        .name(ChatColor.GOLD + "Max Weight: " + ChatColor.GREEN + maxWeight)
+                        .lore(
+                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight < maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
+                                ""
+                        )
+                        .addLore(ItemMenuUtil.getTotalBonusLore(equippedItems))
+                        .get(),
+                (m, e) -> {}
+        );
+        addWeightPercentageBar(menu, maxWeight, loadoutWeight);
         int x = 0;
         int y = 2;
         for (ItemTier tier : ItemTier.VALUES) {
@@ -324,12 +337,13 @@ public class ItemEquipMenu {
         menu.openForPlayer(player);
     }
 
-    private static void addWeightPercentageBar(Player player, DatabasePlayer databasePlayer, ItemLoadout itemLoadout, Menu menu, int loadoutWeight) {
-        int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
+    private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {
         double ratio = loadoutWeight * 8d / maxWeight;
         for (int i = 0; i < 8; i++) {
             ItemStack glassPane;
-            if (i <= ratio - 1) {
+            if (loadoutWeight > maxWeight) {
+                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
+            } else if (i <= ratio - 1) {
                 glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
             } else if (i != 0 && i <= ratio - .5) {
                 glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4);
@@ -345,15 +359,6 @@ public class ItemEquipMenu {
                     }
             );
         }
-        menu.setItem(0, 0,
-                new ItemBuilder(HeadUtils.getHead(player))
-                        .name(ChatColor.GRAY + "Max Weight: " + ChatColor.GREEN + maxWeight)
-                        .lore(ChatColor.GRAY + "Current Weight: " + ChatColor.GREEN + loadoutWeight)
-                        .get(),
-                (m, e) -> {
-
-                }
-        );
     }
 
     public static void openItemEquipMenu(

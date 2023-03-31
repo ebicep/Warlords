@@ -5,8 +5,6 @@ import org.bukkit.ChatColor;
 
 public class ItemTomeModifier {
 
-    public static final int INCREASE_PER_TIER = 2;
-
     public enum Blessings implements ItemModifier<Blessings> {
         DELAYED("Delayed"),
         STRETCHED("Stretched"),
@@ -33,9 +31,18 @@ public class ItemTomeModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Ability Duration";
+            return getDescriptionCalculated((ordinal() + 1) * getIncreasePerTier());
         }
 
+        @Override
+        public String getDescriptionCalculated(float amount) {
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%" + ChatColor.GRAY + " Ability Duration";
+        }
+
+        @Override
+        public float getIncreasePerTier() {
+            return 1;
+        }
     }
 
     public enum Curses implements ItemModifier<Curses> {
@@ -64,7 +71,17 @@ public class ItemTomeModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Ability Duration";
+            return getDescriptionCalculated(-(ordinal() + 1) * getIncreasePerTier());
+        }
+
+        @Override
+        public String getDescriptionCalculated(float amount) {
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%" + ChatColor.GRAY + " Ability Duration";
+        }
+
+        @Override
+        public float getIncreasePerTier() {
+            return 2;
         }
 
     }

@@ -12,8 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemsManager;
-import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
-import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
+import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemGauntlet;
 import com.ebicep.warlords.pve.items.types.ItemTome;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ItemOption implements Option {
 
@@ -77,7 +75,7 @@ public class ItemOption implements Option {
             int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getDifficulty() != null && itemLoadout.getDifficulty() != pveOption.getDifficulty());
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
-            loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager).getA() > maxWeight);
+            loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
             if (loadouts.isEmpty()) {
                 return;
             }
@@ -88,15 +86,15 @@ public class ItemOption implements Option {
                             .stream()
                             .filter(ItemGauntlet.class::isInstance)
                             .map(ItemGauntlet.class::cast)
-                            .mapToInt(AbstractItem::getModifier)
-                            .sum() * ItemGauntletModifier.INCREASE_PER_TIER / 100.0)
+                            .mapToDouble(AbstractItem::getModifierCalculated)
+                            .sum() / 100.0)
             );
-            float abilityDurationModifier = 1 + applied
+            float abilityDurationModifier = (float) (1 + applied
                     .stream()
                     .filter(ItemTome.class::isInstance)
                     .map(ItemTome.class::cast)
-                    .mapToInt(AbstractItem::getModifier)
-                    .sum() * ItemTomeModifier.INCREASE_PER_TIER / 100f;
+                    .mapToDouble(AbstractItem::getModifierCalculated)
+                    .sum() / 100f);
             for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
                 if (ability instanceof Duration) {
                     ((Duration) ability).multiplyTickDuration(abilityDurationModifier);
@@ -106,16 +104,7 @@ public class ItemOption implements Option {
             if (!applied.isEmpty() && player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
                         new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                .appendHoverText(ChatColor.GOLD + loadout.getName(),
-                                        applied.stream()
-                                               .map(i ->
-                                                       ChatColor.GREEN + i.getName() + "\n" +
-                                                               i.getStatPoolLore().stream()
-                                                                .map(lore -> ChatColor.GRAY + " - " + lore)
-                                                                .collect(Collectors.joining("\n"))
-                                               )
-                                               .collect(Collectors.joining("\n"))
-                                )
+                                .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied)))
                 );
             }
         });

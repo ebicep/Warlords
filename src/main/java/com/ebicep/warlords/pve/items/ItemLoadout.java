@@ -4,11 +4,9 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemBuckler;
-import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -35,7 +33,7 @@ public class ItemLoadout {
      * @param itemsManager The items manager to get the items from
      * @return Pair(Weight, Modifier undivided by 100)
      */
-    public Pair<Integer, Integer> getWeight(ItemsManager itemsManager) {
+    public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
 
         List<AbstractItem<?, ?, ?>> actualItems = getActualItems(itemsManager);
@@ -43,12 +41,11 @@ public class ItemLoadout {
         for (AbstractItem<?, ?, ?> actualItem : actualItems) {
             weight += actualItem.getWeight();
             if (actualItem instanceof ItemBuckler) {
-                weightModifier += actualItem.getModifier();
+                weightModifier += actualItem.getModifierCalculated();
             }
         }
 
-        int actualWeightModifier = weightModifier * ItemBucklerModifier.INCREASE_PER_TIER;
-        return new Pair<>((int) (weight * (1 - actualWeightModifier / 100f)), actualWeightModifier);
+        return (int) (weight * (1 - weightModifier / 100f));
     }
 
     public List<AbstractItem<?, ?, ?>> getActualItems(ItemsManager itemsManager) {

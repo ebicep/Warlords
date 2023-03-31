@@ -54,10 +54,10 @@ public class ItemsManager {
      */
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         int weight = 0;
-        System.out.println("Weight: " + weight);
+//        System.out.println("Weight: " + weight);
         // x1
         weight += 5 * Math.log(databasePlayer.getPveStats().getWins() + 1);
-        System.out.println("Weight after x1: " + weight);
+//        System.out.println("Weight after x1: " + weight);
         // x2
         int totalPlayerClassLevel = 0;
         int highestPlayerClassLevel = 0;
@@ -67,21 +67,21 @@ public class ItemsManager {
             highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
         }
         weight += Math.ceil(50 - 50 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1));
-        System.out.println("Weight after x2: " + weight);
+//        System.out.println("Weight after x2: " + weight);
         // x3
         weight += getPrestigeWeight(databasePlayer, selectedSpec);
-        System.out.println("Weight after x3: " + weight);
+//        System.out.println("Weight after x3: " + weight);
         // x4
         weight += getAchievementsWeight(databasePlayer);
-        System.out.println("Weight after x4: " + weight);
+//        System.out.println("Weight after x4: " + weight);
         // x5
         weight += getHiScoreWeight(databasePlayer);
-        System.out.println("Weight after x5: " + weight);
+//        System.out.println("Weight after x5: " + weight);
         // x6
         if (databasePlayer.getPveStats().isCurrentlyPatreon()) {
             weight += 5;
         }
-        System.out.println("Weight after x6: " + weight);
+//        System.out.println("Weight after x6: " + weight);
         return Math.min(weight, 100);
     }
 

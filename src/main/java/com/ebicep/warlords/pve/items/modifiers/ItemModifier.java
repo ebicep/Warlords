@@ -33,4 +33,8 @@ public interface ItemModifier<T extends Enum<T>> {
 
     String getDescription();
 
+    String getDescriptionCalculated(float amount);
+
+    float getIncreasePerTier();
+
 }
