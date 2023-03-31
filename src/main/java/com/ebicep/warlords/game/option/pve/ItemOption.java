@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobDropEvent;
@@ -11,8 +13,10 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
+import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemGauntlet;
+import com.ebicep.warlords.pve.items.types.ItemTome;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
@@ -87,6 +91,17 @@ public class ItemOption implements Option {
                             .mapToInt(AbstractItem::getModifier)
                             .sum() * ItemGauntletModifier.INCREASE_PER_TIER / 100.0)
             );
+            float abilityDurationModifier = 1 + applied
+                    .stream()
+                    .filter(ItemTome.class::isInstance)
+                    .map(ItemTome.class::cast)
+                    .mapToInt(AbstractItem::getModifier)
+                    .sum() * ItemTomeModifier.INCREASE_PER_TIER / 100f;
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                if (ability instanceof Duration) {
+                    ((Duration) ability).multiplyTickDuration(abilityDurationModifier);
+                }
+            }
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
             if (!applied.isEmpty() && player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
