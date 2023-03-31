@@ -219,10 +219,12 @@ public class DrainingMiasma extends AbstractAbility implements Duration {
         this.leechDuration = leechDuration;
     }
 
+    @Override
     public int getTickDuration() {
         return tickDuration;
     }
 
+    @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }

@@ -172,12 +172,20 @@ public class Vindicate extends AbstractAbility implements Duration {
     }
 
 
+    @Override
     public int getTickDuration() {
         return vindTickDuration;
     }
 
+    @Override
     public void setTickDuration(int tickDuration) {
         this.vindTickDuration = tickDuration;
+    }
+
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.vindTickDuration *= multiplier;
+        this.damageReductionTickDuration *= multiplier;
     }
 
     public int getDamageReductionTickDuration() {

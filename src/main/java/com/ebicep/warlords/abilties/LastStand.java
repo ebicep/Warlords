@@ -32,7 +32,8 @@ public class LastStand extends AbstractAbility implements Duration {
     protected float amountPrevented = 0;
 
     private final int radius = 7;
-    private int tickDuration = 240; // ally is half, if need specific duration then add a "bonusAllyDuration" variable to add to half, needed for syncing
+    private int selfTickDuration = 240;
+    private int allyTickDuration = 120;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
 
@@ -49,8 +50,8 @@ public class LastStand extends AbstractAbility implements Duration {
     @Override
     public void updateDescription(Player player) {
         description = "Enter a defensive stance, reducing all damage you take by §c" + selfDamageReductionPercent +
-                "% §7for §6" + format(tickDuration / 20f) + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
-                "% §7for §6" + format(tickDuration / 20f / 2) + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
+                "% §7for §6" + format(selfTickDuration / 20f) + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
+                "% §7for §6" + format(allyTickDuration / 20f) + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
                 "\n\nHas a maximum range of §e" + radius + " §7blocks.";
     }
 
@@ -81,7 +82,7 @@ public class LastStand extends AbstractAbility implements Duration {
                 cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
-                tickDuration,
+                selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksLeft % 15 == 0) {
                         for (WarlordsEntity we : PlayerFilter
@@ -127,7 +128,7 @@ public class LastStand extends AbstractAbility implements Duration {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    tickDuration / 2
+                    allyTickDuration
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -176,7 +177,7 @@ public class LastStand extends AbstractAbility implements Duration {
             standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
                     ChatColor.GRAY + " " + wp.getName() + "'s " +
                     ChatColor.YELLOW + "Last Stand" +
-                    ChatColor.GRAY + " is now protecting you for §6" + format(tickDuration / 20f) + " §7seconds!"
+                    ChatColor.GRAY + " is now protecting you for §6" + format(allyTickDuration / 20f) + " §7seconds!"
             );
         }
 
@@ -254,13 +255,18 @@ public class LastStand extends AbstractAbility implements Duration {
 
     @Override
     public int getTickDuration() {
-        return tickDuration;
+        return selfTickDuration;
     }
 
     @Override
     public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
+        this.selfTickDuration = tickDuration;
     }
 
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.selfTickDuration *= multiplier;
+        this.allyTickDuration *= multiplier;
 
+    }
 }
