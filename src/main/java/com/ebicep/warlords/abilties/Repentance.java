@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,10 +15,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Repentance extends AbstractAbility {
+public class Repentance extends AbstractAbility implements Duration {
 
     private float pool = 0;
-    private int duration = 12;
+    private int tickDuration = 12;
     private int poolDecay = 60;
     private int damageConvertPercent = 10;
     private float energyConvertPercent = 3.5f;
@@ -29,7 +30,7 @@ public class Repentance extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + duration + " §7seconds.";
+                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -55,7 +56,7 @@ public class Repentance extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                tickDuration
         ) {
             @Override
             public boolean distinct() {
@@ -104,12 +105,14 @@ public class Repentance extends AbstractAbility {
         this.pool += amount;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getPoolDecay() {

@@ -243,6 +243,7 @@ public class Earthliving extends AbstractAbility implements Duration {
         return tickDuration;
     }
 
+    @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
