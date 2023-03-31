@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -22,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ArcaneShield extends AbstractAbility {
+public class ArcaneShield extends AbstractAbility implements Duration {
 
     public int timesBroken = 0;
 
     private int maxShieldHealth;
     private int shieldPercentage = 50;
-    private int duration = 6;
+    private int tickDuration = 120;
     private float shieldHealth = 0;
 
     public ArcaneShield() {
@@ -43,7 +44,7 @@ public class ArcaneShield extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Surround yourself with arcane energy, creating a shield that will absorb up to §e" + maxShieldHealth +
-                " §7(§e" + shieldPercentage + "% §7of your maximum health) incoming damage. Lasts §6" + duration + " §7seconds.";
+                " §7(§e" + shieldPercentage + "% §7of your maximum health) incoming damage. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -89,7 +90,7 @@ public class ArcaneShield extends AbstractAbility {
                         }
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation();
@@ -145,11 +146,13 @@ public class ArcaneShield extends AbstractAbility {
         this.shieldHealth += amount;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }
