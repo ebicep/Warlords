@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 
 public class ItemGauntletModifier {
 
+    public static final int INCREASE_PER_TIER = 5;
+
     public enum Blessings implements ItemModifier<Blessings> {
         STRONG("Strong"),
         POWERFUL("Powerful"),
@@ -31,13 +33,9 @@ public class ItemGauntletModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " Mob Drop Chance";
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Mob Drop Chance";
         }
 
-        @Override
-        public float getIncreasePerTier() {
-            return 5;
-        }
     }
 
     public enum Curses implements ItemModifier<Curses> {
@@ -66,12 +64,7 @@ public class ItemGauntletModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " Mob Drop Chance";
-        }
-
-        @Override
-        public float getIncreasePerTier() {
-            return 5;
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Mob Drop Chance";
         }
 
     }

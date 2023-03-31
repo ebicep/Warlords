@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemGauntlet;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -84,7 +85,7 @@ public class ItemOption implements Option {
                             .filter(ItemGauntlet.class::isInstance)
                             .map(ItemGauntlet.class::cast)
                             .mapToInt(AbstractItem::getModifier)
-                            .sum() / 100.0)
+                            .sum() * ItemGauntletModifier.INCREASE_PER_TIER / 100.0)
             );
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
             if (!applied.isEmpty() && player.getEntity() instanceof Player) {

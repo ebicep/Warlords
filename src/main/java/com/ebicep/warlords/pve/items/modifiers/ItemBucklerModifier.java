@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 
 public class ItemBucklerModifier {
 
+    public static final int INCREASE_PER_TIER = 2;
+
     public enum Blessings implements ItemModifier<Blessings> {
         DWARFISH("Dwarfish"),
         TINY("Tiny"),
@@ -31,13 +33,9 @@ public class ItemBucklerModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " Weight";
+            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format((ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
         }
 
-        @Override
-        public float getIncreasePerTier() {
-            return 2;
-        }
     }
 
     public enum Curses implements ItemModifier<Curses> {
@@ -66,12 +64,7 @@ public class ItemBucklerModifier {
 
         @Override
         public String getDescription() {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * getIncreasePerTier()) + "%" + ChatColor.GRAY + " Weight";
-        }
-
-        @Override
-        public float getIncreasePerTier() {
-            return 2;
+            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(-(ordinal() + 1) * INCREASE_PER_TIER) + "%" + ChatColor.GRAY + " Weight";
         }
 
     }
