@@ -25,7 +25,7 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("menu")
     public void menu(Player player) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemEquipMenuExternal(player, false));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
     }
 
     @Subcommand("equipmenu")

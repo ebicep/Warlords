@@ -108,9 +108,9 @@ public class AbilityTree {
                             .name(ChatColor.GREEN + "Save auto upgrade queue to spec")
                             .lore(
                                     "",
-                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GRAY + " to save",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GRAY + " to save.",
                                     ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
-                                            ChatColor.GRAY + " to " + (autoSave ? "disable" : "enable") + " auto save"
+                                            ChatColor.GRAY + " to " + (autoSave ? "disable" : "enable") + " auto save."
                             )
                             .get(),
                     (m, e) -> {

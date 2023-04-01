@@ -16,6 +16,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
+import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
@@ -174,8 +175,9 @@ public class WarlordsNewHotbarMenu {
                         .lore(
                                 ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige),
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to select this specialization",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to claim rewards"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
+                                        ChatColor.GREEN + " to select this specialization.",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to claim rewards."
                         );
                 if (hasRewards) {
                     itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
@@ -769,6 +771,14 @@ public class WarlordsNewHotbarMenu {
                         ChatColor.YELLOW + "Click to view!"
                 )
                 .get();
+        public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
+                .name("§aItems")
+                .lore(
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and equip all your Items.", 160),
+                        "",
+                        ChatColor.YELLOW + "Click to view!"
+                )
+                .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
                 .name("§aReward Inventory")
                 .lore(
@@ -819,8 +829,9 @@ public class WarlordsNewHotbarMenu {
                                 .get(),
                         (m, e) -> {}
                 );
-                menu.setItem(3, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
-                menu.setItem(4, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
+                menu.setItem(3, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+                menu.setItem(4, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(5, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

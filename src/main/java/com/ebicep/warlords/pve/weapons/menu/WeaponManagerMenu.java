@@ -441,7 +441,7 @@ public class WeaponManagerMenu {
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Change your weapon title to modify its stat distribution.", 180),
                     "",
                     ChatColor.GREEN + "Upgrade Weapon Title " + ChatColor.YELLOW + ChatColor.BOLD + "[RIGHT-CLICK]",
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Upgrade your weapon title to increase its passive effect", 180)
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Upgrade your weapon title to increase its passive effect.", 180)
             ));
             upgradeWeaponTitleLore.addAll(legendaryWeapon.getTitleUpgradeCostLore());
             weaponOptions.add(new Pair<>(

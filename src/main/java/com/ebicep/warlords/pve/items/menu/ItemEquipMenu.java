@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemLoadout;
@@ -24,28 +25,27 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
-import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
+import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
 public class ItemEquipMenu {
 
     public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
+    private static final ItemStack ITEM_EQUIP_MENU = new ItemBuilder(Material.ARMOR_STAND)
+            .name(ChatColor.GREEN + "Item Equip Menu")
+            .lore(ChatColor.GRAY + "Click to customize your Item Loadouts")
+            .get();
 
-    public static void openItemEquipMenuExternal(Player player, boolean fromNPC) {
+    public static void openItemEquipMenuExternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
-            List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
+        ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
 
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
-            ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
-            menuSettings.setOpenedFromNPC(fromNPC);
-            menuSettings.setItemInventory(itemInventory);
-            menuSettings.sort();
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
+        ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        menuSettings.setItemInventory(itemInventory);
+        menuSettings.sort();
 
-            openItemEquipMenuInternal(player, databasePlayer);
-        });
-
+        openItemEquipMenuInternal(player, databasePlayer);
     }
 
     public static void openItemEquipMenuInternal(Player player, DatabasePlayer databasePlayer) {
@@ -58,15 +58,13 @@ public class ItemEquipMenu {
                 (i, m, e) -> {},
                 itemBuilder -> itemBuilder,
                 menuSettings,
-                databasePlayer
+                databasePlayer,
+                m -> {
+                    m.setItem(1, 5, ITEM_EQUIP_MENU, (m2, e) -> ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer));
+                    m.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m2, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
+                }
         );
 
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-//        if (menuSettings.isOpenedFromNPC()) {
-//            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-//        } else {
-//            menu.setItem(4, 5, WarlordsNewHotbarMenu.PvEMenu.MENU_BACK_PVE, (m, e) -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(player));
-//        }
         menu.open();
     }
 
@@ -116,8 +114,10 @@ public class ItemEquipMenu {
                             item.generateItemBuilder()
                                 .addLore(
                                         "",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to swap this item",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to unequip this item"
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
+                                                ChatColor.GREEN + " to swap this item.",
+                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
+                                                ChatColor.GREEN + " to unequip this item."
                                 )
                                 .get(),
                             (m, e) -> {
@@ -158,7 +158,7 @@ public class ItemEquipMenu {
             ItemLoadout l = sortedLoadouts.get(i);
             DifficultyIndex difficulty = l.getDifficulty();
             Specializations spec = l.getSpec();
-            lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + i + ". " + l.getName() +
+            lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
                     " (" + l.getWeight(itemsManager) + " | " + (difficulty == null ? "Any" : difficulty.getName()) + " | " + (spec == null ? "Any" : spec.name) + ")");
         }
         menu.setItem(0, 5,
@@ -202,7 +202,7 @@ public class ItemEquipMenu {
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Rename Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout", 150))
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout.", 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
@@ -229,7 +229,7 @@ public class ItemEquipMenu {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.LAVA_BUCKET)
                         .name(ChatColor.RED + "Delete Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout", 150))
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout.", 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
@@ -257,7 +257,7 @@ public class ItemEquipMenu {
                     );
                 }
         );
-
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openItemEquipMenuInternal(player, databasePlayer));
         lore.clear();
         for (int i = 0; i < loadouts.size(); i++) {
             lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
