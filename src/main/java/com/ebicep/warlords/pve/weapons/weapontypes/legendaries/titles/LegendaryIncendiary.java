@@ -49,10 +49,8 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon {
 
         float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
         AbstractPlayerClass playerSpec = player.getSpec();
-        System.out.println(playerSpec.getEnergyPerHit());
 
         playerSpec.setEnergyPerHit(playerSpec.getEnergyPerHit() * (1 + (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100));
-        System.out.println(playerSpec.getEnergyPerHit());
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Incendiary",
                 null,
