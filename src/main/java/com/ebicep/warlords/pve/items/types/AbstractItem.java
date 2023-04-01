@@ -112,7 +112,10 @@ public abstract class AbstractItem<
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
                 .name(getName())
-                .lore("");
+                .lore(
+                        ChatColor.GRAY + "Tier: " + tier.getColoredName(),
+                        ""
+                );
         itemBuilder.addLore(getStatPoolLore());
         if (modifier != 0) {
             itemBuilder.addLore(
@@ -136,8 +139,10 @@ public abstract class AbstractItem<
             } else {
                 name += ChatColor.RED + getCurses()[-modifier - 1].getName() + " ";
             }
+        } else {
+            name += ChatColor.GRAY + "Normal ";
         }
-        name += tier.getColoredName() + " " + ChatColor.GRAY + getType().name;
+        name += getType().name;
         return name;
     }
 
