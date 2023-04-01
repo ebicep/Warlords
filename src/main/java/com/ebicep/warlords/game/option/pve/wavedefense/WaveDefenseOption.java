@@ -171,18 +171,19 @@ public class WaveDefenseOption implements Option, PveOption {
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
                             we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+
+                            if (coinGainOption == null) {
+                                return;
+                            }
+                            if (coinGainOption.getMobCoinValues()
+                                              .values()
+                                              .stream()
+                                              .anyMatch(stringLongLinkedHashMap -> stringLongLinkedHashMap.containsKey(mobToRemove.getName()))
+                            ) {
+                                waveDefenseStats.getMobsKilled().merge(mobToRemove.getName(), 1L, Long::sum);
+                            }
                         }
 
-                        if (coinGainOption == null) {
-                            return;
-                        }
-                        if (coinGainOption.getMobCoinValues()
-                                          .values()
-                                          .stream()
-                                          .anyMatch(stringLongLinkedHashMap -> stringLongLinkedHashMap.containsKey(mobToRemove.getName()))
-                        ) {
-                            waveDefenseStats.getMobsKilled().merge(mobToRemove.getName(), 1L, Long::sum);
-                        }
                     }
                     MobCommand.SPAWNED_MOBS.remove(mobToRemove);
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
@@ -315,7 +316,7 @@ public class WaveDefenseOption implements Option, PveOption {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Monsters Left: " + (spawnCount > 0 || ticksElapsed.get() < 10 ? ChatColor.RED : ChatColor.GREEN) + mobs.size());
+                return Collections.singletonList("Monsters Left: " + (spawnCount > 0 || ticksElapsed.get() < 10 ? ChatColor.RED : ChatColor.GREEN) + mobCount());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
@@ -636,7 +637,7 @@ public class WaveDefenseOption implements Option, PveOption {
                     return;
                 }
 
-                if (mobs.isEmpty() && spawnCount == 0) {
+                if (mobCount() == 0 && spawnCount == 0) {
                     newWave();
 
                     if (waveCounter > 1) {
@@ -701,7 +702,7 @@ public class WaveDefenseOption implements Option, PveOption {
                 optionalWeapon.ifPresent(abstractWeapon -> {
                     warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
                     warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
                     player.updateEntity();
                     player.getSpec().updateCustomStats();
                 });

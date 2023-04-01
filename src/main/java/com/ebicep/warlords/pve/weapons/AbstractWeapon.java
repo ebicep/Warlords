@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -74,7 +75,7 @@ public abstract class AbstractWeapon {
         this.specialization = warlordsPlayer.getSpecClass();
     }
 
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         player.setMaxBaseHealth(player.getMaxBaseHealth() + getHealthBonus());
         player.setHealth(player.getMaxHealth() + getHealthBonus());
     }

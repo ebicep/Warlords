@@ -13,6 +13,15 @@ public interface PveOption {
 
     int playerCount();
 
+    default int mobCount() {
+        return (int) getMobs()
+                .stream()
+                .filter(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
+                .count();
+    }
+
+    Set<AbstractMob<?>> getMobs();
+
     default int getWaveCounter() {
         return 1;
     }
@@ -26,8 +35,6 @@ public interface PveOption {
     }
 
     void spawnNewMob(AbstractMob<?> mob, Team team);
-
-    Set<AbstractMob<?>> getMobs();
 
     default boolean isPauseMobSpawn() {
         return false;

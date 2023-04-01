@@ -269,7 +269,7 @@ public class OnslaughtOption implements Option, PveOption {
 
                     ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
                     wp.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(wp);
+                    abstractWeapon.applyToWarlordsPlayer(wp, this);
                     player.updateEntity();
                     player.getSpec().updateCustomStats();
                 });
