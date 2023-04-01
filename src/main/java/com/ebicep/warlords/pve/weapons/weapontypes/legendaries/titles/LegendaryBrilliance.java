@@ -103,7 +103,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     public String getPassiveEffect() {
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return "When HP falls below 30%, incoming healing increases by 50% and outgoing healing increases by " +
+        return "When your HP falls below 30%, incoming healing increases by 50% and outgoing healing increases by " +
                 formatTitleUpgrade(outgoingHealingBoost, "%") +
                 " for 10s. Can be triggered once every " + formatTitleUpgrade(cooldown, "s") + ".";
     }
