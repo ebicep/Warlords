@@ -101,6 +101,7 @@ public class InspiringPresence extends AbstractAbility implements Duration {
             tempPresence.getPlayersAffected().add(presenceTarget);
             if (pveUpgrade) {
                 resetCooldowns(presenceTarget);
+                presenceTarget.setCooldownModifier(0.9);
             }
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                     ChatColor.GRAY + " Your Inspiring Presence inspired " +
@@ -120,8 +121,11 @@ public class InspiringPresence extends AbstractAbility implements Duration {
                     },
                     cooldownManager -> {
                         cancelAllySpeed.run();
+                        presenceTarget.setCooldownModifier(1);
                     },
-                    tickDuration
+                    tickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    })
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
@@ -139,11 +143,11 @@ public class InspiringPresence extends AbstractAbility implements Duration {
     }
 
     private void resetCooldowns(WarlordsEntity we) {
-        we.getRedAbility().subtractCooldown(30);
-        we.getPurpleAbility().subtractCooldown(30);
-        we.getBlueAbility().subtractCooldown(30);
+        we.getRedAbility().subtractCooldown(10);
+        we.getPurpleAbility().subtractCooldown(10);
+        we.getBlueAbility().subtractCooldown(10);
         if (!we.getOrangeAbility().getName().equals("Inspiring Presence")) {
-            we.getOrangeAbility().subtractCooldown(30);
+            we.getOrangeAbility().subtractCooldown(10);
         }
         we.updateItems();
     }
