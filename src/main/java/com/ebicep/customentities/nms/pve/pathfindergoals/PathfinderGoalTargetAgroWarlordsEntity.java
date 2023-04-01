@@ -7,6 +7,8 @@ import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityCreature;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.PathfinderGoalTarget;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Comparator;
@@ -46,11 +48,11 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends PathfinderGoalTarget
         if (thisWarlordsEntity == null) {
             return false;
         }
-        double followRange = this.f(); // GenericAttributes.FOLLOW_RANGE - default = 16
+        double followRange = this.f(); // GenericAttributes.FOLLOW_RANGE - default = 16/40
         List<EntityLiving> list = this.e.world.a(EntityLiving.class, this.e.getBoundingBox().grow(followRange, 4.0, followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
-            return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity);
+            return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
         });
         list.sort(this.nearestTargetSelector);
         if (list.isEmpty()) {

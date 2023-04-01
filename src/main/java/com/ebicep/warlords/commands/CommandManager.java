@@ -37,6 +37,7 @@ import com.ebicep.warlords.party.commands.StreamCommand;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
@@ -124,11 +125,11 @@ public class CommandManager {
                 target = arg == null ? name : arg;
             }
             Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
-                    .stream()
-                    .filter(WarlordsPlayer.class::isInstance)
-                    .map(WarlordsPlayer.class::cast)
-                    .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
-                    .findAny();
+                                                                      .stream()
+                                                                      .filter(WarlordsPlayer.class::isInstance)
+                                                                      .map(WarlordsPlayer.class::cast)
+                                                                      .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
+                                                                      .findAny();
             if (!optionalWarlordsPlayer.isPresent()) {
                 if (target.equals(name)) {
                     throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
@@ -164,6 +165,19 @@ public class CommandManager {
             throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
         });
         //Contexts
+        manager.getCommandContexts().registerContext(WarlordsNPC.class, command -> {
+            String target = command.popFirstArg();
+            Optional<WarlordsNPC> optionalWarlordsNPC = Warlords.getPlayers().values()
+                                                                .stream()
+                                                                .filter(WarlordsNPC.class::isInstance)
+                                                                .map(WarlordsNPC.class::cast)
+                                                                .filter(warlordsNPC -> warlordsNPC.getUuid().equals(UUID.fromString(target)))
+                                                                .findAny();
+            if (optionalWarlordsNPC.isEmpty()) {
+                throw new InvalidCommandArgument("Could not find WarlordsNPC with UUID " + target);
+            }
+            return optionalWarlordsNPC.get();
+        });
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
             OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
@@ -225,12 +239,12 @@ public class CommandManager {
         manager.getCommandContexts().registerContext(Game.class, command -> {
             String gameID = command.popFirstArg();
             Optional<Game> game = Warlords.getGameManager()
-                    .getGames()
-                    .stream()
-                    .map(GameManager.GameHolder::getGame)
-                    .filter(Objects::nonNull)
-                    .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
-                    .findAny();
+                                          .getGames()
+                                          .stream()
+                                          .map(GameManager.GameHolder::getGame)
+                                          .filter(Objects::nonNull)
+                                          .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
+                                          .findAny();
             if (game.isPresent()) {
                 return game.get();
             } else {
@@ -262,6 +276,15 @@ public class CommandManager {
                         .map(WarlordsPlayer::getName)
                         .collect(Collectors.toList())
         );
+        commandCompletions.registerAsyncCompletion("warlordsnpcs", command ->
+                Warlords.getPlayers().values()
+                        .stream()
+                        .filter(WarlordsNPC.class::isInstance)
+                        .map(WarlordsNPC.class::cast)
+                        .map(WarlordsNPC::getUuid)
+                        .map(UUID::toString)
+                        .collect(Collectors.toList())
+        );
         commandCompletions.registerAsyncCompletion("gameplayers", command ->
                 Warlords.getGameManager().getGames().stream()
                         .map(GameManager.GameHolder::getGame)
@@ -277,12 +300,12 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
-                        .map(GameMap::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMap::name)
+                      .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
-                        .map(GameMode::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMode::name)
+                      .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gameids", command ->
                 Warlords.getGameManager().getGames()
                         .stream()
@@ -297,9 +320,9 @@ public class CommandManager {
         );
         commandCompletions.registerAsyncCompletion("playerabilitystats",
                 command -> GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.keySet()
-                        .stream()
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList())
+                                                                                     .stream()
+                                                                                     .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                                                     .collect(Collectors.toList())
         );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
         commandCompletions.registerAsyncCompletion("partyleaders",
@@ -309,12 +332,12 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return PartyManager.PARTIES.stream()
-                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Party::getPartyPlayers)
-                        .flatMap(Collection::stream)
-                        .map(PartyPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                           .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                                           .map(Party::getPartyPlayers)
+                                           .flatMap(Collection::stream)
+                                           .map(PartyPlayer::getUUID)
+                                           .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                           .collect(Collectors.toList());
             }
             return null;
         });
@@ -322,12 +345,12 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Guild::getPlayers)
-                        .flatMap(Collection::stream)
-                        .map(GuildPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                          .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
+                                          .map(Guild::getPlayers)
+                                          .flatMap(Collection::stream)
+                                          .map(GuildPlayer::getUUID)
+                                          .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                          .collect(Collectors.toList());
             }
             return null;
         });
@@ -335,14 +358,14 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .map(Guild::getName)
-                        .collect(Collectors.toList());
+                                          .map(Guild::getName)
+                                          .collect(Collectors.toList());
             }
             return null;
         });
         commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
-                .map(Mobs::name)
-                .collect(Collectors.toList()));
+                                                                               .map(Mobs::name)
+                                                                               .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
 

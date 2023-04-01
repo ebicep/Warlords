@@ -29,6 +29,7 @@ import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
@@ -2859,9 +2860,15 @@ public enum GameMap {
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)
                     ,
-                    DifficultyIndex.EVENT,
-                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro's Lair")
+                    DifficultyIndex.EVENT
             ) {
+
+                @Override
+                public List<String> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro's Lair");
+
+                }
+
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
                     switch (playerCount) {
@@ -2969,9 +2976,15 @@ public enum GameMap {
                     )
                     .add(2, new SimpleWave(0, 5 * SECOND, null)
                     ),
-                    DifficultyIndex.EVENT,
-                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza")
-            ));
+                    DifficultyIndex.EVENT
+            ) {
+
+                @Override
+                public List<String> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.singletonList("Event: " + ChatColor.GREEN + "Boltaro Bonanza");
+                }
+
+            });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(200, 50, "spec"));
             options.add(new SafeZoneOption());
@@ -3168,9 +3181,14 @@ public enum GameMap {
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)
                     ,
-                    DifficultyIndex.EVENT,
-                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Pharaoh's Revenge")
+                    DifficultyIndex.EVENT
             ) {
+
+                @Override
+                public List<String> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.singletonList("Event: " + ChatColor.GREEN + "Pharaoh's Revenge");
+                }
+
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
                     switch (playerCount) {
@@ -3404,9 +3422,14 @@ public enum GameMap {
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)
                     ,
-                    DifficultyIndex.EVENT,
-                    (waveDefenseOption, warlordsPlayer) -> Collections.singletonList("Event: " + ChatColor.GREEN + "Spiders Burrow")
+                    DifficultyIndex.EVENT
             ) {
+
+                @Override
+                public List<String> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.singletonList("Event: " + ChatColor.GREEN + "Spiders Burrow");
+                }
+
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
                     switch (playerCount) {

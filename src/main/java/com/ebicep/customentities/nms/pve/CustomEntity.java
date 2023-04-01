@@ -86,7 +86,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiMeleeAttack(double speedTowardsTarget) {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.goalSelector.a(1, new PathfinderGoalMeleeAttack((EntityCreature) entity, EntityHuman.class, speedTowardsTarget, true));
+            entity.goalSelector.a(1, new PathfinderGoalMeleeAttack((EntityCreature) entity, EntityLiving.class, speedTowardsTarget, true));
         }
     }
 
@@ -98,7 +98,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void aiLookAtPlayer() {
-        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityHuman.class, 20.0F));
+        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityLiving.class, 20.0F));
     }
 
     default void aiLookIdle() {
@@ -109,7 +109,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetHitBy() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false, EntityHuman.class));
+            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false, EntityLiving.class));
         }
     }
 

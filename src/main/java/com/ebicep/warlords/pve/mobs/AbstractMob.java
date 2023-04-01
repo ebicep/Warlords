@@ -28,7 +28,6 @@ import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -220,7 +219,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
+        this.entity.setTarget((EntityLiving) ((CraftEntity) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {

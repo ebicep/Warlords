@@ -5,19 +5,19 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgroWarlordsEntity;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import net.minecraft.server.v1_8_R3.EntityCreature;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
@@ -67,11 +67,21 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption) {
                 PveOption pveOption = (PveOption) option;
                 AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
-                pveOption.spawnNewMob(mob);
-                EntityInsentient entityInsentient = mob.getEntityInsentient();
-                entityInsentient.targetSelector.a(2, new PathfinderGoalTargetAgroWarlordsEntity((EntityCreature) entityInsentient));
+                pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned Test Mob", true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), true);
+                return;
+            }
+        }
+    }
+
+    @Subcommand("togglespawning")
+    public void toggleSpawning(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player) {
+        for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
+            if (option instanceof PveOption) {
+                PveOption pveOption = (PveOption) option;
+                pveOption.setPauseMobSpawn(!pveOption.isPauseMobSpawn());
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + (pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning", true);
                 return;
             }
         }
@@ -99,7 +109,20 @@ public class MobCommand extends BaseCommand {
     }
 
     @Subcommand("target")
+    @CommandCompletion("@warlordsplayers")
     public void target(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, WarlordsPlayer target) {
+        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+            spawnedMob.setTarget(target);
+        }
+        ChatChannels.sendDebugMessage(player,
+                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
+                true
+        );
+    }
+
+    @Subcommand("targetnpc")
+    @CommandCompletion("@warlordsnpcs")
+    public void target(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, WarlordsNPC target) {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }

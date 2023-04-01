@@ -68,7 +68,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
@@ -92,26 +91,13 @@ public class WaveDefenseOption implements Option, PveOption {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
-    private BiFunction<WaveDefenseOption, WarlordsPlayer, List<String>> waveSidebarOverride = null;
+    private boolean pauseMobSpawn = false;
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this.team = team;
         this.waves = waves;
         this.difficulty = difficulty;
         this.maxWave = difficulty.getMaxWaves();
-    }
-
-    public WaveDefenseOption(
-            Team team,
-            WaveList waves,
-            DifficultyIndex difficulty,
-            BiFunction<WaveDefenseOption, WarlordsPlayer, List<String>> waveSidebarOverride
-    ) {
-        this.team = team;
-        this.waves = waves;
-        this.difficulty = difficulty;
-        this.maxWave = difficulty.getMaxWaves();
-        this.waveSidebarOverride = waveSidebarOverride;
     }
 
     @Override
@@ -322,10 +308,7 @@ public class WaveDefenseOption implements Option, PveOption {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                if (waveSidebarOverride != null) {
-                    return waveSidebarOverride.apply(WaveDefenseOption.this, player);
-                }
-                return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave != Integer.MAX_VALUE ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
+                return getWaveScoreboard(player);
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
@@ -358,129 +341,12 @@ public class WaveDefenseOption implements Option, PveOption {
         }.register(game);
     }
 
-    @Override
-    public void start(@Nonnull Game game) {
-        if (DatabaseManager.guildService != null) {
-            HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
-            for (Guild guild : GuildManager.GUILDS) {
-                for (UUID uuid : uuids) {
-                    Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
-                    if (guildPlayer.isPresent() && guildPlayer.get().getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
-                        guilds.computeIfAbsent(guild, k -> new HashSet<>()).add(uuid);
-                    }
-                }
-            }
-            System.out.println(guilds);
-            guilds.forEach((guild, validUUIDs) -> {
-                for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
-                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
-                    upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
-                }
-            });
-        }
-        new GameRunnable(game) {
-
-            @Override
-            public void run() {
-                if (game.getState() instanceof EndState) {
-                    this.cancel();
-                    return;
-                }
-
-                if (mobs.isEmpty() && spawnCount == 0) {
-                    newWave();
-
-                    if (waveCounter > 1) {
-                        Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
-                    }
-
-                    if (difficulty == DifficultyIndex.ENDLESS) {
-                        switch (waveCounter) {
-                            case 50:
-                            case 100:
-                                getGame().forEachOnlineWarlordsPlayer(wp -> {
-                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                                });
-                                break;
-                        }
-                    }
-                }
-
-                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
-                }
-
-                //check every 10 seconds for mobs in void
-                if (ticksElapsed.get() % 200 == 0) {
-                    for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                        Location location = marker.getLocation();
-                        for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                            if (mob.getWarlordsNPC().getLocation().getY() < -50) {
-                                mob.getWarlordsNPC().teleport(location);
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                ticksElapsed.getAndIncrement();
-            }
-        }.runTaskTimer(20, 0);
-    }
-
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
-
-            player.setInPve(true);
-            if (player.getEntity() instanceof Player) {
-                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-                player.setTeam(Team.BLUE);
-                player.updateArmor();
-            }
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                //weapons
-                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                Optional<AbstractWeapon> optionalWeapon = pveStats
-                        .getWeaponInventory()
-                        .stream()
-                        .filter(AbstractWeapon::isBound)
-                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                        .findFirst();
-                optionalWeapon.ifPresent(abstractWeapon -> {
-                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
-                    player.updateEntity();
-                    player.getSpec().updateCustomStats();
-                });
-            });
-        }
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getWeapon();
-        if (weapon == null) {
-            WeaponOption.showWeaponStats(warlordsPlayer, player);
-        } else {
-            WeaponOption.showPvEWeapon(warlordsPlayer, player);
-        }
-
-        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
-        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
-        }
-    }
-
-    @Override
-    public void onSpecChange(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            ((WarlordsPlayer) player).resetAbilityTree();
-        }
+    public List<String> getWaveScoreboard(WarlordsPlayer player) {
+        return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter +
+                ChatColor.RESET +
+                (maxWave != Integer.MAX_VALUE ? "/" + ChatColor.GREEN + maxWave : "") +
+                ChatColor.RESET +
+                (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
     }
 
     private List<String> healthScoreboard(Game game) {
@@ -633,6 +499,10 @@ public class WaveDefenseOption implements Option, PveOption {
                     return;
                 }
 
+                if (pauseMobSpawn) {
+                    return;
+                }
+
                 counter++;
                 if (lastSpawn == null) {
                     lastSpawn = spawn(getSpawnLocation(null));
@@ -736,6 +606,131 @@ public class WaveDefenseOption implements Option, PveOption {
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }
 
+    @Override
+    public void start(@Nonnull Game game) {
+        if (DatabaseManager.guildService != null) {
+            HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            for (Guild guild : GuildManager.GUILDS) {
+                for (UUID uuid : uuids) {
+                    Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
+                    if (guildPlayer.isPresent() && guildPlayer.get().getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
+                        guilds.computeIfAbsent(guild, k -> new HashSet<>()).add(uuid);
+                    }
+                }
+            }
+            System.out.println(guilds);
+            guilds.forEach((guild, validUUIDs) -> {
+                for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
+                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
+                    upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
+                }
+            });
+        }
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                if (game.getState() instanceof EndState) {
+                    this.cancel();
+                    return;
+                }
+
+                if (mobs.isEmpty() && spawnCount == 0) {
+                    newWave();
+
+                    if (waveCounter > 1) {
+                        Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
+                    }
+
+                    if (difficulty == DifficultyIndex.ENDLESS) {
+                        switch (waveCounter) {
+                            case 50:
+                            case 100:
+                                getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                                });
+                                break;
+                        }
+                    }
+                }
+
+                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
+                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
+                }
+
+                //check every 10 seconds for mobs in void
+                if (ticksElapsed.get() % 200 == 0) {
+                    for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+                        Location location = marker.getLocation();
+                        for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
+                            if (mob.getWarlordsNPC().getLocation().getY() < -50) {
+                                mob.getWarlordsNPC().teleport(location);
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                ticksElapsed.getAndIncrement();
+            }
+        }.runTaskTimer(20, 0);
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+
+            player.setInPve(true);
+            if (player.getEntity() instanceof Player) {
+                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                //weapons
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                Optional<AbstractWeapon> optionalWeapon = pveStats
+                        .getWeaponInventory()
+                        .stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                        .findFirst();
+                optionalWeapon.ifPresent(abstractWeapon -> {
+                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    warlordsPlayer.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                    player.updateEntity();
+                    player.getSpec().updateCustomStats();
+                });
+            });
+        }
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+        if (weapon == null) {
+            WeaponOption.showWeaponStats(warlordsPlayer, player);
+        } else {
+            WeaponOption.showPvEWeapon(warlordsPlayer, player);
+        }
+
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
+        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        }
+    }
+
+    @Override
+    public void onSpecChange(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            ((WarlordsPlayer) player).resetAbilityTree();
+        }
+    }
+
     public int getWavesCleared() {
         if (waveCounter <= 1) {
             return 0;
@@ -778,8 +773,8 @@ public class WaveDefenseOption implements Option, PveOption {
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob) {
-        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
@@ -804,5 +799,15 @@ public class WaveDefenseOption implements Option, PveOption {
 
     public WaveDefenseStats getWaveDefenseStats() {
         return waveDefenseStats;
+    }
+
+    @Override
+    public boolean isPauseMobSpawn() {
+        return pauseMobSpawn;
+    }
+
+    @Override
+    public void setPauseMobSpawn(boolean pauseMobSpawn) {
+        this.pauseMobSpawn = pauseMobSpawn;
     }
 }
