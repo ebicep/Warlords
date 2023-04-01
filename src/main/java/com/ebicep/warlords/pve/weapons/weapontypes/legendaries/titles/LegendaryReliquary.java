@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
@@ -49,7 +49,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon {
         float outgoingDamageIncrease = 1 + (OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Reliquary",
-                "RELIQ",
+                null,
                 LegendaryReliquary.class,
                 null,
                 player,
@@ -131,10 +131,16 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%")
-        ));
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(INCOMING_DAMAGE_INCREASE + INCOMING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 }
 

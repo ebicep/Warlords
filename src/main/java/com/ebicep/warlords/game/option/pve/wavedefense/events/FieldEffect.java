@@ -151,7 +151,7 @@ public class FieldEffect implements Option {
                 if (player instanceof WarlordsPlayer) {
                     AbstractPlayerClass spec = player.getSpec();
                     spec.setEnergyPerSec(spec.getEnergyPerSec() - 10);
-                    spec.setEnergyOnHit(spec.getEnergyOnHit() * 2.5f);
+                    spec.setEnergyPerHit(spec.getEnergyPerHit() * 2.5f);
                 }
             }
         },

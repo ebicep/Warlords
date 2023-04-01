@@ -200,7 +200,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     float afterReduction;
-                                    if (isProjectile(event.getAbility())) {
+                                    if (Utils.isProjectile(event.getAbility())) {
                                         if (isInsideBubble.contains(event.getAttacker())) {
                                             afterReduction = currentDamageValue;
                                         } else {
@@ -236,7 +236,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float afterReduction;
                 hits.getAndIncrement();
-                if (isProjectile(event.getAbility())) {
+                if (Utils.isProjectile(event.getAbility())) {
                     if (isInsideBubble.contains(event.getAttacker())) {
                         afterReduction = currentDamageValue;
                     } else {
@@ -260,16 +260,6 @@ public class PrismGuard extends AbstractAbility implements Duration {
 
     public void addDamageReduced(float amount) {
         damageReduced += amount;
-    }
-
-    private boolean isProjectile(String ability) {
-        return ability.equals("Fireball") ||
-                ability.equals("Frostbolt") ||
-                ability.equals("Water Bolt") ||
-                ability.equals("Lightning Bolt") ||
-                ability.equals("Flame Burst") ||
-                ability.equals("Fallen Souls") ||
-                ability.equals("Soothing Elixir");
     }
 
     public int getProjectileDamageReduction() {

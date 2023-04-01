@@ -26,6 +26,7 @@ public enum LegendaryTitles {
     VALIANT("Valiant", LegendaryValiant.class, LegendaryValiant::new, LegendaryValiant::new, 1),
     BRILLIANCE("Brilliance", LegendaryBrilliance.class, LegendaryBrilliance::new, LegendaryBrilliance::new, 2),
     RELIQUARY("Reliquary", LegendaryReliquary.class, LegendaryReliquary::new, LegendaryReliquary::new, 3),
+    INCENDIARY("Incendiary", LegendaryIncendiary.class, LegendaryIncendiary::new, LegendaryIncendiary::new, 4),
 
     ;
 

@@ -261,7 +261,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
 
         AbstractPlayerClass playerClass = player.getSpec();
-        playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + getEnergyPerHitBonus());
+        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + getEnergyPerHitBonus());
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
