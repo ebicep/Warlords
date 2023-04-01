@@ -18,7 +18,7 @@ import java.util.UUID;
 public class LegendaryReliquary extends AbstractLegendaryWeapon {
 
     public static final int INCOMING_DAMAGE_INCREASE = 15;
-    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = -1;
+    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 1;
     public static final int OUTGOING_DAMAGE_INCREASE = 30;
     public static final float OUTGOING_DAMAGE_INCREASE_PER_UPGRADE = 2.5f;
 
