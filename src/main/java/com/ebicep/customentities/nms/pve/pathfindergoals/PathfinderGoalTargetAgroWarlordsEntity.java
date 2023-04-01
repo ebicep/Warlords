@@ -3,12 +3,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityCreature;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.PathfinderGoalTarget;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.Comparator;
@@ -52,7 +47,7 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends PathfinderGoalTarget
         List<EntityLiving> list = this.e.world.a(EntityLiving.class, this.e.getBoundingBox().grow(followRange, 4.0, followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
-            return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
+            return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof EntityPlayer && ((EntityPlayer) entity).playerInteractManager.getGameMode() == WorldSettings.EnumGamemode.CREATIVE);
         });
         list.sort(this.nearestTargetSelector);
         if (list.isEmpty()) {

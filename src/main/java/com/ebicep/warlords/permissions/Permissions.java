@@ -71,7 +71,7 @@ public enum Permissions {
 
     public static void sendMessageToDebug(WarlordsEntity player, String message) {
         if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
-            player.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            player.getEntity().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
         }
     }
 
