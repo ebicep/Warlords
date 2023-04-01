@@ -24,6 +24,7 @@ public enum LegendaryTitles {
     ARBALEST("Arbalest", LegendaryArbalest.class, LegendaryArbalest::new, LegendaryArbalest::new, 15),
     REVERED("Revered", LegendaryRevered.class, LegendaryRevered::new, LegendaryRevered::new, 0),
     VALIANT("Valiant", LegendaryValiant.class, LegendaryValiant::new, LegendaryValiant::new, 1),
+    BRILLIANCE("Brilliance", LegendaryBrilliance.class, LegendaryBrilliance::new, LegendaryBrilliance::new, 2),
 
     ;
 

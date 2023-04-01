@@ -605,9 +605,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         if (upgradeCost == null) {
             return Collections.singletonList(ChatColor.RED + "Unavailable!");
         } else if (upgradeCost.isEmpty()) {
-            return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Collections.singletonList("\n" + ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
-            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost: ");
+            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost");
         }
     }
 
