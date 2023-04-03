@@ -115,6 +115,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("auto_save_upgrade_profile")
     private boolean autoSaveUpgradeProfile;
 
+    @Field("illusion_vendor_rewards_purchased")
+    private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
+
 
     @Override
     public void updateCustomStats(
@@ -449,5 +452,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public void setCurrentlyPatreon(boolean currentlyPatreon) {
         this.currentlyPatreon = currentlyPatreon;
+    }
+
+    public Map<String, Long> getIllusionVendorRewardsPurchased() {
+        return illusionVendorRewardsPurchased;
     }
 }
