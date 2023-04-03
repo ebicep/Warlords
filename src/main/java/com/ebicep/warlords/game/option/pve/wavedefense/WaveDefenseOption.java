@@ -67,8 +67,8 @@ public class WaveDefenseOption implements Option, PveOption {
     private final WaveList waves;
     private final DifficultyIndex difficulty;
     private final int maxWave;
-    private final WaveDefenseRewards waveDefenseRewards = new WaveDefenseRewards(this);
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
+    private WaveDefenseRewards waveDefenseRewards;
     private int waveCounter = 0;
     private int spawnCount = 0;
     private Wave currentWave;
@@ -89,6 +89,7 @@ public class WaveDefenseOption implements Option, PveOption {
     @Override
     public void register(Game game) {
         this.game = game;
+        this.waveDefenseRewards = new WaveDefenseRewards(this);
         for (Option o : game.getOptions()) {
             if (o instanceof BoundingBoxOption) {
                 BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;

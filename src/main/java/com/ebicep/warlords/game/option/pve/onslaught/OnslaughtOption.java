@@ -50,9 +50,9 @@ public class OnslaughtOption implements Option, PveOption {
 
     private final Team team;
     private final WaveList mobSet;
-    private final OnslaughtRewards onslaughtRewards = new OnslaughtRewards(this);
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private OnslaughtRewards onslaughtRewards;
     private Game game;
     private Wave currentMobSet;
     private int spawnCount = 0;
@@ -69,6 +69,7 @@ public class OnslaughtOption implements Option, PveOption {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        this.onslaughtRewards = new OnslaughtRewards(this);
         for (Option o : game.getOptions()) {
             if (o instanceof BoundingBoxOption) {
                 BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;
