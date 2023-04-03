@@ -99,7 +99,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
             );
         }
 
-        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(4, 4, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
