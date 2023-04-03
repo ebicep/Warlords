@@ -115,7 +115,11 @@ public enum Currencies implements Spendable {
             ChatColor.MAGIC,
             new ItemStack(Material.BEDROCK)
     ),
-
+    ILLUSION_SHARD(
+            "Illusion Shard",
+            ChatColor.WHITE,
+            new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
+    ),
     ;
 
     public static final List<Currencies> STAR_PIECES = Arrays.asList(
@@ -213,6 +217,16 @@ public enum Currencies implements Spendable {
         this.name = name;
         this.chatColor = chatColor;
         this.item = item;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return item;
     }
 
     @Override

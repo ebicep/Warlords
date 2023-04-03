@@ -118,6 +118,7 @@ public class NPCManager {
                     createMysteriousTokenNPC();
                     createItemMichaelNPC();
                     createItemEnyaNPC();
+                    createIllusionVendorNPC();
                 })
                 .execute();
     }
@@ -260,6 +261,20 @@ public class NPCManager {
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 50, 748.5, 90, 0));
+    }
+
+    public static void createIllusionVendorNPC() {
+        registerTrait(IllusionVendorTrait.class, "IllusionVendorTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.BLAZE, "illusion-vendor");
+        npc.addTrait(IllusionVendorTrait.class);
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 55, 748.5, 90, 0));
     }
 
 

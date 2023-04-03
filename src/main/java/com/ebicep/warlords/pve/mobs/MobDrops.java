@@ -34,6 +34,15 @@ public enum MobDrops implements Spendable {
         this.item = item;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return item;
+    }
 
     @Override
     public void addToPlayer(DatabasePlayer databasePlayer, long amount) {

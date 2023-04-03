@@ -34,6 +34,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -77,14 +79,14 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
-                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
-                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
-                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventShopReward(1_000, Currencies.COIN, -1, 10_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 10_000));
             }}
     ) {
         @Override
@@ -304,18 +306,18 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
-                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
-                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
-                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventShopReward(1_000, Currencies.COIN, -1, 8_000));
-                add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
-                add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
-                add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
-                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override
@@ -510,18 +512,18 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3, 300_000));
-                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
-                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
-                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventShopReward(1_000, Currencies.COIN, -1, 8_000));
-                add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
-                add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
-                add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
-                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3, 300_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override
@@ -714,7 +716,7 @@ public enum GameEvents {
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
-    public final List<EventShopReward> shopRewards;
+    public final List<SpendableBuyShop> shopRewards;
 
     GameEvents(
             String name,
@@ -723,7 +725,7 @@ public enum GameEvents {
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
-            List<EventShopReward> shopRewards
+            List<SpendableBuyShop> shopRewards
     ) {
         this.name = name;
         this.currency = currency;
@@ -879,11 +881,11 @@ public enum GameEvents {
 
             int x = 1;
             int y = 1;
-            for (EventShopReward reward : shopRewards) {
+            for (SpendableBuyShop reward : shopRewards) {
                 int rewardAmount = reward.getAmount();
-                Currencies rewardCurrency = reward.getCurrency();
+                Spendable rewardSpendable = reward.getSpendable();
                 int rewardPrice = reward.getPrice();
-                String mapName = rewardAmount + "_" + rewardCurrency.name();
+                String mapName = reward.getMapName();
 
                 String stock;
                 if (reward.getStock() == -1) {
@@ -896,8 +898,8 @@ public enum GameEvents {
 
 
                 menu.setItem(x, y,
-                        new ItemBuilder(rewardCurrency.item)
-                                .name(rewardCurrency.getCostColoredName(rewardAmount))
+                        new ItemBuilder(rewardSpendable.getItem())
+                                .name(rewardSpendable.getCostColoredName(rewardAmount))
                                 .lore(
                                         ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
                                         ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
@@ -915,7 +917,7 @@ public enum GameEvents {
                                 return;
                             }
                             pveStats.subtractCurrency(currency, rewardPrice);
-                            pveStats.addCurrency(rewardCurrency, rewardAmount);
+                            rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
 
                             //event
                             eventStats.getRewardsPurchased().merge(mapName, 1L, Long::sum);
@@ -924,7 +926,7 @@ public enum GameEvents {
                             //event in event mode
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
 
-                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
+                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardSpendable.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
                                     rewardPrice) + ChatColor.GREEN + "!");
                             player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2.5f);
                             openShopMenu(player);
@@ -946,34 +948,4 @@ public enum GameEvents {
         });
     }
 
-    static class EventShopReward {
-
-        private final int amount;
-        private final Currencies currency;
-        private final int stock;
-        private final int price;
-
-        EventShopReward(int amount, Currencies currency, int stock, int price) {
-            this.amount = amount;
-            this.currency = currency;
-            this.stock = stock;
-            this.price = price;
-        }
-
-        public int getAmount() {
-            return amount;
-        }
-
-        public Currencies getCurrency() {
-            return currency;
-        }
-
-        public int getStock() {
-            return stock;
-        }
-
-        public int getPrice() {
-            return price;
-        }
-    }
 }
