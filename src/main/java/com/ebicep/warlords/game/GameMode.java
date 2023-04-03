@@ -287,6 +287,11 @@ public enum GameMode {
 
             return options;
         }
+
+        @Override
+        public float getMobDropModifier() {
+            return .1f;
+        }
     },
     BOSS_RUSH(
             "Boss Rush",
@@ -443,6 +448,10 @@ public enum GameMode {
         return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE;
     }
 
+    public static boolean isPvE(GameMode mode) {
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT;
+    }
+
     public final String name;
     public final String abbreviation;
     public final ItemStack itemStack;
@@ -466,6 +475,10 @@ public enum GameMode {
         this.gamesCollections = gamesCollections;
         this.minPlayersToAddToDatabase = minPlayersToAddToDatabase;
         this.isHiddenInMenu = isHiddenInMenu;
+    }
+
+    public float getMobDropModifier() {
+        return 1;
     }
 
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

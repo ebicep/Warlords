@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -45,11 +46,14 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
         super(game, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                this.difficulty = waveDefenseOption.getDifficulty();
-                this.wavesCleared = waveDefenseOption.getWavesCleared();
-                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer, waveDefenseOption)));
+            if (option instanceof PveOption) {
+                PveOption pveOption = (PveOption) option;
+                this.difficulty = pveOption.getDifficulty();
+                if (option instanceof WaveDefenseOption) {
+                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    this.wavesCleared = waveDefenseOption.getWavesCleared();
+                }
+                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer, pveOption)));
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);

@@ -4,9 +4,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.CoinGainOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
+import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
@@ -129,7 +129,7 @@ public enum Currencies implements Spendable {
 
     public static PvECoinSummary getCoinGainFromGameStats(
             WarlordsEntity warlordsPlayer,
-            WaveDefenseOption waveDefenseOption,
+            PveOption pveOption,
             boolean recalculate
     ) {
         if (!recalculate &&
@@ -139,10 +139,10 @@ public enum Currencies implements Spendable {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
         }
 
-        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption
-                .getWaveDefenseStats()
-                .getPlayerWaveDefenseStats(warlordsPlayer.getUuid());
-        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(playerWaveDefenseStats.getCachedBaseCoinSummary());
+        PlayerPveRewards playerPveRewards = pveOption
+                .getRewards()
+                .getPlayerRewards(warlordsPlayer.getUuid());
+        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(playerPveRewards.getCachedBaseCoinSummary());
 
         long totalCoinsEarned = 0;
         for (Long value : coinSummary.values()) {
@@ -150,7 +150,7 @@ public enum Currencies implements Spendable {
         }
 
         long guildCoinsEarned = 0;
-        CoinGainOption coinGainOption = waveDefenseOption
+        CoinGainOption coinGainOption = pveOption
                 .getGame()
                 .getOptions()
                 .stream()
@@ -162,7 +162,7 @@ public enum Currencies implements Spendable {
         if (coinGainOption != null) {
             Pair<Long, Integer> guildCoinPerXSec = coinGainOption.getGuildCoinPerXSec();
             if (guildCoinPerXSec != null) {
-                RecordTimeElapsedOption recordTimeElapsedOption = waveDefenseOption
+                RecordTimeElapsedOption recordTimeElapsedOption = pveOption
                         .getGame()
                         .getOptions()
                         .stream()

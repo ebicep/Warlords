@@ -3,7 +3,7 @@ package com.ebicep.customentities.nms.pve;
 import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgroWarlordsEntity;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
@@ -131,7 +131,7 @@ public interface CustomEntity<T extends EntityInsentient> {
         ((CraftWorld) location.getWorld()).getHandle().addEntity(customEntity);
     }
 
-    default void onDeath(T entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    default void onDeath(T entity, Location deathLocation, PveOption pveOption) {
     }
 
     T get();

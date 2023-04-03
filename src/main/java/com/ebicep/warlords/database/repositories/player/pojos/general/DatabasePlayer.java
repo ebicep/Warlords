@@ -137,7 +137,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //PvE outside all base stats besides universal experience
         AbstractDatabaseStatInformation classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
         DatabaseSpecialization specStats = this.getSpec(gamePlayer.getSpec());
-        if (GameMode.isWaveDefense(gameMode)) {
+        if (GameMode.isPvE(gameMode)) {
             //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
             classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);

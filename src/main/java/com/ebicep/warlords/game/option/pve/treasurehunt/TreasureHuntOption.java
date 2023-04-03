@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.Bukkit;
 
@@ -49,7 +50,22 @@ public class TreasureHuntOption implements Option, PveOption {
     }
 
     @Override
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return null;
+    }
+
+    @Override
     public Set<AbstractMob<?>> getMobs() {
         return mobs.keySet();
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
     }
 }

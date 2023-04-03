@@ -96,7 +96,7 @@ public class ItemEquipMenu {
         addWeightPercentageBar(menu, maxWeight, loadoutWeight);
         int x = 0;
         int y = 2;
-        for (ItemTier tier : ItemTier.VALUES) {
+        for (ItemTier tier : ItemTier.VALID_VALUES) {
             for (int j = 0; j < tier.maxEquipped; j++) {
                 menu.setItem(x, y,
                         new ItemBuilder(tier.clayBlock)

@@ -17,6 +17,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtDatabaseStatInformation;
 import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
@@ -61,17 +62,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
+    //TODO MOVE ALL ABOVE
+    @Field("wave_defense_stats")
+    private DatabasePlayerPvEDifficultyStats waveDefenseStats = new DatabasePlayerPvEDifficultyStats();
+    @Field("onslaught_stats")
+    private OnslaughtDatabaseStatInformation onslaughtStats = new OnslaughtDatabaseStatInformation();
     //EVENTS
     @Field("event_stats")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();
-    /*
-        event_stats
-        > total shit
-          > event_1
-            > date_1
-            > date_2
-          > event_2
-     */
+
     //GENERAL
 
     //SUPPLY DROP
@@ -127,7 +126,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             PlayersCollections playersCollection
     ) {
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePlayerPvE gamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
 
@@ -215,28 +213,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         //MOB DROPS
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-        if (databaseGame instanceof DatabaseGamePvE) {
-            DifficultyIndex difficulty = ((DatabaseGamePvE) databaseGame).getDifficulty();
-            //TODO REMOVE
-            int wavesCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
-            switch (difficulty) {
-                case NORMAL:
-                case HARD:
-                    if (wavesCleared >= 25) {
-                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
-                    }
-                    break;
-                case ENDLESS:
-                    if (wavesCleared >= 50) {
-                        addCurrency(Currencies.MYSTERIOUS_TOKEN, multiplier);
-                    }
-                    break;
-            }
-        }
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-        this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
@@ -251,11 +230,16 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), ((DatabaseGamePvEEvent) databaseGame).getPointLimit()) * multiplier
             );
         } else {
-            PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
-            if (difficultyStats != null) {
-                difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-            } else {
-                ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            if (GameMode.isWaveDefense(gameMode)) {
+                super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvE) databaseGame).getDifficulty());
+                if (difficultyStats != null) {
+                    difficultyStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                } else {
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+                }
+            } else if (gameMode == GameMode.ONSLAUGHT) {
+
             }
         }
     }

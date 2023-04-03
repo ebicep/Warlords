@@ -196,7 +196,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .teammatesOf((WarlordsPlayer) killer)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode()
+                                                                                                                                                  .getMobDropModifier());
                                    Bukkit.getPluginManager().callEvent(new WarlordsMobDropEvent(warlordsPlayer, dropRate));
                                    if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(warlordsPlayer, drop));

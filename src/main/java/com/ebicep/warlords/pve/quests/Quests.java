@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.quests;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -26,7 +27,7 @@ public enum Quests {
             null
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return false;
         }
     },
@@ -40,9 +41,12 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
-            return total.getKills() + total.getAssists() >= 150;
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            if (pveOption instanceof WaveDefenseOption) {
+                PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+                return total.getKills() + total.getAssists() >= 150;
+            }
+            return false;
         }
     },
     DAILY_2_PLAYS("Motivate",
@@ -55,7 +59,7 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getPlays() + 1 >= 2;
         }
 
@@ -79,8 +83,12 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getWins() >= 1 || waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            if (pveOption instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                return databasePlayer.getPveStats().getWins() >= 1 || waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
+            }
+            return false;
         }
     },
     DAILY_20_WAVE_CLEAR("Wave Clearer",
@@ -93,8 +101,12 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            if (pveOption instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                return databasePlayer.getPveStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
+            }
+            return false;
         }
 
         @Override
@@ -118,7 +130,7 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             return databasePlayer.getPveStats().getPlays() + 1 >= 20;
         }
 
@@ -142,8 +154,12 @@ public enum Quests {
             }}
     ) {
         @Override
-        public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS && waveDefenseOption.getWavesCleared() >= 30;
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            if (pveOption instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                return waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS && waveDefenseOption.getWavesCleared() >= 30;
+            }
+            return false;
         }
     },
 
@@ -152,7 +168,7 @@ public enum Quests {
     public static final Quests[] VALUES = values();
     public static final HashMap<UUID, List<Quests>> CACHED_PLAYER_QUESTS = new HashMap<>();
 
-    public static List<Quests> getQuestsFromGameStats(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption, boolean recalculate) {
+    public static List<Quests> getQuestsFromGameStats(WarlordsPlayer warlordsPlayer, PveOption pveOption, boolean recalculate) {
         if (!QuestCommand.isQuestsEnabled) {
             CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), new ArrayList<>());
             return new ArrayList<>();
@@ -174,7 +190,7 @@ public enum Quests {
                 if (databasePlayer.getPveStats().getQuestsCompleted().containsKey(quest)) {
                     return;
                 }
-                if (quest.checkReward(waveDefenseOption, warlordsPlayer, databasePlayer)) {
+                if (quest.checkReward(pveOption, warlordsPlayer, databasePlayer)) {
                     questsCompleted.add(quest);
                 }
             });
@@ -185,7 +201,7 @@ public enum Quests {
     }
 
     public abstract boolean checkReward(
-            WaveDefenseOption waveDefenseOption,
+            PveOption pveOption,
             WarlordsPlayer warlordsPlayer,
             DatabasePlayer databasePlayer
     );

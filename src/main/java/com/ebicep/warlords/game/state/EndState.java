@@ -9,8 +9,9 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
@@ -100,13 +101,13 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
         sendGlobalMessage(game, "", false);
         if (teamBlueWins) {
-            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+            if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "PLAYERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
             }
         } else if (teamRedWins) {
-            if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+            if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "MONSTERS", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
@@ -125,9 +126,10 @@ public class EndState implements State, TimerDebugAble {
         switch (game.getGameMode()) {
             case WAVE_DEFENSE:
             case EVENT_WAVE_DEFENSE:
+            case ONSLAUGHT:
                 for (Option option : options) {
-                    if (option instanceof WaveDefenseOption) {
-                        showWaveDefenseStats((WaveDefenseOption) option, players);
+                    if (option instanceof PveOption) {
+                        showWaveDefenseStats((PveOption) option, players);
                         break;
                     }
                 }
@@ -175,7 +177,7 @@ public class EndState implements State, TimerDebugAble {
                     .create()
             );
 
-            boolean hoverable = !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode());
+            boolean hoverable = !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
             List<BaseComponent> baseComponents = new ArrayList<>(List.of(wp.getAllMinuteHoverableStats(MinuteStats.KILLS, hoverable)));
             baseComponents.add(ChatUtils.SPACER);
             baseComponents.addAll(List.of(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS, hoverable)));
@@ -250,12 +252,12 @@ public class EndState implements State, TimerDebugAble {
             sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
             for (Option option : options) {
-                if (option instanceof WaveDefenseOption) {
-                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                    showCoinSummary(waveDefenseOption, players);
-                    showWeaponSummary(waveDefenseOption, players);
-                    showMobDropSummary(waveDefenseOption, players);
-                    showQuestSummary(waveDefenseOption, players);
+                if (option instanceof PveOption) {
+                    PveOption pveOption = (PveOption) option;
+                    showCoinSummary(pveOption, players);
+                    showWeaponSummary(pveOption, players);
+                    showMobDropSummary(pveOption, players);
+                    showQuestSummary(pveOption, players);
                     break;
                 }
             }
@@ -318,16 +320,19 @@ public class EndState implements State, TimerDebugAble {
         });
     }
 
-    private void showWaveDefenseStats(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showWaveDefenseStats(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         StringBuilder hover = new StringBuilder();
-        hover.append(ChatColor.WHITE)
-             .append("Waves Cleared")
-             .append(ChatColor.GRAY)
-             .append(": ")
-             .append(ChatColor.GREEN)
-             .append(waveDefenseOption.getWavesCleared())
-             .append("\n");
+        if (pveOption instanceof WaveDefenseOption) {
+            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            hover.append(ChatColor.WHITE)
+                 .append("Waves Cleared")
+                 .append(ChatColor.GRAY)
+                 .append(": ")
+                 .append(ChatColor.GREEN)
+                 .append(waveDefenseOption.getWavesCleared())
+                 .append("\n");
+        }
         game.getOptions()
             .stream()
             .filter(option -> option instanceof RecordTimeElapsedOption)
@@ -524,30 +529,30 @@ public class EndState implements State, TimerDebugAble {
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
 
 
-            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp, null, false);
-            if (expFromWaveDefense.size() > 0) {
-                StringBuilder expFromWaveDefenseSummary = new StringBuilder();
-                expFromWaveDefense.forEach((s, aLong) -> {
-                    expFromWaveDefenseSummary.append(ChatColor.AQUA)
-                                             .append(s)
-                                             .append(ChatColor.WHITE)
-                                             .append(": ")
-                                             .append(ChatColor.DARK_GRAY)
-                                             .append("+")
-                                             .append(ChatColor.DARK_GREEN)
-                                             .append(aLong)
-                                             .append("\n");
+            LinkedHashMap<String, Long> expFromPvE = GuildExperienceUtils.getExpFromPvE(wp, null, false);
+            if (expFromPvE.size() > 0) {
+                StringBuilder expFromPvESummary = new StringBuilder();
+                expFromPvE.forEach((s, aLong) -> {
+                    expFromPvESummary.append(ChatColor.AQUA)
+                                     .append(s)
+                                     .append(ChatColor.WHITE)
+                                     .append(": ")
+                                     .append(ChatColor.DARK_GRAY)
+                                     .append("+")
+                                     .append(ChatColor.DARK_GREEN)
+                                     .append(aLong)
+                                     .append("\n");
                 });
-                expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
+                expFromPvESummary.setLength(expFromPvESummary.length() - 1);
 
                 ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
                         .appendHoverText(
                                 ChatColor.GRAY + "+" +
-                                        ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromWaveDefense.values()
-                                                                                                          .stream()
-                                                                                                          .mapToLong(Long::longValue)
-                                                                                                          .sum()) + " " +
-                                        ChatColor.DARK_GREEN + "Guild Experience", expFromWaveDefenseSummary.toString()
+                                        ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromPvE.values()
+                                                                                                  .stream()
+                                                                                                  .mapToLong(Long::longValue)
+                                                                                                  .sum()) + " " +
+                                        ChatColor.DARK_GREEN + "Guild Experience", expFromPvESummary.toString()
                         )
                         .create()
                 );
@@ -555,7 +560,7 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private void showCoinSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showCoinSummary(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ COINS SUMMARY ✚", true);
 
@@ -564,7 +569,7 @@ public class EndState implements State, TimerDebugAble {
             if (player == null) {
                 continue;
             }
-            Currencies.PvECoinSummary pvECoinSummary = Currencies.getCoinGainFromGameStats(wp, waveDefenseOption, false);
+            Currencies.PvECoinSummary pvECoinSummary = Currencies.getCoinGainFromGameStats(wp, pveOption, false);
 
             StringBuilder coinSummaryString = new StringBuilder();
             pvECoinSummary.getCoinSummary().forEach((s, aLong) -> {
@@ -601,7 +606,7 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private void showWeaponSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showWeaponSummary(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ WEAPONS SUMMARY ✚", true);
 
@@ -611,8 +616,8 @@ public class EndState implements State, TimerDebugAble {
             if (player == null) {
                 continue;
             }
-            WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats().getPlayerWaveDefenseStats(wp.getUuid());
-            List<AbstractWeapon> weaponsFound = playerWaveDefenseStats.getWeaponsFound();
+            PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
+            List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
             if (weaponsFound.isEmpty()) {
                 ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not find any weapons in this game!");
             } else {
@@ -652,7 +657,7 @@ public class EndState implements State, TimerDebugAble {
 
             }
 
-            long fragmentGain = playerWaveDefenseStats.getLegendFragmentGain();
+            long fragmentGain = playerPveRewards.getLegendFragmentGain();
             if (fragmentGain > 0) {
                 ChatUtils.sendMessage(player,
                         true,
@@ -662,7 +667,7 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private void showMobDropSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showMobDropSummary(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ MOB DROPS SUMMARY ✚", true);
 
@@ -672,8 +677,8 @@ public class EndState implements State, TimerDebugAble {
             if (player == null) {
                 continue;
             }
-            WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats().getPlayerWaveDefenseStats(wp.getUuid());
-            HashMap<MobDrops, Long> weaponsFound = playerWaveDefenseStats.getMobDropsGained();
+            PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
+            HashMap<MobDrops, Long> weaponsFound = playerPveRewards.getMobDropsGained();
             if (weaponsFound.isEmpty()) {
                 ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not get any mob drops in this game!");
             } else {
@@ -692,13 +697,13 @@ public class EndState implements State, TimerDebugAble {
     }
 
 
-    private void showQuestSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showQuestSummary(PveOption pveOption, List<WarlordsPlayer> players) {
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
                 continue;
             }
-            List<Quests> quests = Quests.getQuestsFromGameStats(wp, waveDefenseOption, false);
+            List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
             if (!quests.isEmpty()) {
                 player.sendMessage("");
                 ChatUtils.sendCenteredMessage(player, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚");

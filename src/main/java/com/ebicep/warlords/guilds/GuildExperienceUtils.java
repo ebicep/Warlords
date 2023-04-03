@@ -3,6 +3,8 @@ package com.ebicep.warlords.guilds;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -41,7 +43,7 @@ public class GuildExperienceUtils {
         }
     }
 
-    public static LinkedHashMap<String, Long> getExpFromWaveDefense(WarlordsEntity warlordsPlayer, WaveDefenseOption waveDefenseOption, boolean recalculate) {
+    public static LinkedHashMap<String, Long> getExpFromPvE(WarlordsEntity warlordsPlayer, PveOption pveOption, boolean recalculate) {
         if (!recalculate &&
                 CACHED_PLAYER_EXP_SUMMARY.containsKey(warlordsPlayer.getUuid()) &&
                 CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid()) != null
@@ -67,18 +69,27 @@ public class GuildExperienceUtils {
             return expSummary;
         }
 
-        if (experienceGainOption.getGuildExpPerWave() != 0) {
-            expSummary.put("Waves Cleared", experienceGainOption.getGuildExpPerWave() * waveDefenseOption.getWavesCleared());
+        if (experienceGainOption.getGuildExpPer() != 0) {
+            if (pveOption instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                expSummary.put("Waves Cleared", experienceGainOption.getGuildExpPer() * waveDefenseOption.getWavesCleared());
+            } else if (pveOption instanceof OnslaughtOption) {
+                OnslaughtOption onslaughtOption = (OnslaughtOption) pveOption;
+                expSummary.put("Minutes Elapsed", experienceGainOption.getGuildExpPer() * onslaughtOption.getTicksElapsed() / 20 / 60);
+            }
         }
-        if (experienceGainOption.getGuildExpMaxWaveClearBonus() != 0) {
-            int maxWaves = waveDefenseOption.getDifficulty().getMaxWaves();
-            int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
-            if (experienceGainOption.getGuildExpMaxWaveClearBonus() != 0 && wavesCleared == maxWaves) {
-                expSummary.put("Wave " + maxWaves + " Clear Bonus", experienceGainOption.getGuildExpMaxWaveClearBonus());
+        if (experienceGainOption.getGuildExpGameWinBonus() != 0) {
+            if (pveOption instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                int maxWaves = waveDefenseOption.getDifficulty().getMaxWaves();
+                int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
+                if (experienceGainOption.getGuildExpGameWinBonus() != 0 && wavesCleared == maxWaves) {
+                    expSummary.put("Wave " + maxWaves + " Clear Bonus", experienceGainOption.getGuildExpGameWinBonus());
+                }
             }
         }
         if (experienceGainOption.getGuildExpPerXSec() != null) {
-            RecordTimeElapsedOption recordTimeElapsedOption = waveDefenseOption
+            RecordTimeElapsedOption recordTimeElapsedOption = pveOption
                     .getGame()
                     .getOptions()
                     .stream()

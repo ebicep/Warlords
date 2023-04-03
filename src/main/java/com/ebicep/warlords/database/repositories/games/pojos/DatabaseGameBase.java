@@ -58,7 +58,7 @@ public abstract class DatabaseGameBase {
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            if (!GameMode.isWaveDefense(game.getGameMode())) {
+            if (!GameMode.isPvE(game.getGameMode())) {
                 float highestDamage = game.warlordsPlayers()
                                           .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
                                           .get()
@@ -152,7 +152,7 @@ public abstract class DatabaseGameBase {
                 addGameToDatabase(databaseGame, null);
             }
 
-            if (updatePlayerStats && GameMode.isWaveDefense(game.getGameMode())) {
+            if (updatePlayerStats && GameMode.isPvE(game.getGameMode())) {
                 GuildLeaderboardManager.recalculateAllLeaderboards();
             }
 
@@ -278,7 +278,7 @@ public abstract class DatabaseGameBase {
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
-                if (GameMode.isWaveDefense(databaseGame.getGameMode())) {
+                if (GameMode.isPvE(databaseGame.getGameMode())) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,

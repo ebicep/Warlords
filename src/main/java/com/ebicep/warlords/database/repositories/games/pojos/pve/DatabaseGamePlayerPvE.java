@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -49,13 +49,13 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
     public DatabaseGamePlayerPvE() {
     }
 
-    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
+    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         super(warlordsPlayer);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
-        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
-                .getPlayerWaveDefenseStats(uuid);
-        Collection<Long> values = playerWaveDefenseStats.getWaveDamage().values();
+        PlayerPveRewards playerPveRewards = pveOption.getRewards()
+                                                     .getPlayerRewards(uuid);
+        Collection<Long> values = playerPveRewards.getWaveDamage().values();
         if (!values.isEmpty()) {
             this.mostDamageInWave = Collections.max(values);
         }
@@ -68,18 +68,18 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
         this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
         this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
         this.mobDeaths = warlordsPlayer.getMinuteStats().total().getMobDeaths();
-        Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
+        Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, pveOption, true);
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
-        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, waveDefenseOption, true)
+        this.guildExpGained = GuildExperienceUtils.getExpFromPvE(warlordsPlayer, pveOption, true)
                                                   .values()
                                                   .stream()
                                                   .mapToLong(aLong -> aLong)
                                                   .sum();
-        this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
-        this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
-        this.mobDropsGained = new HashMap<>(playerWaveDefenseStats.getMobDropsGained());
-        List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
+        this.weaponsFound.addAll(playerPveRewards.getWeaponsFound());
+        this.legendFragmentsGained = playerPveRewards.getLegendFragmentGain();
+        this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
+        List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, pveOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
     }

@@ -21,7 +21,6 @@ public class DatabaseBasePvE extends PvEDatabaseStatInformation {
 
         //UPDATE SPEC EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
-        this.experiencePvE += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
 }

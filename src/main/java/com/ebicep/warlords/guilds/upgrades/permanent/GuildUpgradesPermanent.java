@@ -144,8 +144,8 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
                     }
 
                     event.getLegendFragments().addAndGet((int) getValueFromTier(tier) *
-                            (event.getWaveDefenseOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
-                            (event.getWaveDefenseOption().getWavesCleared() / 25)
+                            (event.getPveOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
+                            (event.getPer5() / 25)
                     );
                 }
 

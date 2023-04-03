@@ -208,7 +208,7 @@ public class DebugMenuPlayerOptions {
                         .name(ChatColor.GREEN + "Change Spec")
                         .get(),
                 (m, e) -> {
-                    if (GameMode.isWaveDefense(target.getGame().getGameMode())) {
+                    if (GameMode.isPvE(target.getGame().getGameMode())) {
                         if (PermissionHandler.isAdmin(player)) {
                             sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.", true);
                         } else {

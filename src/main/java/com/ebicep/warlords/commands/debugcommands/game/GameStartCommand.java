@@ -101,7 +101,7 @@ public class GameStartCommand {
                 .newEntry(people);
         entryEditor.accept(entryBuilder);
 
-        if (GameMode.isWaveDefense(entryBuilder.getGameMode())) {
+        if (GameMode.isPvE(entryBuilder.getGameMode())) {
             if (people.size() == 1) {
                 DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
                     if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {

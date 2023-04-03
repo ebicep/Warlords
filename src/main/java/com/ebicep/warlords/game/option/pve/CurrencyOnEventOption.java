@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.pve.wavedefense;
+package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;

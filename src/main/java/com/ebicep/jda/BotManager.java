@@ -6,9 +6,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.ServerStatusCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
@@ -120,17 +120,23 @@ public class BotManager {
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
                 String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
-                if (GameMode.isWaveDefense(game.getGameMode())) {
-                    for (Option option : game.getOptions()) {
-                        if (option instanceof WaveDefenseOption) {
-                            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                            eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
-                                                                                                              .getMapName() + " - " + time + word + " - " + waveDefenseOption.getDifficulty()
-                                                                                                                                                                             .getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
-                            break;
-                        }
+                boolean pve = false;
+                for (Option option : game.getOptions()) {
+                    if (!(option instanceof PveOption)) {
+                        continue;
                     }
-                } else {
+                    pve = true;
+                    eb.appendDescription("**Game**: " + game.getGameMode().name + " - " +
+                            game.getMap().getMapName() + " - " +
+                            time + word);
+                    if (option instanceof WaveDefenseOption) {
+                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                        eb.appendDescription(" - " +
+                                waveDefenseOption.getDifficulty().getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
+                        break;
+                    }
+                }
+                if (!pve) {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
                                                                                                       .getMapName() + " - " + time + word + " - " + game.getPoints(
                             Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");

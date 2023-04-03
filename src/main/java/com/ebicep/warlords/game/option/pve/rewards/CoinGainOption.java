@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.pve.wavedefense;
+package com.ebicep.warlords.game.option.pve.rewards;
 
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.util.java.Pair;
@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 
 public class CoinGainOption implements Option {
 
-    public static final long[] COINS_PER_5_WAVES = new long[]{
+    public static final long[] COINS_PER_5 = new long[]{
             50,
             100,
             150,
@@ -29,6 +29,7 @@ public class CoinGainOption implements Option {
             1700,
             1800
     };
+    private boolean playerCoinPer5Bonus = true;
     private final LinkedHashMap<String, LinkedHashMap<String, Long>> mobCoinValues = new LinkedHashMap<>() {{
         put("Bosses Killed", new LinkedHashMap<>() {{
             put("Boltaro", 200L);
@@ -39,7 +40,6 @@ public class CoinGainOption implements Option {
             put("Zenith", 1500L);
         }});
     }};
-    private boolean playerCoinWavesClearedBonus = true;
     private long playerCoinPerKill = 0;
     private long guildCoinInsigniaConvertBonus = 0;
     private Pair<Long, Integer> guildCoinPerXSec = null;
@@ -62,8 +62,13 @@ public class CoinGainOption implements Option {
         return this;
     }
 
+    public CoinGainOption clearMobCoinValues() {
+        mobCoinValues.clear();
+        return this;
+    }
+
     public CoinGainOption noPlayerCoinWavesClearedBonus() {
-        playerCoinWavesClearedBonus = false;
+        playerCoinPer5Bonus = false;
         return this;
     }
 
@@ -87,8 +92,8 @@ public class CoinGainOption implements Option {
         return this;
     }
 
-    public boolean isPlayerCoinWavesClearedBonus() {
-        return playerCoinWavesClearedBonus;
+    public boolean isPlayerCoinPer5Bonus() {
+        return playerCoinPer5Bonus;
     }
 
     public long getPlayerCoinPerKill() {
@@ -106,4 +111,5 @@ public class CoinGainOption implements Option {
     public boolean isDisableCoinConversionUpgrade() {
         return disableCoinConversionUpgrade;
     }
+
 }

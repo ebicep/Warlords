@@ -7,10 +7,10 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.CoinGainOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.CurrencyOnEventOption;
+import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.FieldEffect;
@@ -1302,10 +1302,10 @@ public enum GameMap {
                     .guildCoinInsigniaConvertBonus(2000)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerWave(96)
-                    .playerExpMaxWaveClearBonus(1500)
-                    .guildExpPerWave(8)
-                    .guildExpMaxWaveClearBonus(500)
+                    .playerExpPer(96)
+                    .playerExpGameWinBonus(1500)
+                    .guildExpPer(8)
+                    .guildExpMaxGameWinBonus(500)
             );
 
             return options;
@@ -1483,10 +1483,10 @@ public enum GameMap {
                     .guildCoinInsigniaConvertBonus(1000)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerWave(48)
-                    .playerExpMaxWaveClearBonus(1500)
-                    .guildExpPerWave(4)
-                    .guildExpMaxWaveClearBonus(200)
+                    .playerExpPer(48)
+                    .playerExpGameWinBonus(1500)
+                    .guildExpPer(4)
+                    .guildExpMaxGameWinBonus(200)
             );
 
             return options;
@@ -1650,8 +1650,8 @@ public enum GameMap {
                     .guildCoinInsigniaConvertBonus(750)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerWave(24)
-                    .guildExpPerWave(2)
+                    .playerExpPer(24)
+                    .guildExpPer(2)
             );
 
             return options;
@@ -2641,8 +2641,8 @@ public enum GameMap {
                     .guildCoinInsigniaConvertBonus(1500)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerWave(80)
-                    .guildExpPerWave(5)
+                    .playerExpPer(80)
+                    .guildExpPer(5)
             );
 
             return options;
@@ -2912,8 +2912,8 @@ public enum GameMap {
                     .guildCoinPerXSec(1, 1)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerWave(80)
-                    .guildExpPerWave(10)
+                    .playerExpPer(80)
+                    .guildExpPer(10)
             );
             options.add(new FieldEffect(options));
 
@@ -3646,6 +3646,13 @@ public enum GameMap {
                     )
             ));
             options.add(new ItemOption());
+            options.add(new CoinGainOption()
+                    .guildCoinInsigniaConvertBonus(1000)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPer(80)
+                    .guildExpPer(5)
+            );
 
             return options;
         }

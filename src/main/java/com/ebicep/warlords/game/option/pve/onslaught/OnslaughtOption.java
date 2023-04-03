@@ -3,9 +3,7 @@ package com.ebicep.warlords.game.option.pve.onslaught;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -15,6 +13,7 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
@@ -28,25 +27,15 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Material;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,12 +48,13 @@ import java.util.stream.Collectors;
 
 public class OnslaughtOption implements Option, PveOption {
 
-    private Game game;
     private final Team team;
-    private Wave currentMobSet;
     private final WaveList mobSet;
+    private final OnslaughtRewards onslaughtRewards = new OnslaughtRewards(this);
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private Game game;
+    private Wave currentMobSet;
     private int spawnCount = 0;
     private int spawnLimit;
     private Location lastLocation;
@@ -86,29 +76,9 @@ public class OnslaughtOption implements Option, PveOption {
             }
         }
 
+        game.registerEvents(getBaseListener());
+
         game.registerEvents(new Listener() {
-
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                WarlordsEntity attacker = event.getAttacker();
-                WarlordsEntity receiver = event.getPlayer();
-
-                if (event.isDamageInstance()) {
-                    if (attacker instanceof WarlordsNPC) {
-                        AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (mobs.containsKey(mob)) {
-                            mob.onAttack(attacker, receiver, event);
-                        }
-                    }
-
-                    if (receiver instanceof WarlordsNPC) {
-                        AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
-                        if (mobs.containsKey(mob)) {
-                            mob.onDamageTaken(receiver, attacker, event);
-                        }
-                    }
-                }
-            }
 
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
@@ -145,82 +115,6 @@ public class OnslaughtOption implements Option, PveOption {
                     }
                 }
             }
-
-            @EventHandler
-            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
-                WarlordsEntity player = event.getPlayer();
-                if (!(player instanceof WarlordsPlayer)) {
-                    return;
-                }
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
-                AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
-                if (abilityTree == null) {
-                    return;
-                }
-                AutoUpgradeProfile autoUpgradeProfile = abilityTree.getAutoUpgradeProfile();
-                List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
-                for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
-                    AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
-                    AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
-                    List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
-                    Upgrade upgrade = upgradeList.get(entry.getUpgradeIndex());
-                    if (upgrade.isUnlocked()) {
-                        continue;
-                    }
-                    if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
-                        return;
-                    }
-                    if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
-                        upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, true);
-                    } else {
-                        upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
-                    }
-                }
-            }
-
-            @EventHandler
-            public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof EntityLiving)) {
-                    return;
-                }
-                EntityLiving entityLiving = (EntityLiving) entity;
-                if (mobs.keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
-                    return;
-                }
-                if (entityLiving instanceof EntityInsentient) {
-                    LivingEntity newTarget = event.getTarget();
-                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
-                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    if (newTarget == null) {
-                        if (oldTarget instanceof EntityPlayer) {
-                            //setting target to player zombie
-                            game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
-                                    .findFirst()
-                                    .ifPresent(wp -> {
-                                        if (!(wp.getEntity() instanceof Player)) {
-                                            event.setTarget(wp.getEntity());
-                                        }
-                                    });
-                        }
-                    } else {
-                        if (oldTarget instanceof EntityZombie) {
-                            //makes sure player that rejoins is still the target
-                            game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
-                                    .findFirst()
-                                    .ifPresent(warlordsPlayer -> event.setCancelled(true));
-                        }
-                        if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                            event.setCancelled(true);
-                        }
-                    }
-                }
-            }
         });
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
@@ -247,37 +141,6 @@ public class OnslaughtOption implements Option, PveOption {
     }
 
     @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            player.setInPve(true);
-            if (player.getEntity() instanceof Player) {
-                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-                player.setTeam(Team.BLUE);
-                player.updateArmor();
-            }
-
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                Optional<AbstractWeapon> optionalWeapon = databasePlayer
-                        .getPveStats()
-                        .getWeaponInventory()
-                        .stream()
-                        .filter(AbstractWeapon::isBound)
-                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                        .findFirst();
-                optionalWeapon.ifPresent(abstractWeapon -> {
-                    WarlordsPlayer wp = (WarlordsPlayer) player;
-
-                    ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    wp.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(wp, this);
-                    player.updateEntity();
-                    player.getSpec().updateCustomStats();
-                });
-            });
-        }
-    }
-
-    @Override
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
@@ -301,6 +164,7 @@ public class OnslaughtOption implements Option, PveOption {
 
         new GameRunnable(game) {
             int counter = 0;
+
             @Override
             public void run() {
                 ticksElapsed.getAndIncrement();
@@ -384,6 +248,37 @@ public class OnslaughtOption implements Option, PveOption {
     }
 
     @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            player.setInPve(true);
+            if (player.getEntity() instanceof Player) {
+                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
+
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                Optional<AbstractWeapon> optionalWeapon = databasePlayer
+                        .getPveStats()
+                        .getWeaponInventory()
+                        .stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                        .findFirst();
+                optionalWeapon.ifPresent(abstractWeapon -> {
+                    WarlordsPlayer wp = (WarlordsPlayer) player;
+
+                    ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    wp.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(wp, this);
+                    player.updateEntity();
+                    player.getSpec().updateCustomStats();
+                });
+            });
+        }
+    }
+
+    @Override
     public void updateInventory(@Nonnull WarlordsPlayer wp, Player player) {
         AbstractWeapon weapon = wp.getWeapon();
         if (weapon == null) {
@@ -405,68 +300,23 @@ public class OnslaughtOption implements Option, PveOption {
         }
     }
 
-    private List<String> healthScoreboard(Game game) {
-        List<String> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
-            ChatColor healthColor;
-            String name = we.getName();
-            String newName;
-
-            if (healthRatio >= .5) {
-                healthColor = ChatColor.GREEN;
-            } else if (healthRatio >= .25) {
-                healthColor = ChatColor.YELLOW;
-            } else {
-                healthColor = ChatColor.RED;
-            }
-
-            if (name.length() >= 8) {
-                newName = name.substring(0, 8);
-            } else {
-                newName = name;
-            }
-
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor +
-                    "❤ " + (int) we.getHealth()) +
-                    ChatColor.RESET + " / " +
-                    ChatColor.RED + "⚔ " + we.getMinuteStats()
-                        .total()
-                        .getKills());
+    public float getIntegrityDecay(int playerCount) {
+        switch (playerCount) {
+            case 1:
+                return 0.5f;
+            case 2:
+                return 0.75f;
+            case 3:
+                return 1;
+            case 4:
+                return 1.5f;
+            case 5:
+                return 1.75f;
+            case 6:
+                return 2;
         }
 
-        return list;
-    }
-
-    private String integrityScoreboard() {
-        ChatColor color;
-        if (integrityCounter >= 50) {
-            color = ChatColor.AQUA;
-        } else if (integrityCounter >= 25) {
-            color = ChatColor.GOLD;
-        } else {
-            color = ChatColor.RED;
-        }
-
-        return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
-    }
-
-    @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    @Override
-    public Set<AbstractMob<?>> getMobs() {
-        return mobs.keySet();
-    }
-
-    @Override
-    public Game getGame() {
-        return game;
+        return 1.5f;
     }
 
     public int getSpawnLimit(int playerCount) {
@@ -488,27 +338,42 @@ public class OnslaughtOption implements Option, PveOption {
         return spawnLimit;
     }
 
-    public void setSpawnLimit(int spawnLimit) {
-        this.spawnLimit = spawnLimit;
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
     }
 
-    public float getIntegrityDecay(int playerCount) {
-        switch (playerCount) {
-            case 1:
-                return 0.5f;
-            case 2:
-                return 0.75f;
-            case 3:
-                return 1;
-            case 4:
-                return 1.5f;
-            case 5:
-                return 1.75f;
-            case 6:
-                return 2;
-        }
+    @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs.keySet();
+    }
 
-        return 1.5f;
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return onslaughtRewards;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 
     private void modifyStats(WarlordsNPC warlordsNPC) {
@@ -544,8 +409,53 @@ public class OnslaughtOption implements Option, PveOption {
         warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
-    @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
+    private String integrityScoreboard() {
+        ChatColor color;
+        if (integrityCounter >= 50) {
+            color = ChatColor.AQUA;
+        } else if (integrityCounter >= 25) {
+            color = ChatColor.GOLD;
+        } else {
+            color = ChatColor.RED;
+        }
+
+        return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
+    }
+
+    private List<String> healthScoreboard(Game game) {
+        List<String> list = new ArrayList<>();
+        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
+            float healthRatio = we.getHealth() / we.getMaxHealth();
+            ChatColor healthColor;
+            String name = we.getName();
+            String newName;
+
+            if (healthRatio >= .5) {
+                healthColor = ChatColor.GREEN;
+            } else if (healthRatio >= .25) {
+                healthColor = ChatColor.YELLOW;
+            } else {
+                healthColor = ChatColor.RED;
+            }
+
+            if (name.length() >= 8) {
+                newName = name.substring(0, 8);
+            } else {
+                newName = name;
+            }
+
+            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor +
+                    "❤ " + (int) we.getHealth()) +
+                    ChatColor.RESET + " / " +
+                    ChatColor.RED + "⚔ " + we.getMinuteStats()
+                                             .total()
+                                             .getKills());
+        }
+
+        return list;
+    }
+
+    public void setSpawnLimit(int spawnLimit) {
+        this.spawnLimit = spawnLimit;
     }
 }
