@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.pve.Currencies;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.LinkedHashMap;
@@ -53,7 +52,6 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             PlayersCollections playersCollection
     ) {
         assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
-        databasePlayer.getPveStats().addCurrency(Currencies.ILLUSION_SHARD, ((DatabaseGamePlayerPvEWaveDefense) gamePlayer).getIllusionShardGained());
 
         DatabaseGamePlayerPvEWaveDefense databaseGamePlayerPvEWaveDefense = (DatabaseGamePlayerPvEWaveDefense) gamePlayer;
         databaseGamePlayerPvEWaveDefense.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));

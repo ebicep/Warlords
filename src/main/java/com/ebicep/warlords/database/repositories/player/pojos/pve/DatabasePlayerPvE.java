@@ -210,9 +210,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             }
         }
 
-        //LEGEND FRAGMENTS
+        //SPENDABLE
         addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
-        //MOB DROPS
+        addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained());
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
 
