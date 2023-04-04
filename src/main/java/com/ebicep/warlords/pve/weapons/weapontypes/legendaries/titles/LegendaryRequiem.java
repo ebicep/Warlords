@@ -11,10 +11,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.ForgottenZombie;
+import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import org.bukkit.event.EventHandler;
@@ -75,8 +76,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                    .aliveEnemiesOf(player)
                                    .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
-                                   .findAny()
-                                   .ifPresent(warlordsNPC -> {
+                                   .limit(Utils.generateRandomValueBetweenInclusive(2, 5))
+                                   .forEach(warlordsNPC -> {
                                        EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
                                        warlordsNPC.setTeam(Team.BLUE);
                                        warlordsNPC.getMob().removeTarget();
@@ -89,7 +90,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
             @Override
             public void run() {
-                pveOption.spawnNewMob(new ForgottenZombie(player.getLocation()), Team.BLUE);
+                pveOption.spawnNewMob(new BasicZombie(player.getLocation()), Team.BLUE);
             }
         }.runTaskTimer(200, COOLDOWN * 20);
 

@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -26,7 +27,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, MobDrops.ZENITH_STAR, 1, 30),
             new SpendableBuyShop(200, Currencies.LEGEND_FRAGMENTS, 1, 20),
-            new SpendableBuyShop(1, MobDrops.CELESTIAL_BRONZE, 1, 1000)
+            new SpendableBuyShop(1, MobDrops.CELESTIAL_BRONZE, 1, 500)
     );
 
     public IllusionVendorTrait() {
@@ -45,11 +46,58 @@ public class IllusionVendorTrait extends WarlordsTrait {
     }
 
     public static void openIllusionVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerWeekly) {
-        Menu menu = new Menu("Illusion Vendor", 9 * 5);
+        Menu menu = new Menu("Illusion Vendor", 9 * 4);
+
+        for (int i = 0; i < 9; i++) {
+            menu.setItem(i, 0,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                            .name(" ")
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+        for (int i = 0; i < 9; i++) {
+            menu.setItem(i, 3,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                            .name(" ")
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+        for (int i = 1; i < 3; i++) {
+            menu.setItem(0, i,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                            .name(" ")
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+        for (int i = 1; i < 3; i++) {
+            menu.setItem(8, i,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                            .name(" ")
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+
 
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         DatabasePlayerPvE weeklyPveStats = databasePlayerWeekly.getPveStats();
         Map<String, Long> weeklyRewardsPurchased = weeklyPveStats.getIllusionVendorRewardsPurchased();
+
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.CHEST)
+                        .name(Currencies.ILLUSION_SHARD.getCostColoredName(pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD)))
+                        .get(),
+                (m, e) -> {
+
+                }
+        );
         for (int i = 0; i < SHOP.size(); i++) {
             SpendableBuyShop reward = SHOP.get(i);
             int rewardAmount = reward.getAmount();
@@ -63,11 +111,11 @@ public class IllusionVendorTrait extends WarlordsTrait {
             } else {
                 stock = "" + (reward.getStock() - weeklyRewardsPurchased.getOrDefault(mapName, 0L));
             }
-            menu.setItem(i + 1, 2,
+            menu.setItem(i + 1, 1,
                     new ItemBuilder(rewardSpendable.getItem())
                             .name(rewardSpendable.getCostColoredName(rewardAmount))
                             .lore(
-                                    ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + rewardSpendable.getCostColoredName(rewardPrice),
+                                    ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice),
                                     ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                             )
                             .flags(ItemFlag.HIDE_POTION_EFFECTS)
@@ -99,7 +147,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
             );
         }
 
-        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 

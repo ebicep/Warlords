@@ -210,8 +210,8 @@ public class NPCManager {
         //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
-        lookClose.toggle();
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
     }
@@ -239,42 +239,47 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-michael");
         npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BLACKSMITH);
         npc.addTrait(ItemMichaelTrait.class);
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "Mysterious Michael");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 50, 744.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528, 50, 770, 125, 0));
     }
 
     public static void createItemEnyaNPC() {
         registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
 
-        NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-enya");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BUTCHER);
+        NPC npc = npcRegistry.createNPC(EntityType.BLAZE, "item-enya");
+        npc.data().set("swim", false);
         npc.addTrait(ItemEnyaTrait.class);
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "Ethical Enya");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 50, 748.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2523.5, 50, 764, 90, 0));
     }
 
     public static void createIllusionVendorNPC() {
         registerTrait(IllusionVendorTrait.class, "IllusionVendorTrait");
 
-        NPC npc = npcRegistry.createNPC(EntityType.BLAZE, "illusion-vendor");
+        NPC npc = npcRegistry.createNPC(EntityType.IRON_GOLEM, "illusion-vendor");
         npc.addTrait(IllusionVendorTrait.class);
+
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2550.5, 55, 748.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 768.5, 180, 0));
     }
 
 
