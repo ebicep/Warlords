@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.types.ItemTome;
 import org.bukkit.util.Vector;
 
+import java.util.Objects;
+
 public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
 
     public static void increaseDamage(WarlordsPlayer warlordsPlayer, float damageBoost) {
@@ -19,7 +21,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
                 return;
             }
         }
-        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, damageBoost, 0, 0));
+        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, damageBoost, 0, 0, 0, 0));
     }
 
     public void addDamageBoost(float damageBoost) {
@@ -34,7 +36,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
                 return;
             }
         }
-        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, healBoost, 0));
+        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, healBoost, 0, 0, 0));
     }
 
     public void addHealBoost(float healBoost) {
@@ -49,18 +51,36 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
                 return;
             }
         }
-        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, 0, kbRes));
+        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, 0, kbRes, 0, 0));
     }
 
     public void addKBRes(float kbRes) {
         this.kbMultiplier -= kbRes / 200f; //200 because kb is halved since it reduces too much
     }
 
+    public static void increaseThorns(WarlordsPlayer warlordsPlayer, float thorns, int maxThornsDamage) {
+        for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
+            if (cooldown instanceof ItemAdditiveCooldown) {
+                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+                damageHealCooldown.addThorns(thorns, maxThornsDamage);
+                return;
+            }
+        }
+        warlordsPlayer.getCooldownManager().addCooldown(new ItemAdditiveCooldown(warlordsPlayer, 0, 0, 0, thorns, maxThornsDamage));
+    }
+
+    public void addThorns(float thorns, int maxThornsDamage) {
+        this.thorns += thorns / 100;
+        this.maxThornsDamage = Math.max(this.maxThornsDamage, maxThornsDamage);
+    }
+
     private float damageMultiplier = 1;
     private float healMultiplier = 1;
     private float kbMultiplier = 1;
+    private float thorns = 0;
+    private int maxThornsDamage = 0;
 
-    public ItemAdditiveCooldown(WarlordsEntity from, float damageBoost, float healBoost, float kbRes) {
+    public ItemAdditiveCooldown(WarlordsEntity from, float damageBoost, float healBoost, float kbRes, float thorns, int maxThornsDamage) {
         super(
                 "Item Tome Damage",
                 null,
@@ -75,11 +95,28 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
         addDamageBoost(damageBoost);
         addHealBoost(healBoost);
         addKBRes(kbRes);
+        addThorns(thorns, maxThornsDamage);
     }
 
     @Override
     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
         return currentDamageValue * damageMultiplier;
+    }
+
+    @Override
+    public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+        // prevent recursion
+        if (Objects.equals(event.getAttacker(), from)) {
+            return;
+        }
+        if (thorns <= 0) {
+            return;
+        }
+        float thornsDamage = currentDamageValue * thorns;
+        if (thornsDamage > maxThornsDamage) {
+            thornsDamage = maxThornsDamage;
+        }
+        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, false);
     }
 
     @Override
@@ -91,5 +128,4 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
     public void multiplyKB(Vector currentVector) {
         currentVector.multiply(kbMultiplier);
     }
-
 }

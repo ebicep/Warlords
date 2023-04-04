@@ -10,11 +10,11 @@ import java.util.HashMap;
 
 public interface ItemStatPool<T extends Enum<T>> {
 
-    default void applyToAbility(AbstractAbility ability, float value) {
+    default void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
 
     }
 
-    default void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+    default void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
 
     }
 

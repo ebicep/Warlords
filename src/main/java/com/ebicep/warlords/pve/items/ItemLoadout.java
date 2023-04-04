@@ -60,11 +60,20 @@ public class ItemLoadout {
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
         HashMap<ItemStatPool<?>, Integer> statPoolValues = new HashMap<>();
-        getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> statPoolValues.merge(stat, tier, Integer::sum)));
+        HashMap<ItemStatPool<?>, ItemTier> statPoolHighestTier = new HashMap<>();
+        getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> {
+            statPoolValues.merge(stat, tier, Integer::sum);
+            if (statPoolHighestTier.get(stat) == null || statPoolHighestTier.get(stat).ordinal() < item.getTier().ordinal()) {
+                statPoolHighestTier.put(stat, item.getTier());
+            }
+        }));
 
-        statPoolValues.forEach((stat, tier) -> stat.applyToWarlordsPlayer(warlordsPlayer, (float) tier / stat.getDecimalPlace().value));
+        statPoolValues.forEach((stat, value) -> stat.applyToWarlordsPlayer(warlordsPlayer,
+                (float) value / stat.getDecimalPlace().value,
+                statPoolHighestTier.get(stat)
+        ));
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            statPoolValues.forEach((stat, tier) -> stat.applyToAbility(ability, (float) tier / stat.getDecimalPlace().value));
+            statPoolValues.forEach((stat, value) -> stat.applyToAbility(ability, (float) value / stat.getDecimalPlace().value, statPoolHighestTier.get(stat)));
         }
 
         warlordsPlayer.updateInventory(false);

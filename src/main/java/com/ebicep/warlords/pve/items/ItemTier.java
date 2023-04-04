@@ -24,7 +24,8 @@ public enum ItemTier {
             0,
             0,
             0,
-            null
+            null,
+            0
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -45,7 +46,8 @@ public enum ItemTier {
             3,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 10_000L);
-            }}
+            }},
+            100
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -67,7 +69,8 @@ public enum ItemTier {
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 25_000L);
                 put(Currencies.SYNTHETIC_SHARD, 100L);
-            }}
+            }},
+            200
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -89,7 +92,8 @@ public enum ItemTier {
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 75_000L);
                 put(Currencies.SYNTHETIC_SHARD, 250L);
-            }}
+            }},
+            350
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -111,7 +115,8 @@ public enum ItemTier {
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 125_000L);
                 put(Currencies.LEGEND_FRAGMENTS, 50L);
-            }}
+            }},
+            550
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -133,7 +138,8 @@ public enum ItemTier {
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 200_000L);
                 put(Currencies.LEGEND_FRAGMENTS, 200L);
-            }}
+            }},
+            800
     ) {
         @Override
         public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
@@ -188,6 +194,7 @@ public enum ItemTier {
     public final double blessedChance;
     public final int maxEquipped;
     public final LinkedHashMap<Spendable, Long> removeCurseCost;
+    public final int maxThornsDamage;
 
     ItemTier(
             String name,
@@ -201,7 +208,8 @@ public enum ItemTier {
             double cursedChance,
             double blessedChance,
             int maxEquipped,
-            LinkedHashMap<Spendable, Long> removeCurseCost
+            LinkedHashMap<Spendable, Long> removeCurseCost,
+            int maxThornsDamage
     ) {
         this.name = name;
         this.chatColor = chatColor;
@@ -215,6 +223,7 @@ public enum ItemTier {
         this.blessedChance = blessedChance;
         this.maxEquipped = maxEquipped;
         this.removeCurseCost = removeCurseCost;
+        this.maxThornsDamage = maxThornsDamage;
     }
 
     public abstract <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool);

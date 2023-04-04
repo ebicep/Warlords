@@ -10,7 +10,7 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
 
     AGGRO_PRIO("Aggression Priority") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
             warlordsPlayer.setBonusAgroWeight(warlordsPlayer.getBonusAgroWeight() + value);
         }
 
@@ -21,19 +21,19 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
     },
     THORNS("Thorns") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
-            // TODO
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
+            ItemAdditiveCooldown.increaseThorns(warlordsPlayer, value, highestTier.maxThornsDamage);
         }
     },
     KB_RES("Knockback Resistance") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
             ItemAdditiveCooldown.increaseKBRes(warlordsPlayer, value);
         }
     },
     REGEN_TIMER("Shorter Regen Timer") {
         @Override
-        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value) {
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
             warlordsPlayer.setRegenTickTimerModifier(1 - value / 100f);
         }
     },
@@ -63,13 +63,13 @@ public enum ItemBucklerStatPool implements ItemStatPool<ItemBucklerStatPool> {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Operation getOperation() {
+        return Operation.MULTIPLY;
     }
 
     @Override
-    public Operation getOperation() {
-        return Operation.MULTIPLY;
+    public String getName() {
+        return name;
     }
 
 }
