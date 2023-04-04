@@ -279,7 +279,7 @@ public class NPCManager {
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 768.5, 180, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 769.5, 180, 0));
     }
 
 
