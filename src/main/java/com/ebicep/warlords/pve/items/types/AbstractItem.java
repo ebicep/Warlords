@@ -55,7 +55,9 @@ public abstract class AbstractItem<
         for (Map.Entry<T, ItemTier.StatRange> entry : tierStatRanges.entrySet()) {
             this.statPoolDistribution.put(entry.getKey(), (float) getRandomValueNormalDistribution());
         }
-        bless(null);
+        if (tier != ItemTier.DELTA && tier != ItemTier.OMEGA) {
+            bless(null);
+        }
     }
 
     public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();

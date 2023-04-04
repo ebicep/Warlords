@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
@@ -162,7 +163,11 @@ public class ItemCraftingMenu {
                         .name(ChatColor.GREEN + "Click to Craft Item")
                         .lore(
                                 ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
-                                ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops")
+                                ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
+                                "",
+                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Crafted Item will inherit the type and blessing of the highest tiered selected item.",
+                                        160
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -204,7 +209,7 @@ public class ItemCraftingMenu {
                                 }
                                 AbstractItem<?, ?, ?> craftedItem = inheritedItem.getType().create.apply(tier);
                                 craftedItem.setModifier(inheritedItem.getModifier());
-                                //craftedItem.bless();
+                                craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);
                                 AbstractItem.sendItemMessage(player,
                                         new ComponentBuilder(ChatColor.GRAY + "You crafted ")
