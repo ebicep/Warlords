@@ -54,7 +54,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -1947,23 +1946,17 @@ public abstract class WarlordsEntity {
         if (this.entity instanceof Player) {
             ((Player) this.entity).spigot().sendMessage(message);
             if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES) {
-                //delay by a tick because removing hovers event effects the message sent to original player somehow
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (game != null) {
-                            //remove all hover events
-                            for (BaseComponent component : message) {
-                                component.setHoverEvent(null);
-                            }
-                            game.spectators()
-                                .map(Bukkit::getPlayer)
-                                .filter(Objects::nonNull)
-                                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                                .forEach(player -> player.spigot().sendMessage(message));
-                        }
-                    }
-                }.runTaskLater(Warlords.getInstance(), 1);
+                BaseComponent[] messageCopy = new BaseComponent[message.length];
+                for (int i = 0; i < message.length; i++) {
+                    BaseComponent duplicate = message[i].duplicate();
+                    duplicate.setHoverEvent(null);
+                    messageCopy[i] = duplicate;
+                }
+                game.spectators()
+                    .map(Bukkit::getPlayer)
+                    .filter(Objects::nonNull)
+                    .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                    .forEach(player -> player.spigot().sendMessage(messageCopy));
             }
         }
     }
