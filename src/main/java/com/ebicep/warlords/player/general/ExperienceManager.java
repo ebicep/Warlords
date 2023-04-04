@@ -36,9 +36,24 @@ public class ExperienceManager {
     public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
     public static final List<Pair<ChatColor, Color>> PRESTIGE_COLORS = Arrays.asList(
-            new Pair<>(ChatColor.GRAY, Color.GRAY),//0
-            new Pair<>(ChatColor.RED, Color.RED),//1
-            new Pair<>(ChatColor.YELLOW, Color.YELLOW),//2
+            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
+            new Pair<>(ChatColor.RED, Color.RED), //1
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW), //2
+            new Pair<>(ChatColor.GREEN, Color.GREEN), //3
+            new Pair<>(ChatColor.AQUA, Color.AQUA), //4
+            new Pair<>(ChatColor.BLUE, Color.BLUE), //5
+            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //6
+            new Pair<>(ChatColor.BLACK, Color.BLACK), //7
+            new Pair<>(ChatColor.WHITE, Color.WHITE), //8
+            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY), //9
+            new Pair<>(ChatColor.DARK_RED, Color.RED), //10
+            new Pair<>(ChatColor.GOLD, Color.ORANGE), //11
+            new Pair<>(ChatColor.DARK_AQUA, Color.AQUA), //12
+            new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
+            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE), //13
+            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
+            new Pair<>(ChatColor.RED, Color.RED), //1
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW),  //2
             new Pair<>(ChatColor.GREEN, Color.GREEN),//3
             new Pair<>(ChatColor.AQUA, Color.AQUA), //4
             new Pair<>(ChatColor.BLUE, Color.BLUE), //5
