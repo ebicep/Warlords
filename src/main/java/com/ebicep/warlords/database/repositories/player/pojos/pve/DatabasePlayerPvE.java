@@ -118,7 +118,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("illusion_vendor_rewards_purchased")
     private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
 
-
     @Override
     public void updateCustomStats(
             DatabaseGameBase databaseGame,
