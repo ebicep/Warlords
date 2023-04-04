@@ -83,7 +83,7 @@ public class DatabaseManager {
 
         try {
             playerService = context.getBean("playerService", PlayerService.class);
-            gameService = context.getBean("gameService", GameService.class);
+            //gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);

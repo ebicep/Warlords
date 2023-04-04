@@ -90,7 +90,7 @@ public enum GameEvents {
             }}
     ) {
         @Override
-        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
                     put(Currencies.COIN, 500_000L);
@@ -332,7 +332,7 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
                     put(Currencies.COIN, 500_000L);
@@ -538,7 +538,7 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
                     put(Currencies.COIN, 500_000L);
@@ -736,7 +736,7 @@ public enum GameEvents {
         this.shopRewards = shopRewards;
     }
 
-    public abstract LinkedHashMap<Currencies, Long> getRewards(int position);
+    public abstract LinkedHashMap<Spendable, Long> getRewards(int position);
 
     public LinkedHashMap<String, Long> getGuildRewards(int position) {
         if (position == 1) {

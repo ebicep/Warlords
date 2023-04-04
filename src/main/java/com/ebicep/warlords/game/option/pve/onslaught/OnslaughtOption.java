@@ -24,12 +24,16 @@ import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.*;
@@ -50,9 +54,11 @@ public class OnslaughtOption implements Option, PveOption {
 
     private final Team team;
     private final WaveList mobSet;
-    private final AtomicInteger ticksElapsed = new AtomicInteger(0);
+    private final AtomicInteger ticksElapsed = new AtomicInteger(200); //start at 200 to account for 10 second start delay
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private OnslaughtRewards onslaughtRewards;
+    private HashMap<UUID, HashMap<Spendable, Long>> playerSyntheticPouch = new HashMap<>();
+    private HashMap<UUID, HashMap<Spendable, Long>> playerAspirantPouch = new HashMap<>();
     private Game game;
     private Wave currentMobSet;
     private int spawnCount = 0;
@@ -181,6 +187,26 @@ public class OnslaughtOption implements Option, PveOption {
 
                 for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
                     mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), OnslaughtOption.this);
+                }
+
+                if (ticksElapsed.get() % 20 * 60 * 30 == 0) {
+                    game.warlordsPlayers().forEach(wp -> {
+                        addRewardToPlayerPouch(
+                                wp.getUuid(),
+                                OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
+                                playerAspirantPouch,
+                                "Aspirant Pouch"
+                        );
+                    });
+                } else if (ticksElapsed.get() % 20 * 60 * 5 == 0) {
+                    game.warlordsPlayers().forEach(wp -> {
+                        addRewardToPlayerPouch(
+                                wp.getUuid(),
+                                OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL,
+                                playerSyntheticPouch,
+                                "Synthetic Pouch"
+                        );
+                    });
                 }
             }
         }.runTaskTimer(10 * GameRunnable.SECOND, 0);
@@ -318,6 +344,24 @@ public class OnslaughtOption implements Option, PveOption {
         }
 
         return 1.5f;
+    }
+
+    private void addRewardToPlayerPouch(
+            UUID uuid,
+            RandomCollection<Pair<Spendable, Long>> pouchLootPool,
+            HashMap<UUID, HashMap<Spendable, Long>> playerPouch,
+            String pouchName
+    ) {
+        Pair<Spendable, Long> reward = pouchLootPool.next();
+        if (reward != null) {
+            Spendable spendable = reward.getA();
+            Long amount = reward.getB();
+            playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
+                       .merge(spendable, amount, Long::sum);
+            RewardInventory.sendRewardMessage(uuid,
+                    ChatColor.GREEN + pouchName + ": " + spendable.getChatColor() + "+" + spendable.getCostColoredName(amount)
+            );
+        }
     }
 
     public int getSpawnLimit(int playerCount) {
@@ -458,5 +502,13 @@ public class OnslaughtOption implements Option, PveOption {
 
     public void setSpawnLimit(int spawnLimit) {
         this.spawnLimit = spawnLimit;
+    }
+
+    public HashMap<UUID, HashMap<Spendable, Long>> getPlayerSyntheticPouch() {
+        return playerSyntheticPouch;
+    }
+
+    public HashMap<UUID, HashMap<Spendable, Long>> getPlayerAspirantPouch() {
+        return playerAspirantPouch;
     }
 }

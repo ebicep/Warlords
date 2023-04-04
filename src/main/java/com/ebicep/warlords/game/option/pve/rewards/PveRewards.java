@@ -33,6 +33,12 @@ public abstract class PveRewards<T extends PveOption> {
     }
 
 
+    public void storeRewards() {
+        storeBaseCoinSummary();
+        storeWeaponFragmentGain();
+        storeIllusionShardGain();
+    }
+
     public void storeBaseCoinSummary() {
         if (coinGainOption == null) {
             return;
@@ -107,6 +113,16 @@ public abstract class PveRewards<T extends PveOption> {
         legendFragmentGain.addAndGet((long) ((specPrestigeBonus + otherSpecPrestigeBonus) * difficulty.getRewardsMultiplier() * (per5 / 25)));
         //warlordsPlayer.sendMessage("Legend Fragment Gain After Prestiges: " + legendFragmentGain.get());
     }
+
+    public void storeIllusionShardGain() {
+        if (difficulty == DifficultyIndex.EVENT) {
+            return;
+        }
+
+        storeIllusionShardGainInternal();
+    }
+
+    protected abstract void storeIllusionShardGainInternal();
 
     public HashMap<String, Long> getMobsKilled() {
         return mobsKilled;

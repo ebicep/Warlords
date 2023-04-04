@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.rewards.types;
 
-import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,7 +16,7 @@ public class MasterworksFairReward extends AbstractReward {
     public MasterworksFairReward() {
     }
 
-    public MasterworksFairReward(LinkedHashMap<Currencies, Long> rewards, Instant timeGiven, WeaponsPvE rarity) {
+    public MasterworksFairReward(LinkedHashMap<Spendable, Long> rewards, Instant timeGiven, WeaponsPvE rarity) {
         super(rewards, "Masterworks Fair " + rarity.name);
         this.timeGiven = timeGiven;
     }

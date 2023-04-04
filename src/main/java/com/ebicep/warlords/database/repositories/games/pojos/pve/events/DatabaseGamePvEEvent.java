@@ -5,8 +5,8 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.TimeElapsed;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -92,7 +92,7 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
 
         LinkedHashMap<String, Long> mobKillsMap = new LinkedHashMap<>();
         LinkedHashMap<String, Long> mobDeathsMap = new LinkedHashMap<>();
-        for (DatabaseGamePlayerPvE playerPvE : allPlayers) {
+        for (DatabaseGamePlayerPvEWaveDefense playerPvE : allPlayers) {
             playerPvE.getMobKills().forEach((s, aLong) -> mobKillsMap.merge(s, aLong, Long::sum));
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }

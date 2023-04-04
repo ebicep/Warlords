@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.rewards.types;
 
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 
 import java.time.Instant;
@@ -8,8 +9,8 @@ import java.util.LinkedHashMap;
 
 public class LevelUpReward extends AbstractReward {
 
-    public static LinkedHashMap<Currencies, Long> getRewardForLevel(int level) {
-        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+    public static LinkedHashMap<Spendable, Long> getRewardForLevel(int level) {
+        LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
         if (level <= 50) {
             rewards.put(Currencies.COIN, 1000L);
         } else if (level <= 80) {
@@ -57,7 +58,7 @@ public class LevelUpReward extends AbstractReward {
         super();
     }
 
-    public LevelUpReward(LinkedHashMap<Currencies, Long> rewards, int level, int prestige) {
+    public LevelUpReward(LinkedHashMap<Spendable, Long> rewards, int level, int prestige) {
         super(rewards, null);
         this.level = level;
         this.prestige = prestige;

@@ -8,7 +8,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.Bukkit;
@@ -225,6 +224,11 @@ public enum Currencies implements Spendable {
     }
 
     @Override
+    public ChatColor getChatColor() {
+        return chatColor;
+    }
+
+    @Override
     public ItemStack getItem() {
         return item;
     }
@@ -241,16 +245,6 @@ public enum Currencies implements Spendable {
 
     public String getColoredName() {
         return chatColor + name;
-    }
-
-
-    @Override
-    public String getCostColoredName(long cost) {
-        return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
-    }
-
-    public boolean pluralIncludeS() {
-        return true;
     }
 
     public static class PvECoinSummary {

@@ -35,7 +35,7 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -45,17 +45,17 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
         }
     }

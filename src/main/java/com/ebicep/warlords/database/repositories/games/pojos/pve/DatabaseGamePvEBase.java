@@ -4,14 +4,12 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -19,41 +17,32 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import org.bukkit.ChatColor;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Document(collection = "Games_Information_PvE")
-public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, TimeElapsed, Difficulty {
+public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements TimeElapsed, Difficulty {
 
-    private DifficultyIndex difficulty;
-    @Field("waves_cleared")
-    private int wavesCleared;
+    protected DifficultyIndex difficulty;
     @Field("time_elapsed")
-    private int timeElapsed;
+    protected int timeElapsed;
     @Field("total_mobs_killed")
-    private int totalMobsKilled;
-    private List<DatabaseGamePlayerPvE> players = new ArrayList<>();
+    protected int totalMobsKilled;
+    protected List<DatabaseGamePlayerPvEBase> players = new ArrayList<>();
 
-    public DatabaseGamePvE() {
+    public DatabaseGamePvEBase() {
 
     }
 
-    public DatabaseGamePvE(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+    public DatabaseGamePvEBase(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
             if (option instanceof PveOption) {
                 PveOption pveOption = (PveOption) option;
                 this.difficulty = pveOption.getDifficulty();
-                if (option instanceof WaveDefenseOption) {
-                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                    this.wavesCleared = waveDefenseOption.getWavesCleared();
-                }
-                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer, pveOption)));
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);
@@ -77,18 +66,10 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
     }
 
     @Override
-    public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        return wavesCleared >= difficulty.getMaxWaves() ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-    }
-
-    @Override
     public void appendLastGameStats(Hologram hologram) {
         HologramLines hologramLines = hologram.getLines();
         hologramLines.appendText(ChatColor.GRAY + date);
         hologramLines.appendText(ChatColor.GREEN + map.getMapName() + " - " + Utils.formatTimeLeft(timeElapsed / 20));
-        hologramLines.appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
-                (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
-
     }
 
     @Override
@@ -107,7 +88,7 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 
-        List<DatabaseGamePlayerPvE> allPlayers = players;
+        List<DatabaseGamePlayerPvEBase> allPlayers = players;
         List<String> topDHPPerGamePlayers = new ArrayList<>();
 
 
@@ -123,7 +104,7 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
 
         LinkedHashMap<String, Long> mobKillsMap = new LinkedHashMap<>();
         LinkedHashMap<String, Long> mobDeathsMap = new LinkedHashMap<>();
-        for (DatabaseGamePlayerPvE playerPvE : allPlayers) {
+        for (DatabaseGamePlayerPvEBase playerPvE : allPlayers) {
             playerPvE.getMobKills().forEach((s, aLong) -> mobKillsMap.merge(s, aLong, Long::sum));
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
@@ -137,9 +118,7 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
     @Override
     public String getGameLabel() {
         return ChatColor.GRAY + date + ChatColor.DARK_GRAY + " - " +
-                ChatColor.GREEN + map + ChatColor.DARK_GRAY + " - " +
-                ChatColor.YELLOW + "Waves Cleared: " + wavesCleared + ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
-
+                ChatColor.GREEN + map + ChatColor.DARK_GRAY;
     }
 
     @Override
@@ -151,7 +130,6 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
     public List<String> getExtraLore() {
         return Arrays.asList(
                 ChatColor.GRAY + "Time Elapsed: " + ChatColor.YELLOW + Utils.formatTimeLeft(timeElapsed),
-                ChatColor.GRAY + "Waves Cleared: " + ChatColor.YELLOW + wavesCleared,
                 ChatColor.GRAY + "Total Mobs Killed: " + ChatColor.YELLOW + totalMobsKilled,
                 ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.size()
         );
@@ -159,10 +137,6 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
 
     public DifficultyIndex getDifficulty() {
         return difficulty;
-    }
-
-    public int getWavesCleared() {
-        return wavesCleared;
     }
 
     public int getTimeElapsed() {
@@ -173,7 +147,7 @@ public class DatabaseGamePvE extends DatabaseGameBase implements WavesCleared, T
         return totalMobsKilled;
     }
 
-    public List<DatabaseGamePlayerPvE> getPlayers() {
+    public List<DatabaseGamePlayerPvEBase> getPlayers() {
         return players;
     }
 }

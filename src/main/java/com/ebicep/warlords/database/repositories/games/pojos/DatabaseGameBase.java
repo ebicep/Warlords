@@ -279,7 +279,7 @@ public abstract class DatabaseGameBase {
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
                 if (GameMode.isPvE(databaseGame.getGameMode())) {
-                    databasePlayer.updateCustomStats(databaseGame,
+                    databasePlayer.updateCustomStats(databasePlayer, databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
@@ -287,7 +287,7 @@ public abstract class DatabaseGameBase {
                             activeCollection
                     );
                 } else {
-                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, activeCollection);
+                    databasePlayer.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, activeCollection);
                 }
                 if (activeCollection == PlayersCollections.LIFETIME) {
                     List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays

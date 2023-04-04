@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
@@ -219,7 +219,7 @@ public enum GameMode {
             "Wave Defense",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
             false
@@ -255,7 +255,7 @@ public enum GameMode {
             "Onslaught",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
             false
@@ -297,7 +297,7 @@ public enum GameMode {
             "Boss Rush",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
             true
@@ -334,7 +334,7 @@ public enum GameMode {
             "Anomaly Heist",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
             true

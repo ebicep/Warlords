@@ -5,7 +5,12 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsLegendFragmentGainEv
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.Bukkit;
 
 import java.util.LinkedHashMap;
@@ -14,8 +19,26 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
 
+    public static final RandomCollection<Pair<Spendable, Long>> SYNTHETIC_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
+            .add(50, new Pair<>(Currencies.COIN, 2000L))
+            .add(25, new Pair<>(Currencies.SYNTHETIC_SHARD, 20L))
+            .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 20L))
+            .add(.05, new Pair<>(MobDrops.ZENITH_STAR, 1L))
+            .add(14.95, null);
+    public static final RandomCollection<Pair<Spendable, Long>> ASPIRANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
+            .add(50, new Pair<>(Currencies.LEGEND_FRAGMENTS, 40L))
+            .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 10L))
+            .add(2, new Pair<>(MobDrops.ZENITH_STAR, 1L))
+            .add(23, null);
+
     public OnslaughtRewards(OnslaughtOption pveOption) {
         super(pveOption);
+    }
+
+    @Override
+    public void storeRewards() {
+        super.storeRewards();
+        storePouchRewards();
     }
 
     @Override
@@ -64,6 +87,23 @@ public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
                      });
                  });
 
+    }
+
+    @Override
+    protected void storeIllusionShardGainInternal() {
+        int minutesElapsed = pveOption.getTicksElapsed() / 20 / 60;
+
+        pveOption.getGame()
+                 .warlordsPlayers()
+                 .forEach(warlordsPlayer -> {
+                     UUID uuid = warlordsPlayer.getUuid();
+                     getPlayerRewards(uuid).setIllusionShardGain(minutesElapsed / 5);
+                 });
+    }
+
+    private void storePouchRewards() {
+        pveOption.getPlayerSyntheticPouch().forEach((uuid, spendableLongHashMap) -> getPlayerRewards(uuid).setSyntheticPouch(spendableLongHashMap));
+        pveOption.getPlayerAspirantPouch().forEach((uuid, spendableLongHashMap) -> getPlayerRewards(uuid).setAspirantPouch(spendableLongHashMap));
     }
 
 }

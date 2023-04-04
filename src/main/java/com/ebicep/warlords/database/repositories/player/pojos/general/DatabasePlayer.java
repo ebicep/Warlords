@@ -125,7 +125,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -141,36 +141,36 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
             classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            this.pveStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            this.pveStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
-        classStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        specStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+        specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case DUEL:
-                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.pubStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.compStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             }
         }
     }

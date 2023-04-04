@@ -1,12 +1,10 @@
 package com.ebicep.warlords.game.option.pve.rewards;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class PlayerPveRewards {
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
@@ -14,6 +12,10 @@ public class PlayerPveRewards {
     private final HashMap<MobDrops, Long> mobDropsGained = new HashMap<>();
     private final HashMap<Integer, Long> waveDamage = new HashMap<>();
     private long legendFragmentGain = 0;
+    private long illusionShardGain = 0;
+
+    private Map<Spendable, Long> syntheticPouch = new HashMap<>();
+    private Map<Spendable, Long> aspirantPouch = new HashMap<>();
 
     public List<AbstractWeapon> getWeaponsFound() {
         return weaponsFound;
@@ -31,6 +33,14 @@ public class PlayerPveRewards {
         this.legendFragmentGain = legendFragmentGain;
     }
 
+    public long getIllusionShardGain() {
+        return illusionShardGain;
+    }
+
+    public void setIllusionShardGain(long illusionShardGain) {
+        this.illusionShardGain = illusionShardGain;
+    }
+
     public LinkedHashMap<String, Long> getCachedBaseCoinSummary() {
         return cachedBaseCoinSummary;
     }
@@ -42,5 +52,21 @@ public class PlayerPveRewards {
 
     public HashMap<Integer, Long> getWaveDamage() {
         return waveDamage;
+    }
+
+    public Map<Spendable, Long> getSyntheticPouch() {
+        return syntheticPouch;
+    }
+
+    public void setSyntheticPouch(Map<Spendable, Long> syntheticPouch) {
+        this.syntheticPouch = syntheticPouch;
+    }
+
+    public Map<Spendable, Long> getAspirantPouch() {
+        return aspirantPouch;
+    }
+
+    public void setAspirantPouch(Map<Spendable, Long> aspirantPouch) {
+        this.aspirantPouch = aspirantPouch;
     }
 }

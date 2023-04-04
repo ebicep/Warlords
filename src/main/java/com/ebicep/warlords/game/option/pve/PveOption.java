@@ -94,8 +94,7 @@ public interface PveOption {
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
-                getRewards().storeBaseCoinSummary();
-                getRewards().storeWeaponFragmentGain();
+                getRewards().storeRewards();
             }
 
             @EventHandler

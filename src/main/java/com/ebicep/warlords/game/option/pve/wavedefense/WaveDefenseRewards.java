@@ -70,4 +70,16 @@ public class WaveDefenseRewards extends PveRewards<WaveDefenseOption> {
 
     }
 
+    @Override
+    protected void storeIllusionShardGainInternal() {
+        int wavesCleared = pveOption.getWavesCleared();
+
+        pveOption.getGame()
+                 .warlordsPlayers()
+                 .forEach(warlordsPlayer -> {
+                     UUID uuid = warlordsPlayer.getUuid();
+                     getPlayerRewards(uuid).setIllusionShardGain(wavesCleared / 5);
+                 });
+    }
+
 }

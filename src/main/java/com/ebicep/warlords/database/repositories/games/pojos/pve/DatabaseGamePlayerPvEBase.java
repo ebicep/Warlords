@@ -16,10 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements MostDamageInWave {
+public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
 
-    @Field("most_damage_in_wave")
-    private long mostDamageInWave;
     private int prestige;
     private int level;
     private AbstractWeapon weapon;
@@ -41,24 +39,22 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
     private List<AbstractWeapon> weaponsFound = new ArrayList<>();
     @Field("legend_fragments_gain")
     private long legendFragmentsGained;
+    @Field("illusion_shard_gain")
+    private long illusionShardGained;
     @Field("mob_drops_gained")
     private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
     @Field("quests_completed")
     private List<Quests> questsCompleted = new ArrayList<>();
 
-    public DatabaseGamePlayerPvE() {
+    public DatabaseGamePlayerPvEBase() {
     }
 
-    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+    public DatabaseGamePlayerPvEBase(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         super(warlordsPlayer);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         PlayerPveRewards playerPveRewards = pveOption.getRewards()
                                                      .getPlayerRewards(uuid);
-        Collection<Long> values = playerPveRewards.getWaveDamage().values();
-        if (!values.isEmpty()) {
-            this.mostDamageInWave = Collections.max(values);
-        }
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });
@@ -78,16 +74,12 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
                                                   .sum();
         this.weaponsFound.addAll(playerPveRewards.getWeaponsFound());
         this.legendFragmentsGained = playerPveRewards.getLegendFragmentGain();
+        this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, pveOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
     }
-
-    public long getMostDamageInWave() {
-        return mostDamageInWave;
-    }
-
     public int getPrestige() {
         return prestige;
     }
@@ -134,6 +126,10 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase implements Mos
 
     public long getLegendFragmentsGained() {
         return legendFragmentsGained;
+    }
+
+    public long getIllusionShardGained() {
+        return illusionShardGained;
     }
 
     public Map<MobDrops, Long> getMobDropsGained() {

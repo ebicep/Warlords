@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePlayerPvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.PvEEventBoltaroDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,7 +20,7 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -28,7 +29,7 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaroBonanza;
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventBoltaroBonanza databaseGamePvEEventBoltaroBonanza = (DatabaseGamePvEEventBoltaroBonanza) databaseGame;
         DatabaseGamePlayerPvEEventBoltaroBonanza databaseGamePlayerPvEEventBoltaroBonanza = (DatabaseGamePlayerPvEEventBoltaroBonanza) gamePlayer;

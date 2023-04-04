@@ -9,12 +9,12 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -267,13 +267,14 @@ public class WarlordsNewHotbarMenu {
                 }
 
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
-                LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
+                LinkedHashMap<Spendable, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
                 List<String> lore = rewardForLevel.entrySet()
                                                   .stream()
                                                   .map(currenciesLongEntry -> {
-                                                      Currencies currency = currenciesLongEntry.getKey();
+                                                      Spendable spendable = currenciesLongEntry.getKey();
                                                       Long value = currenciesLongEntry.getValue();
-                                                      return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
+                                                      return spendable.getChatColor()
+                                                                      .toString() + value + " " + spendable.getName() + (spendable != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
                                                   }).collect(Collectors.toList());
                 lore.add(0, "");
                 lore.add("");
@@ -304,8 +305,7 @@ public class WarlordsNewHotbarMenu {
                                 if (claimed.get()) {
                                     player.sendMessage(ChatColor.RED + "You already claimed this reward!");
                                 } else {
-                                    DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-                                    rewardForLevel.forEach(databasePlayerPvE::addCurrency);
+                                    rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                     databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
                                     player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
