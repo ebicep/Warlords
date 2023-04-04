@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -194,7 +193,18 @@ public class ItemCraftingMenu {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
 
-                                AbstractItem<?, ?, ?> craftedItem = ItemType.getRandom().create.apply(tier);
+                                AbstractItem<?, ?, ?> inheritedItem = null;
+                                if (tier == ItemTier.DELTA) {
+                                    inheritedItem = items.get(ItemTier.GAMMA);
+                                } else if (tier == ItemTier.OMEGA) {
+                                    inheritedItem = items.get(ItemTier.DELTA);
+                                }
+                                if (inheritedItem == null) {
+                                    return;
+                                }
+                                AbstractItem<?, ?, ?> craftedItem = inheritedItem.getType().create.apply(tier);
+                                craftedItem.setModifier(inheritedItem.getModifier());
+                                //craftedItem.bless();
                                 pveStats.getItemsManager().addItem(craftedItem);
                                 AbstractItem.sendItemMessage(player,
                                         new ComponentBuilder(ChatColor.GRAY + "You crafted ")
