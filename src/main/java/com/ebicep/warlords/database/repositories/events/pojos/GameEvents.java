@@ -612,7 +612,7 @@ public enum GameEvents {
             EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
                     eventStart,
                     "Highest Game Event Points",
-                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 751.5),
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -631,7 +631,7 @@ public enum GameEvents {
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
                     "Event Points",
-                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 737.5),
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
                             .getEventStats()
@@ -782,7 +782,7 @@ public enum GameEvents {
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2545.5, 50, 744.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2546.5, 50, 744.5, 90, 0));
     }
 
     public void editNPC(NPC npc) {

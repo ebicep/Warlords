@@ -23,7 +23,7 @@ public class WeaponLegendaryCraftMenu {
         put(Currencies.COIN, 1000000L);
         put(Currencies.SYNTHETIC_SHARD, 10000L);
     }};
-    public static final List<String> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost");
+    public static final List<String> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();

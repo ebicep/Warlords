@@ -333,7 +333,7 @@ public class ItemCraftingMenu {
                             3,
                             new ArrayList<>() {{
                                 add(ChatColor.GRAY + "Smelt a Celestial Bronze");
-                                addAll(PvEUtils.getCostLore(CELESTIAL_SMELTERY_COST, "Smelt Cost"));
+                                addAll(PvEUtils.getCostLore(CELESTIAL_SMELTERY_COST, "Smelt Cost", true));
                                 add(ChatColor.GRAY + " - " + ChatColor.GREEN + "Tier " + boughtBlessing + " Bought Blessing");
                             }},
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
