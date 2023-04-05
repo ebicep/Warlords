@@ -116,7 +116,7 @@ public enum Currencies implements Spendable {
     ),
     ILLUSION_SHARD(
             "Illusion Shard",
-            ChatColor.WHITE,
+            ChatColor.DARK_PURPLE,
             new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
     ),
     CELESTIAL_BRONZE(
