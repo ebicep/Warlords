@@ -11,7 +11,9 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,21 +33,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
             new SpendableBuyShop(50, Currencies.FAIRY_ESSENCE, 1, 10),
             new SpendableBuyShop(1, Currencies.RARE_STAR_PIECE, 1, 10)
     );
-
-    public IllusionVendorTrait() {
-        super("IllusionVendorTrait");
-    }
-
-    @Override
-    public void rightClick(NPCRightClickEvent event) {
-        Player player = event.getClicker();
-        UUID uuid = player.getUniqueId();
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY, databasePlayerWeekly -> {
-                openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
-            });
-        });
-    }
 
     public static void openIllusionVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerWeekly) {
         Menu menu = new Menu("Illusion Vendor", 9 * 4);
@@ -153,6 +140,49 @@ public class IllusionVendorTrait extends WarlordsTrait {
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private HologramTrait hologramTrait = null;
+
+    public IllusionVendorTrait() {
+        super("IllusionVendorTrait");
+    }
+
+    @Override
+    public void onSpawn() {
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
+        this.hologramTrait = hologramTrait;
+    }
+
+    @Override
+    public void run() {
+        if (hologramTrait == null) {
+            return;
+        }
+        String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
+                true,
+                true,
+                true,
+                false
+        );
+        if (timeTill.equals("0 seconds")) {
+            hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + "Shipment Arriving Soon!");
+        } else {
+            hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
+        }
+    }
+
+    @Override
+    public void rightClick(NPCRightClickEvent event) {
+        Player player = event.getClicker();
+        UUID uuid = player.getUniqueId();
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            DatabaseManager.getPlayer(uuid, PlayersCollections.WEEKLY, databasePlayerWeekly -> {
+                openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
+            });
+        });
     }
 
 }

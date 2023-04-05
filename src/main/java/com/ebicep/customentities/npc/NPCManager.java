@@ -273,10 +273,6 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.IRON_GOLEM, "illusion-vendor");
         npc.addTrait(IllusionVendorTrait.class);
 
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
-
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 769.5, 180, 0));
