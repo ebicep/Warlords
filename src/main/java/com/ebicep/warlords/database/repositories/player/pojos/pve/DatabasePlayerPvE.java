@@ -8,9 +8,9 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -131,9 +131,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
 
-        DatabaseGamePlayerPvEWaveDefense gamePlayerPvE = (DatabaseGamePlayerPvEWaveDefense) gamePlayer;
+        DatabaseGamePlayerPvEBase gamePlayerPvE = (DatabaseGamePlayerPvEBase) gamePlayer;
 
         //COINS
         addCurrency(Currencies.COIN, gamePlayerPvE.getCoinsGained() * multiplier);
