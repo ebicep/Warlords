@@ -27,14 +27,14 @@ import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
 public class GameStartCommand {
 
-    public static void startGamePvE(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+    public static void startGamePvE(Player player, GameMode gameMode, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
             player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
             return;
         }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
-                            .setGameMode(GameMode.WAVE_DEFENSE)
+                            .setGameMode(gameMode)
                             .setPriority(0)
                             .setOnResult((result, game) -> {
                                 if (game == null) {

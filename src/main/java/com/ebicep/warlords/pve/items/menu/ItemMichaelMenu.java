@@ -521,6 +521,7 @@ public class ItemMichaelMenu {
                                         item.setModifier(tier);
                                     }
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
                                     player.closeInventory();
 
                                     AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
@@ -744,7 +745,7 @@ public class ItemMichaelMenu {
                                     }
                                     item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    player.playSound(player.getLocation(), Sound.WATER, 2, 0.1f);
+                                    player.playSound(player.getLocation(), Sound.SPLASH, 2, 0.1f);
                                     player.closeInventory();
 
                                     AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
