@@ -167,10 +167,12 @@ public class ItemEquipMenu {
                             (m, e) -> {
                                 if (e.isLeftClick()) {
                                     openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
+                                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
                                 } else if (e.isRightClick()) {
                                     itemLoadout.getItems().remove(item.getUUID());
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 0.1f);
                                 }
                             }
                     );
@@ -229,10 +231,12 @@ public class ItemEquipMenu {
                             String name = lines[0];
                             if (!name.matches("[a-zA-Z0-9 ]+")) {
                                 player.sendMessage(ChatColor.RED + "Invalid name!");
+                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                             if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
                                 player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                             ItemLoadout newLoadout = new ItemLoadout(name);
@@ -257,10 +261,12 @@ public class ItemEquipMenu {
                         String name = lines[0];
                         if (!name.matches("[a-zA-Z0-9 ]+")) {
                             player.sendMessage(ChatColor.RED + "Invalid name!");
+                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
                             player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         itemLoadout.setName(name);
@@ -376,6 +382,7 @@ public class ItemEquipMenu {
                     }
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
                 }
         );
         menu.openForPlayer(player);
