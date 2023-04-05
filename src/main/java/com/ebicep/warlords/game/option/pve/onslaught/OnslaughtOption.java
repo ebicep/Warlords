@@ -189,7 +189,7 @@ public class OnslaughtOption implements Option, PveOption {
                     mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), OnslaughtOption.this);
                 }
 
-                if (ticksElapsed.get() % 20 * 60 * 30 == 0) {
+                if (ticksElapsed.get() % 36000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
@@ -198,7 +198,7 @@ public class OnslaughtOption implements Option, PveOption {
                                 "Aspirant Pouch"
                         );
                     });
-                } else if (ticksElapsed.get() % 20 * 60 * 5 == 0) {
+                } else if (ticksElapsed.get() % 6000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
