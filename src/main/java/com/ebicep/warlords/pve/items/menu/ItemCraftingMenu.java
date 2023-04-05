@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -231,6 +232,8 @@ public class ItemCraftingMenu {
                                         new ComponentBuilder(ChatColor.GRAY + "You crafted ")
                                                 .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
                                 );
+                                player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
+                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
                                 player.closeInventory();
                             },
                             (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
@@ -342,6 +345,8 @@ public class ItemCraftingMenu {
                                 pveStats.addCurrency(Currencies.CELESTIAL_BRONZE, 1);
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
+                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
                                 player.closeInventory();
 
                                 AbstractItem.sendItemMessage(player, ChatColor.GREEN + "You smelted a Celestial Bronze");
