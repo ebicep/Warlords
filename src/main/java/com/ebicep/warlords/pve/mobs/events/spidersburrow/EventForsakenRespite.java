@@ -26,7 +26,7 @@ public class EventForsakenRespite extends AbstractZombie implements BossMob {
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SPIDER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 120),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 1200),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 120),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 120),
                         Weapons.NOMEGUSTA.getItem()
                 ),
