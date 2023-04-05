@@ -2,9 +2,11 @@ package com.ebicep.warlords.pve.items.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -12,12 +14,16 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,8 +61,46 @@ public class ItemEquipMenu {
 
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
-                (i, m, e) -> {},
-                itemBuilder -> itemBuilder,
+                (i, m, e) -> {
+                    Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
+                    Menu.openConfirmationMenu(player,
+                            "Confirm Scrap",
+                            3,
+                            new ArrayList<>() {{
+                                add(ChatColor.GRAY + "Scrap this item and claim its materials.");
+                                add("");
+                                add(ChatColor.GREEN + "Rewards: " + ChatColor.GRAY + scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.");
+                                add("");
+                                add(ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone.");
+                            }},
+                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            (m2, e2) -> {
+                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                ItemsManager itemsManager = pveStats.getItemsManager();
+                                int scrapAmount = Utils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
+                                pveStats.addCurrency(Currencies.SCRAP_METAL, scrapAmount);
+                                itemsManager.removeItem(i);
+                                itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                                AbstractItem.sendItemMessage(player,
+                                        new ComponentBuilder(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
+                                                .appendHoverItem(i.getName(), i.generateItemStack())
+                                );
+                                player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+
+                                openItemEquipMenuExternal(player, databasePlayer);
+                            },
+                            (m2, e2) -> openItemEquipMenuExternal(player, databasePlayer),
+                            (m2) -> {
+                            }
+                    );
+                },
+                itemBuilder -> itemBuilder
+                        .addLore(
+                                "",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to scrap"
+                        ),
                 menuSettings,
                 databasePlayer,
                 m -> {
