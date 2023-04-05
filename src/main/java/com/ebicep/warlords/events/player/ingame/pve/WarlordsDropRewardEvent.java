@@ -38,6 +38,9 @@ public class WarlordsDropRewardEvent extends AbstractWarlordsEntityEvent {
     public static enum RewardType {
         WEAPON,
         MOB_DROP,
-        ITEM
+        ITEM,
+        BLESSING,
+
+
     }
 }

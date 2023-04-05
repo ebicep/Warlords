@@ -15,6 +15,7 @@ public class PlayerPveRewards {
     private long legendFragmentGain = 0;
     private long illusionShardGain = 0;
     private List<AbstractItem<?, ?, ?>> itemsFound = new ArrayList<>();
+    private int blessingsFound = 0;
     private Map<Spendable, Long> syntheticPouch = new HashMap<>();
     private Map<Spendable, Long> aspirantPouch = new HashMap<>();
 
@@ -58,6 +59,14 @@ public class PlayerPveRewards {
 
     public List<AbstractItem<?, ?, ?>> getItemsFound() {
         return itemsFound;
+    }
+
+    public int getBlessingsFound() {
+        return blessingsFound;
+    }
+
+    public void addBlessingsFound() {
+        this.blessingsFound += 1;
     }
 
     public Map<Spendable, Long> getSyntheticPouch() {

@@ -5,10 +5,7 @@ import com.ebicep.warlords.abilties.Fireball;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveItemEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -241,6 +238,28 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             });
             killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
         }
+    }
+
+    private void dropBlessing(WarlordsEntity killer) {
+        Game game = killer.getGame();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               AtomicDouble dropRate = new AtomicDouble(.025 * killer.getGame().getGameMode().getDropModifier());
+                               Bukkit.getPluginManager()
+                                     .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.BLESSING, dropRate));
+                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
+                                   Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(killer));
+                                   killer.getGame().forEachOnlinePlayer((player, team) -> {
+                                       AbstractItem.sendItemMessage(player,
+                                               Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
+                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
+                                       );
+                                   });
+                                   killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                               }
+                           });
     }
 
     public EntityLiving getTarget() {

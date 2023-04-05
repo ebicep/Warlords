@@ -42,6 +42,8 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     private long legendFragmentsGained;
     @Field("illusion_shard_gain")
     private long illusionShardGained;
+    @Field("blessings_found")
+    private int blessingsFound;
     @Field("mob_drops_gained")
     private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
     @Field("items_found")
@@ -79,6 +81,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         this.itemsFound.addAll(playerPveRewards.getItemsFound());
         this.legendFragmentsGained = playerPveRewards.getLegendFragmentGain();
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
+        this.blessingsFound = playerPveRewards.getBlessingsFound();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
         List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, pveOption, true);
         this.questsCompleted.addAll(questsFromGameStats);
@@ -134,6 +137,10 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
 
     public long getIllusionShardGained() {
         return illusionShardGained;
+    }
+
+    public int getBlessingsFound() {
+        return blessingsFound;
     }
 
     public Map<MobDrops, Long> getMobDropsGained() {

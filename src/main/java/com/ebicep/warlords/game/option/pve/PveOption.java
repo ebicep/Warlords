@@ -2,10 +2,7 @@ package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveItemEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
@@ -194,6 +191,12 @@ public interface PveOption {
                 getRewards().getPlayerRewards(event.getPlayer().getUuid())
                             .getItemsFound()
                             .add(event.getItem());
+            }
+
+            @EventHandler
+            public void onItemDrop(WarlordsGiveBlessingFoundEvent event) {
+                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                            .addBlessingsFound();
             }
         };
     }

@@ -217,10 +217,11 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                 }
             }
         }
+        getItemsManager().addBlessingsFound(gamePlayerPvE.getBlessingsFound() * multiplier);
 
         //SPENDABLE
         addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
-        addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained());
+        addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained() * multiplier);
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
 
