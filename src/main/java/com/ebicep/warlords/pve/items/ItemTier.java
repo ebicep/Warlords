@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 0),
             new ItemStack(Material.STAINED_CLAY, 1, (short) 0),
             0,
+            null,
             null,
             0,
             0,
@@ -38,6 +40,7 @@ public enum ItemTier {
             new ItemStack(Material.STAINED_CLAY, 1, (short) 5),
             -.20f,
             new WeightRange(7, 10, 15),
+            new Pair<>(1, 3),
             .1,
             .65,
             .05,
@@ -59,6 +62,7 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 3),
             -.10f,
             new WeightRange(15, 20, 30),
+            new Pair<>(5, 10),
             .05,
             .55,
             .10,
@@ -81,6 +85,7 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 2),
             0,
             new WeightRange(22, 30, 45),
+            new Pair<>(11, 20),
             .01,
             .45,
             .10,
@@ -103,6 +108,7 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 4),
             .10f,
             new WeightRange(30, 40, 60),
+            new Pair<>(21, 35),
             .001,
             .35,
             .20,
@@ -125,6 +131,7 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
             .20f,
             new WeightRange(37, 50, 75),
+            new Pair<>(36, 50),
             0,
             .25,
             .25,
@@ -182,6 +189,7 @@ public enum ItemTier {
     public final ItemStack clayBlock;
     public final float statDistributionModifier;
     public final WeightRange weightRange;
+    public final Pair<Integer, Integer> scrapValue;
     public final double dropChance;
     public final double cursedChance;
     public final double blessedChance;
@@ -196,7 +204,7 @@ public enum ItemTier {
             ItemStack clayBlock,
             float statDistributionModifier,
             WeightRange weightRange,
-            double dropChance,
+            Pair<Integer, Integer> scrapValue, double dropChance,
             double cursedChance,
             double blessedChance,
             int maxEquipped,
@@ -209,6 +217,7 @@ public enum ItemTier {
         this.clayBlock = clayBlock;
         this.statDistributionModifier = statDistributionModifier;
         this.weightRange = weightRange;
+        this.scrapValue = scrapValue;
         this.dropChance = dropChance;
         this.cursedChance = cursedChance;
         this.blessedChance = blessedChance;

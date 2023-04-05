@@ -476,7 +476,7 @@ public class ItemMichaelMenu {
             boolean enoughCost = blessingFound && FOUND_COST.entrySet()
                                                             .stream()
                                                             .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
-            ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && !blessingFound || !enoughCost ? Material.ANVIL : Material.BARRIER))
+            ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && (!blessingFound || enoughCost) ? Material.ANVIL : Material.BARRIER))
                     .name(ChatColor.GREEN + "Click to Apply Blessing")
                     .lore(
                             ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),

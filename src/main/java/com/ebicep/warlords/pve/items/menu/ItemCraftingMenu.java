@@ -5,8 +5,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -18,13 +20,17 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
 public class ItemCraftingMenu {
 
@@ -46,7 +52,7 @@ public class ItemCraftingMenu {
                     put(Currencies.SYNTHETIC_SHARD, 25_000L);
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
                     put(MobDrops.ZENITH_STAR, 10L);
-                    put(MobDrops.CELESTIAL_BRONZE, 5L);
+                    put(Currencies.CELESTIAL_BRONZE, 5L);
                 }},
                 new Pair<>(1, 2),
                 new ArrayList<>() {{
@@ -54,30 +60,40 @@ public class ItemCraftingMenu {
                 }}
         ));
     }};
+    private static final LinkedHashMap<Spendable, Long> CELESTIAL_SMELTERY_COST = new LinkedHashMap<>() {{
+        put(Currencies.LEGEND_FRAGMENTS, 5000L);
+        put(Currencies.SCRAP_METAL, 100L);
+        put(MobDrops.ZENITH_STAR, 3L);
+    }};
 
-    public static void openItemCraftingMenu(Player player, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Menu menu = new Menu("Select Item to Craft", 9 * 4);
+    public static void openItemCraftingMenu(Player player, DatabasePlayer databasePlayer) {
+        Menu menu = new Menu("Ethical Enya", 9 * 4);
 
-            menu.setItem(2, 1,
-                    new ItemBuilder(Material.BREWING_STAND_ITEM)
-                            .name(ChatColor.GREEN + "Delta Forging")
-                            .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
-                            .get(),
-                    (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, items)
-            );
+        menu.setItem(1, 1,
+                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 4)
+                        .name(ChatColor.GREEN + "Delta Forging")
+                        .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
+                        .get(),
+                (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, new HashMap<>())
+        );
 
-            menu.setItem(6, 1,
-                    new ItemBuilder(Material.BREWING_STAND_ITEM)
-                            .name(ChatColor.GREEN + "Omega Forging")
-                            .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
-                            .get(),
-                    (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.OMEGA, items)
-            );
+        menu.setItem(4, 1,
+                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 1)
+                        .name(ChatColor.GREEN + "Omega Forging")
+                        .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
+                        .get(),
+                (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
+        );
+        menu.setItem(7, 1,
+                new ItemBuilder(Material.ANVIL)
+                        .name(ChatColor.GREEN + "Celestial Smeltery")
+                        .lore(ChatColor.GRAY + "Smelt Celestial Bronze")
+                        .get(),
+                (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
+        );
 
-            menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        });
+        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     private static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem<?, ?, ?>> items) {
@@ -109,7 +125,7 @@ public class ItemCraftingMenu {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
 
-        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, new HashMap<>()));
+        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, databasePlayer));
         menu.openForPlayer(player);
     }
 
@@ -223,6 +239,120 @@ public class ItemCraftingMenu {
                     );
                 }
         );
+    }
+
+    private static void openCelestialSmelteryMenu(Player player, DatabasePlayer databasePlayer, Integer boughtBlessing) {
+        Menu menu = new Menu("Celestial Smeltery", 9 * 6);
+
+        ItemBuilder itemBuilder = new ItemBuilder(Material.PAPER)
+                .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" +
+                        ChatColor.GREEN + " to select a" + (boughtBlessing != null ? " different " : " ") + "blessing")
+                .enchant(Enchantment.OXYGEN, 1)
+                .flags(ItemFlag.HIDE_ENCHANTS);
+        if (boughtBlessing == null) {
+            itemBuilder.name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing");
+        } else {
+            itemBuilder.name(ChatColor.GREEN + "Tier " + (boughtBlessing) + " Bought Blessing")
+                       .addLore(
+                               "",
+                               ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                       );
+        }
+
+        menu.setItem(1, 1,
+                itemBuilder
+                        .get(),
+                (m, e) -> openBlessingSelectMenu(player, databasePlayer, boughtBlessing)
+        );
+        ItemMenuUtil.addPaneRequirement(menu, 2, 1, boughtBlessing != null);
+
+        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, CELESTIAL_SMELTERY_COST, 1, 2);
+
+        ItemMenuUtil.addItemConfirmation(menu, () -> {
+            addCelestialSmelteryConfirmationMenu(player, databasePlayer, boughtBlessing, menu);
+        });
+
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openItemCraftingMenu(player, databasePlayer));
+        menu.openForPlayer(player);
+    }
+
+    private static void openBlessingSelectMenu(Player player, DatabasePlayer databasePlayer, Integer boughtBlessing) {
+        Menu menu = new Menu("Select a Blessing Tier", 9 * 4);
+
+        ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+
+        for (int tier = 1; tier <= 5; tier++) {
+            Integer blessingBoughtAmount = itemsManager.getBlessingBoughtAmount(tier);
+            int finalTier = tier;
+            menu.setItem(tier + 1, 1,
+                    new ItemBuilder(Material.PAPER)
+                            .name(ChatColor.GREEN + "Tier " + tier + " Bought Blessings")
+                            .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
+                            .amount(blessingBoughtAmount)
+                            .enchant(Enchantment.OXYGEN, 1)
+                            .flags(ItemFlag.HIDE_ENCHANTS)
+                            .get(),
+                    (m, e) -> {
+                        if (blessingBoughtAmount > 0) {
+                            openCelestialSmelteryMenu(player, databasePlayer, finalTier);
+                        }
+                    }
+            );
+        }
+
+        menu.setItem(4, 3, Menu.MENU_BACK, (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, boughtBlessing));
+        menu.openForPlayer(player);
+    }
+
+    private static void addCelestialSmelteryConfirmationMenu(Player player, DatabasePlayer databasePlayer, Integer boughtBlessing, Menu menu) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+
+        boolean hasBoughtBlessing = boughtBlessing != null;
+        boolean enoughCost = CELESTIAL_SMELTERY_COST.entrySet()
+                                                    .stream()
+                                                    .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
+        ItemBuilder itemBuilder = new ItemBuilder(hasBoughtBlessing && enoughCost ? Material.ANVIL : Material.BARRIER)
+                .name(ChatColor.GREEN + "Click to Smelt a Celestial Bronze")
+                .lore(
+                        ItemMenuUtil.getRequirementMetString(hasBoughtBlessing, "Blessing Selected"),
+                        ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
+                );
+
+        menu.setItem(6, 2,
+                itemBuilder.get(),
+                (m, e) -> {
+                    if (!hasBoughtBlessing || !enoughCost) {
+                        return;
+                    }
+
+                    Menu.openConfirmationMenu(player,
+                            "Confirm Smelt",
+                            3,
+                            new ArrayList<>() {{
+                                add(ChatColor.GRAY + "Smelt a Celestial Bronze");
+                                addAll(PvEUtils.getCostLore(CELESTIAL_SMELTERY_COST, "Smelt Cost"));
+                                add(ChatColor.GRAY + " - " + ChatColor.GREEN + "Tier " + boughtBlessing + " Bought Blessing");
+                            }},
+                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            (m2, e2) -> {
+                                for (Map.Entry<Spendable, Long> spendableLongEntry : CELESTIAL_SMELTERY_COST.entrySet()) {
+                                    spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
+                                }
+                                pveStats.getItemsManager().subtractBlessingBought(boughtBlessing);
+                                pveStats.addCurrency(Currencies.CELESTIAL_BRONZE, 1);
+
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                player.closeInventory();
+
+                                AbstractItem.sendItemMessage(player, ChatColor.GREEN + "You smelted a Celestial Bronze");
+                            },
+                            (m2, e2) -> openCelestialSmelteryMenu(player, databasePlayer, boughtBlessing),
+                            (m2) -> {
+                            }
+                    );
+                }
+        );
+
     }
 
     static class TierRequirement {

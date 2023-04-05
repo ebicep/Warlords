@@ -119,6 +119,28 @@ public enum Currencies implements Spendable {
             ChatColor.WHITE,
             new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
     ),
+    CELESTIAL_BRONZE(
+            "Celestial Bronze",
+            ChatColor.GOLD,
+            new ItemStack(Material.MONSTER_EGG, 1, (short) 101)
+    ) {
+        @Override
+        public boolean pluralIncludeS() {
+            return false;
+        }
+    },
+    SCRAP_METAL(
+            "Scrap Metal",
+            ChatColor.GRAY,
+            new ItemStack(Material.MELON_SEEDS)
+    ) {
+        @Override
+        public boolean pluralIncludeS() {
+            return false;
+        }
+    },
+
+
     ;
 
     public static final List<Currencies> STAR_PIECES = Arrays.asList(

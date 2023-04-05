@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.addons.ItemAddonSpecBonus;
@@ -102,12 +103,12 @@ public class ItemSearchMenu extends Menu {
     private void addMobDrops() {
         setItem(2, 5,
                 new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
-                        .name("§aMob Drops")
-                        .lore(Arrays.stream(MobDrops.VALUES)
-                                    .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
-                                                                                       .getMobDrops()
-                                                                                       .getOrDefault(drop, 0L)))
-                                    .collect(Collectors.joining("\n")))
+                        .name("§aYour Drops")
+                        .lore(
+                                MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
+                                Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
+                                Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))
+                        )
                         .get(),
                 (m, e) -> {}
         );

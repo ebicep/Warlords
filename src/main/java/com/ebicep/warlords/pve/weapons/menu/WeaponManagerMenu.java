@@ -188,7 +188,7 @@ public class WeaponManagerMenu {
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.DARK_AQUA + "Your Drops")
+                        .name(ChatColor.DARK_AQUA + "Your Weapon Drops")
                         .lore(
                                 Currencies.STAR_PIECES.stream()
                                                       .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))

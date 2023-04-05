@@ -27,7 +27,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
     private static final List<SpendableBuyShop> SHOP = List.of(
             new SpendableBuyShop(1, MobDrops.ZENITH_STAR, 1, 30),
             new SpendableBuyShop(200, Currencies.LEGEND_FRAGMENTS, 1, 20),
-            new SpendableBuyShop(1, MobDrops.CELESTIAL_BRONZE, 1, 500)
+            new SpendableBuyShop(1, Currencies.CELESTIAL_BRONZE, 1, 500)
     );
 
     public IllusionVendorTrait() {

@@ -75,7 +75,7 @@ public class ItemMenuUtil {
         List<String> costLore = PvEUtils.getCostLore(cost);
         menu.setItem(x, y,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Cost")
+                        .name(ChatColor.GREEN + "Loot")
                         .lore(costLore)
                         .get(),
                 (m, e) -> {

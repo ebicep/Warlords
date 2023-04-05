@@ -16,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 @CommandAlias("items")
@@ -35,7 +34,7 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("forgemenu")
     public void openForgingMenu(Player player, ItemTier tier) {
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openItemCraftingMenu(player, new HashMap<>()));
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemCraftingMenu.openItemCraftingMenu(player, databasePlayer));
     }
 
     @Subcommand("addfoundblessings")
