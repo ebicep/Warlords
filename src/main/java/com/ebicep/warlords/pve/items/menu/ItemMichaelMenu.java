@@ -22,6 +22,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -216,6 +217,7 @@ public class ItemMichaelMenu {
                         (m, e) -> {
                             if (stock <= 0) {
                                 player.sendMessage(ChatColor.RED + "This blessing is out of stock!");
+                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                             LinkedHashMap<Spendable, Long> tierCosts = COSTS.get(finalTier);
@@ -224,6 +226,7 @@ public class ItemMichaelMenu {
                                 Long cost = spendableIntegerEntry.getValue();
                                 if (spendable.getFromPlayer(databasePlayer) < cost) {
                                     player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to bless this item!");
+                                    player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                                     return;
                                 }
                             }
@@ -239,6 +242,7 @@ public class ItemMichaelMenu {
                                         currentWeeklyBlessings.addPlayerOrder(player.getUniqueId(), finalTier);
                                         tierCosts.forEach((spendable, cost) -> spendable.subtractFromPlayer(databasePlayer, cost));
                                         pveStats.getItemsManager().addBlessingBought(finalTier);
+                                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1.5f);
                                         player.closeInventory();
 
                                         AbstractItem.sendItemMessage(player, ChatColor.GRAY + "You bought a " +
@@ -703,6 +707,7 @@ public class ItemMichaelMenu {
                     (m, e) -> {
                         if (item == null) {
                             player.sendMessage(ChatColor.RED + "Select an Item first!");
+                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         LinkedHashMap<Spendable, Long> removeCurseCost = item.getTier().removeCurseCost;
@@ -711,6 +716,7 @@ public class ItemMichaelMenu {
                             Long cost = spendableLongEntry.getValue();
                             if (spendable.getFromPlayer(databasePlayer) < cost) {
                                 player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to purify this Item!");
+                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                         }
@@ -738,6 +744,7 @@ public class ItemMichaelMenu {
                                     }
                                     item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    player.playSound(player.getLocation(), Sound.WATER, 2, 0.1f);
                                     player.closeInventory();
 
                                     AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
