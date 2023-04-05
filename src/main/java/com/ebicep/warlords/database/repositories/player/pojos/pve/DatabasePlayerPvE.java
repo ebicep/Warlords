@@ -439,6 +439,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     }
 
     public long getMobDrops(MobDrops mobDrops) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return Long.MAX_VALUE;
+        }
         return this.mobDrops.getOrDefault(mobDrops, 0L);
     }
 
@@ -447,6 +450,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     }
 
     public void addMobDrops(MobDrops mobDrops, long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
         if (!this.mobDrops.containsKey(mobDrops)) {
             this.mobDrops.put(mobDrops, amount);
         } else {

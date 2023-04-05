@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @CommandPermission("minecraft.command.op|group.administrator")
 public class ItemsCommand extends BaseCommand {
 
+    @Default
     @Subcommand("menu")
     public void menu(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
