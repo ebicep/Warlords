@@ -20,6 +20,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtDatabaseStatInformation;
 import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -91,6 +92,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     private List<CompensationReward> compensationRewards = new ArrayList<>();
     @Field("game_event_rewards")
     private List<GameEventReward> gameEventRewards = new ArrayList<>();
+    @Field("pouch_rewards")
+    private List<PouchReward> pouchRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -420,6 +423,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public List<GameEventReward> getGameEventRewards() {
         return gameEventRewards;
+    }
+
+    public List<PouchReward> getPouchRewards() {
+        return pouchRewards;
     }
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {

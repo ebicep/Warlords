@@ -20,16 +20,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
 
     public static final RandomCollection<Pair<Spendable, Long>> SYNTHETIC_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
-            .add(50, new Pair<>(Currencies.COIN, 2000L))
+            .add(64.95, new Pair<>(Currencies.COIN, 2000L))
             .add(25, new Pair<>(Currencies.SYNTHETIC_SHARD, 20L))
             .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 20L))
-            .add(.05, new Pair<>(MobDrops.ZENITH_STAR, 1L))
-            .add(14.95, null);
+            .add(.05, new Pair<>(MobDrops.ZENITH_STAR, 1L));
     public static final RandomCollection<Pair<Spendable, Long>> ASPIRANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
-            .add(50, new Pair<>(Currencies.LEGEND_FRAGMENTS, 40L))
+            .add(73, new Pair<>(Currencies.LEGEND_FRAGMENTS, 40L))
             .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 10L))
-            .add(2, new Pair<>(MobDrops.ZENITH_STAR, 1L))
-            .add(23, null);
+            .add(2, new Pair<>(MobDrops.ZENITH_STAR, 1L));
 
     public OnslaughtRewards(OnslaughtOption pveOption) {
         super(pveOption);
