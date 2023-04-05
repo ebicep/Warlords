@@ -1925,7 +1925,7 @@ public abstract class WarlordsEntity {
 
     public void sendMessage(String message) {
         this.entity.sendMessage(message);
-        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES) {
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
             game.spectators()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
@@ -1945,7 +1945,7 @@ public abstract class WarlordsEntity {
     public void sendSpigotMessage(BaseComponent[] message) {
         if (this.entity instanceof Player) {
             ((Player) this.entity).spigot().sendMessage(message);
-            if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES) {
+            if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
                 BaseComponent[] messageCopy = new BaseComponent[message.length];
                 for (int i = 0; i < message.length; i++) {
                     BaseComponent duplicate = message[i].duplicate();
