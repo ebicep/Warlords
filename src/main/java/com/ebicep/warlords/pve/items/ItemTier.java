@@ -126,7 +126,7 @@ public enum ItemTier {
     },
     OMEGA(
             "Omega",
-            ChatColor.GRAY,
+            ChatColor.GOLD,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 1),
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
             .20f,
