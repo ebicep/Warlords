@@ -46,7 +46,7 @@ public interface Upgradeable {
         if (upgradeCost.isEmpty()) {
             return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
-            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost");
+            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }
     }
 

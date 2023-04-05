@@ -731,7 +731,7 @@ public class ItemMichaelMenu {
                                     } else {
                                         add(item.getCurses()[-item.getModifier() - 1].getDescription() + ChatColor.DARK_GREEN + " > " + item.getCurses()[-item.getModifier() - 2].getDescription());
                                     }
-                                    addAll(PvEUtils.getCostLore(removeCurseCost));
+                                    addAll(PvEUtils.getCostLore(removeCurseCost, true));
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {

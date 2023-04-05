@@ -122,7 +122,7 @@ public enum StarPieces {
     }
 
     public List<String> getCostLore() {
-        return PvEUtils.getCostLore(synthesisCosts);
+        return PvEUtils.getCostLore(synthesisCosts, true);
     }
 
 }
