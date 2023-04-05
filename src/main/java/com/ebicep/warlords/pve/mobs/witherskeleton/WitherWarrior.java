@@ -37,6 +37,7 @@ public class WitherWarrior extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         this.entity.setSkeletonType(1);
     }
 

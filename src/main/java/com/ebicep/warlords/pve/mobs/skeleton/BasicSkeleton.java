@@ -36,6 +36,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

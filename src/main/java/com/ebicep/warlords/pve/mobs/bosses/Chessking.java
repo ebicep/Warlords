@@ -33,6 +33,7 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         this.entity.get().setSize(19);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {

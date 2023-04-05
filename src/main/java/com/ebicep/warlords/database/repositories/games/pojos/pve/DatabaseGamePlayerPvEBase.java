@@ -8,6 +8,7 @@ import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -43,6 +44,8 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     private long illusionShardGained;
     @Field("mob_drops_gained")
     private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
+    @Field("items_found")
+    private List<AbstractItem<?, ?, ?>> itemsFound = new ArrayList<>();
     @Field("quests_completed")
     private List<Quests> questsCompleted = new ArrayList<>();
 
@@ -73,6 +76,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
                                                   .mapToLong(aLong -> aLong)
                                                   .sum();
         this.weaponsFound.addAll(playerPveRewards.getWeaponsFound());
+        this.itemsFound.addAll(playerPveRewards.getItemsFound());
         this.legendFragmentsGained = playerPveRewards.getLegendFragmentGain();
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
@@ -134,6 +138,10 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
 
     public Map<MobDrops, Long> getMobDropsGained() {
         return mobDropsGained;
+    }
+
+    public List<AbstractItem<?, ?, ?>> getItemsFound() {
+        return itemsFound;
     }
 
     public List<Quests> getQuestsCompleted() {

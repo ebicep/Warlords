@@ -50,6 +50,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         this.entity.setSkeletonType(1);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
@@ -169,6 +170,6 @@ public class Torment extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-
+        super.onDeath(killer, deathLocation, option);
     }
 }

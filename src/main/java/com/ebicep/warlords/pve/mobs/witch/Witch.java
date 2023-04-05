@@ -34,6 +34,7 @@ public class Witch extends AbstractWitch implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

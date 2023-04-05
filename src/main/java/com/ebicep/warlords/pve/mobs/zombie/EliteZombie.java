@@ -35,6 +35,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
     }
 
@@ -55,11 +56,12 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
         Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
     }
 }

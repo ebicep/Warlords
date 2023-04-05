@@ -41,6 +41,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         reduceCooldown = option.getDifficulty() == DifficultyIndex.HARD ? 0.4f : 0.2f;
     }
 

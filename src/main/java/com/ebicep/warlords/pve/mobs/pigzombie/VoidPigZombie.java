@@ -40,6 +40,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         warlordsNPC.getSpec().setBlue(new PrismGuard());
     }
 

@@ -290,7 +290,7 @@ public enum GameMode {
         }
 
         @Override
-        public float getMobDropModifier() {
+        public float getDropModifier() {
             return .1f;
         }
     },
@@ -478,7 +478,7 @@ public enum GameMode {
         this.isHiddenInMenu = isHiddenInMenu;
     }
 
-    public float getMobDropModifier() {
+    public float getDropModifier() {
         return 1;
     }
 

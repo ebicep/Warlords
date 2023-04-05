@@ -23,7 +23,6 @@ public enum ItemTier {
             0,
             0,
             0,
-            0,
             null,
             0
     ) {
@@ -40,7 +39,6 @@ public enum ItemTier {
             -.20f,
             new WeightRange(7, 10, 15),
             .1,
-            .001,
             .65,
             .05,
             3,
@@ -62,7 +60,6 @@ public enum ItemTier {
             -.10f,
             new WeightRange(15, 20, 30),
             .05,
-            .0005,
             .55,
             .10,
             2,
@@ -85,7 +82,6 @@ public enum ItemTier {
             0,
             new WeightRange(22, 30, 45),
             .01,
-            .0001,
             .45,
             .10,
             2,
@@ -108,7 +104,6 @@ public enum ItemTier {
             .10f,
             new WeightRange(30, 40, 60),
             .001,
-            .00001,
             .35,
             .20,
             1,
@@ -130,7 +125,6 @@ public enum ItemTier {
             new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
             .20f,
             new WeightRange(37, 50, 75),
-            0,
             0,
             .25,
             .25,
@@ -189,7 +183,6 @@ public enum ItemTier {
     public final float statDistributionModifier;
     public final WeightRange weightRange;
     public final double dropChance;
-    public final double killDropChance;
     public final double cursedChance;
     public final double blessedChance;
     public final int maxEquipped;
@@ -204,7 +197,6 @@ public enum ItemTier {
             float statDistributionModifier,
             WeightRange weightRange,
             double dropChance,
-            double killDropChance,
             double cursedChance,
             double blessedChance,
             int maxEquipped,
@@ -218,7 +210,6 @@ public enum ItemTier {
         this.statDistributionModifier = statDistributionModifier;
         this.weightRange = weightRange;
         this.dropChance = dropChance;
-        this.killDropChance = killDropChance;
         this.cursedChance = cursedChance;
         this.blessedChance = blessedChance;
         this.maxEquipped = maxEquipped;

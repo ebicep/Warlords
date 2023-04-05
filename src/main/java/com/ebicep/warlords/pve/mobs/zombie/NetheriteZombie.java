@@ -42,6 +42,7 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

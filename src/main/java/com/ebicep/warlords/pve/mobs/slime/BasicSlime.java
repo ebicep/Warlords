@@ -43,6 +43,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
     }
 
     @Override
@@ -80,6 +81,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(warlordsNPC, shimmerRadius, shimmerRadius, shimmerRadius)
                 .aliveEnemiesOf(warlordsNPC)

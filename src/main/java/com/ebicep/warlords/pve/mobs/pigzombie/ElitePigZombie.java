@@ -40,6 +40,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
     }
 

@@ -34,6 +34,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         if (option.getDifficulty() != DifficultyIndex.EASY && option.getGame().onlinePlayersWithoutSpectators().count() == 1) {
             woundingStrike.setHitbox(woundingStrike.getHitbox() - 1);
         }

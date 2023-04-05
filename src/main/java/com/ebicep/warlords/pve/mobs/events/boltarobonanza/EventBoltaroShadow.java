@@ -43,6 +43,7 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 

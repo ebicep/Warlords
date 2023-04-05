@@ -36,6 +36,7 @@ public class EventNarmerAcolyte extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

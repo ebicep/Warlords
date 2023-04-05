@@ -32,6 +32,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 

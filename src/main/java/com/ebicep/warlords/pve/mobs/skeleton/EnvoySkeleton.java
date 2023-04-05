@@ -35,6 +35,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
     }
 

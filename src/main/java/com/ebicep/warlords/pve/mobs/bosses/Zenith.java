@@ -49,6 +49,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
@@ -164,7 +165,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        dropMobDrop(killer);
+        super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                     .withColor(Color.WHITE)

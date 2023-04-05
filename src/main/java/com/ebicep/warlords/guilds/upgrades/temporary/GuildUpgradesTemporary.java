@@ -2,7 +2,7 @@ package com.ebicep.warlords.guilds.upgrades.temporary;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
@@ -104,8 +104,11 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
             game.registerEvents(new Listener() {
 
                 @EventHandler
-                public void onEvent(WarlordsDropWeaponEvent event) {
+                public void onEvent(WarlordsDropRewardEvent event) {
                     if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+                    if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.WEAPON) {
                         return;
                     }
                     event.getDropRate().set(event.getDropRate().get() * getValueFromTier(tier));

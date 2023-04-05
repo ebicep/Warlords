@@ -31,6 +31,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
@@ -145,8 +146,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
             guild.queueUpdate();
         }
-        //WEAPONS
+        //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
+        List<AbstractItem<?, ?, ?>> itemsFound = gamePlayerPvE.getItemsFound();
         if (multiplier > 0) {
             int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
             int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
@@ -169,6 +171,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             } else {
                 weaponInventory.addAll(weaponsFound);
             }
+
+            itemsManager.getItemInventory().addAll(itemsFound);
 
             //QUESTS
             for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
@@ -198,6 +202,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     } else {
                         ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory", true);
                     }
+                }
+
+                for (AbstractItem<?, ?, ?> item : itemsFound) {
+                    itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
                 }
             }
 

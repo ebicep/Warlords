@@ -37,6 +37,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 
@@ -85,6 +86,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we != null) {
             for (WarlordsEntity enemy : PlayerFilter

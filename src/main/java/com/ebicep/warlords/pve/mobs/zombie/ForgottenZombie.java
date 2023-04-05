@@ -41,6 +41,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -82,11 +83,12 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
         Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
     }
 }

@@ -25,6 +25,7 @@ public class Wolf extends AbstractWolf implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

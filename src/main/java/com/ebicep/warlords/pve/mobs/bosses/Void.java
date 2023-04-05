@@ -63,6 +63,7 @@ public class Void extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -205,6 +206,7 @@ public class Void extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             EffectUtils.strikeLightningInCylinder(deathLocation, 8,false);
         }

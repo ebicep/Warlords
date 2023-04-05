@@ -34,6 +34,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 20);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIREWORK_LARGE_BLAST, 2, 0.5f);
     }

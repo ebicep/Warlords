@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pve;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveItemEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
@@ -186,6 +187,13 @@ public interface PveOption {
                 getRewards().getPlayerRewards(event.getPlayer().getUuid())
                             .getMobDropsGained()
                             .merge(event.getMobDrop(), 1L, Long::sum);
+            }
+
+            @EventHandler
+            public void onItemDrop(WarlordsGiveItemEvent event) {
+                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                            .getItemsFound()
+                            .add(event.getItem());
             }
         };
     }

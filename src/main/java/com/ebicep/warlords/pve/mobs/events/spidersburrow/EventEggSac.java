@@ -40,6 +40,7 @@ public class EventEggSac extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         if (ARMOR_STAND) {
             warlordsNPC.getEntity().remove();
             ArmorStand armorStand = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, -1.3, 0), ArmorStand.class);

@@ -37,6 +37,7 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

@@ -4,14 +4,12 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobDropEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemLoadout;
-import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -22,7 +20,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
@@ -40,7 +37,10 @@ public class ItemOption implements Option {
         game.registerEvents(new Listener() {
 
             @EventHandler
-            public void onMobDrop(WarlordsMobDropEvent event) {
+            public void onMobDrop(WarlordsDropRewardEvent event) {
+                if (event.getRewardType() == WarlordsDropRewardEvent.RewardType.WEAPON) {
+                    return;
+                }
                 WarlordsEntity player = event.getPlayer();
                 ItemPlayerConfig itemPlayerConfig = itemPlayerConfigs.get(player.getUuid());
                 if (itemPlayerConfig == null) {
@@ -48,18 +48,6 @@ public class ItemOption implements Option {
                 }
                 AtomicDouble dropRate = event.getDropRate();
                 dropRate.set(dropRate.get() * itemPlayerConfig.getDropRateModifier());
-            }
-
-            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-            public void onWin(WarlordsGameTriggerWinEvent event) {
-                int totalPlayerKills = game.warlordsPlayers()
-                                           .mapToInt(warlordsPlayer -> warlordsPlayer.getMinuteStats().total().getKills())
-                                           .sum();
-                for (ItemTier itemTier : ItemTier.VALID_VALUES) {
-                    game.warlordsPlayers().forEach(wp -> {
-                        // if(ThreadLocalRandom.current().nextDouble() < itemTier.dropChance)
-                    });
-                }
             }
 
         });
@@ -141,6 +129,5 @@ public class ItemOption implements Option {
         public double getDropRateModifier() {
             return dropRateModifier;
         }
-
     }
 }

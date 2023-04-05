@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilties.Fireball;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveItemEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobDropEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -19,6 +19,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -55,6 +58,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final float maxMeleeDamage;
 
     protected WarlordsNPC warlordsNPC;
+    protected PveOption pveOption;
 
     public AbstractMob(
             T entity,
@@ -123,7 +127,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
-    public abstract void onSpawn(PveOption option);
+    public void onSpawn(PveOption option) {
+        this.pveOption = option;
+    }
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
         mapper.apply(this.warlordsNPC);
@@ -137,68 +143,43 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
+            return;
+        }
+        if (pveOption == null) {
+            return;
+        }
         dropWeapon(killer);
-        //dropMobDrop(killer);
+        dropMobDrop(killer);
+        dropItem(killer);
     }
 
     public void dropWeapon(WarlordsEntity killer) {
-        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
-            return;
+        if (killer.getEntity() instanceof Player) {
+            dropWeapon(killer, 100);
         }
-        dropWeapon(killer, 100);
         PlayerFilter.playingGame(killer.getGame())
                     .teammatesOfExcludingSelf(killer)
+                    .filter(wp -> wp.getEntity() instanceof Player)
                     .forEach(teammate -> dropWeapon(teammate, 200));
     }
 
-    private void dropWeapon(WarlordsEntity killer, int bound) {
-        AtomicDouble dropRate = new AtomicDouble(weaponDropRate());
-        Bukkit.getPluginManager().callEvent(new WarlordsDropWeaponEvent(killer, dropRate));
-        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
-            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
-            Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
-
-            if (killer.getEntity() instanceof Player) {
-                killer.getGame().forEachOnlinePlayer((player, team) -> {
-                    player.spigot()
-                          .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                                  .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                                  .append(ChatColor.GRAY + "!")
-                                  .create()
-                          );
-                });
-                killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
-            }
-        }
-    }
-
     public void dropMobDrop(WarlordsEntity killer) {
-        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
-            return;
-        }
         HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
         if (mobDrops.isEmpty()) {
             return;
         }
         Game game = killer.getGame();
-        PveOption pveOption = game
-                .getOptions()
-                .stream()
-                .filter(PveOption.class::isInstance)
-                .map(PveOption.class::cast)
-                .findFirst()
-                .orElse(null);
-        if (pveOption == null) {
-            return;
-        }
         DifficultyIndex difficultyIndex = pveOption.getDifficulty();
         PlayerFilterGeneric.playingGameWarlordsPlayers(game)
                            .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode()
-                                                                                                                                                  .getMobDropModifier());
-                                   Bukkit.getPluginManager().callEvent(new WarlordsMobDropEvent(warlordsPlayer, dropRate));
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d)
+                                           * game.getGameMode().getDropModifier());
+                                   Bukkit.getPluginManager()
+                                         .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.MOB_DROP, dropRate));
                                    if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(warlordsPlayer, drop));
 
@@ -213,6 +194,53 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    }
                                });
                            });
+    }
+
+    public void dropItem(WarlordsEntity killer) {
+        Game game = killer.getGame();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               ItemTier[] validValues = ItemTier.VALID_VALUES;
+                               for (int i = validValues.length - 1; i >= 0; i--) {
+                                   ItemTier itemTier = validValues[i];
+                                   AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * killer.getGame().getGameMode().getDropModifier());
+                                   Bukkit.getPluginManager()
+                                         .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.ITEM, dropRate));
+                                   if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
+                                       AbstractItem<?, ?, ?> item = ItemType.getRandom().create.apply(itemTier);
+                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(killer, item));
+                                       killer.getGame().forEachOnlinePlayer((player, team) -> {
+                                           AbstractItem.sendItemMessage(player,
+                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                                                           .appendHoverItem(item.getName(), item.generateItemStack())
+                                                           .append(ChatColor.GRAY + "!")
+                                           );
+                                       });
+                                       killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       break;
+                                   }
+                               }
+                           });
+    }
+
+    private void dropWeapon(WarlordsEntity killer, int bound) {
+        AtomicDouble dropRate = new AtomicDouble(weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
+        Bukkit.getPluginManager().callEvent(new WarlordsDropRewardEvent(killer, WarlordsDropRewardEvent.RewardType.WEAPON, dropRate));
+        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
+            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
+            Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
+            killer.getGame().forEachOnlinePlayer((player, team) -> {
+                player.spigot()
+                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
+                              .append(ChatColor.GRAY + "!")
+                              .create()
+                      );
+            });
+            killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+        }
     }
 
     public EntityLiving getTarget() {

@@ -25,6 +25,7 @@ public class Spider extends AbstractSpider implements BasicMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

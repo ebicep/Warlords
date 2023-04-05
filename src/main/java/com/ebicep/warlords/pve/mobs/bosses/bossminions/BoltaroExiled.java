@@ -37,6 +37,7 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
     }
 
     @Override
@@ -54,6 +55,7 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 1.3f);
     }
 }

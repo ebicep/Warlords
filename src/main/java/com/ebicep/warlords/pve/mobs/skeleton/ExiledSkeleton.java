@@ -48,6 +48,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

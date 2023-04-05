@@ -39,6 +39,7 @@ public class MeleeOnlyZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
                 null,

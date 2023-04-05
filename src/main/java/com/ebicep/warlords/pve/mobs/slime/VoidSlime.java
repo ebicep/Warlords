@@ -27,6 +27,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         this.entity.get().setSize(10);
     }
 

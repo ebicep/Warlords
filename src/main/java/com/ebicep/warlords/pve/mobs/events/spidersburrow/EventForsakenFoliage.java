@@ -39,6 +39,7 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         // Attacks are converted into Earth Living with double the proc chance as standard.
         Earthliving earthliving = new Earthliving();
         earthliving.setProcChance(earthliving.getProcChance() * 2);
