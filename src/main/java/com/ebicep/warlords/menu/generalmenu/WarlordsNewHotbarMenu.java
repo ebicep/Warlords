@@ -205,7 +205,6 @@ public class WarlordsNewHotbarMenu {
                                         .getOrDefault(spec, Weapons.FELFLAME_BLADE)
                                         .getItem()))
                                         .name("§aWeapon Skin Preview")
-                                        .lore("")
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
@@ -462,7 +461,6 @@ public class WarlordsNewHotbarMenu {
                                         .getWeapon()
                                         .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                                         .name("§aWeapon Skin Preview")
-                                        .lore("")
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));

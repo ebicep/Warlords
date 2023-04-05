@@ -494,7 +494,6 @@ public enum GameMode {
                     .getItem(playerSettings.getWeaponSkins()
                             .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                     .name("§aWeapon Skin Preview")
-                    .lore("")
                     .get();
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)

@@ -125,7 +125,6 @@ public class WarlordsShopMenu {
                         AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                 .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
-                                .lore("")
                                 .get());
 
                         openClassMenu(player, selectedGroup);
@@ -267,7 +266,6 @@ public class WarlordsShopMenu {
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                     .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
-                                    .lore("")
                                     .get());
 
                             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
