@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -28,6 +29,12 @@ import java.util.UUID;
 
 public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
+    public static final RandomCollection<Integer> SPAWN_AMOUNT = new RandomCollection<Integer>()
+            .add(2, 2)
+            .add(2, 3)
+            .add(1, 4)
+            .add(1, 5);
+    public static final int SPAWN_LIMIT = 20;
     public static final int COOLDOWN = 30;
 
     public LegendaryRequiem() {
@@ -39,21 +46,6 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
     public LegendaryRequiem(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Every " + COOLDOWN + " seconds summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return null;
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 180;
     }
 
     @Override
@@ -98,10 +90,24 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (player.isDead()) {
                     return;
                 }
-                pveOption.spawnNewMob(new BasicZombie(player.getLocation()), Team.BLUE);
+                int spawnAmount = SPAWN_AMOUNT.next();
+                int alliedNPCs = (int) game.warlordsNPCs()
+                                           .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
+                                           .count();
+                if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
+                    spawnAmount = SPAWN_LIMIT - alliedNPCs;
+                }
+                for (int i = 0; i < spawnAmount; i++) {
+                    pveOption.spawnNewMob(new BasicZombie(player.getLocation()), Team.BLUE);
+                }
             }
         }.runTaskTimer(200, COOLDOWN * 20);
 
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Every " + COOLDOWN + " seconds summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
     }
 
     @Override
@@ -115,6 +121,21 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getHealthBonusValue() {
+        return 800;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 180;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 20;
     }
@@ -125,13 +146,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getHealthBonusValue() {
-        return 800;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 8;
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return null;
     }
 
     @Override
