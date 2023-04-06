@@ -84,8 +84,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     //REWARDS
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
-    @Field("patreon")
-    private boolean currentlyPatreon = false;
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
     @Field("compensation_rewards")
@@ -154,7 +152,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         List<AbstractItem> itemsFound = gamePlayerPvE.getItemsFound();
         if (playersCollection == PlayersCollections.LIFETIME) {
             if (multiplier > 0) {
-                int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
+                int maxWeaponInventorySize = databasePlayer.isPatreon() ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
                 int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
                 int weaponsFoundSize = weaponsFound.size();
                 int newWeaponInventorySize = currentWeaponInventorySize + weaponsFoundSize;
@@ -459,14 +457,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public Map<MobDrops, Long> getMobDrops() {
         return mobDrops;
-    }
-
-    public boolean isCurrentlyPatreon() {
-        return currentlyPatreon;
-    }
-
-    public void setCurrentlyPatreon(boolean currentlyPatreon) {
-        this.currentlyPatreon = currentlyPatreon;
     }
 
     public Map<String, Long> getIllusionVendorRewardsPurchased() {

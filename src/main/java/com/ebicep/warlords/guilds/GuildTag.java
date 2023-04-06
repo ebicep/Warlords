@@ -16,7 +16,7 @@ public class GuildTag {
             Colors.WHITE, Colors.GRAY, Colors.DARK_GRAY, Colors.BLACK
     };
 
-    private String name;
+    private String name = "";
     @Field("name_color")
     private String nameColor = ChatColor.GRAY.toString();
     @Field("bracket_color")

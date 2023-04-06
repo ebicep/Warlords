@@ -78,7 +78,7 @@ public class ItemsManager {
         weight += getHiScoreWeight(databasePlayer);
 //        System.out.println("Weight after x5: " + weight);
         // x6
-        if (databasePlayer.getPveStats().isCurrentlyPatreon()) {
+        if (databasePlayer.isPatreon()) {
             weight += 5;
         }
 //        System.out.println("Weight after x6: " + weight);

@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -135,7 +135,7 @@ public class WeaponManagerMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (!player.hasPermission("group.patreon") && !PermissionHandler.isAdmin(player)) {
+                    if (!player.hasPermission("group.patreon") && !Permissions.isAdmin(player)) {
                         player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
                         return;
                     }

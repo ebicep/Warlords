@@ -36,7 +36,7 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -62,7 +62,7 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
-import net.luckperms.api.event.user.track.UserTrackEvent;
+import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
 import org.bukkit.GameMode;
 import org.bukkit.*;
@@ -370,9 +370,10 @@ public class Warlords extends JavaPlugin {
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
+            ChatUtils.MessageTypes.WARLORDS.sendMessage("Hooked into LuckPerms");
             LuckPerms api = provider.getProvider();
             EventBus eventBus = api.getEventBus();
-            eventBus.subscribe(this, UserTrackEvent.class, PermissionHandler::listenToNewPatreons);
+            eventBus.subscribe(this, UserDataRecalculateEvent.class, Permissions::listenToNewPatreons);
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> {

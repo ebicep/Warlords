@@ -22,7 +22,6 @@ import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
-import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -54,11 +53,13 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
 
@@ -173,7 +174,7 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabaseManager.getPlayer(uuid, databasePlayer -> {
                 if (fromGame) {
                     //check all spec prestige
                     for (Specializations value : Specializations.VALUES) {
@@ -218,6 +219,14 @@ public class WarlordsEvents implements Listener {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }
                             }).execute();
+                    List<String> permissions = player.getEffectivePermissions()
+                                                     .stream()
+                                                     .map(PermissionAttachmentInfo::getPermission)
+                                                     .collect(Collectors.toList());
+                    permissions.remove("group.default");
+                    for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                        DatabaseManager.updatePlayer(uuid, activeCollection, dp -> dp.setPermissions(permissions));
+                    }
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                 }
@@ -227,7 +236,6 @@ public class WarlordsEvents implements Listener {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
                 }
-                PermissionHandler.checkForPatreon(databasePlayer, player.hasPermission("group.patreon"));
             }, () -> {
                 if (!fromGame) {
                     player.kickPlayer("Unable to load player data. Report this if this issue persists.*");

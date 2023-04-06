@@ -14,6 +14,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
@@ -238,7 +239,7 @@ public class CustomScoreboard {
             } else {
                 team.setSuffix("");
             }
-            team.setPrefix(ChatColor.AQUA.toString());
+            team.setPrefix(Permissions.getPrefixWithColor(onlinePlayer));
             team.addEntry(name);
         }
     }

@@ -47,7 +47,7 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -103,16 +103,15 @@ public class StatsLeaderboardManager {
                                 }
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-                                if (value == PlayersCollections.LIFETIME &&
-                                        (databasePlayer.getPlays() + pveStats.getPlays() < 20 ||
-                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus))) &&
-                                        (currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
-                                                                                                                    .get(currentGameEvent.getStartDateSecond())
-                                                                                                                    .getPlays() == 0)
-                                ) {
+                                boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
+                                boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
+                                boolean noCurrentEventPlays = currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
+                                                                                                                                         .get(currentGameEvent.getStartDateSecond())
+                                                                                                                                         .getPlays() == 0;
+                                if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + pveStats.getPlays() < 20)) {
+                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);

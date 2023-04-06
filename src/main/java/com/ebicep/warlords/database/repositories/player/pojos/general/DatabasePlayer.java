@@ -87,8 +87,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
     @Field("chat_energy")
     private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
-
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
+    private List<String> permissions = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -470,4 +470,21 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     public String getId() {
         return id;
     }
+
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
+    }
+
+    public boolean isPatreon() {
+        return hasPermission("group.patreon");
+    }
+
 }
