@@ -127,6 +127,7 @@ public class ItemCraftingMenu {
         });
 
         menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> openItemCraftingMenu(player, databasePlayer));
+        menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 
@@ -276,6 +277,7 @@ public class ItemCraftingMenu {
         });
 
         menu.setItem(4, 5, MENU_BACK, (m, e) -> openItemCraftingMenu(player, databasePlayer));
+        menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 

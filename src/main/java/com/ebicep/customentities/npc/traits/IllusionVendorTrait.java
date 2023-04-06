@@ -37,44 +37,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
     public static void openIllusionVendor(Player player, DatabasePlayer databasePlayer, DatabasePlayer databasePlayerWeekly) {
         Menu menu = new Menu("Illusion Vendor", 9 * 4);
 
-        for (int i = 0; i < 9; i++) {
-            menu.setItem(i, 0,
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                            .name(" ")
-                            .get(),
-                    (m, e) -> {
-                    }
-            );
-        }
-        for (int i = 0; i < 9; i++) {
-            menu.setItem(i, 3,
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                            .name(" ")
-                            .get(),
-                    (m, e) -> {
-                    }
-            );
-        }
-        for (int i = 1; i < 3; i++) {
-            menu.setItem(0, i,
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                            .name(" ")
-                            .get(),
-                    (m, e) -> {
-                    }
-            );
-        }
-        for (int i = 1; i < 3; i++) {
-            menu.setItem(8, i,
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                            .name(" ")
-                            .get(),
-                    (m, e) -> {
-                    }
-            );
-        }
-
-
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         DatabasePlayerPvE weeklyPveStats = databasePlayerWeekly.getPveStats();
         Map<String, Long> weeklyRewardsPurchased = weeklyPveStats.getIllusionVendorRewardsPurchased();
@@ -144,6 +106,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
         }
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);
     }
 

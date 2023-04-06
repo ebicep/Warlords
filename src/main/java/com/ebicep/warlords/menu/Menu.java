@@ -33,13 +33,9 @@ public class Menu extends AbstractMenuBase {
     public static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
             .name(ChatColor.GREEN + "Back")
             .get();
-    private final Inventory inventory;
-    private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
-    private int nextItemIndex = 0;
-
-    public Menu(String name, int size) {
-        this.inventory = Bukkit.createInventory(null, size, name.substring(0, Math.min(name.length(), 32)));
-    }
+    public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+            .name(" ")
+            .get();
 
     public static void openConfirmationMenu(
             Player player,
@@ -112,6 +108,16 @@ public class Menu extends AbstractMenuBase {
         }
     }
 
+    private final Inventory inventory;
+    private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
+    private int nextItemIndex = 0;
+    private int rows;
+
+    public Menu(String name, int size) {
+        this.inventory = Bukkit.createInventory(null, size, name.substring(0, Math.min(name.length(), 32)));
+        this.rows = size / 9;
+    }
+
     @Override
     public Inventory getInventory() {
         return inventory;
@@ -155,6 +161,27 @@ public class Menu extends AbstractMenuBase {
         for (int i = 0; i < inventory.getSize(); i++) {
             if (inventory.getItem(i) == null) {
                 setItem(i, item, clickHandler);
+            }
+        }
+    }
+
+    public void addBorder(ItemStack itemStack, boolean onlySetIfEmpty) {
+        //top/bottom row
+        for (int i = 0; i < 9; i++) {
+            if (onlySetIfEmpty && inventory.getItem(i) == null) {
+                setItem(i, itemStack, ACTION_DO_NOTHING);
+            }
+            if (onlySetIfEmpty && inventory.getItem(i + (rows - 1) * 9) == null) {
+                setItem(i, rows - 1, itemStack, ACTION_DO_NOTHING);
+            }
+        }
+        //left/right columns
+        for (int i = 0; i < rows; i++) {
+            if (onlySetIfEmpty && inventory.getItem(i * 9) == null) {
+                setItem(0, i, itemStack, ACTION_DO_NOTHING);
+            }
+            if (onlySetIfEmpty && inventory.getItem(i * 9 + 8) == null) {
+                setItem(8, i, itemStack, ACTION_DO_NOTHING);
             }
         }
     }

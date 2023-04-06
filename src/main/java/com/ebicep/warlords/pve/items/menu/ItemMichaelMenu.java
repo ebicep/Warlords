@@ -149,6 +149,7 @@ public class ItemMichaelMenu {
             }
 
             menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         }
 
@@ -258,6 +259,7 @@ public class ItemMichaelMenu {
             }
 
             menu.setItem(4, 3, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         }
 
@@ -333,6 +335,7 @@ public class ItemMichaelMenu {
             });
 
             menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         }
 
@@ -656,6 +659,7 @@ public class ItemMichaelMenu {
             });
 
             menu.setItem(4, 5, MENU_BACK, (m, e) -> openMichaelItemMenu(player, databasePlayer));
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         }
 

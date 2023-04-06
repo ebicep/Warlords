@@ -832,44 +832,6 @@ public enum GameEvents {
 
             Menu menu = new Menu(name + " Shop", 9 * 6);
 
-            for (int i = 0; i < 9; i++) {
-                menu.setItem(i, 0,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 0; i < 9; i++) {
-                menu.setItem(i, 5,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 1; i < 5; i++) {
-                menu.setItem(0, i,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 1; i < 5; i++) {
-                menu.setItem(8, i,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-
-
             menu.setItem(4, 0,
                     new ItemBuilder(Material.CHEST)
                             .name(currency.getCostColoredName(pveStats.getCurrencyValue(currency)))
@@ -944,6 +906,7 @@ public enum GameEvents {
             //TODO previous event shop
             menu.setItem(3, 5, MENU_BACK, finalCurrentEvent ? (m, e) -> openMenu(player) : (m, e) -> openMenu(player));
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         });
     }
