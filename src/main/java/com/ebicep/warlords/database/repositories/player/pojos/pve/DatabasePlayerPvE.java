@@ -151,7 +151,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
         //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
-        List<AbstractItem<?, ?, ?>> itemsFound = gamePlayerPvE.getItemsFound();
+        List<AbstractItem<?, ?>> itemsFound = gamePlayerPvE.getItemsFound();
         if (multiplier > 0) {
             int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
             int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
@@ -207,7 +207,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     }
                 }
 
-                for (AbstractItem<?, ?, ?> item : itemsFound) {
+                for (AbstractItem<?, ?> item : itemsFound) {
                     itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
                 }
             }

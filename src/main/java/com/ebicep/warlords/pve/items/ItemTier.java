@@ -27,12 +27,7 @@ public enum ItemTier {
             0,
             null,
             0
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return null;
-        }
-    },
+    ),
     ALPHA(
             "Alpha",
             ChatColor.GREEN,
@@ -49,12 +44,7 @@ public enum ItemTier {
                 put(Currencies.COIN, 10_000L);
             }},
             100
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return generateStatPoolWithSettings(pool, 2, .45, .10);
-        }
-    },
+    ),
     BETA(
             "Beta",
             ChatColor.BLUE,
@@ -72,12 +62,7 @@ public enum ItemTier {
                 put(Currencies.SYNTHETIC_SHARD, 100L);
             }},
             200
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return generateStatPoolWithSettings(pool, 2, .75, .30);
-        }
-    },
+    ),
     GAMMA(
             "Gamma",
             ChatColor.LIGHT_PURPLE,
@@ -95,12 +80,7 @@ public enum ItemTier {
                 put(Currencies.SYNTHETIC_SHARD, 250L);
             }},
             350
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return generateStatPoolWithSettings(pool, 3, .30, 0);
-        }
-    },
+    ),
     DELTA(
             "Delta",
             ChatColor.YELLOW,
@@ -118,12 +98,7 @@ public enum ItemTier {
                 put(Currencies.LEGEND_FRAGMENTS, 50L);
             }},
             550
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return generateStatPoolWithSettings(pool, 4, .20, 0);
-        }
-    },
+    ),
     OMEGA(
             "Omega",
             ChatColor.GOLD,
@@ -141,12 +116,7 @@ public enum ItemTier {
                 put(Currencies.LEGEND_FRAGMENTS, 200L);
             }},
             800
-    ) {
-        @Override
-        public <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool) {
-            return generateStatPoolWithSettings(pool, 5, 0, 0);
-        }
-    },
+    ),
 
     ;
 
@@ -155,14 +125,13 @@ public enum ItemTier {
                                                         .filter(itemTier -> itemTier != ALL)
                                                         .toArray(ItemTier[]::new);
 
-    private static <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPoolWithSettings(
-            T[] pool,
+    private static Set<ItemStatPool> generateStatPoolWithSettings(
             int initialPool,
             double firstReducedPoolChance,
             double secondReducedPoolChance
     ) {
-        Set<T> statPool = new HashSet<>();
-        List<T> poolList = new ArrayList<>(Arrays.asList(pool));
+        Set<ItemStatPool> statPool = new HashSet<>();
+        List<ItemStatPool> poolList = new ArrayList<>(Arrays.asList(ItemStatPool.VALUES));
         Collections.shuffle(poolList);
         for (int i = 0; i < initialPool; i++) {
             statPool.add(poolList.remove(0));
@@ -172,10 +141,10 @@ public enum ItemTier {
         return statPool;
     }
 
-    private static <T extends Enum<T> & ItemStatPool<T>> void addFromReducedPool(
+    private static void addFromReducedPool(
             double firstReducedPoolChance,
-            Set<T> statPool,
-            List<T> poolList
+            Set<ItemStatPool> statPool,
+            List<ItemStatPool> poolList
     ) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         if (firstReducedPoolChance != 0 && !poolList.isEmpty() && random.nextDouble() <= firstReducedPoolChance) {
@@ -226,7 +195,9 @@ public enum ItemTier {
         this.maxThornsDamage = maxThornsDamage;
     }
 
-    public abstract <T extends Enum<T> & ItemStatPool<T>> Set<T> generateStatPool(T[] pool);
+    public Set<ItemStatPool> generateStatPool() {
+        return generateStatPoolWithSettings(ordinal(), 0, 0);
+    }
 
     public String getColoredName() {
         return chatColor + name;

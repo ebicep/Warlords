@@ -681,13 +681,13 @@ public class EndState implements State, TimerDebugAble {
                     );
                 }
             }
-            List<AbstractItem<?, ?, ?>> itemsFound = playerPveRewards.getItemsFound();
+            List<AbstractItem<?, ?>> itemsFound = playerPveRewards.getItemsFound();
             if (!itemsFound.isEmpty()) {
                 if (!gotAnyDrops) {
                     ChatUtils.sendMessage(player, true, "");
                 }
                 gotAnyDrops = true;
-                for (AbstractItem<?, ?, ?> item : itemsFound) {
+                for (AbstractItem<?, ?> item : itemsFound) {
                     ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
                             .appendHoverItem(item.getName(), item.generateItemStack())
                             .create()

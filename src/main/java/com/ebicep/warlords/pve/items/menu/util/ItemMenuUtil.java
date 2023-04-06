@@ -8,9 +8,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemBucklerStatPool;
-import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
-import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemBuckler;
 import com.ebicep.warlords.pve.items.types.ItemGauntlet;
@@ -32,7 +30,7 @@ public class ItemMenuUtil {
     public static void addItemTierRequirement(
             Menu menu,
             ItemTier tier,
-            AbstractItem<?, ?, ?> item,
+            AbstractItem<?, ?> item,
             int x,
             int y,
             BiConsumer<Menu, InventoryClickEvent> onClick
@@ -117,61 +115,56 @@ public class ItemMenuUtil {
         }
     }
 
-    public static List<String> getTotalBonusLore(List<AbstractItem<?, ?, ?>> equippedItems) {
-        HashMap<ItemGauntletStatPool, Integer> gauntletStatPool = new HashMap<>();
-        HashMap<ItemTomeStatPool, Integer> tomeStatPool = new HashMap<>();
-        HashMap<ItemBucklerStatPool, Integer> bucklerStatPool = new HashMap<>();
+    public static List<String> getTotalBonusLore(List<AbstractItem<?, ?>> equippedItems) {
+        HashMap<ItemStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
         float bucklerModifier = 0;
-        for (AbstractItem<?, ?, ?> equippedItem : equippedItems) {
+        for (AbstractItem<?, ?> equippedItem : equippedItems) {
             if (equippedItem instanceof ItemGauntlet) {
                 ItemGauntlet itemGauntlet = (ItemGauntlet) equippedItem;
-                itemGauntlet.getStatPool().forEach((stat, tier) -> gauntletStatPool.merge(stat, tier, Integer::sum));
+                itemGauntlet.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
                 gauntletModifier += itemGauntlet.getModifierCalculated();
             } else if (equippedItem instanceof ItemTome) {
                 ItemTome itemTome = (ItemTome) equippedItem;
-                itemTome.getStatPool().forEach((stat, tier) -> tomeStatPool.merge(stat, tier, Integer::sum));
+                itemTome.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
                 tomeModifier += itemTome.getModifierCalculated();
             } else if (equippedItem instanceof ItemBuckler) {
                 ItemBuckler itemBuckler = (ItemBuckler) equippedItem;
-                itemBuckler.getStatPool().forEach((stat, tier) -> bucklerStatPool.merge(stat, tier, Integer::sum));
+                itemBuckler.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
                 bucklerModifier += itemBuckler.getModifierCalculated();
             }
         }
-        List<String> gauntletBonusLore = AbstractItem.getStatPoolLore(gauntletStatPool, "   ");
+        List<String> bonusLore = AbstractItem.getStatPoolLore(statPool, "   ");
+        List<String> blessCurseLore = new ArrayList<>();
         if (gauntletModifier != 0) {
-            gauntletBonusLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
                     ItemGauntletModifier.Blessings.VALUES,
                     ItemGauntletModifier.Curses.VALUES,
                     gauntletModifier
             ));
         }
-        List<String> tomeBonusLore = AbstractItem.getStatPoolLore(tomeStatPool, "   ");
         if (tomeModifier != 0) {
-            tomeBonusLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
                     ItemTomeModifier.Blessings.VALUES,
                     ItemTomeModifier.Curses.VALUES,
                     tomeModifier
             ));
         }
-        List<String> bucklerBonusLore = AbstractItem.getStatPoolLore(bucklerStatPool, "   ");
         if (bucklerModifier != 0) {
-            bucklerBonusLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
                     ItemBucklerModifier.Blessings.VALUES,
                     ItemBucklerModifier.Curses.VALUES,
                     bucklerModifier
             ));
         }
+        if (!blessCurseLore.isEmpty()) {
+            bonusLore.add("");
+            bonusLore.addAll(blessCurseLore);
+        }
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.AQUA + "Gauntlets Bonuses");
-        lore.addAll(gauntletBonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "   None") : gauntletBonusLore);
-        lore.add("");
-        lore.add(ChatColor.AQUA + "Tome Bonuses");
-        lore.addAll(tomeBonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "   None") : tomeBonusLore);
-        lore.add("");
-        lore.add(ChatColor.AQUA + "Buckler Bonuses");
-        lore.addAll(bucklerBonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "   None") : bucklerBonusLore);
+        lore.add(ChatColor.AQUA + "Bonuses");
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "   None") : bonusLore);
         return lore;
     }
 }

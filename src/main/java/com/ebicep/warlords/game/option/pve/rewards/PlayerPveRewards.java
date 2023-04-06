@@ -14,7 +14,7 @@ public class PlayerPveRewards {
     private final HashMap<Integer, Long> waveDamage = new HashMap<>();
     private long legendFragmentGain = 0;
     private long illusionShardGain = 0;
-    private List<AbstractItem<?, ?, ?>> itemsFound = new ArrayList<>();
+    private List<AbstractItem<?, ?>> itemsFound = new ArrayList<>();
     private int blessingsFound = 0;
     private Map<Spendable, Long> syntheticPouch = new HashMap<>();
     private Map<Spendable, Long> aspirantPouch = new HashMap<>();
@@ -57,7 +57,7 @@ public class PlayerPveRewards {
         return waveDamage;
     }
 
-    public List<AbstractItem<?, ?, ?>> getItemsFound() {
+    public List<AbstractItem<?, ?>> getItemsFound() {
         return itemsFound;
     }
 

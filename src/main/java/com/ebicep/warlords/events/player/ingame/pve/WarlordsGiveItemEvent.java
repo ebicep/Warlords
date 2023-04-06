@@ -8,9 +8,9 @@ import org.bukkit.event.HandlerList;
 public class WarlordsGiveItemEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private final AbstractItem<?, ?, ?> item;
+    private final AbstractItem<?, ?> item;
 
-    public WarlordsGiveItemEvent(WarlordsEntity player, AbstractItem<?, ?, ?> item) {
+    public WarlordsGiveItemEvent(WarlordsEntity player, AbstractItem<?, ?> item) {
         super(player);
         this.item = item;
     }
@@ -19,7 +19,7 @@ public class WarlordsGiveItemEvent extends AbstractWarlordsEntityEvent {
         return handlers;
     }
 
-    public AbstractItem<?, ?, ?> getItem() {
+    public AbstractItem<?, ?> getItem() {
         return item;
     }
 

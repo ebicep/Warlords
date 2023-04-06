@@ -82,7 +82,7 @@ public class ItemOption implements Option {
                 return;
             }
             ItemLoadout loadout = loadouts.get(0);
-            List<AbstractItem<?, ?, ?>> applied = loadout.getActualItems(itemsManager);
+            List<AbstractItem<?, ?>> applied = loadout.getActualItems(itemsManager);
             itemPlayerConfigs.putIfAbsent(player.getUuid(),
                     new ItemPlayerConfig(loadout, 1 + applied
                             .stream()

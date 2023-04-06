@@ -36,9 +36,9 @@ public class ItemLoadout {
     public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
 
-        List<AbstractItem<?, ?, ?>> actualItems = getActualItems(itemsManager);
+        List<AbstractItem<?, ?>> actualItems = getActualItems(itemsManager);
         int weightModifier = 0;
-        for (AbstractItem<?, ?, ?> actualItem : actualItems) {
+        for (AbstractItem<?, ?> actualItem : actualItems) {
             weight += actualItem.getWeight();
             if (actualItem instanceof ItemBuckler) {
                 weightModifier += actualItem.getModifierCalculated();
@@ -48,9 +48,9 @@ public class ItemLoadout {
         return (int) (weight * (1 - weightModifier / 100f));
     }
 
-    public List<AbstractItem<?, ?, ?>> getActualItems(ItemsManager itemsManager) {
-        List<AbstractItem<?, ?, ?>> items = new ArrayList<>();
-        for (AbstractItem<?, ?, ?> item : itemsManager.getItemInventory()) {
+    public List<AbstractItem<?, ?>> getActualItems(ItemsManager itemsManager) {
+        List<AbstractItem<?, ?>> items = new ArrayList<>();
+        for (AbstractItem<?, ?> item : itemsManager.getItemInventory()) {
             if (this.items.contains(item.getUUID())) {
                 items.add(item);
             }
@@ -59,8 +59,8 @@ public class ItemLoadout {
     }
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
-        HashMap<ItemStatPool<?>, Integer> statPoolValues = new HashMap<>();
-        HashMap<ItemStatPool<?>, ItemTier> statPoolHighestTier = new HashMap<>();
+        HashMap<ItemStatPool, Integer> statPoolValues = new HashMap<>();
+        HashMap<ItemStatPool, ItemTier> statPoolHighestTier = new HashMap<>();
         getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> {
             statPoolValues.merge(stat, tier, Integer::sum);
             if (statPoolHighestTier.get(stat) == null || statPoolHighestTier.get(stat).ordinal() < item.getTier().ordinal()) {

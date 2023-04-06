@@ -272,7 +272,7 @@ public class ItemMichaelMenu {
         }};
 
         public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
-            AbstractItem<?, ?, ?> item = menuData.getItem();
+            AbstractItem<?, ?> item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
             ItemBuilder selectedBlessing;
             if (item != null) {
@@ -348,7 +348,7 @@ public class ItemMichaelMenu {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
                     (newItem, m, e) -> {
-                        AbstractItem<?, ?, ?> previousItem = menuData.getItem();
+                        AbstractItem<?, ?> previousItem = menuData.getItem();
                         //prevent non-normal item from being blessed with bought blessing
                         if (previousItem != null && previousItem.getModifier() == 0 && newItem.getModifier() != 0 && !menuData.isBlessingFound()) {
                             menuData.setBlessing(null);
@@ -477,7 +477,7 @@ public class ItemMichaelMenu {
                 Menu menu
         ) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            AbstractItem<?, ?, ?> item = menuData.getItem();
+            AbstractItem<?, ?> item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
             boolean blessingFound = menuData.isBlessingFound();
             boolean enoughCost = blessingFound && FOUND_COST.entrySet()
@@ -538,7 +538,7 @@ public class ItemMichaelMenu {
         }
 
         private static class ApplyBlessingMenuData {
-            private AbstractItem<?, ?, ?> item;
+            private AbstractItem<?, ?> item;
             private Integer blessing;
             private boolean blessingFound;
 
@@ -601,11 +601,11 @@ public class ItemMichaelMenu {
                 );
             }
 
-            public AbstractItem<?, ?, ?> getItem() {
+            public AbstractItem<?, ?> getItem() {
                 return item;
             }
 
-            public void setItem(AbstractItem<?, ?, ?> item) {
+            public void setItem(AbstractItem<?, ?> item) {
                 this.item = item;
             }
 
@@ -629,7 +629,7 @@ public class ItemMichaelMenu {
 
     public static class RemoveACurseMenu {
 
-        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?, ?> item) {
+        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?> item) {
             Menu menu = new Menu("Remove a Curse", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
@@ -667,7 +667,7 @@ public class ItemMichaelMenu {
                 Player player,
                 DatabasePlayer databasePlayer,
                 ItemSearchMenu.PlayerItemMenuSettings menuSettings,
-                AbstractItem<?, ?, ?> item
+                AbstractItem<?, ?> item
         ) {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
@@ -694,7 +694,7 @@ public class ItemMichaelMenu {
         private static void addPurifyItemConfirmation(
                 Player player,
                 DatabasePlayer databasePlayer,
-                AbstractItem<?, ?, ?> item,
+                AbstractItem<?, ?> item,
                 Menu menu
         ) {
             boolean enoughCost = item != null &&

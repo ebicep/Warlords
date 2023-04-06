@@ -47,7 +47,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     @Field("mob_drops_gained")
     private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
     @Field("items_found")
-    private List<AbstractItem<?, ?, ?>> itemsFound = new ArrayList<>();
+    private List<AbstractItem<?, ?>> itemsFound = new ArrayList<>();
     @Field("quests_completed")
     private List<Quests> questsCompleted = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         return mobDropsGained;
     }
 
-    public List<AbstractItem<?, ?, ?>> getItemsFound() {
+    public List<AbstractItem<?, ?>> getItemsFound() {
         return itemsFound;
     }
 

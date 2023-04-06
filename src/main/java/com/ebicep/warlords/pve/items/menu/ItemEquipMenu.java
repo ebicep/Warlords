@@ -44,7 +44,7 @@ public class ItemEquipMenu {
     public static void openItemEquipMenuExternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
         ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
-        List<AbstractItem<?, ?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
+        List<AbstractItem<?, ?>> itemInventory = new ArrayList<>(itemsManager.getItemInventory());
 
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
         ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
@@ -122,7 +122,7 @@ public class ItemEquipMenu {
 
         ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
-        List<AbstractItem<?, ?, ?>> equippedItems = itemLoadout.getActualItems(itemsManager);
+        List<AbstractItem<?, ?>> equippedItems = itemLoadout.getActualItems(itemsManager);
 
         int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
         int loadoutWeight = itemLoadout.getWeight(itemsManager);
@@ -150,7 +150,7 @@ public class ItemEquipMenu {
                         }
                 );
                 boolean equipped = false;
-                for (AbstractItem<?, ?, ?> item : equippedItems) {
+                for (AbstractItem<?, ?> item : equippedItems) {
                     if (item.getTier() != tier) {
                         continue;
                     }
@@ -417,7 +417,7 @@ public class ItemEquipMenu {
             DatabasePlayer databasePlayer,
             ItemLoadout itemLoadout,
             ItemTier tier,
-            AbstractItem<?, ?, ?> previousItem
+            AbstractItem<?, ?> previousItem
     ) {
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, tier.name + " Items",

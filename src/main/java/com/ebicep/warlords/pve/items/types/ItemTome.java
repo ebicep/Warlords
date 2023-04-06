@@ -2,11 +2,8 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemTomeStatPool;
 
-import java.util.HashMap;
-
-public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
+public class ItemTome extends AbstractItem<ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
 
     public ItemTome() {
     }
@@ -20,16 +17,6 @@ public class ItemTome extends AbstractItem<ItemTomeStatPool, ItemTomeModifier.Bl
         ItemTome itemTome = new ItemTome();
         itemTome.copyFrom(this);
         return itemTome;
-    }
-
-    @Override
-    public Class<ItemTomeStatPool> getStatPoolClass() {
-        return ItemTomeStatPool.class;
-    }
-
-    @Override
-    public HashMap<ItemTomeStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return ItemTomeStatPool.STAT_RANGES;
     }
 
     @Override

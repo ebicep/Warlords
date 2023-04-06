@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractItem<
-        T extends Enum<T> & ItemStatPool<T>,
         R extends Enum<R> & ItemModifier<R>,
         U extends Enum<U> & ItemModifier<U>> {
 
@@ -41,9 +40,9 @@ public abstract class AbstractItem<
     protected Instant obtainedDate = Instant.now();
     protected ItemTier tier;
     @Field("stat_pool")
-    protected Map<T, Float> statPoolDistribution = new HashMap<>();
+    protected Map<ItemStatPool, Float> statPoolDistribution = new HashMap<>();
     @Transient
-    protected Map<T, Integer> statPoolValues;
+    protected Map<ItemStatPool, Integer> statPoolValues;
     protected int modifier;
 
     public AbstractItem() {
@@ -51,16 +50,14 @@ public abstract class AbstractItem<
 
     public AbstractItem(ItemTier tier) {
         this.tier = tier;
-        HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
-        for (Map.Entry<T, ItemTier.StatRange> entry : tierStatRanges.entrySet()) {
-            this.statPoolDistribution.put(entry.getKey(), (float) getRandomValueNormalDistribution());
+        Set<ItemStatPool> statPool = tier.generateStatPool();
+        for (ItemStatPool stat : statPool) {
+            this.statPoolDistribution.put(stat, (float) getRandomValueNormalDistribution());
         }
         if (tier != ItemTier.DELTA && tier != ItemTier.OMEGA) {
             bless(null);
         }
     }
-
-    public abstract HashMap<T, ItemTier.StatRange> getTierStatRanges();
 
     private static double getRandomValueNormalDistribution() {
         double mean = 0.5;
@@ -95,9 +92,9 @@ public abstract class AbstractItem<
         }
     }
 
-    public abstract AbstractItem<T, R, U> clone();
+    public abstract AbstractItem<R, U> clone();
 
-    public void copyFrom(AbstractItem<T, R, U> item) {
+    public void copyFrom(AbstractItem<R, U> item) {
         this.uuid = item.uuid;
         this.obtainedDate = item.obtainedDate;
         this.tier = item.tier;
@@ -189,16 +186,15 @@ public abstract class AbstractItem<
 
     public abstract ItemType getType();
 
-    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool) {
+    public static List<String> getStatPoolLore(Map<ItemStatPool, Integer> statPool) {
         return getStatPoolLore(statPool, "");
     }
 
-    public Map<T, Integer> getStatPool() {
+    public Map<ItemStatPool, Integer> getStatPool() {
         if (statPoolValues == null) {
             statPoolValues = new HashMap<>();
-            HashMap<T, ItemTier.StatRange> tierStatRanges = getTierStatRanges();
             statPoolDistribution.forEach((stat, distribution) -> {
-                ItemTier.StatRange statRange = tierStatRanges.get(stat);
+                ItemTier.StatRange statRange = ItemStatPool.STAT_RANGES.get(stat);
                 double tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
@@ -215,7 +211,7 @@ public abstract class AbstractItem<
 
     public float getItemScore() {
         double sum = 0;
-        for (Map.Entry<T, Float> statDistribution : statPoolDistribution.entrySet()) {
+        for (Map.Entry<ItemStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
             sum += statDistribution.getValue();
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
@@ -270,7 +266,7 @@ public abstract class AbstractItem<
         return 1000;
     }
 
-    public static <T extends Enum<T> & ItemStatPool<T>> List<String> getStatPoolLore(Map<T, Integer> statPool, String prefix) {
+    public static List<String> getStatPoolLore(Map<ItemStatPool, Integer> statPool, String prefix) {
         List<String> lore = new ArrayList<>();
         statPool.keySet()
                 .stream()
@@ -281,14 +277,12 @@ public abstract class AbstractItem<
 
     public float getWeightScore() {
         double sum = 0;
-        for (Map.Entry<T, Float> statDistribution : statPoolDistribution.entrySet()) {
+        for (Map.Entry<ItemStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
             float value = statDistribution.getValue() + tier.statDistributionModifier;
             sum += Math.max(0, Math.min(1, value));
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
     }
-
-    public abstract Class<T> getStatPoolClass();
 
     public UUID getUUID() {
         return uuid;
@@ -306,7 +300,7 @@ public abstract class AbstractItem<
         return modifier;
     }
 
-    public AbstractItem<T, R, U> setModifier(int modifier) {
+    public AbstractItem<R, U> setModifier(int modifier) {
         this.modifier = modifier;
         return this;
     }

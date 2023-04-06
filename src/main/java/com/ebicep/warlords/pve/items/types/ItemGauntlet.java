@@ -2,11 +2,8 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemGauntletStatPool;
 
-import java.util.HashMap;
-
-public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
+public class ItemGauntlet extends AbstractItem<ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
 
     public ItemGauntlet() {
     }
@@ -20,16 +17,6 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletStatPool, ItemGauntle
         ItemGauntlet itemBuckler = new ItemGauntlet();
         itemBuckler.copyFrom(this);
         return itemBuckler;
-    }
-
-    @Override
-    public Class<ItemGauntletStatPool> getStatPoolClass() {
-        return ItemGauntletStatPool.class;
-    }
-
-    @Override
-    public HashMap<ItemGauntletStatPool, ItemTier.StatRange> getTierStatRanges() {
-        return ItemGauntletStatPool.STAT_RANGES;
     }
 
     @Override
