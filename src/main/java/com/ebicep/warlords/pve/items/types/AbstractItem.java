@@ -126,6 +126,7 @@ public abstract class AbstractItem<
         itemBuilder.addLore(
                 "",
                 getItemScoreString(),
+                "",
                 getWeightString()
         );
         return itemBuilder;
@@ -184,7 +185,7 @@ public abstract class AbstractItem<
     }
 
     private String getWeightString() {
-        return ChatColor.GRAY + "Weight: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeight());
+        return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
     }
 
     public abstract ItemType getType();

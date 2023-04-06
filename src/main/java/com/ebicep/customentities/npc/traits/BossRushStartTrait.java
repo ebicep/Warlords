@@ -20,7 +20,7 @@ public class BossRushStartTrait extends WarlordsTrait {
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.BOSS_RUSH) + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.BOSS_RUSH) + " in Lobby");
         hologramTrait.setLine(2, ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString() + "Boss Rush");
-        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+        hologramTrait.setLine(3, ChatColor.RED + ChatColor.BOLD.toString() + "IN DEVELOPMENT");
     }
 
     @Override
