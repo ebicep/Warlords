@@ -149,6 +149,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         dropWeapon(killer);
         dropMobDrop(killer);
         dropItem(killer);
+        dropBlessing(killer);
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -200,24 +201,47 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                ItemTier[] validValues = ItemTier.VALID_VALUES;
+                               double rng = ThreadLocalRandom.current().nextDouble();
                                for (int i = validValues.length - 1; i >= 0; i--) {
                                    ItemTier itemTier = validValues[i];
-                                   AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * killer.getGame().getGameMode().getDropModifier());
+                                   AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * game.getGameMode().getDropModifier());
                                    Bukkit.getPluginManager()
                                          .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.ITEM, dropRate));
-                                   if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
+                                   if (rng < dropRate.get()) {
                                        AbstractItem<?, ?, ?> item = ItemType.getRandom().create.apply(itemTier);
-                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(killer, item));
-                                       killer.getGame().forEachOnlinePlayer((player, team) -> {
+                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
+                                       game.forEachOnlinePlayer((player, team) -> {
                                            AbstractItem.sendItemMessage(player,
-                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
                                                            .appendHoverItem(item.getName(), item.generateItemStack())
                                                            .append(ChatColor.GRAY + "!")
                                            );
                                        });
-                                       killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
                                        break;
                                    }
+                               }
+                           });
+    }
+
+    private void dropBlessing(WarlordsEntity killer) {
+        Game game = killer.getGame();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               AtomicDouble dropRate = new AtomicDouble(.00025 * game.getGameMode().getDropModifier());
+                               Bukkit.getPluginManager()
+                                     .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.BLESSING, dropRate));
+                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
+                                   Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(warlordsPlayer));
+                                   game.forEachOnlinePlayer((player, team) -> {
+                                       AbstractItem.sendItemMessage(player,
+                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
+                                       );
+                                   });
+                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
                                }
                            });
     }
@@ -238,28 +262,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             });
             killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
         }
-    }
-
-    private void dropBlessing(WarlordsEntity killer) {
-        Game game = killer.getGame();
-        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                           .teammatesOf((WarlordsPlayer) killer)
-                           .filter(wp -> wp.getEntity() instanceof Player)
-                           .forEach(warlordsPlayer -> {
-                               AtomicDouble dropRate = new AtomicDouble(.025 * killer.getGame().getGameMode().getDropModifier());
-                               Bukkit.getPluginManager()
-                                     .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.BLESSING, dropRate));
-                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
-                                   Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(killer));
-                                   killer.getGame().forEachOnlinePlayer((player, team) -> {
-                                       AbstractItem.sendItemMessage(player,
-                                               Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
-                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
-                                       );
-                                   });
-                                   killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
-                               }
-                           });
     }
 
     public EntityLiving getTarget() {

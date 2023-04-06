@@ -15,7 +15,7 @@ public class WaveCommand extends BaseCommand {
 
     @Subcommand("set")
     @Description("Set the wave counter")
-    public void set(@Conditions("requireGame:gamemode=WAVE_DEFENSE/EVENT_WAVE_DEFENSE") Player player, Integer amount) {
+    public void set(@Conditions("requireGame:gamemode=PVE") Player player, Integer amount) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions().stream()
                                                                       .filter(option -> option instanceof WaveDefenseOption)

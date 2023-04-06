@@ -619,6 +619,10 @@ public class CommandManager {
             String[] gameModes = configValue.split("/");
             boolean hasGameMode = false;
             for (String gameMode : gameModes) {
+                if (gameMode.equals("PVE") && GameMode.isPvE(game.getGameMode())) {
+                    hasGameMode = true;
+                    break;
+                }
                 GameMode gamemode = GameMode.valueOf(gameMode);
                 if (game.getGameMode() == gamemode) {
                     hasGameMode = true;
