@@ -74,15 +74,24 @@ public class ItemOption implements Option {
             ItemsManager itemsManager = pveStats.getItemsManager();
             List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
             int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
+            loadouts.removeIf(itemLoadout -> itemLoadout.getItems().isEmpty());
+            int nonEmptyLoadouts = loadouts.size();
             loadouts.removeIf(itemLoadout -> {
                 ItemLoadout.DifficultyMode difficultyMode = itemLoadout.getDifficultyMode();
                 return difficultyMode != null && difficultyMode.validGameMode(game.getGameMode()) && difficultyMode.validDifficulty(pveOption.getDifficulty());
             });
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
+
             if (loadouts.isEmpty()) {
+                if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
+                    AbstractItem.sendItemMessage((Player) player.getEntity(),
+                            ChatColor.RED + "No item loadout applied. Make sure your loadout is not overweight or unbinded."
+                    );
+                }
                 return;
             }
+
             ItemLoadout loadout = loadouts.get(0);
             List<AbstractItem> applied = loadout.getActualItems(itemsManager);
             itemPlayerConfigs.putIfAbsent(player.getUuid(),
@@ -103,7 +112,7 @@ public class ItemOption implements Option {
                 }
             }
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
-            if (!applied.isEmpty() && player.getEntity() instanceof Player) {
+            if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
                         new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
                                 .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied)))

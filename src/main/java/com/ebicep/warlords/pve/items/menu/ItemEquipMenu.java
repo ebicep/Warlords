@@ -383,20 +383,23 @@ public class ItemEquipMenu {
     private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {
         double ratio = loadoutWeight * 8d / maxWeight;
         for (int i = 0; i < 8; i++) {
-            ItemStack glassPane;
-            if (loadoutWeight > maxWeight) {
-                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15);
+            ItemBuilder itemBuilder;
+            boolean overweight = loadoutWeight > maxWeight;
+            if (overweight) {
+                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 15)
+                        .name(ChatColor.RED + "Overweight!");
             } else if (i <= ratio - 1) {
-                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
+                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5);
             } else if (i != 0 && i <= ratio - .5) {
-                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 4);
+                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4);
             } else {
-                glassPane = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 14);
+                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 14);
+            }
+            if (!overweight) {
+                itemBuilder.name(" ");
             }
             menu.setItem(i + 1, 0,
-                    new ItemBuilder(glassPane)
-                            .name(" ")
-                            .get(),
+                    itemBuilder.get(),
                     (m, e) -> {
 
                     }
