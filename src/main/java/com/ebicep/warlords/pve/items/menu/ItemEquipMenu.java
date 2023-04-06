@@ -7,7 +7,6 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
@@ -202,10 +201,10 @@ public class ItemEquipMenu {
                                                    .collect(Collectors.toList());
         for (int i = 0; i < sortedLoadouts.size(); i++) {
             ItemLoadout l = sortedLoadouts.get(i);
-            DifficultyIndex difficulty = l.getDifficulty();
+            ItemLoadout.DifficultyMode difficulty = l.getDifficultyMode();
             Specializations spec = l.getSpec();
             lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
-                    " (" + l.getWeight(itemsManager) + " | " + (difficulty == null ? "Any" : difficulty.getName()) + " | " + (spec == null ? "Any" : spec.name) + ")");
+                    " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")");
         }
         menu.setItem(0, 5,
                 new ItemBuilder(Material.BOOK)
@@ -339,24 +338,17 @@ public class ItemEquipMenu {
                 }
         );
         lore.clear();
-        lore.add((itemLoadout.getDifficulty() == null ? ChatColor.AQUA : ChatColor.GRAY) + "Any");
-        DifficultyIndex[] difficulties = DifficultyIndex.VALUES;
-        for (DifficultyIndex value : difficulties) {
-            lore.add((itemLoadout.getDifficulty() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.getName());
+        ItemLoadout.DifficultyMode[] difficultyModes = ItemLoadout.DifficultyMode.VALUES;
+        for (ItemLoadout.DifficultyMode value : difficultyModes) {
+            lore.add((itemLoadout.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
         }
         menu.setItem(6, 5,
                 new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                        .name(ChatColor.GREEN + "Bind to Difficulty")
+                        .name(ChatColor.GREEN + "Bind to Mode")
                         .lore(lore)
                         .get(),
                 (m, e) -> {
-                    if (itemLoadout.getDifficulty() == null) {
-                        itemLoadout.setDifficulty(DifficultyIndex.VALUES[0]);
-                    } else if (itemLoadout.getDifficulty().ordinal() == DifficultyIndex.VALUES.length - 1) {
-                        itemLoadout.setDifficulty(null);
-                    } else {
-                        itemLoadout.setDifficulty(itemLoadout.getDifficulty().next());
-                    }
+                    itemLoadout.setDifficultyMode(itemLoadout.getDifficultyMode().next());
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 }

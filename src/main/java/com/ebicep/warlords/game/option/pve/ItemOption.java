@@ -57,8 +57,8 @@ public class ItemOption implements Option {
         if (!(player instanceof WarlordsPlayer)) {
             return;
         }
-        PveOption pveOption = player
-                .getGame()
+        Game game = player.getGame();
+        PveOption pveOption = game
                 .getOptions()
                 .stream()
                 .filter(option -> option instanceof PveOption)
@@ -74,7 +74,10 @@ public class ItemOption implements Option {
             ItemsManager itemsManager = pveStats.getItemsManager();
             List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
             int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
-            loadouts.removeIf(itemLoadout -> itemLoadout.getDifficulty() != null && itemLoadout.getDifficulty() != pveOption.getDifficulty());
+            loadouts.removeIf(itemLoadout -> {
+                ItemLoadout.DifficultyMode difficultyMode = itemLoadout.getDifficultyMode();
+                return difficultyMode != null && difficultyMode.validGameMode(game.getGameMode()) && difficultyMode.validDifficulty(pveOption.getDifficulty());
+            });
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
             if (loadouts.isEmpty()) {

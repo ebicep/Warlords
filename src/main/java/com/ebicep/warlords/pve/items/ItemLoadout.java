@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -21,7 +22,7 @@ public class ItemLoadout {
     @Field("creation_date")
     private Instant creationDate = Instant.now();
     private List<UUID> items = new ArrayList<>();
-    private DifficultyIndex difficulty;
+    private DifficultyMode difficultyMode = DifficultyMode.ANY;
     private Specializations spec;
 
 
@@ -95,12 +96,12 @@ public class ItemLoadout {
         return items;
     }
 
-    public DifficultyIndex getDifficulty() {
-        return difficulty;
+    public DifficultyMode getDifficultyMode() {
+        return difficultyMode;
     }
 
-    public void setDifficulty(DifficultyIndex difficulty) {
-        this.difficulty = difficulty;
+    public void setDifficultyMode(DifficultyMode difficultyMode) {
+        this.difficultyMode = difficultyMode;
     }
 
     public Specializations getSpec() {
@@ -109,5 +110,97 @@ public class ItemLoadout {
 
     public void setSpec(Specializations spec) {
         this.spec = spec;
+    }
+
+    public enum DifficultyMode {
+        ANY("Any") {
+            @Override
+            public boolean validGameMode(GameMode gameMode) {
+                return true;
+            }
+        },
+        WAVE_DEFENSE("Wave Defense"),
+        WAVE_DEFENSE_EASY(" - Easy") {
+            @Override
+            public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+                return difficultyIndex == DifficultyIndex.EASY;
+            }
+
+            @Override
+            public String getShortName() {
+                return "Easy";
+            }
+        },
+        WAVE_DEFENSE_NORMAL(" - Normal") {
+            @Override
+            public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+                return difficultyIndex == DifficultyIndex.NORMAL;
+            }
+
+            @Override
+            public String getShortName() {
+                return "Normal";
+            }
+        },
+        WAVE_DEFENSE_HARD(" - Hard") {
+            @Override
+            public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+                return difficultyIndex == DifficultyIndex.HARD;
+            }
+
+            @Override
+            public String getShortName() {
+                return "Hard";
+            }
+        },
+        WAVE_DEFENSE_ENDLESS(" - Endless") {
+            @Override
+            public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+                return difficultyIndex == DifficultyIndex.ENDLESS;
+            }
+
+            @Override
+            public String getShortName() {
+                return "Endless";
+            }
+        },
+        ONSLAUGHT("Onslaught") {
+            @Override
+            public boolean validGameMode(GameMode gameMode) {
+                return gameMode == GameMode.ONSLAUGHT;
+            }
+        },
+        EVENT("Event") {
+            @Override
+            public boolean validGameMode(GameMode gameMode) {
+                return gameMode == GameMode.EVENT_WAVE_DEFENSE;
+            }
+        },
+
+        ;
+
+        public static final DifficultyMode[] VALUES = values();
+        public final String name;
+
+        DifficultyMode(String name) {
+            this.name = name;
+        }
+
+        public String getShortName() {
+            return name;
+        }
+
+        public DifficultyMode next() {
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+
+        public boolean validGameMode(GameMode gameMode) {
+            return gameMode == GameMode.WAVE_DEFENSE;
+        }
+
+        public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+            return true;
+        }
+
     }
 }
