@@ -187,7 +187,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                                 },
                                 (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
                         ));
-                        passiveCooldown = 5 * GameRunnable.SECOND;
+                        passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;
