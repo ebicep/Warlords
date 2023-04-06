@@ -2,6 +2,9 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+
+import java.util.Set;
 
 public class ItemTome extends AbstractItem<ItemTomeModifier.Blessings, ItemTomeModifier.Curses> {
 
@@ -10,6 +13,10 @@ public class ItemTome extends AbstractItem<ItemTomeModifier.Blessings, ItemTomeM
 
     public ItemTome(ItemTier tier) {
         super(tier);
+    }
+
+    public ItemTome(ItemTier tier, Set<ItemStatPool> statPool) {
+        super(tier, statPool);
     }
 
     @Override

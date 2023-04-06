@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -28,6 +29,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -183,7 +185,8 @@ public class ItemCraftingMenu {
                                 ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                                 ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
                                 "",
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Crafted Item will inherit the type and blessing of the highest tiered selected item.",
+                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                                "It will also have an additional random stat and become reblessed.",
                                         160
                                 )
                         )
@@ -225,7 +228,14 @@ public class ItemCraftingMenu {
                                 if (inheritedItem == null) {
                                     return;
                                 }
-                                AbstractItem<?, ?> craftedItem = inheritedItem.getType().create.apply(tier);
+                                Set<ItemStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
+                                ItemStatPool[] otherStats = Arrays.stream(ItemStatPool.VALUES)
+                                                                  .filter(pool -> !statPools.contains(pool))
+                                                                  .toArray(ItemStatPool[]::new);
+                                //add random other stat to stat pool
+                                statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
+
+                                AbstractItem<?, ?> craftedItem = inheritedItem.getType().createInherited.apply(tier, statPools);
                                 craftedItem.setModifier(inheritedItem.getModifier());
                                 craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);

@@ -2,6 +2,9 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+
+import java.util.Set;
 
 public class ItemGauntlet extends AbstractItem<ItemGauntletModifier.Blessings, ItemGauntletModifier.Curses> {
 
@@ -10,6 +13,10 @@ public class ItemGauntlet extends AbstractItem<ItemGauntletModifier.Blessings, I
 
     public ItemGauntlet(ItemTier tier) {
         super(tier);
+    }
+
+    public ItemGauntlet(ItemTier tier, Set<ItemStatPool> statPool) {
+        super(tier, statPool);
     }
 
     @Override

@@ -49,8 +49,11 @@ public abstract class AbstractItem<
     }
 
     public AbstractItem(ItemTier tier) {
+        this(tier, tier.generateStatPool());
+    }
+
+    public AbstractItem(ItemTier tier, Set<ItemStatPool> statPool) {
         this.tier = tier;
-        Set<ItemStatPool> statPool = tier.generateStatPool();
         for (ItemStatPool stat : statPool) {
             this.statPoolDistribution.put(stat, (float) getRandomValueNormalDistribution());
         }

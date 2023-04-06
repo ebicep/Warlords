@@ -2,6 +2,9 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
+import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+
+import java.util.Set;
 
 public class ItemBuckler extends AbstractItem<ItemBucklerModifier.Blessings, ItemBucklerModifier.Curses> {
 
@@ -10,6 +13,10 @@ public class ItemBuckler extends AbstractItem<ItemBucklerModifier.Blessings, Ite
 
     public ItemBuckler(ItemTier tier) {
         super(tier);
+    }
+
+    public ItemBuckler(ItemTier tier, Set<ItemStatPool> statPool) {
+        super(tier, statPool);
     }
 
     @Override
