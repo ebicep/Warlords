@@ -99,7 +99,7 @@ public class ItemCraftingMenu {
         menu.openForPlayer(player);
     }
 
-    private static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem<?, ?>> items) {
+    private static void openForgingMenu(Player player, DatabasePlayer databasePlayer, ItemTier itemTier, HashMap<ItemTier, AbstractItem> items) {
         Menu menu = new Menu(itemTier.name + " Forging", 9 * 6);
 
         TierCostInfo tierCostInfo = TIER_COST_INFO.get(itemTier);
@@ -138,7 +138,7 @@ public class ItemCraftingMenu {
             DatabasePlayer databasePlayer,
             ItemTier tier,
             BiConsumer<Menu, InventoryClickEvent> back,
-            TriConsumer<AbstractItem<?, ?>, Menu, InventoryClickEvent> onClick
+            TriConsumer<AbstractItem, Menu, InventoryClickEvent> onClick
     ) {
         ItemSearchMenu menu = new ItemSearchMenu(
                 player,
@@ -166,7 +166,7 @@ public class ItemCraftingMenu {
     private static void addCraftItemConfirmation(
             Player player,
             DatabasePlayer databasePlayer,
-            HashMap<ItemTier, AbstractItem<?, ?>> items,
+            HashMap<ItemTier, AbstractItem> items,
             Menu menu,
             List<TierRequirement> requirements,
             DatabasePlayerPvE pveStats,
@@ -219,7 +219,7 @@ public class ItemCraftingMenu {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
 
-                                AbstractItem<?, ?> inheritedItem = null;
+                                AbstractItem inheritedItem = null;
                                 if (tier == ItemTier.DELTA) {
                                     inheritedItem = items.get(ItemTier.GAMMA);
                                 } else if (tier == ItemTier.OMEGA) {
@@ -235,13 +235,13 @@ public class ItemCraftingMenu {
                                 //add random other stat to stat pool
                                 statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
 
-                                AbstractItem<?, ?> craftedItem = inheritedItem.getType().createInherited.apply(tier, statPools);
+                                AbstractItem craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
                                 craftedItem.setModifier(inheritedItem.getModifier());
                                 craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);
                                 AbstractItem.sendItemMessage(player,
                                         new ComponentBuilder(ChatColor.GRAY + "You crafted ")
-                                                .appendHoverItem(craftedItem.getName(), craftedItem.generateItemStack())
+                                                .appendHoverItem(craftedItem.getItemName(), craftedItem.generateItemStack())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
                                 player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);

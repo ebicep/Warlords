@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemBuckler;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -36,11 +36,11 @@ public class ItemLoadout {
     public int getWeight(ItemsManager itemsManager) {
         int weight = 0;
 
-        List<AbstractItem<?, ?>> actualItems = getActualItems(itemsManager);
+        List<AbstractItem> actualItems = getActualItems(itemsManager);
         int weightModifier = 0;
-        for (AbstractItem<?, ?> actualItem : actualItems) {
+        for (AbstractItem actualItem : actualItems) {
             weight += actualItem.getWeight();
-            if (actualItem instanceof ItemBuckler) {
+            if (actualItem.getType() == ItemType.BUCKLER) {
                 weightModifier += actualItem.getModifierCalculated();
             }
         }
@@ -48,9 +48,9 @@ public class ItemLoadout {
         return (int) (weight * (1 - weightModifier / 100f));
     }
 
-    public List<AbstractItem<?, ?>> getActualItems(ItemsManager itemsManager) {
-        List<AbstractItem<?, ?>> items = new ArrayList<>();
-        for (AbstractItem<?, ?> item : itemsManager.getItemInventory()) {
+    public List<AbstractItem> getActualItems(ItemsManager itemsManager) {
+        List<AbstractItem> items = new ArrayList<>();
+        for (AbstractItem item : itemsManager.getItemInventory()) {
             if (this.items.contains(item.getUUID())) {
                 items.add(item);
             }

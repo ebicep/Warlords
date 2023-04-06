@@ -21,6 +21,7 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 import static com.ebicep.warlords.player.general.SkillBoosts.*;
@@ -217,6 +218,16 @@ public enum Specializations {
         }
         return Classes.ROGUE;
         //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
+    }
+
+    public static Specializations generateSpec(Specializations selectedSpec) {
+        if (ThreadLocalRandom.current().nextDouble() < .25) {
+            return selectedSpec;
+        }
+        Specializations[] otherSpecs = Arrays.stream(VALUES)
+                                             .filter(value -> value != selectedSpec)
+                                             .toArray(Specializations[]::new);
+        return otherSpecs[ThreadLocalRandom.current().nextInt(otherSpecs.length)];
     }
 
     public final String name;

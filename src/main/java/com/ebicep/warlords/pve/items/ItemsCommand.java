@@ -70,11 +70,11 @@ public class ItemsCommand extends BaseCommand {
         ItemTier finalTier = tier;
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                AbstractItem<?, ?> item = type.create.apply(finalTier);
+                AbstractItem item = type.createBasic(finalTier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                                .appendHoverItem(item.getName(), item.generateItemStack())
+                                .appendHoverItem(item.getItemName(), item.generateItemStack())
                 );
             }
         });
@@ -86,11 +86,11 @@ public class ItemsCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
                 ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
-                AbstractItem<?, ?> item = ItemType.getRandom().create.apply(randomItemTier);
+                AbstractItem item = ItemType.getRandom().createBasic(randomItemTier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                                .appendHoverItem(item.getName(), item.generateItemStack())
+                                .appendHoverItem(item.getItemName(), item.generateItemStack())
                 );
             }
         });

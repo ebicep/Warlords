@@ -6,12 +6,12 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.pve.items.types.ItemTome;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.bukkit.util.Vector;
 
 import java.util.Objects;
 
-public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
+public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseDamage(WarlordsPlayer warlordsPlayer, float damageBoost) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
@@ -82,9 +82,9 @@ public class ItemAdditiveCooldown extends PermanentCooldown<ItemTome> {
 
     public ItemAdditiveCooldown(WarlordsEntity from, float damageBoost, float healBoost, float kbRes, float thorns, int maxThornsDamage) {
         super(
-                "Item Tome Damage",
+                "Item Additive",
                 null,
-                ItemTome.class,
+                AbstractItem.class,
                 null,
                 from,
                 CooldownTypes.BUFF,

@@ -4,7 +4,7 @@ import com.ebicep.warlords.util.java.RandomCollection;
 
 import java.util.HashMap;
 
-public interface ItemModifier<T extends Enum<T>> {
+public interface ItemModifier {
 
     HashMap<Integer, Double> BLESSING_TIER_CHANCE = new HashMap<>() {{
         put(1, 68.75);
@@ -26,8 +26,6 @@ public interface ItemModifier<T extends Enum<T>> {
     RandomCollection<Integer> GENERATE_CURSE = new RandomCollection<>() {{
         CURSE_TIER_CHANCE.forEach((tier, weight) -> add(weight, tier));
     }};
-
-    T[] getValues();
 
     String getName();
 

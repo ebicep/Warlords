@@ -272,7 +272,7 @@ public class ItemMichaelMenu {
         }};
 
         public static void openApplyBlessingMenu(Player player, DatabasePlayer databasePlayer, ApplyBlessingMenuData menuData) {
-            AbstractItem<?, ?> item = menuData.getItem();
+            AbstractItem item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
             ItemBuilder selectedBlessing;
             if (item != null) {
@@ -348,7 +348,7 @@ public class ItemMichaelMenu {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
                     (newItem, m, e) -> {
-                        AbstractItem<?, ?> previousItem = menuData.getItem();
+                        AbstractItem previousItem = menuData.getItem();
                         //prevent non-normal item from being blessed with bought blessing
                         if (previousItem != null && previousItem.getModifier() == 0 && newItem.getModifier() != 0 && !menuData.isBlessingFound()) {
                             menuData.setBlessing(null);
@@ -477,7 +477,7 @@ public class ItemMichaelMenu {
                 Menu menu
         ) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            AbstractItem<?, ?> item = menuData.getItem();
+            AbstractItem item = menuData.getItem();
             Integer blessing = menuData.getBlessing();
             boolean blessingFound = menuData.isBlessingFound();
             boolean enoughCost = blessingFound && FOUND_COST.entrySet()
@@ -509,7 +509,7 @@ public class ItemMichaelMenu {
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a blessing on ")
-                                            .appendHoverItem(item.getName(), item.generateItemStack())
+                                            .appendHoverItem(item.getItemName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
                                     int tier = blessing + 1;
@@ -527,7 +527,7 @@ public class ItemMichaelMenu {
                                     player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
                                     player.closeInventory();
 
-                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
+                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getItemName(), item.generateItemStack()));
                                 },
                                 (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
                                 (m2) -> {
@@ -538,7 +538,7 @@ public class ItemMichaelMenu {
         }
 
         private static class ApplyBlessingMenuData {
-            private AbstractItem<?, ?> item;
+            private AbstractItem item;
             private Integer blessing;
             private boolean blessingFound;
 
@@ -568,22 +568,19 @@ public class ItemMichaelMenu {
             private String getModifiedLore(int newModifier, double chance) {
                 if (newModifier == 0) {
                     return ChatColor.WHITE + "Normal" + ChatColor.GRAY + " - " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%";
-                } else if (newModifier > 0) {
-                    ItemModifier<?> itemBlessing = item.getBlessings()[newModifier - 1];
-                    return ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
-                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "100") + "%" +
-                            "\n " + ChatColor.GREEN + itemBlessing.getDescription();
                 } else {
-                    ItemModifier<?> itemCurse = item.getCurses()[-newModifier - 1];
-                    return ChatColor.RED + itemCurse.getName() + ChatColor.GRAY + " - " +
-                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : "0") + "%" +
-                            "\n " + ChatColor.GREEN + itemCurse.getDescription();
+                    ItemModifier itemModifier = item.getItemModifier(newModifier);
+                    boolean isBlessing = newModifier > 0;
+                    return (isBlessing ? ChatColor.GREEN : ChatColor.RED) + itemModifier.getName() + ChatColor.GRAY + " - " +
+                            ChatColor.YELLOW + (blessingFound ? NumberFormat.formatOptionalHundredths(chance) : (isBlessing ? "100" : "0")) + "%" +
+                            "\n " + ChatColor.GREEN + itemModifier.getDescription();
+
                 }
             }
 
             public List<String> getBlessingCurseBoughtLore() {
                 if (!blessingFound) {
-                    ItemModifier<?> itemBlessing = item.getBlessings()[blessing];
+                    ItemModifier itemBlessing = item.getBlessings()[blessing];
                     return Arrays.asList(
                             "",
                             ChatColor.GREEN + itemBlessing.getName() + ChatColor.GRAY + " - " +
@@ -601,11 +598,11 @@ public class ItemMichaelMenu {
                 );
             }
 
-            public AbstractItem<?, ?> getItem() {
+            public AbstractItem getItem() {
                 return item;
             }
 
-            public void setItem(AbstractItem<?, ?> item) {
+            public void setItem(AbstractItem item) {
                 this.item = item;
             }
 
@@ -629,7 +626,7 @@ public class ItemMichaelMenu {
 
     public static class RemoveACurseMenu {
 
-        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem<?, ?> item) {
+        public static void openPurifyItemMenu(Player player, DatabasePlayer databasePlayer, AbstractItem item) {
             Menu menu = new Menu("Remove a Curse", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
@@ -667,7 +664,7 @@ public class ItemMichaelMenu {
                 Player player,
                 DatabasePlayer databasePlayer,
                 ItemSearchMenu.PlayerItemMenuSettings menuSettings,
-                AbstractItem<?, ?> item
+                AbstractItem item
         ) {
             ItemSearchMenu menu = new ItemSearchMenu(
                     player, "Select an Item",
@@ -694,7 +691,7 @@ public class ItemMichaelMenu {
         private static void addPurifyItemConfirmation(
                 Player player,
                 DatabasePlayer databasePlayer,
-                AbstractItem<?, ?> item,
+                AbstractItem item,
                 Menu menu
         ) {
             boolean enoughCost = item != null &&
@@ -741,7 +738,7 @@ public class ItemMichaelMenu {
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You decreased the tier of curse from ")
-                                            .appendHoverItem(item.getName(), item.generateItemStack())
+                                            .appendHoverItem(item.getItemName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
                                     for (Map.Entry<Spendable, Long> spendableLongEntry : removeCurseCost.entrySet()) {
@@ -752,7 +749,7 @@ public class ItemMichaelMenu {
                                     player.playSound(player.getLocation(), Sound.SPLASH, 2, 0.1f);
                                     player.closeInventory();
 
-                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getName(), item.generateItemStack()));
+                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getItemName(), item.generateItemStack()));
                                 },
                                 (m2, e2) -> openPurifyItemMenu(player, databasePlayer, item),
                                 (m2) -> {

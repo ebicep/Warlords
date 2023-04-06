@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -110,7 +111,7 @@ public class GameStartCommand {
                                 .setMap(GameMap.TUTORIAL_MAP)
                                 .setOnResult((result, game) -> {
                                     if (game == null) {
-                                        people.get(0).sendMessage(ChatColor.RED + "All games are currently full. Please try again later.");
+                                        people.get(0).sendMessage(ChatColor.RED + "Unable to find a valid tutorial map. Report this.");
                                     }
                                 });
                     }
@@ -118,7 +119,8 @@ public class GameStartCommand {
             }
         }
 
-        entryBuilder.queueNow();
+        Pair<GameManager.QueueResult, Game> resultGamePair = entryBuilder.queueNow();
+        entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
     }
 
     public static void startGamePublic(Player player) {

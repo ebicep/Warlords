@@ -13,8 +13,7 @@ import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemGauntlet;
-import com.ebicep.warlords.pve.items.types.ItemTome;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
@@ -82,19 +81,17 @@ public class ItemOption implements Option {
                 return;
             }
             ItemLoadout loadout = loadouts.get(0);
-            List<AbstractItem<?, ?>> applied = loadout.getActualItems(itemsManager);
+            List<AbstractItem> applied = loadout.getActualItems(itemsManager);
             itemPlayerConfigs.putIfAbsent(player.getUuid(),
                     new ItemPlayerConfig(loadout, 1 + applied
                             .stream()
-                            .filter(ItemGauntlet.class::isInstance)
-                            .map(ItemGauntlet.class::cast)
+                            .filter(item -> item.getType() == ItemType.GAUNTLET)
                             .mapToDouble(AbstractItem::getModifierCalculated)
                             .sum() / 100.0)
             );
             float abilityDurationModifier = (float) (1 + applied
                     .stream()
-                    .filter(ItemTome.class::isInstance)
-                    .map(ItemTome.class::cast)
+                    .filter(item -> item.getType() == ItemType.TOME)
                     .mapToDouble(AbstractItem::getModifierCalculated)
                     .sum() / 100f);
             for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {

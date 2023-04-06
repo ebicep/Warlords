@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -32,9 +32,10 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
         super(game, gameWinEvent, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
-                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, pveOption)));
+            if (option instanceof WaveDefenseOption) {
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                this.wavesCleared = waveDefenseOption.getWavesCleared();
+                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, waveDefenseOption)));
             }
         }
     }

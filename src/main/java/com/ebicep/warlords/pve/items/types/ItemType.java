@@ -1,53 +1,82 @@
 package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
+import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
+import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
+import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 public enum ItemType {
 
-    BUCKLER("Buckler",
-            ItemBuckler::new,
-            ItemBuckler::new,
-            ItemBuckler::new
-    ),
-    GAUNTLET("Gauntlet",
-            ItemGauntlet::new,
-            ItemGauntlet::new,
-            ItemGauntlet::new
-    ),
-    TOME("Tome",
-            ItemTome::new,
-            ItemTome::new,
-            ItemTome::new
-    ),
+    GAUNTLET("Gauntlet"
+    ) {
+        @Override
+        public BasicItem createBasic(ItemTier tier) {
+            return new BasicItem(this, tier);
+        }
+
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+            return (R[]) ItemGauntletModifier.Blessings.VALUES;
+        }
+
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getCurses() {
+            return (R[]) ItemGauntletModifier.Curses.VALUES;
+        }
+    },
+    TOME("Tome"
+    ) {
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+            return (R[]) ItemTomeModifier.Blessings.VALUES;
+        }
+
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getCurses() {
+            return (R[]) ItemTomeModifier.Curses.VALUES;
+        }
+    },
+    BUCKLER("Buckler"
+    ) {
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+            return (R[]) ItemBucklerModifier.Blessings.VALUES;
+        }
+
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getCurses() {
+            return (R[]) ItemBucklerModifier.Curses.VALUES;
+        }
+    },
 
     ;
 
     public static final ItemType[] VALUES = values();
     public final String name;
-    public final Function<ItemTier, AbstractItem<?, ?>> create;
-    public final BiFunction<ItemTier, Set<ItemStatPool>, AbstractItem<?, ?>> createInherited;
-    public final Supplier<AbstractItem<?, ?>> clone;
 
     public static ItemType getRandom() {
         return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
     }
 
-    ItemType(
-            String name,
-            Function<ItemTier, AbstractItem<?, ?>> create,
-            BiFunction<ItemTier, Set<ItemStatPool>, AbstractItem<?, ?>> createInherited,
-            Supplier<AbstractItem<?, ?>> clone
-    ) {
+    ItemType(String name) {
         this.name = name;
-        this.create = create;
-        this.createInherited = createInherited;
-        this.clone = clone;
     }
+
+    public BasicItem createBasic(ItemTier tier) {
+        return new BasicItem(this, tier);
+    }
+
+    public BasicItem createBasicInherited(ItemTier tier, Set<ItemStatPool> statPool) {
+        return new BasicItem(this, tier, statPool);
+    }
+
+    public abstract <R extends Enum<R> & ItemModifier> R[] getBlessings();
+
+    public abstract <R extends Enum<R> & ItemModifier> R[] getCurses();
 }

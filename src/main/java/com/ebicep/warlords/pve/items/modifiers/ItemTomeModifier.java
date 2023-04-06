@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 public class ItemTomeModifier {
 
-    public enum Blessings implements ItemModifier<Blessings> {
+    public enum Blessings implements ItemModifier {
         DELAYED("Delayed"),
         STRETCHED("Stretched"),
         PROLONGED("Prolonged"),
@@ -17,11 +17,6 @@ public class ItemTomeModifier {
 
         Blessings(String name) {
             this.name = name;
-        }
-
-        @Override
-        public Blessings[] getValues() {
-            return VALUES;
         }
 
         @Override
@@ -45,7 +40,7 @@ public class ItemTomeModifier {
         }
     }
 
-    public enum Curses implements ItemModifier<Curses> {
+    public enum Curses implements ItemModifier {
         BRIEF("Brief"),
         FLETTING("Fletting"),
         NIMBLE("Nimble"),
@@ -57,11 +52,6 @@ public class ItemTomeModifier {
 
         Curses(String name) {
             this.name = name;
-        }
-
-        @Override
-        public Curses[] getValues() {
-            return VALUES;
         }
 
         @Override

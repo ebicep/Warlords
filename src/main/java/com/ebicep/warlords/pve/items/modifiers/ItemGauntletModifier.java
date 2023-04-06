@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 public class ItemGauntletModifier {
 
-    public enum Blessings implements ItemModifier<Blessings> {
+    public enum Blessings implements ItemModifier {
         STRONG("Strong"),
         POWERFUL("Powerful"),
         EXPLOSIVE("Explosive"),
@@ -17,11 +17,6 @@ public class ItemGauntletModifier {
 
         Blessings(String name) {
             this.name = name;
-        }
-
-        @Override
-        public Blessings[] getValues() {
-            return VALUES;
         }
 
         @Override
@@ -45,7 +40,7 @@ public class ItemGauntletModifier {
         }
     }
 
-    public enum Curses implements ItemModifier<Curses> {
+    public enum Curses implements ItemModifier {
         DINKY("Dinky"),
         MEEK("Meek"),
         KIND("Kind"),
@@ -57,11 +52,6 @@ public class ItemGauntletModifier {
 
         Curses(String name) {
             this.name = name;
-        }
-
-        @Override
-        public Curses[] getValues() {
-            return VALUES;
         }
 
         @Override

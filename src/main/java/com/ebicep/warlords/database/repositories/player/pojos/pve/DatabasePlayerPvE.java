@@ -151,41 +151,34 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
         //WEAPONS / ITEMS
         List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
-        List<AbstractItem<?, ?>> itemsFound = gamePlayerPvE.getItemsFound();
-        if (multiplier > 0) {
-            int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
-            int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
-            int weaponsFoundSize = weaponsFound.size();
-            int newWeaponInventorySize = currentWeaponInventorySize + weaponsFoundSize;
-            if (newWeaponInventorySize >= maxWeaponInventorySize) {
-                List<AbstractWeapon> weaponsToKeep = weaponsFound.subList(0, Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize));
-                List<AbstractWeapon> weaponsToSalvage = weaponsFound.subList(Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize),
-                        weaponsFoundSize
-                );
-                weaponInventory.addAll(weaponsToKeep);
-                for (AbstractWeapon weapon : weaponsToSalvage) {
-                    if (weapon instanceof Salvageable) {
-                        Salvageable salvageable = (Salvageable) weapon;
-                        AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
-                        Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
-                        addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
+        List<AbstractItem> itemsFound = gamePlayerPvE.getItemsFound();
+        if (playersCollection == PlayersCollections.LIFETIME) {
+            if (multiplier > 0) {
+                int maxWeaponInventorySize = currentlyPatreon ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
+                int currentWeaponInventorySize = (int) weaponInventory.stream().filter(abstractWeapon -> !(abstractWeapon instanceof StarterWeapon)).count();
+                int weaponsFoundSize = weaponsFound.size();
+                int newWeaponInventorySize = currentWeaponInventorySize + weaponsFoundSize;
+                if (newWeaponInventorySize >= maxWeaponInventorySize) {
+                    List<AbstractWeapon> weaponsToKeep = weaponsFound.subList(0, Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize));
+                    List<AbstractWeapon> weaponsToSalvage = weaponsFound.subList(Math.max(0, maxWeaponInventorySize - currentWeaponInventorySize),
+                            weaponsFoundSize
+                    );
+                    weaponInventory.addAll(weaponsToKeep);
+                    for (AbstractWeapon weapon : weaponsToSalvage) {
+                        if (weapon instanceof Salvageable) {
+                            Salvageable salvageable = (Salvageable) weapon;
+                            AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
+                            Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
+                            addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
+                        }
                     }
+                } else {
+                    weaponInventory.addAll(weaponsFound);
                 }
+
+                itemsManager.getItemInventory().addAll(itemsFound);
+
             } else {
-                weaponInventory.addAll(weaponsFound);
-            }
-
-            itemsManager.getItemInventory().addAll(itemsFound);
-
-            //QUESTS
-            for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-                if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
-                    questsCompleted.merge(quests, 1L, Long::sum);
-                    quests.rewards.forEach(this::addCurrency);
-                }
-            }
-        } else {
-            if (playersCollection == PlayersCollections.LIFETIME) {
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
                     boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
@@ -207,19 +200,20 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     }
                 }
 
-                for (AbstractItem<?, ?> item : itemsFound) {
+                for (AbstractItem item : itemsFound) {
                     itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
                 }
             }
+        }
 
-            //QUESTS
-            for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-                if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
-                    questsCompleted.merge(quests, -1L, Long::sum);
-                    quests.rewards.forEach(this::subtractCurrency);
-                }
+        //QUESTS
+        for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
+            questsCompleted.merge(quests, (long) multiplier, Long::sum);
+            if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
+                quests.rewards.forEach((curr, aLong) -> addCurrency(curr, aLong * multiplier));
             }
         }
+
         getItemsManager().addBlessingsFound(gamePlayerPvE.getBlessingsFound() * multiplier);
 
         //SPENDABLE
@@ -256,90 +250,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
             }
         }
-    }
-
-    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
-        switch (difficultyIndex) {
-            case EASY:
-                return easyStats;
-            case NORMAL:
-                return normalStats;
-            case HARD:
-                return hardStats;
-            case ENDLESS:
-                return endlessStats;
-        }
-        return null;
-    }
-
-    public void subtractCurrency(Currencies currency, int amount) {
-        this.subtractCurrency(currency, (long) amount);
-    }
-
-    public DatabasePlayerPvEDifficultyStats getEasyStats() {
-        return easyStats;
-    }
-
-    public DatabasePlayerPvEDifficultyStats getNormalStats() {
-        return normalStats;
-    }
-
-    public DatabasePlayerPvEDifficultyStats getHardStats() {
-        return hardStats;
-    }
-
-    public DatabasePlayerPvEDifficultyStats getEndlessStats() {
-        return endlessStats;
-    }
-
-    public List<AbstractWeapon> getWeaponInventory() {
-        return weaponInventory;
-    }
-
-    public ItemsManager getItemsManager() {
-        return itemsManager;
-    }
-
-    public List<MasterworksFairEntry> getMasterworksFairEntries() {
-        return masterworksFairEntries;
-    }
-
-    public void addMasterworksFairEntry(MasterworksFairEntry entry) {
-        this.masterworksFairEntries.add(entry);
-    }
-
-    public List<SupplyDropEntry> getSupplyDropEntries() {
-        return supplyDropEntries;
-    }
-
-    public void addSupplyDropEntry(SupplyDropEntry entry) {
-        if (supplyDropEntries.size() > 25) {
-            this.supplyDropEntries = supplyDropEntries.subList(Math.max(supplyDropEntries.size() - 25, 0), supplyDropEntries.size());
-        }
-        this.supplyDropEntries.add(entry);
-    }
-
-    public List<MasterworksFairReward> getMasterworksFairRewards() {
-        return masterworksFairRewards;
-    }
-
-    public void addReward(MasterworksFairReward reward) {
-        this.masterworksFairRewards.add(reward);
-    }
-
-    public Long getCurrencyValue(Currencies currency) {
-        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
-            return Long.MAX_VALUE;
-        }
-        return this.currencies.getOrDefault(currency, 0L);
-    }
-
-    public void addCurrency(Currencies currency, int amount) {
-        this.addCurrency(currency, (long) amount);
-    }
-
-    public void addOneCurrency(Currencies currency) {
-        this.addCurrency(currency, 1L);
     }
 
     public void addCurrency(Currencies currency, Long amount) {
@@ -393,12 +303,107 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         eventMode.addEventPointsSpent(-amount);
     }
 
-    public void subtractOneCurrency(Currencies currency) {
-        this.subtractCurrency(currency, 1L);
+    public void addCurrency(Currencies currency, int amount) {
+        this.addCurrency(currency, (long) amount);
+    }
+
+    public void subtractCurrency(Currencies currency, int amount) {
+        this.subtractCurrency(currency, (long) amount);
+    }
+
+    public ItemsManager getItemsManager() {
+        return itemsManager;
+    }
+
+    public void addMobDrops(MobDrops mobDrops, long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        if (!this.mobDrops.containsKey(mobDrops)) {
+            this.mobDrops.put(mobDrops, amount);
+        } else {
+            this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
+        }
+    }
+
+    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
+        switch (difficultyIndex) {
+            case EASY:
+                return easyStats;
+            case NORMAL:
+                return normalStats;
+            case HARD:
+                return hardStats;
+            case ENDLESS:
+                return endlessStats;
+        }
+        return null;
     }
 
     public void subtractCurrency(Currencies currency, Long amount) {
         this.addCurrency(currency, -amount);
+    }
+
+    public DatabasePlayerPvEDifficultyStats getEasyStats() {
+        return easyStats;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getNormalStats() {
+        return normalStats;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getHardStats() {
+        return hardStats;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getEndlessStats() {
+        return endlessStats;
+    }
+
+    public List<AbstractWeapon> getWeaponInventory() {
+        return weaponInventory;
+    }
+
+    public List<MasterworksFairEntry> getMasterworksFairEntries() {
+        return masterworksFairEntries;
+    }
+
+    public void addMasterworksFairEntry(MasterworksFairEntry entry) {
+        this.masterworksFairEntries.add(entry);
+    }
+
+    public List<SupplyDropEntry> getSupplyDropEntries() {
+        return supplyDropEntries;
+    }
+
+    public void addSupplyDropEntry(SupplyDropEntry entry) {
+        if (supplyDropEntries.size() > 25) {
+            this.supplyDropEntries = supplyDropEntries.subList(Math.max(supplyDropEntries.size() - 25, 0), supplyDropEntries.size());
+        }
+        this.supplyDropEntries.add(entry);
+    }
+
+    public List<MasterworksFairReward> getMasterworksFairRewards() {
+        return masterworksFairRewards;
+    }
+
+    public void addReward(MasterworksFairReward reward) {
+        this.masterworksFairRewards.add(reward);
+    }
+
+    public Long getCurrencyValue(Currencies currency) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return Long.MAX_VALUE;
+        }
+        return this.currencies.getOrDefault(currency, 0L);
+    }
+
+    public void addOneCurrency(Currencies currency) {
+        this.addCurrency(currency, 1L);
+    }
+
+    public void subtractOneCurrency(Currencies currency) {
+        this.subtractCurrency(currency, 1L);
     }
 
     public boolean isCompletedTutorial() {
@@ -454,17 +459,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public Map<MobDrops, Long> getMobDrops() {
         return mobDrops;
-    }
-
-    public void addMobDrops(MobDrops mobDrops, long amount) {
-        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
-            return;
-        }
-        if (!this.mobDrops.containsKey(mobDrops)) {
-            this.mobDrops.put(mobDrops, amount);
-        } else {
-            this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
-        }
     }
 
     public boolean isCurrentlyPatreon() {

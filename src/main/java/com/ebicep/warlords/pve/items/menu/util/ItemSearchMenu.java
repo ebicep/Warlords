@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 public class ItemSearchMenu extends Menu {
     private final Player player;
-    private final TriConsumer<AbstractItem<?, ?>, Menu, InventoryClickEvent> itemClickAction;
+    private final TriConsumer<AbstractItem, Menu, InventoryClickEvent> itemClickAction;
     private final UnaryOperator<ItemBuilder> editItem;
     private final PlayerItemMenuSettings menuSettings;
     private final DatabasePlayer databasePlayer;
@@ -35,7 +35,7 @@ public class ItemSearchMenu extends Menu {
     public ItemSearchMenu(
             Player player,
             String name,
-            TriConsumer<AbstractItem<?, ?>, Menu, InventoryClickEvent> itemClickAction,
+            TriConsumer<AbstractItem, Menu, InventoryClickEvent> itemClickAction,
             UnaryOperator<ItemBuilder> editItem,
             PlayerItemMenuSettings menuSettings,
             DatabasePlayer databasePlayer,
@@ -49,7 +49,7 @@ public class ItemSearchMenu extends Menu {
     public ItemSearchMenu(
             Player player,
             String name,
-            TriConsumer<AbstractItem<?, ?>, Menu, InventoryClickEvent> itemClickAction,
+            TriConsumer<AbstractItem, Menu, InventoryClickEvent> itemClickAction,
             UnaryOperator<ItemBuilder> editItem,
             PlayerItemMenuSettings menuSettings,
             DatabasePlayer databasePlayer
@@ -80,13 +80,13 @@ public class ItemSearchMenu extends Menu {
 
     private void addItems() {
         int page = menuSettings.getPage();
-        List<AbstractItem<?, ?>> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
+        List<AbstractItem> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
         int x = 0;
         int y = 0;
         for (int i = 0; i < 45; i++) {
             int itemNumber = ((page - 1) * 45) + i;
             if (itemNumber < itemInventory.size()) {
-                AbstractItem<?, ?> item = itemInventory.get(itemNumber);
+                AbstractItem item = itemInventory.get(itemNumber);
                 setItem(x, y,
                         editItem.apply(item.generateItemBuilder()).get(),
                         (m, e) -> itemClickAction.accept(item, m, e)
@@ -204,7 +204,7 @@ public class ItemSearchMenu extends Menu {
 
     private void addPageArrows() {
         int page = menuSettings.getPage();
-        List<AbstractItem<?, ?>> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
+        List<AbstractItem> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
         if (page - 1 > 0) {
             setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
@@ -238,9 +238,9 @@ public class ItemSearchMenu extends Menu {
 
         private static final SortOptions[] VALUES = values();
         public final String name;
-        public final Comparator<AbstractItem<?, ?>> comparator;
+        public final Comparator<AbstractItem> comparator;
 
-        SortOptions(String name, Comparator<AbstractItem<?, ?>> comparator) {
+        SortOptions(String name, Comparator<AbstractItem> comparator) {
             this.name = name;
             this.comparator = comparator;
         }
@@ -260,9 +260,9 @@ public class ItemSearchMenu extends Menu {
 
         private static final ModifierFilter[] VALUES = values();
         public final String name;
-        public final Predicate<AbstractItem<?, ?>> filter;
+        public final Predicate<AbstractItem> filter;
 
-        ModifierFilter(String name, Predicate<AbstractItem<?, ?>> filter) {
+        ModifierFilter(String name, Predicate<AbstractItem> filter) {
             this.name = name;
             this.filter = filter;
         }
@@ -278,8 +278,8 @@ public class ItemSearchMenu extends Menu {
         private final Classes selectedClass;
         private boolean openedFromNPC = false;
         private int page = 1;
-        private List<AbstractItem<?, ?>> itemInventory = new ArrayList<>();
-        private List<AbstractItem<?, ?>> sortedItemInventory = new ArrayList<>();
+        private List<AbstractItem> itemInventory = new ArrayList<>();
+        private List<AbstractItem> sortedItemInventory = new ArrayList<>();
         private ItemTier tierFilter = ItemTier.ALL;
         private ModifierFilter modifierFilter = ModifierFilter.NONE;
         private int addonFilter = 0; // 0 = none, 1 = spec, 2 = class
@@ -297,7 +297,7 @@ public class ItemSearchMenu extends Menu {
             setItemInventory(new ArrayList<>(databasePlayer.getPveStats().getItemsManager().getItemInventory()));
         }
 
-        public PlayerItemMenuSettings setItemInventory(List<AbstractItem<?, ?>> itemInventory) {
+        public PlayerItemMenuSettings setItemInventory(List<AbstractItem> itemInventory) {
             this.itemInventory = itemInventory;
             this.sortedItemInventory = new ArrayList<>(itemInventory);
             return this;
@@ -348,7 +348,7 @@ public class ItemSearchMenu extends Menu {
             this.page = page;
         }
 
-        public List<AbstractItem<?, ?>> getSortedItemInventory() {
+        public List<AbstractItem> getSortedItemInventory() {
             return sortedItemInventory;
         }
 

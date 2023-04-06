@@ -243,7 +243,7 @@ public class ItemsManager {
     }
 
     @Field("item_inventory")
-    private List<AbstractItem<?, ?>> itemInventory = new ArrayList<>();
+    private List<AbstractItem> itemInventory = new ArrayList<>();
     private List<ItemLoadout> loadouts = new ArrayList<>() {{
         add(new ItemLoadout("Default"));
     }};
@@ -255,15 +255,15 @@ public class ItemsManager {
     public ItemsManager() {
     }
 
-    public List<AbstractItem<?, ?>> getItemInventory() {
+    public List<AbstractItem> getItemInventory() {
         return itemInventory;
     }
 
-    public void addItem(AbstractItem<?, ?> item) {
+    public void addItem(AbstractItem item) {
         this.itemInventory.add(item);
     }
 
-    public void removeItem(AbstractItem<?, ?> item) {
+    public void removeItem(AbstractItem item) {
         this.itemInventory.remove(item);
     }
 

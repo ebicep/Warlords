@@ -19,9 +19,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class AbstractItem<
-        R extends Enum<R> & ItemModifier<R>,
-        U extends Enum<U> & ItemModifier<U>> {
+public abstract class AbstractItem {
 
     public static void sendItemMessage(Player player, String message) {
         player.sendMessage(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > " + message);
@@ -38,6 +36,7 @@ public abstract class AbstractItem<
     protected UUID uuid = UUID.randomUUID();
     @Field("obtained_date")
     protected Instant obtainedDate = Instant.now();
+    protected ItemType type;
     protected ItemTier tier;
     @Field("stat_pool")
     protected Map<ItemStatPool, Float> statPoolDistribution = new HashMap<>();
@@ -48,11 +47,12 @@ public abstract class AbstractItem<
     public AbstractItem() {
     }
 
-    public AbstractItem(ItemTier tier) {
-        this(tier, tier.generateStatPool());
+    public AbstractItem(ItemType type, ItemTier tier) {
+        this(type, tier, tier.generateStatPool());
     }
 
-    public AbstractItem(ItemTier tier, Set<ItemStatPool> statPool) {
+    public AbstractItem(ItemType type, ItemTier tier, Set<ItemStatPool> statPool) {
+        this.type = type;
         this.tier = tier;
         for (ItemStatPool stat : statPool) {
             this.statPoolDistribution.put(stat, (float) getRandomValueNormalDistribution());
@@ -95,23 +95,13 @@ public abstract class AbstractItem<
         }
     }
 
-    public abstract AbstractItem<R, U> clone();
-
-    public void copyFrom(AbstractItem<R, U> item) {
-        this.uuid = item.uuid;
-        this.obtainedDate = item.obtainedDate;
-        this.tier = item.tier;
-        this.statPoolDistribution = new HashMap<>(item.statPoolDistribution);
-        this.modifier = item.modifier;
-    }
-
     public ItemStack generateItemStack() {
         return generateItemBuilder().get();
     }
 
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
-                .name(getName())
+                .name(getItemName())
                 .lore(
                         ChatColor.GRAY + "Tier: " + tier.getColoredName(),
                         ""
@@ -132,52 +122,63 @@ public abstract class AbstractItem<
         return itemBuilder;
     }
 
-    public String getName() {
+    public String getItemName() {
         String name = "";
-        if (modifier != 0) {
-            if (modifier > 0) {
-                name += ChatColor.GREEN + getBlessings()[modifier - 1].getName() + " ";
-            } else {
-                name += ChatColor.RED + getCurses()[-modifier - 1].getName() + " ";
-            }
+        ItemModifier itemModifier = getItemModifier();
+        if (itemModifier != null) {
+            name += (modifier > 0 ? ChatColor.GREEN : ChatColor.RED) + itemModifier.getName() + " ";
         } else {
             name += ChatColor.GRAY + "Normal ";
         }
-        name += getType().name;
+        name += type.name;
         return name;
+    }
+
+    public ItemModifier getItemModifier() {
+        return getItemModifier(modifier);
+    }
+
+    public ItemModifier getItemModifier(int modifier) {
+        if (modifier > 0) {
+            return getBlessings()[modifier - 1];
+        } else if (modifier < 0) {
+            return getCurses()[-modifier - 1];
+        } else {
+            return null;
+        }
     }
 
     public List<String> getStatPoolLore() {
         return getStatPoolLore(getStatPool());
     }
 
-    public static <R extends Enum<R> & ItemModifier<R>, U extends Enum<U> & ItemModifier<U>> String getModifierCalculatedLore(
-            R[] blessings,
-            U[] curses,
+    public static String getModifierCalculatedLore(
+            ItemModifier[] blessings,
+            ItemModifier[] curses,
             float modifierCalculated
     ) {
         if (modifierCalculated > 0) {
-            R blessing = blessings[0];
+            ItemModifier blessing = blessings[0];
             return WordWrap.wrapWithNewline(blessing.getDescriptionCalculated(modifierCalculated), 150);
         } else {
-            U curse = curses[0];
+            ItemModifier curse = curses[0];
             return WordWrap.wrapWithNewline(curse.getDescriptionCalculated(modifierCalculated), 150);
         }
     }
 
-    public abstract R[] getBlessings();
+    public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+        return type.getBlessings();
+    }
 
-    public abstract U[] getCurses();
+    public <U extends Enum<U> & ItemModifier> U[] getCurses() {
+        return type.getCurses();
+    }
 
     public float getModifierCalculated() {
         if (modifier == 0) {
             return 0;
         }
-        if (modifier > 0) {
-            return modifier * getBlessings()[modifier - 1].getIncreasePerTier();
-        } else {
-            return modifier * getCurses()[-modifier - 1].getIncreasePerTier();
-        }
+        return modifier * getItemModifier().getIncreasePerTier();
     }
 
     private String getItemScoreString() {
@@ -187,8 +188,6 @@ public abstract class AbstractItem<
     private String getWeightString() {
         return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
     }
-
-    public abstract ItemType getType();
 
     public static List<String> getStatPoolLore(Map<ItemStatPool, Integer> statPool) {
         return getStatPoolLore(statPool, "");
@@ -288,6 +287,18 @@ public abstract class AbstractItem<
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
     }
 
+    public String getName() {
+        return null;
+    }
+
+    public String getDescription() {
+        return null;
+    }
+
+    public ItemType getType() {
+        return type;
+    }
+
     public UUID getUUID() {
         return uuid;
     }
@@ -304,7 +315,7 @@ public abstract class AbstractItem<
         return modifier;
     }
 
-    public AbstractItem<R, U> setModifier(int modifier) {
+    public AbstractItem setModifier(int modifier) {
         this.modifier = modifier;
         return this;
     }

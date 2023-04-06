@@ -10,9 +10,7 @@ import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.ItemBuckler;
-import com.ebicep.warlords.pve.items.types.ItemGauntlet;
-import com.ebicep.warlords.pve.items.types.ItemTome;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +28,7 @@ public class ItemMenuUtil {
     public static void addItemTierRequirement(
             Menu menu,
             ItemTier tier,
-            AbstractItem<?, ?> item,
+            AbstractItem item,
             int x,
             int y,
             BiConsumer<Menu, InventoryClickEvent> onClick
@@ -115,24 +113,24 @@ public class ItemMenuUtil {
         }
     }
 
-    public static List<String> getTotalBonusLore(List<AbstractItem<?, ?>> equippedItems) {
+    public static List<String> getTotalBonusLore(List<AbstractItem> equippedItems) {
         HashMap<ItemStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
         float bucklerModifier = 0;
-        for (AbstractItem<?, ?> equippedItem : equippedItems) {
-            if (equippedItem instanceof ItemGauntlet) {
-                ItemGauntlet itemGauntlet = (ItemGauntlet) equippedItem;
-                itemGauntlet.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
-                gauntletModifier += itemGauntlet.getModifierCalculated();
-            } else if (equippedItem instanceof ItemTome) {
-                ItemTome itemTome = (ItemTome) equippedItem;
-                itemTome.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
-                tomeModifier += itemTome.getModifierCalculated();
-            } else if (equippedItem instanceof ItemBuckler) {
-                ItemBuckler itemBuckler = (ItemBuckler) equippedItem;
-                itemBuckler.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
-                bucklerModifier += itemBuckler.getModifierCalculated();
+        for (AbstractItem equippedItem : equippedItems) {
+            ItemType type = equippedItem.getType();
+            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
+            switch (type) {
+                case GAUNTLET:
+                    gauntletModifier += equippedItem.getModifierCalculated();
+                    break;
+                case TOME:
+                    tomeModifier += equippedItem.getModifierCalculated();
+                    break;
+                case BUCKLER:
+                    bucklerModifier += equippedItem.getModifierCalculated();
+                    break;
             }
         }
         List<String> bonusLore = AbstractItem.getStatPoolLore(statPool, "   ");

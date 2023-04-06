@@ -45,10 +45,6 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
         return 100_000;
     }
 
-    @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-    }
-
     public int getTimeElapsed() {
         return timeElapsed;
     }

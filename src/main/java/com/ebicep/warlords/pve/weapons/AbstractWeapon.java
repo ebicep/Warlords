@@ -17,10 +17,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Abstract class for weapons.
@@ -67,24 +65,14 @@ public abstract class AbstractWeapon {
 
     public AbstractWeapon(UUID uuid) {
         generateStats();
-        this.specialization = generateSpec(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
+        this.specialization = Specializations.generateSpec(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
     }
 
     public abstract void generateStats();
 
     public AbstractWeapon(WarlordsPlayer warlordsPlayer) {
         generateStats();
-        this.specialization = generateSpec(warlordsPlayer.getSpecClass());
-    }
-
-    private Specializations generateSpec(Specializations selectedSpec) {
-        if (ThreadLocalRandom.current().nextDouble() < .25) {
-            return selectedSpec;
-        }
-        Specializations[] otherSpecs = Arrays.stream(Specializations.VALUES)
-                                             .filter(value -> value != selectedSpec)
-                                             .toArray(Specializations[]::new);
-        return otherSpecs[ThreadLocalRandom.current().nextInt(otherSpecs.length)];
+        this.specialization = Specializations.generateSpec(warlordsPlayer.getSpecClass());
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {

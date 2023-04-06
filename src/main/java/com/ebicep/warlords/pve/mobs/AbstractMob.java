@@ -208,12 +208,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    Bukkit.getPluginManager()
                                          .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, WarlordsDropRewardEvent.RewardType.ITEM, dropRate));
                                    if (rng < dropRate.get()) {
-                                       AbstractItem<?, ?> item = ItemType.getRandom().create.apply(itemTier);
+                                       AbstractItem item = ItemType.getRandom().createBasic(itemTier);
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                        game.forEachOnlinePlayer((player, team) -> {
                                            AbstractItem.sendItemMessage(player,
                                                    new ComponentBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
-                                                           .appendHoverItem(item.getName(), item.generateItemStack())
+                                                           .appendHoverItem(item.getItemName(), item.generateItemStack())
                                                            .append(ChatColor.GRAY + "!")
                                            );
                                        });
