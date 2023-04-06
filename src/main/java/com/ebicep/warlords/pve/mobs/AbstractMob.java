@@ -86,14 +86,19 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.entityInsentient.persistent = true;
 
         this.livingEntity = (LivingEntity) entityInsentient.getBukkitEntity();
+        updateEquipment();
+    }
+
+    public void updateEquipment() {
+        EntityEquipment equipment = livingEntity.getEquipment();
         if (ee != null) {
-            livingEntity.getEquipment().setBoots(ee.getBoots());
-            livingEntity.getEquipment().setLeggings(ee.getLeggings());
-            livingEntity.getEquipment().setChestplate(ee.getChestplate());
-            livingEntity.getEquipment().setHelmet(ee.getHelmet());
-            livingEntity.getEquipment().setItemInHand(ee.getItemInHand());
+            equipment.setBoots(ee.getBoots());
+            equipment.setLeggings(ee.getLeggings());
+            equipment.setChestplate(ee.getChestplate());
+            equipment.setHelmet(ee.getHelmet());
+            equipment.setItemInHand(ee.getItemInHand());
         } else {
-            livingEntity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
+            equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
     }
 

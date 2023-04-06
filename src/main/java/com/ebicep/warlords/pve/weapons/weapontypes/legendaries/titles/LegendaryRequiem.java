@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.java.Utils;
@@ -21,6 +22,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EntityEquipment;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,10 +100,14 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }
                 for (int i = 0; i < spawnAmount; i++) {
-                    pveOption.spawnNewMob(new BasicZombie(player.getLocation()), Team.BLUE);
+                    BasicZombie mob = new BasicZombie(player.getLocation());
+                    EntityEquipment equipment = mob.getEe();
+                    equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
+                    mob.updateEquipment();
+                    pveOption.spawnNewMob(mob, Team.BLUE);
                 }
             }
-        }.runTaskTimer(200, COOLDOWN * 20);
+        }.runTaskTimer(100, COOLDOWN * 20);
 
     }
 
