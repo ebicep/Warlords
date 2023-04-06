@@ -28,7 +28,7 @@ import java.util.UUID;
 
 public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
-    public static final int COOLDOWN = 5;
+    public static final int COOLDOWN = 30;
 
     public LegendaryRequiem() {
     }
@@ -77,10 +77,15 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                                    .aliveEnemiesOf(player)
                                    .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
                                    .limit(Utils.generateRandomValueBetweenInclusive(2, 5))
-                                   .forEach(warlordsNPC -> {
-                                       EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
-                                       warlordsNPC.setTeam(Team.BLUE);
-                                       warlordsNPC.getMob().removeTarget();
+                                   .forEach(convertedEnemy -> {
+                                       EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                                       convertedEnemy.setTeam(Team.BLUE);
+                                       //removing teammate mobs that are agroed on converted target
+                                       PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                                                          .aliveTeammatesOf(player)
+                                                          .filter(teammate -> Objects.equals(teammate.getMob().getTarget(), convertedEnemy.getEntity()))
+                                                          .forEach(teammate -> teammate.getMob().removeTarget());
+                                       convertedEnemy.getMob().removeTarget();
                                    });
             }
 
@@ -90,6 +95,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
             @Override
             public void run() {
+                if (player.isDead()) {
+                    return;
+                }
                 pveOption.spawnNewMob(new BasicZombie(player.getLocation()), Team.BLUE);
             }
         }.runTaskTimer(200, COOLDOWN * 20);
