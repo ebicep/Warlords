@@ -24,6 +24,8 @@ import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -255,8 +257,7 @@ public class EndState implements State, TimerDebugAble {
                 if (option instanceof PveOption) {
                     PveOption pveOption = (PveOption) option;
                     showCoinSummary(pveOption, players);
-                    showWeaponSummary(pveOption, players);
-                    showMobDropSummary(pveOption, players);
+                    showDropsSummary(pveOption, players);
                     showQuestSummary(pveOption, players);
                     break;
                 }
@@ -606,9 +607,9 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private void showWeaponSummary(PveOption pveOption, List<WarlordsPlayer> players) {
+    private void showDropsSummary(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ WEAPONS SUMMARY ✚", true);
+        sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ DROPS SUMMARY ✚", true);
 
 
         for (WarlordsPlayer wp : players) {
@@ -618,9 +619,10 @@ public class EndState implements State, TimerDebugAble {
             }
             PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
             List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
-            if (weaponsFound.isEmpty()) {
-                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not find any weapons in this game!");
-            } else {
+            boolean gotAnyDrops = false;
+            boolean addSpacer = false;
+            if (!weaponsFound.isEmpty()) {
+                gotAnyDrops = true;
                 LinkedHashMap<WeaponsPvE, List<AbstractWeapon>> weaponsFoundByType = new LinkedHashMap<>();
                 for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
                     weaponsFoundByType.put(rarity, new ArrayList<>());
@@ -654,46 +656,90 @@ public class EndState implements State, TimerDebugAble {
                         }
                     });
                 });
-
             }
-
             long fragmentGain = playerPveRewards.getLegendFragmentGain();
             if (fragmentGain > 0) {
+                gotAnyDrops = true;
                 ChatUtils.sendMessage(player,
                         true,
                         ChatColor.GRAY + "+" + ChatColor.GREEN + fragmentGain + " " + Currencies.LEGEND_FRAGMENTS.getColoredName() + "s"
                 );
             }
-        }
-    }
-
-    private void showMobDropSummary(PveOption pveOption, List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ MOB DROPS SUMMARY ✚", true);
-
-
-        for (WarlordsPlayer wp : players) {
-            Player player = Bukkit.getPlayer(wp.getUuid());
-            if (player == null) {
-                continue;
-            }
-            PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
-            HashMap<MobDrops, Long> weaponsFound = playerPveRewards.getMobDropsGained();
-            if (weaponsFound.isEmpty()) {
-                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not get any mob drops in this game!");
-            } else {
-                List<MobDrops> mobDrops = new ArrayList<>(weaponsFound.keySet());
-                mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal)); // TODO TEST
+            HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
+            if (!mobDropsGained.isEmpty()) {
+                if (!gotAnyDrops) {
+                    ChatUtils.sendMessage(player, true, "");
+                }
+                gotAnyDrops = true;
+                List<MobDrops> mobDrops = new ArrayList<>(mobDropsGained.keySet());
+                mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal));
                 for (MobDrops mobDrop : mobDrops) {
-                    long amountFound = weaponsFound.get(mobDrop);
+                    long amountFound = mobDropsGained.get(mobDrop);
                     ChatUtils.sendMessage(player,
                             true,
                             mobDrop.getCostColoredName(amountFound)
                     );
                 }
             }
-        }
+            List<AbstractItem<?, ?, ?>> itemsFound = playerPveRewards.getItemsFound();
+            if (!itemsFound.isEmpty()) {
+                if (!gotAnyDrops) {
+                    ChatUtils.sendMessage(player, true, "");
+                }
+                gotAnyDrops = true;
+                for (AbstractItem<?, ?, ?> item : itemsFound) {
+                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                            .appendHoverItem(item.getName(), item.generateItemStack())
+                            .create()
+                    );
+                }
+            }
+            int blessingsFound = playerPveRewards.getBlessingsFound();
+            if (blessingsFound > 0) {
+                gotAnyDrops = true;
+                ChatUtils.sendMessage(player,
+                        true,
+                        ChatColor.GRAY + "+" + ChatColor.GREEN + blessingsFound + ChatColor.GRAY + " Unknown Blessings"
+                );
+            }
 
+            Map<Spendable, Long> syntheticPouch = playerPveRewards.getSyntheticPouch();
+            Map<Spendable, Long> aspirantPouch = playerPveRewards.getAspirantPouch();
+            if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty()) {
+                if (!gotAnyDrops) {
+                    ChatUtils.sendMessage(player, true, "");
+                }
+                gotAnyDrops = true;
+                if (!syntheticPouch.isEmpty()) {
+                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                            .appendHoverText(ChatColor.AQUA + "Aspirant Pouch",
+                                    syntheticPouch.entrySet()
+                                                  .stream()
+                                                  .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                                                  .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
+                                                  .collect(Collectors.joining("\n"))
+                            )
+                            .create()
+                    );
+                }
+                if (!aspirantPouch.isEmpty()) {
+                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                            .appendHoverText(ChatColor.AQUA + "Aspirant Pouch",
+                                    aspirantPouch.entrySet()
+                                                 .stream()
+                                                 .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                                                 .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
+                                                 .collect(Collectors.joining("\n"))
+                            )
+                            .create()
+                    );
+                }
+            }
+
+            if (!gotAnyDrops) {
+                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not receive any drops this game!");
+            }
+        }
     }
 
 
