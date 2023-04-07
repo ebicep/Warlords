@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.onslaught;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
@@ -181,7 +182,7 @@ public class OnslaughtOption implements Option, PveOption {
                 }
 
                 if (integrityCounter <= 0) {
-                    getGame().setNextState(new EndState(game, null));
+                    Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, OnslaughtOption.this, Team.RED));
                     this.cancel();
                 }
 
@@ -510,5 +511,9 @@ public class OnslaughtOption implements Option, PveOption {
 
     public HashMap<UUID, HashMap<Spendable, Long>> getPlayerAspirantPouch() {
         return playerAspirantPouch;
+    }
+
+    public void setIntegrityCounter(float integrityCounter) {
+        this.integrityCounter = integrityCounter;
     }
 }

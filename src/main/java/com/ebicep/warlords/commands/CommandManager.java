@@ -16,6 +16,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtCommand;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.EditCurrencyCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.WaveCommand;
@@ -572,6 +573,7 @@ public class CommandManager {
         manager.registerCommand(new EditCurrencyCommand());
         manager.registerCommand(new MobCommand());
         manager.registerCommand(new WaveCommand());
+        manager.registerCommand(new OnslaughtCommand());
 
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());

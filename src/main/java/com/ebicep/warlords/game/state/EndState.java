@@ -620,7 +620,6 @@ public class EndState implements State, TimerDebugAble {
             PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
             List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
             boolean gotAnyDrops = false;
-            boolean addSpacer = false;
             if (!weaponsFound.isEmpty()) {
                 gotAnyDrops = true;
                 LinkedHashMap<WeaponsPvE, List<AbstractWeapon>> weaponsFoundByType = new LinkedHashMap<>();
@@ -667,7 +666,7 @@ public class EndState implements State, TimerDebugAble {
             }
             HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
             if (!mobDropsGained.isEmpty()) {
-                if (!gotAnyDrops) {
+                if (gotAnyDrops) {
                     ChatUtils.sendMessage(player, true, "");
                 }
                 gotAnyDrops = true;
@@ -683,7 +682,7 @@ public class EndState implements State, TimerDebugAble {
             }
             List<AbstractItem> itemsFound = playerPveRewards.getItemsFound();
             if (!itemsFound.isEmpty()) {
-                if (!gotAnyDrops) {
+                if (gotAnyDrops) {
                     ChatUtils.sendMessage(player, true, "");
                 }
                 gotAnyDrops = true;
@@ -706,13 +705,13 @@ public class EndState implements State, TimerDebugAble {
             Map<Spendable, Long> syntheticPouch = playerPveRewards.getSyntheticPouch();
             Map<Spendable, Long> aspirantPouch = playerPveRewards.getAspirantPouch();
             if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty()) {
-                if (!gotAnyDrops) {
+                if (gotAnyDrops) {
                     ChatUtils.sendMessage(player, true, "");
                 }
                 gotAnyDrops = true;
                 if (!syntheticPouch.isEmpty()) {
                     ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                            .appendHoverText(ChatColor.AQUA + "Aspirant Pouch",
+                            .appendHoverText(ChatColor.AQUA + "Synthetic Pouch",
                                     syntheticPouch.entrySet()
                                                   .stream()
                                                   .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))

@@ -68,6 +68,11 @@ public interface PveOption {
 
     default Listener getBaseListener() {
         return new Listener() {
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                getRewards().storeRewards();
+            }
+
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
@@ -88,11 +93,6 @@ public interface PveOption {
                         }
                     }
                 }
-            }
-
-            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-            public void onWin(WarlordsGameTriggerWinEvent event) {
-                getRewards().storeRewards();
             }
 
             @EventHandler

@@ -245,7 +245,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
                     ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
                 }
             } else if (gameMode == GameMode.ONSLAUGHT) {
-
+                onslaughtStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             }
         }
     }
