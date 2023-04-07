@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
 
 import java.util.HashMap;
@@ -11,10 +10,6 @@ public class VoltageGauntlet extends SpecialGammaGauntlet implements EPSandMaxEn
     @Override
     public HashMap<StatPool, Integer> getBonusStats() {
         return EPSandMaxEnergy.super.getBonusStats();
-    }
-
-    public VoltageGauntlet(ItemTier tier) {
-        super(tier);
     }
 
     @Override
