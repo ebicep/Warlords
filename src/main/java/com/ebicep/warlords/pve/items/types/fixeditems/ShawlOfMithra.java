@@ -9,13 +9,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
-import com.ebicep.warlords.pve.items.types.AppliesToPlayer;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobTier;
 
 import java.util.HashMap;
 
-public class ShawlOfMithra extends AbstractFixedItem implements AppliesToPlayer {
+public class ShawlOfMithra extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
         put(BasicStatPool.DAMAGE, 100);

@@ -47,7 +47,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
             public void onEvent(WarlordsDamageHealingEvent event) {
                 if (event.isDamageInstance() && event.getAttacker().equals(player)) {
                     float playerHPCheck = player.getHealth() * ((LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel()) / 100f + 1);
-                    if (event.getPlayer().getMaxHealth() < playerHPCheck) {
+                    if (event.getWarlordsEntity().getMaxHealth() < playerHPCheck) {
                         float damageBoost = 1 + (DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
                         event.setMin(event.getMin() * damageBoost);
                         event.setMax(event.getMax() * damageBoost);

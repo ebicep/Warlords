@@ -92,15 +92,15 @@ public class FieldEffect implements Option {
                 game.registerEvents(new Listener() {
                     @EventHandler
                     public void onCooldown(WarlordsAddCooldownEvent event) {
-                        if (!(event.getPlayer() instanceof WarlordsPlayer)) {
+                        if (!(event.getWarlordsEntity() instanceof WarlordsPlayer)) {
                             return;
                         }
-                        if (Specializations.getClass(event.getPlayer().getSpecClass()) == Classes.WARRIOR) {
+                        if (Specializations.getClass(event.getWarlordsEntity().getSpecClass()) == Classes.WARRIOR) {
                             return;
                         }
                         AbstractCooldown<?> abstractCooldown = event.getAbstractCooldown();
                         if (abstractCooldown instanceof LinkedCooldown) {
-                            if (abstractCooldown.getFrom().equals(event.getPlayer())) {
+                            if (abstractCooldown.getFrom().equals(event.getWarlordsEntity())) {
                                 LinkedCooldown<?> linkedCooldown = (LinkedCooldown<?>) abstractCooldown;
                                 linkedCooldown.setTicksLeft((int) (linkedCooldown.getTicksLeft() * 0.7));
                             }
@@ -170,10 +170,10 @@ public class FieldEffect implements Option {
                             return;
                         }
                         if (event.isDamageInstance()) {
-                            if (!(event.getPlayer() instanceof WarlordsNPC)) {
+                            if (!(event.getWarlordsEntity() instanceof WarlordsNPC)) {
                                 return;
                             }
-                            AbstractMob<?> mob = ((WarlordsNPC) event.getPlayer()).getMob();
+                            AbstractMob<?> mob = ((WarlordsNPC) event.getWarlordsEntity()).getMob();
                             if (!(mob instanceof EventPoisonousSpider) && !(mob instanceof EventEggSac)) {
                                 return;
                             }

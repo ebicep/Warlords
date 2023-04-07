@@ -82,7 +82,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.getAttacker() != player || event.getPlayer() == player) {
+                if (event.getAttacker() != player || event.getWarlordsEntity() == player) {
                     return;
                 }
 

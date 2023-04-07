@@ -40,7 +40,7 @@ public class ItemOption implements Option {
                 if (event.getRewardType() == WarlordsDropRewardEvent.RewardType.WEAPON) {
                     return;
                 }
-                WarlordsEntity player = event.getPlayer();
+                WarlordsEntity player = event.getWarlordsEntity();
                 ItemPlayerConfig itemPlayerConfig = itemPlayerConfigs.get(player.getUuid());
                 if (itemPlayerConfig == null) {
                     return;

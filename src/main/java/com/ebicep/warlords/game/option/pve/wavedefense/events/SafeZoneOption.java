@@ -105,7 +105,7 @@ public class SafeZoneOption implements Option {
 
             @EventHandler
             public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
-                WarlordsEntity player = event.getPlayer();
+                WarlordsEntity player = event.getWarlordsEntity();
                 if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE")) {
                     player.sendMessage(ChatColor.RED + "You cannot use abilities while under the safe effect!");
                     event.setCancelled(true);
@@ -114,7 +114,7 @@ public class SafeZoneOption implements Option {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                WarlordsEntity player = event.getPlayer();
+                WarlordsEntity player = event.getWarlordsEntity();
                 if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE") ||
                         event.getAttacker().getCooldownManager().hasCooldownFromActionBarName("SAFE")
                 ) {

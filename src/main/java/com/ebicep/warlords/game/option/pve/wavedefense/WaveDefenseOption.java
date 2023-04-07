@@ -117,7 +117,7 @@ public class WaveDefenseOption implements Option, PveOption {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                WarlordsEntity we = event.getPlayer();
+                WarlordsEntity we = event.getWarlordsEntity();
                 WarlordsEntity killer = event.getKiller();
 
                 if (we instanceof WarlordsNPC) {

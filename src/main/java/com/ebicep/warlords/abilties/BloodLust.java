@@ -87,7 +87,7 @@ public class BloodLust extends AbstractAbility implements Duration {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveUpgrade) {
-                    if (event.getPlayer().getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
+                    if (event.getWarlordsEntity().getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
                         return currentDamageValue * 1.4f;
                     }
                 }

@@ -123,7 +123,7 @@ public class IceBarrier extends AbstractAbility implements Duration {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue = currentDamageValue * getDamageReduction();
-                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });

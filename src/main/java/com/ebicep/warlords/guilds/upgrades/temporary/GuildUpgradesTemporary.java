@@ -42,7 +42,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsCoinSummaryEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     LinkedHashMap<String, Long> currencyToAdd = event.getCurrencyToAdd();
@@ -74,7 +74,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsAddCurrencyEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
@@ -105,7 +105,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsDropRewardEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.WEAPON) {
@@ -139,7 +139,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsGiveRespawnEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier)));

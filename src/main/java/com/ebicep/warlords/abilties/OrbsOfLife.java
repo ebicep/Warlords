@@ -99,25 +99,25 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         ) {
             @Override
             public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 }
             }
 
             @Override
             public void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 }
             }
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 }
             }
         };

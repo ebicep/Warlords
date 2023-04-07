@@ -28,7 +28,7 @@ public class BoltarosLairOption implements Option {
 
             @EventHandler
             public void onVelocity(WarlordsAddVelocityEvent event) {
-                if (event.getPlayer() instanceof WarlordsNPC) {
+                if (event.getWarlordsEntity() instanceof WarlordsNPC) {
                     Vector vector = event.getVector();
                     vector.setY(vector.getY() * .75);
                 }

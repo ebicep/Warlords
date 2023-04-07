@@ -163,10 +163,10 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                     Collection<Team> teams = TeamMarker.getTeams(event.getGame());
                     List<Team> toReward = new ArrayList<>(teams.size() - 1);
                     for(Team team : teams) {
-                        if(event.getKiller() != null && event.getKiller().getTeam() != event.getPlayer().getTeam() && event.getKiller().getTeam() != team) {
+                        if (event.getKiller() != null && event.getKiller().getTeam() != event.getWarlordsEntity().getTeam() && event.getKiller().getTeam() != team) {
                             continue;
                         }
-                        if(team == event.getPlayer().getTeam()) {
+                        if (team == event.getWarlordsEntity().getTeam()) {
                             continue;
                         }
                         toReward.add(team);

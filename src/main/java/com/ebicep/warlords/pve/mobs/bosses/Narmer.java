@@ -89,7 +89,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
-                if (event.getPlayer().equals(getWarlordsNPC())) {
+                if (event.getWarlordsEntity().equals(getWarlordsNPC())) {
                     float executeHealth = warlordsNPC.getMaxHealth() * 0.4f;
                     if (warlordsNPC.getHealth() < executeHealth && !acolytes.isEmpty()) {
                         warlordsNPC.setHealth(warlordsNPC.getHealth());
@@ -106,7 +106,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
                 if (eventPlayer.isTeammate(warlordsNPC)) {

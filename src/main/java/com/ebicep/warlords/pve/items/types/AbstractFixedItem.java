@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.fixeditems.FixedItemAppliesToPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.ChatColor;
@@ -22,8 +23,8 @@ public abstract class AbstractFixedItem extends AbstractItem {
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder);
-        if (this instanceof AppliesToPlayer) {
-            AppliesToPlayer bonus = (AppliesToPlayer) this;
+        if (this instanceof FixedItemAppliesToPlayer) {
+            FixedItemAppliesToPlayer bonus = (FixedItemAppliesToPlayer) this;
             itemBuilder.addLore(
                     "",
                     ChatColor.GREEN + bonus.getEffect(),

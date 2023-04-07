@@ -85,7 +85,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 if (inEntangledState) {
-                    if (!event.getPlayer().equals(warlordsNPC) && !event.getAttacker().equals(warlordsNPC)) {
+                    if (!event.getWarlordsEntity().equals(warlordsNPC) && !event.getAttacker().equals(warlordsNPC)) {
                         return;
                     }
                     if (!event.getAbility().equals("Ground Slam")) {

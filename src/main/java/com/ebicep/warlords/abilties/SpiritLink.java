@@ -164,7 +164,7 @@ public class SpiritLink extends AbstractChainBase {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue = currentDamageValue * .85f;
-                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });

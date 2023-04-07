@@ -51,7 +51,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
         player.getGame().registerEvents(new Listener() {
             @EventHandler
             public void onBlueAbilityTarget(WarlordsAbilityTargetEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 if (!EFFECTED_ABILITIES.contains(event.getAbilityName())) {

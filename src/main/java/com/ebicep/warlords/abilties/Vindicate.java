@@ -115,7 +115,7 @@ public class Vindicate extends AbstractAbility implements Duration {
                 if (pveUpgrade) {
                     Utils.addKnockback(name, wp.getLocation(), event.getAttacker(), -1, 0.15);
                     event.getAttacker().addDamageInstance(
-                            event.getPlayer(),
+                            event.getWarlordsEntity(),
                             name,
                             currentDamageValue,
                             currentDamageValue,

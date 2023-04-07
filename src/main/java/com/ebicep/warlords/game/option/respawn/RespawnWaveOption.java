@@ -99,18 +99,18 @@ public class RespawnWaveOption implements Option, Listener {
     
     @EventHandler
     public void onEvent(WarlordsDeathEvent event) {
-        giveRespawnTimer(event.getPlayer());
+        giveRespawnTimer(event.getWarlordsEntity());
     }
     
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEvent(WarlordsRespawnEvent event) {
         if (event.isCancelled()) {
-            if (event.getPlayer().getRespawnTimer() == 0) {
+            if (event.getWarlordsEntity().getRespawnTimer() == 0) {
                 int respawn = -currentTimer % this.taskPeriod;
                 while (respawn < 1) {
                     respawn += this.taskPeriod;
                 }
-                event.getPlayer().setRespawnTimer(respawn);
+                event.getWarlordsEntity().setRespawnTimer(respawn);
             }
         }
     }

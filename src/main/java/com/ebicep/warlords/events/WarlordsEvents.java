@@ -914,6 +914,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDeath(WarlordsDeathEvent event) {
-        dropFlag(event.getPlayer());
+        dropFlag(event.getWarlordsEntity());
     }
 }

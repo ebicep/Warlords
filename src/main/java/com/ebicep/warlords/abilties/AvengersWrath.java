@@ -82,10 +82,10 @@ public class AvengersWrath extends AbstractAbility implements Duration {
                 if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                     tempAvengersWrath.addPlayersStruckDuringWrath();
                     for (WarlordsEntity wrathTarget : PlayerFilter
-                            .entitiesAround(event.getPlayer(), hitRadius, hitRadius, hitRadius)
+                            .entitiesAround(event.getWarlordsEntity(), hitRadius, hitRadius, hitRadius)
                             .aliveEnemiesOf(wp)
-                            .closestFirst(event.getPlayer())
-                            .excluding(event.getPlayer())
+                            .closestFirst(event.getWarlordsEntity())
+                            .excluding(event.getWarlordsEntity())
                             .limit(maxTargets)
                     ) {
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);

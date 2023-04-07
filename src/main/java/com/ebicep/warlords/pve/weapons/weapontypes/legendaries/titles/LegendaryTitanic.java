@@ -58,7 +58,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsUpgradeUnlockEvent event) {
-                if (event.getPlayer() == player) {
+                if (event.getWarlordsEntity() == player) {
                     if (baseMaxHealth == -1) {
                         baseMaxHealth = player.getMaxBaseHealth();
                     }

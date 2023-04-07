@@ -140,7 +140,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
             Listener listener = new Listener() {
                 @EventHandler
                 public void onVelocity(WarlordsAddVelocityEvent event) {
-                    if (event.getPlayer().equals(wp)) {
+                    if (event.getWarlordsEntity().equals(wp)) {
                         Vector vector = event.getVector();
                         vector.multiply(1 - knockbackResistance / 100);
                     }

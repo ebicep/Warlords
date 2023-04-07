@@ -160,7 +160,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("WarlordsDamageHealingEvent{");
-        sb.append("player=").append(getPlayer());
+        sb.append("player=").append(getWarlordsEntity());
         sb.append(", attacker=").append(attacker);
         sb.append(", ability=").append(ability);
         sb.append(", min=").append(min);

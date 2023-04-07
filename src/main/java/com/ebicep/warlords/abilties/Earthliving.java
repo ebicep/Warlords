@@ -91,7 +91,7 @@ public class Earthliving extends AbstractAbility implements Duration {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getPlayer();
+                    WarlordsEntity victim = event.getWarlordsEntity();
                     WarlordsEntity attacker = event.getAttacker();
 
                     double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);

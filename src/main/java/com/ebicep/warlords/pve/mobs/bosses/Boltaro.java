@@ -70,7 +70,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
         option.getGame().registerEvents(listener = new Listener() {
             @EventHandler
             public void onMobDeath(WarlordsDeathEvent event) {
-                if (!split && event.getPlayer() instanceof WarlordsNPC) {
+                if (!split && event.getWarlordsEntity() instanceof WarlordsNPC) {
                     mobsKilledBeforeSplit++;
                 }
             }

@@ -92,7 +92,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     multiplier = (100 - maxDamageReduction / 100f);
                 }
                 newDamageValue = currentDamageValue * multiplier;
-                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });

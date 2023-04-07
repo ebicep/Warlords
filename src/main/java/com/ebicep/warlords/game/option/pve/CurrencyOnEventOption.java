@@ -89,7 +89,7 @@ public class CurrencyOnEventOption implements Option, Listener {
             return;
         }
 
-        WarlordsEntity mob = event.getPlayer();
+        WarlordsEntity mob = event.getWarlordsEntity();
         for (WarlordsEntity player : PlayerFilter
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)

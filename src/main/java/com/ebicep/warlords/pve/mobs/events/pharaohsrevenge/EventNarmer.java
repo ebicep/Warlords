@@ -152,7 +152,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                 if (event.getAttacker().equals(warlordsNPC)) {
                     event.setMin(event.getMin() * hpDamageIncrease);
                     event.setMax(event.getMax() * hpDamageIncrease);
-                } else if (event.getPlayer().equals(warlordsNPC)) {
+                } else if (event.getWarlordsEntity().equals(warlordsNPC)) {
                     Location loc = warlordsNPC.getLocation();
                     if (!ancestors.isEmpty()) {
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
@@ -177,7 +177,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
                 if (eventPlayer.isTeammate(warlordsNPC)) {

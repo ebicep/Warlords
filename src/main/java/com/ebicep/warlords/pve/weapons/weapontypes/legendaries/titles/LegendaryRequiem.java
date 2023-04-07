@@ -64,7 +64,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (!(cooldown.getCooldownObject() instanceof UndyingArmy)) {
                     return;
                 }
-                if (!Objects.equals(event.getPlayer(), player)) {
+                if (!Objects.equals(event.getWarlordsEntity(), player)) {
                     return;
                 }
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)

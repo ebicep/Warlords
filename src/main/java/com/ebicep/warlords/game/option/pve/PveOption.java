@@ -76,7 +76,7 @@ public interface PveOption {
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
-                WarlordsEntity receiver = event.getPlayer();
+                WarlordsEntity receiver = event.getWarlordsEntity();
 
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
@@ -97,7 +97,7 @@ public interface PveOption {
 
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
-                WarlordsEntity player = event.getPlayer();
+                WarlordsEntity player = event.getWarlordsEntity();
                 if (!(player instanceof WarlordsPlayer)) {
                     return;
                 }
@@ -174,28 +174,28 @@ public interface PveOption {
 
             @EventHandler
             public void onWeaponDrop(WarlordsGiveWeaponEvent event) {
-                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
                             .getWeaponsFound()
                             .add(event.getWeapon());
             }
 
             @EventHandler
             public void onMobDrop(WarlordsGiveMobDropEvent event) {
-                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
                             .getMobDropsGained()
                             .merge(event.getMobDrop(), 1L, Long::sum);
             }
 
             @EventHandler
             public void onItemDrop(WarlordsGiveItemEvent event) {
-                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
                             .getItemsFound()
                             .add(event.getItem());
             }
 
             @EventHandler
             public void onItemDrop(WarlordsGiveBlessingFoundEvent event) {
-                getRewards().getPlayerRewards(event.getPlayer().getUuid())
+                getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
                             .addBlessingsFound();
             }
         };

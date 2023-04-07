@@ -105,7 +105,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
-                WarlordsEntity victim = event.getPlayer();
+                WarlordsEntity victim = event.getWarlordsEntity();
                 if (victim != wp) {
                     if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
@@ -117,8 +117,8 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
-                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getPlayer()) &&
-                                !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
+                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
+                                !Utils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (pveUpgrade ? 2 : 1.3f);
@@ -139,7 +139,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (!Objects.equals(event.getPlayer(), tempOrderOfEviscerate.getMarkedPlayer())) {
+                if (!Objects.equals(event.getWarlordsEntity(), tempOrderOfEviscerate.getMarkedPlayer())) {
                     return;
                 }
                 if (!pveUpgrade) {

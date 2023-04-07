@@ -48,7 +48,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onCooldownAdd(WarlordsAddCooldownEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }
@@ -74,7 +74,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onSpeedModify(WarlordsAddSpeedModifierEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }
@@ -96,7 +96,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onBlueAbilityTarget(WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 HashSet<WarlordsEntity> warlordsEntities = new HashSet<>(event.getTargets());

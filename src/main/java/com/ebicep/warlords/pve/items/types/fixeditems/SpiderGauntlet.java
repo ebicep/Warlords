@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
-import com.ebicep.warlords.pve.items.types.AppliesToPlayer;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Spider;
@@ -17,7 +16,7 @@ import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 
 import java.util.HashMap;
 
-public class SpiderGauntlet extends AbstractFixedItem implements AppliesToPlayer {
+public class SpiderGauntlet extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
         put(BasicStatPool.DAMAGE, 50);

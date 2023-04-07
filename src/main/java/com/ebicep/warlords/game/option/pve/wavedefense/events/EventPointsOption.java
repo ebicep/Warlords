@@ -81,7 +81,7 @@ public class EventPointsOption implements Option, Listener {
 
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
-        WarlordsEntity deadEntity = event.getPlayer();
+        WarlordsEntity deadEntity = event.getWarlordsEntity();
         WarlordsEntity killer = event.getKiller();
         if (!(killer instanceof WarlordsPlayer)) {
             return;

@@ -109,7 +109,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
 
             @EventHandler
             public void onDamageHealingFinal(WarlordsDamageHealingFinalEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 if (event.isHealingInstance()) {

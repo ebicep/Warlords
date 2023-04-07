@@ -72,7 +72,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
 
             @EventHandler
             public void onVelocity(WarlordsAddVelocityEvent event) {
-                if (!event.getPlayer().equals(warlordsNPC)) {
+                if (!event.getWarlordsEntity().equals(warlordsNPC)) {
                     return;
                 }
                 if (aboveHealthThreshold()) {
@@ -86,7 +86,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!event.getPlayer().equals(warlordsNPC)) {
+                if (!event.getWarlordsEntity().equals(warlordsNPC)) {
                     return;
                 }
                 if (aboveHealthThreshold()) {

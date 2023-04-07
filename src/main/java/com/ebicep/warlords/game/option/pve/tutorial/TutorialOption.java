@@ -58,7 +58,7 @@ public class TutorialOption implements Option {
                 if (!event.getAttacker().equals(warlordsPlayer)) {
                     return;
                 }
-                if (!(event.getPlayer() instanceof WarlordsNPC) || !testDummies.contains((WarlordsNPC) event.getPlayer())) {
+                if (!(event.getWarlordsEntity() instanceof WarlordsNPC) || !testDummies.contains((WarlordsNPC) event.getWarlordsEntity())) {
                     return;
                 }
                 switch (stage.get()) {
@@ -93,7 +93,7 @@ public class TutorialOption implements Option {
 
             @EventHandler
             public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
-                if (!event.getPlayer().equals(warlordsPlayer)) {
+                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -154,7 +154,7 @@ public class TutorialOption implements Option {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                if (event.getPlayer().equals(warlordsPlayer)) {
+                if (event.getWarlordsEntity().equals(warlordsPlayer)) {
                     if (stage.get() == 3 && stageSection.get() == 4) {
                         warlordsPlayer.respawn();
                         warlordsPlayer.resetAbilities(true);
@@ -176,7 +176,7 @@ public class TutorialOption implements Option {
 
             @EventHandler
             public void onUpgradePurchase(WarlordsUpgradeUnlockEvent event) {
-                if (event.getPlayer().equals(warlordsPlayer)) {
+                if (event.getWarlordsEntity().equals(warlordsPlayer)) {
                     if (stage.get() == 3 && stageSection.get() == 5) {
                         nextStageSection();
                     }

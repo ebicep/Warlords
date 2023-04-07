@@ -108,6 +108,10 @@ public abstract class AbstractPlayerClass {
         return new AbstractAbility[]{weapon, red, purple, blue, orange};
     }
 
+    public AbstractAbility[] getAbilitiesExcludingWeapon() {
+        return new AbstractAbility[]{red, purple, blue, orange};
+    }
+
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (!wp.isActive()) {
@@ -150,7 +154,7 @@ public abstract class AbstractPlayerClass {
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
                     if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
+                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return;
@@ -209,7 +213,7 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
+            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
