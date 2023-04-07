@@ -5,9 +5,11 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
+import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.items.types.SpecialItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -60,15 +62,22 @@ public class ItemLoadout {
     }
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
-        HashMap<ItemStatPool, Integer> statPoolValues = new HashMap<>();
-        HashMap<ItemStatPool, ItemTier> statPoolHighestTier = new HashMap<>();
-        getActualItems(itemsManager).forEach(item -> item.getStatPool().forEach((stat, tier) -> {
-            statPoolValues.merge(stat, tier, Integer::sum);
-            if (statPoolHighestTier.get(stat) == null || statPoolHighestTier.get(stat).ordinal() < item.getTier().ordinal()) {
-                statPoolHighestTier.put(stat, item.getTier());
+        HashMap<StatPool, Integer> statPoolValues = new HashMap<>();
+        HashMap<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
+        getActualItems(itemsManager).forEach(item -> {
+            ItemTier tier = item.getTier();
+            addStatPool(statPoolValues, statPoolHighestTier, item.getStatPool(), tier);
+            if (item instanceof SpecialItem) {
+                if (item instanceof ItemAddonClassBonus) {
+                    if (((ItemAddonClassBonus) item).getClasses() != Specializations.getClass(warlordsPlayer.getSpecClass())) {
+                        return;
+                    }
+                }
+                addStatPool(statPoolValues, statPoolHighestTier, ((SpecialItem) item).getBonusStats(), tier);
             }
-        }));
+        });
 
+        // Applying stats
         statPoolValues.forEach((stat, value) -> stat.applyToWarlordsPlayer(warlordsPlayer,
                 (float) value / stat.getDecimalPlace().value,
                 statPoolHighestTier.get(stat)
@@ -78,6 +87,20 @@ public class ItemLoadout {
         }
 
         warlordsPlayer.updateInventory(false);
+    }
+
+    private static <T extends StatPool> void addStatPool(
+            HashMap<StatPool, Integer> statPoolValues,
+            HashMap<StatPool, ItemTier> statPoolHighestTier,
+            HashMap<T, Integer> statPool,
+            ItemTier itemTier
+    ) {
+        statPool.forEach((stat, tier) -> {
+            statPoolValues.merge(stat, tier, Integer::sum);
+            if (statPoolHighestTier.get(stat) == null || statPoolHighestTier.get(stat).ordinal() < itemTier.ordinal()) {
+                statPoolHighestTier.put(stat, itemTier);
+            }
+        });
     }
 
     public String getName() {

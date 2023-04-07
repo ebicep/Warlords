@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -39,9 +39,9 @@ public abstract class AbstractItem {
     protected ItemType type;
     protected ItemTier tier;
     @Field("stat_pool")
-    protected Map<ItemStatPool, Float> statPoolDistribution = new HashMap<>();
+    protected Map<BasicStatPool, Float> statPoolDistribution = new HashMap<>();
     @Transient
-    protected Map<ItemStatPool, Integer> statPoolValues;
+    protected HashMap<BasicStatPool, Integer> statPoolValues;
     protected int modifier;
 
     public AbstractItem() {
@@ -51,10 +51,10 @@ public abstract class AbstractItem {
         this(type, tier, tier.generateStatPool());
     }
 
-    public AbstractItem(ItemType type, ItemTier tier, Set<ItemStatPool> statPool) {
+    public AbstractItem(ItemType type, ItemTier tier, Set<BasicStatPool> statPool) {
         this.type = type;
         this.tier = tier;
-        for (ItemStatPool stat : statPool) {
+        for (BasicStatPool stat : statPool) {
             this.statPoolDistribution.put(stat, (float) getRandomValueNormalDistribution());
         }
         if (tier != ItemTier.DELTA && tier != ItemTier.OMEGA) {
@@ -100,12 +100,22 @@ public abstract class AbstractItem {
     }
 
     public ItemBuilder generateItemBuilder() {
-        ItemBuilder itemBuilder = new ItemBuilder(Material.SKULL_ITEM)
+        ItemBuilder itemBuilder = getBaseItemBuilder();
+        addStatPoolAndBlessing(itemBuilder);
+        addItemScoreAndWeight(itemBuilder);
+        return itemBuilder;
+    }
+
+    protected ItemBuilder getBaseItemBuilder() {
+        return new ItemBuilder(Material.SKULL_ITEM)
                 .name(getItemName())
                 .lore(
                         ChatColor.GRAY + "Tier: " + tier.getColoredName(),
                         ""
                 );
+    }
+
+    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {
         itemBuilder.addLore(getStatPoolLore());
         if (modifier != 0) {
             itemBuilder.addLore(
@@ -113,13 +123,15 @@ public abstract class AbstractItem {
                     getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated())
             );
         }
+    }
+
+    protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
         itemBuilder.addLore(
                 "",
                 getItemScoreString(),
                 "",
                 getWeightString()
         );
-        return itemBuilder;
     }
 
     public String getItemName() {
@@ -189,15 +201,15 @@ public abstract class AbstractItem {
         return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
     }
 
-    public static List<String> getStatPoolLore(Map<ItemStatPool, Integer> statPool) {
+    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool) {
         return getStatPoolLore(statPool, "");
     }
 
-    public Map<ItemStatPool, Integer> getStatPool() {
+    public HashMap<BasicStatPool, Integer> getStatPool() {
         if (statPoolValues == null) {
             statPoolValues = new HashMap<>();
             statPoolDistribution.forEach((stat, distribution) -> {
-                ItemTier.StatRange statRange = ItemStatPool.STAT_RANGES.get(stat);
+                ItemTier.StatRange statRange = BasicStatPool.STAT_RANGES.get(stat);
                 double tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
@@ -214,7 +226,7 @@ public abstract class AbstractItem {
 
     public float getItemScore() {
         double sum = 0;
-        for (Map.Entry<ItemStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
+        for (Map.Entry<BasicStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
             sum += statDistribution.getValue();
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
@@ -269,7 +281,7 @@ public abstract class AbstractItem {
         return 1000;
     }
 
-    public static List<String> getStatPoolLore(Map<ItemStatPool, Integer> statPool, String prefix) {
+    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix) {
         List<String> lore = new ArrayList<>();
         statPool.keySet()
                 .stream()
@@ -280,19 +292,11 @@ public abstract class AbstractItem {
 
     public float getWeightScore() {
         double sum = 0;
-        for (Map.Entry<ItemStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
+        for (Map.Entry<BasicStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
             float value = statDistribution.getValue() + tier.statDistributionModifier;
             sum += Math.max(0, Math.min(1, value));
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
-    }
-
-    public String getName() {
-        return null;
-    }
-
-    public String getDescription() {
-        return null;
     }
 
     public ItemType getType() {

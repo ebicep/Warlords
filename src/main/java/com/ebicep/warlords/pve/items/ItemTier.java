@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -125,13 +125,13 @@ public enum ItemTier {
                                                         .filter(itemTier -> itemTier != ALL)
                                                         .toArray(ItemTier[]::new);
 
-    private static Set<ItemStatPool> generateStatPoolWithSettings(
+    private static Set<BasicStatPool> generateStatPoolWithSettings(
             int initialPool,
             double firstReducedPoolChance,
             double secondReducedPoolChance
     ) {
-        Set<ItemStatPool> statPool = new HashSet<>();
-        List<ItemStatPool> poolList = new ArrayList<>(Arrays.asList(ItemStatPool.VALUES));
+        Set<BasicStatPool> statPool = new HashSet<>();
+        List<BasicStatPool> poolList = new ArrayList<>(Arrays.asList(BasicStatPool.VALUES));
         Collections.shuffle(poolList);
         for (int i = 0; i < initialPool; i++) {
             statPool.add(poolList.remove(0));
@@ -143,8 +143,8 @@ public enum ItemTier {
 
     private static void addFromReducedPool(
             double firstReducedPoolChance,
-            Set<ItemStatPool> statPool,
-            List<ItemStatPool> poolList
+            Set<BasicStatPool> statPool,
+            List<BasicStatPool> poolList
     ) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         if (firstReducedPoolChance != 0 && !poolList.isEmpty() && random.nextDouble() <= firstReducedPoolChance) {
@@ -195,7 +195,7 @@ public enum ItemTier {
         this.maxThornsDamage = maxThornsDamage;
     }
 
-    public Set<ItemStatPool> generateStatPool() {
+    public Set<BasicStatPool> generateStatPool() {
         return generateStatPoolWithSettings(ordinal(), 0, 0);
     }
 

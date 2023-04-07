@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -114,7 +114,7 @@ public class ItemMenuUtil {
     }
 
     public static List<String> getTotalBonusLore(List<AbstractItem> equippedItems) {
-        HashMap<ItemStatPool, Integer> statPool = new HashMap<>();
+        HashMap<BasicStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
         float bucklerModifier = 0;

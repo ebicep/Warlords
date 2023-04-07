@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 
-public enum ItemStatPool {
+public enum BasicStatPool implements StatPool {
 
     HP("Health") {
         @Override
@@ -126,8 +126,8 @@ public enum ItemStatPool {
 
     ;
 
-    public static final ItemStatPool[] VALUES = values();
-    public static final HashMap<ItemStatPool, ItemTier.StatRange> STAT_RANGES = new HashMap<>() {{
+    public static final BasicStatPool[] VALUES = values();
+    public static final HashMap<BasicStatPool, ItemTier.StatRange> STAT_RANGES = new HashMap<>() {{
         put(HP, new ItemTier.StatRange(75, 450));
         put(MAX_ENERGY, new ItemTier.StatRange(10, 30));
         put(EPH, new ItemTier.StatRange(2, 10));
@@ -145,16 +145,8 @@ public enum ItemStatPool {
     }};
     public final String name;
 
-    ItemStatPool(String name) {
+    BasicStatPool(String name) {
         this.name = name;
-    }
-
-    public void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
-
-    }
-
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-
     }
 
     public String getValueFormatted(float value) {
@@ -166,40 +158,10 @@ public enum ItemStatPool {
     }
 
 
-    public Operation getOperation() {
-        return Operation.MULTIPLY;
-    }
-
     public String getName() {
         return name;
     }
 
-    public DecimalPlace getDecimalPlace() {
-        return DecimalPlace.TENTHS;
-    }
 
-
-    public enum Operation {
-        ADD(""),
-        MULTIPLY("%");
-
-        public final String prepend;
-
-        Operation(String prepend) {
-            this.prepend = prepend;
-        }
-    }
-
-    public enum DecimalPlace {
-
-        TENTHS(10),
-        ONES(1);
-
-        public final int value;
-
-        DecimalPlace(int value) {
-            this.value = value;
-        }
-    }
 
 }

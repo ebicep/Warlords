@@ -78,7 +78,7 @@ public class ItemOption implements Option {
             int nonEmptyLoadouts = loadouts.size();
             loadouts.removeIf(itemLoadout -> {
                 ItemLoadout.DifficultyMode difficultyMode = itemLoadout.getDifficultyMode();
-                return difficultyMode != null && difficultyMode.validGameMode(game.getGameMode()) && difficultyMode.validDifficulty(pveOption.getDifficulty());
+                return difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) && !difficultyMode.validDifficulty(pveOption.getDifficulty());
             });
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);

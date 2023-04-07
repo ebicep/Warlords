@@ -10,6 +10,8 @@ import com.ebicep.warlords.pve.items.menu.ItemCraftingMenu;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.items.types.SpecialItem;
+import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
@@ -87,6 +89,21 @@ public class ItemsCommand extends BaseCommand {
             for (int i = 0; i < amount; i++) {
                 ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
                 AbstractItem item = ItemType.getRandom().createBasic(randomItemTier);
+                databasePlayer.getPveStats().getItemsManager().addItem(item);
+                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
+                                .appendHoverItem(item.getItemName(), item.generateItemStack())
+                );
+            }
+        });
+    }
+
+    @Subcommand("generatespecial")
+    public void generateSpecial(Player player, ItemTier tier, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+            for (int i = 0; i < amount; i++) {
+                SpecialItem item = specialItem.create.apply(tier);
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")

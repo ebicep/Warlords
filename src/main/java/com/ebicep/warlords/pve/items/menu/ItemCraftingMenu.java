@@ -11,7 +11,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -228,10 +228,10 @@ public class ItemCraftingMenu {
                                 if (inheritedItem == null) {
                                     return;
                                 }
-                                Set<ItemStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
-                                ItemStatPool[] otherStats = Arrays.stream(ItemStatPool.VALUES)
-                                                                  .filter(pool -> !statPools.contains(pool))
-                                                                  .toArray(ItemStatPool[]::new);
+                                Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
+                                BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
+                                                                   .filter(pool -> !statPools.contains(pool))
+                                                                   .toArray(BasicStatPool[]::new);
                                 //add random other stat to stat pool
                                 statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
 

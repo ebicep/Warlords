@@ -5,7 +5,7 @@ import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
-import com.ebicep.warlords.pve.items.statpool.ItemStatPool;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -72,7 +72,7 @@ public enum ItemType {
         return new BasicItem(this, tier);
     }
 
-    public BasicItem createBasicInherited(ItemTier tier, Set<ItemStatPool> statPool) {
+    public BasicItem createBasicInherited(ItemTier tier, Set<BasicStatPool> statPool) {
         return new BasicItem(this, tier, statPool);
     }
 
