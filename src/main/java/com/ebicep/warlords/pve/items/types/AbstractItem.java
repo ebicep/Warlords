@@ -126,11 +126,10 @@ public abstract class AbstractItem {
     }
 
     protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
+        String itemScoreString = getItemScoreString();
         itemBuilder.addLore(
-                "",
-                getItemScoreString(),
-                "",
-                getWeightString()
+                "" + (itemScoreString != null ? "\n" + itemScoreString : ""),
+                "\n" + getWeightString()
         );
     }
 
@@ -193,7 +192,7 @@ public abstract class AbstractItem {
         return modifier * getItemModifier().getIncreasePerTier();
     }
 
-    private String getItemScoreString() {
+    protected String getItemScoreString() {
         return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
     }
 

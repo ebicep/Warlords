@@ -1,9 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
-
-import java.util.HashMap;
 
 public class ConquerorsFist extends SpecialGammaGauntlet implements EPSandSpeed {
 
@@ -15,11 +12,6 @@ public class ConquerorsFist extends SpecialGammaGauntlet implements EPSandSpeed 
     @Override
     public String getName() {
         return "Conqueror's Fist";
-    }
-
-    @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandSpeed.super.getBonusStats();
     }
 
     @Override

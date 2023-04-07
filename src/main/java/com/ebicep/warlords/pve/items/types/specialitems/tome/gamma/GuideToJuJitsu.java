@@ -1,20 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
-
-import java.util.HashMap;
 
 public class GuideToJuJitsu extends SpecialGammaTome implements CDRandDamage {
 
     @Override
     public String getName() {
         return "Guide to Ju-Jitsu";
-    }
-
-    @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return CDRandDamage.super.getBonusStats();
     }
 
     @Override

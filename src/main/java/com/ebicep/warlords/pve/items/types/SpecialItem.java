@@ -5,15 +5,13 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.ChatColor;
 
-import java.util.HashMap;
 import java.util.Set;
 
-public abstract class SpecialItem extends AbstractItem {
+public abstract class SpecialItem extends AbstractItem implements BonusStats {
 
     public SpecialItem() {
     }
@@ -55,10 +53,6 @@ public abstract class SpecialItem extends AbstractItem {
     public abstract String getName();
 
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
-    }
-
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return new HashMap<>();
     }
 
     public abstract String getBonus();

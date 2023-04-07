@@ -1,9 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
-
-import java.util.HashMap;
 
 public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEnergy {
 
@@ -11,11 +8,6 @@ public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEner
     @Override
     public String getName() {
         return "Blazing Gloves";
-    }
-
-    @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandMaxEnergy.super.getBonusStats();
     }
 
     @Override

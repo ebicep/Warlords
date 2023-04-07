@@ -13,10 +13,7 @@ import com.ebicep.warlords.pve.items.types.SpecialItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ItemLoadout {
 
@@ -62,8 +59,8 @@ public class ItemLoadout {
     }
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
-        HashMap<StatPool, Integer> statPoolValues = new HashMap<>();
-        HashMap<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
+        Map<StatPool, Integer> statPoolValues = new HashMap<>();
+        Map<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
         getActualItems(itemsManager).forEach(item -> {
             ItemTier tier = item.getTier();
             addStatPool(statPoolValues, statPoolHighestTier, item.getStatPool(), tier);
@@ -90,9 +87,9 @@ public class ItemLoadout {
     }
 
     private static <T extends StatPool> void addStatPool(
-            HashMap<StatPool, Integer> statPoolValues,
-            HashMap<StatPool, ItemTier> statPoolHighestTier,
-            HashMap<T, Integer> statPool,
+            Map<StatPool, Integer> statPoolValues,
+            Map<StatPool, ItemTier> statPoolHighestTier,
+            Map<T, Integer> statPool,
             ItemTier itemTier
     ) {
         statPool.forEach((stat, tier) -> {
