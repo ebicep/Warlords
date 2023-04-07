@@ -28,11 +28,6 @@ public enum SpecialStatPool implements StatPool {
             playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() * calculatedValue);
         }
 
-        @Override
-        public Operation getOperation() {
-            return Operation.MULTIPLY;
-        }
-
     },
     MAX_ENERGY {
         @Override
@@ -40,11 +35,6 @@ public enum SpecialStatPool implements StatPool {
             float calculatedValue = 1 + value / 100f;
             AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
             playerClass.setMaxEnergy((int) (playerClass.getMaxEnergy() * calculatedValue));
-        }
-
-        @Override
-        public Operation getOperation() {
-            return Operation.MULTIPLY;
         }
 
     },
@@ -55,12 +45,23 @@ public enum SpecialStatPool implements StatPool {
             ability.setCooldown(ability.getCooldown() * calculatedValue);
         }
 
+    },
+    DAMAGE_RESISTANCE {
         @Override
-        public Operation getOperation() {
-            return Operation.MULTIPLY;
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
+            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
+            playerClass.setDamageResistance((int) (playerClass.getDamageResistance() + value));
         }
 
-    };
+    },
+
+
+    ;
+
+    @Override
+    public Operation getOperation() {
+        return Operation.MULTIPLY;
+    }
 
     @Override
     public DecimalPlace getDecimalPlace() {

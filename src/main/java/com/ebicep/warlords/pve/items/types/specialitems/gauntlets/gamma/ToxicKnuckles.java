@@ -8,11 +8,6 @@ import java.util.HashMap;
 public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEnergy {
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandMaxEnergy.super.getBonusStats();
-    }
-
-    @Override
     public Classes getClasses() {
         return Classes.ROGUE;
     }
@@ -20,6 +15,11 @@ public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEner
     @Override
     public String getName() {
         return "Toxic Knuckles";
+    }
+
+    @Override
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandMaxEnergy.super.getBonusStats();
     }
 
     @Override

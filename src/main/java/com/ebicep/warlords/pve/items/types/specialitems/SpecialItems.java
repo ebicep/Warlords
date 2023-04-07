@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.types.SpecialItem;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 
@@ -36,7 +37,22 @@ public enum SpecialItems {
     TERRA_SCROLL(TerraScroll::new),
     TOME_OF_FIRE(TomeOfFire::new),
     TOME_OF_ICE(TomeOfIce::new),
-    TOME_OF_WATER(TomeOfWater::new);
+    TOME_OF_WATER(TomeOfWater::new),
+    ANOINTED_AEGIS(AnointedAegis::new),
+    BLOODY_CHAKRAM(BloodyChakram::new),
+    BURNING_SHIELD(BurningShield::new),
+    CLANDESTINE_BUCKLER(ClandestineBuckler::new),
+    ENLIGHTENED_AEGIS(EnlightenedAegis::new),
+    ETHEREAL_BULWARK(EtherealBulwark::new),
+    FROSTY_SHIELD(FrostyShield::new),
+    GALVANIC_BULWARK(GalvanicBulwark::new),
+    HALLOWED_AEGIS(HallowedAegis::new),
+    LOAMY_BULWARK(LoamyBulwark::new),
+    LUCID_BUCKLER(LucidBuckler::new),
+    OVERGROWN_BUCKLER(OvergrownBuckler::new),
+    SLIPPERY_SHIELD(SlipperyShield::new),
+    STALWART_CHAKRAM(StalwartChakram::new),
+    THORNY_CHAKRAM(ThornyChakram::new);
 
     public final Supplier<SpecialItem> create;
 

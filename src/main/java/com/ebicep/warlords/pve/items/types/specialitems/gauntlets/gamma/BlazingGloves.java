@@ -9,13 +9,13 @@ public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEner
 
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandMaxEnergy.super.getBonusStats();
+    public String getName() {
+        return "Blazing Gloves";
     }
 
     @Override
-    public String getName() {
-        return "Blazing Gloves";
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandMaxEnergy.super.getBonusStats();
     }
 
     @Override

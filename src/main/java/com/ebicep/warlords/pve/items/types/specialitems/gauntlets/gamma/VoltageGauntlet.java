@@ -8,11 +8,6 @@ import java.util.HashMap;
 public class VoltageGauntlet extends SpecialGammaGauntlet implements EPSandMaxEnergy {
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandMaxEnergy.super.getBonusStats();
-    }
-
-    @Override
     public Classes getClasses() {
         return Classes.SHAMAN;
     }
@@ -20,6 +15,11 @@ public class VoltageGauntlet extends SpecialGammaGauntlet implements EPSandMaxEn
     @Override
     public String getName() {
         return "Voltage Gauntlet";
+    }
+
+    @Override
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandMaxEnergy.super.getBonusStats();
     }
 
     @Override

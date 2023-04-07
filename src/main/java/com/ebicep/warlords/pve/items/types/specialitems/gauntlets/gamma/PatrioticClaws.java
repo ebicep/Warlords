@@ -8,11 +8,6 @@ import java.util.HashMap;
 public class PatrioticClaws extends SpecialGammaGauntlet implements EPSandSpeed {
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandSpeed.super.getBonusStats();
-    }
-
-    @Override
     public Classes getClasses() {
         return Classes.WARRIOR;
     }
@@ -20,6 +15,11 @@ public class PatrioticClaws extends SpecialGammaGauntlet implements EPSandSpeed 
     @Override
     public String getName() {
         return "Patriotic Claws";
+    }
+
+    @Override
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandSpeed.super.getBonusStats();
     }
 
     @Override

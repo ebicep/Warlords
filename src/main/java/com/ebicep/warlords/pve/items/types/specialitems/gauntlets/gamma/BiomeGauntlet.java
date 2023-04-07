@@ -8,11 +8,6 @@ import java.util.HashMap;
 public class BiomeGauntlet extends SpecialGammaGauntlet implements EPSandEPH {
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandEPH.super.getBonusStats();
-    }
-
-    @Override
     public Classes getClasses() {
         return Classes.SHAMAN;
     }
@@ -20,6 +15,11 @@ public class BiomeGauntlet extends SpecialGammaGauntlet implements EPSandEPH {
     @Override
     public String getName() {
         return "Biome Gauntlet";
+    }
+
+    @Override
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandEPH.super.getBonusStats();
     }
 
     @Override

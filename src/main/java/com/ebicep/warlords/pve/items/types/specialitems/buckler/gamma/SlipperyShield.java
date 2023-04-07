@@ -1,30 +1,30 @@
-package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
+package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
 
 import java.util.HashMap;
 
-public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH {
+public class SlipperyShield extends SpecialGammaBuckler implements DamageReductionandRegenTimer {
 
     @Override
     public String getName() {
-        return "Dripping Gloves";
+        return "Slippery Shield";
     }
 
     @Override
     public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandEPH.super.getBonusStats();
+        return DamageReductionandRegenTimer.super.getBonusStats();
     }
 
     @Override
     public String getBonus() {
-        return "+5 EPS but -20% EPH";
+        return "+5% Damage Reduction but -20% Regen Timer.";
     }
 
     @Override
     public String getDescription() {
-        return "It seems that air drying isn't very effective.";
+        return "Slick surfaces never worked so well!";
     }
 
     @Override

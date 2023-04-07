@@ -8,13 +8,13 @@ import java.util.HashMap;
 public class FreezingGloves extends SpecialGammaGauntlet implements EPSandSpeed {
 
     @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return EPSandSpeed.super.getBonusStats();
+    public String getName() {
+        return "Freezing Gloves";
     }
 
     @Override
-    public String getName() {
-        return "Freezing Gloves";
+    public HashMap<StatPool, Integer> getBonusStats() {
+        return EPSandSpeed.super.getBonusStats();
     }
 
     @Override
