@@ -101,7 +101,7 @@ public class ItemsCommand extends BaseCommand {
     }
 
     @Subcommand("spawnspecial")
-    public void spawnSpecial(Player player, ItemTier tier, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
+    public void spawnSpecial(Player player, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {

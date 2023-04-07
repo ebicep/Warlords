@@ -40,7 +40,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet {
 
             @EventHandler
             public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;
                 }
                 AbstractPlayerClass playerSpec = warlordsPlayer.getSpec();
@@ -55,7 +55,11 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet {
                 //picking random ability
                 AbstractAbility ability = abilities[ThreadLocalRandom.current().nextInt(abilities.length)];
                 Player player = event.getPlayer();
+                //temp scuffed account for energy cost
+                float energyCost = ability.getEnergyCost();
+                ability.setEnergyCost(0);
                 ability.onActivate(warlordsPlayer, player);
+                ability.setEnergyCost(energyCost);
                 ability.addTimesUsed();
                 AbstractPlayerClass.sendRightClickPacket(player);
             }

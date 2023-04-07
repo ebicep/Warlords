@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
+import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -71,6 +72,9 @@ public class ItemLoadout {
                     }
                 }
                 addStatPool(statPoolValues, statPoolHighestTier, ((AbstractSpecialItem) item).getBonusStats(), tier);
+            }
+            if (item instanceof AppliesToWarlordsPlayer) {
+                ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer);
             }
         });
 

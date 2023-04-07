@@ -2,12 +2,15 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.SamsonsFists;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.SoothsayersPalms;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 
 import java.util.function.Supplier;
 
 public enum SpecialItems {
+    //GAMMA
     BLAZING_GLOVES(BlazingGloves::new),
     ARCHANGELS_FIST(ArchangelsFist::new),
     BARBARIC_CLAWS(BarbaricClaws::new),
@@ -52,7 +55,13 @@ public enum SpecialItems {
     OVERGROWN_BUCKLER(OvergrownBuckler::new),
     SLIPPERY_SHIELD(SlipperyShield::new),
     STALWART_CHAKRAM(StalwartChakram::new),
-    THORNY_CHAKRAM(ThornyChakram::new);
+    THORNY_CHAKRAM(ThornyChakram::new),
+    //DELTA
+    SOOTHSAYERS_PALMS(SoothsayersPalms::new),
+    SAMSONS_FISTS(SamsonsFists::new),
+
+
+    ;
 
     public final Supplier<AbstractSpecialItem> create;
 
