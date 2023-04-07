@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.statpool;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
@@ -82,16 +81,14 @@ public enum BasicStatPool implements StatPool {
     },
     CRIT_CHANCE("Crit Chance") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
-            float calculatedValue = 1 + value / 100f;
-            ability.setCritChance(ability.getCritChance() * calculatedValue);
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
+            ItemAdditiveCooldown.increaseCritChance(warlordsPlayer, value);
         }
     },
     CRIT_MULTI("Crit Multiplier") {
         @Override
-        public void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
-            float calculatedValue = 1 + value / 100f;
-            ability.setCritMultiplier(ability.getCritMultiplier() * calculatedValue);
+        public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
+            ItemAdditiveCooldown.increaseCritMultiplier(warlordsPlayer, value);
         }
     },
     AGGRO_PRIO("Aggression Priority") {
