@@ -87,7 +87,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 AbstractItem.class,
                 null,
                 from,
-                CooldownTypes.BUFF,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
                 },
                 false

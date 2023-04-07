@@ -1,0 +1,85 @@
+package com.ebicep.warlords.pve.items.types.fixeditems;
+
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
+import com.ebicep.warlords.pve.items.types.AppliesToPlayer;
+import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.MobTier;
+
+import java.util.HashMap;
+
+public class ShawlOfMithra extends AbstractFixedItem implements AppliesToPlayer {
+
+    public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
+        put(BasicStatPool.DAMAGE, 10);
+        put(BasicStatPool.HEALING, 10);
+        put(BasicStatPool.MAX_ENERGY, 20);
+        put(BasicStatPool.REGEN_TIMER, 25);
+
+    }};
+
+    public ShawlOfMithra() {
+        super(ItemType.BUCKLER, ItemTier.DELTA);
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                ShawlOfMithra.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                true
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                WarlordsEntity attacker = event.getAttacker();
+                if (attacker instanceof WarlordsNPC) {
+                    WarlordsNPC warlordsNPC = (WarlordsNPC) attacker;
+                    MobTier mobTier = warlordsNPC.getMobTier();
+                    if (mobTier.ordinal() < 1) {
+                        return currentDamageValue * 0.9f;
+                    }
+                }
+                return currentDamageValue;
+            }
+
+        });
+    }
+
+    @Override
+    public String getName() {
+        return "Shawl of Mithra";
+    }
+
+    @Override
+    public HashMap<BasicStatPool, Integer> getStatPool() {
+        return STAT_POOL;
+    }
+
+    @Override
+    public int getWeight() {
+        return 45;
+    }
+
+    @Override
+    public String getEffect() {
+        return "Queenly Majesty";
+    }
+
+    @Override
+    public String getEffectDescription() {
+        return "Take 10% less damage from all mobs below 2*.";
+    }
+}

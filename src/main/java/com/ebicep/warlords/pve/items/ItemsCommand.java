@@ -8,9 +8,11 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.menu.ItemCraftingMenu;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
+import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.items.types.SpecialItem;
+import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -98,18 +100,30 @@ public class ItemsCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("generatespecial")
-    public void generateSpecial(Player player, ItemTier tier, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
+    @Subcommand("spawnspecial")
+    public void spawnSpecial(Player player, ItemTier tier, SpecialItems specialItem, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                SpecialItem item = specialItem.create.get();
+                AbstractSpecialItem item = specialItem.create.get();
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
                                 .appendHoverItem(item.getItemName(), item.generateItemStack())
                 );
             }
+        });
+    }
+
+    @Subcommand("spawnfixed")
+    public void spawnFixed(Player player, FixedItems fixedItem) {
+        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+            AbstractFixedItem item = fixedItem.create.get();
+            databasePlayer.getPveStats().getItemsManager().addItem(item);
+            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                    new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
+                            .appendHoverItem(item.getItemName(), item.generateItemStack())
+            );
         });
     }
 

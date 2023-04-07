@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types;
 
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
@@ -11,16 +10,16 @@ import org.bukkit.ChatColor;
 
 import java.util.Set;
 
-public abstract class SpecialItem extends AbstractItem implements BonusStats {
+public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats {
 
-    public SpecialItem() {
+    public AbstractSpecialItem() {
     }
 
-    public SpecialItem(ItemType type, ItemTier tier) {
+    public AbstractSpecialItem(ItemType type, ItemTier tier) {
         super(type, tier);
     }
 
-    public SpecialItem(ItemType type, ItemTier tier, Set<BasicStatPool> statPool) {
+    public AbstractSpecialItem(ItemType type, ItemTier tier, Set<BasicStatPool> statPool) {
         super(type, tier, statPool);
     }
 
@@ -51,9 +50,6 @@ public abstract class SpecialItem extends AbstractItem implements BonusStats {
     }
 
     public abstract String getName();
-
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
-    }
 
     public abstract String getBonus();
 

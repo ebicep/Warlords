@@ -14,6 +14,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -156,7 +158,7 @@ public class FieldEffect implements Option {
             }
         },
         ARACHNOPHOBIA("Arachnophobia",
-                "All strikes deal 30% more damage to egg sacs and Poisonous Spiders. All healing abilities are increased by 15%."
+                "All strikes deal 200% more damage to Egg Sacs and Poisonous Spiders. All healing abilities are increased by 15%."
         ) {
             @Override
             public void onStart(Game game) {
@@ -171,12 +173,13 @@ public class FieldEffect implements Option {
                             if (!(event.getPlayer() instanceof WarlordsNPC)) {
                                 return;
                             }
-                            if (!(((WarlordsNPC) event.getPlayer()).getMob() instanceof EventPoisonousSpider)) {
+                            AbstractMob<?> mob = ((WarlordsNPC) event.getPlayer()).getMob();
+                            if (!(mob instanceof EventPoisonousSpider) && !(mob instanceof EventEggSac)) {
                                 return;
                             }
                             if (event.getAbility().contains("Strike")) {
-                                event.setMin(event.getMin() * 1.3f);
-                                event.setMax(event.getMax() * 1.3f);
+                                event.setMin(event.getMin() * 3);
+                                event.setMax(event.getMax() * 3);
                             }
                         } else if (event.isHealingInstance()) {
                             event.setMin(event.getMin() * 1.15f);

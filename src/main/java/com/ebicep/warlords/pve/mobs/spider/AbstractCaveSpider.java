@@ -3,10 +3,11 @@ package com.ebicep.warlords.pve.mobs.spider;
 import com.ebicep.customentities.nms.pve.CustomCaveSpider;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Spider;
 import org.bukkit.Location;
 import org.bukkit.inventory.EntityEquipment;
 
-public abstract class AbstractCaveSpider extends AbstractMob<CustomCaveSpider> {
+public abstract class AbstractCaveSpider extends AbstractMob<CustomCaveSpider> implements Spider {
 
     public AbstractCaveSpider(
             Location spawnLocation,

@@ -3,12 +3,12 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.items.types.SpecialItem;
 
 import java.util.Set;
 
-public abstract class SpecialBuckler extends SpecialItem implements ItemAddonClassBonus {
+public abstract class SpecialBuckler extends AbstractSpecialItem implements ItemAddonClassBonus {
 
     public SpecialBuckler() {
     }

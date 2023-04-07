@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
-import com.ebicep.warlords.pve.items.types.SpecialItem;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
@@ -54,9 +54,9 @@ public enum SpecialItems {
     STALWART_CHAKRAM(StalwartChakram::new),
     THORNY_CHAKRAM(ThornyChakram::new);
 
-    public final Supplier<SpecialItem> create;
+    public final Supplier<AbstractSpecialItem> create;
 
-    SpecialItems(Supplier<SpecialItem> create) {
+    SpecialItems(Supplier<AbstractSpecialItem> create) {
         this.create = create;
     }
 }

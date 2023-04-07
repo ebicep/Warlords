@@ -8,8 +8,8 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.items.types.SpecialItem;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -64,13 +64,13 @@ public class ItemLoadout {
         getActualItems(itemsManager).forEach(item -> {
             ItemTier tier = item.getTier();
             addStatPool(statPoolValues, statPoolHighestTier, item.getStatPool(), tier);
-            if (item instanceof SpecialItem) {
+            if (item instanceof AbstractSpecialItem) {
                 if (item instanceof ItemAddonClassBonus) {
                     if (((ItemAddonClassBonus) item).getClasses() != Specializations.getClass(warlordsPlayer.getSpecClass())) {
                         return;
                     }
                 }
-                addStatPool(statPoolValues, statPoolHighestTier, ((SpecialItem) item).getBonusStats(), tier);
+                addStatPool(statPoolValues, statPoolHighestTier, ((AbstractSpecialItem) item).getBonusStats(), tier);
             }
         });
 
