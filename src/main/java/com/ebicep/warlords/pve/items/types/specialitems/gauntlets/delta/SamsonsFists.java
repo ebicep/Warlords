@@ -24,7 +24,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "Weapon Right-Clicks deals moderate knockback, at slightly increased energy cost.";
+        return "Weapon right-clicks deals moderate knockback, at slightly increased energy cost.";
     }
 
     @Override
