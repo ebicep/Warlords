@@ -235,7 +235,7 @@ public class CustomScoreboard {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
             if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
-                team.setSuffix(" " + tag.getTag());
+                team.setSuffix(" " + tag.getTag(false));
             } else {
                 team.setSuffix("");
             }

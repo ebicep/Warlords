@@ -16,9 +16,16 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -105,9 +112,9 @@ public class StatsLeaderboardManager {
                                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                                 boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
                                 boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
-                                boolean noCurrentEventPlays = currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
-                                                                                                                                         .get(currentGameEvent.getStartDateSecond())
-                                                                                                                                         .getPlays() == 0;
+                                EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
+                                                                                                                                       .get(currentGameEvent.getStartDateSecond());
+                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
                                 if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
@@ -369,10 +376,17 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        String guildTag = "";
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = " " + tag.getTag(true);
+                            }
+                        }
                         hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
-                                                                                    .apply(databasePlayer));
+                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
                 }
@@ -395,10 +409,17 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        String guildTag = "";
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = " " + tag.getTag(true);
+                            }
+                        }
                         hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction()
-                                                                                    .apply(databasePlayer, eventLeaderboard.getEventTime()));
+                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime()));
                         break;
                     }
                 }

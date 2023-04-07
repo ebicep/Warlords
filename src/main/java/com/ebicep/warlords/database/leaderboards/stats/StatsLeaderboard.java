@@ -150,7 +150,7 @@ public class StatsLeaderboard {
             if (guildPlayerPair != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
                 if (tag != null) {
-                    guildTag = " " + tag.getTag();
+                    guildTag = " " + tag.getTag(false);
                 }
             }
             hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +

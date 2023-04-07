@@ -35,7 +35,10 @@ public class GuildTag {
         this.bracketColor = bracketColor;
     }
 
-    public String getTag() {
+    public String getTag(boolean bold) {
+        if (bold) {
+            return bracketColor + ChatColor.BOLD + "[" + nameColor + ChatColor.BOLD + name + bracketColor + ChatColor.BOLD + "]";
+        }
         return bracketColor + "[" + nameColor + name + bracketColor + "]";
     }
 
