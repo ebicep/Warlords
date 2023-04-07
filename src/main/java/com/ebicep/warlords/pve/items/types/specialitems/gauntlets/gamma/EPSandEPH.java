@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items.types.specialitems.gammagauntlet;
+package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.pve.items.statpool.SpecialStatPool;
 import com.ebicep.warlords.pve.items.statpool.StatPool;

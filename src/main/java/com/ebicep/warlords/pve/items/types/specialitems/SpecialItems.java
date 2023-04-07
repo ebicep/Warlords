@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.SpecialItem;
-import com.ebicep.warlords.pve.items.types.specialitems.gammagauntlet.*;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 
 import java.util.function.Function;
 

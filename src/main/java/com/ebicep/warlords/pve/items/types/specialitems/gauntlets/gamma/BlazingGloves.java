@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items.types.specialitems.gammagauntlet;
+package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -6,9 +6,9 @@ import com.ebicep.warlords.pve.items.statpool.StatPool;
 
 import java.util.HashMap;
 
-public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEnergy {
+public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEnergy {
 
-    public ArchangelsFist(ItemTier tier) {
+    public BlazingGloves(ItemTier tier) {
         super(tier);
     }
 
@@ -18,23 +18,23 @@ public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEne
     }
 
     @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
-
-    @Override
     public String getName() {
-        return "Archangel's Fist";
+        return "Blazing Gloves";
     }
 
     @Override
     public String getBonus() {
-        return "Increase energy gain by 3 per second but reduces energy cap by 20%.";
+        return "Increase energy gain by 3 per second but reduces energy cap by 20%";
     }
 
     @Override
     public String getDescription() {
-        return "Behold! Judgement from on high!";
+        return "It seems you have spontaneously combusted.";
+    }
+
+    @Override
+    public Classes getClasses() {
+        return Classes.MAGE;
     }
 
 }
