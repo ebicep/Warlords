@@ -24,7 +24,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "Weapon-Right Clicks deals moderate knockback, at slightly increased energy cost.";
+        return "Weapon Right-Clicks deals moderate knockback, at slightly increased energy cost.";
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet {
                 }
                 WarlordsEntity strikedEntity = event.getStrikedEntity();
                 //same kb as mithra immolation
-                Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.4, 0.1f);
+                Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.5, 0.1f);
             }
         });
     }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.PendragonGauntlets;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.SamsonsFists;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.SoothsayersPalms;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
@@ -59,6 +60,7 @@ public enum SpecialItems {
     //DELTA
     SOOTHSAYERS_PALMS(SoothsayersPalms::new),
     SAMSONS_FISTS(SamsonsFists::new),
+    PENDRAGON_GAUNTLETS(PendragonGauntlets::new),
 
 
     ;

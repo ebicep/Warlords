@@ -21,7 +21,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "+1% chance to perform 1 random rune instead of the player's Weapon Right Click.";
+        return "+1% chance to perform 1 random rune instead of the player's Weapon Right-Click.";
     }
 
     @Override
