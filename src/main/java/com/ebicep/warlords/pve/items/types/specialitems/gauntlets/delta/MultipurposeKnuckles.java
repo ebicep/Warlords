@@ -24,7 +24,7 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "+5% Damage, Damage Reduction, Healing, and EPS";
+        return "+5% Damage, Damage Reduction, Healing, and EPS.";
     }
 
     @Override

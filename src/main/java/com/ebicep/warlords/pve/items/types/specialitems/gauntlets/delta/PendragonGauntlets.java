@@ -18,7 +18,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "Increases Ground Slam's critical chance to 100%";
+        return "Increases Ground Slam's critical chance to 100%.";
     }
 
     @Override

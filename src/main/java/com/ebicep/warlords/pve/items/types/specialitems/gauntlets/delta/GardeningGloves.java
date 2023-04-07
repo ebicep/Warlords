@@ -18,7 +18,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet {
 
     @Override
     public String getBonus() {
-        return "Increases your chances of finding Items when killing ELITE enemies";
+        return "Increases your chances of finding Items when killing ELITE enemies.";
     }
 
     @Override

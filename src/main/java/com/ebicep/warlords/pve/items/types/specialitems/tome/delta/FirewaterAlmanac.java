@@ -22,7 +22,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome {
 
     @Override
     public String getBonus() {
-        return "Increased chance of finding Items when killing mobs with Right-Click";
+        return "Increased chance of finding Items when killing mobs with Right-Click.";
     }
 
     @Override
