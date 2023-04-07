@@ -34,7 +34,7 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
 
     @Override
     public Classes getClasses() {
-        return Classes.SHAMAN;
+        return Classes.ROGUE;
     }
 
     @Override
