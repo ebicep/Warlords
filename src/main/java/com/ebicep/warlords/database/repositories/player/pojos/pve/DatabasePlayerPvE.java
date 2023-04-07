@@ -17,7 +17,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
 import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
@@ -68,7 +68,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
     @Field("wave_defense_stats")
     private DatabasePlayerPvEDifficultyStats waveDefenseStats = new DatabasePlayerPvEDifficultyStats();
     @Field("onslaught_stats")
-    private OnslaughtDatabaseStatInformation onslaughtStats = new OnslaughtDatabaseStatInformation();
+    private DatabasePlayerOnslaughtStats onslaughtStats = new DatabasePlayerOnslaughtStats();
     //EVENTS
     @Field("event_stats")
     private DatabasePlayerPvEEventStats eventStats = new DatabasePlayerPvEEventStats();

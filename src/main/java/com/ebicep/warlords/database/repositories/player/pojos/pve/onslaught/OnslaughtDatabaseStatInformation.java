@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation {
-
     @Override
     public void updateCustomStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
