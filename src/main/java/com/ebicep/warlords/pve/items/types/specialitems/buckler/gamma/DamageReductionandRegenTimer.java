@@ -11,7 +11,7 @@ public interface DamageReductionandRegenTimer extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.DAMAGE_RESISTANCE, 5);
-        put(BasicStatPool.REGEN_TIMER, -20);
+        put(BasicStatPool.REGEN_TIMER, -200);
     }};
 
     @Override

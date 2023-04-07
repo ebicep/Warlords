@@ -11,7 +11,7 @@ public interface DamageReductionandAgroPrio extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.DAMAGE_RESISTANCE, 5);
-        put(BasicStatPool.AGGRO_PRIO, -5);
+        put(BasicStatPool.AGGRO_PRIO, -50);
     }};
 
     @Override

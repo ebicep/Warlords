@@ -11,7 +11,7 @@ public interface CDRandDamage extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.COOLDOWN_REDUCTION, 5);
-        put(BasicStatPool.DAMAGE, -20);
+        put(BasicStatPool.DAMAGE, -200);
     }};
 
     @Override

@@ -11,7 +11,7 @@ public interface CDRandCritChance extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.COOLDOWN_REDUCTION, 5);
-        put(BasicStatPool.CRIT_CHANCE, -20);
+        put(BasicStatPool.CRIT_CHANCE, -200);
     }};
 
     @Override

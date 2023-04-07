@@ -11,7 +11,7 @@ public interface CDRandHealing extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.COOLDOWN_REDUCTION, 5);
-        put(BasicStatPool.HEALING, -20);
+        put(BasicStatPool.HEALING, -200);
     }};
 
     @Override

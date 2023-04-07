@@ -20,10 +20,10 @@ import java.util.HashMap;
 public class SpiderGauntlet extends AbstractFixedItem implements AppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 5);
-        put(BasicStatPool.HEALING, 5);
-        put(BasicStatPool.CRIT_CHANCE, 2);
-        put(BasicStatPool.CRIT_MULTI, 4);
+        put(BasicStatPool.DAMAGE, 50);
+        put(BasicStatPool.HEALING, 50);
+        put(BasicStatPool.CRIT_CHANCE, 20);
+        put(BasicStatPool.CRIT_MULTI, 40);
 
     }};
 

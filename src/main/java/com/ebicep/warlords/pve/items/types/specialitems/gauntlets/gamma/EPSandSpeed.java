@@ -11,7 +11,7 @@ public interface EPSandSpeed extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.EPS, 5);
-        put(BasicStatPool.SPEED, -20);
+        put(BasicStatPool.SPEED, -200);
     }};
 
     @Override

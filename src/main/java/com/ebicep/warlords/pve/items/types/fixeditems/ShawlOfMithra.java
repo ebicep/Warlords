@@ -18,10 +18,10 @@ import java.util.HashMap;
 public class ShawlOfMithra extends AbstractFixedItem implements AppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 10);
-        put(BasicStatPool.HEALING, 10);
+        put(BasicStatPool.DAMAGE, 100);
+        put(BasicStatPool.HEALING, 100);
         put(BasicStatPool.MAX_ENERGY, 20);
-        put(BasicStatPool.REGEN_TIMER, 25);
+        put(BasicStatPool.REGEN_TIMER, 250);
 
     }};
 
