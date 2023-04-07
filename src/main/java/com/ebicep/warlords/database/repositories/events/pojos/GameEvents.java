@@ -36,6 +36,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -524,6 +525,8 @@ public enum GameEvents {
                 add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
                 add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, FixedItems.SHAWL_OF_MITHRA, 1, 500_000));
+                add(new SpendableBuyShop(1, FixedItems.SPIDER_GAUNTLET, 1, 500_000));
             }}
     ) {
         @Override
@@ -801,8 +804,6 @@ public enum GameEvents {
                 (m, e) -> openShopMenu(player)
         );
 
-        //TODO previous event shop
-
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -823,7 +824,6 @@ public enum GameEvents {
             }
         }
         DatabaseGameEvent finalGameEvent = gameEvent;
-        boolean finalCurrentEvent = currentEvent;
 
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -859,10 +859,14 @@ public enum GameEvents {
                 }
 
 
+                ItemBuilder itemBuilder = new ItemBuilder(rewardSpendable.getItem())
+                        .name(rewardSpendable.getCostColoredName(rewardAmount));
+                if (rewardSpendable instanceof FixedItems) {
+                    itemBuilder.addLore("");
+                }
                 menu.setItem(x, y,
-                        new ItemBuilder(rewardSpendable.getItem())
-                                .name(rewardSpendable.getCostColoredName(rewardAmount))
-                                .lore(
+                        itemBuilder
+                                .addLore(
                                         ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
                                         ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                                 )
@@ -903,8 +907,7 @@ public enum GameEvents {
                 }
             }
 
-            //TODO previous event shop
-            menu.setItem(3, 5, MENU_BACK, finalCurrentEvent ? (m, e) -> openMenu(player) : (m, e) -> openMenu(player));
+            menu.setItem(3, 5, MENU_BACK, (m, e) -> openMenu(player));
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);

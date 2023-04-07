@@ -62,7 +62,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements AppliesToPlayer
 
     @Override
     public String getName() {
-        return "Shawl of Mithra";
+        return "Spider Gauntlet";
     }
 
     @Override
