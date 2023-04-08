@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.BucklerPiece;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.CrossNecklaceCharm;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
@@ -69,6 +70,7 @@ public enum SpecialItems {
     PANS_TOME(PansTome::new),
     SCROLL_OF_UNCERTAINTY(ScrollOfUncertainty::new),
     BUCKLER_PIECE(BucklerPiece::new),
+    CROSS_NECKLACE_CHARM(CrossNecklaceCharm::new),
 
 
     ;

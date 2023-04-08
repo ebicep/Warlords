@@ -58,7 +58,7 @@ public class Consecrate extends AbstractAbility implements Duration {
     public void updateDescription(Player player) {
         description = "Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take" +
                 formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage per second and take §c" +
-                strikeDamageBoost + "% §7increased damage from your paladin strikes. Lasts §65 §7seconds.";
+                strikeDamageBoost + "% §7increased damage from your paladin strikes. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
 
     }
 
@@ -112,12 +112,12 @@ public class Consecrate extends AbstractAbility implements Duration {
                                                 wp,
                                                 name,
                                                 minDamageHeal,
-                                            maxDamageHeal,
-                                            critChance,
-                                            critMultiplier,
-                                            false
-                                    );
-                                });
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier,
+                                                false
+                                        );
+                                    });
                     }
                 })
         );
