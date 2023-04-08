@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
 
 import java.time.Instant;
@@ -133,6 +134,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                                 return currentDamageValue * .01f;
                             }
                         });
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         player.sendMessage(ChatColor.GREEN + "Triggered Stalwart! +99% damage reduction for 5s.");
                         return 0;
                     }

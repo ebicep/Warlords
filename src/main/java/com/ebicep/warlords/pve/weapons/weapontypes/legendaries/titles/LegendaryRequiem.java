@@ -21,6 +21,7 @@ import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
@@ -106,6 +107,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     BasicZombie mob = new BasicZombie(player.getLocation());
