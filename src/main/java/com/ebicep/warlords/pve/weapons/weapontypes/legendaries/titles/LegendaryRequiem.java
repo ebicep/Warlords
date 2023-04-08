@@ -134,9 +134,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(),
-                "s"
-        ) + " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
+        return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s") +
+                " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
     }
 
     @Override
