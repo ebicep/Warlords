@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class BookOfActs extends SpecialGammaTome implements CDRandCritChance {
+public class BookOfActs extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsThePresentTestament {
 
     @Override
     public String getName() {

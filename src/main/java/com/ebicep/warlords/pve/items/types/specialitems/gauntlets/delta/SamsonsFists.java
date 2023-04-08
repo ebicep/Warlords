@@ -5,7 +5,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,5 +51,10 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
                 Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.5, 0.1f);
             }
         });
+    }
+
+    @Override
+    public AbstractItem getCraftsInto() {
+        return new HandsOfTheHolyCorpse();
     }
 }

@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ExecutionersAlmanac extends SpecialGammaTome implements CDRandDamage {
+public class ExecutionersAlmanac extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsScrollOfUncertainty {
 
     @Override
     public String getName() {

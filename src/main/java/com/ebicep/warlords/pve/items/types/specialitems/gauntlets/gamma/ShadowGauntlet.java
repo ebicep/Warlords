@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ShadowGauntlet extends SpecialGammaGauntlet implements EPSandSpeed {
+public class ShadowGauntlet extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsGardeningGloves {
 
     @Override
     public Classes getClasses() {

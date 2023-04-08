@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class MediatorsFist extends SpecialGammaGauntlet implements EPSandEPH {
+public class MediatorsFist extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsSamsonsFists {
 
     @Override
     public Classes getClasses() {

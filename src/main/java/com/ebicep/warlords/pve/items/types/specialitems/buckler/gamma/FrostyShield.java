@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class FrostyShield extends SpecialGammaBuckler implements DamageReductionandAgroPrio {
+public class FrostyShield extends SpecialGammaBuckler implements DamageReductionandAgroPrio, CraftsInto.CraftsBucklerPiece {
 
     @Override
     public String getName() {

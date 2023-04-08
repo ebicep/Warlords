@@ -6,6 +6,8 @@ import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,11 +17,6 @@ public enum ItemType {
 
     GAUNTLET("Gauntlet"
     ) {
-        @Override
-        public BasicItem createBasic(ItemTier tier) {
-            return new BasicItem(this, tier);
-        }
-
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
             return (R[]) ItemGauntletModifier.Blessings.VALUES;
@@ -68,7 +65,17 @@ public enum ItemType {
         this.name = name;
     }
 
-    public BasicItem createBasic(ItemTier tier) {
+    public AbstractItem createBasic(ItemTier tier) {
+        switch (tier) {
+            case ALPHA:
+            case BETA:
+                return new BasicItem(this, tier);
+            case GAMMA:
+                return SpecialItems.GAMMA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.GAMMA_ITEMS.length)].create.get();
+            case DELTA:
+                return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create.get();
+        }
+        ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
         return new BasicItem(this, tier);
     }
 

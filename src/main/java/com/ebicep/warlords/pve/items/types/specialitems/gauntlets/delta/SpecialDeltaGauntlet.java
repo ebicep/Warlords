@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.SpecialGauntlet;
 
 import java.util.Set;
 
-public abstract class SpecialDeltaGauntlet extends SpecialGauntlet implements ItemAddonClassBonus {
+public abstract class SpecialDeltaGauntlet extends SpecialGauntlet implements ItemAddonClassBonus, CraftsInto {
 
     public SpecialDeltaGauntlet() {
         super(ItemTier.DELTA);

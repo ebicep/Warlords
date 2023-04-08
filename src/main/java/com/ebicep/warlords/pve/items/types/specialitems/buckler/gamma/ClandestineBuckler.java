@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ClandestineBuckler extends SpecialGammaBuckler implements DamageReductionandKBRes {
+public class ClandestineBuckler extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsShieldOfSnatching {
 
     @Override
     public String getName() {

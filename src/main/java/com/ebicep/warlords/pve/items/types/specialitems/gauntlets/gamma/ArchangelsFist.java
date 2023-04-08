@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEnergy {
+public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsSamsonsFists {
 
     @Override
     public Classes getClasses() {

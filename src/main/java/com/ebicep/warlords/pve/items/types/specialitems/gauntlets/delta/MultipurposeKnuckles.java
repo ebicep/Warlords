@@ -4,6 +4,8 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.statpool.SpecialStatPool;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.RobinHoodsGloves;
 
 import java.util.HashMap;
 
@@ -41,4 +43,8 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
         return BONUS_STATS;
     }
 
+    @Override
+    public AbstractItem getCraftsInto() {
+        return new RobinHoodsGloves();
+    }
 }

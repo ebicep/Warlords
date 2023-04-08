@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEnergy {
+public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsMultipurposeKnuckles {
 
     @Override
     public Classes getClasses() {

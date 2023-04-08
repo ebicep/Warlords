@@ -64,4 +64,5 @@ public class FirewaterAlmanac extends SpecialDeltaTome {
         });
 
     }
+
 }

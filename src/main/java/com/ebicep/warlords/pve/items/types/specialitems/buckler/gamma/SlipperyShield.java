@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class SlipperyShield extends SpecialGammaBuckler implements DamageReductionandRegenTimer {
+public class SlipperyShield extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsBucklerPiece {
 
     @Override
     public String getName() {

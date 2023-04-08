@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class BurningShield extends SpecialGammaBuckler implements DamageReductionandKBRes {
+public class BurningShield extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsBucklerPiece {
 
     @Override
     public String getName() {

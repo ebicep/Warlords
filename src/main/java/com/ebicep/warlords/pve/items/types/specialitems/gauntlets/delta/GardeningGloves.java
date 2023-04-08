@@ -3,7 +3,9 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.NaturesClaws;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import org.bukkit.event.EventHandler;
@@ -48,5 +50,10 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
             }
         });
 
+    }
+
+    @Override
+    public AbstractItem getCraftsInto() {
+        return new NaturesClaws();
     }
 }

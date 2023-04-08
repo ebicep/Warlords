@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -231,6 +232,7 @@ public class ItemCraftingMenu {
                                 if (inheritedItem == null) {
                                     return;
                                 }
+
                                 Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
                                 BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
                                                                    .filter(pool -> !statPools.contains(pool))
@@ -238,7 +240,12 @@ public class ItemCraftingMenu {
                                 //add random other stat to stat pool
                                 statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
 
-                                AbstractItem craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
+                                AbstractItem craftedItem;
+                                if (inheritedItem instanceof CraftsInto) {
+                                    craftedItem = ((CraftsInto) inheritedItem).getCraftsInto();
+                                } else {
+                                    craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
+                                }
                                 craftedItem.setModifier(inheritedItem.getModifier());
                                 craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);

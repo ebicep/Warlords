@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class TomeOfWater extends SpecialGammaTome implements CDRandHealing {
+public class TomeOfWater extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsFirewaterAlmanac {
 
     @Override
     public String getName() {
