@@ -44,20 +44,22 @@ public class PridwensBulwark extends SpecialDeltaBuckler {
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC) {
                     WarlordsNPC warlordsNPC = (WarlordsNPC) event.getWarlordsEntity();
-                    if (!Objects.equals(event.getAbility(), "Seismic Wave")) {
-                        return;
-                    }
                     if (ThreadLocalRandom.current().nextDouble() > 0.1) {
                         return;
                     }
-                    //delayed to account for wave kb
-                    new GameRunnable(warlordsNPC.getGame()) {
+                    if (Objects.equals(event.getAbility(), "Seismic Wave")) {
+                        //delayed to account for wave kb
+                        new GameRunnable(warlordsNPC.getGame()) {
 
-                        @Override
-                        public void run() {
-                            warlordsNPC.setStunTicks(10);
-                        }
-                    }.runTaskLater(3);
+                            @Override
+                            public void run() {
+                                warlordsNPC.setStunTicks(10);
+                            }
+                        }.runTaskLater(3);
+                    } else if (Objects.equals(event.getAbility(), "Reckless Charge")) {
+                        event.setMin(event.getMin() * 1.25f);
+                        event.setMax(event.getMax() * 1.25f);
+                    }
                 }
             }
 
