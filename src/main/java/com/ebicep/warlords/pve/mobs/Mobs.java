@@ -117,6 +117,8 @@ public enum Mobs {
 
     ;
 
+    public static final Mobs[] MOBS = values();
+    public static final Mobs[] BOSSES = {BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH, CHESSKING, ILLUMINA, TORMENT, VOID, PHYSIRA};
     public final Class<?> mobClass;
     public final Function<Location, AbstractMob<?>> createMob;
 

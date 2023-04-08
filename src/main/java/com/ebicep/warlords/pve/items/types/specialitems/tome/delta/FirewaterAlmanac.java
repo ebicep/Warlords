@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -58,8 +57,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome {
                     return;
                 }
                 if (Objects.equals(mobsLastHitWith.getOrDefault(deadMobUUID, null), weaponRightClick)) {
-                    AtomicDouble dropRate = event.getDropRate();
-                    dropRate.set(dropRate.get() * 1.1);
+                    event.addModifier(.1);
                 }
                 mobsLastHitWith.remove(deadMobUUID);
             }

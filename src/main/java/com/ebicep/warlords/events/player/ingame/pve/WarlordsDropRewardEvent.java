@@ -13,6 +13,7 @@ public class WarlordsDropRewardEvent extends AbstractWarlordsEntityEvent {
     private final AbstractMob<?> deadMob;
     private final RewardType rewardType;
     private final AtomicDouble dropRate;
+    private double modifier = 1;
 
     public WarlordsDropRewardEvent(WarlordsEntity player, AbstractMob<?> deadMob, RewardType rewardType, AtomicDouble dropRate) {
         super(player);
@@ -35,6 +36,18 @@ public class WarlordsDropRewardEvent extends AbstractWarlordsEntityEvent {
 
     public AtomicDouble getDropRate() {
         return dropRate;
+    }
+
+    public double getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(double modifier) {
+        this.modifier = modifier;
+    }
+
+    public void addModifier(double modifier) {
+        this.modifier += modifier;
     }
 
     @Override

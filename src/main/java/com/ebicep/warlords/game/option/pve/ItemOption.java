@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
-import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,8 +44,7 @@ public class ItemOption implements Option {
                 if (itemPlayerConfig == null) {
                     return;
                 }
-                AtomicDouble dropRate = event.getDropRate();
-                dropRate.set(dropRate.get() * itemPlayerConfig.getDropRateModifier());
+                event.addModifier(itemPlayerConfig.getDropRateModifier());
             }
 
         });
@@ -95,7 +93,7 @@ public class ItemOption implements Option {
             ItemLoadout loadout = loadouts.get(0);
             List<AbstractItem> applied = loadout.getActualItems(itemsManager);
             itemPlayerConfigs.putIfAbsent(player.getUuid(),
-                    new ItemPlayerConfig(loadout, 1 + applied
+                    new ItemPlayerConfig(loadout, applied
                             .stream()
                             .filter(item -> item.getType() == ItemType.GAUNTLET)
                             .mapToDouble(AbstractItem::getModifierCalculated)

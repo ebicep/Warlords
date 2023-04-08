@@ -5,10 +5,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
-import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.GlassKnuckles;
-import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
-import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.LilithsClaws;
-import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.NaturesClaws;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 
@@ -81,6 +78,7 @@ public enum SpecialItems {
     HANDS_OF_THE_HOLY_CORPSE(HandsOfTheHolyCorpse::new),
     GLASS_KNUCKLES(GlassKnuckles::new),
     NATURES_CLAWS(NaturesClaws::new),
+    ROBIN_HOODS_GLOVES(RobinHoodsGloves::new),
 
     ;
 

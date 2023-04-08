@@ -91,7 +91,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return 1 + (tier == 9 ? 100 : 10 * tier) * .01;
+            return (tier == 9 ? 100 : 10 * tier) * .01;
         }
 
         @Override
@@ -111,7 +111,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
                     if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.WEAPON) {
                         return;
                     }
-                    event.getDropRate().set(event.getDropRate().get() * getValueFromTier(tier));
+                    event.addModifier(getValueFromTier(tier));
                 }
 
             });

@@ -161,12 +161,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void dropWeapon(WarlordsEntity killer) {
         if (killer.getEntity() instanceof Player) {
-            dropWeapon(killer, 100);
+            dropWeapon(killer, 1);
         }
         PlayerFilter.playingGame(killer.getGame())
                     .teammatesOfExcludingSelf(killer)
                     .filter(wp -> wp.getEntity() instanceof Player)
-                    .forEach(teammate -> dropWeapon(teammate, 200));
+                    .forEach(teammate -> dropWeapon(teammate, 2));
     }
 
     public void dropMobDrop(WarlordsEntity killer) {
@@ -181,11 +181,14 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d)
-                                           * game.getGameMode().getDropModifier());
-                                   Bukkit.getPluginManager()
-                                         .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.MOB_DROP, dropRate));
-                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode().getDropModifier());
+                                   WarlordsDropRewardEvent dropRewardEvent = new WarlordsDropRewardEvent(warlordsPlayer,
+                                           this,
+                                           WarlordsDropRewardEvent.RewardType.MOB_DROP,
+                                           dropRate
+                                   );
+                                   Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier()) {
                                        WarlordsGiveMobDropEvent dropEvent = new WarlordsGiveMobDropEvent(warlordsPlayer, drop);
                                        Bukkit.getPluginManager().callEvent(dropEvent);
                                        List<WarlordsPlayer> stolenBy = dropEvent.getStolenBy();
@@ -235,10 +238,13 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                double rng = ThreadLocalRandom.current().nextDouble();
                                for (int i = validValues.length - 1; i >= 0; i--) {
                                    ItemTier itemTier = validValues[i];
+                                   if (itemTier.dropChance == 0) {
+                                       continue;
+                                   }
                                    AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * game.getGameMode().getDropModifier());
-                                   Bukkit.getPluginManager()
-                                         .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.ITEM, dropRate));
-                                   if (rng < dropRate.get()) {
+                                   WarlordsDropRewardEvent dropRewardEvent = new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.ITEM, dropRate);
+                                   Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                                   if (rng < dropRate.get() * dropRewardEvent.getModifier()) {
                                        AbstractItem item = ItemType.getRandom().createBasic(itemTier);
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                        game.forEachOnlinePlayer((player, team) -> {
@@ -262,9 +268,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                AtomicDouble dropRate = new AtomicDouble(.00025 * game.getGameMode().getDropModifier());
-                               Bukkit.getPluginManager()
-                                     .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.BLESSING, dropRate));
-                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get()) {
+                               WarlordsDropRewardEvent dropRewardEvent = new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.BLESSING, dropRate);
+                               Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get() * dropRewardEvent.getModifier()) {
                                    Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(warlordsPlayer));
                                    game.forEachOnlinePlayer((player, team) -> {
                                        AbstractItem.sendItemMessage(player,
@@ -278,9 +284,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
-        AtomicDouble dropRate = new AtomicDouble(weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
-        Bukkit.getPluginManager().callEvent(new WarlordsDropRewardEvent(killer, this, WarlordsDropRewardEvent.RewardType.WEAPON, dropRate));
-        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
+        AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
+        WarlordsDropRewardEvent dropRewardEvent = new WarlordsDropRewardEvent(killer, this, WarlordsDropRewardEvent.RewardType.WEAPON, dropRate);
+        Bukkit.getPluginManager().callEvent(dropRewardEvent);
+        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get() * dropRewardEvent.getModifier()) {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
             killer.getGame().forEachOnlinePlayer((player, team) -> {
