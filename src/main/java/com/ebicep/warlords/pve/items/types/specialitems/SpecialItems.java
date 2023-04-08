@@ -74,6 +74,7 @@ public enum SpecialItems {
     PRIDWENS_BULWARK(PridwensBulwark::new),
     AERIAL_AEGIS(AerialAegis::new),
     SHIELD_OF_SNATCHING(ShieldOfSnatching::new),
+    //OMEGA
     LILITHS_CLAWS(LilithsClaws::new),
     HANDS_OF_THE_HOLY_CORPSE(HandsOfTheHolyCorpse::new),
     GLASS_KNUCKLES(GlassKnuckles::new),
@@ -145,11 +146,6 @@ public enum SpecialItems {
             PRIDWENS_BULWARK,
             AERIAL_AEGIS,
             SHIELD_OF_SNATCHING,
-            LILITHS_CLAWS,
-            HANDS_OF_THE_HOLY_CORPSE,
-            GLASS_KNUCKLES,
-            NATURES_CLAWS,
-            ROBIN_HOODS_GLOVES
     };
     public final Supplier<AbstractSpecialItem> create;
 
