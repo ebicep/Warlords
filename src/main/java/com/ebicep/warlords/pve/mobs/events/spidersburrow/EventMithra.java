@@ -41,7 +41,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
     private final List<EventEggSac> eggSacs = new ArrayList<>();
     private boolean entangledStateComplete = false;
     private boolean inEntangledState = false;
-    private boolean enragedState = false;
+    private boolean immolationTriggered = false;
 
     public EventMithra(Location spawnLocation) {
         super(spawnLocation,
@@ -159,6 +159,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                         setBlocks(Material.AIR);
                         // check egg sacs
                         checkUnbrokenEggSacs();
+                        enrage();
                         this.cancel();
                     }
 
@@ -250,40 +251,9 @@ public class EventMithra extends AbstractZombie implements BossMob {
             }.runTaskTimer(0, 0);
         }
 
-        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .3 && !enragedState) {
-            enragedState = true;
-            Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.berserk.activation", 2, .5f);
-            warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    "Enraged",
-                    null,
-                    EventMithra.class,
-                    null,
-                    warlordsNPC,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    false,
-                    (cooldown, ticks) -> {
-                        if (ticks % 3 == 0) {
-                            ParticleEffect.VILLAGER_ANGRY.display(
-                                    0,
-                                    0,
-                                    0,
-                                    0.1f,
-                                    1,
-                                    warlordsNPC.getLocation().add(0, 1.75, 0),
-                                    500
-                            );
-                        }
-                    }
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.15f;
-                }
-            });
-            warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
-            warlordsNPC.getSpeed().addBaseModifier(5);
+        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .35 && !immolationTriggered) {
+            immolationTriggered = true;
+            immolation(option, warlordsNPC.getLocation());
         }
     }
 
@@ -313,5 +283,120 @@ public class EventMithra extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
+    }
+
+    private void enrage() {
+        Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.berserk.activation", 2, .5f);
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Enraged",
+                null,
+                EventMithra.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                false,
+                (cooldown, ticks) -> {
+                    if (ticks % 3 == 0) {
+                        ParticleEffect.VILLAGER_ANGRY.display(
+                                0,
+                                0,
+                                0,
+                                0.1f,
+                                1,
+                                warlordsNPC.getLocation().add(0, 1.75, 0),
+                                500
+                        );
+                    }
+                }
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.15f;
+            }
+        });
+        warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
+        warlordsNPC.getSpeed().addBaseModifier(5);
+    }
+
+    private void immolation(PveOption option, Location loc) {
+        warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
+        for (int i = 0; i < 3; i++) {
+            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+        }
+
+        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        ChatColor.RED + "PREPARE TO DIE",
+                        ChatColor.LIGHT_PURPLE + "Immolation Spell",
+                        20, 60, 20
+                );
+            }
+        }
+
+        float damage;
+        switch (option.getDifficulty()) {
+            case ENDLESS:
+            case HARD:
+                damage = 200;
+                break;
+            case EASY:
+                damage = 50;
+                break;
+            default:
+                damage = 100;
+                break;
+        }
+        new GameRunnable(warlordsNPC.getGame()) {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                    return;
+                }
+
+                counter++;
+                double radius = (2 * counter);
+                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+                Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
+                for (WarlordsEntity flameTarget : PlayerFilter
+                        .entitiesAround(warlordsNPC, radius, radius, radius)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
+                    flameTarget.addDamageInstance(
+                            warlordsNPC,
+                            "Immolation",
+                            damage,
+                            damage,
+                            0,
+                            100,
+                            false
+                    );
+
+                    warlordsNPC.addHealingInstance(
+                            warlordsNPC,
+                            "Immolation",
+                            damage * 0.5f,
+                            damage * 0.5f,
+                            0,
+                            100,
+                            false,
+                            false
+                    );
+                }
+
+                if (counter == 50) {
+                    this.cancel();
+                    warlordsNPC.getSpeed().addBaseModifier(70);
+                }
+            }
+        }.runTaskTimer(40, 5);
     }
 }

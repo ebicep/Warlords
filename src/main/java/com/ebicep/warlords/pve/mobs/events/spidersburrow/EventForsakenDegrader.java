@@ -30,7 +30,7 @@ public class EventForsakenDegrader extends AbstractZombie implements BossMob, Sp
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 5, 5, 5),
                         Weapons.DRAKEFANG.getItem()
                 ),
-                2200,
+                2700,
                 0.45f,
                 0,
                 300,
@@ -41,7 +41,12 @@ public class EventForsakenDegrader extends AbstractZombie implements BossMob, Sp
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-
+        int currentWave = option.getWaveCounter();
+        if (currentWave % 5 == 0 && currentWave > 5) {
+            float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
+            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
+            warlordsNPC.heal();
+        }
     }
 
     @Override

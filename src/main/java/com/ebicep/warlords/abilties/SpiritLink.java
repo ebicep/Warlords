@@ -68,6 +68,8 @@ public class SpiritLink extends AbstractChainBase {
                 }
 
                 additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), 0);
+
+                break;
             }
         }
         return hitCounter;

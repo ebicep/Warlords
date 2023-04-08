@@ -1,8 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -105,46 +103,7 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            });
             Player player = (Player) commandSender;
-//            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-//                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-//                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
-//                waveDefenseStats.setEasyStats(pveStats.getEasyStats());
-//                waveDefenseStats.setNormalStats(pveStats.getNormalStats());
-//                waveDefenseStats.setHardStats(pveStats.getHardStats());
-//                waveDefenseStats.setEndlessStats(pveStats.getEndlessStats());
-//                waveDefenseStats.setMage(pveStats.getMage());
-//                waveDefenseStats.setPaladin(pveStats.getPaladin());
-//                waveDefenseStats.setWarrior(pveStats.getWarrior());
-//                waveDefenseStats.setRogue(pveStats.getRogue());
-//                waveDefenseStats.setShaman(pveStats.getShaman());
-//                waveDefenseStats.setPlayerCountStats(pveStats.getPlayerCountStats());
-//                waveDefenseStats.merge(pveStats);
-//            });
-
-        }
-
-        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
-            int wins = databasePlayer.getPveStats().getWins();
-            int wdWins = databasePlayer.getPveStats().getWaveDefenseStats().getWins();
-            if (wins != wdWins) {
-                System.out.println(databasePlayer.getName() + " : " + wins + " - " + wdWins + " - LIFETIME");
-                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                    if (activeCollection != PlayersCollections.LIFETIME) {
-                        for (DatabasePlayer dp : DatabaseManager.CACHED_PLAYERS.get(activeCollection).values()) {
-                            int wins2 = dp.getPveStats().getWins();
-                            int wdWins2 = dp.getPveStats().getWaveDefenseStats().getWins();
-                            if (wins2 != wdWins2) {
-                                System.out.println(dp.getName() + " : " + wins2 + " - " + wdWins2 + " - " + activeCollection.name());
-                            }
-                        }
-                    }
-                }
-                System.out.println("-------");
-            }
-        }
-
-//        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-//            for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(activeCollection).values()) {
+//            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
 //                System.out.println("reformatting : " + databasePlayer.getName());
 //                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 //                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
@@ -162,11 +121,57 @@ public class OldTestCommand implements CommandExecutor {
 //                Warlords.newChain()
 //                        .async(() -> {
 //                            System.out.println("updating : " + databasePlayer.getName());
-//                            DatabaseManager.playerService.update(databasePlayer, activeCollection);
+//                            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
+//                        })
+//                        .execute();
+//            });
+
+        }
+//
+//        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
+//            int wins = databasePlayer.getPveStats().getWins();
+//            int wdWins = databasePlayer.getPveStats().getWaveDefenseStats().getWins();
+//            if (wins != wdWins) {
+//                System.out.println(databasePlayer.getName() + " : " + wins + " - " + wdWins + " - LIFETIME");
+////                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+////                    if (activeCollection != PlayersCollections.LIFETIME) {
+////                        for (DatabasePlayer dp : DatabaseManager.CACHED_PLAYERS.get(activeCollection).values()) {
+////                            int wins2 = dp.getPveStats().getWins();
+////                            int wdWins2 = dp.getPveStats().getWaveDefenseStats().getWins();
+////                            if (wins2 != wdWins2) {
+////                                System.out.println(dp.getName() + " : " + wins2 + " - " + wdWins2 + " - " + activeCollection.name());
+////                            }
+////                        }
+////                    }
+////                }
+////                System.out.println("-------");
+//            }
+//        }
+
+//        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+//            for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
+//                System.out.println("reformatting : " + databasePlayer.getName());
+//                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
+//                waveDefenseStats.setEasyStats(pveStats.getEasyStats());
+//                waveDefenseStats.setNormalStats(pveStats.getNormalStats());
+//                waveDefenseStats.setHardStats(pveStats.getHardStats());
+//                waveDefenseStats.setEndlessStats(pveStats.getEndlessStats());
+//                waveDefenseStats.setMage(pveStats.getMage());
+//                waveDefenseStats.setPaladin(pveStats.getPaladin());
+//                waveDefenseStats.setWarrior(pveStats.getWarrior());
+//                waveDefenseStats.setRogue(pveStats.getRogue());
+//                waveDefenseStats.setShaman(pveStats.getShaman());
+//                waveDefenseStats.setPlayerCountStats(pveStats.getPlayerCountStats());
+//                waveDefenseStats.merge(pveStats);
+//                Warlords.newChain()
+//                        .async(() -> {
+//                            System.out.println("updating : " + databasePlayer.getName());
+//                            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
 //                        })
 //                        .execute();
 //            }
-//
+
 //        }
 
 

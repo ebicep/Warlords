@@ -96,7 +96,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
         @Override
         public String getEffectBonusFromTier(int tier) {
-            return "+" + Math.round((getValueFromTier(tier) - 1) * 100) + "%";
+            return "+" + Math.round((getValueFromTier(tier)) * 100) + "%";
         }
 
         @Override
