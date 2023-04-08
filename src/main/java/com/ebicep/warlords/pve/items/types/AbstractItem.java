@@ -128,7 +128,7 @@ public abstract class AbstractItem {
     protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
         String itemScoreString = getItemScoreString();
         itemBuilder.addLore(
-                (itemScoreString != null ? "\n" + itemScoreString + "\n\n" : "") +
+                (itemScoreString != null ? "\n" + itemScoreString + "\n\n" : "\n") +
                         getWeightString()
         );
     }
