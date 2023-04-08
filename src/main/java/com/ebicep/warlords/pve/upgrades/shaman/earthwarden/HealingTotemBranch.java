@@ -92,7 +92,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 50000,
                 () -> {
                     ability.setHealingIncrement(20);
-                    ability.setTickDuration(ability.getTickDuration() * 40);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

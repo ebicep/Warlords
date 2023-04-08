@@ -5,6 +5,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.addons.ItemAddonSpecBonus;
@@ -15,8 +16,10 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -79,6 +82,13 @@ public class ItemSearchMenu extends Menu {
     }
 
     private void addItems() {
+        List<UUID> equippedItems = databasePlayer.getPveStats()
+                                                 .getItemsManager()
+                                                 .getLoadouts()
+                                                 .stream()
+                                                 .map(ItemLoadout::getItems)
+                                                 .flatMap(Collection::stream)
+                                                 .collect(Collectors.toList());
         int page = menuSettings.getPage();
         List<AbstractItem> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
         int x = 0;
@@ -87,8 +97,13 @@ public class ItemSearchMenu extends Menu {
             int itemNumber = ((page - 1) * 45) + i;
             if (itemNumber < itemInventory.size()) {
                 AbstractItem item = itemInventory.get(itemNumber);
+                ItemBuilder itemBuilder = editItem.apply(item.generateItemBuilder());
+                if (equippedItems.contains(item.getUUID())) {
+                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                }
                 setItem(x, y,
-                        editItem.apply(item.generateItemBuilder()).get(),
+                        itemBuilder.get(),
                         (m, e) -> itemClickAction.accept(item, m, e)
                 );
                 x++;
