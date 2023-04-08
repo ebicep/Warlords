@@ -44,7 +44,7 @@ public class BucklerPiece extends SpecialDeltaBuckler {
                     return;
                 }
                 if (Objects.equals(event.getAbility(), "Time Warp")) {
-                    float damageValue = event.getValue();
+                    float damageValue = event.getValue() * .5f;
                     PlayerFilter.entitiesAround(warlordsPlayer.getLocation(), 5, 5, 5)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .forEach(hit -> {
