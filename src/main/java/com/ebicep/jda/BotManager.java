@@ -133,8 +133,10 @@ public class BotManager {
                         WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                         eb.appendDescription(" - " +
                                 waveDefenseOption.getDifficulty().getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
-                        break;
+                    } else {
+                        eb.appendDescription("\n");
                     }
+                    break;
                 }
                 if (!pve) {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()

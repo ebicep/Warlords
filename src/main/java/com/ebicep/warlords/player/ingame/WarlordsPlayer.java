@@ -368,7 +368,6 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public void setDamageResistance(int damageResistance) {
-        System.out.println("Setting damage resistance to " + damageResistance);
         getSpec().setDamageResistance(damageResistance);
     }
 
