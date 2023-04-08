@@ -49,8 +49,7 @@ public enum SpecialStatPool implements StatPool {
     DAMAGE_RESISTANCE {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setDamageResistance((int) (playerClass.getDamageResistance() + value));
+            warlordsPlayer.setDamageResistance((int) (warlordsPlayer.getSpec().getDamageResistance() + value));
         }
 
     },

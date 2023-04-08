@@ -282,7 +282,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                     return currentDamageValue * 1.15f;
                 }
             });
-            warlordsNPC.getSpec().setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
+            warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
             warlordsNPC.getSpeed().addBaseModifier(5);
         }
     }

@@ -80,9 +80,9 @@ public class EventDjet extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (aboveHealthThreshold()) {
-            warlordsNPC.getSpec().setDamageResistance(10);
+            warlordsNPC.setDamageResistance(10);
         } else {
-            warlordsNPC.getSpec().setDamageResistance(30);
+            warlordsNPC.setDamageResistance(30);
         }
     }
 

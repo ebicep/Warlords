@@ -2656,4 +2656,6 @@ public abstract class WarlordsEntity {
     public void setBonusAgroWeight(float agroWeight) {
         this.bonusAgroWeight = agroWeight * agroWeight; // squared because values in PathfinderGoalTargetAgroWarlordsEntity are squared
     }
+
+    public abstract void setDamageResistance(int damageResistance);
 }

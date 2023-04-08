@@ -103,7 +103,7 @@ public class IceBarrier extends AbstractAbility implements Duration {
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
-                                we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
+                                we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
                                 we.addSpeedModifier(wp, "Ice Barrier Slowness", -80, 20);
                             }
                         }

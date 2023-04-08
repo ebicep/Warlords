@@ -61,7 +61,7 @@ public class EventForsakenApparition extends AbstractZombie implements BossMob, 
         if (!damaged) {
             damaged = true;
             // When this spider takes damage, it turns invisible, giving it a 15% increase to damage and a 15% resistance boost.
-            self.getSpec().setDamageResistance(15);
+            self.setDamageResistance(15);
             self.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 60 * 15, 0, true, false));
         }
     }

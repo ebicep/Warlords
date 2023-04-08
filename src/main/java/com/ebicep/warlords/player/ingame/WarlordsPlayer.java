@@ -366,6 +366,12 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
     }
 
+    @Override
+    public void setDamageResistance(int damageResistance) {
+        System.out.println("Setting damage resistance to " + damageResistance);
+        getSpec().setDamageResistance(damageResistance);
+    }
+
     public void applySkillBoost(Player player) {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass() == skillBoost.ability) {

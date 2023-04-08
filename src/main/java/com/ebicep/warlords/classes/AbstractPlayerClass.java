@@ -279,7 +279,7 @@ public abstract class AbstractPlayerClass {
     }
 
     public void setDamageResistance(int damageResistance) {
-        this.damageResistance = Math.max(0, damageResistance);
+        this.damageResistance = damageResistance;
     }
 
     public AbstractAbility getWeapon() {

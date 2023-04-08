@@ -238,6 +238,11 @@ public final class WarlordsNPC extends WarlordsEntity {
         }
     }
 
+    @Override
+    public void setDamageResistance(int damageResistance) {
+        getSpec().setDamageResistance(Math.max(0, damageResistance));
+    }
+
     public MobTier getMobTier() {
         return mob.getMobTier();
     }
