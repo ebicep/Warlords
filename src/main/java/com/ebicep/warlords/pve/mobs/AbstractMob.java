@@ -33,7 +33,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -184,16 +186,40 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    Bukkit.getPluginManager()
                                          .callEvent(new WarlordsDropRewardEvent(warlordsPlayer, this, WarlordsDropRewardEvent.RewardType.MOB_DROP, dropRate));
                                    if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
-                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(warlordsPlayer, drop));
+                                       WarlordsGiveMobDropEvent dropEvent = new WarlordsGiveMobDropEvent(warlordsPlayer, drop);
+                                       Bukkit.getPluginManager().callEvent(dropEvent);
+                                       List<WarlordsPlayer> stolenBy = dropEvent.getStolenBy();
+                                       if (!stolenBy.isEmpty()) {
+                                           Collections.shuffle(stolenBy);
+                                           WarlordsPlayer firstStealer = stolenBy.get(0);
+                                           WarlordsPlayer lastStealer = stolenBy.get(stolenBy.size() - 1);
+                                           Bukkit.getPluginManager().callEvent(new WarlordsGiveStolenMobDropEvent(lastStealer, drop));
 
-                                       game.forEachOnlinePlayer((player, team) -> {
-                                           player.sendMessage(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                           StringBuilder stolenMessage = new StringBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
                                                    ChatColor.GRAY + " obtained a " +
                                                    drop.chatColor + drop.name +
-                                                   ChatColor.GRAY + "!"
-                                           );
-                                       });
-                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                                   ChatColor.GRAY + " but it was stolen by " +
+                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + warlordsPlayer.getName() +
+                                                   ChatColor.GRAY + "!");
+                                           for (int i = 1; i < stolenBy.size() - 1; i++) {
+                                               String previousStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity()) + stolenBy.get(i - 1).getName();
+                                               String nextStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity()) + stolenBy.get(i).getName();
+                                               stolenMessage.append(" But then ")
+                                                            .append(nextStealer)
+                                                            .append(ChatColor.GRAY).append(" stole it from ")
+                                                            .append(previousStealer)
+                                                            .append(ChatColor.GRAY).append("!");
+                                           }
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.toString()));
+                                           lastStealer.playSound(lastStealer.getLocation(), Sound.LEVEL_UP, 500, 1.5f);
+                                       } else {
+                                           String obtainMessage = Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                                   ChatColor.GRAY + " obtained a " +
+                                                   drop.chatColor + drop.name +
+                                                   ChatColor.GRAY + "!";
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage));
+                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       }
                                    }
                                });
                            });

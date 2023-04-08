@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
@@ -181,9 +182,15 @@ public interface PveOption {
 
             @EventHandler
             public void onMobDrop(WarlordsGiveMobDropEvent event) {
-                getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
-                            .getMobDropsGained()
-                            .merge(event.getMobDrop(), 1L, Long::sum);
+                if (!event.getStolenBy().isEmpty()) {
+                    return;
+                }
+                addMobDrop(event.getWarlordsEntity(), event.getMobDrop());
+            }
+
+            @EventHandler
+            public void onMobDrop(WarlordsGiveStolenMobDropEvent event) {
+                addMobDrop(event.getWarlordsEntity(), event.getMobDrop());
             }
 
             @EventHandler
@@ -201,9 +208,15 @@ public interface PveOption {
         };
     }
 
-    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
+    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
+        getRewards().getPlayerRewards(event.getUuid())
+                    .getMobDropsGained()
+                    .merge(event1, 1L, Long::sum);
+    }
 
     PveRewards<?> getRewards();
+
+    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
 
     Game getGame();
 
