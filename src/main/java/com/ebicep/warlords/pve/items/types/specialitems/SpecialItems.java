@@ -4,9 +4,7 @@ import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
-import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.AGuideToMMA;
-import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.FirewaterAlmanac;
-import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.ThePresentTestament;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 
 import java.util.function.Supplier;
@@ -67,9 +65,8 @@ public enum SpecialItems {
     FIREWATER_ALMANAC(FirewaterAlmanac::new),
     THE_PRESENT_TESTAMENT(ThePresentTestament::new),
     A_GUIDE_TO_MMA(AGuideToMMA::new),
-
-
-    ;
+    PANS_TOME(PansTome::new),
+    SCROLL_OF_UNCERTAINTY(ScrollOfUncertainty::new);
 
     public final Supplier<AbstractSpecialItem> create;
 

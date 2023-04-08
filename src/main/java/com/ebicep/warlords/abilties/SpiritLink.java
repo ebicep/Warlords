@@ -14,22 +14,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class SpiritLink extends AbstractChainBase {
 
     public int numberOfDismounts = 0;
-
-    private int bounceRange = 10;
     private double speedDuration = 1.5;
     private double damageReductionDuration = 4.5;
 
     public SpiritLink() {
-        super("Spirit Link", 236.25f, 446.25f, 8.61f, 40, 20, 175);
+        super("Spirit Link", 236.25f, 446.25f, 8.61f, 40, 20, 175, 20, 10, 2);
     }
 
     @Override
@@ -53,7 +48,7 @@ public class SpiritLink extends AbstractChainBase {
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity nearPlayer : PlayerFilter
-                .entitiesAround(player, 20, 18, 20)
+                .entitiesAround(player, radius, radius - 2, radius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .soulBindedFirst(wp)
@@ -72,76 +67,41 @@ public class SpiritLink extends AbstractChainBase {
                     healNearPlayers(wp, nearPlayer);
                 }
 
-                for (WarlordsEntity chainPlayerOne : PlayerFilter
-                        .entitiesAround(nearPlayer, bounceRange, bounceRange, bounceRange)
-                        .aliveEnemiesOf(wp)
-                        .excluding(nearPlayer)
-                        .soulBindedFirst(wp)
-                ) {
-                    playersHit++;
-                    if (chainPlayerOne.onHorse()) {
-                        numberOfDismounts++;
-                    }
-                    chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addDamageInstance(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
-                    hitCounter.add(chainPlayerOne);
-
-                    numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
-                    for (int i = 0; i < numberOfHeals; i++) {
-                        healNearPlayers(wp, chainPlayerOne);
-                    }
-
-                    for (WarlordsEntity chainPlayerTwo : PlayerFilter
-                            .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
-                            .aliveEnemiesOf(wp)
-                            .excluding(nearPlayer, chainPlayerOne)
-                            .soulBindedFirst(wp)
-                    ) {
-                        playersHit++;
-                        if (chainPlayerTwo.onHorse()) {
-                            numberOfDismounts++;
-                        }
-                        chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
-                        hitCounter.add(chainPlayerTwo);
-
-                        numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
-                        for (int i = 0; i < numberOfHeals; i++) {
-                            healNearPlayers(wp, chainPlayerTwo);
-                        }
-
-                        if (pveUpgrade) {
-                            for (WarlordsEntity chainPlayerThree : PlayerFilter
-                                    .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
-                                    .aliveEnemiesOf(wp)
-                                    .excluding(nearPlayer, chainPlayerTwo)
-                                    .soulBindedFirst(wp)
-                            ) {
-                                playersHit++;
-                                if (chainPlayerTwo.onHorse()) {
-                                    numberOfDismounts++;
-                                }
-                                chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
-                                chainPlayerThree.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
-                                hitCounter.add(chainPlayerThree);
-
-                                numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerThree);
-                                for (int i = 0; i < numberOfHeals; i++) {
-                                    healNearPlayers(wp, chainPlayerThree);
-                                }
-
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                    break;
-                }
-                break;
+                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), 0);
             }
         }
         return hitCounter;
+    }
+
+    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
+        float bounceDamageReduction = Math.max(0, 1 - (bounceCount + 1) * .2f);
+        if (bounceCount >= additionalBounces || bounceDamageReduction == 0) {
+            return;
+        }
+        for (WarlordsEntity bounceTarget : PlayerFilter
+                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                .aliveEnemiesOf(wp)
+                .excluding(toExclude)
+                .soulBindedFirst(wp)
+        ) {
+            playersHit++;
+            if (bounceTarget.onHorse()) {
+                numberOfDismounts++;
+            }
+            chain(chainTarget.getLocation(), bounceTarget.getLocation());
+            bounceTarget.addDamageInstance(wp, name, minDamageHeal * bounceDamageReduction, maxDamageHeal * bounceDamageReduction, critChance, critMultiplier, false);
+            hitCounter.add(bounceTarget);
+
+            int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
+            for (int i = 0; i < numberOfHeals; i++) {
+                healNearPlayers(wp, bounceTarget);
+            }
+
+            toExclude.add(bounceTarget);
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + 1);
+
+            break;
+        }
     }
 
     @Override
@@ -218,13 +178,5 @@ public class SpiritLink extends AbstractChainBase {
 
     public void setDamageReductionDuration(double damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
-    }
-
-    public int getBounceRange() {
-        return bounceRange;
-    }
-
-    public void setBounceRange(int bounceRange) {
-        this.bounceRange = bounceRange;
     }
 }

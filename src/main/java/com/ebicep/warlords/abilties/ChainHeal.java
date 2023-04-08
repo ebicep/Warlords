@@ -19,11 +19,8 @@ import java.util.*;
 
 public class ChainHeal extends AbstractChainBase {
 
-    private int radius = 15;
-    private int bounceRange = 10;
-
     public ChainHeal() {
-        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175);
+        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);
     }
 
     @Override
@@ -82,30 +79,7 @@ public class ChainHeal extends AbstractChainBase {
                 chain(p.getLocation(), chainTarget.getLocation());
                 hitCounter.add(chainTarget);
 
-                for (WarlordsEntity bounceTarget : PlayerFilter
-                        .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
-                        .aliveTeammatesOf(wp)
-                        .excluding(wp, chainTarget)
-                ) {
-                    chain(chainTarget.getLocation(), bounceTarget.getLocation());
-                    bounceTarget.addHealingInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            false,
-                            false
-                    );
-
-                    if (pveUpgrade) {
-                        critStatsOnHit(bounceTarget);
-                    }
-
-                    hitCounter.add(bounceTarget);
-                    break;
-                }
+                additionalBounce(wp, hitCounter, chainTarget, new ArrayList<>(Arrays.asList(wp, chainTarget)), 0);
 
                 break;
             }
@@ -127,6 +101,45 @@ public class ChainHeal extends AbstractChainBase {
 
         wp.updateRedItem(player);
         wp.updateBlueItem(player);
+    }
+
+    @Override
+    protected ItemStack getChainItem() {
+        return new ItemStack(Material.RED_ROSE, 1, (short) 1);
+    }
+
+    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
+        if (bounceCount >= additionalBounces) {
+            return;
+        }
+        for (WarlordsEntity bounceTarget : PlayerFilter
+                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                .aliveTeammatesOf(wp)
+                .excluding(toExclude)
+        ) {
+            chain(chainTarget.getLocation(), bounceTarget.getLocation());
+            bounceTarget.addHealingInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    false,
+                    false
+            );
+
+            if (pveUpgrade) {
+                critStatsOnHit(bounceTarget);
+            }
+
+            hitCounter.add(bounceTarget);
+
+            toExclude.add(bounceTarget);
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + 1);
+
+            break;
+        }
     }
 
     private void critStatsOnHit(WarlordsEntity we) {
@@ -178,27 +191,6 @@ public class ChainHeal extends AbstractChainBase {
                 return currentCritMultiplier + 30;
             }
         });
-    }
-
-    @Override
-    protected ItemStack getChainItem() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 1);
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getBounceRange() {
-        return bounceRange;
-    }
-
-    public void setBounceRange(int bounceRange) {
-        this.bounceRange = bounceRange;
     }
 
 
