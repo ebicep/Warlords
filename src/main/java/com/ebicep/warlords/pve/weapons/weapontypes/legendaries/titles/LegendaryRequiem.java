@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -20,14 +20,12 @@ import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
@@ -37,7 +35,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
             .add(1, 4)
             .add(1, 5);
     public static final int SPAWN_LIMIT = 20;
-    public static final int COOLDOWN = 30;
+    public static final int COOLDOWN = 60;
+    public static final int COOLDOWN_INCREASE_PER_UPGRADE = -5;
 
     public LegendaryRequiem() {
     }
@@ -70,16 +69,24 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                    .aliveEnemiesOf(player)
                                    .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
-                                   .limit(Utils.generateRandomValueBetweenInclusive(2, 5))
+                                   .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
+                                   .limit(Utils.generateRandomValueBetweenInclusive(1, 3))
                                    .forEach(convertedEnemy -> {
                                        EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
                                        convertedEnemy.setTeam(Team.BLUE);
+                                       AbstractMob<?> mob = convertedEnemy.getMob();
+                                       EntityEquipment equipment = mob.getEe();
+                                       equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
+                                       mob.updateEquipment();
                                        //removing teammate mobs that are agroed on converted target
                                        PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                                           .aliveTeammatesOf(player)
-                                                          .filter(teammate -> Objects.equals(teammate.getMob().getTarget(), convertedEnemy.getEntity()))
+                                                          .filter(teammate -> {
+                                                              EntityLiving target = teammate.getMob().getTarget();
+                                                              return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
+                                                          })
                                                           .forEach(teammate -> teammate.getMob().removeTarget());
-                                       convertedEnemy.getMob().removeTarget();
+                                       mob.removeTarget();
                                    });
             }
 
@@ -99,21 +106,37 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }
+                HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     BasicZombie mob = new BasicZombie(player.getLocation());
                     EntityEquipment equipment = mob.getEe();
                     equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
                     mob.updateEquipment();
+                    spawnedMobs.add(mob);
                     pveOption.spawnNewMob(mob, Team.BLUE);
                 }
+                new GameRunnable(game) {
+
+                    @Override
+                    public void run() {
+                        spawnedMobs.forEach(mob -> {
+                            if (pveOption.getMobs().contains(mob)) {
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                            }
+                        });
+                        spawnedMobs.clear();
+                    }
+                }.runTaskLater(20 * 60);
             }
-        }.runTaskTimer(100, COOLDOWN * 20);
+        }.runTaskTimer(100, (COOLDOWN + (long) COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) * 20);
 
     }
 
     @Override
     public String getPassiveEffect() {
-        return "Every " + COOLDOWN + " seconds summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
+        return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(),
+                "s"
+        ) + " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
     }
 
     @Override
@@ -153,11 +176,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return null;
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"),
+                formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "s")
+        ));
     }
 
-    @Override
-    public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
-        return null;
-    }
 }
