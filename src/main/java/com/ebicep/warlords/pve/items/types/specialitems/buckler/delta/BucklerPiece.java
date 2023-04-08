@@ -18,7 +18,7 @@ public class BucklerPiece extends SpecialDeltaBuckler {
 
     @Override
     public String getBonus() {
-        return "Time Warp damages nearby enemies for 50% of the healing it gave.";
+        return "50% of the healing received from Time Warp is dealt as damage to nearby enemies.";
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BucklerPiece extends SpecialDeltaBuckler {
                 }
                 if (Objects.equals(event.getAbility(), "Time Warp")) {
                     float damageValue = event.getValue() * .5f;
-                    PlayerFilter.entitiesAround(warlordsPlayer.getLocation(), 5, 5, 5)
+                    PlayerFilter.entitiesAround(warlordsPlayer.getLocation(), 2, 2, 2)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .forEach(hit -> {
                                     hit.addDamageInstance(
