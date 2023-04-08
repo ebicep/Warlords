@@ -1,18 +1,15 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class BucklerPiece extends SpecialDeltaBuckler {
-
-    private static final HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
-        put(BasicStatPool.KB_RES, 50);
-    }};
 
     @Override
     public String getName() {
@@ -21,7 +18,7 @@ public class BucklerPiece extends SpecialDeltaBuckler {
 
     @Override
     public String getBonus() {
-        return "+5% Knockback Resistance.";
+        return "Time Warp damages nearby enemies for 50% of the healing it gave.";
     }
 
     @Override
@@ -36,12 +33,36 @@ public class BucklerPiece extends SpecialDeltaBuckler {
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+        warlordsPlayer.getGame().registerEvents(new Listener() {
 
+            @EventHandler
+            public void onDamageHealFinal(WarlordsDamageHealingFinalEvent event) {
+                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                    return;
+                }
+                if (event.isDamageInstance()) {
+                    return;
+                }
+                if (Objects.equals(event.getAbility(), "Time Warp")) {
+                    float damageValue = event.getValue();
+                    PlayerFilter.entitiesAround(warlordsPlayer.getLocation(), 5, 5, 5)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .forEach(hit -> {
+                                    hit.addDamageInstance(
+                                            warlordsPlayer,
+                                            "Time Warp",
+                                            damageValue,
+                                            damageValue,
+                                            0,
+                                            100,
+                                            false
+                                    );
+                                });
+                }
+            }
+
+        });
     }
 
-    @Override
-    public Map<StatPool, Integer> getBonusStats() {
-        return BONUS_STATS;
-    }
 
 }

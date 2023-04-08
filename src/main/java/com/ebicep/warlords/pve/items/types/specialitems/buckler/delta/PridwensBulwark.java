@@ -38,7 +38,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler {
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onDamageHeall(WarlordsDamageHealingEvent event) {
+            public void onDamageheal(WarlordsDamageHealingEvent event) {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }
