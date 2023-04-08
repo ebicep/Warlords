@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.AerialAegis;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.BucklerPiece;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.CrossNecklaceCharm;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.PridwensBulwark;
@@ -73,6 +74,7 @@ public enum SpecialItems {
     BUCKLER_PIECE(BucklerPiece::new),
     CROSS_NECKLACE_CHARM(CrossNecklaceCharm::new),
     PRIDWENS_BULWARK(PridwensBulwark::new),
+    AERIAL_AEGIS(AerialAegis::new),
 
     ;
 
