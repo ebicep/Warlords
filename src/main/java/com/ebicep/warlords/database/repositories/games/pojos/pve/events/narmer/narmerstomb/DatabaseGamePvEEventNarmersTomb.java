@@ -108,7 +108,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
         return new HashSet<>(players);
     }
 

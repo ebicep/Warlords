@@ -1,12 +1,91 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class OldTestCommand implements CommandExecutor {
+
+    private static double getWeight(float itemScore, ItemTier tier) {
+        ItemTier.WeightRange weightRange = tier.weightRange;
+        if (itemScore <= 10) {
+            return weightRange.getMax();
+        }
+        if (45 <= itemScore && itemScore <= 55) {
+            return weightRange.getNormal();
+        }
+        if (itemScore >= 90) {
+            return weightRange.getMin();
+        }
+        int weight = weightRange.getMax();
+        double midWeight = weightRange.getNormal();
+        // 10-mid
+        double bottomToMidIncrement = getBottomToMidIncrement(weightRange, midWeight);
+        // 10-mid
+        double midToTopIncrement = getMidToTopIncrement(weightRange, midWeight);
+        for (double weightCheck = 10; weightCheck < 45; weightCheck += midToTopIncrement) {
+            weight--;
+//            System.out.println("Weight: " + weight);
+//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + midToTopIncrement));
+            if (weightCheck <= itemScore && itemScore < weightCheck + midToTopIncrement) {
+                return weight;
+            }
+            if (weight < 0) {
+                return 100;
+            }
+        }
+        weight--;
+        for (double weightCheck = 55; weightCheck < 90; weightCheck += bottomToMidIncrement) {
+            weight--;
+//            System.out.println("Weight: " + weight);
+//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + bottomToMidIncrement));
+            if (weightCheck <= itemScore && itemScore < weightCheck + bottomToMidIncrement) {
+                return weight;
+            }
+            if (weight < 0) {
+                return 100;
+            }
+        }
+        return 100;
+    }
+
+    private static double getBottomToMidIncrement(ItemTier.WeightRange weightRange, double midWeight) {
+//        System.out.println("35 / (" + midWeight + " - " + weightRange.getMin() + " - 1)");
+//        System.out.println("35 / " + (midWeight - weightRange.getMin() - 1));
+        return 35d / (midWeight - weightRange.getMin() - 1);
+    }
+
+    private static double getMidToTopIncrement(ItemTier.WeightRange weightRange, double midWeight) {
+//        System.out.println("35 / (" + weightRange.getMax() + " - " + midWeight + " - 1)");
+//        System.out.println("35 / " + (weightRange.getMax() - midWeight - 1));
+        return 35d / (weightRange.getMax() - midWeight - 1);
+    }
+
+    private static void extracted(String collection) {
+        MongoCollection<Document> usersCollection = DatabaseManager.mongoClient
+                .getDatabase("Warlords")
+                .getCollection(collection);
+
+//        Bson filter = new Document("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvE");
+//        Bson update = new Document("$rename", new Document("_class", "com\\.ebicep\\.warlords\\.database\\.repositories\\.games\\.pojos\\.pve\\.wavedefense\\.DatabaseGamePvEWaveDefense"));
+        Bson filter = Filters.regex("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase");
+        Bson update = Updates.set("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense");
+
+        UpdateResult result = usersCollection.updateMany(filter, update);
+        long modifiedCount = result.getModifiedCount();
+        System.out.println("Modified " + modifiedCount + " documents in " + collection);
+    }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -25,8 +104,76 @@ public class OldTestCommand implements CommandExecutor {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
 //                }
 //            });
+            Player player = (Player) commandSender;
+//            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+//                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
+//                waveDefenseStats.setEasyStats(pveStats.getEasyStats());
+//                waveDefenseStats.setNormalStats(pveStats.getNormalStats());
+//                waveDefenseStats.setHardStats(pveStats.getHardStats());
+//                waveDefenseStats.setEndlessStats(pveStats.getEndlessStats());
+//                waveDefenseStats.setMage(pveStats.getMage());
+//                waveDefenseStats.setPaladin(pveStats.getPaladin());
+//                waveDefenseStats.setWarrior(pveStats.getWarrior());
+//                waveDefenseStats.setRogue(pveStats.getRogue());
+//                waveDefenseStats.setShaman(pveStats.getShaman());
+//                waveDefenseStats.setPlayerCountStats(pveStats.getPlayerCountStats());
+//                waveDefenseStats.merge(pveStats);
+//            });
 
         }
+
+        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
+            int wins = databasePlayer.getPveStats().getWins();
+            int wdWins = databasePlayer.getPveStats().getWaveDefenseStats().getWins();
+            if (wins != wdWins) {
+                System.out.println(databasePlayer.getName() + " : " + wins + " - " + wdWins + " - LIFETIME");
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                    if (activeCollection != PlayersCollections.LIFETIME) {
+                        for (DatabasePlayer dp : DatabaseManager.CACHED_PLAYERS.get(activeCollection).values()) {
+                            int wins2 = dp.getPveStats().getWins();
+                            int wdWins2 = dp.getPveStats().getWaveDefenseStats().getWins();
+                            if (wins2 != wdWins2) {
+                                System.out.println(dp.getName() + " : " + wins2 + " - " + wdWins2 + " - " + activeCollection.name());
+                            }
+                        }
+                    }
+                }
+                System.out.println("-------");
+            }
+        }
+
+//        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+//            for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(activeCollection).values()) {
+//                System.out.println("reformatting : " + databasePlayer.getName());
+//                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
+//                waveDefenseStats.setEasyStats(pveStats.getEasyStats());
+//                waveDefenseStats.setNormalStats(pveStats.getNormalStats());
+//                waveDefenseStats.setHardStats(pveStats.getHardStats());
+//                waveDefenseStats.setEndlessStats(pveStats.getEndlessStats());
+//                waveDefenseStats.setMage(pveStats.getMage());
+//                waveDefenseStats.setPaladin(pveStats.getPaladin());
+//                waveDefenseStats.setWarrior(pveStats.getWarrior());
+//                waveDefenseStats.setRogue(pveStats.getRogue());
+//                waveDefenseStats.setShaman(pveStats.getShaman());
+//                waveDefenseStats.setPlayerCountStats(pveStats.getPlayerCountStats());
+//                waveDefenseStats.merge(pveStats);
+//                Warlords.newChain()
+//                        .async(() -> {
+//                            System.out.println("updating : " + databasePlayer.getName());
+//                            DatabaseManager.playerService.update(databasePlayer, activeCollection);
+//                        })
+//                        .execute();
+//            }
+//
+//        }
+
+
+//        extracted("Games_Information");
+//        extracted("Games_Information_PvE");
+        System.out.println("DONE");
+
 
 //        for (Mobs value : Mobs.values()) {
 //            System.out.println(value.createMob.apply(SPAWN_POINT).getName());
@@ -134,61 +281,6 @@ public class OldTestCommand implements CommandExecutor {
 
 
         return true;
-    }
-
-    private static double getWeight(float itemScore, ItemTier tier) {
-        ItemTier.WeightRange weightRange = tier.weightRange;
-        if (itemScore <= 10) {
-            return weightRange.getMax();
-        }
-        if (45 <= itemScore && itemScore <= 55) {
-            return weightRange.getNormal();
-        }
-        if (itemScore >= 90) {
-            return weightRange.getMin();
-        }
-        int weight = weightRange.getMax();
-        double midWeight = weightRange.getNormal();
-        // 10-mid
-        double bottomToMidIncrement = getBottomToMidIncrement(weightRange, midWeight);
-        // 10-mid
-        double midToTopIncrement = getMidToTopIncrement(weightRange, midWeight);
-        for (double weightCheck = 10; weightCheck < 45; weightCheck += midToTopIncrement) {
-            weight--;
-//            System.out.println("Weight: " + weight);
-//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + midToTopIncrement));
-            if (weightCheck <= itemScore && itemScore < weightCheck + midToTopIncrement) {
-                return weight;
-            }
-            if (weight < 0) {
-                return 100;
-            }
-        }
-        weight--;
-        for (double weightCheck = 55; weightCheck < 90; weightCheck += bottomToMidIncrement) {
-            weight--;
-//            System.out.println("Weight: " + weight);
-//            System.out.println("WeightCheck: " + weightCheck + " - " + (weightCheck + bottomToMidIncrement));
-            if (weightCheck <= itemScore && itemScore < weightCheck + bottomToMidIncrement) {
-                return weight;
-            }
-            if (weight < 0) {
-                return 100;
-            }
-        }
-        return 100;
-    }
-
-    private static double getBottomToMidIncrement(ItemTier.WeightRange weightRange, double midWeight) {
-//        System.out.println("35 / (" + midWeight + " - " + weightRange.getMin() + " - 1)");
-//        System.out.println("35 / " + (midWeight - weightRange.getMin() - 1));
-        return 35d / (midWeight - weightRange.getMin() - 1);
-    }
-
-    private static double getMidToTopIncrement(ItemTier.WeightRange weightRange, double midWeight) {
-//        System.out.println("35 / (" + weightRange.getMax() + " - " + midWeight + " - 1)");
-//        System.out.println("35 / " + (weightRange.getMax() - midWeight - 1));
-        return 35d / (weightRange.getMax() - midWeight - 1);
     }
 
 

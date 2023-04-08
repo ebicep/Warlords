@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -16,14 +17,16 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Document(collection = "Games_Information_Wave_Defense")
 public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements WavesCleared {
 
     @Field("waves_cleared")
     private int wavesCleared;
-
+    protected List<DatabaseGamePlayerPvEWaveDefense> players = new ArrayList<>();
     public DatabaseGamePvEWaveDefense() {
 
     }
@@ -38,6 +41,12 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, waveDefenseOption)));
             }
         }
+        this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerPvEBase> getBasePlayers() {
+        return new HashSet<>(players);
     }
 
     @Override

@@ -30,7 +30,6 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     protected int timeElapsed;
     @Field("total_mobs_killed")
     protected int totalMobsKilled;
-    protected List<DatabaseGamePlayerPvEBase> players = new ArrayList<>();
 
     public DatabaseGamePvEBase() {
 
@@ -46,12 +45,11 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);
-        this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
     }
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.forEach(databaseGamePlayerPvE -> {
+        getBasePlayers().forEach(databaseGamePlayerPvE -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvE,
                     multiplier
@@ -61,9 +59,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
-        return new HashSet<>(players);
-    }
+    public abstract Set<DatabaseGamePlayerPvEBase> getBasePlayers();
 
     @Override
     public void appendLastGameStats(Hologram hologram) {
@@ -88,7 +84,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 
-        List<DatabaseGamePlayerPvEBase> allPlayers = players;
+        Set<DatabaseGamePlayerPvEBase> allPlayers = getBasePlayers();
         List<String> topDHPPerGamePlayers = new ArrayList<>();
 
 
@@ -131,7 +127,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
         return Arrays.asList(
                 ChatColor.GRAY + "Time Elapsed: " + ChatColor.YELLOW + Utils.formatTimeLeft(timeElapsed),
                 ChatColor.GRAY + "Total Mobs Killed: " + ChatColor.YELLOW + totalMobsKilled,
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.size()
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + getBasePlayers().size()
         );
     }
 
@@ -147,7 +143,4 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
         return totalMobsKilled;
     }
 
-    public List<DatabaseGamePlayerPvEBase> getPlayers() {
-        return players;
-    }
 }

@@ -3,7 +3,6 @@ package com.ebicep.warlords.database;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
-import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
@@ -37,8 +36,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
 
 public class DatabaseManager {
@@ -142,16 +139,16 @@ public class DatabaseManager {
         //Loading last 5 games
         ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
-        Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(15))
-                .syncLast((games) -> {
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
-                    previousGames.addAll(games);
-                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
-                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
-                })
-                .execute();
+//        Warlords.newChain()
+//                .asyncFirst(() -> gameService.getLastGames(15))
+//                .syncLast((games) -> {
+//                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
+//                    previousGames.addAll(games);
+//                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
+//                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+//                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
+//                })
+//                .execute();
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {

@@ -29,19 +29,19 @@ public enum PlayersCollections {
             return ACTIVE_COLLECTIONS.contains(this);
         }
     },
-    //    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6") {
+//        SEASON_6("Season 6", "Players_Information_Season_6") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
 //            return ACTIVE_COLLECTIONS.contains(this);
 //        }
 //    },
-//    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5") {
+//    SEASON_5("Season 5", "Players_Information_Season_5") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
 //            return ACTIVE_COLLECTIONS.contains(this);
 //        }
 //    },
-//    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4") {
+//    SEASON_4("Season 4", "Players_Information_Season_4") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
 //            return ACTIVE_COLLECTIONS.contains(this);

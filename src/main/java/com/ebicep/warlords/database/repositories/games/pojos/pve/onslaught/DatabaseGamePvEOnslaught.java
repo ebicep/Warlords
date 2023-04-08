@@ -4,6 +4,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
@@ -13,25 +14,30 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "Games_Information_Onslaught")
 public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
+
+    protected List<DatabaseGamePlayerPvEOnslaught> players = new ArrayList<>();
 
     public DatabaseGamePvEOnslaught() {
 
     }
 
     public DatabaseGamePvEOnslaught(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, gameWinEvent, counted);
         //this.difficulty =
+        super(game, gameWinEvent, counted);
         for (Option option : game.getOptions()) {
             if (option instanceof OnslaughtOption) {
                 OnslaughtOption pveonslaughtOption = (OnslaughtOption) option;
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEOnslaught(warlordsPlayer, pveonslaughtOption)));
             }
         }
+        this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
     }
 
     @Override
@@ -46,7 +52,7 @@ public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEBase> getBasePlayers() {
         return new HashSet<>(players);
     }
 

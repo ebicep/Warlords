@@ -8,6 +8,9 @@ import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.pve.SkullID;
+import com.ebicep.warlords.util.pve.SkullUtils;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,7 +18,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings("unchecked")
 public enum ItemType {
 
-    GAUNTLET("Gauntlet"
+    GAUNTLET("Gauntlet",
+            SkullUtils.getSkullFrom(SkullID.IRON_FIST)
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -27,7 +31,8 @@ public enum ItemType {
             return (R[]) ItemGauntletModifier.Curses.VALUES;
         }
     },
-    TOME("Tome"
+    TOME("Tome",
+            SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_BOOK)
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -39,7 +44,8 @@ public enum ItemType {
             return (R[]) ItemTomeModifier.Curses.VALUES;
         }
     },
-    BUCKLER("Buckler"
+    BUCKLER("Buckler",
+            SkullUtils.getSkullFrom(SkullID.GOOGLE_HOME_MINI)
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -56,13 +62,15 @@ public enum ItemType {
 
     public static final ItemType[] VALUES = values();
     public final String name;
+    public final ItemStack skull;
 
     public static ItemType getRandom() {
         return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
     }
 
-    ItemType(String name) {
+    ItemType(String name, ItemStack skull) {
         this.name = name;
+        this.skull = skull;
     }
 
     public AbstractItem createBasic(ItemTier tier) {

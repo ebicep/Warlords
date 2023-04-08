@@ -11,12 +11,6 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.UpdateResult;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -82,18 +76,7 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
-        MongoCollection<Document> usersCollection = DatabaseManager.mongoClient
-                .getDatabase("Warlords")
-                .getCollection("Games_Information");
 
-//        Bson filter = new Document("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvE");
-//        Bson update = new Document("$rename", new Document("_class", "com\\.ebicep\\.warlords\\.database\\.repositories\\.games\\.pojos\\.pve\\.wavedefense\\.DatabaseGamePvEWaveDefense"));
-        Bson filter = Filters.regex("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvE");
-        Bson update = Updates.set("_class", "com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense");
-
-        UpdateResult result = usersCollection.updateMany(filter, update);
-        long modifiedCount = result.getModifiedCount();
-        System.out.println("Modified " + modifiedCount + " documents");
 /*
         Set<DatabasePlayer> databasePlayers = new HashSet<>(DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values());
         for (DatabasePlayer databasePlayer : databasePlayers) {

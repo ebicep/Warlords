@@ -189,14 +189,31 @@ public enum SkullID {
     CAVE_SPIDER(
             "39173a7a-c957-4ec1-ac1a-43e5a64983df",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDE2NDVkZmQ3N2QwOTkyMzEwN2IzNDk2ZTk0ZWViNWMzMDMyOWY5N2VmYzk2ZWQ3NmUyMjZlOTgyMjQifX19"
-    );
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/49967-iron-fist
+    IRON_FIST(
+            "a83132fb-de57-486f-882b-e8cae690ec4d",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2FlYWUwNmZiMmMzYzljYjhlODQzMGNjZGUxNTgzYzU2ZGE2M2I3ZDY4MDgxYzVjZmZiMDg1NzY2NmRlM2ZkYSJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/37586-enchantment-book
+    ENCHANTMENT_BOOK(
+            "6ac73df3-4fb7-4b7d-83b9-8c7d1f0f814a",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2RjOTg1YTdhNjhjNTc0ZjY4M2MwYjg1OTUyMWZlYjNmYzNkMmZmYTA1ZmEwOWRiMGJhZTQ0YjhhYzI5YjM4NSJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/41807-google-home-mini-white
+    GOOGLE_HOME_MINI(
+            "e487ec23-5f53-4668-8051-13c3413edb5f",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTU5OWQ2YmJmNGZhMTg3MDk2ZjZlMDliNzZlZjZiMDc1M2NlYTMyOTBlOWQzZTZjY2E3MDdkNGYwODdlYjc1In19fQ"
+    ),
+
+
+    ;
 
     private final String id;
     private final String textureId;
 
     /**
-     *
-     * @param id uuid of the given custom skull.
+     * @param id        uuid of the given custom skull.
      * @param textureId texture ID encoded in Base64, cannot be null.
      */
     SkullID(String id, @Nonnull String textureId) {

@@ -112,7 +112,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
         return new HashSet<>(players);
     }
 

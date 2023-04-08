@@ -108,7 +108,7 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
         return new HashSet<>(players);
     }
 

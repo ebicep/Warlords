@@ -15,8 +15,6 @@ import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -54,7 +52,7 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -108,19 +106,19 @@ public class StatsLeaderboardManager {
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
                                     }
                                 }
-                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-                                boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
-                                boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
-                                EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
-                                                                                                                                       .get(currentGameEvent.getStartDateSecond());
-                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
-                                if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
-                                    continue;
-                                }
-                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
-                                    continue;
-                                }
+//                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+//                                DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+//                                boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
+//                                boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
+//                                EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
+//                                                                                                                                       .get(currentGameEvent.getStartDateSecond());
+//                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
+//                                if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
+//                                    continue;
+//                                }
+//                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
+//                                    continue;
+//                                }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
                             }
                             resetLeaderboards(value, true);

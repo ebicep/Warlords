@@ -1,12 +1,12 @@
-package com.ebicep.warlords.database.repositories.player.pojos.pve;
+package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
@@ -16,22 +16,22 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseDatabaseStatInformation implements DatabasePlayer {
 
-    private DatabaseMagePvE mage = new DatabaseMagePvE();
-    private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
-    private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
-    private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
-    private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
+    private DatabaseMagePvEWaveDefense mage = new DatabaseMagePvEWaveDefense();
+    private DatabaseWarriorPvEWaveDefense warrior = new DatabaseWarriorPvEWaveDefense();
+    private DatabasePaladinPvEWaveDefense paladin = new DatabasePaladinPvEWaveDefense();
+    private DatabaseShamanPvEWaveDefense shaman = new DatabaseShamanPvEWaveDefense();
+    private DatabaseRoguePvEWaveDefense rogue = new DatabaseRoguePvEWaveDefense();
     @Field("player_count_stats")
-    private Map<Integer, DatabasePlayerPvEPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
-        put(1, new DatabasePlayerPvEPlayerCountStats());
-        put(2, new DatabasePlayerPvEPlayerCountStats());
-        put(3, new DatabasePlayerPvEPlayerCountStats());
-        put(4, new DatabasePlayerPvEPlayerCountStats());
+    private Map<Integer, DatabasePlayerPvEWaveDefensePlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
+        put(1, new DatabasePlayerPvEWaveDefensePlayerCountStats());
+        put(2, new DatabasePlayerPvEWaveDefensePlayerCountStats());
+        put(3, new DatabasePlayerPvEWaveDefensePlayerCountStats());
+        put(4, new DatabasePlayerPvEWaveDefensePlayerCountStats());
     }};
 
-    public DatabasePlayerPvEDifficultyStats() {
+    public DatabasePlayerPvEWaveDefenseDifficultyStats() {
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
 
         super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
@@ -56,7 +56,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();
-        DatabasePlayerPvEPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
+        DatabasePlayerPvEWaveDefensePlayerCountStats countStats = this.getPlayerCountStats(playerCount);
         if (countStats != null) {
             countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
@@ -65,7 +65,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
     }
 
     @Override
-    public DatabaseBasePvE getSpec(Specializations specializations) {
+    public DatabaseBasePvEWaveDefense getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -102,7 +102,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
     }
 
     @Override
-    public DatabaseBasePvE getClass(Classes classes) {
+    public DatabaseBasePvEWaveDefense getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -119,66 +119,42 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
     }
 
     @Override
-    public DatabaseBasePvE[] getClasses() {
-        return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBasePvEWaveDefense[] getClasses() {
+        return new DatabaseBasePvEWaveDefense[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    public DatabaseMagePvE getMage() {
-        return mage;
-    }
-
-    public DatabaseWarriorPvE getWarrior() {
-        return warrior;
-    }
-
-    public DatabasePaladinPvE getPaladin() {
-        return paladin;
-    }
-
-    public DatabaseShamanPvE getShaman() {
-        return shaman;
-    }
-
-    public DatabaseRoguePvE getRogue() {
-        return rogue;
-    }
-
-    public Map<Integer, DatabasePlayerPvEPlayerCountStats> getPlayerCountStats() {
-        return playerCountStats;
-    }
-
-    public DatabasePlayerPvEPlayerCountStats getPlayerCountStats(int playerCount) {
+    public DatabasePlayerPvEWaveDefensePlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;
         }
-        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEPlayerCountStats());
+        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEWaveDefensePlayerCountStats());
     }
 
     public float getClearRate() {
         return plays == 0 ? 0 : (float) wins / plays;
     }
 
-    public void setMage(DatabaseMagePvE mage) {
-        this.mage = mage;
+    public DatabaseMagePvEWaveDefense getMage() {
+        return mage;
     }
 
-    public void setWarrior(DatabaseWarriorPvE warrior) {
-        this.warrior = warrior;
+    public DatabaseWarriorPvEWaveDefense getWarrior() {
+        return warrior;
     }
 
-    public void setPaladin(DatabasePaladinPvE paladin) {
-        this.paladin = paladin;
+    public DatabasePaladinPvEWaveDefense getPaladin() {
+        return paladin;
     }
 
-    public void setShaman(DatabaseShamanPvE shaman) {
-        this.shaman = shaman;
+    public DatabaseShamanPvEWaveDefense getShaman() {
+        return shaman;
     }
 
-    public void setRogue(DatabaseRoguePvE rogue) {
-        this.rogue = rogue;
+    public DatabaseRoguePvEWaveDefense getRogue() {
+        return rogue;
     }
 
-    public void setPlayerCountStats(Map<Integer, DatabasePlayerPvEPlayerCountStats> playerCountStats) {
-        this.playerCountStats = playerCountStats;
+    public Map<Integer, DatabasePlayerPvEWaveDefensePlayerCountStats> getPlayerCountStats() {
+        return playerCountStats;
     }
 }

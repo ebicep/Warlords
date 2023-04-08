@@ -104,14 +104,14 @@ public enum Quests {
         public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             if (pveOption instanceof WaveDefenseOption) {
                 WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
-                return databasePlayer.getPveStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
+                return databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
             }
             return false;
         }
 
         @Override
         public String getProgress(DatabasePlayer databasePlayer) {
-            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getTotalWavesCleared() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
         }
 
         @Override

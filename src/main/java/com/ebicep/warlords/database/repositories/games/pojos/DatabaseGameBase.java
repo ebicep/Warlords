@@ -443,7 +443,7 @@ public abstract class DatabaseGameBase {
         this.counted = counted;
     }
 
-    public abstract Set<DatabaseGamePlayerBase> getBasePlayers();
+    public abstract Set<? extends DatabaseGamePlayerBase> getBasePlayers();
 
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 
@@ -482,7 +482,7 @@ public abstract class DatabaseGameBase {
         //last game stats
         appendLastGameStats(lastGameStats);
 
-        Set<DatabaseGamePlayerBase> allPlayers = getBasePlayers();
+        Set<? extends DatabaseGamePlayerBase> allPlayers = getBasePlayers();
         HashMap<DatabaseGamePlayerBase, ChatColor> playerColor = new HashMap<>();
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);

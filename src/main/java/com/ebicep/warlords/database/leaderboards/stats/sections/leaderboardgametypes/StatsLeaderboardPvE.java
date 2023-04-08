@@ -3,31 +3,26 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
 
-public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> {
+public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEWaveDefenseDifficultyStats> {
 
-    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Modes", "All"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getEasyStats(), "Easy Mode", "Easy"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getNormalStats(), "Normal Mode", "Normal"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getHardStats(), "Hard Mode", "Hard"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getEndlessStats(), "Endless Mode", "Endless"));
+    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats>> CATEGORIES = new ArrayList<>() {{
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats(), "All Modes", "All"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEasyStats(), "Easy Mode", "Easy"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getNormalStats(), "Normal Mode", "Normal"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getHardStats(), "Hard Mode", "Hard"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEndlessStats(), "Endless Mode", "Endless"));
     }};
 
     public StatsLeaderboardPvE() {
@@ -40,7 +35,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
         statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
                 CENTER_BOARD_1,
@@ -89,8 +84,9 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                         .apply(databasePlayer)
                         .getHighestWaveCleared())
         ));
+        /*
         statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", SPAWN_POINT,
-                databasePlayer -> ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries().stream()
+                databasePlayer -> ((DatabasePlayerPvEW) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries().stream()
                         .filter(masterworksFairEntry -> masterworksFairEntry.getPlacement() == 1)
                         .count(),
                 databasePlayer -> NumberFormat.addCommaAndRound(((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
@@ -177,14 +173,16 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
             ));
         }
 
+         */
+
         for (Classes value : Classes.VALUES) {
             statsLeaderboards.add(new StatsLeaderboard(value.name + " Level",
                     SPAWN_POINT,
                     databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClass(value).getLevel(),
                     databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
-                            .apply(databasePlayer)
-                            .getClass(value)
-                            .getLevel()),
+                                                                                            .apply(databasePlayer)
+                                                                                            .getClass(value)
+                                                                                            .getLevel()),
                     true
             ));
             statsLeaderboards.add(new StatsLeaderboard(value.name + " Kills",

@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
@@ -107,7 +106,7 @@ public abstract class AbstractItem {
     }
 
     protected ItemBuilder getBaseItemBuilder() {
-        return new ItemBuilder(Material.SKULL_ITEM)
+        return new ItemBuilder(type.skull)
                 .name(getItemName())
                 .lore(
                         ChatColor.GRAY + "Tier: " + tier.getColoredName(),

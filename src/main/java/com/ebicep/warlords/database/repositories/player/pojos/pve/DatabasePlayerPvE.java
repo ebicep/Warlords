@@ -11,13 +11,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
 import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
@@ -27,7 +28,6 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -47,7 +47,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -55,18 +54,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
 
-    //DIFFICULTY STATS
-    @Field("easy_stats")
-    private DatabasePlayerPvEDifficultyStats easyStats = new DatabasePlayerPvEDifficultyStats();
-    @Field("normal_stats")
-    private DatabasePlayerPvEDifficultyStats normalStats = new DatabasePlayerPvEDifficultyStats();
-    @Field("hard_stats")
-    private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
-    @Field("endless_stats")
-    private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
-    //TODO MOVE ALL ABOVE
     @Field("wave_defense_stats")
-    private DatabasePlayerPvEDifficultyStats waveDefenseStats = new DatabasePlayerPvEDifficultyStats();
+    private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
     @Field("onslaught_stats")
     private DatabasePlayerOnslaughtStats onslaughtStats = new DatabasePlayerOnslaughtStats();
     //EVENTS
@@ -219,14 +208,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained() * multiplier);
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-
-        //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-
-        //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         //UPDATE GAME MODE STATS
         if (databaseGame instanceof DatabaseGamePvEEvent) {
             assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
@@ -237,13 +219,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
             );
         } else {
             if (GameMode.isWaveDefense(gameMode)) {
-                super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-                PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvEWaveDefense) databaseGame).getDifficulty());
-                if (difficultyStats != null) {
-                    difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                } else {
-                    ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
-                }
+                waveDefenseStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             } else if (gameMode == GameMode.ONSLAUGHT) {
                 onslaughtStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             }
@@ -324,38 +300,24 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
         }
     }
 
-    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
-        switch (difficultyIndex) {
-            case EASY:
-                return easyStats;
-            case NORMAL:
-                return normalStats;
-            case HARD:
-                return hardStats;
-            case ENDLESS:
-                return endlessStats;
-        }
-        return null;
-    }
-
     public void subtractCurrency(Currencies currency, Long amount) {
         this.addCurrency(currency, -amount);
     }
 
-    public DatabasePlayerPvEDifficultyStats getEasyStats() {
-        return easyStats;
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getEasyStats() {
+        return waveDefenseStats.getEasyStats();
     }
 
-    public DatabasePlayerPvEDifficultyStats getNormalStats() {
-        return normalStats;
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getNormalStats() {
+        return waveDefenseStats.getNormalStats();
     }
 
-    public DatabasePlayerPvEDifficultyStats getHardStats() {
-        return hardStats;
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getHardStats() {
+        return waveDefenseStats.getHardStats();
     }
 
-    public DatabasePlayerPvEDifficultyStats getEndlessStats() {
-        return endlessStats;
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getEndlessStats() {
+        return waveDefenseStats.getEndlessStats();
     }
 
     public List<AbstractWeapon> getWeaponInventory() {
@@ -461,5 +423,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public Map<String, Long> getIllusionVendorRewardsPurchased() {
         return illusionVendorRewardsPurchased;
+    }
+
+    public DatabasePlayerWaveDefenseStats getWaveDefenseStats() {
+        return waveDefenseStats;
     }
 }
