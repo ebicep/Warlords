@@ -29,7 +29,7 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
         addStatPoolAndBlessing(itemBuilder);
         itemBuilder.addLore(
                 "",
-                ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ""),
+                ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":"),
                 WordWrap.wrapWithNewline(ChatColor.GRAY + getBonus(), 160)
         );
         addItemScoreAndWeight(itemBuilder);

@@ -27,7 +27,7 @@ public abstract class AbstractFixedItem extends AbstractItem {
             FixedItemAppliesToPlayer bonus = (FixedItemAppliesToPlayer) this;
             itemBuilder.addLore(
                     "",
-                    ChatColor.GREEN + bonus.getEffect(),
+                    ChatColor.GREEN + bonus.getEffect() + ":",
                     WordWrap.wrapWithNewline(ChatColor.GRAY + bonus.getEffectDescription(), 160)
             );
         }
