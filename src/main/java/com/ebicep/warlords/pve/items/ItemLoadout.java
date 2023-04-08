@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -38,12 +39,22 @@ public class ItemLoadout {
         int weight = 0;
 
         List<AbstractItem> actualItems = getActualItems(itemsManager);
+        List<Integer> itemWeights = new ArrayList<>();
         int weightModifier = 0;
+        boolean hasHandsOfTheHolyCorpse = false;
         for (AbstractItem actualItem : actualItems) {
             weight += actualItem.getWeight();
+            itemWeights.add(actualItem.getWeight());
             if (actualItem.getType() == ItemType.BUCKLER) {
                 weightModifier += actualItem.getModifierCalculated();
             }
+            if (actualItem instanceof HandsOfTheHolyCorpse) {
+                hasHandsOfTheHolyCorpse = true;
+            }
+        }
+        if (hasHandsOfTheHolyCorpse && itemWeights.size() > 1) {
+            itemWeights.sort(Comparator.reverseOrder());
+            weight -= itemWeights.get(1);
         }
 
         return (int) (weight * (1 - weightModifier / 100f));

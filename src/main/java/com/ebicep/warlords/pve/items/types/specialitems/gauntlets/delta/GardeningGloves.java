@@ -3,13 +3,14 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class GardeningGloves extends SpecialDeltaGauntlet {
+public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
     @Override
     public String getName() {

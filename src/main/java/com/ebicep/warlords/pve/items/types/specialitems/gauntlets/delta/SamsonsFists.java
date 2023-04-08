@@ -5,13 +5,14 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
 
-public class SamsonsFists extends SpecialDeltaGauntlet {
+public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
     @Override
     public Classes getClasses() {
         return Classes.PALADIN;

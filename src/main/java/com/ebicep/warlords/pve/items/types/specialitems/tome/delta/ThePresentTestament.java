@@ -36,7 +36,6 @@ public class ThePresentTestament extends SpecialDeltaTome {
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
-
             @EventHandler
             public void onDamageheal(WarlordsDamageHealingEvent event) {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {

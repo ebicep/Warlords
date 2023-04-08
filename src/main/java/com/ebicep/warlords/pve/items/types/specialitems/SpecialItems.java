@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.LilithsClaws;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
@@ -75,6 +76,7 @@ public enum SpecialItems {
     AERIAL_AEGIS(AerialAegis::new),
     SHIELD_OF_SNATCHING(ShieldOfSnatching::new),
     LILITHS_CLAWS(LilithsClaws::new),
+    HANDS_OF_THE_HOLY_CORPSE(HandsOfTheHolyCorpse::new),
 
     ;
 

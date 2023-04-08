@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +13,7 @@ import org.bukkit.event.Listener;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SoothsayersPalms extends SpecialDeltaGauntlet {
+public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
     @Override
     public String getName() {
