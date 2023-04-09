@@ -58,9 +58,20 @@ public class ItemEquipMenu {
         PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer));
         ItemSearchMenu.PlayerItemMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
 
+        List<UUID> equippedItems = databasePlayer.getPveStats()
+                                                 .getItemsManager()
+                                                 .getLoadouts()
+                                                 .stream()
+                                                 .map(ItemLoadout::getItems)
+                                                 .flatMap(Collection::stream)
+                                                 .collect(Collectors.toList());
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {
+                    if (equippedItems.contains(i.getUUID())) {
+                        player.sendMessage(ChatColor.RED + "You cannot scrap an equipped item!");
+                        return;
+                    }
                     Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
                     Menu.openConfirmationMenu(player,
                             "Confirm Scrap",
