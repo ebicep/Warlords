@@ -16,10 +16,8 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -99,8 +97,7 @@ public class ItemSearchMenu extends Menu {
                 AbstractItem item = itemInventory.get(itemNumber);
                 ItemBuilder itemBuilder = editItem.apply(item.generateItemBuilder());
                 if (equippedItems.contains(item.getUUID())) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                    itemBuilder.addLore("", ChatColor.AQUA + "EQUIPPED");
                 }
                 setItem(x, y,
                         itemBuilder.get(),
