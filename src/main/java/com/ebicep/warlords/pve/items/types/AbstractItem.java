@@ -207,7 +207,7 @@ public abstract class AbstractItem {
         if (statPoolValues == null) {
             statPoolValues = new HashMap<>();
             statPoolDistribution.forEach((stat, distribution) -> {
-                ItemTier.StatRange statRange = BasicStatPool.STAT_RANGES.get(stat);
+                BasicStatPool.StatRange statRange = BasicStatPool.STAT_RANGES.get(stat);
                 double tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));

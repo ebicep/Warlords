@@ -124,21 +124,21 @@ public enum BasicStatPool implements StatPool {
     ;
 
     public static final BasicStatPool[] VALUES = values();
-    public static final HashMap<BasicStatPool, ItemTier.StatRange> STAT_RANGES = new HashMap<>() {{
-        put(HP, new ItemTier.StatRange(75, 450));
-        put(MAX_ENERGY, new ItemTier.StatRange(10, 30));
-        put(EPH, new ItemTier.StatRange(2, 10));
-        put(SPEED, new ItemTier.StatRange(2, 10));
+    public static final HashMap<BasicStatPool, StatRange> STAT_RANGES = new HashMap<>() {{
+        put(HP, new StatRange(75, 450));
+        put(MAX_ENERGY, new StatRange(10, 30));
+        put(EPH, new StatRange(1, 5));
+        put(SPEED, new StatRange(2, 10));
 
-        put(DAMAGE, new ItemTier.StatRange(5, 25));
-        put(HEALING, new ItemTier.StatRange(5, 15));
-        put(CRIT_CHANCE, new ItemTier.StatRange(2, 10));
-        put(CRIT_MULTI, new ItemTier.StatRange(5, 25));
+        put(DAMAGE, new StatRange(2, 12));
+        put(HEALING, new StatRange(5, 15));
+        put(CRIT_CHANCE, new StatRange(1, 5));
+        put(CRIT_MULTI, new StatRange(2, 12));
 
-        put(AGGRO_PRIO, new ItemTier.StatRange(3, 15));
-        put(THORNS, new ItemTier.StatRange(3, 15));
-        put(KB_RES, new ItemTier.StatRange(3, 15));
-        put(REGEN_TIMER, new ItemTier.StatRange(5, 45));
+        put(AGGRO_PRIO, new StatRange(3, 15));
+        put(THORNS, new StatRange(3, 15));
+        put(KB_RES, new StatRange(3, 15));
+        put(REGEN_TIMER, new StatRange(5, 45));
     }};
     public final String name;
 
@@ -160,5 +160,23 @@ public enum BasicStatPool implements StatPool {
     }
 
 
+    public static class StatRange {
 
+        private final int min;
+        private final int max;
+
+        public StatRange(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public int getMax() {
+            return max;
+        }
+
+    }
 }
