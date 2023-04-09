@@ -328,6 +328,7 @@ public class DatabaseManager {
 
     public static void updateWeeklyBlessings(WeeklyBlessings weeklyBlessings) {
         Warlords.newChain()
-                .async(() -> weeklyBlessingsService.update(weeklyBlessings));
+                .async(() -> weeklyBlessingsService.update(weeklyBlessings))
+                .execute();
     }
 }
