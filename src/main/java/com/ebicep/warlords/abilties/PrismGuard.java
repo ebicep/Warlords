@@ -85,6 +85,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
         Set<WarlordsEntity> playersHit = new HashSet<>();
         AtomicInteger hits = new AtomicInteger(0);
         PrismGuard tempPrismGuard = new PrismGuard();
+        wp.getCooldownManager().removeCooldown(PrismGuard.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",
@@ -134,7 +135,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
                             String s = wp == entity ? "Your " : wp.getName() + "'s ";
                             entity.sendMessage(
                                     WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
-                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + tickDuration + " §7seconds!"
+                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + (tickDuration / 20f) + " §7seconds!"
                             );
                             entity.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                     "Prism Guard",
