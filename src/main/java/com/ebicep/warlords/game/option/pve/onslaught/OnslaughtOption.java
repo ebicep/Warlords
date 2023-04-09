@@ -434,7 +434,7 @@ public class OnslaughtOption implements Option, PveOption {
         // Flag check whether mob is a boss.
         boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
         // Reduce base scale by 50 for each player after 2 or more players in game instance.
-        double modifiedScale = scale - (playerCount > 1 ? (50 * playerCount) : 0);
+        double modifiedScale = scale - (playerCount > 1 ? (100 * playerCount) : 0);
         // Divide scale based on game time.
         double modifier = (game.getState().getTicksElapsed() / 1000f) / modifiedScale + 1;
 

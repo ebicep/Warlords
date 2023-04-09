@@ -3530,6 +3530,7 @@ public enum GameMap {
                             .add(0.2, Mobs.GHOST_ZOMBIE)
                             .add(0.05, Mobs.BASIC_SKELETON)
                             .add(0.1, Mobs.BASIC_SLIME)
+                            .add(0.02, Mobs.IRON_GOLEM)
                     )
                     .add(5, new SimpleWave(ChatColor.YELLOW + "MEDIUM")
                             .add(0.6, Mobs.BASIC_ZOMBIE)
