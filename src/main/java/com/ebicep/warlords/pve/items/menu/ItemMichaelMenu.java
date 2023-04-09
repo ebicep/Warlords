@@ -197,7 +197,7 @@ public class ItemMichaelMenu {
                 return;
             }
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            Map<Integer, Integer> playerOrder = currentWeeklyBlessings.getPlayerOrders().computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
+            Map<Integer, Integer> playerOrder = currentWeeklyBlessings.getPlayerOrders().getOrDefault(player.getUniqueId(), new HashMap<>());
 
             Menu menu = new Menu("Buy a Blessing", 9 * 4);
             for (int tier = 1; tier <= 5; tier++) {
