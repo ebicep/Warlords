@@ -129,7 +129,7 @@ public class ItemEquipMenu {
                 new ItemBuilder(HeadUtils.getHead(player))
                         .name(ChatColor.GOLD + "Max Weight: " + ChatColor.GREEN + maxWeight)
                         .lore(
-                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight < maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
+                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
                                 ""
                         )
                         .addLore(ItemMenuUtil.getTotalBonusLore(equippedItems))
@@ -166,7 +166,6 @@ public class ItemEquipMenu {
                             (m, e) -> {
                                 if (e.isLeftClick()) {
                                     openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
-                                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
                                 } else if (e.isRightClick()) {
                                     itemLoadout.getItems().remove(item.getUUID());
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -421,6 +420,7 @@ public class ItemEquipMenu {
                         itemLoadout.getItems().remove(previousItem.getUUID());
                     }
                     itemLoadout.getItems().add(i.getUUID());
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                 },
