@@ -129,7 +129,7 @@ public class ItemEquipMenu {
                 new ItemBuilder(HeadUtils.getHead(player))
                         .name(ChatColor.GOLD + "Max Weight: " + ChatColor.GREEN + maxWeight)
                         .lore(
-                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight < maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
+                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
                                 ""
                         )
                         .addLore(ItemMenuUtil.getTotalBonusLore(equippedItems))
