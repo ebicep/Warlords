@@ -52,6 +52,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         super(uuid);
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
+        this.specialization = selectedSpec;
         this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);

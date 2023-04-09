@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.mobs.Spider;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class SpiderGauntlet extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
@@ -45,9 +46,10 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getAttacker();
-                if (attacker instanceof WarlordsNPC) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) attacker;
+                if (victim instanceof WarlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
+                    WarlordsNPC warlordsNPC = (WarlordsNPC) victim;
                     AbstractMob<?> mob = warlordsNPC.getMob();
                     if (mob instanceof Spider || mob instanceof EventEggSac) {
                         return currentDamageValue * 1.3f;
