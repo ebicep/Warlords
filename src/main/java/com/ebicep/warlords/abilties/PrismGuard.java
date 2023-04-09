@@ -85,6 +85,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
         Set<WarlordsEntity> playersHit = new HashSet<>();
         AtomicInteger hits = new AtomicInteger(0);
         PrismGuard tempPrismGuard = new PrismGuard();
+        wp.getCooldownManager().removeCooldown(PrismGuard.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",

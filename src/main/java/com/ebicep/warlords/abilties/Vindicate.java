@@ -88,7 +88,7 @@ public class Vindicate extends AbstractAbility implements Duration {
                         ChatColor.GRAY + wp.getName() + "'s" +
                         ChatColor.YELLOW + " Vindicate" +
                         ChatColor.GRAY + " is now protecting you from de-buffs for " +
-                        ChatColor.GOLD + vindTickDuration +
+                        ChatColor.GOLD + (vindTickDuration / 20f) +
                         ChatColor.GRAY + " seconds!"
                 );
             }
