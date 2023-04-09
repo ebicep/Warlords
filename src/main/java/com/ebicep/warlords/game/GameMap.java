@@ -3521,7 +3521,7 @@ public enum GameMap {
             options.add(new RespawnWaveOption(1, 20, 10));
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
             options.add(new CurrencyOnEventOption()
-                    .onKill(250)
+                    .onKill(250, true)
                     .startWith(15000)
             );
             options.add(new OnslaughtOption(Team.RED, new StaticWaveList()

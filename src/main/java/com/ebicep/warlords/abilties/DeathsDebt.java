@@ -38,7 +38,7 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
     public int playersDamaged = 0;
     public int playersHealed = 0;
 
-    private int tickDuration = 80;
+    private int tickDuration = 120;
     private float delayedDamage = 0;
     private int respiteRadius = 10;
     private int debtRadius = 8;
