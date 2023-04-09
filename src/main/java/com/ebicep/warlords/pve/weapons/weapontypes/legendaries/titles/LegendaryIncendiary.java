@@ -100,6 +100,11 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getSpeedBonusValue() {
+        return 8;
+    }
+
+    @Override
     protected float getEnergyPerHitBonusValue() {
         return 3;
     }
