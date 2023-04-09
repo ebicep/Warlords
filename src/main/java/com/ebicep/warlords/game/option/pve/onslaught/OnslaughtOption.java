@@ -339,9 +339,9 @@ public class OnslaughtOption implements Option, PveOption {
             case 4:
                 return 1.5f;
             case 5:
-                return 1.75f;
+                return 2f;
             case 6:
-                return 2;
+                return 2.5f;
         }
 
         return 1.5f;
