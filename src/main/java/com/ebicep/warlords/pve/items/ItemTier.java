@@ -207,26 +207,6 @@ public enum ItemTier {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static class StatRange {
-
-        private final int min;
-        private final int max;
-
-        public StatRange(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public int getMax() {
-            return max;
-        }
-
-    }
-
     public static class WeightRange {
         private final int min;
         private final int normal;
