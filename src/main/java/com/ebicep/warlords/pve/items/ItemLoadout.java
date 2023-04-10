@@ -73,6 +73,7 @@ public class ItemLoadout {
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
         Map<StatPool, Integer> statPoolValues = new HashMap<>();
         Map<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
+        HashSet<Class<?>> appliedClasses = new HashSet<>();
         getActualItems(itemsManager).forEach(item -> {
             ItemTier tier = item.getTier();
             addStatPool(statPoolValues, statPoolHighestTier, item.getStatPool(), tier);
@@ -83,9 +84,10 @@ public class ItemLoadout {
                     }
                 }
                 addStatPool(statPoolValues, statPoolHighestTier, ((AbstractSpecialItem) item).getBonusStats(), tier);
-            }
-            if (item instanceof AppliesToWarlordsPlayer) {
-                ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer);
+                if (item instanceof AppliesToWarlordsPlayer && !appliedClasses.contains(item.getClass())) {
+                    appliedClasses.add(item.getClass());
+                    ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer);
+                }
             }
         });
 
