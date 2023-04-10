@@ -4,7 +4,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pve.EventNoDrawOption;
+import com.ebicep.warlords.game.option.pve.EventGameEndOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 
-public class BoltarosLairOption implements Option, EventNoDrawOption {
+public class BoltarosLairOption implements Option, EventGameEndOption {
 
     @Override
     public void register(@Nonnull Game game) {

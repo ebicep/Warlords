@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.pve.EventNoDrawOption;
+import com.ebicep.warlords.game.option.pve.EventGameEndOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
@@ -116,7 +116,7 @@ public class EndState implements State, TimerDebugAble {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
             }
         } else {
-            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE) || options.stream().anyMatch(EventNoDrawOption.class::isInstance)) {
+            if (options.stream().anyMatch(EventGameEndOption.class::isInstance)) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
             } else {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
