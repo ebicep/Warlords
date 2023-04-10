@@ -618,9 +618,20 @@ public class EndState implements State, TimerDebugAble {
                 continue;
             }
             PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(wp.getUuid());
-            List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
             boolean gotAnyDrops = false;
+            long illusionShardGain = playerPveRewards.getIllusionShardGain();
+            if (illusionShardGain > 0) {
+                gotAnyDrops = true;
+                ChatUtils.sendMessage(player,
+                        true,
+                        ChatColor.GRAY + "+" + ChatColor.GREEN + illusionShardGain + " " + Currencies.ILLUSION_SHARD.getColoredName() + (illusionShardGain == 1 ? "" : "s")
+                );
+            }
+            List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
             if (!weaponsFound.isEmpty()) {
+                if (gotAnyDrops) {
+                    ChatUtils.sendMessage(player, true, "");
+                }
                 gotAnyDrops = true;
                 LinkedHashMap<WeaponsPvE, List<AbstractWeapon>> weaponsFoundByType = new LinkedHashMap<>();
                 for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
@@ -636,7 +647,7 @@ public class EndState implements State, TimerDebugAble {
                         if (amountFound > 0) {
                             boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
                             ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : ""),
+                                    .appendHoverText(rarity.chatColor.toString() + amountFound + " " + rarity.name + " Weapon" + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : ""),
                                             weapons.stream()
                                                    .map(abstractWeapon -> {
                                                        String output = abstractWeapon.getName();
