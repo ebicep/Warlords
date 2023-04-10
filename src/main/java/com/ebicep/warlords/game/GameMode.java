@@ -297,7 +297,7 @@ public enum GameMode {
     BOSS_RUSH(
             "Boss Rush",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             null,
             GamesCollections.PVE,
             1,
@@ -334,7 +334,7 @@ public enum GameMode {
     TREASURE_HUNT(
             "Anomaly Heist",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             null,
             GamesCollections.PVE,
             1,
@@ -413,7 +413,7 @@ public enum GameMode {
     EVENT_WAVE_DEFENSE(
             "Event Wave Defense",
             "PVE",
-            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 if (DatabaseGameEvent.currentGameEvent == null || DatabaseGameEvent.currentGameEvent.getEndDate().isBefore(Instant.now())) {
                     return null;
