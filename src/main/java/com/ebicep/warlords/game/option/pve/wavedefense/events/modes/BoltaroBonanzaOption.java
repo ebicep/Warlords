@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pve.EventNoDrawOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -22,7 +23,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BoltaroBonanzaOption implements Option {
+public class BoltaroBonanzaOption implements Option, EventNoDrawOption {
 
     private final AtomicInteger highestSplitValue = new AtomicInteger();
 
