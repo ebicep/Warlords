@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -158,6 +159,7 @@ public class ItemCraftingMenu {
                                                         .getItemInventory()
                                                         .stream()
                                                         .filter(item -> item.getTier() == tier)
+                                                        .filter(item -> !(item instanceof AbstractFixedItem))
                                                         .collect(Collectors.toList())),
                 databasePlayer,
                 m -> {
