@@ -136,8 +136,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
                 false
         );
         if (timeTill.equals("0 seconds")) {
-            hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + "Shipment Arriving Soon!");
-        } else {
             hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + "Next Shipment in " + timeTill);
         }
     }
