@@ -9,7 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Sound;
@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveCooldown {
+public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int DAMAGE_BOOST = 5;
     public static final int TARGETS_TO_HIT = 40;
@@ -54,7 +54,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-
+        this.passiveCooldown = 0;
         final AtomicInteger targetsHit = new AtomicInteger(0);
         final AtomicInteger damageBoost = new AtomicInteger(0);
         final AtomicReference<RegularCooldown<LegendaryDivine>> cooldown = new AtomicReference<>(null);
@@ -248,7 +248,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public int getTickCooldown() {
-        return passiveCooldown;
+    public int getCounter() {
+        return passiveCooldown / 20;
     }
 }

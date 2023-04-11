@@ -68,7 +68,7 @@ public interface CustomEntity<T extends EntityInsentient> {
             aiWander(wanderSpeed);
 
             //targets entity that hit it
-            aiTargetHitBy();
+            //aiTargetHitBy();
             //targets closest entities
             aiTargetClosest();
         }

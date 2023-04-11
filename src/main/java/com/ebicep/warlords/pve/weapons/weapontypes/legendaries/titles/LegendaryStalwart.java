@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryStalwart extends AbstractLegendaryWeapon implements PassiveCooldown {
+public class LegendaryStalwart extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int UNDER_HP_CHECK = 80;
     public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
@@ -50,8 +50,9 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
         return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
                 " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
                 ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
-                "\n\nIf your HP is currently higher than 80% and you will die from the next source of damage, your " +
-                "health will be set to 5% of your max HP and gain 99% damage reduction for 5 seconds. Can be triggered every 30 seconds.";
+                "\n\nIf your health is currently higher than 80% and you will die from the next source of damage, your " +
+                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
+                "Can be triggered every 30 seconds.";
     }
 
     @Override
@@ -182,9 +183,9 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    public int getTickCooldown() {
+    public int getCounter() {
         if (Instant.now().isBefore(lastActivated.get())) {
-            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get()) * 20;
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
         }
         return 0;
     }

@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Sound;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCooldown {
+public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int HEALING_BOOST = 25;
     public static final float HEALING_BOOST_PER_UPGRADE = 6.25f;
@@ -105,7 +105,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     public String getPassiveEffect() {
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return "When your HP falls below 30%, incoming healing increases by 50% and outgoing healing increases by " +
+        return "When your health falls below 30%, incoming healing increases by 50% and outgoing healing increases by " +
                 formatTitleUpgrade(outgoingHealingBoost, "%") +
                 " for 10s. Can be triggered once every " + formatTitleUpgrade(cooldown, "s") + ".";
     }
@@ -169,9 +169,9 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
-    public int getTickCooldown() {
+    public int getCounter() {
         if (Instant.now().isBefore(lastActivated.get())) {
-            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get()) * 20;
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
         }
         return 0;
     }

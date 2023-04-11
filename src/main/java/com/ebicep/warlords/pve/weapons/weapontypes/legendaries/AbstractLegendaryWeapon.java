@@ -291,21 +291,25 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 }
             }.runTaskTimer(20, 0);
         }
-        if (this instanceof PassiveCooldown) {
+        if (this instanceof PassiveCounter && ((PassiveCounter) this).constantlyUpdate()) {
             new GameRunnable(player.getGame()) {
 
                 @Override
                 public void run() {
-                    int cooldown = ((PassiveCooldown) AbstractLegendaryWeapon.this).getSecondCooldown();
-                    int amount = cooldown > 0 ? cooldown : 1;
-                    if (player.getEntity() instanceof Player) {
-                        ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
-                        if (item != null) {
-                            item.setAmount(amount);
-                        }
-                    }
+                    updateItemCounter(player);
                 }
             }.runTaskTimer(20, 10);
+        }
+    }
+
+    protected void updateItemCounter(WarlordsPlayer player) {
+        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
+        int amount = cooldown > 0 ? cooldown : 1;
+        if (player.getEntity() instanceof Player) {
+            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+            if (item != null && item.getAmount() != amount) {
+                item.setAmount(amount);
+            }
         }
     }
 

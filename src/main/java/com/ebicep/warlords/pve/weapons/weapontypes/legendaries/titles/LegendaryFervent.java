@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCooldown;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryFervent extends AbstractLegendaryWeapon implements PassiveCooldown {
+public class LegendaryFervent extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int DAMAGE_BOOST = 5;
     public static final int DAMAGE_TO_TAKE = 5000;
@@ -82,7 +82,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-
+        this.passiveCooldown = 0;
         final AtomicDouble damageTaken = new AtomicDouble(0);
         final AtomicInteger damageBoost = new AtomicInteger(0);
         final AtomicReference<RegularCooldown<LegendaryFervent>> cooldown = new AtomicReference<>(null);
@@ -237,7 +237,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public int getTickCooldown() {
-        return passiveCooldown;
+    public int getCounter() {
+        return passiveCooldown / 20;
     }
 }

@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -21,23 +22,32 @@ import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.springframework.data.annotation.Transient;
 
 import java.util.*;
 
-public class LegendaryRequiem extends AbstractLegendaryWeapon {
+public class LegendaryRequiem extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final RandomCollection<Integer> SPAWN_AMOUNT = new RandomCollection<Integer>()
             .add(2, 2)
             .add(2, 3)
             .add(1, 4)
             .add(1, 5);
+    public static final ItemStack CHESTPLATE = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);
+    public static final ItemStack LEGGINGS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 200, 0);
+    public static final ItemStack BOOTS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 200, 0);
     public static final int SPAWN_LIMIT = 20;
     public static final int COOLDOWN = 60;
     public static final int COOLDOWN_INCREASE_PER_UPGRADE = -5;
+
+    @Transient
+    private int counter = 0;
 
     public LegendaryRequiem() {
     }
@@ -53,7 +63,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-
+        this.counter = 0;
 
         Game game = player.getGame();
         game.registerEvents(new Listener() {
@@ -76,9 +86,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                                        EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
                                        convertedEnemy.setTeam(Team.BLUE);
                                        AbstractMob<?> mob = convertedEnemy.getMob();
-                                       EntityEquipment equipment = mob.getEe();
-                                       equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
-                                       mob.updateEquipment();
+                                       updateMobEquipment(mob, player);
                                        //removing teammate mobs that are agroed on converted target
                                        PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                                           .aliveTeammatesOf(player)
@@ -92,12 +100,20 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
             }
 
         });
+        int cooldown = (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel());
 
         new GameRunnable(game) {
 
+            int ticksElapsed = -1;
+
             @Override
             public void run() {
+                ticksElapsed++;
+                counter = ticksElapsed % cooldown;
                 if (player.isDead()) {
+                    return;
+                }
+                if (ticksElapsed % cooldown != 0) {
                     return;
                 }
                 int spawnAmount = SPAWN_AMOUNT.next();
@@ -111,9 +127,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     BasicZombie mob = new BasicZombie(player.getLocation());
-                    EntityEquipment equipment = mob.getEe();
-                    equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
-                    mob.updateEquipment();
+                    updateMobEquipment(mob, player);
                     spawnedMobs.add(mob);
                     pveOption.spawnNewMob(mob, Team.BLUE);
                 }
@@ -130,8 +144,17 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
                     }
                 }.runTaskLater(20 * 60);
             }
-        }.runTaskTimer(100, (COOLDOWN + (long) COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) * 20);
+        }.runTaskTimer(100, 20);
 
+    }
+
+    private static void updateMobEquipment(AbstractMob<?> mob, WarlordsPlayer player) {
+        EntityEquipment equipment = mob.getEe();
+        equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
+        equipment.setChestplate(CHESTPLATE);
+        equipment.setLeggings(LEGGINGS);
+        equipment.setBoots(BOOTS);
+        mob.updateEquipment();
     }
 
     @Override
@@ -183,4 +206,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon {
         ));
     }
 
+    @Override
+    public int getCounter() {
+        return 60 - counter;
+    }
 }

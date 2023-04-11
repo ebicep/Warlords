@@ -12,7 +12,6 @@ public class CustomWitch extends EntityWitch implements CustomEntity<CustomWitch
         resetAI(world);
         aiWander(1);
         aiLookAtPlayer();
-        aiTargetHitBy();
     }
 
     public CustomWitch(org.bukkit.World world) {

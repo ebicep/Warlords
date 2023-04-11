@@ -66,7 +66,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         String hpTitleUpgrade = formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%");
-        return "While your HP is below " +
+        return "While your health is below " +
                 hpTitleUpgrade + ", your EPS is increased by " +
                 formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
     }
