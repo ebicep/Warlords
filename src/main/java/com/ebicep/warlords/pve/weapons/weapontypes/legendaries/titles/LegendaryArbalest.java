@@ -3,12 +3,12 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -34,25 +34,35 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+        return baseCost;
     }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
-        player.getGame().registerEvents(new Listener() {
-            @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isDamageInstance() && event.getAttacker().equals(player)) {
-                    float playerHPCheck = player.getHealth() * ((LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel()) / 100f + 1);
-                    if (event.getWarlordsEntity().getMaxHealth() < playerHPCheck) {
-                        float damageBoost = 1 + (DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
-                        event.setMin(event.getMin() * damageBoost);
-                        event.setMax(event.getMax() * damageBoost);
-                    }
+        float playerHPCheck = player.getMaxHealth() * ((LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel()) / 100f + 1);
+        float damageBoost = 1 + (DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Arbalest",
+                null,
+                LegendaryArbalest.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getWarlordsEntity().getHealth() < playerHPCheck) {
+                    return currentDamageValue * damageBoost;
                 }
+                return currentDamageValue;
             }
         });
     }
@@ -60,8 +70,8 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Deal " + formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") +
-                " more damage to enemies whose max health is less than " +
-                formatTitleUpgrade(LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel(), "%") + " of your current HP.";
+                " more damage to enemies whose current health is less than " +
+                formatTitleUpgrade(LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel(), "%") + " of your max health.";
     }
 
     @Override
@@ -95,6 +105,11 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 25;
     }
@@ -115,13 +130,6 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
                         formatTitleUpgrade(LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
-        return baseCost;
     }
 
 }
