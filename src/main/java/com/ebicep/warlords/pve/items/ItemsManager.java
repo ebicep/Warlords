@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items;
 
 import co.aikar.commands.CommandIssuer;
+import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -54,10 +56,8 @@ public class ItemsManager {
      */
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         int weight = 0;
-//        System.out.println("Weight: " + weight);
         // x1
         weight += 2.5 * Math.pow(databasePlayer.getPveStats().getWins() + 12, 1 / 3d);
-//        System.out.println("Weight after x1: " + weight);
         // x2
         int totalPlayerClassLevel = 0;
         int highestPlayerClassLevel = 0;
@@ -67,22 +67,50 @@ public class ItemsManager {
             highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
         }
         weight += Math.ceil(25 - 25 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1));
-//        System.out.println("Weight after x2: " + weight);
         // x3
         weight += getPrestigeWeight(databasePlayer, selectedSpec);
-//        System.out.println("Weight after x3: " + weight);
         // x4
         weight += getAchievementsWeight(databasePlayer);
-//        System.out.println("Weight after x4: " + weight);
         // x5
         weight += getHiScoreWeight(databasePlayer);
-//        System.out.println("Weight after x5: " + weight);
         // x6
         if (databasePlayer.isPatreon()) {
             weight += 5;
         }
-//        System.out.println("Weight after x6: " + weight);
         return Math.min(weight, 100);
+    }
+
+    public static List<Pair<String, Integer>> getMaxWeightBreakdown(DatabasePlayer databasePlayer, Specializations selectedSpec) {
+        List<Pair<String, Integer>> weightBreakdown = new ArrayList<>();
+        // x1
+        int x1 = (int) (2.5 * Math.pow(databasePlayer.getPveStats().getWins() + 12, 1 / 3d));
+        weightBreakdown.add(new Pair<>("Total Wins", x1));
+        // x2
+        int totalPlayerClassLevel = 0;
+        int highestPlayerClassLevel = 0;
+        for (DatabaseBaseGeneral databaseBaseGeneral : databasePlayer.getClasses()) {
+            int level = databaseBaseGeneral.getLevel();
+            totalPlayerClassLevel += level;
+            highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
+        }
+        int x2 = (int) (Math.ceil(25 - 25 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
+        weightBreakdown.add(new Pair<>("Average Player Level", x2));
+        // x3
+        int x3 = getPrestigeWeight(databasePlayer, selectedSpec);
+        weightBreakdown.add(new Pair<>("Prestige", x3));
+        // x4
+        int x4 = getAchievementsWeight(databasePlayer);
+        weightBreakdown.add(new Pair<>("Achievements", x4));
+        // x5
+        int x5 = getHiScoreWeight(databasePlayer);
+        weightBreakdown.add(new Pair<>("Weekly Bonus", x5));
+        // x6
+        int x6 = 0;
+        if (databasePlayer.isPatreon()) {
+            x6 = 5;
+        }
+        weightBreakdown.add(new Pair<>("Patreon", x6));
+        return weightBreakdown;
     }
 
     /**
@@ -159,13 +187,20 @@ public class ItemsManager {
     private static int getAchievementsWeight(DatabasePlayer databasePlayer) {
         int weight = 0;
 
+        HashMap<Achievement.Difficulty, Integer> challengeAchievementDifficultyWeight = new HashMap<>();
         for (ChallengeAchievements challengeAchievement : ChallengeAchievements.VALUES) {
-            weight += challengeAchievement.getDifficulty().weightFunction.apply(
-                    (int) databasePlayer.getAchievements()
-                                        .stream()
-                                        .filter(achievementRecord -> achievementRecord.getAchievement() == challengeAchievement)
-                                        .count()
+            int count = (int) databasePlayer.getAchievements()
+                                            .stream()
+                                            .filter(achievementRecord -> achievementRecord.getAchievement() == challengeAchievement)
+                                            .count();
+            challengeAchievementDifficultyWeight.merge(
+                    challengeAchievement.getDifficulty(),
+                    count,
+                    Integer::sum
             );
+        }
+        for (Map.Entry<Achievement.Difficulty, Integer> difficultyIntegerEntry : challengeAchievementDifficultyWeight.entrySet()) {
+            weight += difficultyIntegerEntry.getKey().weightFunction.apply(difficultyIntegerEntry.getValue());
         }
 
         HashMap<Integer, Integer> numberOfTieredAchievements = new HashMap<>();

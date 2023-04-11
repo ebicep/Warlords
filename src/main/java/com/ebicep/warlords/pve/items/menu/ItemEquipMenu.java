@@ -134,20 +134,34 @@ public class ItemEquipMenu {
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
         List<AbstractItem> equippedItems = itemLoadout.getActualItems(itemsManager);
 
-        int maxWeight = ItemsManager.getMaxWeight(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec());
+        Specializations selectedSpec = itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec();
+        List<Pair<String, Integer>> weightBreakdown = ItemsManager.getMaxWeightBreakdown(databasePlayer, selectedSpec);
+        int maxWeight = weightBreakdown.stream().mapToInt(Pair::getB).sum();
         int loadoutWeight = itemLoadout.getWeight(itemsManager);
-        menu.setItem(0, 0,
+        addWeightPercentageBar(menu, maxWeight, loadoutWeight);
+        menu.setItem(2, 1,
                 new ItemBuilder(HeadUtils.getHead(player))
-                        .name(ChatColor.GOLD + "Max Weight: " + ChatColor.GREEN + maxWeight)
-                        .lore(
-                                ChatColor.GOLD + "Current Weight: " + (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight,
-                                ""
-                        )
-                        .addLore(ItemMenuUtil.getTotalBonusLore(equippedItems))
+                        .name(ChatColor.AQUA + "Stat Bonuses")
+                        .lore(ItemMenuUtil.getTotalBonusLore(equippedItems, true))
                         .get(),
                 (m, e) -> {}
         );
-        addWeightPercentageBar(menu, maxWeight, loadoutWeight);
+        menu.setItem(6, 1,
+                new ItemBuilder(Material.ANVIL)
+                        .name(ChatColor.GOLD + "Weight: " +
+                                (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight +
+                                ChatColor.GRAY + "/" +
+                                ChatColor.GREEN + maxWeight)
+                        .lore("",
+                                ChatColor.AQUA + "Breakdown (" + selectedSpec.name + "):"
+                        )
+                        .addLore(weightBreakdown.stream()
+                                                .map(pair -> ChatColor.AQUA + "- " + ChatColor.GRAY + pair.getA() + ": " + ChatColor.GREEN + pair.getB())
+                                                .collect(Collectors.toList())
+                        )
+                        .get(),
+                (m, e) -> {}
+        );
         int x = 0;
         int y = 2;
         for (ItemTier tier : ItemTier.VALID_VALUES) {
@@ -391,8 +405,8 @@ public class ItemEquipMenu {
     }
 
     private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {
-        double ratio = loadoutWeight * 8d / maxWeight;
-        for (int i = 0; i < 8; i++) {
+        double ratio = loadoutWeight * 9d / maxWeight;
+        for (int i = 0; i < 9; i++) {
             ItemBuilder itemBuilder;
             boolean overweight = loadoutWeight > maxWeight;
             if (overweight) {
@@ -408,7 +422,7 @@ public class ItemEquipMenu {
             if (!overweight) {
                 itemBuilder.name(" ");
             }
-            menu.setItem(i + 1, 0,
+            menu.setItem(i, 0,
                     itemBuilder.get(),
                     (m, e) -> {
 

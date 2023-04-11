@@ -115,7 +115,7 @@ public class ItemMenuUtil {
         }
     }
 
-    public static List<String> getTotalBonusLore(List<AbstractItem> equippedItems) {
+    public static List<String> getTotalBonusLore(List<AbstractItem> equippedItems, boolean skipFirstLine) {
         HashMap<BasicStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
@@ -162,7 +162,7 @@ public class ItemMenuUtil {
             ));
         }
         if (!blessCurseLore.isEmpty()) {
-            bonusLore.add(ChatColor.AQUA + "Blessings/Curses");
+            bonusLore.add(ChatColor.AQUA + "Blessings/Curses:");
             bonusLore.addAll(blessCurseLore);
         }
         List<String> bonusLores = equippedItems.stream()
@@ -174,13 +174,15 @@ public class ItemMenuUtil {
                                                .collect(Collectors.toList());
         //TODO stack same bonuses
         if (!bonusLores.isEmpty()) {
-            bonusLore.add(ChatColor.AQUA + "Special Bonuses");
+            bonusLore.add(ChatColor.AQUA + "Special Bonuses:");
             for (String lore : bonusLores) {
                 bonusLore.add(ChatColor.AQUA + "- " + lore.replaceAll("\n", "\n     ") + "\n\n");
             }
         }
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.AQUA + "Stat Bonuses");
+        if (!skipFirstLine) {
+            lore.add(ChatColor.AQUA + "Stat Bonuses:");
+        }
         lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "None") : bonusLore);
         return lore;
     }

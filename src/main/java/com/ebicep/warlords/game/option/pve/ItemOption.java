@@ -113,7 +113,7 @@ public class ItemOption implements Option {
             if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
                         new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied)))
+                                .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false)))
                 );
             }
         });
