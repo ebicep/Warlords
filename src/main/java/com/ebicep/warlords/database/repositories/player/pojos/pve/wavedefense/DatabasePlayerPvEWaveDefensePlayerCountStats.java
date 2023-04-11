@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDatabaseStatInformation implements DatabaseWarlordsClasses<WaveDefenseDatabaseStatInformation> {
 
     private DatabaseMagePvEWaveDefense mage = new DatabaseMagePvEWaveDefense();
     private DatabaseWarriorPvEWaveDefense warrior = new DatabaseWarriorPvEWaveDefense();
@@ -102,6 +102,31 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDat
     @Override
     public DatabaseBasePvEWaveDefense[] getClasses() {
         return new DatabaseBasePvEWaveDefense[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public WaveDefenseDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public WaveDefenseDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public WaveDefenseDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public WaveDefenseDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public WaveDefenseDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEWaveDefensePlayerCountStats other) {

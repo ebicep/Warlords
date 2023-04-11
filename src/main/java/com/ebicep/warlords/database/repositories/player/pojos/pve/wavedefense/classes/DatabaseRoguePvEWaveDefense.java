@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
 
-public class DatabaseRoguePvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsClass {
+public class DatabaseRoguePvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEWaveDefense assassin = new DatabaseBasePvEWaveDefense();
     private DatabaseBasePvEWaveDefense vindicator = new DatabaseBasePvEWaveDefense();

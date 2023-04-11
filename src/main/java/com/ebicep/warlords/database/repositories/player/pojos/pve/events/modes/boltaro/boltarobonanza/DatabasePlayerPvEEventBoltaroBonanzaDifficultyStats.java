@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEventBoltaroBonanzaDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEventBoltaroBonanzaDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventBoltaroBonanzaDatabaseStatInformation> {
 
     private DatabaseMagePvEEventBoltaroBonanza mage = new DatabaseMagePvEEventBoltaroBonanza();
     private DatabaseWarriorPvEEventBoltaroBonanza warrior = new DatabaseWarriorPvEEventBoltaroBonanza();
@@ -123,6 +123,31 @@ public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEven
     @Override
     public DatabaseBasePvEEventBoltaroBonanza[] getClasses() {
         return new DatabaseBasePvEEventBoltaroBonanza[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventBoltaroBonanzaDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventBoltaroBonanzaDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventBoltaroBonanzaDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventBoltaroBonanzaDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventBoltaroBonanzaDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public DatabasePlayerPvEEventBoltaroBonanzaPlayerCountStats getPlayerCountStats(int playerCount) {

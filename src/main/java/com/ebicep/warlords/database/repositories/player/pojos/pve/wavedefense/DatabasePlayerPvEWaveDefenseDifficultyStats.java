@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseDatabaseStatInformation implements DatabaseWarlordsClasses<WaveDefenseDatabaseStatInformation> {
 
     private DatabaseMagePvEWaveDefense mage = new DatabaseMagePvEWaveDefense();
     private DatabaseWarriorPvEWaveDefense warrior = new DatabaseWarriorPvEWaveDefense();

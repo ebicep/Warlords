@@ -274,6 +274,10 @@ public class CustomScoreboard {
             validatePlayerHolograms(uuid);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
             GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
+            if (GameType.isPve(selectedGameType)) {
+                givePvEScoreboard();
+                return;
+            }
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
             int statsCategory = playerLeaderboardInfo.getStatsCategory();
 
@@ -290,10 +294,6 @@ public class CustomScoreboard {
             }
             scoreboardSelection += selectedCollection.name;
 
-            if (selectedGameType == GameType.PVE) {
-                givePvEScoreboard();
-                return;
-            }
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
                     .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
                     .findAny();

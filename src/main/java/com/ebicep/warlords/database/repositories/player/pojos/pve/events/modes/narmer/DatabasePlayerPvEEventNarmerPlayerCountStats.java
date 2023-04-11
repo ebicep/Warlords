@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmerDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmerDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventNarmerDatabaseStatInformation> {
 
     private DatabaseMagePvEEventNarmer mage = new DatabaseMagePvEEventNarmer();
     private DatabaseWarriorPvEEventNarmer warrior = new DatabaseWarriorPvEEventNarmer();
@@ -103,6 +103,31 @@ public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmer
     @Override
     public DatabaseBasePvEEventNarmer[] getClasses() {
         return new DatabaseBasePvEEventNarmer[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventNarmerPlayerCountStats other) {

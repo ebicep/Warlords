@@ -2,10 +2,10 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.cla
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
 
-public class DatabaseWarriorPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsClass {
+public class DatabaseWarriorPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEOnslaught berserker = new DatabaseBasePvEOnslaught();
     private DatabaseBasePvEOnslaught defender = new DatabaseBasePvEOnslaught();

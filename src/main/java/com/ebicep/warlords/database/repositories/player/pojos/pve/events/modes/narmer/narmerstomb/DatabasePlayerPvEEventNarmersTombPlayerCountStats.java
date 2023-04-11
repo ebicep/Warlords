@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.narmerstomb.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventNarmersTombPlayerCountStats extends PvEEventNarmersTombDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventNarmersTombPlayerCountStats extends PvEEventNarmersTombDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventNarmersTombDatabaseStatInformation> {
 
     private DatabaseMagePvEEventNarmersTomb mage = new DatabaseMagePvEEventNarmersTomb();
     private DatabaseWarriorPvEEventNarmersTomb warrior = new DatabaseWarriorPvEEventNarmersTomb();
@@ -103,6 +103,31 @@ public class DatabasePlayerPvEEventNarmersTombPlayerCountStats extends PvEEventN
     @Override
     public DatabaseBasePvEEventNarmersTomb[] getClasses() {
         return new DatabaseBasePvEEventNarmersTomb[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventNarmersTombPlayerCountStats other) {

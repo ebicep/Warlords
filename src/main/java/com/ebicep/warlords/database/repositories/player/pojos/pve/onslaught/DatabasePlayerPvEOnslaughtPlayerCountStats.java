@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabaseStatInformation implements DatabaseWarlordsClasses<OnslaughtDatabaseStatInformation> {
 
     private DatabaseMagePvEOnslaught mage = new DatabaseMagePvEOnslaught();
     private DatabaseWarriorPvEOnslaught warrior = new DatabaseWarriorPvEOnslaught();
@@ -102,6 +102,31 @@ public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabas
     @Override
     public DatabaseBasePvEOnslaught[] getClasses() {
         return new DatabaseBasePvEOnslaught[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public OnslaughtDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public OnslaughtDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public OnslaughtDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public OnslaughtDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public OnslaughtDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEOnslaughtPlayerCountStats other) {

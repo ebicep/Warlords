@@ -4,13 +4,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements DatabaseWarlordsClasses<TDMDatabaseStatInformation> {
 
     private DatabaseMageTDM mage = new DatabaseMageTDM();
     private DatabaseWarriorTDM warrior = new DatabaseWarriorTDM();
@@ -94,5 +95,30 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements com
     @Override
     public DatabaseBaseTDM[] getClasses() {
         return new DatabaseBaseTDM[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public TDMDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public TDMDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public TDMDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public TDMDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public TDMDatabaseStatInformation getRogue() {
+        return rogue;
     }
 }

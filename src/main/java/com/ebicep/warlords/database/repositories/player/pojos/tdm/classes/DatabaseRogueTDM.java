@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
 
-public class DatabaseRogueTDM extends DatabaseBaseTDM implements DatabaseWarlordsClass {
+public class DatabaseRogueTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseTDM assassin = new DatabaseBaseTDM();
     private DatabaseBaseTDM vindicator = new DatabaseBaseTDM();

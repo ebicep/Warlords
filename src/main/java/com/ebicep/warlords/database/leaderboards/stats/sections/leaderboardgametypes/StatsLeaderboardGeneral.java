@@ -1,22 +1,16 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes;
 
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
-import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerGeneral;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
+public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<DatabasePlayerGeneral> {
 
-public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<AbstractDatabaseStatInformation> {
-
-    private static final List<StatsLeaderboardCategory<AbstractDatabaseStatInformation>> CATEGORIES = new ArrayList<>() {{
+    private static final List<StatsLeaderboardCategory<DatabasePlayerGeneral>> CATEGORIES = new ArrayList<>() {{
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer, "All Queues", "All"));
         add(new StatsLeaderboardCategory<>(DatabasePlayer::getCompStats, "Competitive Queue", "Comps"));
         add(new StatsLeaderboardCategory<>(DatabasePlayer::getPubStats, "Public Queue", "Pubs"));
@@ -33,132 +27,7 @@ public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<Ab
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<AbstractDatabaseStatInformation> statsLeaderboardCategory) {
-        List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
-
-        Class<?> databasePlayerClass = statsLeaderboardCategory.getStatFunction().apply(new DatabasePlayer()).getClass();
-        if (DatabasePlayer.class.equals(databasePlayerClass)) {
-            statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
-                    CENTER_BOARD_1,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getMage().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getMage()
-                            .getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Warrior Experience",
-                    CENTER_BOARD_2,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getWarrior().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getWarrior()
-                            .getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Paladin Experience",
-                    CENTER_BOARD_3,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getPaladin().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getPaladin()
-                            .getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Shaman Experience",
-                    CENTER_BOARD_4,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getShaman().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getShaman()
-                            .getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Rogue Experience",
-                    CENTER_BOARD_5,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getRogue().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getRogue()
-                            .getExperience())
-            ));
-        } else if (DatabasePlayerCompStats.class.equals(databasePlayerClass)) {
-            statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
-                    CENTER_BOARD_1,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerCompStats.class).getMage().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerCompStats.class
-                    ).getMage().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Warrior Experience",
-                    CENTER_BOARD_2,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerCompStats.class).getWarrior().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerCompStats.class
-                    ).getWarrior().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Paladin Experience",
-                    CENTER_BOARD_3,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerCompStats.class).getPaladin().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerCompStats.class
-                    ).getPaladin().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Shaman Experience",
-                    CENTER_BOARD_4,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerCompStats.class).getShaman().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerCompStats.class
-                    ).getShaman().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Rogue Experience",
-                    CENTER_BOARD_5,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerCompStats.class).getRogue().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerCompStats.class
-                    ).getRogue().getExperience())
-            ));
-        } else if (DatabasePlayerPubStats.class.equals(databasePlayerClass)) {
-            statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
-                    CENTER_BOARD_1,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerPubStats.class).getMage().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerPubStats.class
-                    ).getMage().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Warrior Experience",
-                    CENTER_BOARD_2,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerPubStats.class).getWarrior().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerPubStats.class
-                    ).getWarrior().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Paladin Experience",
-                    CENTER_BOARD_3,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerPubStats.class).getPaladin().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerPubStats.class
-                    ).getPaladin().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Shaman Experience",
-                    CENTER_BOARD_4,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerPubStats.class).getShaman().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerPubStats.class
-                    ).getShaman().getExperience())
-            ));
-            statsLeaderboards.add(new StatsLeaderboard("Rogue Experience",
-                    CENTER_BOARD_5,
-                    databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayerPubStats.class).getRogue().getExperience(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory,
-                            databasePlayer,
-                            DatabasePlayerPubStats.class
-                    ).getRogue().getExperience())
-            ));
-        }
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerGeneral> statsLeaderboardCategory) {
     }
-
-    private <T> T applyAndCast(
-            StatsLeaderboardCategory<AbstractDatabaseStatInformation> statsLeaderboardCategory,
-            DatabasePlayer databasePlayer,
-            Class<T> clazz
-    ) {
-        return clazz.cast(statsLeaderboardCategory.getStatFunction().apply(databasePlayer));
-    }
-
 }
+

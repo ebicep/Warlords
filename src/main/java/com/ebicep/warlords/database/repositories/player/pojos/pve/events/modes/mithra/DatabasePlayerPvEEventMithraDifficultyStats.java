@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.spidersdwelling.DatabasePlayerPvEEventSpidersDwellingDifficultyStats;
@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraDatabaseStatInformation implements DatabasePlayer, EventMode {
+public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventMithraDatabaseStatInformation>, EventMode {
 
     private DatabaseMagePvEEventMithra mage = new DatabaseMagePvEEventMithra();
     private DatabaseWarriorPvEEventMithra warrior = new DatabaseWarriorPvEEventMithra();
@@ -136,6 +136,31 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
     @Override
     public DatabaseBasePvEEventMithra[] getClasses() {
         return new DatabaseBasePvEEventMithra[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventMithraDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventMithraDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventMithraDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventMithraDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventMithraDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public DatabasePlayerPvEEventMithraPlayerCountStats getPlayerCountStats(int playerCount) {

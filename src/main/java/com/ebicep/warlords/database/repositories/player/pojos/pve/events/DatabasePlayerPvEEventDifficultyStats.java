@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatInformation implements DatabasePlayer, EventMode {
+public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventDatabaseStatInformation>, EventMode {
 
     private DatabaseMagePvEEvent mage = new DatabaseMagePvEEvent();
     private DatabaseWarriorPvEEvent warrior = new DatabaseWarriorPvEEvent();
@@ -126,6 +126,31 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
     @Override
     public DatabaseBasePvEEvent[] getClasses() {
         return new DatabaseBasePvEEvent[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public DatabasePlayerPvEEventPlayerCountStats getPlayerCountStats(int playerCount) {

@@ -4,13 +4,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements DatabaseWarlordsClasses<DuelDatabaseStatInformation> {
 
     private DatabaseMageDuel mage = new DatabaseMageDuel();
     private DatabaseWarriorDuel warrior = new DatabaseWarriorDuel();
@@ -94,5 +95,30 @@ public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements c
     @Override
     public DatabaseBaseDuel[] getClasses() {
         return new DatabaseBaseDuel[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public DuelDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public DuelDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public DuelDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public DuelDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public DuelDatabaseStatInformation getRogue() {
+        return rogue;
     }
 }

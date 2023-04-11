@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabaseBasePvEEventMithra;
 
-public class DatabaseShamanPvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsClass {
+public class DatabaseShamanPvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventMithra thunderlord = new DatabaseBasePvEEventMithra();
     private DatabaseBasePvEEventMithra spiritguard = new DatabaseBasePvEEventMithra();

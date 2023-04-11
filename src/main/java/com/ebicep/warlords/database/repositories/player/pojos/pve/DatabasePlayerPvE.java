@@ -13,7 +13,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
@@ -52,7 +51,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implements DatabasePlayer {
+public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     @Field("wave_defense_stats")
     private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
@@ -427,5 +426,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats implemen
 
     public DatabasePlayerWaveDefenseStats getWaveDefenseStats() {
         return waveDefenseStats;
+    }
+
+    public DatabasePlayerOnslaughtStats getOnslaughtStats() {
+        return onslaughtStats;
     }
 }

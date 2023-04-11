@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
-public interface DatabaseWarlordsClass {
+public interface DatabaseWarlordsSpecs {
 
     AbstractDatabaseStatInformation[] getSpecs();
 

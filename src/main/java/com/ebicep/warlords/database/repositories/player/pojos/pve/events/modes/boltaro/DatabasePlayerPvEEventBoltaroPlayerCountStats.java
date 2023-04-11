@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBoltaroDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBoltaroDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventBoltaroDatabaseStatInformation> {
 
     private DatabaseMagePvEEventBoltaro mage = new DatabaseMagePvEEventBoltaro();
     private DatabaseWarriorPvEEventBoltaro warrior = new DatabaseWarriorPvEEventBoltaro();
@@ -103,6 +103,31 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
     @Override
     public DatabaseBasePvEEventBoltaro[] getClasses() {
         return new DatabaseBasePvEEventBoltaro[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventBoltaroPlayerCountStats other) {

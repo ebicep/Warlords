@@ -5,13 +5,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventDatabaseStatInformation> {
 
     private DatabaseMagePvEEvent mage = new DatabaseMagePvEEvent();
     private DatabaseWarriorPvEEvent warrior = new DatabaseWarriorPvEEvent();
@@ -100,6 +100,31 @@ public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStat
     @Override
     public DatabaseBasePvEEvent[] getClasses() {
         return new DatabaseBasePvEEvent[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventPlayerCountStats other) {

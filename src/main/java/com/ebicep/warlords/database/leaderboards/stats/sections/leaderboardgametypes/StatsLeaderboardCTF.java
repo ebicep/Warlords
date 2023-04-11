@@ -10,7 +10,8 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
+import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.CIRCULAR_1_OUTER_2;
+import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.LEAD_5;
 
 public class StatsLeaderboardCTF extends AbstractStatsLeaderboardGameType<DatabasePlayerCTF> {
 
@@ -34,12 +35,6 @@ public class StatsLeaderboardCTF extends AbstractStatsLeaderboardGameType<Databa
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
         statsLeaderboards.add(new StatsLeaderboard("Flags Captured", LEAD_5, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFlagsCaptured(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFlagsCaptured())));
         statsLeaderboards.add(new StatsLeaderboard("Flags Returned", CIRCULAR_1_OUTER_2, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFlagsReturned(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFlagsReturned())));
-
-        statsLeaderboards.add(new StatsLeaderboard("Mage Experience", CENTER_BOARD_1, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMage().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMage().getExperience())));
-        statsLeaderboards.add(new StatsLeaderboard("Warrior Experience", CENTER_BOARD_2, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWarrior().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWarrior().getExperience())));
-        statsLeaderboards.add(new StatsLeaderboard("Paladin Experience", CENTER_BOARD_3, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPaladin().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPaladin().getExperience())));
-        statsLeaderboards.add(new StatsLeaderboard("Shaman Experience", CENTER_BOARD_4, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getShaman().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getShaman().getExperience())));
-        statsLeaderboards.add(new StatsLeaderboard("Rogue Experience", CENTER_BOARD_5, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience())));
     }
 
 }

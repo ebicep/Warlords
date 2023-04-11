@@ -5,13 +5,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformation implements DatabaseWarlordsClasses<PvEDatabaseStatInformation> {
 
     private DatabaseMagePvE mage = new DatabaseMagePvE();
     private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
@@ -100,6 +100,31 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
     @Override
     public DatabaseBasePvE[] getClasses() {
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEPlayerCountStats other) {

@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabaseStatInformation implements DatabaseWarlordsClasses<OnslaughtDatabaseStatInformation> {
 
     private DatabaseMagePvEOnslaught mage = new DatabaseMagePvEOnslaught();
     private DatabaseWarriorPvEOnslaught warrior = new DatabaseWarriorPvEOnslaught();
@@ -122,6 +122,31 @@ public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabase
     public DatabaseBasePvEOnslaught[] getClasses() {
         return new DatabaseBasePvEOnslaught[]{mage, warrior, paladin, shaman, rogue};
     }
+
+    public DatabaseWarriorPvEOnslaught getWarrior() {
+        return warrior;
+    }
+
+    public DatabasePaladinPvEOnslaught getPaladin() {
+        return paladin;
+    }
+
+    public DatabaseShamanPvEOnslaught getShaman() {
+        return shaman;
+    }
+
+    public DatabaseRoguePvEOnslaught getRogue() {
+        return rogue;
+    }
+
+    public DatabaseMagePvEOnslaught getMage() {
+        return mage;
+    }
+
+    public long getAverageTimeLived() {
+        return plays == 0 ? 0 : totalTimePlayed / plays;
+    }
+
 
     public DatabasePlayerPvEOnslaughtPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {

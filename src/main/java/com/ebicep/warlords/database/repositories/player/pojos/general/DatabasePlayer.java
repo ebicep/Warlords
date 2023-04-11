@@ -10,13 +10,11 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
 import org.bukkit.Bukkit;
@@ -33,7 +31,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayer extends DatabasePlayerGeneral {
 
     @Id
     private String id;
@@ -49,11 +47,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Long discordID = null;
     @Field("future_messages")
     private List<FutureMessage> futureMessages = new ArrayList<>();
-    private DatabaseMage mage = new DatabaseMage();
-    private DatabaseWarrior warrior = new DatabaseWarrior();
-    private DatabasePaladin paladin = new DatabasePaladin();
-    private DatabaseShaman shaman = new DatabaseShaman();
-    private DatabaseRogue rogue = new DatabaseRogue();
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("tdm_stats")
@@ -175,64 +168,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         }
     }
 
-    @Override
-    public DatabaseSpecialization getSpec(Specializations specializations) {
-        switch (specializations) {
-            case PYROMANCER:
-                return mage.getPyromancer();
-            case CRYOMANCER:
-                return mage.getCryomancer();
-            case AQUAMANCER:
-                return mage.getAquamancer();
-            case BERSERKER:
-                return warrior.getBerserker();
-            case DEFENDER:
-                return warrior.getDefender();
-            case REVENANT:
-                return warrior.getRevenant();
-            case AVENGER:
-                return paladin.getAvenger();
-            case CRUSADER:
-                return paladin.getCrusader();
-            case PROTECTOR:
-                return paladin.getProtector();
-            case THUNDERLORD:
-                return shaman.getThunderlord();
-            case SPIRITGUARD:
-                return shaman.getSpiritguard();
-            case EARTHWARDEN:
-                return shaman.getEarthwarden();
-            case ASSASSIN:
-                return rogue.getAssassin();
-            case VINDICATOR:
-                return rogue.getVindicator();
-            case APOTHECARY:
-                return rogue.getApothecary();
-        }
-        return null;
-    }
 
-    @Override
-    public DatabaseBaseGeneral getClass(Classes classes) {
-        switch (classes) {
-            case MAGE:
-                return mage;
-            case WARRIOR:
-                return warrior;
-            case PALADIN:
-                return paladin;
-            case SHAMAN:
-                return shaman;
-            case ROGUE:
-                return rogue;
-        }
-        return null;
-    }
-
-    @Override
-    public DatabaseBaseGeneral[] getClasses() {
-        return new DatabaseBaseGeneral[]{mage, warrior, paladin, shaman, rogue};
-    }
 
     public String getName() {
         return name;
@@ -281,46 +217,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         } else {
             this.futureMessages.add(futureMessage);
         }
-    }
-
-    public DatabaseMage getMage() {
-        return mage;
-    }
-
-    public void setMage(DatabaseMage mage) {
-        this.mage = mage;
-    }
-
-    public DatabaseWarrior getWarrior() {
-        return warrior;
-    }
-
-    public void setWarrior(DatabaseWarrior warrior) {
-        this.warrior = warrior;
-    }
-
-    public DatabasePaladin getPaladin() {
-        return paladin;
-    }
-
-    public void setPaladin(DatabasePaladin paladin) {
-        this.paladin = paladin;
-    }
-
-    public DatabaseShaman getShaman() {
-        return shaman;
-    }
-
-    public void setShaman(DatabaseShaman shaman) {
-        this.shaman = shaman;
-    }
-
-    public DatabaseRogue getRogue() {
-        return rogue;
-    }
-
-    public void setRogue(DatabaseRogue rogue) {
-        this.rogue = rogue;
     }
 
     public DatabasePlayerCTF getCtfStats() {

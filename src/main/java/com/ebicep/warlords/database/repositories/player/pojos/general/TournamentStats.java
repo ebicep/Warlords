@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.*;
@@ -29,7 +29,7 @@ public class TournamentStats {
     }
 }
 
-class DatabasePlayerTournamentStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
+class DatabasePlayerTournamentStats extends AbstractDatabaseStatInformation implements DatabaseWarlordsClasses<AbstractDatabaseStatInformation> {
 
     private DatabaseMage mage = new DatabaseMage();
     private DatabaseWarrior warrior = new DatabaseWarrior();

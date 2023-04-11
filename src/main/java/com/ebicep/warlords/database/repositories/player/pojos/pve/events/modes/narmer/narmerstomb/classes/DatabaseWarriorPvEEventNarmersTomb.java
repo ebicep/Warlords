@@ -2,10 +2,10 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.narmerstomb.DatabaseBasePvEEventNarmersTomb;
 
-public class DatabaseWarriorPvEEventNarmersTomb extends DatabaseBasePvEEventNarmersTomb implements DatabaseWarlordsClass {
+public class DatabaseWarriorPvEEventNarmersTomb extends DatabaseBasePvEEventNarmersTomb implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventNarmersTomb berserker = new DatabaseBasePvEEventNarmersTomb();
     private DatabaseBasePvEEventNarmersTomb defender = new DatabaseBasePvEEventNarmersTomb();

@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.spidersdwelling.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEventSpidersDwellingDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEventSpidersDwellingDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventSpidersDwellingDatabaseStatInformation> {
 
     private DatabaseMagePvEEventSpidersDwelling mage = new DatabaseMagePvEEventSpidersDwelling();
     private DatabaseWarriorPvEEventSpidersDwelling warrior = new DatabaseWarriorPvEEventSpidersDwelling();
@@ -103,6 +103,31 @@ public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEv
     @Override
     public DatabaseBasePvEEventSpidersDwelling[] getClasses() {
         return new DatabaseBasePvEEventSpidersDwelling[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventSpidersDwellingPlayerCountStats other) {

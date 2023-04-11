@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 
-public class DatabaseMageCTF extends DatabaseBaseCTF implements DatabaseWarlordsClass {
+public class DatabaseMageCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
 
     protected DatabaseBaseCTF pyromancer = new DatabaseBaseCTF();
     protected DatabaseBaseCTF cryomancer = new DatabaseBaseCTF();

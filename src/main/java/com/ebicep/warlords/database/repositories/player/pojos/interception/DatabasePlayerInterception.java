@@ -4,13 +4,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerInterception extends InterceptionDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayerInterception extends InterceptionDatabaseStatInformation implements DatabaseWarlordsClasses<InterceptionDatabaseStatInformation> {
 
     private DatabaseMageInterception mage = new DatabaseMageInterception();
     private DatabaseWarriorInterception warrior = new DatabaseWarriorInterception();
@@ -94,5 +95,30 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
     @Override
     public DatabaseBaseInterception[] getClasses() {
         return new DatabaseBaseInterception[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public InterceptionDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public InterceptionDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public InterceptionDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public InterceptionDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public InterceptionDatabaseStatInformation getRogue() {
+        return rogue;
     }
 }

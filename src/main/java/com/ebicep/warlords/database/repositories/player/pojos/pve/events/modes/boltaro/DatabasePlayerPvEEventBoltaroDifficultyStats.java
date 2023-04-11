@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabasePlayerPvEEventBoltaroLairDifficultyStats;
@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltaroDatabaseStatInformation implements DatabasePlayer, EventMode {
+public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltaroDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventBoltaroDatabaseStatInformation>, EventMode {
 
     private DatabaseMagePvEEventBoltaro mage = new DatabaseMagePvEEventBoltaro();
     private DatabaseWarriorPvEEventBoltaro warrior = new DatabaseWarriorPvEEventBoltaro();
@@ -143,6 +143,31 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
     @Override
     public DatabaseBasePvEEventBoltaro[] getClasses() {
         return new DatabaseBasePvEEventBoltaro[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventBoltaroDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public DatabasePlayerPvEEventBoltaroPlayerCountStats getPlayerCountStats(int playerCount) {

@@ -8,9 +8,7 @@ import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardGeneral;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
+import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.*;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -463,7 +461,15 @@ public class StatsLeaderboardManager {
     public enum GameType {
         ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new),
         CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
-        PVE("Wave Defense", "PvE", StatsLeaderboardPvE::new);
+        PVE("PvE", "PvE", StatsLeaderboardPvE::new),
+        WAVE_DEFENSE("Wave Defense", "Wave Defense", StatsLeaderboardWaveDefense::new),
+        ONSLAUGHT("Onslaught", "Onslaught", StatsLeaderboardOnslaught::new),
+
+        ;
+
+        public static boolean isPve(GameType gameType) {
+            return gameType == PVE || gameType == WAVE_DEFENSE || gameType == ONSLAUGHT;
+        }
 
         public static GameType getAfter(GameType gameType) {
             switch (gameType) {
@@ -472,6 +478,10 @@ public class StatsLeaderboardManager {
                 case CTF:
                     return PVE;
                 case PVE:
+                    return WAVE_DEFENSE;
+                case WAVE_DEFENSE:
+                    return ONSLAUGHT;
+                case ONSLAUGHT:
                     return ALL;
             }
             return ALL;
@@ -480,11 +490,15 @@ public class StatsLeaderboardManager {
         public static GameType getBefore(GameType gameType) {
             switch (gameType) {
                 case ALL:
-                    return PVE;
+                    return ONSLAUGHT;
                 case CTF:
                     return ALL;
                 case PVE:
                     return CTF;
+                case WAVE_DEFENSE:
+                    return PVE;
+                case ONSLAUGHT:
+                    return WAVE_DEFENSE;
             }
             return ALL;
         }
