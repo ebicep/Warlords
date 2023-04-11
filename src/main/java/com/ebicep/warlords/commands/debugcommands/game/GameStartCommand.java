@@ -46,29 +46,6 @@ public class GameStartCommand {
         );
     }
 
-    public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
-            return;
-        }
-        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
-            player.sendMessage(ChatColor.RED + "The event is over!");
-            return;
-        }
-        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
-                    queueEntryBuilder
-                            .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
-                            .setPriority(0)
-                            .setOnResult((result, game) -> {
-                                if (game == null) {
-                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-                                }
-                            });
-                })
-        );
-    }
-
     public static void startGame(
             Player player,
             boolean excludeStarter,
@@ -83,14 +60,21 @@ public class GameStartCommand {
         //check if player is in a party, they must be leader to join
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
         if (partyPlayerPair != null) {
-            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(uuid)) {
+            Party party = partyPlayerPair.getA();
+            if (!party.getPartyLeader().getUUID().equals(uuid)) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
-            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
+            } else if (!party.allOnlineAndNoAFKs()) {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }
-            people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
+            for (PartyPlayer partyPlayer : party.getPartyPlayers()) {
+                if (Warlords.getPlayer(partyPlayer.getUUID()) != null) {
+                    player.sendMessage(ChatColor.RED + "You cannot start a game with a player who is already in a game.");
+                    return;
+                }
+            }
+            people = party.getAllPartyPeoplePlayerOnline();
             if (excludeStarter) {
                 people.removeIf(p -> p.getUniqueId().equals(uuid));
             }
@@ -98,8 +82,7 @@ public class GameStartCommand {
             people = Collections.singletonList(player);
         }
 
-        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager()
-                .newEntry(people);
+        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager().newEntry(people);
         entryEditor.accept(entryBuilder);
 
         if (GameMode.isPvE(entryBuilder.getGameMode())) {
@@ -121,6 +104,29 @@ public class GameStartCommand {
 
         Pair<GameManager.QueueResult, Game> resultGamePair = entryBuilder.queueNow();
         entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
+    }
+
+    public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
+            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            return;
+        }
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
+            player.sendMessage(ChatColor.RED + "The event is over!");
+            return;
+        }
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                }
+                            });
+                })
+        );
     }
 
     public static void startGamePublic(Player player) {
@@ -152,9 +158,9 @@ public class GameStartCommand {
                 sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName(), false);
                 sendDebugMessage(player,
                         ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons()
-                                .stream()
-                                .map(e -> toTitleHumanCase(e.name()))
-                                .collect(Collectors.joining(", ")),
+                                                                                  .stream()
+                                                                                  .map(e -> toTitleHumanCase(e.name()))
+                                                                                  .collect(Collectors.joining(", ")),
                         false
                 );
                 sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers(), false);
