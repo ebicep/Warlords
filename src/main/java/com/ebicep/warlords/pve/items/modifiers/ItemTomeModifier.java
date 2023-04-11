@@ -35,6 +35,11 @@ public class ItemTomeModifier {
         }
 
         @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Ability Duration: " + ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%";
+        }
+
+        @Override
         public float getIncreasePerTier() {
             return 1;
         }
@@ -67,6 +72,11 @@ public class ItemTomeModifier {
         @Override
         public String getDescriptionCalculated(float amount) {
             return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%" + ChatColor.GRAY + " Ability Duration";
+        }
+
+        @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Ability Duration: " + ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%";
         }
 
         @Override

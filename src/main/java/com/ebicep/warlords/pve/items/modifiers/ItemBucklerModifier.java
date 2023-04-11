@@ -35,6 +35,11 @@ public class ItemBucklerModifier {
         }
 
         @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Weight: " + ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%";
+        }
+
+        @Override
         public float getIncreasePerTier() {
             return 2;
         }
@@ -67,6 +72,11 @@ public class ItemBucklerModifier {
         @Override
         public String getDescriptionCalculated(float amount) {
             return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%" + ChatColor.GRAY + " Weight";
+        }
+
+        @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Weight: " + ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%";
         }
 
         @Override

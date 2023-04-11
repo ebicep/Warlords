@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 
 import java.util.Set;
 
-public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats {
+public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats, BonusLore {
 
     public AbstractSpecialItem() {
     }
@@ -29,8 +29,7 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
         addStatPoolAndBlessing(itemBuilder);
         itemBuilder.addLore(
                 "",
-                ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":"),
-                WordWrap.wrapWithNewline(ChatColor.GRAY + getBonus(), 160)
+                getBonusLore()
         );
         addItemScoreAndWeight(itemBuilder);
         itemBuilder.addLore(
@@ -55,8 +54,9 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     public abstract String getDescription();
 
-    public Class<?> craftsInto() {
-        return null;
+    @Override
+    public String getBonusLore() {
+        return ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":") + "\n" +
+                WordWrap.wrapWithNewline(ChatColor.GRAY + getBonus(), 160);
     }
-
 }

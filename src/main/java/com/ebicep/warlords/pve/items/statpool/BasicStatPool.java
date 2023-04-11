@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
-import java.util.HashMap;
+import java.util.*;
 
 public enum BasicStatPool implements StatPool {
 
@@ -140,14 +140,32 @@ public enum BasicStatPool implements StatPool {
         put(KB_RES, new StatRange(3, 15));
         put(REGEN_TIMER, new StatRange(5, 45));
     }};
+
+    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix, boolean inverted) {
+        List<String> lore = new ArrayList<>();
+        statPool.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Enum::ordinal))
+                .forEachOrdered(stat -> lore.add(prefix + (!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat)))));
+        return lore;
+    }
+
+    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted) {
+        return getStatPoolLore(statPool, "", inverted);
+    }
+
     public final String name;
 
     BasicStatPool(String name) {
         this.name = name;
     }
 
-    public String getValueFormatted(float value) {
+    public String getValueStatFormatted(float value) {
         return ChatColor.GREEN + formatValue(value) + getOperation().prepend + " " + ChatColor.GRAY + getName();
+    }
+
+    public String getStatValueFormatted(float value) {
+        return ChatColor.GRAY + getName() + ": " + ChatColor.GREEN + formatValue(value) + getOperation().prepend;
     }
 
     public String formatValue(float value) {

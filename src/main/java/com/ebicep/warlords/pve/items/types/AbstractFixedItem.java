@@ -9,7 +9,7 @@ import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 
-public abstract class AbstractFixedItem extends AbstractItem {
+public abstract class AbstractFixedItem extends AbstractItem implements BonusLore {
 
     public AbstractFixedItem() {
     }
@@ -57,4 +57,14 @@ public abstract class AbstractFixedItem extends AbstractItem {
 
     @Override
     public abstract int getWeight();
+
+    @Override
+    public String getBonusLore() {
+        if (this instanceof FixedItemAppliesToPlayer) {
+            FixedItemAppliesToPlayer bonus = (FixedItemAppliesToPlayer) this;
+            return ChatColor.GREEN + bonus.getEffect() + ":\n" +
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + bonus.getEffectDescription(), 160);
+        }
+        return null;
+    }
 }

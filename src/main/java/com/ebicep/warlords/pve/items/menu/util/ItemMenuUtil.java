@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.BonusLore;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class ItemMenuUtil {
 
@@ -133,36 +135,53 @@ public class ItemMenuUtil {
                     break;
             }
         }
-        List<String> bonusLore = AbstractItem.getStatPoolLore(statPool, "   ");
+        List<String> bonusLore = BasicStatPool.getStatPoolLore(statPool, ChatColor.AQUA + "- ", true);
         List<String> blessCurseLore = new ArrayList<>();
         if (gauntletModifier != 0) {
-            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
                     ItemGauntletModifier.Blessings.VALUES,
                     ItemGauntletModifier.Curses.VALUES,
-                    gauntletModifier
+                    gauntletModifier,
+                    true
             ));
         }
         if (tomeModifier != 0) {
-            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
                     ItemTomeModifier.Blessings.VALUES,
                     ItemTomeModifier.Curses.VALUES,
-                    tomeModifier
+                    tomeModifier,
+                    true
             ));
         }
         if (bucklerModifier != 0) {
-            blessCurseLore.add("   " + AbstractItem.getModifierCalculatedLore(
+            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
                     ItemBucklerModifier.Blessings.VALUES,
                     ItemBucklerModifier.Curses.VALUES,
-                    bucklerModifier
+                    bucklerModifier,
+                    true
             ));
         }
         if (!blessCurseLore.isEmpty()) {
-            bonusLore.add("");
+            bonusLore.add(ChatColor.AQUA + "Blessings/Curses");
             bonusLore.addAll(blessCurseLore);
         }
+        List<String> bonusLores = equippedItems.stream()
+                                               .sorted(Comparator.comparingInt(o -> o.getTier().ordinal()))
+                                               .filter(BonusLore.class::isInstance)
+                                               .map(BonusLore.class::cast)
+                                               .map(BonusLore::getBonusLore)
+                                               .filter(Objects::nonNull)
+                                               .collect(Collectors.toList());
+        //TODO stack same bonuses
+        if (!bonusLores.isEmpty()) {
+            bonusLore.add(ChatColor.AQUA + "Special Bonuses");
+            for (String lore : bonusLores) {
+                bonusLore.add(ChatColor.AQUA + "- " + lore.replaceAll("\n", "\n     ") + "\n\n");
+            }
+        }
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.AQUA + "Bonuses");
-        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "   None") : bonusLore);
+        lore.add(ChatColor.AQUA + "Stat Bonuses");
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "None") : bonusLore);
         return lore;
     }
 }

@@ -35,6 +35,11 @@ public class ItemGauntletModifier {
         }
 
         @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Mob Drop Chance: " + ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%";
+        }
+
+        @Override
         public float getIncreasePerTier() {
             return 2.5f;
         }
@@ -67,6 +72,11 @@ public class ItemGauntletModifier {
         @Override
         public String getDescriptionCalculated(float amount) {
             return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%" + ChatColor.GRAY + " Mob Drop Chance";
+        }
+
+        @Override
+        public String getDescriptionCalculatedInverted(float amount) {
+            return ChatColor.GRAY + "Mob Drop Chance: " + ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%";
         }
 
         @Override

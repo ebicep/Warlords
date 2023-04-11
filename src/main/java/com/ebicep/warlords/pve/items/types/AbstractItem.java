@@ -32,6 +32,21 @@ public abstract class AbstractItem {
         return (current - min) / (max - min);
     }
 
+    public static String getModifierCalculatedLore(
+            ItemModifier[] blessings,
+            ItemModifier[] curses,
+            float modifierCalculated,
+            boolean inverted
+    ) {
+        if (modifierCalculated > 0) {
+            ItemModifier blessing = blessings[0];
+            return WordWrap.wrapWithNewline(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(modifierCalculated), 150);
+        } else {
+            ItemModifier curse = curses[0];
+            return WordWrap.wrapWithNewline(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(modifierCalculated), 150);
+        }
+    }
+
     protected UUID uuid = UUID.randomUUID();
     @Field("obtained_date")
     protected Instant obtainedDate = Instant.now();
@@ -119,7 +134,7 @@ public abstract class AbstractItem {
         if (modifier != 0) {
             itemBuilder.addLore(
                     "",
-                    getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated())
+                    getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false)
             );
         }
     }
@@ -159,21 +174,7 @@ public abstract class AbstractItem {
     }
 
     public List<String> getStatPoolLore() {
-        return getStatPoolLore(getStatPool());
-    }
-
-    public static String getModifierCalculatedLore(
-            ItemModifier[] blessings,
-            ItemModifier[] curses,
-            float modifierCalculated
-    ) {
-        if (modifierCalculated > 0) {
-            ItemModifier blessing = blessings[0];
-            return WordWrap.wrapWithNewline(blessing.getDescriptionCalculated(modifierCalculated), 150);
-        } else {
-            ItemModifier curse = curses[0];
-            return WordWrap.wrapWithNewline(curse.getDescriptionCalculated(modifierCalculated), 150);
-        }
+        return BasicStatPool.getStatPoolLore(getStatPool(), false);
     }
 
     public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -197,10 +198,6 @@ public abstract class AbstractItem {
 
     private String getWeightString() {
         return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
-    }
-
-    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool) {
-        return getStatPoolLore(statPool, "");
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {
@@ -277,15 +274,6 @@ public abstract class AbstractItem {
             }
         }
         return 1000;
-    }
-
-    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix) {
-        List<String> lore = new ArrayList<>();
-        statPool.keySet()
-                .stream()
-                .sorted(Comparator.comparingInt(Enum::ordinal))
-                .forEachOrdered(stat -> lore.add(prefix + stat.getValueFormatted(statPool.get(stat))));
-        return lore;
     }
 
     public float getWeightScore() {

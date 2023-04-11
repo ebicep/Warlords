@@ -33,6 +33,8 @@ public interface ItemModifier {
 
     String getDescriptionCalculated(float amount);
 
+    String getDescriptionCalculatedInverted(float amount);
+
     float getIncreasePerTier();
 
 }
