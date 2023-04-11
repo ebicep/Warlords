@@ -52,33 +52,6 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
-                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, " +
-                formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " increased damage, and " +
-                formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()) + " EPS for 6 seconds. Can be triggered every 40 seconds.";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(
-                new Pair<>(
-                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()),
-                        formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevelUpgraded())
-                )
-        );
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 120;
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
 
@@ -94,6 +67,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     return;
                 }
                 if (event.isHealingInstance()) {
+                    return;
+                }
+                if (player.getCooldownManager().hasCooldownFromName("Divine Ability")) {
                     return;
                 }
                 if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
@@ -134,8 +110,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
         new GameRunnable(player.getGame()) {
 
+            final HashMap<AbstractAbility, Float> abilityEnergyCostReduction = new HashMap<>();
             int shiftTickTime = 0;
-            HashMap<AbstractAbility, Float> abilityEnergyCostReduction = new HashMap<>();
 
             @Override
             public void run() {
@@ -200,6 +176,14 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
+                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, " +
+                formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " increased damage, and " +
+                formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()) + " EPS for 6 seconds. Can be triggered every 40 seconds.";
+    }
+
+    @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.DIVINE;
     }
@@ -207,16 +191,6 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     @Override
     protected float getMeleeDamageMinValue() {
         return 100;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 25;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 175;
     }
 
     @Override
@@ -242,6 +216,35 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     @Override
     protected float getSkillCritChanceBonusValue() {
         return 5;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 120;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 25;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 175;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevelUpgraded())
+                )
+        );
     }
 
     @Override
