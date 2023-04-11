@@ -133,7 +133,7 @@ public class UndyingArmy extends AbstractAbility implements Duration {
                         ChatColor.GRAY + wp.getName() + "'s " +
                         ChatColor.YELLOW + "Undying Army" +
                         ChatColor.GRAY + " is now protecting you for " +
-                        ChatColor.GOLD + tickDuration +
+                        ChatColor.GOLD + format(tickDuration / 20f) +
                         ChatColor.GRAY + " seconds."
                 );
             }
