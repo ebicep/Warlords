@@ -60,7 +60,7 @@ public class EventForsakenRespite extends AbstractZombie implements BossMob, Spi
                                        ImpalingStrike.giveLeechCooldown(
                                                warlordsNPC,
                                                warlordsPlayer,
-                                               3 * 20,
+                                               3,
                                                .25f,
                                                .15f,
                                                warlordsDamageHealingFinalEvent -> {
