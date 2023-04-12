@@ -122,12 +122,16 @@ public abstract class AbstractItem {
     }
 
     protected ItemBuilder getBaseItemBuilder() {
-        return new ItemBuilder(getType().skull)
+        return new ItemBuilder(getItemStack())
                 .name(getItemName())
                 .lore(
                         ChatColor.GRAY + "Tier: " + tier.getColoredName(),
                         ""
                 );
+    }
+
+    protected ItemStack getItemStack() {
+        return getType().skull;
     }
 
     protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {

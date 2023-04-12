@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
@@ -75,6 +78,11 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     @Override
     public ItemType getType() {
         return ItemType.TOME;
+    }
+
+    @Override
+    protected ItemStack getItemStack() {
+        return Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200);
     }
 
     @Override
