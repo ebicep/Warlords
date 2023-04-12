@@ -508,11 +508,11 @@ public class ItemMichaelMenu {
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a blessing on ")
+                                    int tier = blessing + 1;
+                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a" + (blessingFound ? "n unknown" : " bought tier " + tier) + " blessing on ")
                                             .appendHoverItem(item.getItemName(), item.generateItemStack())
                                             .append(ChatColor.GRAY + " and it became ");
 
-                                    int tier = blessing + 1;
                                     if (blessingFound) {
                                         pveStats.getItemsManager().subtractBlessingsFound(1);
                                         item.bless(null);
