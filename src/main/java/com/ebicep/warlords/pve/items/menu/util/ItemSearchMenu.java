@@ -245,7 +245,10 @@ public class ItemSearchMenu extends Menu {
         DATE("Date", Comparator.comparing(AbstractItem::getObtainedDate)),
         TIER("Tier", Comparator.comparing(AbstractItem::getTier)),
         TYPE("Type", Comparator.comparing(AbstractItem::getType)),
-        ITEM_SCORE("Item Score", Comparator.comparing(AbstractItem::getItemScore));
+        ITEM_SCORE("Item Score", Comparator.comparing(AbstractItem::getItemScore)),
+        WEIGHT("Weight", Comparator.comparing(AbstractItem::getWeight)),
+
+        ;
 
         private static final SortOptions[] VALUES = values();
         public final String name;

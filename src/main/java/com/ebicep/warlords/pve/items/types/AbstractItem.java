@@ -277,7 +277,7 @@ public abstract class AbstractItem {
         return 1000;
     }
 
-    public float getWeightScore() {
+    private float getWeightScore() {
         double sum = 0;
         for (Map.Entry<BasicStatPool, Float> statDistribution : statPoolDistribution.entrySet()) {
             float value = statDistribution.getValue() + tier.statDistributionModifier;
