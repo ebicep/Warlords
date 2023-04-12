@@ -236,7 +236,7 @@ public class ItemLoadout {
         }
 
         public boolean validDifficulty(DifficultyIndex difficultyIndex) {
-            return true;
+            return false;
         }
 
     }
