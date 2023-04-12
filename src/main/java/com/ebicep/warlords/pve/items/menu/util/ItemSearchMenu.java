@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.menu.util;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Classes;
@@ -7,17 +8,21 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
-import com.ebicep.warlords.pve.items.addons.ItemAddonSpecBonus;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -134,49 +139,42 @@ public class ItemSearchMenu extends Menu {
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     open();
                 }
         );
     }
 
     private void addFilterBySetting() {
-        ItemTier filterBy = menuSettings.getTierFilter();
-        int addonFilter = menuSettings.getAddonFilter();
-        ModifierFilter modifierFilter = menuSettings.getModifierFilter();
-        StringBuilder addonFilterLore = new StringBuilder();
-        String[] addonFilters = PlayerItemMenuSettings.ADDON_FILTERS;
-        for (int i = 0; i < addonFilters.length; i++) {
-            String filter = addonFilters[i];
-            addonFilterLore.append(addonFilter == i ? ChatColor.AQUA : ChatColor.GRAY).append(filter).append("\n");
+        PlayerItemMenuSettings.PlayerItemMenuFilterSettings filterSettings = menuSettings.getFilterSettings();
+        List<String> filterLore = new ArrayList<>();
+        if (filterSettings.getTypeFilter() != ItemType.NONE) {
+            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTypeFilter().name);
         }
+        if (filterSettings.getTierFilter() != ItemTier.NONE) {
+            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTierFilter().name);
+        }
+        if (filterSettings.getModifierFilter() != ModifierFilter.NONE) {
+            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getModifierFilter().name);
+        }
+        if (filterSettings.getAddonFilter()) {
+            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Selected Class Bonus");
+        }
+        if (filterSettings.getFavoriteFilter()) {
+            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Only Favorites");
+        }
+        if (filterLore.isEmpty()) {
+            filterLore.add(ChatColor.GRAY + "No filters selected");
+        }
+        filterLore.add("");
+        filterLore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GRAY + " to change");
         setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Filter By")
-                        .lore(
-                                Arrays.stream(ItemTier.VALUES)
-                                      .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                      .collect(Collectors.joining("\n")),
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to change tier filter",
-                                "",
-                                Arrays.stream(ModifierFilter.VALUES)
-                                      .map(value -> (modifierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                      .collect(Collectors.joining("\n")),
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change modifier filter",
-                                "",
-                                addonFilterLore +
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change bonus filter"
-                        )
+                        .name(ChatColor.GREEN + "Filter Settings")
+                        .lore(filterLore)
                         .get(),
                 (m, e) -> {
-                    if (e.isShiftClick()) {
-                        menuSettings.nextAddonFilter();
-                    } else if (e.isLeftClick()) {
-                        menuSettings.setTierFilter(filterBy.next());
-                    } else if (e.isRightClick()) {
-                        menuSettings.setModifierFilter(modifierFilter.next());
-                    }
-                    menuSettings.setPage(1);
-                    open();
+                    ItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
                 }
         );
     }
@@ -246,6 +244,7 @@ public class ItemSearchMenu extends Menu {
     public enum SortOptions {
         DATE("Date", Comparator.comparing(AbstractItem::getObtainedDate)),
         TIER("Tier", Comparator.comparing(AbstractItem::getTier)),
+        TYPE("Type", Comparator.comparing(AbstractItem::getType)),
         ITEM_SCORE("Item Score", Comparator.comparing(AbstractItem::getItemScore));
 
         private static final SortOptions[] VALUES = values();
@@ -263,19 +262,36 @@ public class ItemSearchMenu extends Menu {
     }
 
     public enum ModifierFilter {
-        NONE("None", item -> true),
-        NORMAL("Normal", item -> item.getModifier() == 0),
-        BLESSED("Blessed", item -> item.getModifier() > 0),
-        CURSED("Cursed", item -> item.getModifier() < 0),
+        NONE("None",
+                new ItemStack(Material.BARRIER),
+                item -> true
+        ),
+        NORMAL("Normal",
+                new ItemStack(Material.PAPER),
+                item -> item.getModifier() == 0
+        ),
+        BLESSED("Blessed",
+                new ItemBuilder(Material.PAPER)
+                        .enchant(Enchantment.OXYGEN, 1)
+                        .flags(ItemFlag.HIDE_ENCHANTS)
+                        .get(),
+                item -> item.getModifier() > 0
+        ),
+        CURSED("Cursed",
+                new ItemStack(Material.EMPTY_MAP),
+                item -> item.getModifier() < 0
+        ),
 
         ;
 
-        private static final ModifierFilter[] VALUES = values();
+        public static final ModifierFilter[] VALUES = values();
         public final String name;
+        public final ItemStack itemStack;
         public final Predicate<AbstractItem> filter;
 
-        ModifierFilter(String name, Predicate<AbstractItem> filter) {
+        ModifierFilter(String name, ItemStack itemStack, Predicate<AbstractItem> filter) {
             this.name = name;
+            this.itemStack = itemStack;
             this.filter = filter;
         }
 
@@ -285,27 +301,28 @@ public class ItemSearchMenu extends Menu {
     }
 
     public static class PlayerItemMenuSettings {
-        public static final String[] ADDON_FILTERS = new String[]{"None", "Selected Spec", "Selected Class"};
-        private final Specializations selectedSpec;
         private final Classes selectedClass;
-        private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractItem> itemInventory = new ArrayList<>();
         private List<AbstractItem> sortedItemInventory = new ArrayList<>();
-        private ItemTier tierFilter = ItemTier.ALL;
-        private ModifierFilter modifierFilter = ModifierFilter.NONE;
-        private int addonFilter = 0; // 0 = none, 1 = spec, 2 = class
+        private PlayerItemMenuFilterSettings filterSettings = new PlayerItemMenuFilterSettings();
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
-        public PlayerItemMenuSettings(Specializations selectedSpec) {
-            this.selectedSpec = selectedSpec;
-            this.selectedClass = Specializations.getClass(selectedSpec);
+        public PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
+            this(databasePlayer, Specializations.getClass(databasePlayer.getLastSpec()));
         }
 
-        public PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
-            this.selectedSpec = databasePlayer.getLastSpec();
-            this.selectedClass = Specializations.getClass(databasePlayer.getLastSpec());
+        public PlayerItemMenuSettings(DatabasePlayer databasePlayer, Classes classes) {
+            this.selectedClass = classes;
+            ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
+            PlayerItemMenuFilterSettings playerItemMenuFilterSettings = itemsManager.getMenuFilterSettings();
+            if (playerItemMenuFilterSettings == null) {
+                playerItemMenuFilterSettings = new PlayerItemMenuFilterSettings();
+                itemsManager.setMenuFilterSettings(playerItemMenuFilterSettings);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            }
+            this.filterSettings = playerItemMenuFilterSettings;
             setItemInventory(new ArrayList<>(databasePlayer.getPveStats().getItemsManager().getItemInventory()));
         }
 
@@ -317,26 +334,31 @@ public class ItemSearchMenu extends Menu {
 
         public void reset() {
             this.page = 1;
-            this.tierFilter = ItemTier.ALL;
-            this.addonFilter = 0;
+            this.filterSettings.tierFilter = ItemTier.NONE;
+            this.filterSettings.typeFilter = ItemType.NONE;
+            this.filterSettings.modifierFilter = ModifierFilter.NONE;
+            this.filterSettings.addonFilter = false;
+            this.filterSettings.favoriteFilter = false;
             this.sortOption = SortOptions.DATE;
             this.ascending = true;
         }
 
         public void sort() {
             sortedItemInventory = new ArrayList<>(itemInventory);
-            if (tierFilter != ItemTier.ALL) {
-                sortedItemInventory.removeIf(item -> item.getTier() != tierFilter);
+            if (filterSettings.tierFilter != ItemTier.NONE) {
+                sortedItemInventory.removeIf(item -> item.getTier() != filterSettings.tierFilter);
             }
-            if (modifierFilter != ModifierFilter.NONE) {
-                sortedItemInventory.removeIf(weapon -> !modifierFilter.filter.test(weapon));
+            if (filterSettings.typeFilter != ItemType.NONE) {
+                sortedItemInventory.removeIf(item -> item.getType() != filterSettings.typeFilter);
             }
-            if (addonFilter != 0) {
-                if (addonFilter == 1) {
-                    sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonSpecBonus && ((ItemAddonSpecBonus) item).getSpec() == selectedSpec));
-                } else if (addonFilter == 2) {
-                    sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonClassBonus && ((ItemAddonClassBonus) item).getClasses() == selectedClass));
-                }
+            if (filterSettings.modifierFilter != ModifierFilter.NONE) {
+                sortedItemInventory.removeIf(weapon -> !filterSettings.modifierFilter.filter.test(weapon));
+            }
+            if (filterSettings.addonFilter) {
+                sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonClassBonus && ((ItemAddonClassBonus) item).getClasses() == selectedClass));
+            }
+            if (filterSettings.favoriteFilter) {
+                sortedItemInventory.removeIf(item -> !item.isFavorite());
             }
             sortedItemInventory.sort(sortOption.comparator);
             if (!ascending) {
@@ -344,12 +366,8 @@ public class ItemSearchMenu extends Menu {
             }
         }
 
-        public boolean isOpenedFromNPC() {
-            return openedFromNPC;
-        }
-
-        public void setOpenedFromNPC(boolean openedFromNPC) {
-            this.openedFromNPC = openedFromNPC;
+        public PlayerItemMenuFilterSettings getFilterSettings() {
+            return filterSettings;
         }
 
         public int getPage() {
@@ -362,34 +380,6 @@ public class ItemSearchMenu extends Menu {
 
         public List<AbstractItem> getSortedItemInventory() {
             return sortedItemInventory;
-        }
-
-        public ItemTier getTierFilter() {
-            return tierFilter;
-        }
-
-        public void setTierFilter(ItemTier tierFilter) {
-            this.tierFilter = tierFilter;
-        }
-
-        public ModifierFilter getModifierFilter() {
-            return modifierFilter;
-        }
-
-        public void setModifierFilter(ModifierFilter modifierFilter) {
-            this.modifierFilter = modifierFilter;
-        }
-
-        public int getAddonFilter() {
-            return addonFilter;
-        }
-
-        public void nextAddonFilter() {
-            if (addonFilter == 2) {
-                addonFilter = 0;
-            } else {
-                addonFilter++;
-            }
         }
 
         public SortOptions getSortOption() {
@@ -406,6 +396,60 @@ public class ItemSearchMenu extends Menu {
 
         public void setAscending(boolean ascending) {
             this.ascending = ascending;
+        }
+
+        public static class PlayerItemMenuFilterSettings {
+            public ItemTier tierFilter;
+            public ItemType typeFilter;
+            public ModifierFilter modifierFilter;
+            public boolean addonFilter = false; // false = none, true = class
+            private boolean favoriteFilter = false;
+
+            public PlayerItemMenuFilterSettings() {
+                this.tierFilter = ItemTier.NONE;
+                this.typeFilter = ItemType.NONE;
+                this.modifierFilter = ModifierFilter.NONE;
+            }
+
+            public ItemTier getTierFilter() {
+                return tierFilter;
+            }
+
+            public void setTierFilter(ItemTier tierFilter) {
+                this.tierFilter = tierFilter;
+            }
+
+            public ItemType getTypeFilter() {
+                return typeFilter;
+            }
+
+            public void setTypeFilter(ItemType typeFilter) {
+                this.typeFilter = typeFilter;
+            }
+
+            public ModifierFilter getModifierFilter() {
+                return modifierFilter;
+            }
+
+            public void setModifierFilter(ModifierFilter modifierFilter) {
+                this.modifierFilter = modifierFilter;
+            }
+
+            public boolean getAddonFilter() {
+                return addonFilter;
+            }
+
+            public void nextAddonFilter() {
+                addonFilter = !addonFilter;
+            }
+
+            public boolean getFavoriteFilter() {
+                return favoriteFilter;
+            }
+
+            public void nextFavoriteFilter() {
+                favoriteFilter = !favoriteFilter;
+            }
         }
     }
 }

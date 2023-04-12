@@ -57,6 +57,7 @@ public abstract class AbstractItem {
     @Transient
     protected HashMap<BasicStatPool, Integer> statPoolValues;
     protected int modifier;
+    protected boolean favorite;
 
     public AbstractItem() {
     }
@@ -308,5 +309,13 @@ public abstract class AbstractItem {
     public AbstractItem setModifier(int modifier) {
         this.modifier = modifier;
         return this;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 }

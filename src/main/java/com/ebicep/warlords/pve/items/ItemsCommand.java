@@ -67,7 +67,7 @@ public class ItemsCommand extends BaseCommand {
 
     @Subcommand("generate")
     public void generate(Player player, ItemType type, ItemTier tier, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
-        if (tier == ItemTier.ALL) {
+        if (tier == ItemTier.NONE) {
             tier = ItemTier.ALPHA;
             ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Item tier was set to " + tier.name() + " because it was NONE", true);
         }

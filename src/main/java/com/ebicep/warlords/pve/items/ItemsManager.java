@@ -12,6 +12,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.classes.Da
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
@@ -279,6 +280,8 @@ public class ItemsManager {
 
     @Field("item_inventory")
     private List<AbstractItem> itemInventory = new ArrayList<>();
+    @Field("menu_settings")
+    private ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings = new ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings();
     private List<ItemLoadout> loadouts = new ArrayList<>() {{
         add(new ItemLoadout("Default"));
     }};
@@ -300,6 +303,14 @@ public class ItemsManager {
 
     public void removeItem(AbstractItem item) {
         this.itemInventory.remove(item);
+    }
+
+    public ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings getMenuFilterSettings() {
+        return menuFilterSettings;
+    }
+
+    public void setMenuFilterSettings(ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings) {
+        this.menuFilterSettings = menuFilterSettings;
     }
 
     public List<ItemLoadout> getLoadouts() {

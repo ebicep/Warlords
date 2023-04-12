@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
@@ -18,6 +19,20 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings("unchecked")
 public enum ItemType {
 
+
+    NONE("All",
+            new ItemStack(Material.BARRIER)
+    ) {
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+            return null;
+        }
+
+        @Override
+        public <R extends Enum<R> & ItemModifier> R[] getCurses() {
+            return null;
+        }
+    },
     GAUNTLET("Gauntlet",
             SkullUtils.getSkullFrom(SkullID.IRON_FIST)
     ) {
@@ -61,16 +76,21 @@ public enum ItemType {
     ;
 
     public static final ItemType[] VALUES = values();
+    public static final ItemType[] VALID_VALUES = {GAUNTLET, TOME, BUCKLER};
     public final String name;
     public final ItemStack skull;
 
     public static ItemType getRandom() {
-        return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
+        return VALID_VALUES[ThreadLocalRandom.current().nextInt(VALID_VALUES.length)];
     }
 
     ItemType(String name, ItemStack skull) {
         this.name = name;
         this.skull = skull;
+    }
+
+    public ItemType next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
     public AbstractItem createBasic(ItemTier tier) {
@@ -84,7 +104,7 @@ public enum ItemType {
                 return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create.get();
         }
         ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
-        return new BasicItem(this, tier);
+        return null;
     }
 
     public BasicItem createBasicInherited(ItemTier tier, Set<BasicStatPool> statPool) {

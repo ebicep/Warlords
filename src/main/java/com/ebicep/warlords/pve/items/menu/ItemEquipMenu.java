@@ -205,7 +205,7 @@ public class ItemEquipMenu {
                 }
                 if (!equipped) {
                     menu.setItem(x, y + 1,
-                            new ItemBuilder(ItemTier.ALL.clayBlock)
+                            new ItemBuilder(ItemTier.NONE.clayBlock)
                                     .name(ChatColor.GREEN + "Click to Equip Item")
                                     .get(),
                             (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, tier, null)
@@ -450,7 +450,9 @@ public class ItemEquipMenu {
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                 },
                 itemBuilder -> itemBuilder,
-                new ItemSearchMenu.PlayerItemMenuSettings(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
+                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer,
+                        Specializations.getClass(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
+                )
                         .setItemInventory(databasePlayer.getPveStats()
                                                         .getItemsManager()
                                                         .getItemInventory()

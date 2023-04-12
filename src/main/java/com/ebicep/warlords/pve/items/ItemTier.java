@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public enum ItemTier {
 
-    ALL(
+    NONE(
             "None",
             ChatColor.BLACK,
             new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 0),
@@ -122,7 +122,7 @@ public enum ItemTier {
 
     public static final ItemTier[] VALUES = values();
     public static final ItemTier[] VALID_VALUES = Arrays.stream(VALUES)
-                                                        .filter(itemTier -> itemTier != ALL)
+                                                        .filter(itemTier -> itemTier != NONE)
                                                         .toArray(ItemTier[]::new);
 
     private static Set<BasicStatPool> generateStatPoolWithSettings(

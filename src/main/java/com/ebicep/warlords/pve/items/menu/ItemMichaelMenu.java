@@ -302,7 +302,7 @@ public class ItemMichaelMenu {
             Menu menu = new Menu("Apply a Blessing", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
-                    ItemTier.ALL,
+                    ItemTier.NONE,
                     item,
                     1,
                     1,
@@ -630,7 +630,7 @@ public class ItemMichaelMenu {
             Menu menu = new Menu("Remove a Curse", 9 * 6);
             ItemMenuUtil.addItemTierRequirement(
                     menu,
-                    ItemTier.ALL,
+                    ItemTier.NONE,
                     item,
                     1,
                     1,
