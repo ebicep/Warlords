@@ -100,10 +100,17 @@ public class ItemSearchMenu extends Menu {
             int itemNumber = ((page - 1) * 45) + i;
             if (itemNumber < itemInventory.size()) {
                 AbstractItem item = itemInventory.get(itemNumber);
-                ItemBuilder itemBuilder = editItem.apply(item.generateItemBuilder());
-                if (equippedItems.contains(item.getUUID())) {
-                    itemBuilder.addLore("", ChatColor.AQUA + "EQUIPPED");
+                ItemBuilder itemBuilder = item.generateItemBuilder();
+                if (item.isFavorite()) {
+                    itemBuilder.addLore("", ChatColor.LIGHT_PURPLE + "FAVORITE");
                 }
+                if (equippedItems.contains(item.getUUID())) {
+                    if (!item.isFavorite()) {
+                        itemBuilder.addLore("");
+                    }
+                    itemBuilder.addLore(ChatColor.AQUA + "EQUIPPED");
+                }
+                itemBuilder = editItem.apply(itemBuilder);
                 setItem(x, y,
                         itemBuilder.get(),
                         (m, e) -> itemClickAction.accept(item, m, e)

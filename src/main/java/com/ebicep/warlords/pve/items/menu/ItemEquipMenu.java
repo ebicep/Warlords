@@ -68,6 +68,20 @@ public class ItemEquipMenu {
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {
+                    if (e.isRightClick()) {
+                        i.setFavorite(!i.isFavorite());
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        AbstractItem.sendItemMessage(player,
+                                new ComponentBuilder(ChatColor.GRAY + "You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ")
+                                        .appendHoverItem(i.getItemName(), i.generateItemStack())
+                        );
+                        openItemEquipMenuExternal(player, databasePlayer);
+                        return;
+                    }
+                    if (i.isFavorite()) {
+                        player.sendMessage(ChatColor.RED + "You cannot scrap a favorited item!");
+                        return;
+                    }
                     if (equippedItems.contains(i.getUUID())) {
                         player.sendMessage(ChatColor.RED + "You cannot scrap an equipped item!");
                         return;
@@ -109,7 +123,8 @@ public class ItemEquipMenu {
                 itemBuilder -> itemBuilder
                         .addLore(
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to scrap"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to scrap",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to favorite"
                         ),
                 menuSettings,
                 databasePlayer,
