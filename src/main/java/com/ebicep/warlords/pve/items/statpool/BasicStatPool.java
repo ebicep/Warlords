@@ -132,8 +132,8 @@ public enum BasicStatPool implements StatPool {
 
         put(DAMAGE, new StatRange(2, 12));
         put(HEALING, new StatRange(5, 15));
-        put(CRIT_CHANCE, new StatRange(1, 5));
-        put(CRIT_MULTI, new StatRange(2, 12));
+        put(CRIT_CHANCE, new StatRange(2, 10));
+        put(CRIT_MULTI, new StatRange(5, 25));
 
         put(AGGRO_PRIO, new StatRange(3, 15));
         put(THORNS, new StatRange(3, 15));

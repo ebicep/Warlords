@@ -406,9 +406,9 @@ public class ItemEquipMenu {
 
     private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {
         double ratio = loadoutWeight * 9d / maxWeight;
+        boolean overweight = loadoutWeight > maxWeight;
         for (int i = 0; i < 9; i++) {
             ItemBuilder itemBuilder;
-            boolean overweight = loadoutWeight > maxWeight;
             if (overweight) {
                 itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 15)
                         .name(ChatColor.RED + "Overweight!");
