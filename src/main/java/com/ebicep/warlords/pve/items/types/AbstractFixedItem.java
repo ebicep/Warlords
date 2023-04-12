@@ -14,8 +14,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     public AbstractFixedItem() {
     }
 
-    public AbstractFixedItem(ItemType type, ItemTier tier) {
-        this.type = type;
+    public AbstractFixedItem(ItemTier tier) {
         this.tier = tier;
     }
 
@@ -67,4 +66,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
         }
         return null;
     }
+
+    @Override
+    public abstract ItemType getType();
 }

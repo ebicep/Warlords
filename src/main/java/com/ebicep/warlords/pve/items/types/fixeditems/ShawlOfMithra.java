@@ -25,7 +25,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     }};
 
     public ShawlOfMithra() {
-        super(ItemType.BUCKLER, ItemTier.DELTA);
+        super(ItemTier.DELTA);
     }
 
     @Override
@@ -70,6 +70,11 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     @Override
     public int getWeight() {
         return 45;
+    }
+
+    @Override
+    public ItemType getType() {
+        return ItemType.TOME;
     }
 
     @Override

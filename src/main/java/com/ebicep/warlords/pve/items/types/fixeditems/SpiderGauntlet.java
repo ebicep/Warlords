@@ -28,7 +28,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     }};
 
     public SpiderGauntlet() {
-        super(ItemType.BUCKLER, ItemTier.GAMMA);
+        super(ItemTier.GAMMA);
     }
 
     @Override
@@ -74,6 +74,11 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     @Override
     public int getWeight() {
         return 35;
+    }
+
+    @Override
+    public ItemType getType() {
+        return ItemType.GAUNTLET;
     }
 
     @Override

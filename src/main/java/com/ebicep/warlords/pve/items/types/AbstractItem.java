@@ -121,7 +121,7 @@ public abstract class AbstractItem {
     }
 
     protected ItemBuilder getBaseItemBuilder() {
-        return new ItemBuilder(type.skull)
+        return new ItemBuilder(getType().skull)
                 .name(getItemName())
                 .lore(
                         ChatColor.GRAY + "Tier: " + tier.getColoredName(),
@@ -155,7 +155,7 @@ public abstract class AbstractItem {
         } else {
             name += ChatColor.GRAY + "Normal ";
         }
-        name += type.name;
+        name += getType().name;
         return name;
     }
 
@@ -178,11 +178,11 @@ public abstract class AbstractItem {
     }
 
     public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
-        return type.getBlessings();
+        return getType().getBlessings();
     }
 
     public <U extends Enum<U> & ItemModifier> U[] getCurses() {
-        return type.getCurses();
+        return getType().getCurses();
     }
 
     public float getModifierCalculated() {
