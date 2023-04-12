@@ -72,9 +72,15 @@ public class EventPointsOption implements Option, Listener {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(player != null ? "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points.getOrDefault(player.getUuid(),
-                        0
-                )) : "");
+                return Collections.singletonList(player != null ?
+                                                 "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points.getOrDefault(player.getUuid(), 0)) :
+                                                 new HashSet<>(points.values()).size() <= 1 ? "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points
+                                                         .values()
+                                                         .stream()
+                                                         .findFirst()
+                                                         .orElse(0)) :
+                                                 ""
+                );
             }
         });
     }
