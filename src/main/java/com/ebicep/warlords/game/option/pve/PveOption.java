@@ -108,6 +108,9 @@ public interface PveOption {
                     return;
                 }
                 AutoUpgradeProfile autoUpgradeProfile = abilityTree.getAutoUpgradeProfile();
+                if (autoUpgradeProfile == null) {
+                    return;
+                }
                 List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
                 for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
                     AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
@@ -208,16 +211,16 @@ public interface PveOption {
         };
     }
 
-    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
-        getRewards().getPlayerRewards(event.getUuid())
-                    .getMobDropsGained()
-                    .merge(event1, 1L, Long::sum);
-    }
-
     PveRewards<?> getRewards();
 
     ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
 
     Game getGame();
+
+    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
+        getRewards().getPlayerRewards(event.getUuid())
+                    .getMobDropsGained()
+                    .merge(event1, 1L, Long::sum);
+    }
 
 }

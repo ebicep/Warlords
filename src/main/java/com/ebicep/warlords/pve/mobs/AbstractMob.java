@@ -188,7 +188,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                            dropRate
                                    );
                                    Bukkit.getPluginManager().callEvent(dropRewardEvent);
-                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier()) {
+                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier() && !warlordsPlayer.getName()
+                                                                                                                                                        .equals("sumSmash")) {
                                        WarlordsGiveMobDropEvent dropEvent = new WarlordsGiveMobDropEvent(warlordsPlayer, drop);
                                        Bukkit.getPluginManager().callEvent(dropEvent);
                                        List<WarlordsPlayer> stolenBy = dropEvent.getStolenBy();
@@ -202,7 +203,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                                    ChatColor.GRAY + " obtained a " +
                                                    drop.chatColor + drop.name +
                                                    ChatColor.GRAY + " but it was stolen by " +
-                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + warlordsPlayer.getName() +
+                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + firstStealer.getName() +
                                                    ChatColor.GRAY + "!");
                                            for (int i = 1; i < stolenBy.size() - 1; i++) {
                                                String previousStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity()) + stolenBy.get(i - 1).getName();
