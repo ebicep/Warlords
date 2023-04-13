@@ -188,8 +188,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                            dropRate
                                    );
                                    Bukkit.getPluginManager().callEvent(dropRewardEvent);
-                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier() && !warlordsPlayer.getName()
-                                                                                                                                                        .equals("sumSmash")) {
+                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier()) {
                                        WarlordsGiveMobDropEvent dropEvent = new WarlordsGiveMobDropEvent(warlordsPlayer, drop);
                                        Bukkit.getPluginManager().callEvent(dropEvent);
                                        List<WarlordsPlayer> stolenBy = dropEvent.getStolenBy();
