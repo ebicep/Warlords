@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.pve.DifficultyMode;
 import net.md_5.bungee.api.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,10 +14,16 @@ public class AutoUpgradeProfile {
 
     public static final String AUTO_UPGRADE_PREFIX = ChatColor.AQUA + "Auto Upgrade" + ChatColor.DARK_GRAY + " > ";
 
+    private String name = "Default";
     @Field("profiles")
     private List<AutoUpgradeEntry> autoUpgradeEntries = new ArrayList<>();
+    private DifficultyMode difficultyMode = DifficultyMode.ANY;
 
     public AutoUpgradeProfile() {
+    }
+
+    public AutoUpgradeProfile(String name) {
+        this.name = name;
     }
 
     public AutoUpgradeProfile(AutoUpgradeProfile autoUpgradeProfile) {
@@ -58,8 +65,24 @@ public class AutoUpgradeProfile {
         return null;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<AutoUpgradeEntry> getAutoUpgradeEntries() {
         return autoUpgradeEntries;
+    }
+
+    public DifficultyMode getDifficultyMode() {
+        return difficultyMode;
+    }
+
+    public void setDifficultyMode(DifficultyMode difficultyMode) {
+        this.difficultyMode = difficultyMode;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
@@ -75,7 +76,7 @@ public class ItemOption implements Option {
             loadouts.removeIf(itemLoadout -> itemLoadout.getItems().isEmpty());
             int nonEmptyLoadouts = loadouts.size();
             loadouts.removeIf(itemLoadout -> {
-                ItemLoadout.DifficultyMode difficultyMode = itemLoadout.getDifficultyMode();
+                DifficultyMode difficultyMode = itemLoadout.getDifficultyMode();
                 return difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) && !difficultyMode.validDifficulty(pveOption.getDifficulty());
             });
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());

@@ -7,6 +7,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
@@ -240,7 +241,7 @@ public class ItemEquipMenu {
                                                    .collect(Collectors.toList());
         for (int i = 0; i < sortedLoadouts.size(); i++) {
             ItemLoadout l = sortedLoadouts.get(i);
-            ItemLoadout.DifficultyMode difficulty = l.getDifficultyMode();
+            DifficultyMode difficulty = l.getDifficultyMode();
             Specializations spec = l.getSpec();
             lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
                     " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")");
@@ -377,8 +378,8 @@ public class ItemEquipMenu {
                 }
         );
         lore.clear();
-        ItemLoadout.DifficultyMode[] difficultyModes = ItemLoadout.DifficultyMode.VALUES;
-        for (ItemLoadout.DifficultyMode value : difficultyModes) {
+        DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
+        for (DifficultyMode value : difficultyModes) {
             lore.add((itemLoadout.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
         }
         menu.setItem(6, 5,
