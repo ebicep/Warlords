@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -192,6 +193,9 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             autoUpgradeProfile.addEntry(branchIndex, upgradeIndex, upgradeType);
             openUpgradeBranchMenu();
         }
+        DatabaseManager.updatePlayer(player.getUuid(), databasePlayer -> {
+
+        });
     }
 
     private void addBranchToMenu(Menu menu, List<Upgrade> tree, int x, int y) {

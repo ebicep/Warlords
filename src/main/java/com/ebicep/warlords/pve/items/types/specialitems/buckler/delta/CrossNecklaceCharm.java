@@ -4,8 +4,19 @@ import com.ebicep.warlords.abilties.Consecrate;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+
+import java.util.Set;
 
 public class CrossNecklaceCharm extends SpecialDeltaBuckler {
+
+    public CrossNecklaceCharm(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public CrossNecklaceCharm() {
+
+    }
 
     @Override
     public String getName() {

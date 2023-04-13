@@ -244,7 +244,7 @@ public class ItemCraftingMenu {
 
                                 AbstractItem craftedItem;
                                 if (inheritedItem instanceof CraftsInto) {
-                                    craftedItem = ((CraftsInto) inheritedItem).getCraftsInto();
+                                    craftedItem = ((CraftsInto) inheritedItem).getCraftsInto(statPools);
                                 } else {
                                     craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
                                 }

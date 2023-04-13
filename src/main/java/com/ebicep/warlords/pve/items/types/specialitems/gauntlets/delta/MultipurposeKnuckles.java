@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.RobinHoodsGloves;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
 
@@ -17,6 +18,14 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
         put(BasicStatPool.HEALING, 50);
         put(SpecialStatPool.EPS, 5);
     }};
+
+    public MultipurposeKnuckles(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public MultipurposeKnuckles() {
+
+    }
 
     @Override
     public String getName() {
@@ -44,7 +53,7 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
     }
 
     @Override
-    public AbstractItem getCraftsInto() {
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new RobinHoodsGloves();
     }
 }

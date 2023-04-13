@@ -4,14 +4,24 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PridwensBulwark extends SpecialDeltaBuckler {
+
+    public PridwensBulwark(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public PridwensBulwark() {
+
+    }
 
     @Override
     public String getName() {

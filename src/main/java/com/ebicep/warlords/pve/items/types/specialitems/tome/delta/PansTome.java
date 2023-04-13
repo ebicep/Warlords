@@ -5,8 +5,19 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+
+import java.util.Set;
 
 public class PansTome extends SpecialDeltaTome {
+
+    public PansTome(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public PansTome() {
+
+    }
 
     @Override
     public String getName() {

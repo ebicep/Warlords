@@ -1,116 +1,119 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 
+import java.util.Set;
+
 public interface CraftsInto {
 
-    AbstractItem getCraftsInto();
+    AbstractItem getCraftsInto(Set<BasicStatPool> statPool);
 
     interface CraftsPalmOfTheSoothsayer extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new SoothsayersPalms();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new SoothsayersPalms(statPool);
         }
     }
 
     interface CraftsSamsonsFists extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new SamsonsFists();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new SamsonsFists(statPool);
         }
     }
 
     interface CraftsPendragonGauntlets extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new PendragonGauntlets();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new PendragonGauntlets(statPool);
         }
     }
 
     interface CraftsGardeningGloves extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new GardeningGloves();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new GardeningGloves(statPool);
         }
     }
 
     interface CraftsMultipurposeKnuckles extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new MultipurposeKnuckles();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new MultipurposeKnuckles(statPool);
         }
     }
 
     interface CraftsFirewaterAlmanac extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new FirewaterAlmanac();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new FirewaterAlmanac(statPool);
         }
     }
 
     interface CraftsThePresentTestament extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new ThePresentTestament();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new ThePresentTestament(statPool);
         }
     }
 
     interface CraftsAGuideToMMA extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new AGuideToMMA();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new AGuideToMMA(statPool);
         }
     }
 
     interface CraftsPansTome extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new PansTome();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new PansTome(statPool);
         }
     }
 
     interface CraftsScrollOfUncertainty extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new ScrollOfUncertainty();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new ScrollOfUncertainty(statPool);
         }
     }
 
     interface CraftsBucklerPiece extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new BucklerPiece();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new BucklerPiece(statPool);
         }
     }
 
     interface CraftsCrossNecklaceCharm extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new CrossNecklaceCharm();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new CrossNecklaceCharm(statPool);
         }
     }
 
     interface CraftsPridwensBulwark extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new PridwensBulwark();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new PridwensBulwark(statPool);
         }
     }
 
     interface CraftsAerialAegis extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new AerialAegis();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new AerialAegis(statPool);
         }
     }
 
     interface CraftsShieldOfSnatching extends CraftsInto {
         @Override
-        default AbstractItem getCraftsInto() {
-            return new ShieldOfSnatching();
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new ShieldOfSnatching(statPool);
         }
     }
 }

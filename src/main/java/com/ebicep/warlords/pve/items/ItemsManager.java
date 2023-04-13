@@ -67,7 +67,7 @@ public class ItemsManager {
             totalPlayerClassLevel += level;
             highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
         }
-        weight += Math.ceil(25 - 25 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1));
+        weight += Math.ceil(40 - 40 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1));
         // x3
         weight += getPrestigeWeight(databasePlayer, selectedSpec);
         // x4
@@ -94,7 +94,7 @@ public class ItemsManager {
             totalPlayerClassLevel += level;
             highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
         }
-        int x2 = (int) (Math.ceil(25 - 25 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
+        int x2 = (int) (Math.ceil(40 - 40 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
         weightBreakdown.add(new Pair<>("Average Player Level", x2));
         // x3
         int x3 = getPrestigeWeight(databasePlayer, selectedSpec);

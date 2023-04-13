@@ -170,10 +170,6 @@ public class AbilityTree {
                             .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
                             .get(),
                     (m, e) -> {
-                        if (autoUpgradeProfile.getName().equals("Default")) {
-                            player.sendMessage(ChatColor.RED + "You cannot rename the default profile!");
-                            return;
-                        }
                         SignGUI.open(player, new String[]{"", "Enter", "Profile Name", ""}, (p, lines) -> {
                             String name = lines[0];
                             if (!name.matches("[a-zA-Z0-9 ]+")) {
@@ -198,8 +194,8 @@ public class AbilityTree {
                             .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
                             .get(),
                     (m, e) -> {
-                        if (autoUpgradeProfile.getName().equals("Default")) {
-                            player.sendMessage(ChatColor.RED + "You cannot delete the default profile!");
+                        if (autoUpgradeProfiles.size() == 1) {
+                            player.sendMessage(ChatColor.RED + "You must have at least one profile!");
                             return;
                         }
                         Menu.openConfirmationMenu(

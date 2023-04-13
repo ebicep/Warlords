@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.NaturesClaws;
@@ -11,7 +12,17 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Set;
+
 public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
+
+    public GardeningGloves(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public GardeningGloves() {
+
+    }
 
     @Override
     public String getName() {
@@ -53,7 +64,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
     }
 
     @Override
-    public AbstractItem getCraftsInto() {
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new NaturesClaws();
     }
 }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
@@ -13,8 +14,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
+    public SamsonsFists(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public SamsonsFists() {
+
+    }
+
     @Override
     public Classes getClasses() {
         return Classes.PALADIN;
@@ -54,7 +64,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     }
 
     @Override
-    public AbstractItem getCraftsInto() {
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new HandsOfTheHolyCorpse();
     }
 }

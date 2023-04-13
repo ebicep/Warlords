@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.LilithsClaws;
@@ -13,9 +14,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
+
+    public SoothsayersPalms(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public SoothsayersPalms() {
+
+    }
 
     @Override
     public String getName() {
@@ -71,7 +81,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
     }
 
     @Override
-    public AbstractItem getCraftsInto() {
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
         return new LilithsClaws();
     }
 }

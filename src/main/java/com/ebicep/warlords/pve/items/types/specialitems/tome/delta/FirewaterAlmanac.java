@@ -4,15 +4,25 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class FirewaterAlmanac extends SpecialDeltaTome {
+
+    public FirewaterAlmanac(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public FirewaterAlmanac() {
+
+    }
 
     @Override
     public String getName() {
