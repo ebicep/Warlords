@@ -196,7 +196,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
             questsCompleted.merge(quests, (long) multiplier, Long::sum);
             if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
-                quests.rewards.forEach((curr, aLong) -> addCurrency(curr, aLong * multiplier));
+                quests.rewards.forEach((curr, aLong) -> curr.addToPlayer(databasePlayer, aLong * multiplier));
             }
         }
 

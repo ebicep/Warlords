@@ -4,11 +4,14 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -162,6 +165,22 @@ public enum Quests {
             return false;
         }
     },
+    WEEKLY_5000_ONSLAUGHT("Slayer",
+            "Kill 5,000 enemies in Onslaught",
+            PlayersCollections.WEEKLY,
+            null,
+            new LinkedHashMap<>() {{
+                put(MobDrops.ZENITH_STAR, 1L);
+            }}
+    ) {
+        @Override
+        public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
+            if (pveOption instanceof OnslaughtOption) {
+                return databasePlayer.getPveStats().getOnslaughtStats().getKills() + warlordsPlayer.getMinuteStats().total().getKills() >= 5000;
+            }
+            return false;
+        }
+    },
 
     ;
 
@@ -210,9 +229,9 @@ public enum Quests {
     public final String description;
     public final PlayersCollections time;
     public final Instant expireOn;
-    public final LinkedHashMap<Currencies, Long> rewards;
+    public final LinkedHashMap<Spendable, Long> rewards;
 
-    Quests(String name, String description, PlayersCollections time, Instant expireOn, LinkedHashMap<Currencies, Long> rewards) {
+    Quests(String name, String description, PlayersCollections time, Instant expireOn, LinkedHashMap<Spendable, Long> rewards) {
         this.name = name;
         this.description = description;
         this.time = time;
