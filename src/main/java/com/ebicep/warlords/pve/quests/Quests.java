@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.quests;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
@@ -166,7 +167,7 @@ public enum Quests {
         }
     },
     WEEKLY_5000_ONSLAUGHT("Slayer",
-            "Kill 5,000 enemies in Onslaught",
+            "Get 5,000 Kills/Assists in Onslaught",
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
@@ -176,7 +177,9 @@ public enum Quests {
         @Override
         public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
             if (pveOption instanceof OnslaughtOption) {
-                return databasePlayer.getPveStats().getOnslaughtStats().getKills() + warlordsPlayer.getMinuteStats().total().getKills() >= 5000;
+                DatabasePlayerOnslaughtStats onslaughtStats = databasePlayer.getPveStats().getOnslaughtStats();
+                PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+                return onslaughtStats.getKills() + onslaughtStats.getAssists() + total.getKills() + total.getAssists() >= 5000;
             }
             return false;
         }
