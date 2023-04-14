@@ -92,7 +92,7 @@ public class AbilityTree {
             if (autoUpgradeProfiles.isEmpty()) {
                 autoUpgradeProfile = new AutoUpgradeProfile();
                 autoUpgradeProfiles.add(autoUpgradeProfile);
-            } else if (autoUpgradeProfile == null) {
+            } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
                 autoUpgradeProfile = autoUpgradeProfiles.stream()
                                                         .filter(profile -> {
                                                             Game game = warlordsPlayer.getGame();

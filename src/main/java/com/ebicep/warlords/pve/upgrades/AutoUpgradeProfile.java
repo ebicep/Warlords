@@ -73,10 +73,6 @@ public class AutoUpgradeProfile {
         this.name = name;
     }
 
-    public List<AutoUpgradeEntry> getAutoUpgradeEntries() {
-        return autoUpgradeEntries;
-    }
-
     public DifficultyMode getDifficultyMode() {
         return difficultyMode;
     }
@@ -99,6 +95,12 @@ public class AutoUpgradeProfile {
             return false;
         }
         AutoUpgradeProfile otherProfile = (AutoUpgradeProfile) o;
+        if (!name.equals(otherProfile.name)) {
+            return false;
+        }
+        if (!difficultyMode.equals(otherProfile.difficultyMode)) {
+            return false;
+        }
         List<AutoUpgradeEntry> otherEntries = otherProfile.getAutoUpgradeEntries();
         if (otherEntries.size() != autoUpgradeEntries.size()) {
             return false;
@@ -111,6 +113,10 @@ public class AutoUpgradeProfile {
             }
         }
         return true;
+    }
+
+    public List<AutoUpgradeEntry> getAutoUpgradeEntries() {
+        return autoUpgradeEntries;
     }
 
     public static class AutoUpgradeEntry {
