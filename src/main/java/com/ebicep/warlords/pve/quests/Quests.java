@@ -183,6 +183,17 @@ public enum Quests {
             }
             return false;
         }
+
+        @Override
+        public String getProgress(DatabasePlayer databasePlayer) {
+            DatabasePlayerOnslaughtStats onslaughtStats = databasePlayer.getPveStats().getOnslaughtStats();
+            return ChatColor.GOLD.toString() + (onslaughtStats.getKills() + onslaughtStats.getAssists()) + ChatColor.AQUA + "/" + ChatColor.GOLD + "5,000";
+        }
+
+        @Override
+        public String getNoProgress() {
+            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "5,000";
+        }
     },
 
     ;
