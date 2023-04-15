@@ -229,6 +229,7 @@ public class Guild {
     public void kick(GuildPlayer sender, GuildPlayer target) {
         getRoleOfPlayer(target.getUUID()).getPlayers().remove(target.getUUID());
         this.players.removeIf(player -> player.getUUID().equals(target.getUUID()));
+        this.guildPlayerUUIDCache.remove(target.getUUID());
         sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.RED + " was kicked from the guild!", true);
         log(new GuildLogKick(sender.getUUID(), target.getUUID()));
         queueUpdate();
