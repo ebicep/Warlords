@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.AthenianAegis;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.CrescentBulwark;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ElementalShield;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
@@ -92,6 +93,7 @@ public enum SpecialItems {
     ELEMENTAL_SHIELD(ElementalShield::new),
     BREASTPLATE_BUCKLER(BreastplateBuckler::new),
     ATHENIAN_AEGIS(AthenianAegis::new),
+    CRESCENT_BULWARK(CrescentBulwark::new),
 
     ;
 
