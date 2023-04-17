@@ -4,6 +4,7 @@ import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
+import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -56,6 +57,9 @@ public class ItemsManager {
      * @return The weight of the player
      */
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
+            return 10000;
+        }
         int weight = 0;
         // x1
         weight += 2.5 * Math.pow(databasePlayer.getPveStats().getWins() + 12, 1 / 3d);
@@ -79,39 +83,6 @@ public class ItemsManager {
             weight += 5;
         }
         return Math.min(weight, 100);
-    }
-
-    public static List<Pair<String, Integer>> getMaxWeightBreakdown(DatabasePlayer databasePlayer, Specializations selectedSpec) {
-        List<Pair<String, Integer>> weightBreakdown = new ArrayList<>();
-        // x1
-        int x1 = (int) (2.5 * Math.pow(databasePlayer.getPveStats().getWins() + 12, 1 / 3d));
-        weightBreakdown.add(new Pair<>("Total Wins", x1));
-        // x2
-        int totalPlayerClassLevel = 0;
-        int highestPlayerClassLevel = 0;
-        for (DatabaseBaseGeneral databaseBaseGeneral : databasePlayer.getClasses()) {
-            int level = databaseBaseGeneral.getLevel();
-            totalPlayerClassLevel += level;
-            highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
-        }
-        int x2 = (int) (Math.ceil(40 - 40 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
-        weightBreakdown.add(new Pair<>("Average Player Level", x2));
-        // x3
-        int x3 = getPrestigeWeight(databasePlayer, selectedSpec);
-        weightBreakdown.add(new Pair<>("Prestige", x3));
-        // x4
-        int x4 = getAchievementsWeight(databasePlayer);
-        weightBreakdown.add(new Pair<>("Achievements", x4));
-        // x5
-        int x5 = getHiScoreWeight(databasePlayer);
-        weightBreakdown.add(new Pair<>("Weekly Bonus", x5));
-        // x6
-        int x6 = 0;
-        if (databasePlayer.isPatreon()) {
-            x6 = 5;
-        }
-        weightBreakdown.add(new Pair<>("Patreon", x6));
-        return weightBreakdown;
     }
 
     /**
@@ -276,6 +247,42 @@ public class ItemsManager {
         }
 
         return Math.min(weight, 9);
+    }
+
+    public static List<Pair<String, Integer>> getMaxWeightBreakdown(DatabasePlayer databasePlayer, Specializations selectedSpec) {
+        List<Pair<String, Integer>> weightBreakdown = new ArrayList<>();
+        // x1
+        int x1 = (int) (2.5 * Math.pow(databasePlayer.getPveStats().getWins() + 12, 1 / 3d));
+        weightBreakdown.add(new Pair<>("Total Wins", x1));
+        // x2
+        int totalPlayerClassLevel = 0;
+        int highestPlayerClassLevel = 0;
+        for (DatabaseBaseGeneral databaseBaseGeneral : databasePlayer.getClasses()) {
+            int level = databaseBaseGeneral.getLevel();
+            totalPlayerClassLevel += level;
+            highestPlayerClassLevel = Math.max(highestPlayerClassLevel, level);
+        }
+        int x2 = (int) (Math.ceil(40 - 40 * (Math.pow(1.55, -((double) totalPlayerClassLevel / 5 / highestPlayerClassLevel - 1)) - 1)));
+        weightBreakdown.add(new Pair<>("Average Player Level", x2));
+        // x3
+        int x3 = getPrestigeWeight(databasePlayer, selectedSpec);
+        weightBreakdown.add(new Pair<>("Prestige", x3));
+        // x4
+        int x4 = getAchievementsWeight(databasePlayer);
+        weightBreakdown.add(new Pair<>("Achievements", x4));
+        // x5
+        int x5 = getHiScoreWeight(databasePlayer);
+        weightBreakdown.add(new Pair<>("Weekly Bonus", x5));
+        // x6
+        int x6 = 0;
+        if (databasePlayer.isPatreon()) {
+            x6 = 5;
+        }
+        weightBreakdown.add(new Pair<>("Patreon", x6));
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
+            weightBreakdown.add(new Pair<>("ADMIM BYPASS", 10000));
+        }
+        return weightBreakdown;
     }
 
     @Field("item_inventory")

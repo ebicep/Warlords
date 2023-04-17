@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -60,12 +60,9 @@ public class FirewaterAlmanac extends SpecialDeltaTome {
             }
 
             @EventHandler
-            public void onItemDrop(WarlordsDropRewardEvent event) {
+            public void onItemDrop(WarlordsDropItemEvent event) {
                 AbstractMob<?> deadMob = event.getDeadMob();
                 UUID deadMobUUID = deadMob.getWarlordsNPC().getUuid();
-                if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.ITEM) {
-                    return;
-                }
                 if (Objects.equals(mobsLastHitWith.getOrDefault(deadMobUUID, null), weaponRightClick)) {
                     event.addModifier(.1);
                 }

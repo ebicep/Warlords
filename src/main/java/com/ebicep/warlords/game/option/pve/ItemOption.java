@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.AbstractWarlordsDropRewardEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -36,8 +36,8 @@ public class ItemOption implements Option {
         game.registerEvents(new Listener() {
 
             @EventHandler
-            public void onMobDrop(WarlordsDropRewardEvent event) {
-                if (event.getRewardType() == WarlordsDropRewardEvent.RewardType.WEAPON) {
+            public void onMobDrop(AbstractWarlordsDropRewardEvent event) {
+                if (event.getRewardType() == AbstractWarlordsDropRewardEvent.RewardType.WEAPON) {
                     return;
                 }
                 WarlordsEntity player = event.getWarlordsEntity();

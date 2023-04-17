@@ -8,6 +8,8 @@ import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.CommandmentNoEleven;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.FlemingAlmanac;
 
 import java.util.function.Supplier;
 
@@ -80,6 +82,8 @@ public enum SpecialItems {
     GLASS_KNUCKLES(GlassKnuckles::new),
     NATURES_CLAWS(NaturesClaws::new),
     ROBIN_HOODS_GLOVES(RobinHoodsGloves::new),
+    FLEMING_ALMANAC(FlemingAlmanac::new),
+    COMMANDMENT_NO_ELEVEN(CommandmentNoEleven::new),
 
     ;
 

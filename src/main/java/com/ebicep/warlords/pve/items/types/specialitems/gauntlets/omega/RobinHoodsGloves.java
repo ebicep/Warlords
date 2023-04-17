@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -33,10 +33,7 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler(priority = EventPriority.HIGHEST)
-            public void onRewardDrop(WarlordsDropRewardEvent event) {
-                if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.ITEM) {
-                    return;
-                }
+            public void onRewardDrop(WarlordsDropItemEvent event) {
                 AbstractMob<?> deadMob = event.getDeadMob();
                 if (Arrays.stream(Mobs.BOSSES).noneMatch(mobs -> Objects.equals(mobs.mobClass, deadMob.getClass()))) {
                     return;

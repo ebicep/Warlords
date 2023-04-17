@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropRewardEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -49,10 +49,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onItemDrop(WarlordsDropRewardEvent event) {
-                if (event.getRewardType() != WarlordsDropRewardEvent.RewardType.ITEM) {
-                    return;
-                }
+            public void onItemDrop(WarlordsDropItemEvent event) {
                 AbstractMob<?> deadMob = event.getDeadMob();
                 if (deadMob.getMobTier() != MobTier.ELITE) {
                     return;
