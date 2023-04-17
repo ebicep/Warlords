@@ -331,9 +331,9 @@ public class OnslaughtOption implements Option, PveOption {
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
             case 1:
-                return 0.5f;
+                return 0.25f;
             case 2:
-                return 0.75f;
+                return 0.5f;
             case 3:
                 return 1;
             case 4:
