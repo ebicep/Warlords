@@ -50,7 +50,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onDamageheal(WarlordsDamageHealingEvent event) {
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }

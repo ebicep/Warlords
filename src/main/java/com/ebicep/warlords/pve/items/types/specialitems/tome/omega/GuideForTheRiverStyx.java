@@ -41,7 +41,7 @@ public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToW
             @EventHandler
             public void onEvent(WarlordsGiveRespawnEvent event) {
                 AtomicInteger respawnTimer = event.getRespawnTimer();
-                 respawnTimer.set((int) (respawnTimer.get() * .75));
+                respawnTimer.set((int) (respawnTimer.get() * .75));
             }
         });
     }

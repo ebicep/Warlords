@@ -1,14 +1,13 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome;
 
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 
 import java.util.Set;
 
-public abstract class SpecialTome extends AbstractSpecialItem implements ItemAddonClassBonus {
+public abstract class SpecialTome extends AbstractSpecialItem {
 
     public SpecialTome() {
     }

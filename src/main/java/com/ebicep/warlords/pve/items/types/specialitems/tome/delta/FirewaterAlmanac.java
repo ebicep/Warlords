@@ -55,7 +55,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
             private final HashMap<UUID, String> mobsLastHitWith = new HashMap<>();
 
             @EventHandler
-            public void onDamageheal(WarlordsDamageHealingEvent event) {
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }
