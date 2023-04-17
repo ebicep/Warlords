@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -48,7 +49,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         String weaponRightClick = warlordsPlayer.getSpec().getWeapon().getName();
         warlordsPlayer.getGame().registerEvents(new Listener() {
 

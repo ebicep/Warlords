@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
@@ -35,7 +36,7 @@ public class FlemingAlmanac extends SpecialOmegaTome implements AppliesToWarlord
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
+package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -8,31 +8,31 @@ import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public TomeOfTheft(Set<BasicStatPool> statPool) {
+public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
+    public AthenianAegis(Set<BasicStatPool> statPool) {
         super(statPool);
     }
 
-    public TomeOfTheft() {
+    public AthenianAegis() {
 
     }
 
     @Override
     public String getName() {
-        return "Tome of Theft";
+        return "Athenian Aegis";
     }
 
     @Override
     public String getBonus() {
-        return "5% of all attacks are dodged.";
+        return "For every mob on the field, increase your ability to heal by 1%.";
     }
 
     @Override
     public String getDescription() {
-        return "Finally! A purchase worth my while.";
+        return "It's covered in olive oil. No, it doesn't come off.";
     }
 
     @Override
@@ -41,16 +41,20 @@ public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPl
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }
-                if (event.isHealingInstance()) {
+                if (event.isDamageInstance()) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() < .05) {
-                    //TODO dodge message
-                    event.setCancelled(true);
-                }
+                float healingBoost = getHealingBoost();
+                event.setMin(event.getMin() * healingBoost);
+                event.setMax(event.getMax() * healingBoost);
+            }
+
+            private float getHealingBoost() {
+                int mobCount = pveOption.getMobs().size();
+                return 1 + (mobCount * .01f);
             }
         });
     }

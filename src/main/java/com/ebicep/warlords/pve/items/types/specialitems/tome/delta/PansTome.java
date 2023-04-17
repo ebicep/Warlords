@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 import com.ebicep.warlords.abilties.ChainHeal;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -43,7 +44,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             if (!(ability instanceof AbstractChainBase)) {
                 continue;

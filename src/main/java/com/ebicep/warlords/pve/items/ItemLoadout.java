@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
@@ -69,7 +70,7 @@ public class ItemLoadout {
         return items;
     }
 
-    public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         Map<StatPool, Integer> statPoolValues = new HashMap<>();
         Map<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
         HashSet<Class<?>> appliedClasses = new HashSet<>();
@@ -85,7 +86,7 @@ public class ItemLoadout {
                 addStatPool(statPoolValues, statPoolHighestTier, ((AbstractSpecialItem) item).getBonusStats(), tier);
                 if (item instanceof AppliesToWarlordsPlayer && !appliedClasses.contains(item.getClass())) {
                     appliedClasses.add(item.getClass());
-                    ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer);
+                    ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer, pveOption);
                 }
             }
         });

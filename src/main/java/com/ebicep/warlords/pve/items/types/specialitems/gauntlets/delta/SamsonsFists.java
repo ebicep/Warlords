@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -46,7 +47,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         AbstractAbility weapon = warlordsPlayer.getSpec().getWeapon();
         weapon.setEnergyCost(weapon.getEnergyCost() + 15);
         warlordsPlayer.getGame().registerEvents(new Listener() {

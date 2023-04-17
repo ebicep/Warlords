@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -40,7 +41,7 @@ public class AerialAegis extends SpecialDeltaBuckler {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         new GameRunnable(warlordsPlayer.getGame()) {
 
             @Override

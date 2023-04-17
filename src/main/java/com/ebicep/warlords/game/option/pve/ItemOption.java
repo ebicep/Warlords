@@ -110,7 +110,7 @@ public class ItemOption implements Option {
                     ((Duration) ability).multiplyTickDuration(abilityDurationModifier);
                 }
             }
-            loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer);
+            loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer, pveOption);
             if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
                         new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
@@ -35,7 +36,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
