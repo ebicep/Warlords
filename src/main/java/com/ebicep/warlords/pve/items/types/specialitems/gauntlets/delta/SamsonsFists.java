@@ -65,6 +65,6 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return new HandsOfTheHolyCorpse();
+        return new HandsOfTheHolyCorpse(statPool);
     }
 }

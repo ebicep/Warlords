@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.items.statpool.StatPool;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GlassKnuckles extends SpecialOmegaGauntlet {
 
@@ -13,6 +14,14 @@ public class GlassKnuckles extends SpecialOmegaGauntlet {
         put(SpecialStatPool.DAMAGE_RESISTANCE, -25);
         put(BasicStatPool.DAMAGE, 500);
     }};
+
+    public GlassKnuckles(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public GlassKnuckles() {
+
+    }
 
     @Override
     public String getName() {

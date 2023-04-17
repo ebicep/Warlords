@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
 
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropMobDropEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -9,8 +10,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
+    public CommandmentNoEleven(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public CommandmentNoEleven() {
+
+    }
+
     @Override
     public String getName() {
         return "Commandment No. Eleven";

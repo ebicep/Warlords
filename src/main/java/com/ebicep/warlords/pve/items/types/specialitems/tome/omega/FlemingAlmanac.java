@@ -2,13 +2,23 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 public class FlemingAlmanac extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
+    public FlemingAlmanac(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public FlemingAlmanac() {
+
+    }
+
     @Override
     public String getName() {
         return "Fleming's Almanac";

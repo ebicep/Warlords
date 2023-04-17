@@ -54,6 +54,6 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return new RobinHoodsGloves();
+        return new RobinHoodsGloves(statPool);
     }
 }

@@ -5,10 +5,21 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 
+import java.util.Set;
+
 public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
+    public NaturesClaws(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public NaturesClaws() {
+
+    }
+
     @Override
     public String getName() {
         return "Nature's Claws";

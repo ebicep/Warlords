@@ -82,6 +82,6 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return new LilithsClaws();
+        return new LilithsClaws(statPool);
     }
 }

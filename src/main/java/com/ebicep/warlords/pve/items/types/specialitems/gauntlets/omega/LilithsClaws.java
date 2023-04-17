@@ -5,15 +5,25 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
+    public LilithsClaws(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public LilithsClaws() {
+
+    }
+
     @Override
     public String getName() {
         return "Lilith's Claws";

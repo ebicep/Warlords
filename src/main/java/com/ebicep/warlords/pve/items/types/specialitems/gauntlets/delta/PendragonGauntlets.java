@@ -51,6 +51,6 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return new GlassKnuckles();
+        return new GlassKnuckles(statPool);
     }
 }

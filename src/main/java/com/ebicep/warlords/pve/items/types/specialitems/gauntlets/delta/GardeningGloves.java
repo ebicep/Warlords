@@ -62,6 +62,6 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return new NaturesClaws();
+        return new NaturesClaws(statPool);
     }
 }

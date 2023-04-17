@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega;
 
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mobs;
@@ -11,8 +12,17 @@ import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 
 public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
+    public RobinHoodsGloves(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    public RobinHoodsGloves() {
+
+    }
+
     @Override
     public String getName() {
         return "Robin Hood's Gloves";
