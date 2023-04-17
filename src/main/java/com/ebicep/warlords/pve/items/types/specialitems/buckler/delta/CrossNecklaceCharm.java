@@ -5,10 +5,13 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
 
 import java.util.Set;
 
-public class CrossNecklaceCharm extends SpecialDeltaBuckler {
+public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInto {
 
     public CrossNecklaceCharm(Set<BasicStatPool> statPool) {
         super(statPool);
@@ -48,4 +51,8 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler {
         }
     }
 
+    @Override
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+        return new BreastplateBuckler(statPool);
+    }
 }

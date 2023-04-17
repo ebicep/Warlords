@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ElementalShield;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
@@ -88,6 +89,7 @@ public enum SpecialItems {
     GUIDE_FOR_THE_RIVER_STYX(GuideForTheRiverStyx::new),
     TOME_OF_THEFT(TomeOfTheft::new),
     ELEMENTAL_SHIELD(ElementalShield::new),
+    BREASTPLATE_BUCKLER(BreastplateBuckler::new),
 
     ;
 
