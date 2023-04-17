@@ -116,6 +116,7 @@ public class ChainHeal extends AbstractChainBase {
                 .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
                 .aliveTeammatesOf(wp)
                 .excluding(toExclude)
+                .warlordPlayersFirst()
         ) {
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
             bounceTarget.addHealingInstance(

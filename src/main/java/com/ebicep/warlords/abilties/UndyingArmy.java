@@ -113,8 +113,8 @@ public class UndyingArmy extends AbstractAbility implements Duration {
         tempUndyingArmy.setPveUpgrade(pveUpgrade);
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                .aliveTeammatesOf(wp)
-                .closestFirst(wp)
+                                                   .aliveTeammatesOf(wp)
+                                                   .closestWarlordPlayersFirst(wp.getLocation())
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {

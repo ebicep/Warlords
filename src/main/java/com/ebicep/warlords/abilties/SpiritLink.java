@@ -160,6 +160,7 @@ public class SpiritLink extends AbstractChainBase {
         for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                .closestWarlordPlayersFirst(warlordsPlayer.getLocation())
                 .limit(2)
         ) {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
