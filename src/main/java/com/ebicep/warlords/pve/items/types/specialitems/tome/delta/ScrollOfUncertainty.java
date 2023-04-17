@@ -4,6 +4,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.TomeOfTheft;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -11,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ScrollOfUncertainty extends SpecialDeltaTome {
+public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto {
 
     public ScrollOfUncertainty(Set<BasicStatPool> statPool) {
         super(statPool);
@@ -57,5 +60,10 @@ public class ScrollOfUncertainty extends SpecialDeltaTome {
 
         });
 
+    }
+
+    @Override
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+        return new TomeOfTheft(statPool);
     }
 }
