@@ -6,10 +6,13 @@ import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.GuideForTheRiverStyx;
 
 import java.util.Set;
 
-public class PansTome extends SpecialDeltaTome {
+public class PansTome extends SpecialDeltaTome implements CraftsInto {
 
     public PansTome(Set<BasicStatPool> statPool) {
         super(statPool);
@@ -55,5 +58,10 @@ public class PansTome extends SpecialDeltaTome {
             }
         }
 
+    }
+
+    @Override
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+        return new GuideForTheRiverStyx(statPool);
     }
 }

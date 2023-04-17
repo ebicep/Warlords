@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.CommandmentNoEleven;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.FlemingAlmanac;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.GuideForTheRiverStyx;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.ScrollOfScripts;
 
 import java.util.function.Supplier;
@@ -86,6 +87,7 @@ public enum SpecialItems {
     FLEMING_ALMANAC(FlemingAlmanac::new),
     COMMANDMENT_NO_ELEVEN(CommandmentNoEleven::new),
     SCROLL_OF_SCRIPTS(ScrollOfScripts::new),
+    GUIDE_FOR_THE_RIVER_STYX(GuideForTheRiverStyx::new),
 
     ;
 
