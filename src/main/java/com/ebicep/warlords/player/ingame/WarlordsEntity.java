@@ -7,6 +7,7 @@ import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.*;
@@ -103,11 +104,11 @@ public abstract class WarlordsEntity {
     private float health;
     private float maxHealth;
     private float maxBaseHealth;
-    private int regenTimer;
-    private int respawnTimer = -1;
+    private int regenTickTimer;
+    private float regenTickTimerModifier = 1;
+    private int respawnTickTimer = -1;
     private boolean dead = false;
     private float energy = 0;
-    private float maxEnergy;
     private float horseCooldown = 0;
     private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
@@ -128,12 +129,8 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
+    private float bonusAgroWeight = 0;
 
-
-    public WarlordsEntity() {
-        game = null;
-        deathLocation = null;
-    }
 
     public WarlordsEntity(Player player, Specializations specialization) {
         this();
@@ -142,6 +139,11 @@ public abstract class WarlordsEntity {
         this.entity = player;
         this.specClass = specialization;
         this.spec = specialization.create.get();
+    }
+
+    public WarlordsEntity() {
+        game = null;
+        deathLocation = null;
     }
 
     /**
@@ -169,7 +171,6 @@ public abstract class WarlordsEntity {
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
         this.maxBaseHealth = this.maxHealth;
-        this.maxEnergy = this.spec.getMaxEnergy();
         this.speed = isInPve() ? new CalculateSpeed(this, this::setWalkSpeed,
                 13,
                 true
@@ -392,7 +393,7 @@ public abstract class WarlordsEntity {
             if (isMeleeHit) {
                 // True damage
                 sendTookDamageMessage(min, "melee damage");
-                regenTimer = 10;
+                resetRegenTimer();
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle(
@@ -411,7 +412,7 @@ public abstract class WarlordsEntity {
             } else {
                 // Fall Damage
                 sendTookDamageMessage(damageValue, "fall damage");
-                regenTimer = 10;
+                resetRegenTimer();
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     // Title card "YOU DIED!"
                     if (entity instanceof Player) {
@@ -497,7 +498,7 @@ public abstract class WarlordsEntity {
             damageValue *= (intervene.getDamageReduction() / 100f);
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
             intervenedBy.addAbsorbed(damageValue);
-            intervenedBy.setRegenTimer(10);
+            intervenedBy.resetRegenTimer();
             intervene.addDamagePrevented(damageValue);
             // Break Intervene if above damage threshold
             if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
@@ -702,32 +703,32 @@ public abstract class WarlordsEntity {
                 }
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
-                if (isEnemy(attacker)) {
-                    hitBy.put(attacker, 10);
-                    cancelHealingPowerUp();
-                    removeHorse();
+                //if (isEnemy(attacker)) {
+                hitBy.put(attacker, 10);
+                cancelHealingPowerUp();
+                removeHorse();
 
-                    float finalDamageValue = damageValue;
-                    doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
-                    doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
+                float finalDamageValue = damageValue;
+                doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
+                doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
-                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
-                    //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
-                    //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                        abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
-                        //appendDebugMessage(debugMessage, 2, abstractCooldown);
-                    }
-
-                    //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                        abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
-                        //appendDebugMessage(debugMessage, 2, abstractCooldown);
-                    }
+                //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
+                //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
+                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
                 }
 
-                regenTimer = 10;
+                //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                    abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
+                    //appendDebugMessage(debugMessage, 2, abstractCooldown);
+                }
+                //}
+
+                resetRegenTimer();
                 updateHealth();
 
                 // debt and healing
@@ -1131,26 +1132,24 @@ public abstract class WarlordsEntity {
 
         ownFeed.append(ChatColor.GRAY).append(" health.");
 
-        if (sender.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid());
-            switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (playerSettings.getChatHealingMode()) {
+            case ALL:
+                if (sender.showDebugMessage) {
+                    sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                } else {
+                    sender.sendMessage(ownFeed.toString());
+                }
+                break;
+            case CRITS_ONLY:
+                if (isCrit) {
                     if (sender.showDebugMessage) {
                         sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
-                    if (isCrit) {
-                        if (sender.showDebugMessage) {
-                            sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
-                        } else {
-                            sender.sendMessage(ownFeed.toString());
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
         }
 
         // Ally Message
@@ -1181,27 +1180,26 @@ public abstract class WarlordsEntity {
 
         allyFeed.append(ChatColor.GRAY).append(" health.");
 
-        if (receiver.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid());
-            switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+        playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
+        switch (playerSettings.getChatHealingMode()) {
+            case ALL:
+                if (receiver.showDebugMessage) {
+                    receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
+                } else {
+                    receiver.sendMessage(allyFeed.toString());
+                }
+                break;
+            case CRITS_ONLY:
+                if (isCrit) {
                     if (receiver.showDebugMessage) {
                         receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
                     } else {
                         receiver.sendMessage(allyFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
-                    if (isCrit) {
-                        if (receiver.showDebugMessage) {
-                            receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
-                        } else {
-                            receiver.sendMessage(allyFeed.toString());
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
         }
+
     }
 
     /**
@@ -1240,27 +1238,26 @@ public abstract class WarlordsEntity {
         }
         enemyFeed.append(ChatColor.GRAY).append(" damage.");
 
-        if (receiver.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid());
-            switch (playerSettings.getChatDamageMode()) {
-                case ALL:
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
+        switch (playerSettings.getChatDamageMode()) {
+            case ALL:
+                if (receiver.showDebugMessage) {
+                    receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
+                } else {
+                    receiver.sendMessage(enemyFeed.toString());
+                }
+                break;
+            case CRITS_ONLY:
+                if (isCrit) {
                     if (receiver.showDebugMessage) {
                         receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
                     } else {
                         receiver.sendMessage(enemyFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
-                    if (isCrit) {
-                        if (receiver.showDebugMessage) {
-                            receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
-                        } else {
-                            receiver.sendMessage(enemyFeed.toString());
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
         }
+
 
         // Sender feed
         StringBuilder ownFeed = new StringBuilder();
@@ -1285,27 +1282,26 @@ public abstract class WarlordsEntity {
 
         ownFeed.append(ChatColor.GRAY).append(" damage.");
 
-        if (sender.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid());
-            switch (playerSettings.getChatDamageMode()) {
-                case ALL:
+        playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (playerSettings.getChatDamageMode()) {
+            case ALL:
+                if (sender.showDebugMessage) {
+                    sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                } else {
+                    sender.sendMessage(ownFeed.toString());
+                }
+                break;
+            case CRITS_ONLY:
+                if (isCrit) {
                     if (sender.showDebugMessage) {
                         sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
                     } else {
                         sender.sendMessage(ownFeed.toString());
                     }
-                    break;
-                case CRITS_ONLY:
-                    if (isCrit) {
-                        if (sender.showDebugMessage) {
-                            sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
-                        } else {
-                            sender.sendMessage(ownFeed.toString());
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
         }
+
     }
 
     private void appendDebugMessage(StringBuilder stringBuilder, String title, String value) {
@@ -1395,7 +1391,6 @@ public abstract class WarlordsEntity {
 
     public void cancelHealingPowerUp() {
         if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
-            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
             this.getCooldownManager().removeCooldown(HealingPowerup.class, false);
         }
     }
@@ -1464,7 +1459,7 @@ public abstract class WarlordsEntity {
             assisted.addAssist();
         });
         hitBy.clear();
-        regenTimer = 0;
+        regenTickTimer = 0;
         heal();
     }
 
@@ -1797,8 +1792,7 @@ public abstract class WarlordsEntity {
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.maxBaseHealth = this.maxHealth;
         this.health = this.maxHealth;
-        this.maxEnergy = this.spec.getMaxEnergy();
-        this.energy = this.maxEnergy;
+        this.energy = this.spec.getMaxEnergy();
     }
 
     public float getHealth() {
@@ -1852,20 +1846,29 @@ public abstract class WarlordsEntity {
         this.health = this.maxBaseHealth;
     }
 
-    public int getRegenTimer() {
-        return regenTimer;
+    public int getRegenTickTimer() {
+        return regenTickTimer;
     }
 
-    public void setRegenTimer(int regenTimer) {
-        this.regenTimer = regenTimer;
+    public void setRegenTickTimer(int regenTickTimer) {
+        this.regenTickTimer = regenTickTimer;
     }
 
-    public int getRespawnTimer() {
-        return respawnTimer;
+    public void resetRegenTimer() {
+        regenTickTimer = (int) (200 * regenTickTimerModifier);
     }
 
-    public void setRespawnTimer(int respawnTimer) {
-        this.respawnTimer = respawnTimer;
+    public void setRegenTickTimerModifier(float regenTickTimerModifier) {
+        this.regenTickTimerModifier = regenTickTimerModifier;
+    }
+
+    public int getRespawnTickTimer() {
+        return respawnTickTimer;
+    }
+
+    public void setRespawnTickTimer(int respawnTickTimer) {
+        //convert respawntimer to ticks
+        this.respawnTickTimer = respawnTickTimer * 20;
     }
 
     public float getEnergy() {
@@ -1878,9 +1881,9 @@ public abstract class WarlordsEntity {
 
     public float addEnergy(WarlordsEntity giver, String ability, float amount) {
         float energyGiven = 0;
-        if (energy + amount > maxEnergy) {
-            energyGiven = maxEnergy - energy;
-            this.energy = maxEnergy;
+        if (energy + amount > getMaxEnergy()) {
+            energyGiven = getMaxEnergy() - energy;
+            this.energy = getMaxEnergy();
         } else if (energy + amount > 0) {
             energyGiven = amount;
             this.energy += amount;
@@ -1909,6 +1912,10 @@ public abstract class WarlordsEntity {
         return energyGiven;
     }
 
+    public float getMaxEnergy() {
+        return spec.getMaxEnergy();
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -1918,8 +1925,13 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(String message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
-            this.entity.sendMessage(message);
+        this.entity.sendMessage(message);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(message));
         }
     }
 
@@ -1932,8 +1944,21 @@ public abstract class WarlordsEntity {
     }
 
     public void sendSpigotMessage(BaseComponent[] message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
+        if (this.entity instanceof Player) {
             ((Player) this.entity).spigot().sendMessage(message);
+            if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+                BaseComponent[] messageCopy = new BaseComponent[message.length];
+                for (int i = 0; i < message.length; i++) {
+                    BaseComponent duplicate = message[i].duplicate();
+                    duplicate.setHoverEvent(null);
+                    messageCopy[i] = duplicate;
+                }
+                game.spectators()
+                    .map(Bukkit::getPlayer)
+                    .filter(Objects::nonNull)
+                    .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                    .forEach(player -> player.spigot().sendMessage(messageCopy));
+            }
         }
     }
 
@@ -1941,9 +1966,9 @@ public abstract class WarlordsEntity {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
-            if (energy - amount > maxEnergy) {
-                amountSubtracted = maxEnergy - energy;
-                energy = maxEnergy;
+            if (energy - amount > getMaxEnergy()) {
+                amountSubtracted = getMaxEnergy() - energy;
+                energy = getMaxEnergy();
             } else if (energy - amount < 0) {
                 amountSubtracted = energy;
                 energy = 0;
@@ -2473,24 +2498,28 @@ public abstract class WarlordsEntity {
         return this.compassTarget;
     }
 
-    public void runEverySecond() {
-        this.spec.runEverySecond();
+    public void runEveryTick() {
+        this.spec.runEveryTick();
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
     }
 
+    public void runEverySecond() {
+        this.spec.runEverySecond();
+    }
+
     private void decrementRespawnTimer() {
         // Respawn
-        if (respawnTimer == 1) {
+        if (respawnTickTimer == 20) {
             respawn();
-        } else if (respawnTimer > 0) {
+        } else if (respawnTickTimer > 0) {
             minuteStats.addTotalRespawnTime();
-            respawnTimer--;
-            if (respawnTimer <= 30) {
+            respawnTickTimer--;
+            if (respawnTickTimer <= 600) {
                 if (entity instanceof Player) {
                     PacketUtils.sendTitle((Player) entity,
                             "",
-                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer,
+                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawnTickTimer / 20),
                             0,
                             40,
                             0
@@ -2531,7 +2560,7 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
         }
-        setRespawnTimer(-1);
+        setRespawnTickTimer(-1);
         setEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);
@@ -2540,23 +2569,11 @@ public abstract class WarlordsEntity {
         updateEntity();
     }
 
-    public float getMaxEnergy() {
-        return maxEnergy;
-    }
-
-    public void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = maxEnergy;
-    }
-
     public void teleport(Location location) {
         this.entity.teleport(location);
     }
 
     public abstract void updateEntity();
-
-    public void runEveryTick() {
-        this.spec.runEveryTick();
-    }
 
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
@@ -2632,4 +2649,14 @@ public abstract class WarlordsEntity {
     public void setShowDebugMessage(boolean showDebugMessage) {
         this.showDebugMessage = showDebugMessage;
     }
+
+    public float getBonusAgroWeight() {
+        return bonusAgroWeight;
+    }
+
+    public void setBonusAgroWeight(float agroWeight) {
+        this.bonusAgroWeight = agroWeight * agroWeight; // squared because values in PathfinderGoalTargetAgroWarlordsEntity are squared
+    }
+
+    public abstract void setDamageResistance(int damageResistance);
 }

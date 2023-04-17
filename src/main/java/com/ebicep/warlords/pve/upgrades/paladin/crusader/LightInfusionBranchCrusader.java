@@ -89,7 +89,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
                 "+3s Duration\n\nCasting Light Infusion near other allies will give them Light Infusion. (Half the energy given.)",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() + 3);
+                    ability.setTickDuration(ability.getTickDuration() + 60);
                     ability.setPveUpgrade(true);
                 }
         );

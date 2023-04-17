@@ -1,8 +1,19 @@
 package com.ebicep.warlords.permissions;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.luckperms.api.event.user.UserDataRecalculateEvent;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.Node;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.CHAT_ARROW;
 import static com.ebicep.warlords.util.chat.ChatChannels.DEBUG;
@@ -19,20 +30,35 @@ public enum Permissions {
     ;
 
     public static final Permissions[] VALUES = values();
-    public final String prefix;
-    public final ChatColor prefixColor;
-    public final String permission;
 
-    Permissions(String prefix, ChatColor prefixColor, String permission) {
-        this.prefix = prefix;
-        this.prefixColor = prefixColor;
-        this.permission = permission;
+    public static void listenToNewPatreons(UserDataRecalculateEvent event) {
+        User user = event.getUser();
+        List<String> permissions = user.getNodes()
+                                       .stream()
+                                       .map(Node::getKey)
+                                       .collect(Collectors.toList());
+        permissions.remove("group.default");
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            DatabaseManager.updatePlayer(user.getUniqueId(), activeCollection, dp -> dp.setPermissions(permissions));
+        }
+        Warlords.newChain()
+                .sync(CustomScoreboard::updateLobbyPlayerNames)
+                .execute();
     }
 
     public static String getPrefixWithColor(Player player) {
         for (Permissions value : VALUES) {
             if (player.hasPermission(value.permission)) {
                 return value == DEFAULT ? value.prefixColor.toString() : value.prefixColor + "[" + value.prefix + "] ";
+            }
+        }
+        return ChatColor.AQUA.toString();
+    }
+
+    public static String getColor(DatabasePlayer databasePlayer) {
+        for (Permissions value : VALUES) {
+            if (databasePlayer.hasPermission(value.permission)) {
+                return value.prefixColor.toString();
             }
         }
         return ChatColor.AQUA.toString();
@@ -62,7 +88,6 @@ public enum Permissions {
         return player.hasPermission(DEFAULT.permission);
     }
 
-
     public static void sendMessageToDebug(Player player, String message) {
         if (player.hasPermission("warlords.database.messagefeed")) {
             player.sendMessage(message);
@@ -71,8 +96,18 @@ public enum Permissions {
 
     public static void sendMessageToDebug(WarlordsEntity player, String message) {
         if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
-            player.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            player.getEntity().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
         }
+    }
+
+    public final String prefix;
+    public final ChatColor prefixColor;
+    public final String permission;
+
+    Permissions(String prefix, ChatColor prefixColor, String permission) {
+        this.prefix = prefix;
+        this.prefixColor = prefixColor;
+        this.permission = permission;
     }
 
 }

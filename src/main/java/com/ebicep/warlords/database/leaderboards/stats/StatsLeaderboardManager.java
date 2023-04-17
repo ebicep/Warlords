@@ -8,17 +8,22 @@ import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
 import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardGeneral;
-import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
+import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.*;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -103,16 +108,15 @@ public class StatsLeaderboardManager {
                                 }
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-                                if (value == PlayersCollections.LIFETIME &&
-                                        (databasePlayer.getPlays() + pveStats.getPlays() < 20 ||
-                                                (databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus))) &&
-                                        (currentGameEvent == null || currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
-                                                                                                                    .get(currentGameEvent.getStartDateSecond())
-                                                                                                                    .getPlays() == 0)
-                                ) {
+                                boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
+                                boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
+                                EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
+                                                                                                                                       .get(currentGameEvent.getStartDateSecond());
+                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
+                                if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && (databasePlayer.getPlays() + pveStats.getPlays() < 20)) {
+                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
@@ -370,10 +374,17 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        String guildTag = "";
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = " " + tag.getTag(true);
+                            }
+                        }
                         hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
-                                                                                    .apply(databasePlayer));
+                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
                 }
@@ -396,10 +407,17 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        String guildTag = "";
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = " " + tag.getTag(true);
+                            }
+                        }
                         hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction()
-                                                                                    .apply(databasePlayer, eventLeaderboard.getEventTime()));
+                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
+                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime()));
                         break;
                     }
                 }
@@ -443,7 +461,15 @@ public class StatsLeaderboardManager {
     public enum GameType {
         ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new),
         CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
-        PVE("Wave Defense", "PvE", StatsLeaderboardPvE::new);
+        PVE("PvE", "PvE", StatsLeaderboardPvE::new),
+        WAVE_DEFENSE("Wave Defense", "Wave Defense", StatsLeaderboardWaveDefense::new),
+        ONSLAUGHT("Onslaught", "Onslaught", StatsLeaderboardOnslaught::new),
+
+        ;
+
+        public static boolean isPve(GameType gameType) {
+            return gameType == PVE || gameType == WAVE_DEFENSE || gameType == ONSLAUGHT;
+        }
 
         public static GameType getAfter(GameType gameType) {
             switch (gameType) {
@@ -452,6 +478,10 @@ public class StatsLeaderboardManager {
                 case CTF:
                     return PVE;
                 case PVE:
+                    return WAVE_DEFENSE;
+                case WAVE_DEFENSE:
+                    return ONSLAUGHT;
+                case ONSLAUGHT:
                     return ALL;
             }
             return ALL;
@@ -460,11 +490,15 @@ public class StatsLeaderboardManager {
         public static GameType getBefore(GameType gameType) {
             switch (gameType) {
                 case ALL:
-                    return PVE;
+                    return ONSLAUGHT;
                 case CTF:
                     return ALL;
                 case PVE:
                     return CTF;
+                case WAVE_DEFENSE:
+                    return PVE;
+                case ONSLAUGHT:
+                    return WAVE_DEFENSE;
             }
             return ALL;
         }

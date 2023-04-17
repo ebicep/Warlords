@@ -5,6 +5,12 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
@@ -104,8 +110,17 @@ public class EventLeaderboard {
         hologramLines.appendText(ChatColor.GRAY + subTitle);
         for (int i = page * StatsLeaderboard.PLAYERS_PER_PAGE; i < (page + 1) * StatsLeaderboard.PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+            String guildTag = "";
+            if (guildPlayerPair != null) {
+                GuildTag tag = guildPlayerPair.getA().getTag();
+                if (tag != null) {
+                    guildTag = " " + tag.getTag(false);
+                }
+            }
             hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
-                    ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer, eventTime));
+                    Permissions.getColor(databasePlayer) + databasePlayer.getName() + guildTag +
+                    ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer, eventTime));
         }
         hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
 
@@ -179,6 +194,10 @@ public class EventLeaderboard {
 
      */
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, location);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -190,11 +209,6 @@ public class EventLeaderboard {
         }
         EventLeaderboard that = (EventLeaderboard) o;
         return title.equals(that.title) && location.equals(that.location);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, location);
     }
 
     public String getTitle() {

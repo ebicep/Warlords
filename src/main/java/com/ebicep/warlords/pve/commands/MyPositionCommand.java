@@ -29,11 +29,9 @@ public class MyPositionCommand extends BaseCommand {
             new StatLeaderboardTarget("Kills", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getKills())),
             new StatLeaderboardTarget("Assists", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getAssists())),
             new StatLeaderboardTarget("Deaths", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getDeaths())),
-            new StatLeaderboardTarget("Waves Cleared", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getTotalWavesCleared())),
+            //new StatLeaderboardTarget("Waves Cleared", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getTotalWavesCleared())),
             new StatLeaderboardTarget("Games Cleared", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getWins())),
-            new StatLeaderboardTarget("Clear Rate",
-                    pvEDatabaseStatInformation -> NumberFormat.addCommaAndRound(pvEDatabaseStatInformation.getWinRate() * 100) + "%"
-            ),
+            new StatLeaderboardTarget("Clear Rate", pvEDatabaseStatInformation -> NumberFormat.addCommaAndRound(pvEDatabaseStatInformation.getWinRate() * 100) + "%"),
     };
 
     private static void appendStats(

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -21,12 +22,12 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class Intervene extends AbstractAbility {
+public class Intervene extends AbstractAbility implements Duration {
 
     public int playersIntervened = 0;
     public int carriersIntervened = 0;
 
-    private final int duration = 5;
+    private int tickDuration = 100;
     private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;
@@ -51,7 +52,7 @@ public class Intervene extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Protect the target ally, reducing the damage they take by §e100% §7and redirecting §e" + damageReduction + "% §7of the damage they would " +
                 "have taken back to you. You can protect the target for a maximum of §c" + format(maxDamagePrevented) +
-                " §7damage. You must remain within §e" + breakRadius + " §7blocks of each other. Lasts §6" + duration + " §7seconds." +
+                " §7damage. You must remain within §e" + breakRadius + " §7blocks of each other. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
     }
 
@@ -146,7 +147,7 @@ public class Intervene extends AbstractAbility {
                                 ChatColor.GRAY + "has expired!"
                         );
                     },
-                    duration * 20,
+                    tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
                             cooldown.setTicksLeft(0);
@@ -233,5 +234,15 @@ public class Intervene extends AbstractAbility {
 
     public void setDamageReduction(int damageReduction) {
         this.damageReduction = damageReduction;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }

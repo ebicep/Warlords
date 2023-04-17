@@ -1,8 +1,9 @@
 package com.ebicep.customentities.nms.pve;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgroWarlordsEntity;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
@@ -67,7 +68,7 @@ public interface CustomEntity<T extends EntityInsentient> {
             aiWander(wanderSpeed);
 
             //targets entity that hit it
-            aiTargetHitBy();
+            //aiTargetHitBy();
             //targets closest entities
             aiTargetClosest();
         }
@@ -85,7 +86,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiMeleeAttack(double speedTowardsTarget) {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.goalSelector.a(1, new PathfinderGoalMeleeAttack((EntityCreature) entity, EntityHuman.class, speedTowardsTarget, true));
+            entity.goalSelector.a(1, new PathfinderGoalMeleeAttack((EntityCreature) entity, EntityLiving.class, speedTowardsTarget, true));
         }
     }
 
@@ -97,7 +98,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void aiLookAtPlayer() {
-        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityHuman.class, 20.0F));
+        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityLiving.class, 20.0F));
     }
 
     default void aiLookIdle() {
@@ -108,14 +109,15 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetHitBy() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false, EntityHuman.class));
+            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false, EntityLiving.class));
         }
     }
 
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 2, false, false, null));
+//            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 2, false, false, null));
+            entity.targetSelector.a(2, new PathfinderGoalTargetAgroWarlordsEntity((EntityCreature) entity));
         }
     }
 
@@ -129,7 +131,7 @@ public interface CustomEntity<T extends EntityInsentient> {
         ((CraftWorld) location.getWorld()).getHandle().addEntity(customEntity);
     }
 
-    default void onDeath(T entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    default void onDeath(T entity, Location deathLocation, PveOption pveOption) {
     }
 
     T get();

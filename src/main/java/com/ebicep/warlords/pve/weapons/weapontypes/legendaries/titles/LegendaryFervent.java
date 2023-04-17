@@ -2,17 +2,21 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryFervent extends AbstractLegendaryWeapon {
+public class LegendaryFervent extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int DAMAGE_BOOST = 5;
     public static final int DAMAGE_TO_TAKE = 5000;
@@ -29,9 +33,12 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     public static final int ABILITY_STRIKE_DAMAGE_BOOST = 100;
     public static final int ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE = 20;
     public static final int ABILITY_DURATION = 12;
-    public static final float ABILITY_DURATION_PER_UPGRADE = 2.5f;
+    public static final int ABILITY_DURATION_PER_UPGRADE = 1;
 
     public static final int MAX_STACKS = 3;
+
+    @Transient
+    private int passiveCooldown = 0;
 
     public LegendaryFervent() {
     }
@@ -49,12 +56,13 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
         return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
                 " health (Post damage reduction). Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
                 formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " more damage for " +
-                formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds.";
+                formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds. Can be triggered every 40 seconds.";
     }
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
+        return Arrays.asList(
+                new Pair<>(
                         formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
@@ -72,9 +80,9 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        this.passiveCooldown = 0;
         final AtomicDouble damageTaken = new AtomicDouble(0);
         final AtomicInteger damageBoost = new AtomicInteger(0);
         final AtomicReference<RegularCooldown<LegendaryFervent>> cooldown = new AtomicReference<>(null);
@@ -101,7 +109,7 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onDamageHealingFinal(WarlordsDamageHealingFinalEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
@@ -147,20 +155,24 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
         new GameRunnable(player.getGame()) {
 
             int shiftTickTime = 0;
-            int abilityCooldown = 0;
 
             @Override
             public void run() {
-                if (abilityCooldown > 0) {
-                    abilityCooldown--;
+                if (passiveCooldown > 0) {
+                    passiveCooldown--;
+                    if (passiveCooldown <= 0) {
+                        shiftTickTime = 0;
+                    }
                     return;
                 }
                 if (cooldown.get() == null || !player.getCooldownManager().hasCooldown(cooldown.get()) || !cooldown.get().getName().equals("Fervent 3")) {
                     return;
                 }
                 if (player.isSneaking()) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Fervent Ability",
@@ -173,9 +185,9 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
                                 },
                                 cooldownManager -> {
                                 },
-                                (int) (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
+                                (ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) * 20
                         ));
-                        abilityCooldown = 40 * 20;
+                        passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;
@@ -222,5 +234,10 @@ public class LegendaryFervent extends AbstractLegendaryWeapon {
     @Override
     protected float getSkillCritMultiplierBonusValue() {
         return 10;
+    }
+
+    @Override
+    public int getCounter() {
+        return passiveCooldown / 20;
     }
 }

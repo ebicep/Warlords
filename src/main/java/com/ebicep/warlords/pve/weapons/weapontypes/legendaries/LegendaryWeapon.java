@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.java.Pair;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,5 +58,10 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     @Override
     protected float getSpeedBonusValue() {
         return 10;
+    }
+
+    @Override
+    public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
+        return null;
     }
 }

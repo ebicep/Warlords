@@ -26,7 +26,7 @@ public abstract class AbstractPlayerClass {
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;
-    protected float energyOnHit;
+    protected float energyPerHit;
     protected int damageResistance;
     protected AbstractAbility weapon;
     protected AbstractAbility red;
@@ -44,7 +44,7 @@ public abstract class AbstractPlayerClass {
             int maxHealth,
             int maxEnergy,
             int energyPerSec,
-            int energyOnHit,
+            int energyPerHit,
             int damageResistance,
             AbstractAbility weapon,
             AbstractAbility red,
@@ -55,7 +55,7 @@ public abstract class AbstractPlayerClass {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
-        this.energyOnHit = energyOnHit;
+        this.energyPerHit = energyPerHit;
         this.damageResistance = damageResistance;
         this.weapon = weapon;
         this.red = red;
@@ -108,6 +108,10 @@ public abstract class AbstractPlayerClass {
         return new AbstractAbility[]{weapon, red, purple, blue, orange};
     }
 
+    public AbstractAbility[] getAbilitiesExcludingWeapon() {
+        return new AbstractAbility[]{red, purple, blue, orange};
+    }
+
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (!wp.isActive()) {
@@ -150,7 +154,7 @@ public abstract class AbstractPlayerClass {
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
                     if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
+                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return;
@@ -209,7 +213,7 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, ability);
+            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
@@ -262,12 +266,12 @@ public abstract class AbstractPlayerClass {
         this.energyPerSec = energyPerSec;
     }
 
-    public float getEnergyOnHit() {
-        return energyOnHit;
+    public float getEnergyPerHit() {
+        return energyPerHit;
     }
 
-    public void setEnergyOnHit(float energyOnHit) {
-        this.energyOnHit = energyOnHit;
+    public void setEnergyPerHit(float energyPerHit) {
+        this.energyPerHit = energyPerHit;
     }
 
     public int getDamageResistance() {
@@ -275,7 +279,7 @@ public abstract class AbstractPlayerClass {
     }
 
     public void setDamageResistance(int damageResistance) {
-        this.damageResistance = Math.max(0, damageResistance);
+        this.damageResistance = damageResistance;
     }
 
     public AbstractAbility getWeapon() {

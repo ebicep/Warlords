@@ -140,6 +140,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder amount(int amount) {
+        item.setAmount(amount);
+        return this;
+    }
+
     public ItemBuilder unbreakable() {
         return unbreakable(true);
     }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
@@ -42,12 +43,12 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
         this.abilityTree = abilityTree;
         this.ability = ability;
-        this.itemStack = abilityTree.getPlayer().getItemStackForAbility(ability);
+        this.itemStack = abilityTree.getWarlordsPlayer().getItemStackForAbility(ability);
         this.itemName = ability.getName();
     }
 
     public void openUpgradeBranchMenu() {
-        WarlordsPlayer player = abilityTree.getPlayer();
+        WarlordsPlayer player = abilityTree.getWarlordsPlayer();
         Menu menu = new Menu("Upgrades", 9 * 6);
 
         addBranchToMenu(menu, treeA, 2, 4);
@@ -131,7 +132,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         autoUpgradeEntry.getUpgradeType() == upgradeType &&
                         autoUpgradeEntry.getUpgradeIndex() == upgradeIndex
                 );
-        WarlordsPlayer player = abilityTree.getPlayer();
+        WarlordsPlayer player = abilityTree.getWarlordsPlayer();
         if (contains) {
             AutoUpgradeProfile.AutoUpgradeEntry lastEntry = autoUpgradeProfile
                     .getAutoUpgradeEntries()
@@ -192,10 +193,13 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             autoUpgradeProfile.addEntry(branchIndex, upgradeIndex, upgradeType);
             openUpgradeBranchMenu();
         }
+        DatabaseManager.updatePlayer(player.getUuid(), databasePlayer -> {
+
+        });
     }
 
     private void addBranchToMenu(Menu menu, List<Upgrade> tree, int x, int y) {
-        WarlordsPlayer player = abilityTree.getPlayer();
+        WarlordsPlayer player = abilityTree.getWarlordsPlayer();
         for (int i = 0; i < tree.size(); i++) {
             Upgrade upgrade = tree.get(i);
             int finalI = i;
@@ -332,7 +336,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         String prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : "";
         game.forEachOnlinePlayer((p, t) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
-                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
+                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getWarlordsPlayer().getName() + " §ehas unlocked ")
                         .appendHoverItem(ChatColor.GOLD + ability.getName() + " - §c§l" + upgrade.getName() + "§e!",
                                 new ItemBuilder(Material.STONE)
                                         .name("§c§l" + upgrade.getName())
@@ -341,7 +345,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         )
                         .create());
             } else {
-                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked ")
+                p.spigot().sendMessage(new ComponentBuilder(prefix + ChatColor.AQUA + abilityTree.getWarlordsPlayer().getName() + " §ehas unlocked ")
                         .appendHoverItem(ChatColor.GOLD + ability.getName() + " - " + upgrade.getName() + "§e!",
                                 new ItemBuilder(Material.STONE)
                                         .name(ChatColor.GOLD + upgrade.getName())

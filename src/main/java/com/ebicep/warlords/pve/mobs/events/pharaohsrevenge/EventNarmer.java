@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -64,6 +64,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -151,7 +152,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                 if (event.getAttacker().equals(warlordsNPC)) {
                     event.setMin(event.getMin() * hpDamageIncrease);
                     event.setMax(event.getMax() * hpDamageIncrease);
-                } else if (event.getPlayer().equals(warlordsNPC)) {
+                } else if (event.getWarlordsEntity().equals(warlordsNPC)) {
                     Location loc = warlordsNPC.getLocation();
                     if (!ancestors.isEmpty()) {
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
@@ -176,7 +177,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
                 if (eventPlayer.isTeammate(warlordsNPC)) {
@@ -332,6 +333,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)

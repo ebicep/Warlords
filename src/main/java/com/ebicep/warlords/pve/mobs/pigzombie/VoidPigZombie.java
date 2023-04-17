@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.PrismGuard;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -40,12 +40,13 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         warlordsNPC.getSpec().setBlue(new PrismGuard());
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 30 == 0) {
             EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.CLOUD, 1);
         }
 
@@ -67,7 +68,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
             }
         }
 
-        if (ticksElapsed % 300 == 0) {
+        if (ticksElapsed % 400 == 0) {
             warlordsNPC.getBlueAbility().onActivate(warlordsNPC, null);
         }
     }

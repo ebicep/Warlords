@@ -11,12 +11,11 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
     float maxHealing = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
     int radius = ability.getRadius();
-    int duration = ability.getDuration();
 
     public HealingTotemBranch(AbilityTree abilityTree, HealingTotem ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Scope - Tier I",
                 "+2 Block totem radius",
                 5000,
                 () -> {
@@ -24,7 +23,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Scope - Tier II",
                 "+4 Blocks totem radius",
                 10000,
                 () -> {
@@ -32,7 +31,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Scope - Tier III",
                 "+6 Blocks totem radius",
                 15000,
                 () -> {
@@ -40,7 +39,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Scope - Tier IV",
                 "+8 Blocks totem radius\n+20% Healing",
                 20000,
                 () -> {
@@ -51,45 +50,49 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+1s Duration",
+                "Zeal - Tier I",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+2s Duration",
+                "Zeal - Tier II",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+3s Duration",
+                "Zeal - Tier III",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+4s Duration",
+                "Zeal - Tier IV",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Healing Obelisk",
                 "Healing Totem - Master Upgrade",
-                "-25% Cooldown reduction\n\nAll enemies within the radius of Healing Totem are perpetually crippled, reducing their damage dealt by 50%",
+                "Double the duration of Healing Totem but reduce the incremental healing by 15%.\n\nAll enemies within" +
+                        " the radius of Healing Totem are perpetually slowed and crippled, reducing their movement" +
+                        " speed and damage dealt by 50%. Additionally, reduce their passive damage" +
+                        " resistance by 5% for each second they are in range of your Healing Totem.",
                 50000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.75f);
+                    ability.setHealingIncrement(20);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

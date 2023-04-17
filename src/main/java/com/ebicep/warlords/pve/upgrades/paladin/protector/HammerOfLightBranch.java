@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
 
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
     float cooldown = ability.getCooldown();
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
@@ -91,7 +91,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
 

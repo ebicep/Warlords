@@ -4,14 +4,11 @@ import com.ebicep.warlords.abilties.CripplingStrike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -19,7 +16,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -48,6 +44,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
@@ -70,27 +67,7 @@ public class EventDjet extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
-                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
-                        name,
-                        "CRIP",
-                        CripplingStrike.class,
-                        new CripplingStrike(),
-                        warlordsNPC,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        cooldownManager -> {
-                            if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                                warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-                            }
-                        },
-                        3 * 20
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * .9f;
-                    }
-                });
+                CripplingStrike.cripple(warlordsNPC, warlordsPlayer, name, 3 * 20);
             }
         }
     }
@@ -103,9 +80,9 @@ public class EventDjet extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (aboveHealthThreshold()) {
-            warlordsNPC.getSpec().setDamageResistance(10);
+            warlordsNPC.setDamageResistance(10);
         } else {
-            warlordsNPC.getSpec().setDamageResistance(30);
+            warlordsNPC.setDamageResistance(30);
         }
     }
 

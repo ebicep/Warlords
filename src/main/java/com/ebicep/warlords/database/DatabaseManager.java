@@ -3,7 +3,6 @@ package com.ebicep.warlords.database;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
-import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
@@ -12,6 +11,8 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
+import com.ebicep.warlords.database.repositories.items.WeeklyBlessingsService;
+import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -35,8 +36,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
 
 public class DatabaseManager {
@@ -65,6 +64,7 @@ public class DatabaseManager {
     public static MasterworksFairService masterworksFairService;
     public static GuildService guildService;
     public static GameEventsService gameEventsService;
+    public static WeeklyBlessingsService weeklyBlessingsService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -85,6 +85,7 @@ public class DatabaseManager {
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
+            weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -93,6 +94,7 @@ public class DatabaseManager {
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
         }
+
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
@@ -109,7 +111,7 @@ public class DatabaseManager {
                 .sync(() -> {
                     GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
                     ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
-                    DatabaseTiming.checkStatsTimings();
+                    DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
                 })
@@ -137,16 +139,16 @@ public class DatabaseManager {
         //Loading last 5 games
         ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
-        Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(15))
-                .syncLast((games) -> {
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
-                    previousGames.addAll(games);
-                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
-                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
-                })
-                .execute();
+//        Warlords.newChain()
+//                .asyncFirst(() -> gameService.getLastGames(15))
+//                .syncLast((games) -> {
+//                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
+//                    previousGames.addAll(games);
+//                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
+//                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+//                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
+//                })
+//                .execute();
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {
@@ -322,5 +324,11 @@ public class DatabaseManager {
 
     public static ConcurrentHashMap<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {
         return CACHED_PLAYERS.get(playersCollections);
+    }
+
+    public static void updateWeeklyBlessings(WeeklyBlessings weeklyBlessings) {
+        Warlords.newChain()
+                .async(() -> weeklyBlessingsService.update(weeklyBlessings))
+                .execute();
     }
 }

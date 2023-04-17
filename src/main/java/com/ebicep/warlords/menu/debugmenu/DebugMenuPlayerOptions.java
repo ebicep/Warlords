@@ -14,7 +14,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -208,8 +208,8 @@ public class DebugMenuPlayerOptions {
                         .name(ChatColor.GREEN + "Change Spec")
                         .get(),
                 (m, e) -> {
-                    if (GameMode.isWaveDefense(target.getGame().getGameMode())) {
-                        if (PermissionHandler.isAdmin(player)) {
+                    if (GameMode.isPvE(target.getGame().getGameMode())) {
+                        if (Permissions.isAdmin(player)) {
                             sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.", true);
                         } else {
                             sendDebugMessage(player, ChatColor.RED + "Cannot change spec in wave defense.", true);

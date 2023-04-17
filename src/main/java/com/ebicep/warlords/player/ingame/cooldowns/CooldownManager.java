@@ -2,6 +2,8 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilties.WoundingStrikeDefender;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -41,6 +43,11 @@ public class CooldownManager {
 
     public boolean hasCooldown(Class<?> cooldownClass) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass().equals(cooldownClass));
+    }
+
+    public boolean hasCooldownExtends(Class<?> cooldownClass) {
+        return abstractCooldowns.stream()
+                                .anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldownClass.isAssignableFrom(cooldown.getCooldownClass()));
     }
 
     public boolean hasCooldown(Object cooldownObject) {
@@ -407,6 +414,11 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getCooldowns() {
         return abstractCooldowns;
+    }
+
+    public void removePreviousWounding() {
+        removeCooldown(WoundingStrikeBerserker.class, true);
+        removeCooldown(WoundingStrikeDefender.class, true);
     }
 
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {

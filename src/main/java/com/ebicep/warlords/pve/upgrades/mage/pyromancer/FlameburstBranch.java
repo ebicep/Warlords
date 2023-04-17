@@ -28,7 +28,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -36,7 +36,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -44,7 +44,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 

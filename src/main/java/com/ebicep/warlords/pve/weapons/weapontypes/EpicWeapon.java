@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -60,8 +61,8 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
         player.getSpeed().addBaseModifier(getSpeedBonus());
     }
 

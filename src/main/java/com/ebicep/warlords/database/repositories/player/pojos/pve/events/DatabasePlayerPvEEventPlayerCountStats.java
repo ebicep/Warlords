@@ -3,15 +3,15 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventDatabaseStatInformation> {
 
     private DatabaseMagePvEEvent mage = new DatabaseMagePvEEvent();
     private DatabaseWarriorPvEEvent warrior = new DatabaseWarriorPvEEvent();
@@ -24,24 +24,23 @@ public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStat
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvE;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
 
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-        this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
     @Override
@@ -101,6 +100,31 @@ public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStat
     @Override
     public DatabaseBasePvEEvent[] getClasses() {
         return new DatabaseBasePvEEvent[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getMage() {
+        return mage;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getWarrior() {
+        return warrior;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getPaladin() {
+        return paladin;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getShaman() {
+        return shaman;
+    }
+
+    @Override
+    public PvEEventDatabaseStatInformation getRogue() {
+        return rogue;
     }
 
     public void merge(DatabasePlayerPvEEventPlayerCountStats other) {

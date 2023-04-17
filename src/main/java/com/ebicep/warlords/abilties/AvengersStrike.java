@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -87,8 +89,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         Optional<Consecrate> consecrate = getStandingOnConsecrate(wp, nearPlayer);
         consecrate.ifPresent(cons -> {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value *= (1 + cons.getStrikeDamageBoost() / 100f));
+            minDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
+            maxDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
         });
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
@@ -109,16 +111,25 @@ public class AvengersStrike extends AbstractStrikeBase {
                     .excluding(nearPlayer)
                     .limit(2)
             ) {
+                AtomicReference<Float> minDamageSlash = new AtomicReference<>(minDamageHeal);
+                AtomicReference<Float> maxDamageSlash = new AtomicReference<>(maxDamageHeal);
+                Optional<Consecrate> consecrateSlash = getStandingOnConsecrate(wp, we);
+                consecrateSlash.ifPresent(cons -> {
+                    wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
+                    minDamageSlash.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
+                    maxDamageSlash.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
+                });
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        ((minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
-                        ((maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.4f,
+                        ((minDamageSlash.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((maxDamageSlash.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
                         critChance,
                         critMultiplier,
                         false,
-                        consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
+                        consecrateSlash.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
                 );
+                Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
             }
         }
 

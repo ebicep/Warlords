@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -26,7 +27,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 
 public class WeaponTitleMenu {
 
-    public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, int page) {
+    public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles[] titles, int page) {
         Menu menu = new Menu("Apply Title to Weapon", 9 * 5);
 
         for (int i = 0; i < 9 * 5; i++) {
@@ -47,26 +48,11 @@ public class WeaponTitleMenu {
                 }
         );
 
-//        int[] colors = new int[] {4,5,3};
-//        for (int i = 0; i < 9; i++) {
-//            for (int j = 0; j < 3; j++) {
-//                menu.setItem(
-//                        i,
-//                        j + 1,
-//                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) colors[i / 3])
-//                                .name("")
-//                                .get(),
-//                        (m, e) -> {
-//                        }
-//                );
-//            }
-//        }
-
         Map<LegendaryTitles, LegendaryWeaponTitleInfo> unlockedTitles = weapon.getTitles();
         for (int i = 0; i < 3; i++) {
             int titleIndex = ((page - 1) * 3) + i;
-            if (titleIndex < LegendaryTitles.VALUES.length) {
-                LegendaryTitles title = LegendaryTitles.VALUES[titleIndex];
+            if (titleIndex < titles.length) {
+                LegendaryTitles title = titles[titleIndex];
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
 
@@ -145,10 +131,10 @@ public class WeaponTitleMenu {
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
-                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, page);
+                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, titles, page);
 
                                     },
-                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, page),
+                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page),
                                     (m2) -> {
                                     }
                             );
@@ -163,20 +149,45 @@ public class WeaponTitleMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
-                    (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, page - 1)
+                    (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
             );
         }
-        if (LegendaryTitles.VALUES.length > (page * 3)) {
+        if (titles.length > (page * 3)) {
             menu.setItem(8, 4,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
-                    (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, page + 1)
+                    (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page + 1)
             );
         }
 
         menu.setItem(4, 4, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
+        menu.setItem(5, 4,
+                new ItemBuilder(Material.SIGN)
+                        .name(ChatColor.GREEN + "Search Title")
+                        .get(),
+                (m, e) ->
+                        SignGUI.open(player, new String[]{"", "^ Search Query ^", "Returns titles", "containing query"}, (p, lines) -> {
+                            String titleName = lines[0];
+                            if (titleName.isEmpty()) {
+                                player.sendMessage(ChatColor.RED + "Query cannot be empty!");
+                                openWeaponEditor(player, databasePlayer, weapon);
+                                return;
+                            }
+                            titleName = titleName.toLowerCase();
+                            String finalTitleName = titleName;
+                            LegendaryTitles[] legendaryTitles = Arrays.stream(LegendaryTitles.VALUES)
+                                                                      .filter(title -> title.name.toLowerCase().contains(finalTitleName))
+                                                                      .toArray(LegendaryTitles[]::new);
+                            if (legendaryTitles.length == 0) {
+                                player.sendMessage(ChatColor.RED + "No titles with that name found!");
+                                openWeaponEditor(player, databasePlayer, weapon);
+                                return;
+                            }
+                            openWeaponTitleMenu(player, databasePlayer, weapon, legendaryTitles, 1);
+                        })
+        );
         menu.openForPlayer(player);
     }
 
@@ -204,6 +215,10 @@ public class WeaponTitleMenu {
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
 
         return titledWeapon;
+    }
+
+    public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, int page) {
+        openWeaponTitleMenu(player, databasePlayer, weapon, LegendaryTitles.VALUES, page);
     }
 
     public static void openWeaponTitleUpgradeMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
@@ -244,9 +259,9 @@ public class WeaponTitleMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
-            for (Map.Entry<Enum<? extends Spendable>, Long> currenciesLongEntry : upgradeCost.entrySet()) {
-                ((Spendable) currenciesLongEntry.getKey()).subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
+            LinkedHashMap<Spendable, Long> upgradeCost = weapon.getTitleUpgradeCost(weapon.getTitleLevelUpgraded());
+            for (Map.Entry<Spendable, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
             }
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

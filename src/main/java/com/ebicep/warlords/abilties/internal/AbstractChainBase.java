@@ -19,10 +19,28 @@ import java.util.Set;
 
 public abstract class AbstractChainBase extends AbstractAbility {
 
-    protected int playersHit = 0;
+    public int playersHit = 0;
+    protected int radius;
+    protected int bounceRange;
+    protected int additionalBounces;
 
-    public AbstractChainBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+
+    public AbstractChainBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            int radius,
+            int bounceRange,
+            int additionalBounces
+    ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        this.radius = radius;
+        this.bounceRange = bounceRange;
+        this.additionalBounces = additionalBounces;
     }
 
     @Override
@@ -99,5 +117,31 @@ public abstract class AbstractChainBase extends AbstractAbility {
     }
 
     protected abstract ItemStack getChainItem();
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getBounceRange() {
+        return bounceRange;
+    }
+
+    public void setBounceRange(int bounceRange) {
+        this.bounceRange = bounceRange;
+    }
+
+
+    public int getAdditionalBounces() {
+        return additionalBounces;
+    }
+
+    public void setAdditionalBounces(int additionalBounces) {
+        this.additionalBounces = additionalBounces;
+    }
+
 
 }

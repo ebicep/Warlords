@@ -33,7 +33,10 @@ public class NPCManager {
         Warlords.newChain()
                 .sync(() -> {
                     createGameNPC();
-                    createPvENPC();
+                    createWaveDefenseNPC();
+                    createOnslaughtNPC();
+                    createTreasureHuntNPC();
+                    createBossRushNPC();
                 })
                 .execute();
     }
@@ -46,10 +49,10 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 741.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 738.5, 45, 0));
     }
 
-    private static void createPvENPC() {
+    private static void createWaveDefenseNPC() {
         registerTrait(PvEStartTrait.class, "PveStartTrait");
 
         NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "pve-mode");
@@ -57,7 +60,40 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 747.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 741.5, 90, 0));
+    }
+
+    private static void createOnslaughtNPC() {
+        registerTrait(OnslaughtStartTrait.class, "OnslaughtStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "onslaught-mode");
+        npc.addTrait(OnslaughtStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 744.5, 90, 0));
+    }
+
+    private static void createTreasureHuntNPC() {
+        registerTrait(TreasureHuntStartTrait.class, "TreasureHuntStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "treasure-hunt-mode");
+        npc.addTrait(TreasureHuntStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 747.5, 90, 0));
+    }
+
+    private static void createBossRushNPC() {
+        registerTrait(BossRushStartTrait.class, "BossRushStartTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "boss-rush-mode");
+        npc.addTrait(BossRushStartTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 750.5, 135, 0));
     }
 
     public static void registerTrait(Class<? extends Trait> trait, String traitName) {
@@ -80,6 +116,9 @@ public class NPCManager {
                     createQuestMenuNPC();
                     createStarPieceSynthesizerNPC();
                     createMysteriousTokenNPC();
+                    createItemMichaelNPC();
+                    createItemEnyaNPC();
+                    createIllusionVendorNPC();
                 })
                 .execute();
     }
@@ -171,8 +210,8 @@ public class NPCManager {
         //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
 
         npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        LookClose lookClose = npc.getOrAddTrait(LookClose.class);
-        lookClose.toggle();
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
     }
@@ -192,6 +231,51 @@ public class NPCManager {
         equipment.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.BEDROCK));
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2532.5, 48.5, 746.8, 90, 0));
+    }
+
+    public static void createItemMichaelNPC() {
+        registerTrait(ItemMichaelTrait.class, "ItemMichaelTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-michael");
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BLACKSMITH);
+        npc.addTrait(ItemMichaelTrait.class);
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Mysterious Michael");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528, 50, 770, 125, 0));
+    }
+
+    public static void createItemEnyaNPC() {
+        registerTrait(ItemEnyaTrait.class, "ItemEnyaTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.BLAZE, "item-enya");
+        npc.data().set("swim", false);
+        npc.addTrait(ItemEnyaTrait.class);
+        npc.getOrAddTrait(LookClose.class)
+           .toggle();
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Ethical Enya");
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2523.5, 50, 764, 90, 0));
+    }
+
+    public static void createIllusionVendorNPC() {
+        registerTrait(IllusionVendorTrait.class, "IllusionVendorTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.IRON_GOLEM, "illusion-vendor");
+        npc.addTrait(IllusionVendorTrait.class);
+
+        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 769.5, 180, 0));
     }
 
 

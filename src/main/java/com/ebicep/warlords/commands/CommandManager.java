@@ -16,9 +16,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.tutorial.TutorialCommand;
-import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
-import com.ebicep.warlords.game.option.wavedefense.commands.WaveCommand;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtCommand;
+import com.ebicep.warlords.game.option.pve.tutorial.TutorialCommand;
+import com.ebicep.warlords.game.option.pve.wavedefense.commands.EditCurrencyCommand;
+import com.ebicep.warlords.game.option.pve.wavedefense.commands.WaveCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -37,11 +38,13 @@ import com.ebicep.warlords.party.commands.StreamCommand;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
+import com.ebicep.warlords.pve.items.ItemsCommand;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
@@ -123,11 +126,11 @@ public class CommandManager {
                 target = arg == null ? name : arg;
             }
             Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
-                    .stream()
-                    .filter(WarlordsPlayer.class::isInstance)
-                    .map(WarlordsPlayer.class::cast)
-                    .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
-                    .findAny();
+                                                                      .stream()
+                                                                      .filter(WarlordsPlayer.class::isInstance)
+                                                                      .map(WarlordsPlayer.class::cast)
+                                                                      .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
+                                                                      .findAny();
             if (!optionalWarlordsPlayer.isPresent()) {
                 if (target.equals(name)) {
                     throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
@@ -163,6 +166,19 @@ public class CommandManager {
             throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
         });
         //Contexts
+        manager.getCommandContexts().registerContext(WarlordsNPC.class, command -> {
+            String target = command.popFirstArg();
+            Optional<WarlordsNPC> optionalWarlordsNPC = Warlords.getPlayers().values()
+                                                                .stream()
+                                                                .filter(WarlordsNPC.class::isInstance)
+                                                                .map(WarlordsNPC.class::cast)
+                                                                .filter(warlordsNPC -> warlordsNPC.getUuid().equals(UUID.fromString(target)))
+                                                                .findAny();
+            if (optionalWarlordsNPC.isEmpty()) {
+                throw new InvalidCommandArgument("Could not find WarlordsNPC with UUID " + target);
+            }
+            return optionalWarlordsNPC.get();
+        });
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
             OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
@@ -224,12 +240,12 @@ public class CommandManager {
         manager.getCommandContexts().registerContext(Game.class, command -> {
             String gameID = command.popFirstArg();
             Optional<Game> game = Warlords.getGameManager()
-                    .getGames()
-                    .stream()
-                    .map(GameManager.GameHolder::getGame)
-                    .filter(Objects::nonNull)
-                    .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
-                    .findAny();
+                                          .getGames()
+                                          .stream()
+                                          .map(GameManager.GameHolder::getGame)
+                                          .filter(Objects::nonNull)
+                                          .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
+                                          .findAny();
             if (game.isPresent()) {
                 return game.get();
             } else {
@@ -261,6 +277,15 @@ public class CommandManager {
                         .map(WarlordsPlayer::getName)
                         .collect(Collectors.toList())
         );
+        commandCompletions.registerAsyncCompletion("warlordsnpcs", command ->
+                Warlords.getPlayers().values()
+                        .stream()
+                        .filter(WarlordsNPC.class::isInstance)
+                        .map(WarlordsNPC.class::cast)
+                        .map(WarlordsNPC::getUuid)
+                        .map(UUID::toString)
+                        .collect(Collectors.toList())
+        );
         commandCompletions.registerAsyncCompletion("gameplayers", command ->
                 Warlords.getGameManager().getGames().stream()
                         .map(GameManager.GameHolder::getGame)
@@ -276,12 +301,12 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
-                        .map(GameMap::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMap::name)
+                      .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
-                        .map(GameMode::name)
-                        .collect(Collectors.toList()));
+                      .map(GameMode::name)
+                      .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gameids", command ->
                 Warlords.getGameManager().getGames()
                         .stream()
@@ -296,9 +321,9 @@ public class CommandManager {
         );
         commandCompletions.registerAsyncCompletion("playerabilitystats",
                 command -> GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.keySet()
-                        .stream()
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList())
+                                                                                     .stream()
+                                                                                     .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                                                     .collect(Collectors.toList())
         );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
         commandCompletions.registerAsyncCompletion("partyleaders",
@@ -308,12 +333,12 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return PartyManager.PARTIES.stream()
-                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Party::getPartyPlayers)
-                        .flatMap(Collection::stream)
-                        .map(PartyPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                           .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                                           .map(Party::getPartyPlayers)
+                                           .flatMap(Collection::stream)
+                                           .map(PartyPlayer::getUUID)
+                                           .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                           .collect(Collectors.toList());
             }
             return null;
         });
@@ -321,12 +346,12 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
-                        .map(Guild::getPlayers)
-                        .flatMap(Collection::stream)
-                        .map(GuildPlayer::getUUID)
-                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                        .collect(Collectors.toList());
+                                          .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
+                                          .map(Guild::getPlayers)
+                                          .flatMap(Collection::stream)
+                                          .map(GuildPlayer::getUUID)
+                                          .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                          .collect(Collectors.toList());
             }
             return null;
         });
@@ -334,14 +359,14 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .map(Guild::getName)
-                        .collect(Collectors.toList());
+                                          .map(Guild::getName)
+                                          .collect(Collectors.toList());
             }
             return null;
         });
         commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
-                .map(Mobs::name)
-                .collect(Collectors.toList()));
+                                                                               .map(Mobs::name)
+                                                                               .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
 
@@ -484,14 +509,15 @@ public class CommandManager {
     }
 
     public static void registerCommands() {
-        manager.registerCommand(new DebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
         manager.registerCommand(new GameListCommand());
         manager.registerCommand(new GameTerminateCommand());
         manager.registerCommand(new PrivateGameTerminateCommand());
 
+        manager.registerCommand(new DebugCommand());
         manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new ForceActivateCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new StunClearCommand());
@@ -547,6 +573,7 @@ public class CommandManager {
         manager.registerCommand(new EditCurrencyCommand());
         manager.registerCommand(new MobCommand());
         manager.registerCommand(new WaveCommand());
+        manager.registerCommand(new OnslaughtCommand());
 
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());
@@ -555,9 +582,9 @@ public class CommandManager {
         manager.registerCommand(new CompensateCommand());
 
         manager.registerCommand(new QuestCommand());
-
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
+        manager.registerCommand(new ItemsCommand());
 
         manager.registerCommand(new TutorialCommand());
 
@@ -594,6 +621,10 @@ public class CommandManager {
             String[] gameModes = configValue.split("/");
             boolean hasGameMode = false;
             for (String gameMode : gameModes) {
+                if (gameMode.equals("PVE") && GameMode.isPvE(game.getGameMode())) {
+                    hasGameMode = true;
+                    break;
+                }
                 GameMode gamemode = GameMode.valueOf(gameMode);
                 if (game.getGameMode() == gamemode) {
                     hasGameMode = true;

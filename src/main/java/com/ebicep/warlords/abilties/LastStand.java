@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -24,15 +25,15 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class LastStand extends AbstractAbility {
+public class LastStand extends AbstractAbility implements Duration {
 
     public int playersLastStanded = 0;
 
     protected float amountPrevented = 0;
 
     private final int radius = 7;
-    private int selfDuration = 12;
-    private int allyDuration = 6;
+    private int selfTickDuration = 240;
+    private int allyTickDuration = 120;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
 
@@ -49,8 +50,8 @@ public class LastStand extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Enter a defensive stance, reducing all damage you take by §c" + selfDamageReductionPercent +
-                "% §7for §6" + selfDuration + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
-                "% §7for §6" + allyDuration + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
+                "% §7for §6" + format(selfTickDuration / 20f) + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
+                "% §7for §6" + format(allyTickDuration / 20f) + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
                 "\n\nHas a maximum range of §e" + radius + " §7blocks.";
     }
 
@@ -81,7 +82,7 @@ public class LastStand extends AbstractAbility {
                 cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
-                selfDuration * 20,
+                selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksLeft % 15 == 0) {
                         for (WarlordsEntity we : PlayerFilter
@@ -127,7 +128,7 @@ public class LastStand extends AbstractAbility {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    allyDuration * 20
+                    allyTickDuration
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -176,7 +177,7 @@ public class LastStand extends AbstractAbility {
             standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
                     ChatColor.GRAY + " " + wp.getName() + "'s " +
                     ChatColor.YELLOW + "Last Stand" +
-                    ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"
+                    ChatColor.GRAY + " is now protecting you for §6" + format(allyTickDuration / 20f) + " §7seconds!"
             );
         }
 
@@ -252,21 +253,20 @@ public class LastStand extends AbstractAbility {
         return amountPrevented;
     }
 
-    public int getSelfDuration() {
-        return selfDuration;
+    @Override
+    public int getTickDuration() {
+        return selfTickDuration;
     }
 
-    public void setSelfDuration(int selfDuration) {
-        this.selfDuration = selfDuration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.selfTickDuration = tickDuration;
     }
 
-    public int getAllyDuration() {
-        return allyDuration;
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.selfTickDuration *= multiplier;
+        this.allyTickDuration *= multiplier;
+
     }
-
-    public void setAllyDuration(int allyDuration) {
-        this.allyDuration = allyDuration;
-    }
-
-
 }

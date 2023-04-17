@@ -3,9 +3,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation implements DatabaseWarlordsClasses<PvEDatabaseStatInformation> {
 
     private DatabaseMagePvE mage = new DatabaseMagePvE();
     private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
@@ -36,30 +36,29 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvE;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
 
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-        this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();
         DatabasePlayerPvEPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
         if (countStats != null) {
-            countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
             ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
@@ -157,5 +156,29 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
 
     public float getClearRate() {
         return plays == 0 ? 0 : (float) wins / plays;
+    }
+
+    public void setMage(DatabaseMagePvE mage) {
+        this.mage = mage;
+    }
+
+    public void setWarrior(DatabaseWarriorPvE warrior) {
+        this.warrior = warrior;
+    }
+
+    public void setPaladin(DatabasePaladinPvE paladin) {
+        this.paladin = paladin;
+    }
+
+    public void setShaman(DatabaseShamanPvE shaman) {
+        this.shaman = shaman;
+    }
+
+    public void setRogue(DatabaseRoguePvE rogue) {
+        this.rogue = rogue;
+    }
+
+    public void setPlayerCountStats(Map<Integer, DatabasePlayerPvEPlayerCountStats> playerCountStats) {
+        this.playerCountStats = playerCountStats;
     }
 }

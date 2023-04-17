@@ -1,7 +1,7 @@
 package com.ebicep.warlords.events.player.ingame.pve;
 
 import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
@@ -12,20 +12,26 @@ public class WarlordsLegendFragmentGainEvent extends AbstractWarlordsEntityEvent
 
     private static final HandlerList handlers = new HandlerList();
     private final AtomicLong legendFragments;
-    private final WaveDefenseOption waveDefenseOption;
+    private final PveOption pveOption;
+    private final int per5;
 
-    public WarlordsLegendFragmentGainEvent(@Nonnull WarlordsEntity player, AtomicLong legendFragments, WaveDefenseOption waveDefenseOption) {
+    public WarlordsLegendFragmentGainEvent(@Nonnull WarlordsEntity player, AtomicLong legendFragments, PveOption pveOption, int per5) {
         super(player);
         this.legendFragments = legendFragments;
-        this.waveDefenseOption = waveDefenseOption;
+        this.pveOption = pveOption;
+        this.per5 = per5;
     }
 
     public AtomicLong getLegendFragments() {
         return legendFragments;
     }
 
-    public WaveDefenseOption getWaveDefenseOption() {
-        return waveDefenseOption;
+    public PveOption getPveOption() {
+        return pveOption;
+    }
+
+    public int getPer5() {
+        return per5;
     }
 
     @Override

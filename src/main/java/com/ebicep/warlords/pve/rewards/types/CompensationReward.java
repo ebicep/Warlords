@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.rewards.types;
 
-import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import org.bukkit.ChatColor;
 
@@ -11,7 +11,7 @@ public class CompensationReward extends AbstractReward {
     public CompensationReward() {
     }
 
-    public CompensationReward(LinkedHashMap<Currencies, Long> rewards, String from) {
+    public CompensationReward(LinkedHashMap<Spendable, Long> rewards, String from) {
         super(rewards, from);
     }
 

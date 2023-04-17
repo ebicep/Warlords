@@ -23,18 +23,15 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     public int numberOfDismounts = 0;
 
     private int damageReduction = 0;
-    private int radius = 20;
-    private int bounceRange = 10;
-    private int maxBounces = 3;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 30;
 
     public ChainLightning() {
-        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175);
+        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175, 20, 10, 3);
     }
 
     public ChainLightning(int damageReduction) {
-        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175);
+        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175, 20, 10, 3);
         this.damageReduction = damageReduction;
     }
 
@@ -45,7 +42,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     @Override
     public void updateDescription(Player player) {
         description = "Discharge a bolt of lightning at the targeted enemy player that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and jumps to §e" + maxBounces + " §7additional targets within §e" + bounceRange +
+                "damage and jumps to §e" + additionalBounces + " §7additional targets within §e" + bounceRange +
                 " §7blocks. Each time the lightning jumps the damage is decreased by §c15%§7. You gain §e" + format(damageReductionPerBounce) +
                 "% §7damage resistance for each target hit, up to §e" + format(maxDamageReduction) +
                 "% §7damage resistance. This buff lasts §64.5 §7seconds." +
@@ -82,7 +79,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                4 * 20
+                4 * 20 + 10
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -92,7 +89,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     multiplier = (100 - maxDamageReduction / 100f);
                 }
                 newDamageValue = currentDamageValue * multiplier;
-                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });
@@ -106,15 +103,13 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
-        if (playersSize >= (hasHitTotem ? maxBounces - 1 : maxBounces)) {
+        if (playersSize >= (hasHitTotem ? additionalBounces - 1 : additionalBounces)) {
             if (hasHitTotem) {
                 playersHit.add(null);
             }
             return playersHit;
         }
-        /**
-         * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
-         */
+
         boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
@@ -201,7 +196,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private Optional<CapacitorTotem> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
-                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
+                .filter(totem -> totem.getTotem().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
+                        && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
     }
 
@@ -216,31 +212,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     public void setDamageReductionPerBounce(float damageReductionPerBounce) {
         this.damageReductionPerBounce = damageReductionPerBounce;
-    }
-
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getBounceRange() {
-        return bounceRange;
-    }
-
-    public void setBounceRange(int bounceRange) {
-        this.bounceRange = bounceRange;
-    }
-
-    public int getMaxBounces() {
-        return maxBounces;
-    }
-
-    public void setMaxBounces(int maxBounces) {
-        this.maxBounces = maxBounces;
     }
 
     public float getMaxDamageReduction() {

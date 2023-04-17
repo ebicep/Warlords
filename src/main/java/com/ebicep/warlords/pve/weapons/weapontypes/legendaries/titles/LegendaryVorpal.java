@@ -4,24 +4,32 @@ import com.ebicep.warlords.abilties.Earthliving;
 import com.ebicep.warlords.abilties.Windfury;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryVorpal extends AbstractLegendaryWeapon {
+public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveCounter {
 
     private static final int MELEE_DAMAGE_BOOST = 20;
     private static final float MELEE_DAMAGE_BOOST_PER_UPGRADE = 7.5f;
     private static final int PROC_CHANCE_INCREASE = 5;
     private static final float PROC_CHANCE_INCREASE_PER_UPGRADE = 2.5f;
+
+    @Transient
+    private int meleeCounter = 0;
+
 
     public LegendaryVorpal() {
     }
@@ -60,8 +68,9 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
+        this.meleeCounter = 0;
 
         float meleeDamageBoost = 1 + (MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100;
         float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
@@ -77,11 +86,10 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         }
 
         player.getGame().registerEvents(new Listener() {
-            int meleeCounter = 0;
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.getAttacker() != player || event.getPlayer() == player) {
+                if (event.getAttacker() != player || event.getWarlordsEntity() == player) {
                     return;
                 }
 
@@ -101,6 +109,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
                     return;
                 }
                 meleeCounter++;
+                updateItemCounter(player);
                 if (cooldownManager.hasCooldownFromName("Windfury Weapon") ||
                         cooldownManager.hasCooldownFromName("Earthliving Weapon") ||
                         cooldownManager.hasCooldownFromName("Soulbinding Weapon")
@@ -109,6 +118,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
                     event.setMax(event.getMax() * meleeDamageBoost);
                 }
                 if (meleeCounter % 5 == 0) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     event.setMin(event.getMin() * 7);
                     event.setMax(event.getMax() * 7);
                     event.setIgnoreReduction(true);
@@ -155,5 +165,15 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     @Override
     protected float getEnergyPerHitBonusValue() {
         return 4;
+    }
+
+    @Override
+    public int getCounter() {
+        return (meleeCounter % 5);
+    }
+
+    @Override
+    public boolean constantlyUpdate() {
+        return false;
     }
 }

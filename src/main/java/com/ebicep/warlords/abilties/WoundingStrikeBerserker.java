@@ -69,8 +69,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                                                                                                           .hasCooldown(WoundingStrikeDefender.class))) {
                 nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
             }
-            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, true);
-            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
+            nearPlayer.getCooldownManager().removePreviousWounding();
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
                     name,
                     "WND",
@@ -97,7 +96,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
     }
 
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        hit.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
+        hit.getCooldownManager().removePreviousWounding();
         hit.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
                 "Bleed",
                 "BLEED",

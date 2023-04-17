@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -61,6 +61,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -77,7 +78,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         PrismGuard prismGuard = new PrismGuard();
-        prismGuard.setDuration(10);
+        prismGuard.setTickDuration(200);
         warlordsNPC.getSpec().setBlue(prismGuard);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
@@ -192,10 +193,11 @@ public class Illumina extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.BLUE)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                       .withColor(Color.BLUE)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 

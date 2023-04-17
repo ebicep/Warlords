@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.state.EndState;
@@ -19,13 +20,25 @@ import java.util.Comparator;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
-@CommandAlias("wl")
+@CommandAlias("wl|debug")
 @CommandPermission("warlords.game.debug")
 public class DebugCommand extends BaseCommand {
 
     @Default
     public void openDebugMenu(Player player) {
         DebugMenu.openDebugMenu(player);
+    }
+
+    @Subcommand("printclassinfo")
+    @Description("Prints class info (health, energy, etc)")
+    public void printClassInfo(@Conditions("requireGame") WarlordsPlayer player) {
+        AbstractPlayerClass specClass = player.getSpec();
+        sendDebugMessage(player, ChatColor.GOLD + "Class: " + ChatColor.WHITE + specClass.getName(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Max Health: " + ChatColor.WHITE + specClass.getMaxHealth(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Max Energy: " + ChatColor.WHITE + specClass.getMaxEnergy(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Sec: " + ChatColor.WHITE + specClass.getEnergyPerSec(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Hit: " + ChatColor.WHITE + specClass.getEnergyPerHit(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Damage Resistance: " + ChatColor.WHITE + specClass.getDamageResistance(), false);
     }
 
     @Subcommand("freeze")
@@ -126,8 +139,8 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Heals a player based on the amount or sender if there is no target")
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addHealingInstance(target, "DEBUG", amount, amount, 0, 100, false, false);
-        target.setRegenTimer(10);
+        target.addHealingInstance(target, "God", amount, amount, 0, 100, false, false);
+        target.resetRegenTimer();
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!", true);
     }
 
@@ -136,7 +149,7 @@ public class DebugCommand extends BaseCommand {
     @Description("Damages a player based on the amount or sender if there is no target")
     public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addDamageInstance(target, "God", amount, amount, 0, 100, false);
-        target.setRegenTimer(10);
+        target.resetRegenTimer();
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!", true);
     }
 

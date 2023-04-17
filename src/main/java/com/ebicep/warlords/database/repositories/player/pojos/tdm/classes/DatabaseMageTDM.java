@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
 
-public class DatabaseMageTDM extends DatabaseBaseTDM implements DatabaseWarlordsClass {
+public class DatabaseMageTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
 
     protected DatabaseBaseTDM pyromancer = new DatabaseBaseTDM();
     protected DatabaseBaseTDM cryomancer = new DatabaseBaseTDM();

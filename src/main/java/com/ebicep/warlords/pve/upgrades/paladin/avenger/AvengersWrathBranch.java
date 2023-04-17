@@ -9,7 +9,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
 
     float energyPerSecond = ability.getEnergyPerSecond();
     float cooldown = ability.getCooldown();
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
 
     public AvengersWrathBranch(AbilityTree abilityTree, AvengersWrath ability) {
         super(abilityTree, ability);
@@ -52,7 +52,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 "+2s Duration",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -60,7 +60,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 "+4s Duration",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
         treeB.add(new Upgrade(
@@ -68,7 +68,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 "+6s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 6);
+                    ability.setTickDuration(duration + 120);
                 }
         ));
         treeB.add(new Upgrade(
@@ -76,7 +76,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 "+8s Duration",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 8);
+                    ability.setTickDuration(duration + 160);
                 }
         ));
 

@@ -16,7 +16,7 @@ public class GuildTag {
             Colors.WHITE, Colors.GRAY, Colors.DARK_GRAY, Colors.BLACK
     };
 
-    private String name;
+    private String name = "";
     @Field("name_color")
     private String nameColor = ChatColor.GRAY.toString();
     @Field("bracket_color")
@@ -35,7 +35,10 @@ public class GuildTag {
         this.bracketColor = bracketColor;
     }
 
-    public String getTag() {
+    public String getTag(boolean bold) {
+        if (bold) {
+            return bracketColor + ChatColor.BOLD + "[" + nameColor + ChatColor.BOLD + name + bracketColor + ChatColor.BOLD + "]";
+        }
         return bracketColor + "[" + nameColor + name + bracketColor + "]";
     }
 

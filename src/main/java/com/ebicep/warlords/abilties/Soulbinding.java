@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -19,18 +20,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Soulbinding extends AbstractAbility {
+public class Soulbinding extends AbstractAbility implements Duration {
 
     public int playersBinded = 0;
     public int soulProcs = 0;
     public int linkProcs = 0;
     public int soulTeammatesCDReductions = 0;
     public int linkTeammatesHealed = 0;
-
-    private final int duration = 12;
     private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+    private int tickDuration = 240;
     private float bindDuration = 2;
 
     public Soulbinding() {
@@ -42,7 +42,7 @@ public class Soulbinding extends AbstractAbility {
         description = "Your melee attacks §dBIND enemies for §6" + bindDuration + " §7seconds. Against §dBOUND §7targets, " +
                 "your next Spirit Link will heal you for §a400 §7health (half for §e2 §7nearby allies.) Your next Fallen Souls " +
                 "will reduce the cooldown of all abilities by §61.5 §7seconds. (§61 §7second for §e2 §7nearby allies). " +
-                "Both buffs may be activated for every melee hit. Lasts §6" + duration + " §7seconds." +
+                "Both buffs may be activated for every melee hit. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nSuccessful soulbind procs will grant you §625% §7knockback resistance for §61.2 §7seconds. (max §63.6 §7seconds)";
     }
 
@@ -90,7 +90,7 @@ public class Soulbinding extends AbstractAbility {
                         }
                     }
                 },
-                duration * 20,
+                tickDuration,
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
@@ -183,6 +183,16 @@ public class Soulbinding extends AbstractAbility {
         procedPlayers.addAll(playersProcedByLink);
         return procedPlayers;
 
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public static class SoulBoundPlayer {

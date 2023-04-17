@@ -49,7 +49,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
         return players.values().stream()
                       .flatMap(Collection::stream)
                       .collect(Collectors.toSet());

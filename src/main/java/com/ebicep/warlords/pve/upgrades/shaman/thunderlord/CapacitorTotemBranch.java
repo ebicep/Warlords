@@ -10,7 +10,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
 
     public CapacitorTotemBranch(AbilityTree abilityTree, CapacitorTotem ability) {
         super(abilityTree, ability);
@@ -57,7 +57,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "+1s Duration\n-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                     ability.setCooldown(cooldown * 0.95f);
                 }
         ));
@@ -66,7 +66,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "+2s Duration\n-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                     ability.setCooldown(cooldown * 0.9f);
                 }
         ));
@@ -75,7 +75,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "+3s Duration\n-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                     ability.setCooldown(cooldown * 0.85f);
                 }
         ));
@@ -84,7 +84,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "+4s Duration\n-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                     ability.setCooldown(cooldown * 0.8f);
                 }
         ));

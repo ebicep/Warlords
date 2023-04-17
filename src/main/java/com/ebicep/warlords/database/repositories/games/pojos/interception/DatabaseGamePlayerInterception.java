@@ -22,8 +22,7 @@ public class DatabaseGamePlayerInterception extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerInterception(WarlordsPlayer warlordsPlayer) {
         super(warlordsPlayer);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
-        this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
-        //TODO abstract warlordsplayer per gamemode
+        this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;
     }
 
     public int getSecondsInCombat() {

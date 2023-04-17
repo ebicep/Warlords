@@ -11,6 +11,7 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
 import com.ebicep.warlords.poll.polls.PartyPoll;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -26,6 +27,32 @@ import java.util.*;
 
 @CommandAlias("party|p")
 public class PartyCommand extends BaseCommand {
+
+    @Subcommand("listall")
+    @CommandPermission("group.administrator")
+    @Description("Lists the all party lists")
+    public void listAll(CommandIssuer issuer) {
+        List<Party> parties = PartyManager.PARTIES;
+        if (parties.isEmpty()) {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!", true);
+        } else {
+            parties.forEach(party -> issuer.sendMessage(party.getPartyList()));
+        }
+    }
+
+    @Subcommand("debugcreate")
+    @CommandPermission("group.administrator")
+    @Description("Creates a party with all players on server")
+    public void debugCreate(@Conditions("party:false") Player player) {
+        Party party = new Party(player.getUniqueId(), false);
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+            party.join(onlinePlayer.getUniqueId());
+        }
+        PartyManager.PARTIES.add(party);
+    }
 
     @CommandAlias("pl")
     @Subcommand("list")
@@ -63,7 +90,7 @@ public class PartyCommand extends BaseCommand {
         if (!party.isAllInvite() &&
                 !party.getPartyLeader().getUUID().equals(playerUUID) &&
                 party.getPartyModerators().stream()
-                        .noneMatch(partyPlayer -> partyPlayer.getUUID().equals(playerUUID))
+                     .noneMatch(partyPlayer -> partyPlayer.getUUID().equals(playerUUID))
         ) {
             Party.sendPartyMessage(player, ChatColor.RED + "All invite is disabled!");
             return;
@@ -86,8 +113,8 @@ public class PartyCommand extends BaseCommand {
         ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         ChatUtils.sendCenteredMessage(target,
                 ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (party.getPartyLeader()
-                        .getUUID()
-                        .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
+                                                                                                           .getUUID()
+                                                                                                           .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
         );
         TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
@@ -253,8 +280,8 @@ public class PartyCommand extends BaseCommand {
         Party party = partyPlayerWrapper.getParty();
         if (target.equalsIgnoreCase("@a")) {
             Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> !party.hasUUID(p.getUniqueId()))
-                    .forEach(p -> party.join(p.getUniqueId()));
+                  .filter(p -> !party.hasUUID(p.getUniqueId()))
+                  .forEach(p -> party.join(p.getUniqueId()));
             return;
         }
         Player playerToForceInvite = Bukkit.getPlayer(target);

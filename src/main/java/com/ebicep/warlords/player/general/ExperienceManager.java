@@ -11,7 +11,9 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -34,9 +36,24 @@ public class ExperienceManager {
     public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
     public static final List<Pair<ChatColor, Color>> PRESTIGE_COLORS = Arrays.asList(
-            new Pair<>(ChatColor.GRAY, Color.GRAY),//0
-            new Pair<>(ChatColor.RED, Color.RED),//1
-            new Pair<>(ChatColor.YELLOW, Color.YELLOW),//2
+            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
+            new Pair<>(ChatColor.RED, Color.RED), //1
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW), //2
+            new Pair<>(ChatColor.GREEN, Color.GREEN), //3
+            new Pair<>(ChatColor.AQUA, Color.AQUA), //4
+            new Pair<>(ChatColor.BLUE, Color.BLUE), //5
+            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //6
+            new Pair<>(ChatColor.BLACK, Color.BLACK), //7
+            new Pair<>(ChatColor.WHITE, Color.WHITE), //8
+            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY), //9
+            new Pair<>(ChatColor.DARK_RED, Color.RED), //10
+            new Pair<>(ChatColor.GOLD, Color.ORANGE), //11
+            new Pair<>(ChatColor.DARK_AQUA, Color.AQUA), //12
+            new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
+            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE), //13
+            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
+            new Pair<>(ChatColor.RED, Color.RED), //1
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW),  //2
             new Pair<>(ChatColor.GREEN, Color.GREEN),//3
             new Pair<>(ChatColor.AQUA, Color.AQUA), //4
             new Pair<>(ChatColor.BLUE, Color.BLUE), //5
@@ -141,7 +158,7 @@ public class ExperienceManager {
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
 
         Game game = warlordsPlayer.getGame();
-        if (GameMode.isWaveDefense(game.getGameMode())) {
+        if (GameMode.isPvE(game.getGameMode())) {
             ExperienceGainOption experienceGainOption = game
                     .getOptions()
                     .stream()
@@ -149,24 +166,35 @@ public class ExperienceManager {
                     .map(ExperienceGainOption.class::cast)
                     .findAny()
                     .orElse(null);
-            WaveDefenseOption waveDefenseOption = game
+            PveOption pveOption = game
                     .getOptions()
                     .stream()
-                    .filter(option -> option instanceof WaveDefenseOption)
-                    .map(WaveDefenseOption.class::cast)
+                    .filter(option -> option instanceof PveOption)
+                    .map(PveOption.class::cast)
                     .findAny()
                     .orElse(null);
-            if (waveDefenseOption != null && experienceGainOption != null) {
-                DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
-                int maxWaves = difficulty.getMaxWaves();
-                int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
-                if (experienceGainOption.getPlayerExpPerWave() != 0) {
-                    expGain.put("Waves Cleared", (long) wavesCleared * experienceGainOption.getPlayerExpPerWave());
+            if (experienceGainOption != null && pveOption != null) {
+                DifficultyIndex difficulty = pveOption.getDifficulty();
+                Pair<String, Long> perBonus = null;
+                Pair<String, Long> winBonus = null;
+                if (pveOption instanceof WaveDefenseOption) {
+                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                    int maxWaves = difficulty.getMaxWaves();
+                    int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
+                    perBonus = new Pair<>("Waves Cleared", (long) wavesCleared * experienceGainOption.getPlayerExpPer());
+                    if (wavesCleared == maxWaves) {
+                        winBonus = new Pair<>("Wave " + maxWaves + " Clear Bonus",
+                                (long) (experienceGainOption.getPlayerExpGameWinBonus() * difficulty.getRewardsMultiplier())
+                        );
+                    }
+                } else if (pveOption instanceof OnslaughtOption) {
+                    perBonus = new Pair<>("Minutes Elapsed", pveOption.getTicksElapsed() / 20 / 60 * experienceGainOption.getPlayerExpPer());
                 }
-                if (experienceGainOption.getPlayerExpMaxWaveClearBonus() != 0 && wavesCleared == maxWaves) {
-                    expGain.put("Wave " + maxWaves + " Clear Bonus",
-                            (long) (experienceGainOption.getPlayerExpMaxWaveClearBonus() * difficulty.getRewardsMultiplier())
-                    );
+                if (experienceGainOption.getPlayerExpPer() != 0 && perBonus != null) {
+                    expGain.put(perBonus.getA(), perBonus.getB());
+                }
+                if (experienceGainOption.getPlayerExpGameWinBonus() != 0 && winBonus != null) {
+                    expGain.put(winBonus.getA(), winBonus.getB());
                 }
                 if (experienceGainOption.getPlayerExpPerXSec() != null) {
                     game.getOptions()

@@ -29,6 +29,7 @@ public class GameJoinCommand extends BaseCommand {
                     ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already in this game!", true);
                     return;
                 }
+
                 WarlordsPlayer warlordsPlayer = game
                         .getCachedPlayers()
                         .stream()

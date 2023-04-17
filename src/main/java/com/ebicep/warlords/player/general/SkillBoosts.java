@@ -112,7 +112,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
                     ((IceBarrier) abstractAbility).setDamageReductionPercent(55);
-                    ((IceBarrier) abstractAbility).setDuration(((IceBarrier) abstractAbility).getDuration() + 2);
+                    ((IceBarrier) abstractAbility).setTickDuration(((IceBarrier) abstractAbility).getTickDuration() + 40);
                 }
             }
     ),
@@ -166,7 +166,7 @@ public enum SkillBoosts {
             HealingRain.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain) {
-                    ((HealingRain) abstractAbility).setDuration(16);
+                    ((HealingRain) abstractAbility).setTickDuration(((HealingRain) abstractAbility).getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
@@ -336,8 +336,9 @@ public enum SkillBoosts {
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
-                    ((UndyingArmy) abstractAbility).setDuration(15);
-                    ((UndyingArmy) abstractAbility).setMaxHealthDamage(((UndyingArmy) abstractAbility).getMaxHealthDamage() - 5);
+                    UndyingArmy undyingArmy = (UndyingArmy) abstractAbility;
+                    undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 100);
+                    undyingArmy.setMaxHealthDamage(undyingArmy.getMaxHealthDamage() - 5);
                 }
             }
     ),
@@ -393,7 +394,7 @@ public enum SkillBoosts {
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
-                    ((AvengersWrath) abstractAbility).setDuration(((AvengersWrath) abstractAbility).getDuration() + 5);
+                    ((AvengersWrath) abstractAbility).setTickDuration(((AvengersWrath) abstractAbility).getTickDuration() + 100);
                     ((AvengersWrath) abstractAbility).setEnergyPerSecond(((AvengersWrath) abstractAbility).getEnergyPerSecond() + 10);
                 }
             }
@@ -428,7 +429,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusionCrusader) abstractAbility).setDuration(((LightInfusionCrusader) abstractAbility).getDuration() + 3);
+                    LightInfusionCrusader lightInfusion = (LightInfusionCrusader) abstractAbility;
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
@@ -485,7 +487,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusionProtector) abstractAbility).setDuration(6);
+                    LightInfusionProtector lightInfusion = (LightInfusionProtector) abstractAbility;
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
@@ -730,7 +733,7 @@ public enum SkillBoosts {
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
-                    ((OrderOfEviscerate) abstractAbility).setDuration(12);
+                    ((OrderOfEviscerate) abstractAbility).setTickDuration(((OrderOfEviscerate) abstractAbility).getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }

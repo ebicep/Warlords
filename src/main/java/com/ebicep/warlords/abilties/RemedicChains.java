@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -19,14 +20,14 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RemedicChains extends AbstractAbility {
+public class RemedicChains extends AbstractAbility implements Duration {
 
     public int playersLinked = 0;
     public int numberOfBrokenLinks = 0;
 
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
-    private int duration = 8;
+    private int tickDuration = 160;
     private int alliesAffected = 3;
     private int linkBreakRadius = 15;
     private int castRange = 10;
@@ -38,7 +39,7 @@ public class RemedicChains extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Bind yourself to §e" + alliesAffected + " §7allies near you, increasing the damage they deal by §c" +
-                format(allyDamageIncrease) + "% §7as long as the link is active. Lasts §6" + duration + " §7seconds." +
+                format(allyDamageIncrease) + "% §7as long as the link is active. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nWhen the link expires you and the allies are healed for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
                 "health. Breaking the link early will only heal the allies for §a" + healingMultiplier +
                 "% §7of the original amount for each second they have been linked." +
@@ -84,7 +85,7 @@ public class RemedicChains extends AbstractAbility {
                     ChatColor.GRAY + wp.getName() + "'s" +
                     ChatColor.YELLOW + " Remedic Chains" +
                     ChatColor.GRAY + " is now increasing your §cdamage §7for " +
-                    ChatColor.GOLD + duration +
+                    ChatColor.GOLD + format(tickDuration / 20f) +
                     ChatColor.GRAY + " seconds!"
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
@@ -147,7 +148,7 @@ public class RemedicChains extends AbstractAbility {
                         healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 8 != 0) {
                         return;
@@ -232,12 +233,14 @@ public class RemedicChains extends AbstractAbility {
         this.alliesAffected = alliesAffected;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public float getHealingMultiplier() {

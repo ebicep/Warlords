@@ -35,7 +35,7 @@ public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer) {
         super(warlordsPlayer);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
-        this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
+        this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;
         this.flagCaptures = warlordsPlayer.getFlagsCaptured();
         this.flagReturns = warlordsPlayer.getFlagsReturned();
         this.totalDamageOnCarrier = warlordsPlayer.getMinuteStats().total().getDamageOnCarrier();

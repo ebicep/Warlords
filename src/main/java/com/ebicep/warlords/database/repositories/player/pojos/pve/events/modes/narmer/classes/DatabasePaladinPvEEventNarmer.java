@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabaseBasePvEEventNarmer;
 
-public class DatabasePaladinPvEEventNarmer extends DatabaseBasePvEEventNarmer implements DatabaseWarlordsClass {
+public class DatabasePaladinPvEEventNarmer extends DatabaseBasePvEEventNarmer implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventNarmer avenger = new DatabaseBasePvEEventNarmer();
     private DatabaseBasePvEEventNarmer crusader = new DatabaseBasePvEEventNarmer();

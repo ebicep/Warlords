@@ -6,10 +6,10 @@ import com.ebicep.warlords.commands.DatabasePlayerFuture;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseDatabaseStatInformation;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -42,8 +42,8 @@ public class EditStatsCommand extends BaseCommand {
                 player.sendMessage(ChatColor.GREEN + "Arguments: " + Arrays.toString(arguments));
                 Method[] methods = object.getClass().getMethods();
                 player.sendMessage(ChatColor.GREEN + "Methods: " + ChatColor.GRAY + Arrays.stream(methods)
-                        .map(Method::getName)
-                        .collect(Collectors.joining(", ")));
+                                                                                          .map(Method::getName)
+                                                                                          .collect(Collectors.joining(", ")));
                 String methodToFind = s;
                 if (arguments.length > 0) {
                     methodToFind = s.substring(0, s.indexOf("("));
@@ -60,6 +60,12 @@ public class EditStatsCommand extends BaseCommand {
                                     arguments[i] = Integer.parseInt((String) arguments[i]);
                                 } else if (methodArguments[i] == long.class) {
                                     arguments[i] = Long.parseLong((String) arguments[i]);
+                                } else if (methodArguments[i] == double.class) {
+                                    arguments[i] = Double.parseDouble((String) arguments[i]);
+                                } else if (methodArguments[i] == float.class) {
+                                    arguments[i] = Float.parseFloat((String) arguments[i]);
+                                } else if (methodArguments[i] == boolean.class) {
+                                    arguments[i] = Boolean.parseBoolean((String) arguments[i]);
                                 }
                             }
                             object = method.invoke(object, arguments);
@@ -86,14 +92,14 @@ public class EditStatsCommand extends BaseCommand {
     }
 
     public static void wipeTopStats(DatabasePlayer databasePlayer) {
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        DatabasePlayerWaveDefenseStats pveStats = databasePlayer.getPveStats().getWaveDefenseStats();
         wipe(pveStats);
         for (Classes value : Classes.VALUES) {
-            DatabaseBasePvE databaseBasePvE = pveStats.getClass(value);
+            DatabaseBasePvEWaveDefense databaseBasePvE = pveStats.getClass(value);
             wipe(databaseBasePvE);
         }
         for (Specializations value : Specializations.VALUES) {
-            DatabaseBasePvE databaseBasePvE = pveStats.getSpec(value);
+            DatabaseBasePvEWaveDefense databaseBasePvE = pveStats.getSpec(value);
             wipe(databaseBasePvE);
         }
         wipe(pveStats.getNormalStats());
@@ -102,30 +108,30 @@ public class EditStatsCommand extends BaseCommand {
         DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
     }
 
-    private static void wipe(DatabasePlayerPvEDifficultyStats difficultyStats) {
-        wipe((PvEDatabaseStatInformation) difficultyStats);
+    private static void wipe(DatabasePlayerPvEWaveDefenseDifficultyStats difficultyStats) {
+        wipe((WaveDefenseDatabaseStatInformation) difficultyStats);
         for (Classes value : Classes.VALUES) {
-            PvEDatabaseStatInformation databaseBasePvE = difficultyStats.getClass(value);
+            WaveDefenseDatabaseStatInformation databaseBasePvE = difficultyStats.getClass(value);
             wipe(databaseBasePvE);
         }
         for (Specializations value : Specializations.VALUES) {
-            PvEDatabaseStatInformation databaseBasePvE = difficultyStats.getSpec(value);
+            WaveDefenseDatabaseStatInformation databaseBasePvE = difficultyStats.getSpec(value);
             wipe(databaseBasePvE);
         }
         difficultyStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
             wipe(databasePlayerPvEPlayerCountStats);
             for (Classes value : Classes.VALUES) {
-                PvEDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getClass(value);
+                WaveDefenseDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getClass(value);
                 wipe(databaseBasePvE);
             }
             for (Specializations value : Specializations.VALUES) {
-                PvEDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getSpec(value);
+                WaveDefenseDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getSpec(value);
                 wipe(databaseBasePvE);
             }
         });
     }
 
-    private static void wipe(PvEDatabaseStatInformation statInformation) {
+    private static void wipe(WaveDefenseDatabaseStatInformation statInformation) {
         statInformation.setHighestWaveCleared(0);
         statInformation.setMostDamageInRound(0);
         statInformation.setMostDamageInWave(0);

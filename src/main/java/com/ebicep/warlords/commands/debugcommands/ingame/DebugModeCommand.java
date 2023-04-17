@@ -9,6 +9,8 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 
 
 @CommandAlias("debugmode")
@@ -19,6 +21,10 @@ public class DebugModeCommand extends BaseCommand {
     @Default
     @Description("Disables energy consumption, Disables cooldowns, Prevents damage from being taken, and shows debug messages on attacks")
     public void debugMode(WarlordsPlayer warlordsPlayer) {
+        debugMode(warlordsPlayer, false);
+    }
+
+    private static void debugMode(WarlordsPlayer warlordsPlayer, boolean gmc) {
         warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
@@ -28,9 +34,21 @@ public class DebugModeCommand extends BaseCommand {
         }
         warlordsPlayer.updateItems();
         warlordsPlayer.setHorseCooldown(0);
+        if (gmc) {
+            if (warlordsPlayer.getEntity() instanceof Player) {
+                ((Player) warlordsPlayer.getEntity()).setGameMode(GameMode.CREATIVE);
+            }
+        }
         ChatChannels.sendDebugMessage(warlordsPlayer,
                 ChatColor.GREEN + "You now have infinite energy, no cooldowns, will take no damage, and have debug messages!",
                 true
         );
     }
+
+    @CommandAlias("debugmode2")
+    @Description("Debugmode + creative mode")
+    public void debugMode2(WarlordsPlayer warlordsPlayer) {
+        debugMode(warlordsPlayer, true);
+    }
+
 }

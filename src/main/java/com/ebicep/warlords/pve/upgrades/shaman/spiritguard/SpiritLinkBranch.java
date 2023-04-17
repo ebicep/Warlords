@@ -9,7 +9,6 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
     float minDamage;
     float maxDamage;
-    int bounceRange = ability.getBounceRange();
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {
         super(abilityTree, ability);
@@ -60,7 +59,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 "+4 Blocks hit radius",
                 5000,
                 () -> {
-                    ability.setBounceRange(bounceRange + 4);
+                    ability.setBounceRange(ability.getBounceRange() + 4);
                 }
         ));
         treeB.add(new Upgrade(
@@ -68,7 +67,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 "+6 Blocks hit radius",
                 10000,
                 () -> {
-                    ability.setBounceRange(bounceRange + 6);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -76,7 +75,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 "+8 Blocks hit radius",
                 15000,
                 () -> {
-                    ability.setBounceRange(bounceRange + 8);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -84,7 +83,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 "+10 Blocks hit radius",
                 20000,
                 () -> {
-                    ability.setBounceRange(bounceRange + 10);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
 
@@ -94,6 +93,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 "Damage reduction and speed duration have been doubled. Additionally, Spirit Link will bounce 3 times instead of 2.",
                 50000,
                 () -> {
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                     ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
                     ability.setSpeedDuration(ability.getSpeedDuration() * 2);
                     ability.setPveUpgrade(true);

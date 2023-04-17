@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -35,7 +35,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 30),
                         Weapons.TENDERIZER.getItem()
                 ),
-                10000,
+                25000,
                 0.15f,
                 0,
                 2000,
@@ -45,10 +45,11 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .build());
+                                                                                   .withColor(Color.WHITE)
+                                                                                   .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                   .build());
     }
 
     @Override

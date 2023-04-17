@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -32,11 +33,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DeathsDebt extends AbstractTotemBase {
+public class DeathsDebt extends AbstractTotemBase implements Duration {
 
     public int playersDamaged = 0;
     public int playersHealed = 0;
 
+    private int tickDuration = 120;
     private float delayedDamage = 0;
     private int respiteRadius = 10;
     private int debtRadius = 8;
@@ -56,7 +58,7 @@ public class DeathsDebt extends AbstractTotemBase {
     @Override
     public void updateDescription(Player player) {
         description = "§2Spirits’ Respite§7: Place down a totem that delays §c100% §7of incoming damage towards yourself. Transforms into §dDeath’s Debt " +
-                "§7after §64 §7- §66 §7seconds (increases with higher health), or when you exit its §e" + respiteRadius + " §7block radius." +
+                "§7after §6" + format(tickDuration / 20f) + " §7- §6" + format((tickDuration / 20f + 2)) + " §7seconds (increases with higher health), or when you exit its §e" + respiteRadius + " §7block radius." +
                 "\n\n§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) +
                 "% §7of the damage delayed by §2Spirit's Respite §7over §66 §7seconds. The totem will heal nearby allies for §a15% §7of all damage " +
                 "that you take. If you survive, deal §c" + format(damagePercent) +
@@ -87,7 +89,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
-        final int duration = (4 + (2 * Math.round(wp.getHealth() / wp.getMaxHealth()))) * 20;
+        final int duration = tickDuration + (2 * Math.round(wp.getHealth() / wp.getMaxHealth())) * 20;
 
         CircleEffect circle = new CircleEffect(
                 wp,
@@ -347,5 +349,15 @@ public class DeathsDebt extends AbstractTotemBase {
 
     public void setDamagePercent(float damagePercent) {
         this.damagePercent = damagePercent;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }

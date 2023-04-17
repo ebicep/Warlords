@@ -2,9 +2,11 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -50,6 +52,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         super(uuid);
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
+        this.specialization = selectedSpec;
         this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
@@ -241,16 +244,14 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return skillCritMultiplierBonus;
     }
 
-    protected abstract float getMeleeDamageMaxValue();
-
     @Override
     public void generateStats() {
 
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
         player.getSpeed().addBaseModifier(getSpeedBonus());
 
         for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
@@ -261,7 +262,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
 
         AbstractPlayerClass playerClass = player.getSpec();
-        playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + getEnergyPerHitBonus());
+        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + getEnergyPerHitBonus());
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
@@ -289,6 +290,26 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                     }
                 }
             }.runTaskTimer(20, 0);
+        }
+        if (this instanceof PassiveCounter && ((PassiveCounter) this).constantlyUpdate()) {
+            new GameRunnable(player.getGame()) {
+
+                @Override
+                public void run() {
+                    updateItemCounter(player);
+                }
+            }.runTaskTimer(20, 10);
+        }
+    }
+
+    protected void updateItemCounter(WarlordsPlayer player) {
+        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
+        int amount = cooldown > 0 ? cooldown : 1;
+        if (player.getEntity() instanceof Player) {
+            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+            if (item != null && item.getAmount() != amount) {
+                item.setAmount(amount);
+            }
         }
     }
 
@@ -546,6 +567,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getStarPiece().starPieceBonusValue;
     }
 
+    protected abstract float getMeleeDamageMaxValue();
+
     protected abstract float getCritChanceValue();
 
     protected abstract float getCritMultiplierValue();
@@ -583,24 +606,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     public List<String> getTitleUpgradeCostLore() {
-        LinkedHashMap<Enum<? extends Spendable>, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
-        List<String> lore = new ArrayList<>();
+        LinkedHashMap<Spendable, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         if (upgradeCost == null) {
-            lore.add(ChatColor.RED + "Unavailable!");
+            return Collections.singletonList(ChatColor.RED + "Unavailable!");
         } else if (upgradeCost.isEmpty()) {
-            lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Collections.singletonList("\n" + ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
-            lore.add("");
-            lore.add(ChatColor.AQUA + "Upgrade Cost: ");
-            upgradeCost.forEach((anEnum, aLong) -> {
-                lore.add(ChatColor.GRAY + " - " + ((Spendable) anEnum).getCostColoredName(aLong));
-            });
+            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }
-        return lore;
     }
 
-    public LinkedHashMap<Enum<? extends Spendable>, Long> getTitleUpgradeCost(int tier) {
-        LinkedHashMap<Enum<? extends Spendable>, Long> cost = new LinkedHashMap<>();
+    public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
+        LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
         switch (tier) {
             case 1:
                 cost.put(Currencies.COIN, 500_000L);

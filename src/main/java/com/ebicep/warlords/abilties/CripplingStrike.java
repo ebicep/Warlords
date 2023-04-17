@@ -20,6 +20,41 @@ import java.util.Optional;
 
 public class CripplingStrike extends AbstractStrikeBase {
 
+    public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
+        cripple(from, target, name, new CripplingStrike(), tickDuration, .9f);
+    }
+
+    public static void cripple(
+            WarlordsEntity from,
+            WarlordsEntity target,
+            String name,
+            CripplingStrike cripplingStrike,
+            int tickDuration,
+            float crippleAmount
+    ) {
+        target.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+                name,
+                "CRIP",
+                CripplingStrike.class,
+                cripplingStrike,
+                from,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
+                        target.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                    }
+                },
+                tickDuration
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * crippleAmount;
+            }
+        });
+    }
+
     private final int crippleDuration = 3;
     private int consecutiveStrikeCounter = 0;
     private int cripple = 10;
@@ -78,52 +113,16 @@ public class CripplingStrike extends AbstractStrikeBase {
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrike cripplingStrike = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+            cripple(wp,
+                    nearPlayer,
                     name,
-                    "CRIP",
-                    CripplingStrike.class,
                     new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
-                    wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-                        }
-                    },
-                    crippleDuration * 20
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1,
-                            2
-                    ) * (cripplePerStrike / 100f));
-                }
-            });
+                    crippleDuration * 20,
+                    ((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * (cripplePerStrike / 100f)
+            );
         } else {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
-                    name,
-                    "CRIP",
-                    CripplingStrike.class,
-                    new CripplingStrike(),
-                    wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-                        }
-                    },
-                    crippleDuration * 20
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (100 - cripple) / 100f;
-                }
-            });
+            cripple(wp, nearPlayer, name, crippleDuration * 20, (100 - cripple) / 100f);
         }
 
         return true;
@@ -131,6 +130,16 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     public int getConsecutiveStrikeCounter() {
         return consecutiveStrikeCounter;
+    }
+
+    public static void cripple(
+            WarlordsEntity from,
+            WarlordsEntity target,
+            String name,
+            int tickDuration,
+            float crippleAmount
+    ) {
+        cripple(from, target, name, new CripplingStrike(), tickDuration, crippleAmount);
     }
 
     public int getCripple() {

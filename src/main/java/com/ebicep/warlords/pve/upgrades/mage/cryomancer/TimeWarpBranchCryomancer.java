@@ -86,7 +86,7 @@ public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryo
                         "all enemies near you will get shattered, slowing them by 80% for 3 seconds.",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() * 2);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

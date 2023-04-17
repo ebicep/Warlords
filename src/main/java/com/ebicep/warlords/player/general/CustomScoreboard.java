@@ -14,6 +14,8 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
@@ -216,10 +218,15 @@ public class CustomScoreboard {
 
     public void updateLobbyPlayerNamesInternal() {
         Player player = Bukkit.getPlayer(uuid);
-        if (player == null || !player.getWorld().getName().equals("MainLobby")) {
+        if (player == null) {
             return;
         }
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(uuid);
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            WarlordsEntity onlinePlayerWE = Warlords.getPlayer(onlinePlayer);
+            if (warlordsEntity != null && onlinePlayerWE != null && warlordsEntity.getGame().equals(onlinePlayerWE.getGame())) {
+                continue;
+            }
             String name = onlinePlayer.getName();
             if (scoreboard.getTeam(name) == null) {
                 scoreboard.registerNewTeam(name);
@@ -228,11 +235,11 @@ public class CustomScoreboard {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
             if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
-                team.setSuffix(" " + tag.getTag());
+                team.setSuffix(" " + tag.getTag(false));
             } else {
                 team.setSuffix("");
             }
-            team.setPrefix(ChatColor.AQUA.toString());
+            team.setPrefix(Permissions.getPrefixWithColor(onlinePlayer));
             team.addEntry(name);
         }
     }
@@ -267,6 +274,10 @@ public class CustomScoreboard {
             validatePlayerHolograms(uuid);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
             GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
+            if (GameType.isPve(selectedGameType)) {
+                givePvEScoreboard();
+                return;
+            }
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
             int statsCategory = playerLeaderboardInfo.getStatsCategory();
 
@@ -283,10 +294,6 @@ public class CustomScoreboard {
             }
             scoreboardSelection += selectedCollection.name;
 
-            if (selectedGameType == GameType.PVE) {
-                givePvEScoreboard();
-                return;
-            }
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
                     .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
                     .findAny();
@@ -333,7 +340,7 @@ public class CustomScoreboard {
                             "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
                             "    ",
                             "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                            "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                            "  " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
                     );
                 },
                 () -> {
@@ -358,7 +365,7 @@ public class CustomScoreboard {
                 "Absorbed: " + ChatColor.GOLD + "N/A",
                 "    ",
                 "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION//"    " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                "  " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION//"    " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
         );
     }
 

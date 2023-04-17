@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,8 +21,8 @@ import java.util.UUID;
 
 public class LegendaryRevered extends AbstractLegendaryWeapon {
 
-    public static final int DAMAGE_INCREASE = 25;
-    public static final float DAMAGE_INCREASE_PER_UPGRADE = 5;
+    public static final int DAMAGE_INCREASE = 15;
+    public static final float DAMAGE_INCREASE_PER_UPGRADE = 2.5f;
     public static final int DURATION = 5;
     public static final float DURATION_INCREASE_PER_UPGRADE = .25f;
     private static final String COOLDOWN_NAME = "Revered";
@@ -44,13 +45,13 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
             @EventHandler
             public void onBlueAbilityTarget(WarlordsAbilityTargetEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 if (!EFFECTED_ABILITIES.contains(event.getAbilityName())) {
@@ -118,7 +119,8 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
+        return Arrays.asList(
+                new Pair<>(
                         formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HealingTotem extends AbstractTotemBase {
+public class HealingTotem extends AbstractTotemBase implements Duration {
 
     public int playersHealed = 0;
     public int playersCrippled = 0;
@@ -35,8 +36,9 @@ public class HealingTotem extends AbstractTotemBase {
     protected float amountHealed = 0;
 
     private int radius = 7;
-    private int duration = 6;
+    private int tickDuration = 120;
     private int crippleDuration = 6;
+    private int healingIncrement = 35;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -50,7 +52,8 @@ public class HealingTotem extends AbstractTotemBase {
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
                 " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health every second. " +
-                "The healing will gradually increase by §a35% §7 (Up to " + (35 * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
+                "The healing will gradually increase by §a35% §7 (Up to " + Math.round(healingIncrement * tickDuration / 20f) + "%) every second. Lasts §6" + format(
+                tickDuration / 20f) + " §7seconds." +
                 "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
                 crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
     }
@@ -92,7 +95,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
-                    float healMultiplier = Math.min(1 + (.35f * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
+                    float healMultiplier = Math.min(1 + (convertToPercent(healingIncrement) * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -118,7 +121,7 @@ public class HealingTotem extends AbstractTotemBase {
                     totemStand.remove();
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksElapsed % 10 == 0) {
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
@@ -126,7 +129,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     if (ticksElapsed % 20 == 0) {
                         cooldownCounter.set(ticksElapsed);
-                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
+                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveUpgrade ? 0.4f : 0.9f);
 
                         ParticleEffect.VILLAGER_HAPPY.display(
                                 0.4F,
@@ -163,7 +166,7 @@ public class HealingTotem extends AbstractTotemBase {
                         circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                        float healMultiplier = 1 + (.35f * (ticksElapsed / 20f));
+                        float healMultiplier = 1 + (convertToPercent(healingIncrement) * (ticksElapsed / 20f));
                         PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
                                 .forEach(teammate -> {
@@ -185,6 +188,9 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
+                                        enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
+                                        enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
+                                        EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                         enemy.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
                                                 "Totem Crippling",
                                                 "CRIP",
@@ -256,12 +262,14 @@ public class HealingTotem extends AbstractTotemBase {
         this.radius = radius;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getCrippleDuration() {
@@ -272,5 +280,11 @@ public class HealingTotem extends AbstractTotemBase {
         this.crippleDuration = crippleDuration;
     }
 
+    public int getHealingIncrement() {
+        return healingIncrement;
+    }
 
+    public void setHealingIncrement(int healingIncrement) {
+        this.healingIncrement = healingIncrement;
+    }
 }

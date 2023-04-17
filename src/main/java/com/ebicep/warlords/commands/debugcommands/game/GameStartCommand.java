@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -27,37 +28,14 @@ import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
 public class GameStartCommand {
 
-    public static void startGamePvE(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+    public static void startGamePvE(Player player, GameMode gameMode, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
             player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
             return;
         }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
-                            .setGameMode(GameMode.WAVE_DEFENSE)
-                            .setPriority(0)
-                            .setOnResult((result, game) -> {
-                                if (game == null) {
-                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-                                }
-                            });
-                })
-        );
-    }
-
-    public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
-            return;
-        }
-        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
-            player.sendMessage(ChatColor.RED + "The event is over!");
-            return;
-        }
-        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
-                    queueEntryBuilder
-                            .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
+                            .setGameMode(gameMode)
                             .setPriority(0)
                             .setOnResult((result, game) -> {
                                 if (game == null) {
@@ -82,14 +60,21 @@ public class GameStartCommand {
         //check if player is in a party, they must be leader to join
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
         if (partyPlayerPair != null) {
-            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(uuid)) {
+            Party party = partyPlayerPair.getA();
+            if (!party.getPartyLeader().getUUID().equals(uuid)) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
-            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
+            } else if (!party.allOnlineAndNoAFKs()) {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }
-            people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
+            for (PartyPlayer partyPlayer : party.getPartyPlayers()) {
+                if (Warlords.getPlayer(partyPlayer.getUUID()) != null) {
+                    player.sendMessage(ChatColor.RED + "You cannot start a game with a player who is already in a game.");
+                    return;
+                }
+            }
+            people = party.getAllPartyPeoplePlayerOnline();
             if (excludeStarter) {
                 people.removeIf(p -> p.getUniqueId().equals(uuid));
             }
@@ -97,11 +82,10 @@ public class GameStartCommand {
             people = Collections.singletonList(player);
         }
 
-        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager()
-                .newEntry(people);
+        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager().newEntry(people);
         entryEditor.accept(entryBuilder);
 
-        if (GameMode.isWaveDefense(entryBuilder.getGameMode())) {
+        if (GameMode.isPvE(entryBuilder.getGameMode())) {
             if (people.size() == 1) {
                 DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
                     if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
@@ -110,7 +94,7 @@ public class GameStartCommand {
                                 .setMap(GameMap.TUTORIAL_MAP)
                                 .setOnResult((result, game) -> {
                                     if (game == null) {
-                                        people.get(0).sendMessage(ChatColor.RED + "All games are currently full. Please try again later.");
+                                        people.get(0).sendMessage(ChatColor.RED + "Unable to find a valid tutorial map. Report this.");
                                     }
                                 });
                     }
@@ -118,7 +102,31 @@ public class GameStartCommand {
             }
         }
 
-        entryBuilder.queueNow();
+        Pair<GameManager.QueueResult, Game> resultGamePair = entryBuilder.queueNow();
+        entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
+    }
+
+    public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
+            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            return;
+        }
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
+            player.sendMessage(ChatColor.RED + "The event is over!");
+            return;
+        }
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                }
+                            });
+                })
+        );
     }
 
     public static void startGamePublic(Player player) {
@@ -150,9 +158,9 @@ public class GameStartCommand {
                 sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName(), false);
                 sendDebugMessage(player,
                         ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons()
-                                .stream()
-                                .map(e -> toTitleHumanCase(e.name()))
-                                .collect(Collectors.joining(", ")),
+                                                                                  .stream()
+                                                                                  .map(e -> toTitleHumanCase(e.name()))
+                                                                                  .collect(Collectors.joining(", ")),
                         false
                 );
                 sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers(), false);
