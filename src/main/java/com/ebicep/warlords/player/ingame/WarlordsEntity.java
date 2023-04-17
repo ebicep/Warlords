@@ -106,7 +106,7 @@ public abstract class WarlordsEntity {
     private float maxBaseHealth;
     private int regenTickTimer;
     private float regenTickTimerModifier = 1;
-    private int respawnTimer = -1;
+    private int respawnTickTimer = -1;
     private boolean dead = false;
     private float energy = 0;
     private float horseCooldown = 0;
@@ -1862,12 +1862,13 @@ public abstract class WarlordsEntity {
         this.regenTickTimerModifier = regenTickTimerModifier;
     }
 
-    public int getRespawnTimer() {
-        return respawnTimer;
+    public int getRespawnTickTimer() {
+        return respawnTickTimer;
     }
 
-    public void setRespawnTimer(int respawnTimer) {
-        this.respawnTimer = respawnTimer;
+    public void setRespawnTickTimer(int respawnTickTimer) {
+        //convert respawntimer to ticks
+        this.respawnTickTimer = respawnTickTimer * 20;
     }
 
     public float getEnergy() {
@@ -2499,26 +2500,26 @@ public abstract class WarlordsEntity {
 
     public void runEveryTick() {
         this.spec.runEveryTick();
-    }
-
-    public void runEverySecond() {
-        this.spec.runEverySecond();
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
     }
 
+    public void runEverySecond() {
+        this.spec.runEverySecond();
+    }
+
     private void decrementRespawnTimer() {
         // Respawn
-        if (respawnTimer == 1) {
+        if (respawnTickTimer == 20) {
             respawn();
-        } else if (respawnTimer > 0) {
+        } else if (respawnTickTimer > 0) {
             minuteStats.addTotalRespawnTime();
-            respawnTimer--;
-            if (respawnTimer <= 30) {
+            respawnTickTimer--;
+            if (respawnTickTimer <= 600) {
                 if (entity instanceof Player) {
                     PacketUtils.sendTitle((Player) entity,
                             "",
-                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer,
+                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawnTickTimer / 20),
                             0,
                             40,
                             0
@@ -2559,7 +2560,7 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
         }
-        setRespawnTimer(-1);
+        setRespawnTickTimer(-1);
         setEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);

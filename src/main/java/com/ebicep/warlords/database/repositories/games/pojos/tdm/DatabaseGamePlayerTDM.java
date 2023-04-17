@@ -17,7 +17,7 @@ public class DatabaseGamePlayerTDM extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerTDM(WarlordsPlayer warlordsPlayer) {
         super(warlordsPlayer);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
-        this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
+        this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;
     }
 
 

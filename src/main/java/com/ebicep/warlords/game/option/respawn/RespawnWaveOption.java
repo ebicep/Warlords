@@ -74,8 +74,8 @@ public class RespawnWaveOption implements Option, Listener {
         game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
             currentTimer += delayInTicks / 20;
             for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
-                if (player.getRespawnTimer() >= 0) {
-                    player.setRespawnTimer(Math.max(player.getRespawnTimer() - delayInTicks * 20, 0));
+                if (player.getRespawnTickTimer() >= 0) {
+                    player.setRespawnTickTimer(Math.max((player.getRespawnTickTimer() / 20) - (delayInTicks * 20), 0));
                 }
             }
         });
@@ -89,7 +89,7 @@ public class RespawnWaveOption implements Option, Listener {
             public void run() {
                 currentTimer++;
                 for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
-                    if (player.isDead() && player.isOnline() && player.getRespawnTimer() == -1) {
+                    if (player.isDead() && player.isOnline() && player.getRespawnTickTimer() == -1) {
                         giveRespawnTimer(player);
                     }
                 }
@@ -105,12 +105,12 @@ public class RespawnWaveOption implements Option, Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEvent(WarlordsRespawnEvent event) {
         if (event.isCancelled()) {
-            if (event.getWarlordsEntity().getRespawnTimer() == 0) {
+            if (event.getWarlordsEntity().getRespawnTickTimer() == 0) {
                 int respawn = -currentTimer % this.taskPeriod;
                 while (respawn < 1) {
                     respawn += this.taskPeriod;
                 }
-                event.getWarlordsEntity().setRespawnTimer(respawn);
+                event.getWarlordsEntity().setRespawnTickTimer(respawn);
             }
         }
     }
@@ -122,7 +122,7 @@ public class RespawnWaveOption implements Option, Listener {
         }
         AtomicInteger respawnTime = new AtomicInteger(respawn);
         Bukkit.getPluginManager().callEvent(new WarlordsGiveRespawnEvent(player, respawnTime));
-        player.setRespawnTimer(Math.max(2, respawnTime.get()));
+        player.setRespawnTickTimer(Math.max(2, respawnTime.get()));
     }
     
 }
