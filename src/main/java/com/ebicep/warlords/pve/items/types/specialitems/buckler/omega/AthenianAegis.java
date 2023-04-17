@@ -53,7 +53,7 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
             }
 
             private float getHealingBoost() {
-                int mobCount = pveOption.getMobs().size();
+                int mobCount = pveOption.mobCount();
                 return 1 + (mobCount * .01f);
             }
         });

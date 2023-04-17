@@ -100,18 +100,36 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             }
 
         });
-        int cooldown = (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel());
+        int cooldown = (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) * 20;
 
         new GameRunnable(game) {
 
+            final HashSet<AbstractMob<?>> allSpawnedMobs = new HashSet<>();
             int ticksElapsed = -1;
+            int shiftTickTime = 0;
 
             @Override
             public void run() {
                 ticksElapsed++;
-                counter = ticksElapsed % cooldown;
+                counter = (ticksElapsed % cooldown) / 20;
                 if (player.isDead()) {
                     return;
+                }
+                if (player.isSneaking()) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    shiftTickTime++;
+                    if (shiftTickTime == 20) {
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        allSpawnedMobs.forEach(mob -> {
+                            if (pveOption.getMobs().contains(mob)) {
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                            }
+                        });
+                        allSpawnedMobs.clear();
+                        shiftTickTime = -20;
+                    } else {
+                        shiftTickTime = 0;
+                    }
                 }
                 if (ticksElapsed % cooldown != 0) {
                     return;
@@ -128,6 +146,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 for (int i = 0; i < spawnAmount; i++) {
                     BasicZombie mob = new BasicZombie(player.getLocation());
                     updateMobEquipment(mob, player);
+                    allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
                     pveOption.spawnNewMob(mob, Team.BLUE);
                 }
@@ -144,7 +163,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     }
                 }.runTaskLater(20 * 60);
             }
-        }.runTaskTimer(100, 20);
+        }.runTaskTimer(100, 0);
 
     }
 
@@ -160,7 +179,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     @Override
     public String getPassiveEffect() {
         return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s") +
-                " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies.";
+                " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
+                "Shift for 1 second to remove all summoned mobs.";
     }
 
     @Override

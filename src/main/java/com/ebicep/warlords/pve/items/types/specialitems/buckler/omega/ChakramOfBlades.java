@@ -53,7 +53,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
             }
 
             private float getDamageBoost() {
-                int mobCount = pveOption.getMobs().size();
+                int mobCount = pveOption.mobCount();
                 return 1 + (mobCount * .01f);
             }
         });

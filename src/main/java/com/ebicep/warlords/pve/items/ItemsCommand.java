@@ -75,6 +75,9 @@ public class ItemsCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
                 AbstractItem item = type.createBasic(finalTier);
+                if (item == null) {
+                    continue;
+                }
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
@@ -91,6 +94,9 @@ public class ItemsCommand extends BaseCommand {
             for (int i = 0; i < amount; i++) {
                 ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
                 AbstractItem item = ItemType.getRandom().createBasic(randomItemTier);
+                if (item == null) {
+                    continue;
+                }
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                         new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
