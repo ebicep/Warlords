@@ -3,10 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.AthenianAegis;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.CrescentBulwark;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ElementalShield;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.*;
@@ -94,6 +91,7 @@ public enum SpecialItems {
     BREASTPLATE_BUCKLER(BreastplateBuckler::new),
     ATHENIAN_AEGIS(AthenianAegis::new),
     CRESCENT_BULWARK(CrescentBulwark::new),
+    CHAKRAM_OF_BLADES(ChakramOfBlades::new),
 
     ;
 
@@ -161,6 +159,24 @@ public enum SpecialItems {
             AERIAL_AEGIS,
             SHIELD_OF_SNATCHING,
     };
+    public static final SpecialItems[] OMEGA_ITEMS = {
+            LILITHS_CLAWS,
+            HANDS_OF_THE_HOLY_CORPSE,
+            GLASS_KNUCKLES,
+            NATURES_CLAWS,
+            ROBIN_HOODS_GLOVES,
+            FLEMING_ALMANAC,
+            COMMANDMENT_NO_ELEVEN,
+            SCROLL_OF_SCRIPTS,
+            GUIDE_FOR_THE_RIVER_STYX,
+            TOME_OF_THEFT,
+            ELEMENTAL_SHIELD,
+            BREASTPLATE_BUCKLER,
+            ATHENIAN_AEGIS,
+            CRESCENT_BULWARK,
+            CHAKRAM_OF_BLADES,
+    };
+
     public final Supplier<AbstractSpecialItem> create;
 
     SpecialItems(Supplier<AbstractSpecialItem> create) {

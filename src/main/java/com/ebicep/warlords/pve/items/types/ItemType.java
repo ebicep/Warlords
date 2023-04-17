@@ -102,6 +102,8 @@ public enum ItemType {
                 return SpecialItems.GAMMA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.GAMMA_ITEMS.length)].create.get();
             case DELTA:
                 return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create.get();
+            case OMEGA:
+                return SpecialItems.OMEGA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.OMEGA_ITEMS.length)].create.get();
         }
         ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
         return null;

@@ -5,6 +5,9 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ChakramOfBlades;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,7 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ShieldOfSnatching extends SpecialDeltaBuckler {
+public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto {
 
     public ShieldOfSnatching(Set<BasicStatPool> statPool) {
         super(statPool);
@@ -67,4 +70,8 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler {
         });
     }
 
+    @Override
+    public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+        return new ChakramOfBlades(statPool);
+    }
 }
