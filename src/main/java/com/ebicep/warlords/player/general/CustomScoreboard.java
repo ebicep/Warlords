@@ -94,7 +94,7 @@ public class CustomScoreboard {
                     UUID playerUUID = player.getUniqueId();
                     validatePlayerHolograms(playerUUID);
                     PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(playerUUID);
-                    if (playerLeaderboardInfo.getStatsGameType() == GameType.PVE) {
+                    if (GameType.isPve(playerLeaderboardInfo.getStatsGameType())) {
                         CustomScoreboard customScoreboard = getPlayerScoreboard(playerUUID);
                         customScoreboard.givePvEScoreboard(databasePlayerPvE, false);
                     }
@@ -130,9 +130,9 @@ public class CustomScoreboard {
     public void giveNewSideBar(boolean forceClear, String... entries) {
         //clearing all teams if size doesnt match
         Set<Team> teams = scoreboard.getTeams()
-                .stream()
-                .filter(team -> team.getName().startsWith("!team"))
-                .collect(Collectors.toSet());
+                                    .stream()
+                                    .filter(team -> team.getName().startsWith("!team"))
+                                    .collect(Collectors.toSet());
         if (forceClear || entries.length != teams.size()) {
             teams.forEach(Team::unregister);
             clearSideBar();
@@ -295,8 +295,8 @@ public class CustomScoreboard {
             scoreboardSelection += selectedCollection.name;
 
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
-                    .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
-                    .findAny();
+                                                                                .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
+                                                                                .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                 AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
