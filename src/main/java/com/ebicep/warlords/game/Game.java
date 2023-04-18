@@ -742,16 +742,24 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game",
-                true
+                false
         );
         this.closed = true;
         List<Throwable> exceptions = new ArrayList<>();
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks = " + gameTasks.size(),
+                false
+        );
         for (BukkitTask task : gameTasks) {
+            ChatChannels.sendDebugMessage((CommandIssuer) null,
+                    ChatColor.LIGHT_PURPLE + "Closing Game: Tasks Sync " + task.isSync(),
+                    false
+            );
             task.cancel();
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled",
-                true
+                false
         );
         gameTasks.clear();
         for (Listener listener : eventHandlers) {
@@ -759,7 +767,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered",
-                true
+                false
         );
         eventHandlers.clear();
         try {
@@ -769,7 +777,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game: Players removed",
-                true
+                false
         );
         for (Option option : options) {
             try {
@@ -780,7 +788,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up",
-                true
+                false
         );
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
@@ -795,7 +803,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
                 ChatColor.LIGHT_PURPLE + "Closing Game: State end",
-                true
+                false
         );
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
