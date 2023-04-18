@@ -249,12 +249,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                        game.forEachOnlinePlayer((player, team) -> {
                                            AbstractItem.sendItemMessage(player,
-                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
-                                                           .appendHoverItem(item.getItemName(), item.generateItemStack())
-                                                           .append(ChatColor.GRAY + "!")
+                                                   Component.text(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
+                                                            .hoverEvent(item.getHoverComponent())
+                                                            .append(Component.text(ChatColor.GRAY + "!"))
                                            );
                                        });
-                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                        break;
                                    }
                                }
@@ -278,7 +278,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                                        ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
                                        );
                                    });
-                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                }
                            });
     }
@@ -305,7 +305,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget((EntityLiving) ((CraftEntity) target.getEntity()).getHandle());
+        this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {

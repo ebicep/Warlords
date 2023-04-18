@@ -135,7 +135,7 @@ public class AbilityTree {
                     }
             );
             menu.setItem(2, 4,
-                    new ItemBuilder(Material.BOOK_AND_QUILL)
+                    new ItemBuilder(Material.WRITABLE_BOOK)
                             .name(ChatColor.GREEN + "Create Profile")
                             .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
                             .get(),
@@ -147,12 +147,12 @@ public class AbilityTree {
                                 String name = lines[0];
                                 if (!name.matches("[a-zA-Z0-9 ]+")) {
                                     warlordsPlayer.sendMessage(ChatColor.RED + "Invalid name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                     return;
                                 }
                                 if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
                                     warlordsPlayer.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                     return;
                                 }
                                 AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
@@ -174,12 +174,12 @@ public class AbilityTree {
                             String name = lines[0];
                             if (!name.matches("[a-zA-Z0-9 ]+")) {
                                 player.sendMessage(ChatColor.RED + "Invalid name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                             if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
                                 player.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                 return;
                             }
                             autoUpgradeProfile.setName(name);
@@ -255,7 +255,7 @@ public class AbilityTree {
                 lore.add((autoUpgradeProfile.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
             }
             menu.setItem(7, 4,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                    new ItemBuilder(Material.COMPARATOR)
                             .name(ChatColor.GREEN + "Bind to Mode")
                             .lore(lore)
                             .get(),

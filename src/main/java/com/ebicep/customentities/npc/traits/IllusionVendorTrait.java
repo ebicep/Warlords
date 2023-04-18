@@ -85,12 +85,12 @@ public class IllusionVendorTrait extends WarlordsTrait {
                     (m, e) -> {
                         if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < finalRewardPrice) {
                             player.sendMessage(ChatColor.RED + "You need " + Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice) + ChatColor.RED + " to purchase this item!");
-                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         if (reward.getStock() != -1 && purchasedAmount >= reward.getStock()) {
                             player.sendMessage(ChatColor.RED + "This item is out of stock!");
-                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         pveStats.subtractCurrency(Currencies.ILLUSION_SHARD, finalRewardPrice);
@@ -102,7 +102,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                         player.sendMessage(ChatColor.GREEN + "Purchased " + rewardSpendable.getCostColoredName(rewardAmount) +
                                 ChatColor.GREEN + " for " + Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice) +
                                 ChatColor.GREEN + "!");
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2f);
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                         openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
 
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -141,12 +141,12 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                   (m, e) -> {
                                       if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < cost) {
                                           player.sendMessage(ChatColor.RED + "You need " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) + ChatColor.RED + " to purchase this item!");
-                                          player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                          player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                           return;
                                       }
                                       if (purchasedAmount >= 1) {
                                           player.sendMessage(ChatColor.RED + "This item is out of stock!");
-                                          player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                          player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                           return;
                                       }
                                       pveStats.subtractCurrency(Currencies.ILLUSION_SHARD, cost);
@@ -159,7 +159,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                       player.sendMessage(ChatColor.GREEN + "Purchased " + itemName +
                                               ChatColor.GREEN + " for " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) +
                                               ChatColor.GREEN + "!");
-                                      player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2f);
+                                      player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                                       openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
 
                                       DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

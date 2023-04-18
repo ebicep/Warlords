@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;

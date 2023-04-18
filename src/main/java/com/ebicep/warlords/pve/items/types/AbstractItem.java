@@ -3,11 +3,11 @@ package com.ebicep.warlords.pve.items.types;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,8 +24,8 @@ public abstract class AbstractItem {
         player.sendMessage(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > " + message);
     }
 
-    public static void sendItemMessage(Player player, ComponentBuilder message) {
-        player.spigot().sendMessage(message.prependAndCreate(new ComponentBuilder(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > ").create()));
+    public static void sendItemMessage(Player player, Component message) {
+        player.sendMessage(Component.text(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > ").append(message));
     }
 
     private static double getAverageValue(double min, double max, double current) {
@@ -112,6 +112,10 @@ public abstract class AbstractItem {
 
     public ItemStack generateItemStack() {
         return generateItemBuilder().get();
+    }
+
+    public Component getHoverComponent() {
+        return Component.text(getItemName()).hoverEvent(generateItemStack());
     }
 
     public ItemBuilder generateItemBuilder() {

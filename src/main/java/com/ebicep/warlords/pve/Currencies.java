@@ -87,7 +87,7 @@ public enum Currencies implements Spendable {
     EVENT_POINTS_MITHRA(
             "Mithra Event Point",
             ChatColor.YELLOW,
-            new ItemStack(Material.DOUBLE_PLANT)
+            new ItemStack(Material.SUNFLOWER)
     ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
@@ -102,7 +102,7 @@ public enum Currencies implements Spendable {
     TITLE_TOKEN_SPIDERS_BURROW(
             "Spiders Burrow Title Token",
             ChatColor.YELLOW,
-            new ItemStack(Material.SNOW_BALL)
+            new ItemStack(Material.SNOWBALL)
     ),
     LIMIT_BREAKER(
             "Limit Breaker",
@@ -117,12 +117,12 @@ public enum Currencies implements Spendable {
     ILLUSION_SHARD(
             "Illusion Shard",
             ChatColor.DARK_PURPLE,
-            new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
+            new ItemStack(Material.GRAY_STAINED_GLASS_PANE)
     ),
     CELESTIAL_BRONZE(
             "Celestial Bronze",
             ChatColor.GOLD,
-            new ItemStack(Material.MONSTER_EGG, 1, (short) 101)
+            new ItemStack(Material.RABBIT_SPAWN_EGG)
     ) {
         @Override
         public boolean pluralIncludeS() {

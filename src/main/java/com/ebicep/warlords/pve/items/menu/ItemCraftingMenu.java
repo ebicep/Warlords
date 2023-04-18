@@ -256,7 +256,7 @@ public class ItemCraftingMenu {
                                                 .appendHoverItem(craftedItem.getItemName(), craftedItem.generateItemStack())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
-                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
+                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                                 player.closeInventory();
                             },
                             (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
@@ -370,7 +370,7 @@ public class ItemCraftingMenu {
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
-                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
+                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                                 player.closeInventory();
 
                                 AbstractItem.sendItemMessage(player, ChatColor.GREEN + "You smelted a Celestial Bronze");

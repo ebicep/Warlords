@@ -147,13 +147,13 @@ public class Warlords extends JavaPlugin {
         return null;
     }
 
-    @Nullable
-    public static WarlordsEntity getPlayer(@Nullable net.minecraft.server.v1_8_R3.Entity entity) {
-        if (entity != null) {
-            return getPlayer(entity.getBukkitEntity());
-        }
-        return null;
-    }
+//    @Nullable
+//    public static WarlordsEntity getPlayer(@Nullable Entity entity) {
+//        if (entity != null) {
+//            return getPlayer(entity.getBukkitEntity());
+//        }
+//        return null;
+//    }
 
     @Nullable
     public static WarlordsEntity getPlayer(@Nullable Player player) {
