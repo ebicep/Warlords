@@ -56,6 +56,14 @@ public class Utils {
                 ability.equals("Soothing Elixir");
     }
 
+    public static boolean isPrimaryProjectile(String ability) {
+        return ability.equals("Fireball") ||
+                ability.equals("Frostbolt") ||
+                ability.equals("Water Bolt") ||
+                ability.equals("Lightning Bolt") ||
+                ability.equals("Fallen Souls");
+    }
+
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
     private static final ItemStack[] woolSortedByColor = {

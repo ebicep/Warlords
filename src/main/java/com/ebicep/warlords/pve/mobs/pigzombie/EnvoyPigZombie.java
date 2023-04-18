@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
@@ -39,6 +39,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
     }
 

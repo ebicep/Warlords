@@ -5,9 +5,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -34,7 +34,7 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -52,11 +52,8 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
         gamePlayerPvEEvent.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         gamePlayerPvEEvent.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
-        if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 50_000) * multiplier;
-        } else {
-            this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), 15_000) * multiplier;
-        }
+        this.eventPointsCumulative += Math.min(gamePlayerPvEEvent.getPoints(), databaseGamePvEEvent.getPointLimit()) * multiplier;
+
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayerPvEEvent.getPoints());
         } else if (this.highestEventPointsGame == gamePlayerPvEEvent.getPoints()) {

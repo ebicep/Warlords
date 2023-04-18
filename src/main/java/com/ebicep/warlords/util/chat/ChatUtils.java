@@ -16,6 +16,13 @@ public class ChatUtils {
     public static final Component SPACER = Component.text(ChatColor.GRAY + " - ");
     private static final int CENTER_PX = 164;
 
+    public static String addStrikeThrough(String message) {
+        for (ChatColor color : ChatColor.values()) {
+            message = message.replace(color.toString(), color.toString() + ChatColor.STRIKETHROUGH);
+        }
+        return message;
+    }
+
     public static void sendTitleToGamePlayers(Game game, String title, String subtitle) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
             if (we.getEntity() instanceof Player) {
@@ -193,6 +200,8 @@ public class ChatUtils {
         TIMINGS("Timings", ChatColor.DARK_GRAY),
         MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
         GAME_EVENTS("Events", ChatColor.DARK_RED),
+        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", ChatColor.DARK_RED),
+        ILLUSION_VENDOR("IllusionVendor", ChatColor.GOLD),
 
         GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
 

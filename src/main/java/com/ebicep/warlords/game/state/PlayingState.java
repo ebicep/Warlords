@@ -96,8 +96,8 @@ public class PlayingState implements State, TimerDebugAble {
         AtomicBoolean closeGame = new AtomicBoolean(false);
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
-            if (team != null && (!com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode()) || player.isOnline())) {
-                if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+            if (team != null && (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) || player.isOnline())) {
+                if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                     PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                     Specializations selectedSpec = playerSettings.getSelectedSpec();
                     if (selectedSpec.isBanned()) {
@@ -134,6 +134,10 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
         toRemove.forEach(this.game::removePlayer);
+
+        if (game.warlordsPlayers().findAny().isEmpty()) {
+            closeGame.set(true);
+        }
 
         if (closeGame.get()) {
             new BukkitRunnable() {
@@ -323,7 +327,7 @@ public class PlayingState implements State, TimerDebugAble {
                                                                                                                      .getCurrentCooldown() + .5));
                     byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
                                                                                                                        .getCurrentCooldown() + .5));
-                    if (com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+                    if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
                             playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
                         });
@@ -365,7 +369,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (winEvent != null) {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
-                    !com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode()) &&
+                    !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) &&
                     players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
                     timer >= 6000;
             //comps
@@ -382,7 +386,7 @@ public class PlayingState implements State, TimerDebugAble {
                 }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
-                if (!com.ebicep.warlords.game.GameMode.isWaveDefense(game.getGameMode())) {
+                if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
 //                    Warlords.newChain()
 //                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
 //                            .syncLast(databasePlayers -> {

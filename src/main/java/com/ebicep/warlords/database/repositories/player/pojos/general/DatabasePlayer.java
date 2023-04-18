@@ -10,13 +10,11 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
 import org.bukkit.Bukkit;
@@ -33,7 +31,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayer extends DatabasePlayerGeneral {
 
     @Id
     private String id;
@@ -49,11 +47,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Long discordID = null;
     @Field("future_messages")
     private List<FutureMessage> futureMessages = new ArrayList<>();
-    private DatabaseMage mage = new DatabaseMage();
-    private DatabaseWarrior warrior = new DatabaseWarrior();
-    private DatabasePaladin paladin = new DatabasePaladin();
-    private DatabaseShaman shaman = new DatabaseShaman();
-    private DatabaseRogue rogue = new DatabaseRogue();
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("tdm_stats")
@@ -87,8 +80,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
     @Field("chat_energy")
     private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
-
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
+    private List<String> permissions = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -99,21 +92,33 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DatabasePlayer that = (DatabasePlayer) o;
-        return uuid.equals(that.uuid);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(uuid);
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DatabasePlayer that = (DatabasePlayer) o;
+        return uuid.equals(that.uuid);
+    }
+
+    @Override
+    public String toString() {
+        return "DatabasePlayer{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -125,80 +130,37 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //PvE outside all base stats besides universal experience
         AbstractDatabaseStatInformation classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
         DatabaseSpecialization specStats = this.getSpec(gamePlayer.getSpec());
-        if (GameMode.isWaveDefense(gameMode)) {
+        if (GameMode.isPvE(gameMode)) {
             //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
             classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            this.pveStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            this.pveStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
-        classStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        specStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+        specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         //UPDATE GAMEMODES
         switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-            case DUEL -> this.duelStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case DUEL -> this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.pubStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                this.compStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             }
         }
     }
 
-    @Override
-    public DatabaseSpecialization getSpec(Specializations specializations) {
-        return switch (specializations) {
-            case PYROMANCER -> mage.getPyromancer();
-            case CRYOMANCER -> mage.getCryomancer();
-            case AQUAMANCER -> mage.getAquamancer();
-            case BERSERKER -> warrior.getBerserker();
-            case DEFENDER -> warrior.getDefender();
-            case REVENANT -> warrior.getRevenant();
-            case AVENGER -> paladin.getAvenger();
-            case CRUSADER -> paladin.getCrusader();
-            case PROTECTOR -> paladin.getProtector();
-            case THUNDERLORD -> shaman.getThunderlord();
-            case SPIRITGUARD -> shaman.getSpiritguard();
-            case EARTHWARDEN -> shaman.getEarthwarden();
-            case ASSASSIN -> rogue.getAssassin();
-            case VINDICATOR -> rogue.getVindicator();
-            case APOTHECARY -> rogue.getApothecary();
-        };
-    }
 
-    @Override
-    public DatabaseBaseGeneral getClass(Classes classes) {
-        return switch (classes) {
-            case MAGE -> mage;
-            case WARRIOR -> warrior;
-            case PALADIN -> paladin;
-            case SHAMAN -> shaman;
-            case ROGUE -> rogue;
-        };
-    }
-
-    @Override
-    public DatabaseBaseGeneral[] getClasses() {
-        return new DatabaseBaseGeneral[]{mage, warrior, paladin, shaman, rogue};
-    }
-
-    @Override
-    public String toString() {
-        return "DatabasePlayer{" +
-                "uuid='" + uuid + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
 
     public String getName() {
         return name;
@@ -247,46 +209,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         } else {
             this.futureMessages.add(futureMessage);
         }
-    }
-
-    public DatabaseMage getMage() {
-        return mage;
-    }
-
-    public void setMage(DatabaseMage mage) {
-        this.mage = mage;
-    }
-
-    public DatabaseWarrior getWarrior() {
-        return warrior;
-    }
-
-    public void setWarrior(DatabaseWarrior warrior) {
-        this.warrior = warrior;
-    }
-
-    public DatabasePaladin getPaladin() {
-        return paladin;
-    }
-
-    public void setPaladin(DatabasePaladin paladin) {
-        this.paladin = paladin;
-    }
-
-    public DatabaseShaman getShaman() {
-        return shaman;
-    }
-
-    public void setShaman(DatabaseShaman shaman) {
-        this.shaman = shaman;
-    }
-
-    public DatabaseRogue getRogue() {
-        return rogue;
-    }
-
-    public void setRogue(DatabaseRogue rogue) {
-        this.rogue = rogue;
     }
 
     public DatabasePlayerCTF getCtfStats() {
@@ -436,4 +358,21 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     public String getId() {
         return id;
     }
+
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
+    }
+
+    public boolean isPatreon() {
+        return hasPermission("group.patreon");
+    }
+
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
@@ -12,7 +13,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -57,7 +58,7 @@ public abstract class DatabaseGameBase {
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            if (!GameMode.isWaveDefense(game.getGameMode())) {
+            if (!GameMode.isPvE(game.getGameMode())) {
                 float highestDamage = game.warlordsPlayers()
                                           .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
                                           .get()
@@ -142,7 +143,7 @@ public abstract class DatabaseGameBase {
                 addGameToDatabase(databaseGame, null);
             }
 
-            if (updatePlayerStats && GameMode.isWaveDefense(game.getGameMode())) {
+            if (updatePlayerStats && GameMode.isPvE(game.getGameMode())) {
                 GuildLeaderboardManager.recalculateAllLeaderboards();
             }
 
@@ -267,8 +268,8 @@ public abstract class DatabaseGameBase {
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
-                if (GameMode.isWaveDefense(databaseGame.getGameMode())) {
-                    databasePlayer.updateCustomStats(databaseGame,
+                if (GameMode.isPvE(databaseGame.getGameMode())) {
+                    databasePlayer.updateCustomStats(databasePlayer, databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
@@ -276,19 +277,23 @@ public abstract class DatabaseGameBase {
                             activeCollection
                     );
                 } else {
-                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, activeCollection);
+                    databasePlayer.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, activeCollection);
                 }
                 if (activeCollection == PlayersCollections.LIFETIME) {
-                    databasePlayer.addAchievements(
-                            Arrays.stream(TieredAchievements.values())
-                                  .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
-                                  .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
-                                  .filter(tieredAchievements -> databasePlayer.getAchievements()
-                                                                              .stream()
-                                                                              .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
-                                  .map(TieredAchievements.TieredAchievementRecord::new)
-                                  .collect(Collectors.toList())
-                    );
+                    List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays
+                            .stream(TieredAchievements.values())
+                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
+                            .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
+                            .filter(tieredAchievements -> databasePlayer.getAchievements()
+                                                                        .stream()
+                                                                        .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
+                            .map(TieredAchievements.TieredAchievementRecord::new)
+                            .collect(Collectors.toList());
+                    Player player = Bukkit.getOfflinePlayer(gamePlayer.getUuid()).getPlayer();
+                    if (player != null) {
+                        achievementRecords.forEach(record -> record.getAchievement().sendAchievementUnlockMessage(player));
+                    }
+                    databasePlayer.addAchievements(achievementRecords);
                 }
             });
         }
@@ -428,7 +433,7 @@ public abstract class DatabaseGameBase {
         this.counted = counted;
     }
 
-    public abstract Set<DatabaseGamePlayerBase> getBasePlayers();
+    public abstract Set<? extends DatabaseGamePlayerBase> getBasePlayers();
 
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 
@@ -467,7 +472,7 @@ public abstract class DatabaseGameBase {
         //last game stats
         appendLastGameStats(lastGameStats);
 
-        Set<DatabaseGamePlayerBase> allPlayers = getBasePlayers();
+        Set<? extends DatabaseGamePlayerBase> allPlayers = getBasePlayers();
         HashMap<DatabaseGamePlayerBase, ChatColor> playerColor = new HashMap<>();
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);

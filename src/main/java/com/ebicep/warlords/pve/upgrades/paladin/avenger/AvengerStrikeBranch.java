@@ -104,7 +104,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 """
                         -5 Additional energy cost.
 
-                        Avenger's Strike hits 2 additional enemies for 40% of the original strike damage.
+                        Avenger's Strike hits 2 additional enemies for 50% of the original strike damage.
 
                         Deal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.""",
                 50000,

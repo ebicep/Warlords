@@ -11,12 +11,14 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
@@ -24,13 +26,17 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltarosLairOption;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.NarmersTombOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.NarmersTombOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.SpidersDwellingOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -74,18 +80,18 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
-                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
-                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
-                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventShopReward(1_000, Currencies.COIN, -1, 10_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 10_000));
             }}
     ) {
         @Override
-        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
                     put(Currencies.COIN, 500_000L);
@@ -145,38 +151,6 @@ public enum GameEvents {
                 put(Currencies.COIN, 10_000L);
                 put(Currencies.SUPPLY_DROP_TOKEN, 10L);
                 put(Currencies.COMMON_STAR_PIECE, 1L);
-            }};
-        }
-
-        @Override
-        public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            if (position == 1) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 150_000L);
-                    put("Experience", 150_000L);
-                }};
-            }
-            if (position == 2) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 100_000L);
-                    put("Experience", 100_000L);
-                }};
-            }
-            if (position == 3) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 75_000L);
-                    put("Experience", 75_000L);
-                }};
-            }
-            if (4 <= position && position <= 10) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 50_000L);
-                    put("Experience", 50_000L);
-                }};
-            }
-            return new LinkedHashMap<>() {{
-                put("Coins", 20_000L);
-                put("Experience", 20_000L);
             }};
         }
 
@@ -333,18 +307,18 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new EventShopReward(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
-                add(new EventShopReward(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
-                add(new EventShopReward(100_000, Currencies.COIN, 5, 100_000));
-                add(new EventShopReward(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
-                add(new EventShopReward(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
-                add(new EventShopReward(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
-                add(new EventShopReward(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
-                add(new EventShopReward(1_000, Currencies.COIN, -1, 8_000));
-                add(new EventShopReward(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
-                add(new EventShopReward(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
-                add(new EventShopReward(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
-                add(new EventShopReward(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 3, 300_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override
@@ -359,7 +333,7 @@ public enum GameEvents {
         }
 
         @Override
-        public LinkedHashMap<Currencies, Long> getRewards(int position) {
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
                 return new LinkedHashMap<>() {{
                     put(Currencies.COIN, 500_000L);
@@ -424,38 +398,6 @@ public enum GameEvents {
                 put(Currencies.COIN, 10_000L);
                 put(Currencies.SUPPLY_DROP_TOKEN, 10L);
                 put(Currencies.COMMON_STAR_PIECE, 1L);
-            }};
-        }
-
-        @Override
-        public LinkedHashMap<String, Long> getGuildRewards(int position) {
-            if (position == 1) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 150_000L);
-                    put("Experience", 150_000L);
-                }};
-            }
-            if (position == 2) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 100_000L);
-                    put("Experience", 100_000L);
-                }};
-            }
-            if (position == 3) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 75_000L);
-                    put("Experience", 75_000L);
-                }};
-            }
-            if (4 <= position && position <= 10) {
-                return new LinkedHashMap<>() {{
-                    put("Coins", 50_000L);
-                    put("Experience", 50_000L);
-                }};
-            }
-            return new LinkedHashMap<>() {{
-                put("Coins", 20_000L);
-                put("Experience", 20_000L);
             }};
         }
 
@@ -556,7 +498,217 @@ public enum GameEvents {
             menu.setItem(4, 3, MENU_BACK, (m, e) -> openMenu(player));
             menu.openForPlayer(player);
         }
-    };
+    },
+    MITHRA("Spiders Burrow",
+            Currencies.EVENT_POINTS_MITHRA,
+            DatabasePlayerPvEEventStats::getMithraStats,
+            DatabasePlayerPvEEventStats::getMithraEventStats,
+            DatabasePlayerPvEEventStats::getMithraStats,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                for (Option option : game.getOptions()) {
+                    if (option instanceof SpidersDwellingOption) {
+                        return new DatabaseGamePvEEventSpidersDwelling(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
+                }
+                return null;
+            },
+            new ArrayList<>() {{
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3, 300_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+                add(new SpendableBuyShop(1, FixedItems.SHAWL_OF_MITHRA, 1, 500_000));
+                add(new SpendableBuyShop(1, FixedItems.SPIDER_GAUNTLET, 1, 500_000));
+            }}
+    ) {
+        @Override
+        public void initialize() {
+            super.initialize();
+            Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+                }
+            }, Warlords.getInstance());
+        }
+
+        @Override
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 500_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 5L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 200_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 2L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1000L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 25_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
+        }
+
+        @Override
+        public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
+            long eventStart = currentGameEvent.getStartDateSecond();
+            EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getMithraEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+                            .getSpidersDwellingStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getMithraEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+                            .getSpidersDwellingStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getMithraEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getMithraEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(spidersDwellingBoard, "Spiders Dwelling");
+            leaderboards.put(totalBoard, "Total Event Points");
+        }
+
+        @Override
+        public void editNPC(NPC npc) {
+            Equipment equipment = npc.getOrAddTrait(Equipment.class);
+            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.IRON_QUEEN));
+            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200));
+            equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200));
+            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200));
+            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.SILVER_PHANTASM_SWORD_3.getItem());
+        }
+
+        @Override
+        public void setMenu(Menu menu) {
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BLAZE_POWDER)
+                            .name(ChatColor.GREEN + "Start a private Mithra event game")
+                            .get(),
+                    (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
+            );
+            menu.setItem(6, 1,
+                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                            .name(ChatColor.GREEN + "Join a public Mithra event game")
+                            .get(),
+                    (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)
+            );
+        }
+
+        private void openMithraModeMenu(Player player, boolean privateGame) {
+            Menu menu = new Menu("Spiders Burrow Modes", 9 * 4);
+
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(ChatColor.GREEN + "Spiders Dwelling")
+                            .lore(
+                                    ChatColor.YELLOW + "EEEEEK!",
+                                    "",
+                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
+                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4));
+                        }
+                    }
+            );
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMenu(player));
+            menu.openForPlayer(player);
+        }
+    },
+
+    ;
 
     public static final GameEvents[] VALUES = values();
     public static NPC npc;
@@ -567,7 +719,7 @@ public enum GameEvents {
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
-    public final List<EventShopReward> shopRewards;
+    public final List<SpendableBuyShop> shopRewards;
 
     GameEvents(
             String name,
@@ -576,7 +728,7 @@ public enum GameEvents {
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
-            List<EventShopReward> shopRewards
+            List<SpendableBuyShop> shopRewards
     ) {
         this.name = name;
         this.currency = currency;
@@ -587,9 +739,38 @@ public enum GameEvents {
         this.shopRewards = shopRewards;
     }
 
-    public abstract LinkedHashMap<Currencies, Long> getRewards(int position);
+    public abstract LinkedHashMap<Spendable, Long> getRewards(int position);
 
-    public abstract LinkedHashMap<String, Long> getGuildRewards(int position);
+    public LinkedHashMap<String, Long> getGuildRewards(int position) {
+        if (position == 1) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 150_000L);
+                put("Experience", 150_000L);
+            }};
+        }
+        if (position == 2) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 100_000L);
+                put("Experience", 100_000L);
+            }};
+        }
+        if (position == 3) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 75_000L);
+                put("Experience", 75_000L);
+            }};
+        }
+        if (4 <= position && position <= 10) {
+            return new LinkedHashMap<>() {{
+                put("Coins", 50_000L);
+                put("Experience", 50_000L);
+            }};
+        }
+        return new LinkedHashMap<>() {{
+            put("Coins", 20_000L);
+            put("Experience", 20_000L);
+        }};
+    }
 
     public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
 
@@ -604,7 +785,7 @@ public enum GameEvents {
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2539.5, 50, 744.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2546.5, 50, 744.5, 90, 0));
     }
 
     public void editNPC(NPC npc) {
@@ -622,8 +803,6 @@ public enum GameEvents {
                         .get(),
                 (m, e) -> openShopMenu(player)
         );
-
-        //TODO previous event shop
 
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -645,7 +824,6 @@ public enum GameEvents {
             }
         }
         DatabaseGameEvent finalGameEvent = gameEvent;
-        boolean finalCurrentEvent = currentEvent;
 
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -653,44 +831,6 @@ public enum GameEvents {
             EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDateSecond());
 
             Menu menu = new Menu(name + " Shop", 9 * 6);
-
-            for (int i = 0; i < 9; i++) {
-                menu.setItem(i, 0,
-                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 0; i < 9; i++) {
-                menu.setItem(i, 5,
-                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 1; i < 5; i++) {
-                menu.setItem(0, i,
-                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-            for (int i = 1; i < 5; i++) {
-                menu.setItem(8, i,
-                        new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                                .name(" ")
-                                .get(),
-                        (m, e) -> {
-                        }
-                );
-            }
-
 
             menu.setItem(4, 0,
                     new ItemBuilder(Material.CHEST)
@@ -703,26 +843,30 @@ public enum GameEvents {
 
             int x = 1;
             int y = 1;
-            for (EventShopReward reward : shopRewards) {
-                int rewardAmount = reward.amount();
-                Currencies rewardCurrency = reward.currency();
-                int rewardPrice = reward.price();
-                String mapName = rewardAmount + "_" + rewardCurrency.name();
+            for (SpendableBuyShop reward : shopRewards) {
+                int rewardAmount = reward.getAmount();
+                Spendable rewardSpendable = reward.getSpendable();
+                int rewardPrice = reward.getPrice();
+                String mapName = reward.getMapName();
 
                 String stock;
-                if (reward.stock() == -1) {
+                if (reward.getStock() == -1) {
                     stock = "Unlimited";
                 } else if (eventMode == null) {
-                    stock = "" + reward.stock();
+                    stock = "" + reward.getStock();
                 } else {
-                    stock = "" + (reward.stock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
+                    stock = "" + (reward.getStock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
                 }
 
 
+                ItemBuilder itemBuilder = new ItemBuilder(rewardSpendable.getItem())
+                        .name(rewardSpendable.getCostColoredName(rewardAmount));
+                if (rewardSpendable instanceof FixedItems) {
+                    itemBuilder.addLore("");
+                }
                 menu.setItem(x, y,
-                        new ItemBuilder(rewardCurrency.item)
-                                .name(rewardCurrency.getCostColoredName(rewardAmount))
-                                .lore(
+                        itemBuilder
+                                .addLore(
                                         ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
                                         ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                                 )
@@ -734,12 +878,12 @@ public enum GameEvents {
                                 return;
                             }
                             Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
-                            if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
+                            if (reward.getStock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.getStock()) {
                                 player.sendMessage(ChatColor.RED + "This item is out of stock!");
                                 return;
                             }
                             pveStats.subtractCurrency(currency, rewardPrice);
-                            pveStats.addCurrency(rewardCurrency, rewardAmount);
+                            rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
 
                             //event
                             eventStats.getRewardsPurchased().merge(mapName, 1L, Long::sum);
@@ -748,7 +892,7 @@ public enum GameEvents {
                             //event in event mode
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
 
-                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardCurrency.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
+                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardSpendable.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
                                     rewardPrice) + ChatColor.GREEN + "!");
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
                             openShopMenu(player);
@@ -763,14 +907,11 @@ public enum GameEvents {
                 }
             }
 
-            //TODO previous event shop
-            menu.setItem(3, 5, MENU_BACK, finalCurrentEvent ? (m, e) -> openMenu(player) : (m, e) -> openMenu(player));
+            menu.setItem(3, 5, MENU_BACK, (m, e) -> openMenu(player));
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
             menu.openForPlayer(player);
         });
     }
 
-    record EventShopReward(int amount, Currencies currency, int stock, int price) {
-
-    }
 }

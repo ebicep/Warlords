@@ -2,8 +2,9 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,9 +21,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.Particle;
 
 import java.util.Collections;
@@ -51,6 +50,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
                 ChatColor.RED + "Torment",
@@ -71,7 +71,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getAttacker().getCooldownManager().hasCooldown(DamageCheck.class)) {
-                    return currentDamageValue * 4;
+                    return currentDamageValue * 5;
                 }
 
                 return currentDamageValue * 0.25f;
@@ -88,14 +88,17 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
 
                 @Override
                 public void run() {
-                    EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 0.2 * counter, 255, 30, 30, counter, 4);
-                    counter++;
-                    if (counter == 40) {
-                        option.spawnNewMob(new SoulOfGradient(warlordsNPC.getLocation()));
+                    if (warlordsNPC.isDead()) {
                         this.cancel();
+                        return;
                     }
 
-                    if (warlordsNPC.isDead()) {
+                    EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 0.3 * counter, 255, 30, 30, counter, 4);
+                    counter++;
+                    if (counter == 40) {
+                        for (int i = 0; i < option.playerCount(); i++) {
+                            option.spawnNewMob(new SoulOfGradient(warlordsNPC.getLocation()));
+                        }
                         this.cancel();
                     }
                 }
@@ -107,6 +110,11 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
                     .leastAliveFirst()
                     .limit(1)
             ) {
+                ChatUtils.sendTitleToGamePlayers(
+                        warlordsNPC.getGame(),
+                        "",
+                        ChatColor.GOLD + we.getName() + ChatColor.RED + " has been marked by Torment!"
+                );
                 Utils.addKnockback(name, warlordsNPC.getLocation(), we, 2, 0.35);
                 we.getCooldownManager().removeCooldown(DamageCheck.class, false);
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -117,7 +125,6 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
                         warlordsNPC,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
-
                         },
                         15 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
@@ -149,16 +156,19 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
+        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
+                .withColor(Color.RED)
+                .with(FireworkEffect.Type.BALL)
+                .build());
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        Utils.playGlobalSound(self.getLocation(), Sound.ENDERDRAGON_HIT, 2, 0.2f);
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-
+        super.onDeath(killer, deathLocation, option);
     }
 }

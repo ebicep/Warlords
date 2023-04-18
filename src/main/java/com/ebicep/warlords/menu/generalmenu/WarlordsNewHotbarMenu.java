@@ -9,13 +9,14 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
+import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
@@ -177,8 +178,9 @@ public class WarlordsNewHotbarMenu {
                         .lore(
                                 ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige),
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to select this specialization",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to claim rewards"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
+                                        ChatColor.GREEN + " to select this specialization.",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to claim rewards."
                         );
                 if (hasRewards) {
                     itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
@@ -206,7 +208,6 @@ public class WarlordsNewHotbarMenu {
                                         .getOrDefault(spec, Weapons.FELFLAME_BLADE)
                                         .getItem()))
                                         .name("§aWeapon Skin Preview")
-                                        .lore("")
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
@@ -268,13 +269,14 @@ public class WarlordsNewHotbarMenu {
                 }
 
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
-                LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
+                LinkedHashMap<Spendable, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
                 List<String> lore = rewardForLevel.entrySet()
                                                   .stream()
                                                   .map(currenciesLongEntry -> {
-                                                      Currencies currency = currenciesLongEntry.getKey();
+                                                      Spendable spendable = currenciesLongEntry.getKey();
                                                       Long value = currenciesLongEntry.getValue();
-                                                      return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
+                                                      return spendable.getChatColor()
+                                                                      .toString() + value + " " + spendable.getName() + (spendable != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
                                                   }).collect(Collectors.toList());
                 lore.add(0, "");
                 lore.add("");
@@ -306,8 +308,7 @@ public class WarlordsNewHotbarMenu {
                                 if (claimed.get()) {
                                     player.sendMessage(ChatColor.RED + "You already claimed this reward!");
                                 } else {
-                                    DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-                                    rewardForLevel.forEach(databasePlayerPvE::addCurrency);
+                                    rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                     databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
                                     player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -464,7 +465,6 @@ public class WarlordsNewHotbarMenu {
                                         .getWeapon()
                                         .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                                         .name("§aWeapon Skin Preview")
-                                        .lore("")
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
@@ -518,7 +518,7 @@ public class WarlordsNewHotbarMenu {
                     "",
                     "§7Health: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxHealth()),
                     "§7Energy: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()) + " §7/ §a+" + NumberFormat.formatOptionalHundredths(
-                            apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyOnHit()) + " §7per hit",
+                            apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()) + " §7per hit",
                     "",
                     selectedSpec == APOTHECARY ? "§7Speed: §e10%" : null,
                     apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
@@ -773,6 +773,14 @@ public class WarlordsNewHotbarMenu {
                         ChatColor.YELLOW + "Click to view!"
                 )
                 .get();
+        public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
+                .name("§aItems")
+                .lore(
+                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and equip all your Items.", 160),
+                        "",
+                        ChatColor.YELLOW + "Click to view!"
+                )
+                .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
                 .name("§aReward Inventory")
                 .lore(
@@ -823,8 +831,9 @@ public class WarlordsNewHotbarMenu {
                                 .get(),
                         (m, e) -> {}
                 );
-                menu.setItem(3, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
-                menu.setItem(4, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
+                menu.setItem(3, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+                menu.setItem(4, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(5, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);

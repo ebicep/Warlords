@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public abstract class AbstractAbility {
 
     static {
         DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     //Sneak ability

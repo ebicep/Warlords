@@ -9,8 +9,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
 
     float selfDamageReduction = ability.getSelfDamageReduction();
     float allyDamageReduction = ability.getTeammateDamageReduction();
-    int duration = ability.getSelfDuration();
-    int allyDuration = ability.getAllyDuration();
+    int duration = ability.getTickDuration();
 
     public LastStandBranch(AbilityTree abilityTree, LastStand ability) {
         super(abilityTree, ability);
@@ -57,8 +56,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "+1s Duration",
                 5000,
                 () -> {
-                    ability.setAllyDuration(allyDuration + 1);
-                    ability.setSelfDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -66,8 +64,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "+2s Duration",
                 10000,
                 () -> {
-                    ability.setAllyDuration(allyDuration + 2);
-                    ability.setSelfDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -75,8 +72,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "+3s Duration",
                 15000,
                 () -> {
-                    ability.setAllyDuration(allyDuration + 3);
-                    ability.setSelfDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -84,8 +80,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "+4s Duration",
                 20000,
                 () -> {
-                    ability.setAllyDuration(allyDuration + 4);
-                    ability.setSelfDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
 

@@ -61,7 +61,16 @@ public class PlayerSettings {
 
     @Nonnull
     public static PlayerSettings getPlayerSettings(@Nonnull UUID uuid) {
-        return PLAYER_SETTINGS.computeIfAbsent(uuid, (k) -> new PlayerSettings(uuid));
+        return getPlayerSettings(uuid, true);
+    }
+
+    @Nonnull
+    public static PlayerSettings getPlayerSettings(@Nonnull UUID uuid, boolean computeIfAbsent) {
+        if (computeIfAbsent) {
+            return PLAYER_SETTINGS.computeIfAbsent(uuid, (k) -> new PlayerSettings(uuid));
+        } else {
+            return PLAYER_SETTINGS.getOrDefault(uuid, new PlayerSettings(uuid));
+        }
     }
 
     public SkillBoosts getSkillBoostForClass() {

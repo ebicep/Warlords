@@ -1,12 +1,12 @@
 package com.ebicep.warlords.abilties;
 
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -22,30 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TimeWarpAquamancer extends AbstractAbility {
-
-    public int timesSuccessful = 0;
-
-    private int duration = 5;
-    private int warpHealPercentage = 30;
+public class TimeWarpAquamancer extends AbstractTimeWarpBase {
 
     public TimeWarpAquamancer() {
-        super("Time Warp", 0, 0, 28.19f, 30);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "Activate to place a time rune on the ground. After §6" + duration +
-                " §7seconds, you will warp back to that location and restore §a" + warpHealPercentage + "% §7of your health";
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Successful", "" + timesSuccessful));
-
-        return info;
+        super();
     }
 
     @Override
@@ -56,11 +36,11 @@ public class TimeWarpAquamancer extends AbstractAbility {
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
         int startingBlocksTravelled = wp.getBlocksTravelled();
-        RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
+        RegularCooldown<TimeWarpAquamancer> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
-                TimeWarp.class,
-                new TimeWarp(),
+                TimeWarpAquamancer.class,
+                new TimeWarpAquamancer(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -127,8 +107,8 @@ public class TimeWarpAquamancer extends AbstractAbility {
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Monsoon Leap Altar",
                                 "ALTAR",
-                                TimeWarp.class,
-                                new TimeWarp(),
+                                TimeWarpAquamancer.class,
+                                new TimeWarpAquamancer(),
                                 wp,
                                 CooldownTypes.ABILITY,
                                 cooldownManager1 -> {
@@ -164,7 +144,7 @@ public class TimeWarpAquamancer extends AbstractAbility {
                         ));
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
@@ -260,23 +240,4 @@ public class TimeWarpAquamancer extends AbstractAbility {
         return pillars;
     }
 
-    public int getTimesSuccessful() {
-        return timesSuccessful;
-    }
-
-    public int getWarpHealPercentage() {
-        return warpHealPercentage;
-    }
-
-    public void setWarpHealPercentage(int warpHealPercentage) {
-        this.warpHealPercentage = warpHealPercentage;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
 }

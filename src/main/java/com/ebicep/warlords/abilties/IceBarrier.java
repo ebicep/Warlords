@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -20,17 +21,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class IceBarrier extends AbstractAbility {
+public class IceBarrier extends AbstractAbility implements Duration {
 
-    private int duration = 6;
-    private int damageReductionPercent = 50;
+    private int tickDuration = 120;
+    private float damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
 
     public IceBarrier() {
         super("Ice Barrier", 0, 0, 46.98f, 0);
     }
 
-    public IceBarrier(int damageReductionPercent) {
+    public IceBarrier(float damageReductionPercent) {
         super("Ice Barrier", 0, 0, 46.98f, 0);
         this.damageReductionPercent = damageReductionPercent;
     }
@@ -39,7 +40,7 @@ public class IceBarrier extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Surround yourself with a layer of of cold air, reducing damage taken by §c" + damageReductionPercent +
                 "%§7, While active, taking melee damage reduces the attacker's movement speed by §e" + slownessOnMeleeHit +
-                "% §7for §62 §7seconds. Lasts §6" + duration + " §7seconds.";
+                "% §7for §62 §7seconds. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -64,7 +65,7 @@ public class IceBarrier extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
@@ -87,7 +88,7 @@ public class IceBarrier extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
-                                we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
+                                we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
                                 we.addSpeedModifier(wp, "Ice Barrier Slowness", -80, 20);
                             }
                         }
@@ -107,7 +108,7 @@ public class IceBarrier extends AbstractAbility {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue = currentDamageValue * getDamageReduction();
-                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });
@@ -119,20 +120,22 @@ public class IceBarrier extends AbstractAbility {
         return (100 - damageReductionPercent) / 100f;
     }
 
-    public int getDamageReductionPercent() {
+    public float getDamageReductionPercent() {
         return damageReductionPercent;
     }
 
-    public void setDamageReductionPercent(int damageReductionPercent) {
+    public void setDamageReductionPercent(float damageReductionPercent) {
         this.damageReductionPercent = damageReductionPercent;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
 

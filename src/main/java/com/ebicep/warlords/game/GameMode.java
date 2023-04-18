@@ -8,17 +8,18 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
+import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
-import com.ebicep.warlords.game.option.tutorial.TutorialOption;
-import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -219,10 +220,10 @@ public enum GameMode {
             "Wave Defense",
             "PVE",
             new ItemStack(Material.ZOMBIE_HEAD),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -255,10 +256,10 @@ public enum GameMode {
             "Onslaught",
             "PVE",
             new ItemStack(Material.ZOMBIE_HEAD),
-            DatabaseGamePvE::new,
+            DatabaseGamePvEOnslaught::new,
             GamesCollections.PVE,
             1,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -287,12 +288,17 @@ public enum GameMode {
 
             return options;
         }
+
+        @Override
+        public float getDropModifier() {
+            return .1f;
+        }
     },
     BOSS_RUSH(
             "Boss Rush",
             "PVE",
-            new ItemStack(Material.ZOMBIE_HEAD),
-            DatabaseGamePvE::new,
+            null,//new ItemStack(Material.ZOMBIE_HEAD),
+            null,
             GamesCollections.PVE,
             1,
             true
@@ -312,6 +318,43 @@ public enum GameMode {
                     10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Kill all bosses in order to win!"
+            ));
+            options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+            options.add(new GameFreezeOption());
+            options.add(new BasicScoreboardOption());
+
+            return options;
+        }
+    },
+    TREASURE_HUNT(
+            "Anomaly Heist",
+            "PVE",
+            null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,
+            GamesCollections.PVE,
+            1,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Survive against waves of",
+                    color + "monsters!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the onslaught begin!"
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
@@ -406,7 +449,7 @@ public enum GameMode {
     EVENT_WAVE_DEFENSE(
             "Event Wave Defense",
             "PVE",
-            new ItemStack(Material.ZOMBIE_HEAD),
+            null,//new ItemStack(Material.ZOMBIE_HEAD),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 if (DatabaseGameEvent.currentGameEvent == null || DatabaseGameEvent.currentGameEvent.getEndDate().isBefore(Instant.now())) {
                     return null;
@@ -442,6 +485,10 @@ public enum GameMode {
         return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE;
     }
 
+    public static boolean isPvE(GameMode mode) {
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT;
+    }
+
     public final String name;
     public final String abbreviation;
     public final ItemStack itemStack;
@@ -467,6 +514,10 @@ public enum GameMode {
         this.isHiddenInMenu = isHiddenInMenu;
     }
 
+    public float getDropModifier() {
+        return 1;
+    }
+
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>(64);
 
@@ -479,7 +530,6 @@ public enum GameMode {
                     .getItem(playerSettings.getWeaponSkins()
                             .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                     .name("§aWeapon Skin Preview")
-                    .lore("")
                     .get();
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)

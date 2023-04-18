@@ -227,6 +227,9 @@ public enum TieredAchievements implements Achievement {
                 {ILLUSION_CONQUEROR_I, ILLUSION_CONQUEROR_II, ILLUSION_CONQUEROR_III, ILLUSION_CONQUEROR_IV, ILLUSION_CONQUEROR_V},
                 {MIRAGE_SLAYER_I, MIRAGE_SLAYER_II, MIRAGE_SLAYER_III, MIRAGE_SLAYER_IV, MIRAGE_SLAYER_V}
         });
+        put(ONSLAUGHT, new TieredAchievements[][]{
+
+        });
     }};
     public final String name;
     public final String description;

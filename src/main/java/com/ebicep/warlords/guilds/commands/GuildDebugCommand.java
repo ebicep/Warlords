@@ -67,7 +67,7 @@ public class GuildDebugCommand extends BaseCommand {
         guild.setTag(tag);
         GuildManager.queueUpdateGuild(guild);
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag()
+                ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(false)
         );
     }
 

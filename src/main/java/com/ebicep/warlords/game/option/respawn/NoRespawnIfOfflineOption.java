@@ -18,7 +18,7 @@ public class NoRespawnIfOfflineOption implements Option, Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEvent(WarlordsRespawnEvent event) {
-        if (!event.getPlayer().isOnline()) {
+        if (!event.getWarlordsEntity().isOnline()) {
             event.setCancelled(true);
         }
     }

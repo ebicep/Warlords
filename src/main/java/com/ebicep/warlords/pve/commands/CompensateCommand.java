@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -37,7 +38,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 @CommandPermission("group.administrator")
 public class CompensateCommand extends BaseCommand {
 
-    public static void openCompensateMenu(Player player, LinkedHashMap<Currencies, Long> compensation, List<DatabasePlayer> compensatedPlayers) {
+    public static void openCompensateMenu(Player player, LinkedHashMap<Spendable, Long> compensation, List<DatabasePlayer> compensatedPlayers) {
         if (compensatedPlayers == null || compensatedPlayers.isEmpty()) {
             ChatChannels.sendDebugMessage(player, ChatColor.RED + "No players to compensate!");
             return;
@@ -141,7 +142,7 @@ public class CompensateCommand extends BaseCommand {
         menu.openForPlayer(player);
     }
 
-    public static void compensate(Player player, LinkedHashMap<Currencies, Long> compensation, List<DatabasePlayer> compensatedPlayers, String title) {
+    public static void compensate(Player player, LinkedHashMap<Spendable, Long> compensation, List<DatabasePlayer> compensatedPlayers, String title) {
         System.out.println(compensation);
         System.out.println(compensatedPlayers);
         if (compensatedPlayers.size() == 1) {
@@ -150,7 +151,7 @@ public class CompensateCommand extends BaseCommand {
                         DatabasePlayer databasePlayer = compensatedPlayers.get(0);
                         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                         if (title == null) {
-                            compensation.forEach(pveStats::addCurrency);
+                            compensation.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                         } else {
                             pveStats.getCompensationRewards().add(new CompensationReward(compensation, title));
                         }
@@ -175,7 +176,7 @@ public class CompensateCommand extends BaseCommand {
                         for (DatabasePlayer databasePlayer : compensatedPlayers) {
                             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                             if (title == null) {
-                                compensation.forEach(pveStats::addCurrency);
+                                compensation.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                             } else {
                                 pveStats.getCompensationRewards().add(new CompensationReward(compensation, title));
                             }

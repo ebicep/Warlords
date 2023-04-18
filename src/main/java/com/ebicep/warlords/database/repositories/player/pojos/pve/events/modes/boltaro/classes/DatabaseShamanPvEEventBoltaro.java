@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabaseBasePvEEventBoltaro;
 
-public class DatabaseShamanPvEEventBoltaro extends DatabaseBasePvEEventBoltaro implements DatabaseWarlordsClass {
+public class DatabaseShamanPvEEventBoltaro extends DatabaseBasePvEEventBoltaro implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaro thunderlord = new DatabaseBasePvEEventBoltaro();
     private DatabaseBasePvEEventBoltaro spiritguard = new DatabaseBasePvEEventBoltaro();

@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.EventGameEndOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
@@ -26,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ImposterModeOption implements Option {
+public class ImposterModeOption implements Option, EventGameEndOption {
 
     public static int NUMBER_OF_IMPOSTERS_PER_TEAM = 1;
     private final HashMap<Team, List<UUID>> imposters = new HashMap<>();

@@ -177,7 +177,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80);
+        entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80); //TODO NULL CHECK
     }
 
     public MobTier getMobTier() {

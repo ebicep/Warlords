@@ -36,14 +36,14 @@ public enum ChallengeAchievements implements Achievement {
                     WarlordsDamageHealingFinalEvent event = events.get(i);
                     if (event.isHasFlag() && event.getInitialHealth() <= 1000) {
                         below1000Index = i;
-                        carrier = event.getPlayer(); //carrier must be the same person, no repicks
+                        carrier = event.getWarlordsEntity(); //carrier must be the same person, no repicks
                         break;
                     }
                 }
                 if (below1000Index != -1) {
                     for (int i = below1000Index; i < events.size(); i++) {
                         WarlordsDamageHealingFinalEvent event = events.get(i);
-                        if (event.getPlayer() == carrier && event.isHasFlag() && event.getFinalHealth() >= carrier.getMaxHealth()) {
+                        if (event.getWarlordsEntity() == carrier && event.isHasFlag() && event.getFinalHealth() >= carrier.getMaxHealth()) {
                             fullHealthIndex = i;
                             break;
                         }
@@ -85,7 +85,7 @@ public enum ChallengeAchievements implements Achievement {
                 for (int i = 0; i < events.size(); i++) {
                     WarlordsDamageHealingFinalEvent event = events.get(i);
                     if (event.isHasFlag() || event.getValue() >= event.getInitialHealth()) { //for one shots
-                        if (event.getInitialHealth() >= event.getPlayer().getMaxHealth()) {
+                        if (event.getInitialHealth() >= event.getWarlordsEntity().getMaxHealth()) {
                             indexCarrierFull = i;
                             break;
                         }
@@ -131,9 +131,9 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer()
-                        .getLocation()
-                        .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
+                return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getWarlordsEntity()
+                                                                               .getLocation()
+                                                                               .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
             }
     ),
     DUCK_TANK("Duck Tank",
@@ -203,7 +203,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead()) {
-                    return new CooldownFilter<>(lastDamageEvent.getPlayer(), RegularCooldown.class)
+                    return new CooldownFilter<>(lastDamageEvent.getWarlordsEntity(), RegularCooldown.class)
                             .filterCooldownFrom(warlordsEntity)
                             .filterCooldownClassAndMapToObjectsOfClass(SoulShackle.class)
                             .findAny()
@@ -350,7 +350,7 @@ public enum ChallengeAchievements implements Achievement {
                                             regularCooldown.getCooldownObject() instanceof LastStand
                             )
                     ) {
-                        carrier = event.getPlayer();
+                        carrier = event.getWarlordsEntity();
                         index = i;
                         break;
                     }
@@ -360,7 +360,7 @@ public enum ChallengeAchievements implements Achievement {
                     int totalDamage = 0;
                     for (int i = index; i < events.size(); i++) {
                         WarlordsDamageHealingFinalEvent event = events.get(i);
-                        if (event.getPlayer() == carrier && event.isHasFlag()) {
+                        if (event.getWarlordsEntity() == carrier && event.isHasFlag()) {
                             totalDamage += event.getValue();
                         }
                     }
@@ -405,8 +405,8 @@ public enum ChallengeAchievements implements Achievement {
                                 .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.class))
                                 .map(persistentCooldown -> ((Soulbinding) persistentCooldown.getCooldownObject()))
                                 .anyMatch(soulbinding -> soulbinding.getAllProcedPlayers().stream()
-                                        .filter(wp -> wp == event.getPlayer())
-                                        .count() >= 10
+                                                                    .filter(wp -> wp == event.getWarlordsEntity())
+                                                                    .count() >= 10
                                 );
                     }
                 }
@@ -427,7 +427,7 @@ public enum ChallengeAchievements implements Achievement {
                 for (int i = 0; i < events.size(); i++) {
                     if (events.get(i).isHasFlag()) {
                         indexCarrier = i;
-                        carrier = events.get(i).getPlayer();
+                        carrier = events.get(i).getWarlordsEntity();
                         break;
                     }
                 }
@@ -435,7 +435,7 @@ public enum ChallengeAchievements implements Achievement {
                 if (indexCarrier != -1) {
                     for (int i = 0; i < events.size(); i++) {
                         WarlordsDamageHealingFinalEvent event = events.get(i);
-                        if (event.getPlayer().equals(carrier) && event.isDead()) {
+                        if (event.getWarlordsEntity().equals(carrier) && event.isDead()) {
                             indexCarrierKilled = i;
                             break;
                         }
@@ -447,9 +447,9 @@ public enum ChallengeAchievements implements Achievement {
                 if (indexCarrierKilled != -1) {
                     WarlordsEntity finalCarrier = carrier;
                     int numberOfAbilityAttackers = (int) events.subList(indexCarrier, indexCarrierKilled).stream()
-                            .filter(warlordsDamageHealingFinalEvent -> warlordsDamageHealingFinalEvent.getPlayer().equals(finalCarrier))
-                            .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getAbility().isEmpty())
-                            .count();
+                                                               .filter(warlordsDamageHealingFinalEvent -> warlordsDamageHealingFinalEvent.getWarlordsEntity().equals(finalCarrier))
+                                                               .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getAbility().isEmpty())
+                                                               .count();
                     return numberOfAbilityAttackers >= 5;
                 } else {
                     return false;

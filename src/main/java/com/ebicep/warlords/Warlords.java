@@ -35,7 +35,7 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -61,7 +61,7 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
-import net.luckperms.api.event.user.track.UserTrackEvent;
+import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -143,6 +143,14 @@ public class Warlords extends JavaPlugin {
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static WarlordsEntity getPlayer(@Nullable net.minecraft.server.v1_8_R3.Entity entity) {
+        if (entity != null) {
+            return getPlayer(entity.getBukkitEntity());
         }
         return null;
     }
@@ -361,9 +369,10 @@ public class Warlords extends JavaPlugin {
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
+            ChatUtils.MessageTypes.WARLORDS.sendMessage("Hooked into LuckPerms");
             LuckPerms api = provider.getProvider();
             EventBus eventBus = api.getEventBus();
-            eventBus.subscribe(this, UserTrackEvent.class, PermissionHandler::listenToNewPatreons);
+            eventBus.subscribe(this, UserDataRecalculateEvent.class, Permissions::listenToNewPatreons);
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> {
@@ -589,10 +598,6 @@ public class Warlords extends JavaPlugin {
 
                     for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                         ability.checkSecondaryAbilities();
-
-                        if (wp.isSneaking() && !wp.isWasSneaking()) {
-                            ability.runSecondAbilities();
-                        }
                     }
 
                     wp.setWasSneaking(wp.isSneaking());
@@ -778,6 +783,20 @@ public class Warlords extends JavaPlugin {
                         wp.setHitCooldown(wp.getHitCooldown() - 1);
                     }
 
+                    // Natural Regen
+                    if (wp instanceof WarlordsPlayer) {
+                        int regenTickTimer = wp.getRegenTickTimer();
+                        wp.setRegenTickTimer(regenTickTimer - 1);
+                        if (regenTickTimer == 0) {
+                            wp.getHitBy().clear();
+                        }
+                        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+                        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+                            int healthToAdd = (int) (wp.getMaxHealth() / 55.3);
+                            wp.setHealth(Math.max(wp.getHealth(), Math.min(wp.getHealth() + healthToAdd, wp.getMaxHealth())));
+                        }
+                    }
+
                     //NPC STUN
                     if (wp instanceof WarlordsNPC npc) {
                         if (npc.getStunTicks() > 0) {
@@ -870,23 +889,6 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
                         wps.runEverySecond();
-                        // Natural Regen
-                        if (wps.getRegenTimer() != 0) {
-                            if (wps instanceof WarlordsPlayer) {
-                                wps.setRegenTimer(wps.getRegenTimer() - 1);
-                            }
-                            if (wps.getRegenTimer() == 0) {
-                                wps.getHitBy().clear();
-                            }
-                        } else {
-                            int healthToAdd = (int) (wps.getMaxHealth() / 55.3);
-                            wps.setHealth(Math.max(wps.getHealth(),
-                                    Math.min(wps.getHealth() + healthToAdd,
-                                            wps.getMaxHealth()
-                                    )
-                            ));
-                        }
-
                         // Cooldowns
 
                         // Checks whether the player has a flag cooldown.
@@ -911,7 +913,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Combat Timer - Logs combat time after 4 seconds.
-                        if (wps.getRegenTimer() > 6) {
+                        if (wps.getRegenTickTimer() > 6 * 20) {
                             wps.getMinuteStats().addTimeInCombat();
                         }
 

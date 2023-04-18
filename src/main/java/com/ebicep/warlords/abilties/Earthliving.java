@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -23,12 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Earthliving extends AbstractAbility {
+public class Earthliving extends AbstractAbility implements Duration {
 
     public int timesProcd = 0;
     public int playersHealed = 0;
 
-    private final int duration = 8;
+    private int tickDuration = 160;
     private float procChance = 40;
     private int maxAllies = 2;
     private int weaponDamage = 240;
@@ -42,7 +43,7 @@ public class Earthliving extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a §e" + format(procChance) +
                 "% §7chance to heal you and §e2 §7nearby allies for §a" + weaponDamage +
-                "% §7weapon damage. Lasts §6" + duration + " §7seconds." +
+                "% §7weapon damage. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nThe first hit is guaranteed to activate Earthliving.";
     }
 
@@ -59,7 +60,7 @@ public class Earthliving extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
         Earthliving tempEarthliving = new Earthliving();
         final boolean[] firstProc = {true};
@@ -72,7 +73,7 @@ public class Earthliving extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         wp.getLocation().getWorld().spawnParticle(
@@ -92,7 +93,7 @@ public class Earthliving extends AbstractAbility {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getPlayer();
+                    WarlordsEntity victim = event.getWarlordsEntity();
                     WarlordsEntity attacker = event.getAttacker();
 
                     double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
@@ -106,11 +107,11 @@ public class Earthliving extends AbstractAbility {
                         }
 
                         new GameRunnable(victim.getGame()) {
-                            int counter = 0;
                             final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
                                                     ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
                             final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
                                                     ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                            int counter = 0;
 
                             @Override
                             public void run() {
@@ -172,7 +173,7 @@ public class Earthliving extends AbstractAbility {
                     Utils.playGlobalSound(target.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.2f);
                     new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.BIRCH_SAPLING).play();
                     for (WarlordsEntity ally : PlayerFilter
-                            .entitiesAround(target, 6, 6, 6)
+                            .entitiesAround(target, 10, 10, 10)
                             .aliveTeammatesOf(giver)
                             .closestFirst(target)
                     ) {
@@ -239,7 +240,15 @@ public class Earthliving extends AbstractAbility {
         this.maxHits = maxHits;
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
 
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
 }
 
 

@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -48,6 +48,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -133,6 +134,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.BLACK)
                                                                        .withColor(Color.WHITE)

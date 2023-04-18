@@ -24,6 +24,7 @@ public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
     public static boolean DISABLE_RESTART_CHECK = false;
+    public static boolean DISABLE_SPECTATOR_MESSAGES = false;
 
     @Subcommand("bypasscurrencies")
     @Description("Bypasses player pve currency costs - Prevents any from being added")
@@ -73,6 +74,13 @@ public class AdminCommand extends BaseCommand {
     public void unbanSpec(Player player, Specializations spec) {
         spec.setBanned(false);
         ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Unbanned " + spec.name);
+    }
+
+    @Subcommand("disablespectatormessages")
+    @Description("Disables spectator messages")
+    public void disableSpectatorMessages(CommandIssuer issuer) {
+        DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, true);
     }
 
     @HelpCommand

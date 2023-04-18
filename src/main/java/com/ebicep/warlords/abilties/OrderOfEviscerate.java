@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderOfEviscerate extends AbstractAbility {
+public class OrderOfEviscerate extends AbstractAbility implements Duration {
 
     public int numberOfFullResets = 0;
     public int numberOfHalfResets = 0;
@@ -37,7 +38,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     protected int mobsKilledWithOrder = 0;
 
     private boolean masterUpgrade = false;
-    private int duration = 8;
+    private int tickDuration = 160;
     private float damageThreshold = 0;
     private WarlordsEntity markedPlayer;
 
@@ -47,7 +48,7 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Cloak yourself for §6" + duration + " §7seconds, granting you §e40% §7movement speed and making you §einvisible §7to the enemy for the " +
+        description = "Cloak yourself for §6" + format(tickDuration / 20f) + " §7seconds, granting you §e40% §7movement speed and making you §einvisible §7to the enemy for the " +
                 "duration. However, taking up to §c600 §7fall damage or any type of ability damage will end your invisibility." +
                 "\n\nAll your attacks against an enemy will mark them vulnerable. Vulnerable enemies take §c20% §7more damage. " +
                 "Additionally, enemies hit from behind take an additional §c10% §7more damage." +
@@ -70,7 +71,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, tickDuration, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
         OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();
@@ -92,7 +93,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.4f, 2);
                     wp.getWorld().spawnParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05, null, true);
@@ -105,7 +106,7 @@ public class OrderOfEviscerate extends AbstractAbility {
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
-                WarlordsEntity victim = event.getPlayer();
+                WarlordsEntity victim = event.getWarlordsEntity();
                 if (victim != wp) {
                     if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
@@ -117,8 +118,8 @@ public class OrderOfEviscerate extends AbstractAbility {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
-                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getPlayer()) &&
-                                !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
+                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
+                                !Utils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (pveUpgrade ? 2 : 1.3f);
@@ -139,7 +140,7 @@ public class OrderOfEviscerate extends AbstractAbility {
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (!Objects.equals(event.getPlayer(), tempOrderOfEviscerate.getMarkedPlayer())) {
+                if (!Objects.equals(event.getWarlordsEntity(), tempOrderOfEviscerate.getMarkedPlayer())) {
                     return;
                 }
                 if (!pveUpgrade) {
@@ -212,7 +213,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         });
 
         if (!FlagHolder.isPlayerHolderFlag(wp)) {
-            giveCloak(wp, duration);
+            giveCloak(wp, tickDuration);
         }
 
         return true;
@@ -245,7 +246,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         return damageThreshold;
     }
 
-    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int duration) {
+    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         RegularCooldown<OrderOfEviscerate> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
                 "INVIS",
@@ -268,7 +269,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                     .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
                         wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
@@ -294,12 +295,14 @@ public class OrderOfEviscerate extends AbstractAbility {
         this.markedPlayer = markedPlayer;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public boolean isMasterUpgrade() {

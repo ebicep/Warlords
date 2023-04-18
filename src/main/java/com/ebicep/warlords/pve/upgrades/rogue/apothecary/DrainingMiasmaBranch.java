@@ -91,7 +91,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                         " will explode on death, dealing 1% max health damage to all nearby enemies.",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() * 4);
+                    ability.setTickDuration(ability.getTickDuration() * 4);
                     ability.setLeechDuration(ability.getLeechDuration() * 4);
                     ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 4);
 

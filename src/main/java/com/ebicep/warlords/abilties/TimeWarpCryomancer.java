@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -23,30 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TimeWarpCryomancer extends AbstractAbility {
-
-    public int timesSuccessful = 0;
-
-    private int duration = 5;
-    private int warpHealPercentage = 30;
+public class TimeWarpCryomancer extends AbstractTimeWarpBase {
 
     public TimeWarpCryomancer() {
-        super("Time Warp", 0, 0, 28.19f, 30);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "Activate to place a time rune on the ground. After §6" + duration +
-                " §7seconds, you will warp back to that location and restore §a" + warpHealPercentage + "% §7of your health";
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Successful", "" + timesSuccessful));
-
-        return info;
+        super();
     }
 
     @Override
@@ -73,11 +52,11 @@ public class TimeWarpCryomancer extends AbstractAbility {
                         });
         }
 
-        RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
+        RegularCooldown<TimeWarpCryomancer> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
-                TimeWarp.class,
-                new TimeWarp(),
+                TimeWarpCryomancer.class,
+                new TimeWarpCryomancer(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -137,7 +116,7 @@ public class TimeWarpCryomancer extends AbstractAbility {
                         cryoPod.get().remove();
                     }
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
@@ -230,23 +209,4 @@ public class TimeWarpCryomancer extends AbstractAbility {
         return true;
     }
 
-    public int getTimesSuccessful() {
-        return timesSuccessful;
-    }
-
-    public int getWarpHealPercentage() {
-        return warpHealPercentage;
-    }
-
-    public void setWarpHealPercentage(int warpHealPercentage) {
-        this.warpHealPercentage = warpHealPercentage;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
 }

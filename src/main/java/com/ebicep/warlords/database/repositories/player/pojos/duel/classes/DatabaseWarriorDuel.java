@@ -2,10 +2,10 @@ package com.ebicep.warlords.database.repositories.player.pojos.duel.classes;
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabaseBaseDuel;
 
-public class DatabaseWarriorDuel extends DatabaseBaseDuel implements DatabaseWarlordsClass {
+public class DatabaseWarriorDuel extends DatabaseBaseDuel implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseDuel berserker = new DatabaseBaseDuel();
     private DatabaseBaseDuel defender = new DatabaseBaseDuel();

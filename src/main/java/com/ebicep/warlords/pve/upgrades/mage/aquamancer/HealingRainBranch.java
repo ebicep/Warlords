@@ -80,7 +80,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 20000,
                 () -> {
                     ability.setRadius(radius + 4);
-                    ability.setDuration(ability.getDuration() + 4);
+                    ability.setTickDuration(ability.getTickDuration() + 80);
                 }
         ));
 
@@ -94,7 +94,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
-                    ability.setDuration(ability.getDuration() + 4);
+                    ability.setTickDuration(ability.getTickDuration() + 80);
                 }
         );
     }

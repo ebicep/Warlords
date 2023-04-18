@@ -3,12 +3,11 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,28 +21,22 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         assert databaseGame instanceof DatabaseGamePvEEvent;
-        assert gamePlayer instanceof DatabaseGamePlayerPvE;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
 
         DatabaseGamePvEEvent databaseGamePvEEvent = (DatabaseGamePvEEvent) databaseGame;
         DatabaseGamePlayerPvEEvent databaseGamePlayerPvEEvent = (DatabaseGamePlayerPvEEvent) gamePlayer;
 
-        if (databaseGame instanceof DatabaseGamePvEEventBoltaroLair) {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 50_000) * multiplier;
-        } else if (databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza) {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 15_000) * multiplier;
-        } else {
-            this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), 100_000) * multiplier;
-        }
+        this.eventPointsCumulative += Math.min(databaseGamePlayerPvEEvent.getPoints(), databaseGamePvEEvent.getPointLimit()) * multiplier;
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, databaseGamePlayerPvEEvent.getPoints());
         } else if (highestEventPointsGame == databaseGamePlayerPvEEvent.getPoints()) {

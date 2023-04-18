@@ -8,6 +8,8 @@ import java.util.TreeMap;
 
 public class NumberFormat {
 
+    public static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX = new DecimalFormat("#.#");
+    public static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE = new DecimalFormat("#.#");
     private static final DecimalFormat FORMAT_COMMAS = new DecimalFormat("#,###");
     private static final DecimalFormat DECIMAL_FORMAT_TENTHS = new DecimalFormat("0.0");
     private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_TENTHS = new DecimalFormat("#.#");
@@ -25,6 +27,16 @@ public class NumberFormat {
         DECIMAL_FORMAT_OPTIONAL_TENTHS.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS.setRoundingMode(RoundingMode.HALF_UP);
         DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS.setRoundingMode(RoundingMode.HALF_UP);
+
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.setPositivePrefix("+");
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.setNegativePrefix("-");
+
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.setPositivePrefix("-");
+        DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.setNegativePrefix("+");
 
         SUFFIXES.put(1_000L, "k");
         SUFFIXES.put(1_000_000L, "m");

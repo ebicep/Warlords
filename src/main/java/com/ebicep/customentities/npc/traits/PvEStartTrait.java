@@ -8,7 +8,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
 
-import static com.ebicep.warlords.pve.DifficultyMenu.openPveMenu;
+import static com.ebicep.warlords.pve.DifficultyMenu.openDifficultyMenu;
 
 public class PvEStartTrait extends WarlordsTrait {
 
@@ -21,17 +21,17 @@ public class PvEStartTrait extends WarlordsTrait {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.WAVE_DEFENSE) + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.WAVE_DEFENSE) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.GOLD + "Wave Defense");
+        hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "Wave Defense");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        openPveMenu(event.getClicker().getPlayer());
+        openDifficultyMenu(event.getClicker().getPlayer());
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        openPveMenu(event.getClicker().getPlayer());
+        openDifficultyMenu(event.getClicker().getPlayer());
     }
 }

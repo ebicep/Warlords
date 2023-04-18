@@ -141,6 +141,71 @@ public enum SkullID {
             "88e9a827-7429-4c7f-9f49-dfb8aa2123d0",
             "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTJkZWZiZTNjZGUzMjZkNDUxMWJiNTMzMzlkNzc3YWZhNzAzZjNlYzRkYWE2OTdkNjFhNDQwMjc0NGNiYjBjZCJ9fX0="
     ),
+    ITEM_CORE_BLUE(
+            "009a87cf-a01b-4f26-ba2b-75dbee0cea98",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZThmNWRjOTI3OTIzMjc5MTI3YTlkMmFkZTg2NDMyZjk4Nzc2MDljYjlmODM4NTRhNWI4OTJiZjdjYWQ5ZGYyZiJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/40957-white-spider
+    WHITE_SPIDER(
+            "5ca9d769-742d-4483-a8c5-1e42502bb779",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ1Y2ViMjBiMGExYjNmNDU4ZWE0NTA0Y2QwYzI3MTJkYjJmZTk3OTRmY2Q3YTVlMTgwMTI3YTQ4ZWMyNjQ3MyJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/44568-jungle-spider
+    JUNGLE_SPIDER(
+            "d822d63c-c59a-42e5-8f60-0b4b4bc323fd",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2I1Y2NjZjRhYjExNDFjMzZmZmZiZmViZDZkMDlmMjVmMTBjODUxMmI1Y2JmMGMxNzRlMGQ1MzhjNmEzMThmMiJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/52049-deep-dark-crawler
+    DEEP_DARK_CRAWLER(
+            "da308d95-f9c7-4406-9e49-48f6c5bb4125",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODk4ZTJmODU0YzJkMmRlNzU5NWIyMWJjMmY5MzYyMDA2ZWE3MmNiNjExODFkMmE5OWUwNjExY2Q3NDkwNzY5MyJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/49995-spider-skull
+    SPIDER(
+            "80a7a6fd-ea9d-421f-9909-c2aa99789a93",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjg1YzFlZTYxZjJiZDQ0M2MwYTllNjE3ZjM3MjAzY2RmZjQ0MGJmYTJkMDBiNmRkMzZmZjgzNGNkODcwMmQ5In19fQ="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/23540-blood-spider
+    BLOOD_SPIDER(
+            "bf0be255-89ce-415a-b7ca-037424dce343",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODMwMDk4NmVkMGEwNGVhNzk5MDRmNmFlNTNmNDllZDNhMGZmNWIxZGY2MmJiYTYyMmVjYmQzNzc3ZjE1NmRmOCJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/2533-decapitated-spider
+    DECAPITATED_SPIDER(
+            "0dd94060-fd14-486c-9339-2a896dbd991d",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ3YmVlNDJmZGE1ZmUyYjhhZTI2ZmNmNDE0MGNhNTRkNWQzMzRiMmFlMWZlZDlmMWMwOGJhZWI2M2E3ZiJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/humanoid/48315-spider-spirit
+    SPIDER_SPIRIT(
+            "bded57c8-92a5-409b-9b6e-45788ce5c291",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU3MWFmMGM5MjEyMzM3OTdkODU1YzUyMDBhOTBlOTVhMWQ3YzdhNDAxY2FhMThiYjdmZWEwMjFmY2E0OTE1MyJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/45040-spider-egg-sac
+    EGG_SAC(
+            "7424d4ae-1103-468f-a4b9-2da89c2d7816",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTI4NmE2Mjg4NjRlZmVjNzZkMjFmMWJmYjg0ZDE4MDliMzAyZGVhYjcyOGI4ZGFiNmJlODA0NjdiN2U2ZmNlOCJ9fX0"
+    ),
+    //https://minecraft-heads.com/custom-heads/monsters/315-cave-spider
+    CAVE_SPIDER(
+            "39173a7a-c957-4ec1-ac1a-43e5a64983df",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDE2NDVkZmQ3N2QwOTkyMzEwN2IzNDk2ZTk0ZWViNWMzMDMyOWY5N2VmYzk2ZWQ3NmUyMjZlOTgyMjQifX19"
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/49967-iron-fist
+    IRON_FIST(
+            "a83132fb-de57-486f-882b-e8cae690ec4d",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2FlYWUwNmZiMmMzYzljYjhlODQzMGNjZGUxNTgzYzU2ZGE2M2I3ZDY4MDgxYzVjZmZiMDg1NzY2NmRlM2ZkYSJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/37586-enchantment-book
+    ENCHANTMENT_BOOK(
+            "6ac73df3-4fb7-4b7d-83b9-8c7d1f0f814a",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2RjOTg1YTdhNjhjNTc0ZjY4M2MwYjg1OTUyMWZlYjNmYzNkMmZmYTA1ZmEwOWRiMGJhZTQ0YjhhYzI5YjM4NSJ9fX0="
+    ),
+    //https://minecraft-heads.com/custom-heads/decoration/41807-google-home-mini-white
+    GOOGLE_HOME_MINI(
+            "e487ec23-5f53-4668-8051-13c3413edb5f",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTU5OWQ2YmJmNGZhMTg3MDk2ZjZlMDliNzZlZjZiMDc1M2NlYTMyOTBlOWQzZTZjY2E3MDdkNGYwODdlYjc1In19fQ"
+    ),
+
 
     ;
 
@@ -148,8 +213,7 @@ public enum SkullID {
     private final String textureId;
 
     /**
-     *
-     * @param id uuid of the given custom skull.
+     * @param id        uuid of the given custom skull.
      * @param textureId texture ID encoded in Base64, cannot be null.
      */
     SkullID(String id, @Nonnull String textureId) {

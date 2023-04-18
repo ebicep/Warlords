@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -21,14 +22,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DrainingMiasma extends AbstractAbility {
+public class DrainingMiasma extends AbstractAbility implements Duration {
 
     protected int numberOfLeechProcd = 0;
 
     public int playersHit = 0;
 
     private int maxHealthDamage = 4;
-    private int duration = 5;
+    private int tickDuration = 100;
     private int leechDuration = 5;
     private int enemyHitRadius = 8;
     private float leechSelfAmount = 25;
@@ -41,7 +42,7 @@ public class DrainingMiasma extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take §c50 §7+ §c" + maxHealthDamage +
-                "% §7of their max health as damage per second, for §6" + duration + " §7seconds. " +
+                "% §7of their max health as damage per second, for §6" + format(tickDuration / 20f) + " §7seconds. " +
                 "Enemies poisoned by your Draining Miasma are slowed by §e25% §7for §63 §7seconds on cast." +
                 "\n\nEach enemy hit will be afflicted with §aLEECH §7for §6" + leechDuration + " §7seconds.";
     }
@@ -102,7 +103,7 @@ public class DrainingMiasma extends AbstractAbility {
                             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
                         }
                     },
-                    duration * 20,
+                    tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
@@ -155,7 +156,7 @@ public class DrainingMiasma extends AbstractAbility {
                         DrainingMiasma.class,
                         new DrainingMiasma(),
                         wp,
-                        CooldownTypes.ABILITY,
+                        CooldownTypes.DEBUFF,
                         cooldownManager -> {
                             new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.BIRCH_SAPLING).play();
                             for (WarlordsEntity target : PlayerFilter
@@ -221,14 +222,15 @@ public class DrainingMiasma extends AbstractAbility {
         this.leechDuration = leechDuration;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
-
 
     public int getMaxHealthDamage() {
         return maxHealthDamage;

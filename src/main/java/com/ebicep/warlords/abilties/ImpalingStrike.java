@@ -58,7 +58,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
                         false
                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                     finalEvent.accept(warlordsDamageHealingFinalEvent);
-                    if (event.getPlayer().hasFlag()) {
+                    if (event.getWarlordsEntity().hasFlag()) {
                         this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
                     }
                 });

@@ -94,8 +94,8 @@ public class GraveOption implements Option, Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEvent(WarlordsDeathEvent event) {
-        if (event.getPlayer().shouldSpawnGrave()) {
-            addGrave(event.getPlayer());
+        if (event.getWarlordsEntity().shouldSpawnGrave()) {
+            addGrave(event.getWarlordsEntity());
         }
     }
 
@@ -103,7 +103,7 @@ public class GraveOption implements Option, Listener {
     public void onEvent(WarlordsRespawnEvent event) {
         for (Iterator<Grave> it = this.graves.iterator(); it.hasNext();) {
             Grave grave = it.next();
-            if (grave.getOwner() == event.getPlayer()) {
+            if (grave.getOwner() == event.getWarlordsEntity()) {
                 grave.remove();
                 it.remove();
             }

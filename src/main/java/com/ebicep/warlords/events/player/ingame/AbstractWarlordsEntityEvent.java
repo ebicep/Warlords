@@ -19,7 +19,7 @@ public abstract class AbstractWarlordsEntityEvent extends AbstractWarlordsGameEv
     }
 
     @Nonnull
-    public WarlordsEntity getPlayer() {
+    public WarlordsEntity getWarlordsEntity() {
         return player;
     }
 

@@ -5,12 +5,11 @@ import com.ebicep.warlords.abilties.Fireball;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.*;
+import com.ebicep.warlords.events.player.ingame.pve.drops.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -18,8 +17,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
@@ -30,10 +33,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -53,6 +57,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final float maxMeleeDamage;
 
     protected WarlordsNPC warlordsNPC;
+    protected PveOption pveOption;
 
     public AbstractMob(
             T entity,
@@ -83,14 +88,19 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.mob.persist = true;
 
         this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+        updateEquipment();
+    }
+
+    public void updateEquipment() {
+        EntityEquipment equipment = livingEntity.getEquipment();
         if (ee != null) {
-            livingEntity.getEquipment().setBoots(ee.getBoots());
-            livingEntity.getEquipment().setLeggings(ee.getLeggings());
-            livingEntity.getEquipment().setChestplate(ee.getChestplate());
-            livingEntity.getEquipment().setHelmet(ee.getHelmet());
-            livingEntity.getEquipment().setItemInHand(ee.getItemInMainHand());
+            equipment.setBoots(ee.getBoots());
+            equipment.setLeggings(ee.getLeggings());
+            equipment.setChestplate(ee.getChestplate());
+            equipment.setHelmet(ee.getHelmet());
+            equipment.setItemInHand(ee.getItemInMainHand());
         } else {
-            livingEntity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
+            equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
     }
 
@@ -121,7 +131,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
-    public abstract void onSpawn(PveOption option);
+    public void onSpawn(PveOption option) {
+        this.pveOption = option;
+    }
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
         mapper.apply(this.warlordsNPC);
@@ -135,27 +147,149 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        dropWeapon(killer);
-        //dropMobDrop(killer);
-    }
-
-    public void dropWeapon(WarlordsEntity killer) {
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
-        dropWeapon(killer, 100);
+        if (pveOption == null) {
+            return;
+        }
+        dropWeapon(killer);
+        dropMobDrop(killer);
+        dropItem(killer);
+        dropBlessing(killer);
+    }
+
+    public void dropWeapon(WarlordsEntity killer) {
+        if (killer.getEntity() instanceof Player) {
+            dropWeapon(killer, 1);
+        }
         PlayerFilter.playingGame(killer.getGame())
                     .teammatesOfExcludingSelf(killer)
-                    .forEach(teammate -> dropWeapon(teammate, 200));
+                    .filter(wp -> wp.getEntity() instanceof Player)
+                    .forEach(teammate -> dropWeapon(teammate, 2));
+    }
+
+    public void dropMobDrop(WarlordsEntity killer) {
+        HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
+        if (mobDrops.isEmpty()) {
+            return;
+        }
+        Game game = killer.getGame();
+        DifficultyIndex difficultyIndex = pveOption.getDifficulty();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode().getDropModifier());
+                                   AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropMobDropEvent(warlordsPlayer,
+                                           this,
+                                           dropRate,
+                                           drop
+                                   );
+                                   Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                                   if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get() * dropRewardEvent.getModifier()) {
+                                       WarlordsGiveMobDropEvent dropEvent = new WarlordsGiveMobDropEvent(warlordsPlayer, drop);
+                                       Bukkit.getPluginManager().callEvent(dropEvent);
+                                       List<WarlordsPlayer> stolenBy = dropEvent.getStolenBy();
+                                       if (!stolenBy.isEmpty()) {
+                                           Collections.shuffle(stolenBy);
+                                           WarlordsPlayer firstStealer = stolenBy.get(0);
+                                           WarlordsPlayer lastStealer = stolenBy.get(stolenBy.size() - 1);
+                                           Bukkit.getPluginManager().callEvent(new WarlordsGiveStolenMobDropEvent(lastStealer, drop));
+
+                                           StringBuilder stolenMessage = new StringBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                                   ChatColor.GRAY + " obtained a " +
+                                                   drop.chatColor + drop.name +
+                                                   ChatColor.GRAY + " but it was stolen by " +
+                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + firstStealer.getName() +
+                                                   ChatColor.GRAY + "!");
+                                           for (int i = 1; i < stolenBy.size() - 1; i++) {
+                                               String previousStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity()) + stolenBy.get(i - 1).getName();
+                                               String nextStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity()) + stolenBy.get(i).getName();
+                                               stolenMessage.append(" But then ")
+                                                            .append(nextStealer)
+                                                            .append(ChatColor.GRAY).append(" stole it from ")
+                                                            .append(previousStealer)
+                                                            .append(ChatColor.GRAY).append("!");
+                                           }
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.toString()));
+                                           lastStealer.playSound(lastStealer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 1.5f);
+                                       } else {
+                                           String obtainMessage = Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                                   ChatColor.GRAY + " obtained a " +
+                                                   drop.chatColor + drop.name +
+                                                   ChatColor.GRAY + "!";
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage));
+                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+                                       }
+                                   }
+                               });
+                           });
+    }
+
+    public void dropItem(WarlordsEntity killer) {
+        Game game = killer.getGame();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               ItemTier[] validValues = ItemTier.VALID_VALUES;
+                               double rng = ThreadLocalRandom.current().nextDouble();
+                               for (int i = validValues.length - 1; i >= 0; i--) {
+                                   ItemTier itemTier = validValues[i];
+                                   if (itemTier.dropChance == 0) {
+                                       continue;
+                                   }
+                                   AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * game.getGameMode().getDropModifier());
+                                   AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropItemEvent(warlordsPlayer, this, dropRate, itemTier);
+                                   Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                                   if (rng < dropRate.get() * dropRewardEvent.getModifier()) {
+                                       AbstractItem item = ItemType.getRandom().createBasic(itemTier);
+                                       Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
+                                       game.forEachOnlinePlayer((player, team) -> {
+                                           AbstractItem.sendItemMessage(player,
+                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
+                                                           .appendHoverItem(item.getItemName(), item.generateItemStack())
+                                                           .append(ChatColor.GRAY + "!")
+                                           );
+                                       });
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       break;
+                                   }
+                               }
+                           });
+    }
+
+    private void dropBlessing(WarlordsEntity killer) {
+        Game game = killer.getGame();
+        PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                           .teammatesOf((WarlordsPlayer) killer)
+                           .filter(wp -> wp.getEntity() instanceof Player)
+                           .forEach(warlordsPlayer -> {
+                               AtomicDouble dropRate = new AtomicDouble(.00025 * game.getGameMode().getDropModifier());
+                               AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropBlessingEvent(warlordsPlayer, this, dropRate);
+                               Bukkit.getPluginManager().callEvent(dropRewardEvent);
+                               if (ThreadLocalRandom.current().nextDouble() < dropRate.get() * dropRewardEvent.getModifier()) {
+                                   Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(warlordsPlayer));
+                                   game.forEachOnlinePlayer((player, team) -> {
+                                       AbstractItem.sendItemMessage(player,
+                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
+                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
+                                       );
+                                   });
+                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                               }
+                           });
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
-        AtomicDouble dropRate = new AtomicDouble(weaponDropRate());
-        Bukkit.getPluginManager().callEvent(new WarlordsDropWeaponEvent(killer, dropRate));
-        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
+        AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
+        AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
+        Bukkit.getPluginManager().callEvent(dropRewardEvent);
+        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get() * dropRewardEvent.getModifier()) {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
-
             killer.getGame().forEachOnlinePlayer((player, team) -> {
                 player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity())
                                               .append(Component.text(killer.getName() + ChatColor.GRAY + " got lucky and found "))
@@ -166,47 +300,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
-    public void dropMobDrop(WarlordsEntity killer) {
-        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
-            return;
-        }
-        HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
-        if (mobDrops.isEmpty()) {
-            return;
-        }
-        PveOption pveOption = killer.getGame()
-                                    .getOptions()
-                                    .stream()
-                                    .filter(PveOption.class::isInstance)
-                                    .map(PveOption.class::cast)
-                                    .findFirst().orElse(null);
-        if (pveOption == null) {
-            return;
-        }
-        DifficultyIndex difficultyIndex = pveOption.getDifficulty();
-        mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-            AtomicReference<Double> dropRate = new AtomicReference<>(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d));
-            if (ThreadLocalRandom.current().nextDouble(0, 1) <= dropRate.get()) {
-                Bukkit.getPluginManager().callEvent(new WarlordsGiveMobDropEvent(killer, drop));
-
-                killer.getGame().forEachOnlinePlayer((player, team) -> {
-                    player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() +
-                            ChatColor.GRAY + " obtained a " +
-                            drop.chatColor + drop.name +
-                            ChatColor.GRAY + "!"
-                    );
-                });
-                killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-            }
-        });
-    }
-
     public net.minecraft.world.entity.LivingEntity getTarget() {
         return this.entity.getTarget();
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
+        this.entity.setTarget((EntityLiving) ((CraftEntity) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {

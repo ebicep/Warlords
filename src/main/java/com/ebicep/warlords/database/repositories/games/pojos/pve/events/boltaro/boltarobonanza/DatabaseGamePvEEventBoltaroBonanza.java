@@ -9,9 +9,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.game.option.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.wavedefense.events.modes.BoltaroBonanzaOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -67,6 +67,11 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
+    public int getPointLimit() {
+        return 15_000;
+    }
+
+    @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltaroBonanza -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
@@ -107,7 +112,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public Set<DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
         return new HashSet<>(players);
     }
 

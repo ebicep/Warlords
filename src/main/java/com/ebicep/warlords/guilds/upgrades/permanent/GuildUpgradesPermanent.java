@@ -38,7 +38,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsGiveExperienceEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     event.getExperienceSummary().replaceAll((key, value) -> (long) (value * getValueFromTier(tier)));
@@ -68,7 +68,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsGiveGuildCoinEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
 
@@ -139,13 +139,13 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsLegendFragmentGainEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
 
                     event.getLegendFragments().addAndGet((int) getValueFromTier(tier) *
-                            (event.getWaveDefenseOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
-                            (event.getWaveDefenseOption().getWavesCleared() / 25)
+                            (event.getPveOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
+                            (event.getPer5() / 25)
                     );
                 }
 

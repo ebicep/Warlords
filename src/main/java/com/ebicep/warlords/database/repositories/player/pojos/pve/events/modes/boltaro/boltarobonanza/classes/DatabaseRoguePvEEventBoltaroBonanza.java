@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabaseBasePvEEventBoltaroBonanza;
 
-public class DatabaseRoguePvEEventBoltaroBonanza extends DatabaseBasePvEEventBoltaroBonanza implements DatabaseWarlordsClass {
+public class DatabaseRoguePvEEventBoltaroBonanza extends DatabaseBasePvEEventBoltaroBonanza implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroBonanza assassin = new DatabaseBasePvEEventBoltaroBonanza();
     private DatabaseBasePvEEventBoltaroBonanza vindicator = new DatabaseBasePvEEventBoltaroBonanza();

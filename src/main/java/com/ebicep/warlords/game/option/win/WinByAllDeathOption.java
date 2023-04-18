@@ -31,7 +31,7 @@ public class WinByAllDeathOption implements Option {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                if (event.getPlayer() instanceof WarlordsPlayer) {
+                if (event.getWarlordsEntity() instanceof WarlordsPlayer) {
                     teams.removeIf(team -> {
                         List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
                                                                                   .matchingTeam(team)

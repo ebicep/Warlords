@@ -1,14 +1,18 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.springframework.data.annotation.Transient;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryStalwart extends AbstractLegendaryWeapon {
+public class LegendaryStalwart extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int UNDER_HP_CHECK = 80;
     public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
@@ -26,6 +30,9 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
     public static final int REDUCTION_DURATION = 5;
     public static final int COOLDOWN = 30;
+
+    @Transient
+    private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
 
     public LegendaryStalwart() {
     }
@@ -43,13 +50,15 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
         return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
                 " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
                 ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
-                "\n\nIf your HP is currently higher than 80% and you will die from the next source of damage, your " +
-                "health will be set to 5% of your max HP and gain 99% damage reduction for 5 seconds. Can be triggered every 30 seconds.";
+                "\n\nIf your health is currently higher than 80% and you will die from the next source of damage, your " +
+                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
+                "Can be triggered every 30 seconds.";
     }
 
     @Override
     public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
+        return Arrays.asList(
+                new Pair<>(
                         formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
@@ -66,13 +75,12 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
 
         // 80 - 10 = skip +70% hp = .7
         // 85 - 9.5 = skip +75.5% hp = .75.5
         float upperBoundHP = (getUnderHpCheck() - getEveryHpPercent()) / 100;
-        AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
 
         player.getCooldownManager().addCooldown(
                 new PermanentCooldown<>(
@@ -127,6 +135,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                                 return currentDamageValue * .01f;
                             }
                         });
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         player.sendMessage(ChatColor.GREEN + "Triggered Stalwart! +99% damage reduction for 5s.");
                         return 0;
                     }
@@ -171,5 +180,13 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
 
     private int getUnderHpCheck() {
         return UNDER_HP_CHECK + UNDER_HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel();
+    }
+
+    @Override
+    public int getCounter() {
+        if (Instant.now().isBefore(lastActivated.get())) {
+            return (int) ChronoUnit.SECONDS.between(Instant.now(), lastActivated.get());
+        }
+        return 0;
     }
 }

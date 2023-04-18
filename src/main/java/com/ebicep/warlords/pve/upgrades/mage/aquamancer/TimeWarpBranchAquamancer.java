@@ -86,7 +86,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
                         "Lasts up to 10 seconds, based on how many blocks you travelled during Time Warp.",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() * 2);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

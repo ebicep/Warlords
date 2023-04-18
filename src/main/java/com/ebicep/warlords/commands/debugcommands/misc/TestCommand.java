@@ -9,10 +9,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
-import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
@@ -21,20 +17,11 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Comparator;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
 public class TestCommand extends BaseCommand {
-
-    @Default
-    @Description("Universal test command")
-    public void test(CommandIssuer issuer) {
-        //doTest(issuer);
-        Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName());
-        });
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
-    }
 
     public static void doTest(CommandIssuer issuer) {
         System.out.println("--------------");
@@ -54,6 +41,16 @@ public class TestCommand extends BaseCommand {
 //            System.out.println(cache.stats());
 //        }
 
+    }
+
+    @Default
+    @Description("Universal test command")
+    public void test(CommandIssuer issuer) {
+        //doTest(issuer);
+        Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName());
+        });
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
     }
 
     @CommandAlias("testguild")
@@ -82,6 +79,8 @@ public class TestCommand extends BaseCommand {
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
 
+
+/*
         Set<DatabasePlayer> databasePlayers = new HashSet<>(DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values());
         for (DatabasePlayer databasePlayer : databasePlayers) {
             System.out.println("Checking " + databasePlayer.getName());
@@ -104,6 +103,8 @@ public class TestCommand extends BaseCommand {
                 }
             }
         }
+
+ */
         /*
         Warlords.newChain()
                 .asyncFirst(() -> {

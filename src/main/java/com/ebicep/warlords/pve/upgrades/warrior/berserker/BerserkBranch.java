@@ -9,7 +9,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     float damageBoost = ability.getDamageIncrease();
     int speedBuff = ability.getSpeedBuff();
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
 
     public BerserkBranch(AbilityTree abilityTree, Berserk ability) {
         super(abilityTree, ability);
@@ -53,7 +53,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 5000,
                 () -> {
                     ability.setSpeedBuff(speedBuff + 3);
-                    ability.setDuration(duration + 1);
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -62,7 +62,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 10000,
                 () -> {
                     ability.setSpeedBuff(speedBuff + 6);
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeB.add(new Upgrade(
@@ -71,7 +71,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 15000,
                 () -> {
                     ability.setSpeedBuff(speedBuff + 9);
-                    ability.setDuration(duration + 3);
+                    ability.setTickDuration(duration + 60);
                 }
         ));
         treeB.add(new Upgrade(
@@ -80,7 +80,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 20000,
                 () -> {
                     ability.setSpeedBuff(speedBuff + 12);
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
 

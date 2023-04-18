@@ -125,7 +125,6 @@ public class WarlordsShopMenu {
                         AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                 .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
-                                .lore("")
                                 .get());
 
                         openClassMenu(player, selectedGroup);
@@ -266,7 +265,6 @@ public class WarlordsShopMenu {
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                     .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
-                                    .lore("")
                                     .get());
 
                             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
@@ -554,7 +552,7 @@ public class WarlordsShopMenu {
                 "",
                 "§7Health: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxHealth()),
                 "§7Energy: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()) + " §7/ §a+" + NumberFormat.formatOptionalHundredths(
-                        apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyOnHit()) + " §7per hit",
+                        apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()) + " §7per hit",
                 "",
                 selectedSpec == APOTHECARY ? "§7Speed: §e10%" : null,
                 apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"

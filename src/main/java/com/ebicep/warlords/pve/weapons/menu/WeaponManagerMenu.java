@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -43,17 +43,14 @@ public class WeaponManagerMenu {
     public static final int MAX_WEAPONS = MAX_WEAPONS_PER_PAGE * 5;
     public static final int MAX_WEAPONS_PATREON = MAX_WEAPONS_PER_PAGE * 10;
 
-    public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
+    public static final HashMap<UUID, PlayerWeaponMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player, boolean fromNPC) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-
-            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
-            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
+            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setOpenedFromNPC(fromNPC);
-            menuSettings.setWeaponInventory(weaponInventory);
             menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
 
             openWeaponInventoryFromInternal(player, databasePlayer);
@@ -62,8 +59,8 @@ public class WeaponManagerMenu {
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
         UUID uuid = player.getUniqueId();
-        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
-        PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
+        PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerWeaponMenuSettings(databasePlayer));
+        PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
         menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
@@ -138,7 +135,7 @@ public class WeaponManagerMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (!player.hasPermission("group.patreon") && !PermissionHandler.isAdmin(player)) {
+                    if (!player.hasPermission("group.patreon") && !Permissions.isAdmin(player)) {
                         player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
                         return;
                     }
@@ -191,7 +188,7 @@ public class WeaponManagerMenu {
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.DARK_AQUA + "Your Drops")
+                        .name(ChatColor.DARK_AQUA + "Your Weapon Drops")
                         .lore(
                                 Currencies.STAR_PIECES.stream()
                                                       .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
@@ -228,19 +225,17 @@ public class WeaponManagerMenu {
                                       .collect(Collectors.joining("\n")),
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change bind filter",
                                 "",
-                                selectedSpecFilter ? ChatColor.GRAY + "All Specs\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
+                                selectedSpecFilter ? ChatColor.GRAY + "None\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change spec filter"
                         )
                         .get(),
                 (m, e) -> {
                     if (e.isShiftClick()) {
                         menuSettings.toggleSelectedSpecFilter();
-                    } else {
-                        if (e.isLeftClick()) {
-                            menuSettings.setRarityFilter(filterBy.next());
-                        } else if (e.isRightClick()) {
-                            menuSettings.setBindFilterOption(bindFilterOption.next());
-                        }
+                    } else if (e.isLeftClick()) {
+                        menuSettings.setRarityFilter(filterBy.next());
+                    } else if (e.isRightClick()) {
+                        menuSettings.setBindFilterOption(bindFilterOption.next());
                     }
                     menuSettings.setPage(1);
                     openWeaponInventoryFromInternal(player, databasePlayer);
@@ -401,8 +396,8 @@ public class WeaponManagerMenu {
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon legendaryWeapon) {
-            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerMenuSettings());
-            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
+            PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerWeaponMenuSettings(databasePlayer));
+            PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
             weaponOptions.add(new Pair<>(
@@ -444,7 +439,7 @@ public class WeaponManagerMenu {
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Change your weapon title to modify its stat distribution.", 180),
                     "",
                     ChatColor.GREEN + "Upgrade Weapon Title " + ChatColor.YELLOW + ChatColor.BOLD + "[RIGHT-CLICK]",
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Upgrade your weapon title to increase its passive effect", 180)
+                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Upgrade your weapon title to increase its passive effect.", 180)
             ));
             upgradeWeaponTitleLore.addAll(legendaryWeapon.getTitleUpgradeCostLore());
             weaponOptions.add(new Pair<>(
@@ -468,10 +463,10 @@ public class WeaponManagerMenu {
                                 player.sendMessage(ChatColor.RED + "You need to upgrade your weapon to upgrade its title.");
                                 return;
                             }
-                            for (Map.Entry<Enum<? extends Spendable>, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
-                                                                                                           .entrySet()
+                            for (Map.Entry<Spendable, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
+                                                                                           .entrySet()
                             ) {
-                                Spendable spendable = (Spendable) enumLongEntry.getKey();
+                                Spendable spendable = enumLongEntry.getKey();
                                 Long currencyCost = enumLongEntry.getValue();
                                 if (spendable.getFromPlayer(databasePlayer) < currencyCost) {
                                     player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(currencyCost) + ChatColor.RED + " to upgrade this title!");
@@ -568,9 +563,9 @@ public class WeaponManagerMenu {
 
     public enum BindFilterOptions {
 
-        ALL("All", (weapon) -> true),
-        BOUND("Bound", AbstractWeapon::isBound),
-        UNBOUND("Unbound", (weapon) -> !weapon.isBound()),
+        NONE("None", weapon -> true),
+        BOUND("Bound", weapon -> weapon.isBound()),
+        UNBOUND("Unbound", weapon -> !weapon.isBound()),
 
         ;
 
@@ -589,23 +584,27 @@ public class WeaponManagerMenu {
 
     }
 
-    static class PlayerMenuSettings {
+    static class PlayerWeaponMenuSettings {
         private boolean openedFromNPC = false;
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
         private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
-        private BindFilterOptions bindFilterOption = BindFilterOptions.ALL;
+        private BindFilterOptions bindFilterOption = BindFilterOptions.NONE;
         private boolean selectedSpecFilter = false;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
         private StarPieces selectedStarPiece = StarPieces.COMMON;
         private int weaponScoreSalvage = 70;
 
+        public PlayerWeaponMenuSettings(DatabasePlayer databasePlayer) {
+            setWeaponInventory(databasePlayer.getPveStats().getWeaponInventory());
+        }
+
         public void reset() {
             this.page = 1;
             this.rarityFilter = WeaponsPvE.NONE;
-            this.bindFilterOption = BindFilterOptions.ALL;
+            this.bindFilterOption = BindFilterOptions.NONE;
             this.selectedSpecFilter = false;
             this.sortOption = SortOptions.DATE;
             this.ascending = true;
@@ -616,7 +615,7 @@ public class WeaponManagerMenu {
             if (rarityFilter != WeaponsPvE.NONE) {
                 sortedWeaponInventory.removeIf(weapon -> weapon.getRarity() != rarityFilter);
             }
-            if (bindFilterOption != BindFilterOptions.ALL) {
+            if (bindFilterOption != BindFilterOptions.NONE) {
                 sortedWeaponInventory.removeIf(weapon -> !bindFilterOption.filter.test(weapon));
             }
             if (selectedSpecFilter) {

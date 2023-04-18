@@ -87,7 +87,7 @@ public final class Game implements Runnable, AutoCloseable {
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
-
+    private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
@@ -738,21 +738,37 @@ public final class Game implements Runnable, AutoCloseable {
         if (this.closed) {
             return;
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game",
+                true
+        );
         this.closed = true;
         List<Throwable> exceptions = new ArrayList<>();
         for (BukkitTask task : gameTasks) {
             task.cancel();
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled",
+                true
+        );
         gameTasks.clear();
         for (Listener listener : eventHandlers) {
             HandlerList.unregisterAll(listener);
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered",
+                true
+        );
         eventHandlers.clear();
         try {
             removeAllPlayers();
         } catch (Throwable e) {
             exceptions.add(e);
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Players removed",
+                true
+        );
         for (Option option : options) {
             try {
                 option.onGameCleanup(this);
@@ -760,6 +776,10 @@ public final class Game implements Runnable, AutoCloseable {
                 exceptions.add(e);
             }
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up",
+                true
+        );
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
         this.nextState = null;
@@ -771,6 +791,10 @@ public final class Game implements Runnable, AutoCloseable {
             }
             this.state = new ClosedState(this);
         }
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: State end",
+                true
+        );
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
             RuntimeException e = new RuntimeException("Problems closing the game", exceptions.get(0));
@@ -888,5 +912,9 @@ public final class Game implements Runnable, AutoCloseable {
         int oldPoints = oldPointsObj;
         this.points.put(team, points);
         Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, points));
+    }
+
+    public Set<WarlordsPlayer> getCachedPlayers() {
+        return cachedPlayers;
     }
 }

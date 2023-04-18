@@ -5,6 +5,9 @@
       <item index="0" class="java.lang.String" itemvalue="co.aikar.commands.annotation.Subcommand" />
       <item index="1" class="java.lang.String" itemvalue="org.bukkit.event.EventHandler" />
     </list>
+    <writeAnnotations>
+      <writeAnnotation name="org.springframework.data.mongodb.core.mapping.Field" />
+    </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">

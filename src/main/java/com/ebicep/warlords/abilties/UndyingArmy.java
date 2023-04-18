@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class UndyingArmy extends AbstractAbility {
+public class UndyingArmy extends AbstractAbility implements Duration {
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(ChatColor.RED + "Instant Kill")
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
@@ -31,7 +32,7 @@ public class UndyingArmy extends AbstractAbility {
 
     private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
     private int radius = 15;
-    private int duration = 10;
+    private int tickDuration = 200;
     private int maxArmyAllies = 6;
     private int maxHealthDamage = 10;
     private float flatHealing = 100;
@@ -49,7 +50,7 @@ public class UndyingArmy extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + " §7block radius to heal them for §a" +
-                format(flatHealing) + " §7+ §a" + missingHealing + "% §7of their missing health every second. Lasts §6" + duration + " §7seconds." +
+                format(flatHealing) + " §7+ §a" + missingHealing + "% §7of their missing health every second. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
                 "\n\nChained allies that take fatal damage will be revived with §a100% §7of their max health and §e100% §7max energy. Revived allies rapidly " +
                 "take §c" + maxHealthDamage + "% §7of their max health as damage every second.";
     }
@@ -124,8 +125,8 @@ public class UndyingArmy extends AbstractAbility {
         tempUndyingArmy.setPveUpgrade(pveUpgrade);
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                .aliveTeammatesOf(wp)
-                .closestFirst(wp)
+                                                   .aliveTeammatesOf(wp)
+                                                   .closestWarlordPlayersFirst(wp.getLocation())
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
@@ -144,7 +145,7 @@ public class UndyingArmy extends AbstractAbility {
                         ChatColor.GRAY + wp.getName() + "'s " +
                         ChatColor.YELLOW + "Undying Army" +
                         ChatColor.GRAY + " is now protecting you for " +
-                        ChatColor.GOLD + duration +
+                        ChatColor.GOLD + format(tickDuration / 20f) +
                         ChatColor.GRAY + " seconds."
                 );
             }
@@ -157,7 +158,7 @@ public class UndyingArmy extends AbstractAbility {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    duration * 20,
+                    tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
@@ -220,12 +221,14 @@ public class UndyingArmy extends AbstractAbility {
         this.maxArmyAllies = maxArmyAllies;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public int getMaxHealthDamage() {

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -37,10 +38,9 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
 
-        System.out.println(player.getHealth() / player.getMaxHealth() * (HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel()));
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Valiant",
                 null,
@@ -66,7 +66,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         String hpTitleUpgrade = formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%");
-        return "While your HP is below " +
+        return "While your health is below " +
                 hpTitleUpgrade + ", your EPS is increased by " +
                 formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
     }

@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEviscerate> {
 
     float cooldown = ability.getCooldown();
-    int duration = ability.getDuration();
+    int duration = ability.getTickDuration();
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
@@ -19,7 +19,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "+2s Duration",
                 5000,
                 () -> {
-                    ability.setDuration(duration + 2);
+                    ability.setTickDuration(duration + 40);
                 }
         ));
         treeA.add(new Upgrade(
@@ -27,7 +27,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "+4s Duration",
                 10000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setTickDuration(duration + 80);
                 }
         ));
         treeA.add(new Upgrade(
@@ -35,7 +35,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "+6s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 6);
+                    ability.setTickDuration(duration + 120);
                 }
         ));
         treeA.add(new Upgrade(
@@ -43,7 +43,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "+8s Duration",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 8);
+                    ability.setTickDuration(duration + 160);
                 }
         ));
 

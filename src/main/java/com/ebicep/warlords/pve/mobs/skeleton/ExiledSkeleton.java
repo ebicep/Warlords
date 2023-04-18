@@ -6,7 +6,7 @@ import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -47,6 +47,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -109,7 +110,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class, false);
+        receiver.getCooldownManager().removePreviousWounding();
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WND",

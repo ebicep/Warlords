@@ -62,10 +62,13 @@ public class DebugMenuTeamOptions {
                 List<String> lore = new ArrayList<>(Arrays.asList(getPlayerStatLore(warlordsEntity)));
                 lore.add("");
                 if (player.getUniqueId() != warlordsEntity.getUuid()) {
-                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options");
-                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Teleport");
+                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
+                            ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options.");
+                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
+                            ChatColor.GREEN + " to " + ChatColor.YELLOW + "Teleport.");
                 } else {
-                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options");
+                    lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" +
+                            ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options.");
                 }
                 ItemStack itemStack;
                 if (warlordsEntity instanceof WarlordsNPC) {

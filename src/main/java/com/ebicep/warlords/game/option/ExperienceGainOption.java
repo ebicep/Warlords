@@ -4,21 +4,21 @@ import com.ebicep.warlords.util.java.Pair;
 
 public class ExperienceGainOption implements Option {
 
-    private long playerExpPerWave = 0;
-    private long playerExpMaxWaveClearBonus = 0;
+    private long playerExpPer = 0;
+    private long playerExpGameWinBonus = 0;
     private Pair<Long, Integer> playerExpPerXSec = null;
     //GUILD not effected by difficulty rewards multiplier
-    private long guildExpPerWave = 0;
-    private long guildExpMaxWaveClearBonus = 0;
+    private long guildExpPer = 0;
+    private long guildExpGameWinBonus = 0;
     private Pair<Long, Integer> guildExpPerXSec = null;
 
-    public ExperienceGainOption playerExpPerWave(long playerExpPerWave) {
-        this.playerExpPerWave = playerExpPerWave;
+    public ExperienceGainOption playerExpPer(long playerExpPer) {
+        this.playerExpPer = playerExpPer;
         return this;
     }
 
-    public ExperienceGainOption playerExpMaxWaveClearBonus(long playerExpMaxWaveClearBonus) {
-        this.playerExpMaxWaveClearBonus = playerExpMaxWaveClearBonus;
+    public ExperienceGainOption playerExpGameWinBonus(long playerExpGameWinBonus) {
+        this.playerExpGameWinBonus = playerExpGameWinBonus;
         return this;
     }
 
@@ -27,13 +27,13 @@ public class ExperienceGainOption implements Option {
         return this;
     }
 
-    public ExperienceGainOption guildExpPerWave(long guildExpPerWave) {
-        this.guildExpPerWave = guildExpPerWave;
+    public ExperienceGainOption guildExpPer(long guildExpPer) {
+        this.guildExpPer = guildExpPer;
         return this;
     }
 
-    public ExperienceGainOption guildExpMaxWaveClearBonus(long guildExpMaxWaveClearBonus) {
-        this.guildExpMaxWaveClearBonus = guildExpMaxWaveClearBonus;
+    public ExperienceGainOption guildExpMaxGameWinBonus(long guildExpMaxGameWinBonus) {
+        this.guildExpGameWinBonus = guildExpMaxGameWinBonus;
         return this;
     }
 
@@ -42,24 +42,24 @@ public class ExperienceGainOption implements Option {
         return this;
     }
 
-    public long getPlayerExpPerWave() {
-        return playerExpPerWave;
+    public long getPlayerExpPer() {
+        return playerExpPer;
     }
 
-    public long getPlayerExpMaxWaveClearBonus() {
-        return playerExpMaxWaveClearBonus;
+    public long getPlayerExpGameWinBonus() {
+        return playerExpGameWinBonus;
     }
 
     public Pair<Long, Integer> getPlayerExpPerXSec() {
         return playerExpPerXSec;
     }
 
-    public long getGuildExpPerWave() {
-        return guildExpPerWave;
+    public long getGuildExpPer() {
+        return guildExpPer;
     }
 
-    public long getGuildExpMaxWaveClearBonus() {
-        return guildExpMaxWaveClearBonus;
+    public long getGuildExpGameWinBonus() {
+        return guildExpGameWinBonus;
     }
 
     public Pair<Long, Integer> getGuildExpPerXSec() {

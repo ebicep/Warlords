@@ -183,7 +183,7 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
     }
 
     @Nonnull
-    public PlayerFilterGeneric<T> aliveTeammatesOf(@Nonnull T player) {
+    public PlayerFilterGeneric<T> aliveTeammatesOf(@Nonnull WarlordsEntity player) {
         return filter(player::isTeammateAlive);
     }
 

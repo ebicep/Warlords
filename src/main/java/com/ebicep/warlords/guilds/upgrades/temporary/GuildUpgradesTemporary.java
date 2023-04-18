@@ -2,8 +2,8 @@ package com.ebicep.warlords.guilds.upgrades.temporary;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -42,7 +42,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsCoinSummaryEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     LinkedHashMap<String, Long> currencyToAdd = event.getCurrencyToAdd();
@@ -74,7 +74,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsAddCurrencyEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
@@ -91,12 +91,12 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return 1 + (tier == 9 ? 100 : 10 * tier) * .01;
+            return (tier == 9 ? 100 : 10 * tier) * .01;
         }
 
         @Override
         public String getEffectBonusFromTier(int tier) {
-            return "+" + Math.round((getValueFromTier(tier) - 1) * 100) + "%";
+            return "+" + Math.round((getValueFromTier(tier)) * 100) + "%";
         }
 
         @Override
@@ -105,10 +105,10 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsDropWeaponEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
-                    event.getDropRate().set(event.getDropRate().get() * getValueFromTier(tier));
+                    event.addModifier(getValueFromTier(tier));
                 }
 
             });
@@ -136,7 +136,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
                 @EventHandler
                 public void onEvent(WarlordsGiveRespawnEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                    if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
                     event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier)));

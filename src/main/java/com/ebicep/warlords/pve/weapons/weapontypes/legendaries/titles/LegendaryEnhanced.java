@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -40,14 +41,14 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
+    public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
+        super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
 
             @EventHandler
             public void onCooldownAdd(WarlordsAddCooldownEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }
@@ -72,7 +73,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onSpeedModify(WarlordsAddSpeedModifierEvent event) {
-                WarlordsEntity eventPlayer = event.getPlayer();
+                WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }
@@ -94,7 +95,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onBlueAbilityTarget(WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent event) {
-                if (!event.getPlayer().equals(player)) {
+                if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
                 HashSet<WarlordsEntity> warlordsEntities = new HashSet<>(event.getTargets());

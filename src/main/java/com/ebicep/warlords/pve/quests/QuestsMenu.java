@@ -23,6 +23,9 @@ public class QuestsMenu {
         AtomicInteger col = new AtomicInteger(1);
         Quests previousQuest = Quests.VALUES[0];
         for (Quests quest : Quests.VALUES) {
+            if (quest.time == null) {
+                continue;
+            }
             if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
                 continue;
             }

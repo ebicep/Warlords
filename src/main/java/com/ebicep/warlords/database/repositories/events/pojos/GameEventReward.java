@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.events.pojos;
 
-import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import org.bukkit.ChatColor;
 
@@ -13,7 +13,7 @@ public class GameEventReward extends AbstractReward {
     public GameEventReward() {
     }
 
-    public GameEventReward(LinkedHashMap<Currencies, Long> rewards, String from, long event) {
+    public GameEventReward(LinkedHashMap<Spendable, Long> rewards, String from, long event) {
         super(rewards, from);
         this.event = event;
     }

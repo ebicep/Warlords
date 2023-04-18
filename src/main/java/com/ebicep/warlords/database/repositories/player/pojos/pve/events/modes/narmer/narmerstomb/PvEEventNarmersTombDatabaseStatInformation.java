@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePlayerPvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.PvEEventBoltaroDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -21,7 +22,7 @@ public class PvEEventNarmersTombDatabaseStatInformation extends PvEEventBoltaroD
 
     @Override
     public void updateCustomStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -30,7 +31,7 @@ public class PvEEventNarmersTombDatabaseStatInformation extends PvEEventBoltaroD
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventNarmersTomb;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventNarmersTomb;
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         if (multiplier > 0) {
             this.highestWaveCleared = Math.max((((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);

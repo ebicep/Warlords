@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.interception.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabaseBaseInterception;
 
-public class DatabaseMageInterception extends DatabaseBaseInterception implements DatabaseWarlordsClass {
+public class DatabaseMageInterception extends DatabaseBaseInterception implements DatabaseWarlordsSpecs {
 
     protected DatabaseBaseInterception pyromancer = new DatabaseBaseInterception();
     protected DatabaseBaseInterception cryomancer = new DatabaseBaseInterception();

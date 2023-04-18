@@ -11,6 +11,7 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
 import com.ebicep.warlords.poll.polls.PartyPoll;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -25,6 +26,32 @@ import java.util.*;
 
 @CommandAlias("party|p")
 public class PartyCommand extends BaseCommand {
+
+    @Subcommand("listall")
+    @CommandPermission("group.administrator")
+    @Description("Lists the all party lists")
+    public void listAll(CommandIssuer issuer) {
+        List<Party> parties = PartyManager.PARTIES;
+        if (parties.isEmpty()) {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!", true);
+        } else {
+            parties.forEach(party -> issuer.sendMessage(party.getPartyList()));
+        }
+    }
+
+    @Subcommand("debugcreate")
+    @CommandPermission("group.administrator")
+    @Description("Creates a party with all players on server")
+    public void debugCreate(@Conditions("party:false") Player player) {
+        Party party = new Party(player.getUniqueId(), false);
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+            party.join(onlinePlayer.getUniqueId());
+        }
+        PartyManager.PARTIES.add(party);
+    }
 
     @CommandAlias("pl")
     @Subcommand("list")

@@ -204,7 +204,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
                             .aliveTeammatesOfExcludingSelf(wp)
                             .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
-                            .closestFirst(wp.getLocation())
+                            .closestWarlordPlayersFirst(wp.getLocation())
                             .limit(2)
                     ) {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);

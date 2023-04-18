@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -85,7 +85,7 @@ public class DatabaseGamePlayerBase {
         this.totalDamage = warlordsPlayer.getMinuteStats().total().getDamage();
         this.totalHealing = warlordsPlayer.getMinuteStats().total().getHealing();
         this.totalAbsorbed = warlordsPlayer.getMinuteStats().total().getAbsorbed();
-        if (!(this instanceof DatabaseGamePlayerPvE)) {
+        if (!(this instanceof DatabaseGamePlayerPvEWaveDefense)) {
             this.kills = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getKills).toList();
             this.assists = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getAssists).toList();
             this.deaths = warlordsPlayer.getMinuteStats().stream().map(PlayerStatisticsMinute.Entry::getDeaths).toList();

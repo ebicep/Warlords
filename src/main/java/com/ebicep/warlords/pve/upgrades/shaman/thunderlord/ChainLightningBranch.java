@@ -11,8 +11,6 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
     float maxDamage = ability.getMaxDamageHeal();
     float energyCost = ability.getEnergyCost();
     int radius = ability.getRadius();
-    int bounceRange = ability.getBounceRange();
-    int maxBounces = ability.getMaxBounces();
 
     public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability) {
         super(abilityTree, ability);
@@ -25,7 +23,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                     ability.setMinDamageHeal(minDamage * 1.075f);
                     ability.setMaxDamageHeal(maxDamage * 1.075f);
                     ability.setRadius(radius + 2);
-                    ability.setBounceRange(bounceRange + 2);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
         treeA.add(new Upgrade(
@@ -36,7 +34,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                     ability.setMinDamageHeal(minDamage * 1.15f);
                     ability.setMaxDamageHeal(maxDamage * 1.15f);
                     ability.setRadius(radius + 4);
-                    ability.setBounceRange(bounceRange + 4);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
         treeA.add(new Upgrade(
@@ -47,7 +45,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                     ability.setMinDamageHeal(minDamage * 1.225f);
                     ability.setMaxDamageHeal(maxDamage * 1.225f);
                     ability.setRadius(radius + 6);
-                    ability.setBounceRange(bounceRange + 6);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
         treeA.add(new Upgrade(
@@ -58,7 +56,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
                     ability.setRadius(radius + 8);
-                    ability.setBounceRange(bounceRange + 8);
+                    ability.setBounceRange(ability.getBounceRange() + 2);
                 }
         ));
 
@@ -92,7 +90,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 20);
-                    ability.setMaxBounces(maxBounces + 1);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                 }
         ));
 

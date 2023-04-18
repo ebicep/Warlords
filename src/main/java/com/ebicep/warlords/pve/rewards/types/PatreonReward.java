@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMess
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,7 @@ import java.util.Locale;
 
 public class PatreonReward extends AbstractReward implements Listener {
 
-    public static final LinkedHashMap<Currencies, Long> patreonRewards = new LinkedHashMap<>() {{
+    public static final LinkedHashMap<Spendable, Long> PATREON_REWARDS = new LinkedHashMap<>() {{
         put(Currencies.FAIRY_ESSENCE, 1000L);
     }};
 
@@ -75,7 +76,7 @@ public class PatreonReward extends AbstractReward implements Listener {
     }
 
     public PatreonReward(Instant timeGiven) {
-        super(patreonRewards,
+        super(PATREON_REWARDS,
                 Year.from(timeGiven.atZone(ZoneOffset.UTC)).getValue() + " " +
                         Month.from(timeGiven.atZone(ZoneOffset.UTC)).getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
                         " Patreon"

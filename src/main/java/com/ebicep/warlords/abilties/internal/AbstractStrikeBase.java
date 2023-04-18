@@ -4,12 +4,15 @@ import com.ebicep.warlords.abilties.Consecrate;
 import com.ebicep.warlords.abilties.HammerOfLight;
 import com.ebicep.warlords.abilties.ProtectorsStrike;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -50,6 +53,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         playSoundAndEffect(nearPlayer.getLocation());
 
                         boolean successfulStrike = onHit(wp, player, nearPlayer);
+                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
                         if (this instanceof ProtectorsStrike) {
                             Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)

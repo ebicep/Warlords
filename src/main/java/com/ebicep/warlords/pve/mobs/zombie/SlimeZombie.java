@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -37,6 +37,7 @@ public class SlimeZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
 
     }
 

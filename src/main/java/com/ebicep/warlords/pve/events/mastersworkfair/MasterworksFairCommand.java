@@ -12,7 +12,7 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -157,7 +157,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                                     }
                                                     resent = true;
                                                     pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                                    LinkedHashMap<Currencies, Long> rewards = masterworksFair.getRewards(masterworksFairEntry);
+                                                    LinkedHashMap<Spendable, Long> rewards = masterworksFair.getRewards(masterworksFairEntry);
                                                     pveStats.addReward(new MasterworksFairReward(rewards, instant, rarity));
                                                     ChatChannels.sendDebugMessage(
                                                             (CommandIssuer) null,

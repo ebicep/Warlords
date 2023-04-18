@@ -88,16 +88,16 @@ public class RespawnProtectionOption implements Option, Listener {
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onEvent(WarlordsRespawnEvent event) {
-        WarlordsEntity player = event.getPlayer();
+        WarlordsEntity player = event.getWarlordsEntity();
         Location respawnPoint = event.getRespawnLocation();
         spawnProtection.put(player, new Pair<>(respawnPoint, protectionTime * 4));
     }
     
     @EventHandler()
     public void onEvent(WarlordsDamageHealingEvent event) {
-        if (spawnProtection.containsKey(event.getPlayer())) {
-            if (event.getAttacker().getTeam() != event.getPlayer().getTeam()) {
-                event.getPlayer().removeHorse();
+        if (spawnProtection.containsKey(event.getWarlordsEntity())) {
+            if (event.getAttacker().getTeam() != event.getWarlordsEntity().getTeam()) {
+                event.getWarlordsEntity().removeHorse();
             }
             event.setCancelled(true);
         }

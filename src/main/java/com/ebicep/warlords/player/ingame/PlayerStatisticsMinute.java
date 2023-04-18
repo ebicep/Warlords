@@ -319,7 +319,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         }
 
         @Nonnegative
-        public float getRespawnTimeSpent() {
+        public int getRespawnTimeSpent() {
             return respawnTimeSpent;
         }
 

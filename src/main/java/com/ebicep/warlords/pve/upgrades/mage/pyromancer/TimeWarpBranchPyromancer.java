@@ -85,7 +85,7 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                         " multiplier for each block travelled while Time Warp is active and double the duration of Time Warp.",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() * 2);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.setPveUpgrade(true);
                 }
         );

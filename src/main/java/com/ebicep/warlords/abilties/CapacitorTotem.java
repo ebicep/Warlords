@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -19,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class CapacitorTotem extends AbstractTotemBase {
+public class CapacitorTotem extends AbstractTotemBase implements Duration {
 
     public int numberOfProcs = 0;
 
@@ -28,7 +29,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
-    private int duration = 8;
+    private int tickDuration = 160;
     private double radius = 6;
 
     public CapacitorTotem() {
@@ -42,7 +43,7 @@ public class CapacitorTotem extends AbstractTotemBase {
     @Override
     public void updateDescription(Player player) {
         description = "Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing" +
-                formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage to all enemies nearby. Lasts §6" + duration + " §7seconds.";
+                formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage to all enemies nearby. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -87,8 +88,8 @@ public class CapacitorTotem extends AbstractTotemBase {
                                 false
                         ).ifPresent(warlordsDamageHealingFinalEvent -> {
                             if (warlordsDamageHealingFinalEvent.isDead()) {
-                                tempCapacitorTotem.addPLayersKilledWithFinalHit();
-                                if (tempCapacitorTotem.playersKilledWithFinalHit >= 15) {
+                                tempCapacitorTotem.addPlayersKilledWithFinalHit();
+                                if (tempCapacitorTotem.getPlayersKilledWithFinalHit() >= 15) {
                                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
                                 }
                             }
@@ -96,7 +97,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
                         if (pveUpgrade) {
                             int damageResistance = warlordsPlayer.getSpec().getDamageResistance();
-                            warlordsPlayer.getSpec().setDamageResistance(damageResistance - 20);
+                            warlordsPlayer.setDamageResistance(damageResistance - 20);
                         }
                     });
 
@@ -118,15 +119,15 @@ public class CapacitorTotem extends AbstractTotemBase {
                 cooldownManager -> {
                     totemStand.remove();
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
                         if (PlayerFilter.playingGame(wp.getGame())
-                                .teammatesOfExcludingSelf(wp)
-                                .stream()
-                                .filter(WarlordsEntity::hasFlag)
-                                .map(WarlordsEntity::getLocation)
-                                .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
+                                        .teammatesOfExcludingSelf(wp)
+                                        .stream()
+                                        .filter(WarlordsEntity::hasFlag)
+                                        .map(WarlordsEntity::getLocation)
+                                        .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
                             tempCapacitorTotem.setTeamCarrierPassedThrough(true);
                         }
                     }
@@ -139,7 +140,7 @@ public class CapacitorTotem extends AbstractTotemBase {
         return radius;
     }
 
-    public void addPLayersKilledWithFinalHit() {
+    public void addPlayersKilledWithFinalHit() {
         playersKilledWithFinalHit++;
     }
 
@@ -167,12 +168,14 @@ public class CapacitorTotem extends AbstractTotemBase {
         this.pulseDamage = pulseDamage;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     public void addProc() {

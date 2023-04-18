@@ -2,7 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -11,18 +14,19 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class AvengersWrath extends AbstractAbility {
+public class AvengersWrath extends AbstractAbility implements Duration {
 
     public int extraPlayersStruck = 0;
     public int playersStruckDuringWrath = 0;
     public int playersKilledDuringWrath = 0;
 
-    private int duration = 12;
+    private int tickDuration = 240;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
     private int hitRadius = 5;
@@ -35,7 +39,7 @@ public class AvengersWrath extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Burst with incredible holy power, causing your Avenger's Strikes to " +
                 "hit up to §e" + maxTargets + " §7additional enemies that are within §e5 §7blocks of your target. Your energy per second is increased by §e" +
-                format(energyPerSecond) + " §7for the duration of the effect. Lasts §6" + duration + " §7seconds.";
+                format(energyPerSecond) + " §7for the duration of the effect. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -61,7 +65,7 @@ public class AvengersWrath extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         wp.getLocation().getWorld().spawnParticle(
@@ -83,10 +87,10 @@ public class AvengersWrath extends AbstractAbility {
                 if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                     tempAvengersWrath.addPlayersStruckDuringWrath();
                     for (WarlordsEntity wrathTarget : PlayerFilter
-                            .entitiesAround(event.getPlayer(), hitRadius, hitRadius, hitRadius)
+                            .entitiesAround(event.getWarlordsEntity(), hitRadius, hitRadius, hitRadius)
                             .aliveEnemiesOf(wp)
-                            .closestFirst(event.getPlayer())
-                            .excluding(event.getPlayer())
+                            .closestFirst(event.getWarlordsEntity())
+                            .excluding(event.getWarlordsEntity())
                             .limit(maxTargets)
                     ) {
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
@@ -117,6 +121,7 @@ public class AvengersWrath extends AbstractAbility {
                                     EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE)
                             );
                         }
+                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
                         wrathTarget.subtractEnergy(10, true);
                     }
                 }
@@ -158,14 +163,6 @@ public class AvengersWrath extends AbstractAbility {
         return playersKilledDuringWrath;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public float getEnergyPerSecond() {
         return energyPerSecond;
     }
@@ -189,5 +186,15 @@ public class AvengersWrath extends AbstractAbility {
 
     public void setHitRadius(int hitRadius) {
         this.hitRadius = hitRadius;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }

@@ -141,7 +141,6 @@ public class PlayerHotBarItemListener implements Listener {
                 1,
                 new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                         .name("§aWeapon Skin Preview")
-                        .lore("")
                         .get()
         );
 

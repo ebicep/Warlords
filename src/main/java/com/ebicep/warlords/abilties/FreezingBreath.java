@@ -134,8 +134,8 @@ public class FreezingBreath extends AbstractAbility {
         }
 
         if (pveUpgrade) {
-            if (counter > 5) {
-                counter = 5;
+            if (counter > 6) {
+                counter = 6;
             }
             damageReductionOnHit(wp, counter);
         }
@@ -158,7 +158,7 @@ public class FreezingBreath extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - (0.04f * counter));
+                return currentDamageValue * (1 - (0.05f * counter));
             }
         });
     }

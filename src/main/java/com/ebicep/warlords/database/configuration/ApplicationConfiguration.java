@@ -11,9 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -25,7 +28,11 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), getDatabaseName());
+        MongoTemplate mongoTemplate = new MongoTemplate(mongoClient(), getDatabaseName());
+        MappingMongoConverter mongoMapping = (MappingMongoConverter) mongoTemplate.getConverter();
+        mongoMapping.setCustomConversions(customConversions()); // tell mongodb to use the custom converters
+        mongoMapping.afterPropertiesSet();
+        return mongoTemplate;
     }
 
     @Nonnull
@@ -58,4 +65,10 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         return true;
     }
 
+    @Override
+    public MongoCustomConversions customConversions() {
+        return new MongoCustomConversions(Arrays.asList(
+                new StringToSpendableConverter()
+        ));
+    }
 }

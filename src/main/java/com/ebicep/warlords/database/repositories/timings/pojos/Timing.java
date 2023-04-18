@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 public enum Timing {
 
     LIFETIME("Lifetime", 0, 0),
+    MONTHLY("Monthly", 0, 0),
     WEEKLY("Weekly", 10080, 604800),
     DAILY("Daily", 1440, 86400),
 

@@ -82,7 +82,7 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
                 20000,
                 () -> {
                     ability.setRadius(radius + 1);
-                    ability.setDuration(ability.getDuration() + 1);
+                    ability.setTickDuration(ability.getTickDuration() + 20);
                 }
         ));
 

@@ -1,12 +1,14 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -41,17 +43,11 @@ public interface Upgradeable {
 
     default List<String> getUpgradeCostLore() {
         LinkedHashMap<Currencies, Long> upgradeCost = getUpgradeCost(getUpgradeLevel() + 1);
-        List<String> lore = new ArrayList<>();
         if (upgradeCost.isEmpty()) {
-            lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Max Level!");
         } else {
-            lore.add("");
-            lore.add(ChatColor.AQUA + "Upgrade Cost: ");
-            upgradeCost.forEach((currencies, aLong) -> {
-                lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
-            });
+            return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }
-        return lore;
     }
 
     LinkedHashMap<Currencies, Long> getUpgradeCost(int tier);

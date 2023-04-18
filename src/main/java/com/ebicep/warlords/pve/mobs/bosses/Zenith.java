@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.PveOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -48,6 +48,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
@@ -132,10 +133,12 @@ public class Zenith extends AbstractZombie implements BossMob {
                     }
 
                     counter++;
-                    FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                                                                                            .withColor(Color.WHITE)
-                                                                                            .with(FireworkEffect.Type.BURST)
-                                                                                            .build());
+                    FireWorkEffectPlayer.playFirework(
+                            receiver.getLocation(),
+                            FireworkEffect.builder()
+                            .withColor(Color.WHITE)
+                            .with(FireworkEffect.Type.BURST)
+                            .build());
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
@@ -154,7 +157,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        dropMobDrop(killer);
+        super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                            .withColor(Color.WHITE)
@@ -199,9 +202,10 @@ public class Zenith extends AbstractZombie implements BossMob {
     public HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>() {{
             put(MobDrops.ZENITH_STAR, new HashMap<>() {{
-                put(DifficultyIndex.NORMAL, .01);
-                put(DifficultyIndex.HARD, .02);
-                put(DifficultyIndex.ENDLESS, .02);
+                put(DifficultyIndex.EASY, .015);
+                put(DifficultyIndex.NORMAL, .025);
+                put(DifficultyIndex.HARD, .05);
+                put(DifficultyIndex.ENDLESS, .05);
             }});
         }};
     }

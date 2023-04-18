@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -78,7 +79,7 @@ public class MasterworksFair {
                                                                                                      for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
                                                                                                          WeaponsPvE rarity = masterworksFairEntry.getRarity();
                                                                                                          pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                                                                                         LinkedHashMap<Currencies, Long> rewards = getRewards(
+                                                                                                         LinkedHashMap<Spendable, Long> rewards = getRewards(
                                                                                                                  masterworksFairEntry);
                                                                                                          if (throughRewardsInventory) {
                                                                                                              pveStats.addReward(new MasterworksFairReward(
@@ -87,7 +88,7 @@ public class MasterworksFair {
                                                                                                                      rarity
                                                                                                              ));
                                                                                                          } else {
-                                                                                                             rewards.forEach(pveStats::addCurrency);
+                                                                                                             rewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                                                                                          }
                                                                                                      }
 
@@ -103,11 +104,11 @@ public class MasterworksFair {
         }
     }
 
-    public LinkedHashMap<Currencies, Long> getRewards(MasterworksFairEntry masterworksFairEntry) {
+    public LinkedHashMap<Spendable, Long> getRewards(MasterworksFairEntry masterworksFairEntry) {
         int placement = masterworksFairEntry.getPlacement();
         float score = masterworksFairEntry.getScore();
         WeaponsPvE rarity = masterworksFairEntry.getRarity();
-        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+        LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
         if (placement <= 3) {
             rewards.put(rarity.starPieceCurrency, 1L);
             switch (placement) {

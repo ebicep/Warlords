@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -82,6 +83,32 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     @Nonnull
     public PlayerFilter sorted(@Nonnull Comparator<? super WarlordsEntity> comparator) {
         return new PlayerFilter(stream.sorted(comparator));
+    }
+
+    @Nonnull
+    public PlayerFilter warlordPlayersFirst() {
+        return new PlayerFilter(stream.sorted((o1, o2) -> {
+            if (o1 instanceof WarlordsPlayer && !(o2 instanceof WarlordsPlayer)) {
+                return -1;
+            } else if (!(o1 instanceof WarlordsPlayer) && o2 instanceof WarlordsPlayer) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }));
+    }
+
+    @Nonnull
+    public PlayerFilter closestWarlordPlayersFirst(@Nonnull Location loc) {
+        return new PlayerFilter(stream.sorted((o1, o2) -> {
+            if (o1 instanceof WarlordsPlayer && !(o2 instanceof WarlordsPlayer)) {
+                return -1;
+            } else if (!(o1 instanceof WarlordsPlayer) && o2 instanceof WarlordsPlayer) {
+                return 1;
+            } else {
+                return Double.compare(o1.getLocation().distanceSquared(loc), o2.getLocation().distanceSquared(loc));
+            }
+        }));
     }
 
     @Nonnull

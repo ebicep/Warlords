@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -145,7 +145,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         updatePlayerReference(player.getPlayer());
         updateEntity();
 
-        if (player.getPlayer() != null && PermissionHandler.isAdmin(player.getPlayer())) {
+        if (player.getPlayer() != null && Permissions.isAdmin(player.getPlayer())) {
             this.setShowDebugMessage(true);
         }
     }
@@ -345,6 +345,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             this.entity.remove();
             this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
         }
+    }
+
+    @Override
+    public void setDamageResistance(int damageResistance) {
+        getSpec().setDamageResistance(damageResistance);
     }
 
     public void applySkillBoost(Player player) {

@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
@@ -24,7 +25,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public void updateStats(
-            DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             DatabaseGamePlayerBase gamePlayer,
             int multiplier,
             PlayersCollections playersCollection
@@ -49,7 +50,7 @@ public abstract class AbstractDatabaseStatInformation {
         this.healing += gamePlayer.getTotalHealing() * multiplier;
         this.absorbed += gamePlayer.getTotalAbsorbed() * multiplier;
         this.updateCustomStats(
-                databaseGame,
+                databasePlayer, databaseGame,
                 databaseGame.getGameMode(),
                 gamePlayer,
                 result,
@@ -59,6 +60,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public abstract void updateCustomStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,

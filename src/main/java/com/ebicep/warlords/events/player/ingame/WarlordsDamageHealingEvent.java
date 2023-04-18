@@ -161,7 +161,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     @Override
     public String toString() {
         return "WarlordsDamageHealingEvent{" +
-                "player=" + getPlayer() +
+                "player=" + getWarlordsEntity() +
                 ", attacker=" + attacker +
                 ", ability=" + ability +
                 ", min=" + min +

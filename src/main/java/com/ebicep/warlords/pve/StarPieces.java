@@ -23,19 +23,22 @@ public enum StarPieces {
             30,
             new LinkedHashMap<>() {{
                 put(Currencies.COMMON_STAR_PIECE, 5L);
-                put(Currencies.COIN, 50000L);
+                put(Currencies.COIN, 50 + 000L);
             }}
     ),
     EPIC(Currencies.EPIC_STAR_PIECE,
             40,
             new LinkedHashMap<>() {{
                 put(Currencies.RARE_STAR_PIECE, 5L);
-                put(Currencies.COIN, 250000L);
+                put(Currencies.COIN, 250_000L);
             }}
     ),
     LEGENDARY(Currencies.LEGENDARY_STAR_PIECE,
             50,
-            new LinkedHashMap<>()
+            new LinkedHashMap<>() {{
+                put(Currencies.EPIC_STAR_PIECE, 5L);
+                put(Currencies.COIN, 1_000_000L);
+            }}
     );
 
     public static final StarPieces[] VALUES = values();
@@ -93,7 +96,7 @@ public enum StarPieces {
 
                         }
                 );
-                col += 4;
+                col += 2;
             }
 
             menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
@@ -116,11 +119,7 @@ public enum StarPieces {
     }
 
     public List<String> getCostLore() {
-        List<String> costLore = new ArrayList<>();
-        costLore.add("");
-        costLore.add(ChatColor.AQUA + "Cost:");
-        synthesisCosts.forEach((currency, value) -> costLore.add(ChatColor.GRAY + " - " + currency.getCostColoredName(value)));
-        return costLore;
+        return PvEUtils.getCostLore(synthesisCosts, true);
     }
 
 }

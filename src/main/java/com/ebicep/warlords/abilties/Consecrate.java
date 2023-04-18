@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Consecrate extends AbstractAbility {
+public class Consecrate extends AbstractAbility implements Duration {
 
     public int strikesBoosted = 0;
     public int playersHit = 0;
@@ -29,7 +30,7 @@ public class Consecrate extends AbstractAbility {
     private int strikeDamageBoost;
     private float radius;
     private Location location;
-    private int duration = 5;
+    private int tickDuration = 100;
 
     public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
@@ -57,7 +58,7 @@ public class Consecrate extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take" +
                 formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage per second and take §c" +
-                strikeDamageBoost + "% §7increased damage from your paladin strikes. Lasts §65 §7seconds.";
+                strikeDamageBoost + "% §7increased damage from your paladin strikes. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
 
     }
 
@@ -100,23 +101,23 @@ public class Consecrate extends AbstractAbility {
                     effectTask.cancel();
                 },
                 false,
-                duration * 20,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
-                                .aliveEnemiesOf(wp)
-                                .forEach(enemy -> {
-                                    playersHit++;
-                                    enemy.addDamageInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal,
-                                            maxDamageHeal,
-                                            critChance,
-                                            critMultiplier,
-                                            false
-                                    );
-                                });
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> {
+                                        playersHit++;
+                                        enemy.addDamageInstance(
+                                                wp,
+                                                name,
+                                                minDamageHeal,
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier,
+                                                false
+                                        );
+                                    });
                     }
                 })
         );
@@ -148,11 +149,13 @@ public class Consecrate extends AbstractAbility {
         this.strikeDamageBoost = strikeDamageBoost;
     }
 
-    public int getDuration() {
-        return duration;
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }

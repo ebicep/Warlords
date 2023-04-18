@@ -1,16 +1,14 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Conditions;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,12 +48,12 @@ public class SpectateCommand extends BaseCommand {
                             ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
                             ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
                             ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons()
-                                    .stream()
-                                    .map(e -> toTitleHumanCase(e.name()))
-                                    .collect(Collectors.joining(", ")),
+                                                                              .stream()
+                                                                              .map(e -> toTitleHumanCase(e.name()))
+                                                                              .collect(Collectors.joining(", ")),
                             ChatColor.GRAY + "Players: " + ChatColor.RED + game.warlordsPlayers().count()
                     );
-            if (GameMode.isWaveDefense(game.getGameMode())) {
+            if (GameMode.isPvE(game.getGameMode())) {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
                     itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.AQUA + warlordsPlayer.getName() + "\n");
                 });
@@ -120,4 +118,18 @@ public class SpectateCommand extends BaseCommand {
     public void spectate(@Conditions("outsideGame") Player player) {
         openSpectateMenu(player);
     }
+
+    @Subcommand("gametoggle")
+    @CommandPermission("group.administrator")
+    @Description("Toggles spectating for current game")
+    public void disableSpectating(@Conditions("requireGame") Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        game.setAcceptsSpectators(!game.acceptsSpectators());
+        if (game.acceptsSpectators()) {
+            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spectating is now enabled for this game", true);
+        } else {
+            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Spectating is now disabled for this game", true);
+        }
+    }
+
 }
