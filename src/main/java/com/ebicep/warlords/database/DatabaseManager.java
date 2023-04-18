@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.guild.GuildService;
+import com.ebicep.warlords.database.repositories.illusionvendor.IllusionVendorService;
 import com.ebicep.warlords.database.repositories.items.WeeklyBlessingsService;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
@@ -65,6 +66,7 @@ public class DatabaseManager {
     public static GuildService guildService;
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
+    public static IllusionVendorService illusionVendorService;
     public static boolean enabled = true;
 
     public static void init() {
@@ -86,6 +88,7 @@ public class DatabaseManager {
             guildService = context.getBean("guildService", GuildService.class);
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
+            illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
         } catch (Exception e) {
             e.printStackTrace();
             return;

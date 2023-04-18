@@ -15,7 +15,7 @@ public class SpendableBuyShop {
     }
 
     public String getMapName() {
-        return amount + "_" + spendable.getName();
+        return amount + "_" + spendable.getName(); //TODO .name();
     }
 
     public int getAmount() {

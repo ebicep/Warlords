@@ -2,6 +2,7 @@ package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -9,8 +10,10 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
@@ -20,9 +23,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IllusionVendorTrait extends WarlordsTrait {
 
@@ -104,7 +110,65 @@ public class IllusionVendorTrait extends WarlordsTrait {
                     }
             );
         }
+        IllusionVendorWeeklyShop weeklyShop = IllusionVendorWeeklyShop.currentIllusionVendorWeeklyShop;
+        if (weeklyShop != null) {
+            Map<String, IllusionVendorWeeklyShop.PurchasableItem> itemCosts = IllusionVendorWeeklyShop.ITEM_COSTS;
+            AtomicInteger x = new AtomicInteger(1);
+            weeklyShop.getItems()
+                      .entrySet()
+                      .stream()
+                      .sorted(Comparator.comparing(o -> o.getValue().getTier())).forEachOrdered(entry -> {
+                          String mapName = entry.getKey();
+                          AbstractItem item = entry.getValue();
+                          String itemName = item.getItemName();
+                          IllusionVendorWeeklyShop.PurchasableItem purchasableItem = itemCosts.get(mapName);
+                          if (purchasableItem == null) {
+                              ChatUtils.MessageTypes.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop: " + mapName);
+                              return;
+                          }
+                          long cost = purchasableItem.getCost();
+                          Long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
+                          menu.setItem(x.get(), 2,
+                                  new ItemBuilder(item.generateItemStack())
+                                          .name(itemName)
+                                          .addLore(
+                                                  "",
+                                                  ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(cost),
+                                                  ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + (1 - purchasedAmount)
+                                          )
+                                          .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                                          .get(),
+                                  (m, e) -> {
+                                      if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < cost) {
+                                          player.sendMessage(ChatColor.RED + "You need " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) + ChatColor.RED + " to purchase this item!");
+                                          player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                          return;
+                                      }
+                                      if (purchasedAmount >= 1) {
+                                          player.sendMessage(ChatColor.RED + "This item is out of stock!");
+                                          player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
+                                          return;
+                                      }
+                                      pveStats.subtractCurrency(Currencies.ILLUSION_SHARD, cost);
+                                      item.setObtainedDate(Instant.now());
+                                      pveStats.getItemsManager().addItem(item);
 
+                                      pveStats.getIllusionVendorRewardsPurchased().merge(mapName, 1L, Long::sum);
+                                      weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
+
+                                      player.sendMessage(ChatColor.GREEN + "Purchased " + itemName +
+                                              ChatColor.GREEN + " for " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) +
+                                              ChatColor.GREEN + "!");
+                                      player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2f);
+                                      openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
+
+                                      DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                      DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+                                  }
+                          );
+                          x.getAndIncrement();
+                      });
+        }
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.addBorder(Menu.GRAY_EMPTY_PANE, true);
         menu.openForPlayer(player);

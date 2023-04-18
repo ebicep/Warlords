@@ -296,6 +296,7 @@ public class ChatUtils {
         MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
         GAME_EVENTS("Events", ChatColor.DARK_RED),
         WEEKLY_BLESSINGS("ItemsWeeklyBlessings", ChatColor.DARK_RED),
+        ILLUSION_VENDOR("IllusionVendor", ChatColor.GOLD),
 
         GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
 

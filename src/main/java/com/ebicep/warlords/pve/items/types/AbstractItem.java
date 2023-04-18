@@ -302,6 +302,10 @@ public abstract class AbstractItem {
         return obtainedDate;
     }
 
+    public void setObtainedDate(Instant obtainedDate) {
+        this.obtainedDate = obtainedDate;
+    }
+
     public ItemTier getTier() {
         return tier;
     }
