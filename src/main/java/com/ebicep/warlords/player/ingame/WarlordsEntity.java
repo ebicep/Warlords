@@ -779,12 +779,16 @@ public abstract class WarlordsEntity {
 
                     attacker.addKill();
 
-                    attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
-                    sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
-
                     game.forEachOnlinePlayer((p, t) -> {
-                        if (p != this.entity && p != attacker.entity) {
-                            p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+                        if (playerSettings.getChatKillsMode() == Settings.ChatSettings.ChatKills.ALL) {
+                            if (p == this.entity) {
+                                sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
+                            } else if (p == attacker.entity) {
+                                attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
+                            } else {
+                                p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                            }
                         }
                     });
 

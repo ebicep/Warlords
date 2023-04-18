@@ -80,6 +80,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
     @Field("chat_energy")
     private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
+    @Field("chat_kills")
+    private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
 
@@ -361,6 +363,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public void setChatEnergyMode(Settings.ChatSettings.ChatEnergy chatEnergyMode) {
         this.chatEnergyMode = chatEnergyMode;
+    }
+
+    public Settings.ChatSettings.ChatKills getChatKillsMode() {
+        return chatKillsMode;
+    }
+
+    public void setChatKillsMode(Settings.ChatSettings.ChatKills chatKillsMode) {
+        this.chatKillsMode = chatKillsMode;
     }
 
     public String getId() {
