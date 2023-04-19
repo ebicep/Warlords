@@ -9,6 +9,7 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -121,6 +122,10 @@ public class StatsLeaderboard {
     }
 
     private void createLeaderboard(PlayersCollections collection, String categoryName, String subTitle) {
+        if (location.getWorld() == null) {
+            ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage("Leaderboard " + title + " has invalid location - " + location);
+            return;
+        }
         //skip hologram creation for hidden leaderboards
         if (hidden) {
             return;

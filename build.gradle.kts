@@ -153,7 +153,7 @@ bukkit {
     main = "com.ebicep.warlords.Warlords"
     apiVersion = "1.19"
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "HolographicDisplays")
+    depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens")
     commands {
         register("oldtest") {
             description = "Old test command"
