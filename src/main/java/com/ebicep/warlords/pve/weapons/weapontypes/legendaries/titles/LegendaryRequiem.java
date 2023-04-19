@@ -127,9 +127,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         });
                         allSpawnedMobs.clear();
                         shiftTickTime = -20;
-                    } else {
-                        shiftTickTime = 0;
                     }
+                } else {
+                    shiftTickTime = 0;
                 }
                 if (ticksElapsed % cooldown != 0) {
                     return;
