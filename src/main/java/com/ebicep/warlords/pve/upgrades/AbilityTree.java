@@ -93,27 +93,30 @@ public class AbilityTree {
                 autoUpgradeProfile = new AutoUpgradeProfile();
                 autoUpgradeProfiles.add(autoUpgradeProfile);
             } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
-                autoUpgradeProfile = autoUpgradeProfiles.stream()
-                                                        .filter(profile -> {
-                                                            Game game = warlordsPlayer.getGame();
-                                                            if (game == null) {
-                                                                return true;
-                                                            }
-                                                            PveOption pveOption = game.getOptions()
-                                                                                      .stream()
-                                                                                      .filter(PveOption.class::isInstance)
-                                                                                      .map(PveOption.class::cast)
-                                                                                      .findFirst()
-                                                                                      .orElse(null);
-                                                            if (pveOption == null) {
-                                                                return true;
-                                                            }
-                                                            DifficultyMode difficultyMode = profile.getDifficultyMode();
-                                                            return difficultyMode != null && difficultyMode.validGameMode(game.getGameMode()) &&
-                                                                    difficultyMode.validDifficulty(pveOption.getDifficulty());
-                                                        })
-                                                        .findFirst()
-                                                        .orElse(autoUpgradeProfiles.get(0));
+                Game game = warlordsPlayer.getGame();
+                if (game == null) {
+                    autoUpgradeProfile = autoUpgradeProfiles.get(0);
+                } else {
+                    PveOption pveOption = game.getOptions()
+                                              .stream()
+                                              .filter(PveOption.class::isInstance)
+                                              .map(PveOption.class::cast)
+                                              .findFirst()
+                                              .orElse(null);
+                    if (pveOption == null) {
+                        autoUpgradeProfile = autoUpgradeProfiles.get(0);
+                    } else {
+                        autoUpgradeProfile = autoUpgradeProfiles
+                                .stream()
+                                .filter(profile -> {
+                                    DifficultyMode difficultyMode = profile.getDifficultyMode();
+                                    return !(difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) &&
+                                            !difficultyMode.validDifficulty(pveOption.getDifficulty()));
+                                })
+                                .findFirst()
+                                .orElse(autoUpgradeProfiles.get(0));
+                    }
+                }
             }
             List<String> lore = new ArrayList<>();
             for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
@@ -221,7 +224,9 @@ public class AbilityTree {
             );
             lore.clear();
             for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
-                lore.add("" + (autoUpgradeProfiles.get(i).equals(autoUpgradeProfile) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + autoUpgradeProfiles.get(i).getName());
+                lore.add("" + (autoUpgradeProfiles.get(i)
+                                                  .equals(autoUpgradeProfile) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + autoUpgradeProfiles.get(i)
+                                                                                                                                                       .getName());
             }
             menu.setItem(6, 4,
                     new ItemBuilder(Material.TRIPWIRE_HOOK)
