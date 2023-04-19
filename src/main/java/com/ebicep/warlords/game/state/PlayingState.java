@@ -44,6 +44,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -229,9 +230,8 @@ public class PlayingState implements State, TimerDebugAble {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         Objective health = customScoreboard.getHealth();
         if (health == null || scoreboard.getObjective("health") == null) {
-            health = scoreboard.registerNewObjective("health", "dummy");
+            health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text(ChatColor.RED + "❤"));
             health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            health.setDisplayName(ChatColor.RED + "❤");
             customScoreboard.setHealth(health);
         }
         Objective finalHealth = health;

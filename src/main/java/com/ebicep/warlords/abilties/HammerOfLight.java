@@ -289,7 +289,7 @@ public class HammerOfLight extends AbstractAbility implements Duration {
         ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
         //hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
         hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
-        hammer.setItemInHand(new ItemStack(Material.STRING));
+        hammer.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);
         hammer.setVisible(false);
         hammer.setMarker(true);

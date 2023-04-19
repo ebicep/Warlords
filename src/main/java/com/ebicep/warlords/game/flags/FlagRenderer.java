@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -31,13 +32,13 @@ import java.util.List;
 import static org.bukkit.block.BlockFace.*;
 
 public class FlagRenderer {
-	
+
     private final FlagInfo info;
-    private int timer = 0;
     private final List<Player> affectedPlayers = new ArrayList<>();
     private final List<Entity> renderedArmorStands = new ArrayList<>();
     private final List<Block> renderedBlocks = new ArrayList<>();
     private final List<Runnable> runningTasksCancel = new ArrayList<>();
+    private int timer = 0;
     private FlagLocation lastLocation;
 
     public FlagRenderer(FlagInfo info) {
@@ -54,6 +55,7 @@ public class FlagRenderer {
 
     /**
      * Returns the last state rendered, could be null
+     *
      * @return
      */
     @Nullable
@@ -68,7 +70,13 @@ public class FlagRenderer {
         if (timer <= 0 && !(info.getFlag() instanceof WaitingFlagLocation)) {
             timer = 20;
             float offset = info.getFlag() instanceof PlayerFlagLocation ? 1.5F : 0.5F;
-            info.getFlag().getLocation().getWorld().playEffect(info.getFlag().getLocation().clone().add(0, offset, 0), Effect.STEP_SOUND, info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK.getId() : Material.LAPIS_BLOCK.getId());
+            info.getFlag()
+                .getLocation()
+                .getWorld()
+                .playEffect(info.getFlag().getLocation().clone().add(0, offset, 0),
+                        Effect.STEP_SOUND,
+                        info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK.getId() : Material.LAPIS_BLOCK.getId() //TODO check
+                );
         }
         timer--;
     }
@@ -133,7 +141,7 @@ public class FlagRenderer {
             renderedArmorStands.add(stand);
             stand.setGravity(false);
             stand.setCanPickupItems(false);
-            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
+            stand.customName(Component.text(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG"));
             stand.setCustomNameVisible(true);
             stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand.setVisible(false);
@@ -142,7 +150,7 @@ public class FlagRenderer {
             renderedArmorStands.add(stand1);
             stand1.setGravity(false);
             stand1.setCanPickupItems(false);
-            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
+            stand1.customName(Component.text(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT"));
             stand1.setCustomNameVisible(true);
             stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand1.setVisible(false);

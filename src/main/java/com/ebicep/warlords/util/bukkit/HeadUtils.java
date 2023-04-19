@@ -33,7 +33,7 @@ public class HeadUtils {
             public void run() {
                 ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-                skullMeta.setOwner(player.getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()));
                 playerSkull.setItemMeta(skullMeta);
                 PLAYER_HEADS.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
             }
@@ -50,7 +50,7 @@ public class HeadUtils {
         }
         ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
+        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
         playerSkull.setItemMeta(skullMeta);
         PLAYER_HEADS.put(uuid, CraftItemStack.asNMSCopy(playerSkull));
         return playerSkull;

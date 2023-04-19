@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -69,8 +70,8 @@ public class Boulder extends AbstractAbility {
             speed = player.getLocation().getDirection().multiply(boulderSpeed);
         }
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.TALL_GRASS, 1, (short) 2));
-        stand.setCustomName("Boulder");
+        stand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
+        stand.customName(Component.text("Boulder"));
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
         stand.setVisible(false);

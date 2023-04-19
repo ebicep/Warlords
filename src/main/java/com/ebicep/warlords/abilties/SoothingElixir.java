@@ -67,7 +67,7 @@ public class SoothingElixir extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
+        stand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
         stand.setGravity(false);
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {

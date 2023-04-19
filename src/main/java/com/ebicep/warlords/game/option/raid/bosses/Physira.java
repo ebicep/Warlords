@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,12 +56,12 @@ public class Physira extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() > phaseOneHealth) {
             // Deal (4000 x PLAYER COUNT) damage in 10 seconds to break shield, if not broken deal 90% of all players' max health as damage (bypasses damage reduction.)
         } else if (warlordsNPC.getHealth() > phaseTwoHealth) {
-            Bukkit.broadcastMessage("phase 2");
+            Bukkit.broadcast(Component.text("phase 2"));
         } else if (warlordsNPC.getHealth() > phaseThreeHealth) {
-            Bukkit.broadcastMessage("phase 3");
+            Bukkit.broadcast(Component.text("phase 3"));
             // Knockback waves, Lock on players with the most health (if a player dies heal 10% current hp.)
         } else if (warlordsNPC.getHealth() > phaseFourHealth) {
-            Bukkit.broadcastMessage("phase 4");
+            Bukkit.broadcast(Component.text("phase 4"));
             // Knockback waves, Lock on players with the most health (if a player dies heal 10% current hp.)
         }
     }

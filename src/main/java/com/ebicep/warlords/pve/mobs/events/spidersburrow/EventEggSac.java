@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -46,8 +47,8 @@ public class EventEggSac extends AbstractZombie implements BossMob {
             ArmorStand armorStand = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, -1.3, 0), ArmorStand.class);
             armorStand.setGravity(false);
             armorStand.setVisible(false);
-            armorStand.setHelmet(new ItemStack(Material.DRAGON_EGG));
-            armorStand.setCustomName(name);
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.DRAGON_EGG));
+            armorStand.customName(Component.text(name));
             warlordsNPC.setEntity(armorStand);
             warlordsNPC.updateEntity();
         }

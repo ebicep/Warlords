@@ -70,7 +70,7 @@ public class ArmorStandWaveEffect {
                 if (stand == null) {
                     stand = loc.getWorld().spawn(loc, ArmorStand.class);
                     stand.setGravity(false);
-                    stand.setHelmet(texture);
+                    stand.getEquipment().setHelmet(texture);
                     stand.setBasePlate(false);
                     stand.setVisible(false);
                     stand.setMarker(true);

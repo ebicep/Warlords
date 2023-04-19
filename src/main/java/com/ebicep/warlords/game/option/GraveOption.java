@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -164,7 +165,7 @@ public class GraveOption implements Option, Listener {
             ArmorStand deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
             String name = this.graveName.apply(player);
             if (name != null) {
-                deathStand.setCustomName(name);
+                deathStand.customName(Component.text(name));
                 deathStand.setCustomNameVisible(true);
             }
             deathStand.setGravity(false);

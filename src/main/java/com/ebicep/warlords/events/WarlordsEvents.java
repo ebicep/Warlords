@@ -412,6 +412,17 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getEquipment().getItemInMainHand();
             int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
+                if (itemHeld.getType().name().endsWith("_BANNER")) {
+                    if (wp.getFlagDropCooldown() > 0) {
+                        player.sendMessage("§cYou cannot drop the flag yet, please wait 3 seconds!");
+                    } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class)) {
+                        player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
+                    } else {
+                        FlagHolder.dropFlagForPlayer(wp);
+                        wp.setFlagDropCooldown(5);
+                    }
+                    return;
+                }
                 switch (itemHeld.getType()) {
                     case BONE -> {
                         if (!itemHeld.equals(UndyingArmy.BONE)) {
@@ -427,16 +438,6 @@ public class WarlordsEvents implements Listener {
                                 100,
                                 false
                         );
-                    }
-                    case LEGACY_BANNER -> {
-                        if (wp.getFlagDropCooldown() > 0) {
-                            player.sendMessage("§cYou cannot drop the flag yet, please wait 3 seconds!");
-                        } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class)) {
-                            player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
-                        } else {
-                            FlagHolder.dropFlagForPlayer(wp);
-                            wp.setFlagDropCooldown(5);
-                        }
                     }
                     case COMPASS -> {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
@@ -590,7 +591,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
         if (e.getPlayer().getVehicle() != null) {
-            if (e.getInventory().getHolder() != null && e.getView().getTitle().equals("Horse")) {
+            if (e.getInventory().getHolder() != null && e.getInventory().getHolder() instanceof Horse) {
                 e.setCancelled(true);
             }
         }
@@ -615,9 +616,14 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onHorseJump(HorseJumpEvent e) {
-        if (Warlords.hasPlayer((OfflinePlayer) e.getEntity().getPassenger())) {
-            if (Objects.requireNonNull(Warlords.getPlayer(e.getEntity().getPassenger())).getGame().isFrozen()) {
-                e.setCancelled(true);
+        List<Entity> passengers = e.getEntity().getPassengers();
+        if (passengers.isEmpty()) {
+            return;
+        }
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(passengers.get(0).getUniqueId());
+        if (warlordsEntity != null) {
+            if (warlordsEntity.getGame().isFrozen()) {
+                e.setCancelled(true); //TODO
             }
         }
     }

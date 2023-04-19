@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -822,7 +823,7 @@ public final class Game implements Runnable, AutoCloseable {
 
     public static void reopenGameReferencedMenus() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            String title = player.getOpenInventory().getTitle();
+            String title = PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title());
             switch (title) {
                 case "Debug Options" -> DebugMenu.openDebugMenu(player);
                 case "Current Games" -> SpectateCommand.openSpectateMenu(player);

@@ -6,6 +6,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -41,7 +42,8 @@ public class DebugMenu {
                             .lore(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
                                     ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
                                     ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
-                                    ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount())
+                                    ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                            )
                             .enchant(Enchantment.OXYGEN, 1)
                             .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
@@ -56,7 +58,7 @@ public class DebugMenu {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTitle().equals("Team Options")) {
+                                if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("Team Options")) {
                                     DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                                 } else {
                                     this.cancel();

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.menu;
 
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,7 +39,7 @@ public class MenuEventListener implements Listener {
 
             @Override
             public void run() {
-                if (player.getOpenInventory().getTitle().equals("container.crafting")) {
+                if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("container.crafting")) {
                     player.removeMetadata(METADATA_CUSTOM_INVENTORY, plugin);
                 }
             }

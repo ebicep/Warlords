@@ -86,7 +86,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
             chain.setVisible(false);
             chain.setBasePlate(false);
             chain.setMarker(true);
-            chain.setHelmet(getChainItem());
+            chain.getEquipment().setHelmet(getChainItem());
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
             if (to.distanceSquared(from) < .4) {

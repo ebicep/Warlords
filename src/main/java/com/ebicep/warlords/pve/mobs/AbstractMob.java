@@ -93,6 +93,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void updateEquipment() {
         EntityEquipment equipment = livingEntity.getEquipment();
+        if (equipment == null) {
+            return;
+        }
         if (ee != null) {
             equipment.setBoots(ee.getBoots());
             equipment.setLeggings(ee.getLeggings());

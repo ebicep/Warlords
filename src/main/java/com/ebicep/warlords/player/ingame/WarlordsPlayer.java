@@ -22,8 +22,10 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -96,6 +98,18 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         resetAbilityTree();
+    }
+
+    public void resetAbilityTree() {
+        this.abilityTree.getUpgradeBranches().clear();
+        this.spec.setUpgradeBranches(this);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
+            if (autoUpgradeProfiles == null || autoUpgradeProfiles.isEmpty()) {
+                return;
+            }
+            this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
+        });
     }
 
     public WarlordsPlayer(
@@ -173,10 +187,16 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.setCustomName(getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
+        jimmy.customName(Component.text(getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(this.getHealth()) + "❤")); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
-        jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
+        AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
+        attribute = jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
         //prevents jimmy from moving
         jimmy.setAI(true);
         if (isDead()) {
@@ -216,12 +236,12 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void updateHealth() {
         if (getEntity() instanceof Zombie) {
             if (isDead()) {
-                getEntity().setCustomName("");
+                getEntity().customName(Component.text(""));
             } else {
-                String oldName = getEntity().getCustomName();
-                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(
-                        getHealth()) + "❤";
-                getEntity().setCustomName(newName);
+                Component oldName = getEntity().customName();
+                if (oldName != null) {
+                    getEntity().customName(oldName.append(Component.text(ChatColor.RED.toString() + Math.round(getHealth()) + "❤")));
+                }
             }
         }
     }
@@ -382,21 +402,8 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         return null;
     }
 
-
     public AbilityTree getAbilityTree() {
         return abilityTree;
-    }
-
-    public void resetAbilityTree() {
-        this.abilityTree.getUpgradeBranches().clear();
-        this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
-            if (autoUpgradeProfiles == null || autoUpgradeProfiles.isEmpty()) {
-                return;
-            }
-            this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
-        });
     }
 
     public AbstractWeapon getWeapon() {

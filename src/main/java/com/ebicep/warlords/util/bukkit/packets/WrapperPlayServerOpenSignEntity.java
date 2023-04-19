@@ -24,7 +24,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 
 public class WrapperPlayServerOpenSignEntity extends AbstractPacket {
-    public static final PacketType TYPE = PacketType.Play.Server.OPEN_SIGN_ENTITY;
+    public static final PacketType TYPE = PacketType.Play.Server.OPEN_SIGN_ENTITY; //TODO
 
     public WrapperPlayServerOpenSignEntity() {
         super(new PacketContainer(TYPE), TYPE);

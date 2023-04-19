@@ -27,6 +27,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -252,7 +253,7 @@ public class DebugMenuPlayerOptions {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTitle().equals("CD Manager: " + name)) {
+                                if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("CD Manager: " + name)) {
                                     CooldownOptionMenus.openCooldownManagerMenu(player, target);
                                 } else {
                                     this.cancel();
@@ -584,7 +585,7 @@ public class DebugMenuPlayerOptions {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (player.getOpenInventory().getTitle().equals("CD Manager: " + target.getName())) {
+                                    if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("CD Manager: " + target.getName())) {
                                         openCooldownManagerMenu(player, target);
                                     } else {
                                         this.cancel();
@@ -636,7 +637,7 @@ public class DebugMenuPlayerOptions {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (player.getOpenInventory().getTitle().equals("CD Manager: " + target.getName())) {
+                            if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("CD Manager: " + target.getName())) {
                                 openCooldownManagerMenu(player, target);
                             } else {
                                 this.cancel();

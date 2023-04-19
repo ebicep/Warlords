@@ -80,7 +80,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                     ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice),
                                     ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                             )
-                            .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                            .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
                         if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < finalRewardPrice) {
@@ -136,7 +136,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                                   ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(cost),
                                                   ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + (1 - purchasedAmount)
                                           )
-                                          .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                                          .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                           .get(),
                                   (m, e) -> {
                                       if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < cost) {

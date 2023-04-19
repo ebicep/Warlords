@@ -4,6 +4,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.*;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -291,8 +293,8 @@ public class Utils {
         Location headLocationForward = location.clone().add(location.getDirection().multiply(1)).add(0, 1, 0);
         Location footLocationForward = location.clone().add(location.getDirection().multiply(1));
         return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR &&
-                location.getWorld().getBlockAt(headLocationForward).getType() != Material.LEGACY_WOOD_STEP &&
-                location.getWorld().getBlockAt(headLocationForward).getType() != Material.LEGACY_STEP &&
+                location.getWorld().getBlockAt(headLocationForward).getType().data != Stairs.class &&
+                location.getWorld().getBlockAt(headLocationForward).getType().data != Slab.class &&
                 location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 

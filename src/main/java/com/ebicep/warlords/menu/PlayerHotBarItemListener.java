@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -91,7 +92,7 @@ public class PlayerHotBarItemListener implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (e.getPlayer().getOpenInventory().getTitle().equals("Team Builder")) {
+                            if (PlainTextComponentSerializer.plainText().serialize(e.getPlayer().getOpenInventory().title()).equals("Team Builder")) {
                                 p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
                             } else {
                                 this.cancel();

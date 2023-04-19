@@ -1648,7 +1648,7 @@ public abstract class WarlordsEntity {
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.INK_SAC, ability.getCurrentCooldownItem(), (byte) 8)
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
@@ -2371,8 +2371,9 @@ public abstract class WarlordsEntity {
                 return false;
             }
         }
-        //addPotionEffect(effect, force);
-        this.getEntity().addPotionEffect(potionEffect, true);
+        LivingEntity livingEntity = this.getEntity();
+        livingEntity.removePotionEffect(potionEffect.getType());
+        livingEntity.addPotionEffect(potionEffect);
         return true;
     }
 

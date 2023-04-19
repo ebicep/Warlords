@@ -31,6 +31,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -546,7 +547,7 @@ public enum GameMode {
 
                                 @Override
                                 public void run() {
-                                    if (p.getOpenInventory().getTitle().equals("Player Specs")) {
+                                    if (PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title()).equals("Player Specs")) {
                                         openPlayerSpecInfoMenu(g, p);
                                     } else {
                                         this.cancel();

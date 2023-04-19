@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.world.entity.Entity;
@@ -43,8 +44,9 @@ public class PacketUtils {
 
     public static void sendTitle(UUID uuid, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.isOnline()) {
-            sendTitle(offlinePlayer.getPlayer(), title, subtitle, fadeIn, stay, fadeOut);
+        Player player = offlinePlayer.getPlayer();
+        if (player != null) {
+            sendTitle(player, title, subtitle, fadeIn, stay, fadeOut);
         }
     }
 
@@ -53,13 +55,13 @@ public class PacketUtils {
     }
 
     public static void sendTabHF(Player player, String header, String footer) {
-        player.setPlayerListHeader(header);
-        player.setPlayerListFooter(footer);
+        player.sendPlayerListHeader(Component.text(header));
+        player.sendPlayerListFooter(Component.text(footer));
     }
 
 
     public static void sendActionBar(Player p, String message) {
-        p.sendActionBar(message);
+        p.sendActionBar(Component.text(message));
     }
 
 }

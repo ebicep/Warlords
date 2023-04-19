@@ -279,7 +279,7 @@ public class EffectUtils {
             chain.setVisible(false);
             chain.setBasePlate(false);
             chain.setMarker(true);
-            chain.setHelmet(item);
+            chain.getEquipment().setHelmet(item);
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
             if (to.distanceSquared(from) < .3) {

@@ -43,7 +43,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             jimmy.getEquipment().setLeggings(inv.getLeggings());
             jimmy.getEquipment().setChestplate(inv.getChestplate());
             jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInMainHand());
+            jimmy.getEquipment().setItemInMainHand(inv.getItemInMainHand());
         } else {
             jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }

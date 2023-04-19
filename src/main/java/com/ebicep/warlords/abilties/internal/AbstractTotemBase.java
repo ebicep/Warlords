@@ -82,7 +82,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         ArmorStand totemStand = player.getWorld().spawn(this instanceof DeathsDebt ? standLocation.clone().add(0, -.25, 0) : standLocation, ArmorStand.class);
         totemStand.setVisible(false);
         totemStand.setGravity(false);
-        totemStand.setHelmet(getTotemItemStack());
+        totemStand.getEquipment().setHelmet(getTotemItemStack());
 
         onActivation(wp, player, totemStand);
 

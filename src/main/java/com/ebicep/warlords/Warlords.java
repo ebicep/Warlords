@@ -59,6 +59,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -964,17 +965,17 @@ public class Warlords extends JavaPlugin {
                 Instant now = Instant.now();
                 if (!SENT_HOUR_REMINDER.get()) {
                     if (now.plus(1, ChronoUnit.HOURS).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 1 hour.");
+                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 1 hour."));
                         SENT_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_HALF_HOUR_REMINDER.get()) {
                     if (now.plus(30, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 30 minutes.");
+                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 30 minutes."));
                         SENT_HALF_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_FIFTEEN_MINUTE_REMINDER.get()) {
                     if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 15 minutes.");
+                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 15 minutes."));
                         SENT_FIFTEEN_MINUTE_REMINDER.set(true);
                         cancel(); // Can cancel since there are no more checks
                     }

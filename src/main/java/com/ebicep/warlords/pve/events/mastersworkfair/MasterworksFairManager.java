@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -53,7 +54,7 @@ public class MasterworksFairManager {
         MasterworksFairTrait.PAUSED.set(false);
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer.getOpenInventory().getTitle().equals("Masterworks Fair")) {
+            if (PlainTextComponentSerializer.plainText().serialize(onlinePlayer.getOpenInventory().title()).equals("Masterworks Fair")) {
                 onlinePlayer.closeInventory();
             }
         }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -36,10 +37,6 @@ public class ItemBuilder {
         item = new ItemStack(type, amount);
     }
 
-    public ItemBuilder(@Nonnull Material type, int amount, short damage) {
-        item = new ItemStack(type, amount, damage);
-    }
-
     public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
         item = new ItemStack(stack);
     }
@@ -62,7 +59,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(@Nonnull String name) {
-        meta().setDisplayName(name);
+        meta().displayName(Component.text(name));
         return this;
     }
 

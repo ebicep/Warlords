@@ -62,7 +62,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected int onHit(InternalProjectile projectile, WarlordsEntity hit) {
+    protected int onHit(@Nonnull InternalProjectile projectile, WarlordsEntity hit) {
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
@@ -128,7 +128,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
         fallenSoul.setGravity(false);
         fallenSoul.setVisible(false);
         fallenSoul.setMarker(true);
-        fallenSoul.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+        fallenSoul.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
         fallenSoul.setHeadPose(new EulerAngle(-Math.atan2(
                 projectile.getSpeed().getY(),
                 Math.sqrt(

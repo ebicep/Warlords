@@ -12,12 +12,14 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -95,20 +97,21 @@ public class SoulSwitch extends AbstractAbility {
                     decoy.setVisible(false);
                     decoy.setGravity(false);
                     decoy.setCustomNameVisible(true);
-                    decoy.setCustomName(wp.getColoredName() + "'s Decoy");
-                    decoy.setItemInHand(player.getInventory().getItem(0));
-                    decoy.setHelmet(HeadUtils.getHead(player.getUniqueId()));
-                    decoy.setChestplate(player.getInventory().getChestplate());
-                    decoy.setLeggings(player.getInventory().getLeggings());
-                    decoy.setBoots(player.getInventory().getBoots());
+                    decoy.customName(Component.text(wp.getColoredName() + "'s Decoy"));
+                    EntityEquipment equipment = decoy.getEquipment();
+                    equipment.setItemInMainHand(player.getInventory().getItem(0));
+                    equipment.setHelmet(HeadUtils.getHead(player.getUniqueId()));
+                    equipment.setChestplate(player.getInventory().getChestplate());
+                    equipment.setLeggings(player.getInventory().getLeggings());
+                    equipment.setBoots(player.getInventory().getBoots());
 
                     PlayerFilter.entitiesAround(ownLocation, 15, 15, 15)
-                            .aliveEnemiesOf(wp)
-                            .forEach(warlordsEntity -> {
-                                if (warlordsEntity instanceof WarlordsNPC) {
-                                    ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
-                                }
-                            });
+                                .aliveEnemiesOf(wp)
+                                .forEach(warlordsEntity -> {
+                                    if (warlordsEntity instanceof WarlordsNPC) {
+                                        ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
+                                    }
+                                });
 
                     if (pveUpgrade) {
                         float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;

@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -271,8 +272,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§b§lSPEED");
-                armorStand.setHelmet(new ItemStack(Material.YELLOW_WOOL));
+                armorStand.customName(Component.text("§b§lSPEED"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_WOOL));
             }
         },
 
@@ -301,8 +302,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§a§lHEALING");
-                armorStand.setHelmet(new ItemStack(Material.GREEN_WOOL));
+                armorStand.customName(Component.text("§a§lHEALING"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
         },
 
@@ -334,8 +335,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§6§lENERGY");
-                armorStand.setHelmet(new ItemStack(Material.ORANGE_WOOL));
+                armorStand.customName(Component.text("§6§lENERGY"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.ORANGE_WOOL));
             }
         },
 
@@ -368,8 +369,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§c§lDAMAGE");
-                armorStand.setHelmet(new ItemStack(Material.RED_WOOL));
+                armorStand.customName(Component.text("§c§lDAMAGE"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
 
@@ -401,8 +402,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§b§lCOOLDOWN");
-                armorStand.setHelmet(new ItemStack(Material.LIGHT_BLUE_WOOL));
+                armorStand.customName(Component.text("§b§lCOOLDOWN"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.LIGHT_BLUE_WOOL));
             }
         },
 
@@ -414,8 +415,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§c§l5000 SELF DAMAGE");
-                armorStand.setHelmet(new ItemStack(Material.RED_WOOL));
+                armorStand.customName(Component.text("§c§l5000 SELF DAMAGE"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
 
@@ -427,8 +428,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§a§l5000 SELF HEAL");
-                armorStand.setHelmet(new ItemStack(Material.GREEN_WOOL));
+                armorStand.customName(Component.text("§a§l5000 SELF HEAL"));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
         };
 

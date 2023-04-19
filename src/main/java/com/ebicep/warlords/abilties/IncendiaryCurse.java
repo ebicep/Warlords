@@ -62,7 +62,7 @@ public class IncendiaryCurse extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.LEGACY_FIREBALL));
+        stand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
         stand.setGravity(false);
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {

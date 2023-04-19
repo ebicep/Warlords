@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -281,7 +282,7 @@ public class DebugMenuGameOptions {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTitle().equals("Team Options")) {
+                                if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("Team Options")) {
                                     DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                                 } else {
                                     this.cancel();

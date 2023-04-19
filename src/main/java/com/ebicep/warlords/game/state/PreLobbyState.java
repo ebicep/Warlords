@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -563,7 +564,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
             Team selectedTeam = PlayerSettings.getPlayerSettings(e.getKey().getUniqueId()).getWantedTeam();
             if (selectedTeam == null) {
-                Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");
+                Bukkit.broadcast(Component.text(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!"));
             }
             TeamPreference newPref = new TeamPreference(
                     e.getValue(),

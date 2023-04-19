@@ -201,7 +201,7 @@ public class EarthenSpike extends AbstractAbility {
                             }
 
                             ArmorStand stand = (ArmorStand) targetLocation.getWorld().spawnEntity(targetLocation.add(0, -.6, 0), EntityType.ARMOR_STAND);
-                            stand.setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
+                            stand.getEquipment().setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
                             stand.setGravity(false);
                             stand.setVisible(false);
                             stand.setMarker(true);

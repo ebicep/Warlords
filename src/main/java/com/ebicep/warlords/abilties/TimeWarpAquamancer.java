@@ -78,7 +78,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
                             altar.setVisible(false);
                             altar.setGravity(false);
                             altar.setMarker(true);
-                            altar.setHelmet(new ItemStack(Material.PRISMARINE, 1, (short) 1));
+                            altar.getEquipment().setHelmet(new ItemStack(Material.PRISMARINE_BRICKS));
                             altarsBlocks.add(altar);
                         }
                         altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
@@ -227,14 +227,14 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
             pillar.setVisible(false);
             pillar.setGravity(false);
             pillar.setMarker(true);
-            pillar.setHelmet(new ItemStack(Material.PRISMARINE, 1, (short) 2));
+            pillar.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
             pillars.add(pillar);
         }
         ArmorStand light = baseLocation.getWorld().spawn(baseLocation.add(0, .6, 0), ArmorStand.class);
         light.setVisible(false);
         light.setGravity(false);
         light.setMarker(true);
-        light.setHelmet(new ItemStack(Material.SEA_LANTERN, 1, (short) 2));
+        light.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
         pillars.add(light);
         return pillars;
     }

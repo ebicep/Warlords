@@ -57,7 +57,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected int onHit(InternalProjectile projectile, WarlordsEntity hit) {
+    protected int onHit(@Nonnull InternalProjectile projectile, WarlordsEntity hit) {
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
@@ -134,7 +134,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         armorStand.setGravity(false);
         armorStand.setVisible(false);
         armorStand.setMarker(true);
-        armorStand.setHelmet(new ItemStack(Material.JUNGLE_SAPLING));
+        armorStand.getEquipment().setHelmet(new ItemStack(Material.JUNGLE_SAPLING));
         armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                 projectile.getSpeed().getY(),
                 Math.sqrt(

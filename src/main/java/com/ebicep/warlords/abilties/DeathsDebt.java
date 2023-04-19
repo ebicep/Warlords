@@ -188,7 +188,7 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
                     circle.setRadius(debtRadius);
 
                     //blue to purple totem
-                    totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
+                    totemStand.getEquipment().setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
                 },
                 cooldownManager -> {
                     Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManager, RegularCooldown.class)
