@@ -33,12 +33,12 @@ public class DebugCommand extends BaseCommand {
     @Description("Prints class info (health, energy, etc)")
     public void printClassInfo(@Conditions("requireGame") WarlordsPlayer player) {
         AbstractPlayerClass specClass = player.getSpec();
-        sendDebugMessage(player, ChatColor.GOLD + "Class: " + ChatColor.WHITE + specClass.getName(), false);
-        sendDebugMessage(player, ChatColor.GOLD + "Max Health: " + ChatColor.WHITE + specClass.getMaxHealth(), false);
-        sendDebugMessage(player, ChatColor.GOLD + "Max Energy: " + ChatColor.WHITE + specClass.getMaxEnergy(), false);
-        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Sec: " + ChatColor.WHITE + specClass.getEnergyPerSec(), false);
-        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Hit: " + ChatColor.WHITE + specClass.getEnergyPerHit(), false);
-        sendDebugMessage(player, ChatColor.GOLD + "Damage Resistance: " + ChatColor.WHITE + specClass.getDamageResistance(), false);
+        sendDebugMessage(player, ChatColor.GOLD + "Class: " + ChatColor.WHITE + specClass.getName());
+        sendDebugMessage(player, ChatColor.GOLD + "Max Health: " + ChatColor.WHITE + specClass.getMaxHealth());
+        sendDebugMessage(player, ChatColor.GOLD + "Max Energy: " + ChatColor.WHITE + specClass.getMaxEnergy());
+        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Sec: " + ChatColor.WHITE + specClass.getEnergyPerSec());
+        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Hit: " + ChatColor.WHITE + specClass.getEnergyPerHit());
+        sendDebugMessage(player, ChatColor.GOLD + "Damage Resistance: " + ChatColor.WHITE + specClass.getDamageResistance());
     }
 
     @Subcommand("freeze")

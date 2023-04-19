@@ -70,7 +70,7 @@ public class NPCManager {
         npc.addTrait(OnslaughtStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 744.5, 90, 0));
     }
 
@@ -81,7 +81,7 @@ public class NPCManager {
         npc.addTrait(TreasureHuntStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 747.5, 90, 0));
     }
 
@@ -92,7 +92,7 @@ public class NPCManager {
         npc.addTrait(BossRushStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 750.5, 135, 0));
     }
 
@@ -237,7 +237,7 @@ public class NPCManager {
         registerTrait(ItemMichaelTrait.class, "ItemMichaelTrait");
 
         NPC npc = npcRegistry.createNPC(EntityType.VILLAGER, "item-michael");
-        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.BLACKSMITH);
+        npc.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.TOOLSMITH);
         npc.addTrait(ItemMichaelTrait.class);
         npc.getOrAddTrait(LookClose.class)
            .toggle();
@@ -245,7 +245,7 @@ public class NPCManager {
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "Mysterious Michael");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528, 50, 770, 125, 0));
     }
@@ -262,7 +262,7 @@ public class NPCManager {
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
         hologramTrait.setLine(1, ChatColor.GREEN + "Ethical Enya");
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2523.5, 50, 764, 90, 0));
     }
@@ -273,7 +273,7 @@ public class NPCManager {
         NPC npc = npcRegistry.createNPC(EntityType.IRON_GOLEM, "illusion-vendor");
         npc.addTrait(IllusionVendorTrait.class);
 
-        npc.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
         npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2557.5, 50, 769.5, 180, 0));
     }

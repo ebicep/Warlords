@@ -37,13 +37,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -333,19 +328,29 @@ public class OnslaughtOption implements Option, PveOption {
 
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
-            case 1:
+            case 1 -> {
                 return 0.25f;
-            case 2:
+            }
+            case 2 -> {
                 return 0.5f;
-            case 3:
+            }
+            case 3 -> {
                 return 1;
-            case 4:
+            }
+            case 4 -> {
                 return 1.5f;
-            case 5:
+            }
+            case 5 -> {
                 return 2;
-                                             case 6:
-                                             return 2.5f;
+            }
+            case 6 -> {
+                return 2.5f;
+            }
+            default -> {
+                return playerCount * 0.5f;
+            }
         }
+    }
 
     @Override
     public void spawnNewMob(AbstractMob<?> mob) {

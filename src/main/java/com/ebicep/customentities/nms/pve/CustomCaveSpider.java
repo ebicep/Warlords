@@ -1,23 +1,30 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomCaveSpider extends EntitySpider implements CustomEntity<CustomCaveSpider> {
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
+import net.minecraft.world.entity.monster.CaveSpider;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 
-    public CustomCaveSpider(World world) {
-        super(world);
-        resetAI(world);
+import javax.annotation.Nonnull;
+
+public class CustomCaveSpider extends CaveSpider implements CustomEntity<CustomCaveSpider> {
+
+    public CustomCaveSpider(ServerLevel serverLevel) {
+        super(EntityType.CAVE_SPIDER, serverLevel);
+        resetAI();
         giveBaseAI(1.0, 0.8, 100);
 
-        this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
+        this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
 //        this.goalSelector.a(4, new PathfinderGoalSpiderMeleeAttack(this, EntityHuman.class));
 //        this.targetSelector.a(2, new PathfinderGoalSpiderNearestAttackableTarget<>(this, EntityHuman.class));
     }
 
     @Override
-    public boolean n() {
-        return false; //disables spider climbing
+    public boolean isClimbing() {
+        return false;
     }
 
     public CustomCaveSpider(org.bukkit.World world) {
@@ -32,46 +39,12 @@ public class CustomCaveSpider extends EntitySpider implements CustomEntity<Custo
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
-    }
-
-    static class PathfinderGoalSpiderMeleeAttack extends PathfinderGoalMeleeAttack {
-        public PathfinderGoalSpiderMeleeAttack(EntitySpider entityspider, Class<? extends Entity> oclass) {
-            super(entityspider, oclass, 1.0, true);
-        }
-
-        public boolean b() {
-            float f = this.b.c(1.0F);
-            if (f >= 0.5F && this.b.bc().nextInt(100) == 0) { //something with light level, cant attack in daylight
-                this.b.setGoalTarget(null);
-                return false;
-            } else {
-                return super.b();
-            }
-        }
-
-        protected double a(EntityLiving entityliving) {
-            return (double) (4.0F + entityliving.width);
-        }
-    }
-
-    static class PathfinderGoalSpiderNearestAttackableTarget<T extends EntityLiving> extends PathfinderGoalNearestAttackableTarget<T> {
-        public PathfinderGoalSpiderNearestAttackableTarget(EntitySpider entityspider, Class<T> oclass) {
-            super(entityspider, oclass, true);
-        }
-
-        public boolean a() {
-            float f = this.e.c(1.0F); //something with light level, cant attack in daylight
-            return !(f >= 0.5F) && super.a();
-        }
     }
 }

@@ -98,7 +98,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.4f, 2);
                     wp.getWorld().spawnParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05, null, true);
                     if (ticksElapsed % 10 == 0) {
-                        //ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
+                        //Particle.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
                     }
                 })
         ) {

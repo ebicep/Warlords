@@ -15,7 +15,8 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -113,8 +114,9 @@ public class ItemOption implements Option {
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer, pveOption);
             if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
-                        new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false)))
+                        Component.text(ChatColor.GREEN + "Applied Item Loadout: ")
+                                 .append(Component.text(ChatColor.GOLD + loadout.getName())
+                                                  .hoverEvent(HoverEvent.showText(Component.text(String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false))))))
                 );
             }
         });

@@ -22,7 +22,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.Particle;
 
 import java.util.Collections;
 
@@ -164,7 +163,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(self.getLocation(), Sound.ENDERDRAGON_HIT, 2, 0.2f);
+        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0.2f);
     }
 
     @Override

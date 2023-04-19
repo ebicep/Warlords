@@ -14,13 +14,13 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -72,9 +72,8 @@ public class ItemEquipMenu {
                     if (e.isRightClick()) {
                         i.setFavorite(!i.isFavorite());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        AbstractItem.sendItemMessage(player,
-                                new ComponentBuilder(ChatColor.GRAY + "You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ")
-                                        .appendHoverItem(i.getItemName(), i.generateItemStack())
+                        AbstractItem.sendItemMessage(player, Component.text(ChatColor.GRAY + "You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ")
+                                                                      .hoverEvent(i.getHoverComponent())
                         );
                         openItemEquipMenuExternal(player, databasePlayer);
                         return;
@@ -108,11 +107,10 @@ public class ItemEquipMenu {
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                AbstractItem.sendItemMessage(player,
-                                        new ComponentBuilder(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
-                                                .appendHoverItem(i.getItemName(), i.generateItemStack())
+                                AbstractItem.sendItemMessage(player, Component.text(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
+                                                                              .hoverEvent(i.getHoverComponent())
                                 );
-                                player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+                                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
 
                                 openItemEquipMenuExternal(player, databasePlayer);
                             },
@@ -211,7 +209,7 @@ public class ItemEquipMenu {
                                     itemLoadout.getItems().remove(item.getUUID());
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
-                                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 0.1f);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 0.1f);
                                 }
                             }
                     );
@@ -383,7 +381,7 @@ public class ItemEquipMenu {
             lore.add((itemLoadout.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
         }
         menu.setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                new ItemBuilder(Material.COMPARATOR)
                         .name(ChatColor.GREEN + "Bind to Mode")
                         .lore(lore)
                         .get(),
@@ -414,7 +412,7 @@ public class ItemEquipMenu {
                     }
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
                 }
         );
         menu.openForPlayer(player);
@@ -426,14 +424,14 @@ public class ItemEquipMenu {
         for (int i = 0; i < 9; i++) {
             ItemBuilder itemBuilder;
             if (overweight) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 15)
+                itemBuilder = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
                         .name(ChatColor.RED + "Overweight!");
             } else if (i <= ratio - 1) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5);
+                itemBuilder = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE);
             } else if (i != 0 && i <= ratio - .5) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4);
+                itemBuilder = new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE);
             } else {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 14);
+                itemBuilder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
             }
             if (!overweight) {
                 itemBuilder.name(" ");

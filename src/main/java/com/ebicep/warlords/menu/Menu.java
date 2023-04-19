@@ -33,7 +33,7 @@ public class Menu extends AbstractMenuBase {
     public static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
             .name(ChatColor.GREEN + "Back")
             .get();
-    public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+    public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
             .name(" ")
             .get();
 

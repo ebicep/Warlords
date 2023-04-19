@@ -671,7 +671,7 @@ public enum GameEvents {
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                    new ItemBuilder(Material.COMPARATOR)
                             .name(ChatColor.GREEN + "Join a public Mithra event game")
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)

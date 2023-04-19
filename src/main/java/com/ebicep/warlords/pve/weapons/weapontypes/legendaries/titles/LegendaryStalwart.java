@@ -135,7 +135,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                                 return currentDamageValue * .01f;
                             }
                         });
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         player.sendMessage(ChatColor.GREEN + "Triggered Stalwart! +99% damage reduction for 5s.");
                         return 0;
                     }

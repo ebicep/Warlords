@@ -17,7 +17,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -126,7 +125,7 @@ public class ItemSearchMenu extends Menu {
 
     private void addMobDrops() {
         setItem(2, 5,
-                new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
+                new ItemBuilder(Material.ZOMBIE_HEAD)
                         .name("§aYour Drops")
                         .lore(
                                 MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
@@ -189,7 +188,7 @@ public class ItemSearchMenu extends Menu {
     private void addSortBySetting() {
         SortOptions sortedBy = menuSettings.getSortOption();
         setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                new ItemBuilder(Material.COMPARATOR)
                         .name(ChatColor.GREEN + "Sort By")
                         .lore(Arrays.stream(SortOptions.VALUES)
                                     .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
@@ -288,7 +287,7 @@ public class ItemSearchMenu extends Menu {
                 item -> item.getModifier() > 0
         ),
         CURSED("Cursed",
-                new ItemStack(Material.EMPTY_MAP),
+                new ItemStack(Material.MAP),
                 item -> item.getModifier() < 0
         ),
 

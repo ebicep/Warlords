@@ -10,11 +10,13 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
@@ -25,6 +27,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -129,11 +132,11 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            String oldName = getEntity().getCustomName();
-            String newName = oldName.substring(0,
-                    oldName.lastIndexOf(' ') + 1
-            ) + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤";
-            getEntity().setCustomName(newName);
+            Component oldName = getEntity().customName();
+            if (oldName != null) {
+                Component newName = oldName.append(Component.text(ChatColor.RED.toString() + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"));
+                getEntity().customName(newName);
+            }
         }
     }
 
@@ -171,13 +174,23 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateEntity() {
-        entity.setCustomName(
-                (mob != null && mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " : "")
-                        + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"
+        entity.customName(Component.text(mob != null && mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " :
+                                         ChatColor.RED.toString() + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤")
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(80); //TODO NULL CHECK
+        AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(100);
+        } else {
+            entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(80);
+        }
+    }
+
+    @Override
+    public void setDamageResistance(int damageResistance) {
+        getSpec().setDamageResistance(Math.max(0, damageResistance));
     }
 
     public MobTier getMobTier() {

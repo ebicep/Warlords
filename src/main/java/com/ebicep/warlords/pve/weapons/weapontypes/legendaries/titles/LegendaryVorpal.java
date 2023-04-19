@@ -116,7 +116,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                     event.setMax(event.getMax() * meleeDamageBoost);
                 }
                 if (meleeCounter % 5 == 0) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     event.setMin(event.getMin() * 7);
                     event.setMax(event.getMax() * 7);
                     event.setIgnoreReduction(true);

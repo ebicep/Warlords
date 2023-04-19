@@ -1,8 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.mongodb.client.MongoCollection;
@@ -277,7 +274,7 @@ public class OldTestCommand implements CommandExecutor {
 
 
 //        Quests quest = Quests.DAILY_300_KA;
-//        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+//        ChatUtils.sendCenteredMessageWithEvents(player, Component.text()
 //                .appendHoverText(ChatColor.GREEN + quest.name, quest.getHoverText())
 //                .create()
 //        );

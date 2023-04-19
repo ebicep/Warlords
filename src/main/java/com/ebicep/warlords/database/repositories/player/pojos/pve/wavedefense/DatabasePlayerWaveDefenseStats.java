@@ -43,7 +43,7 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
         if (difficultyStats != null) {
             difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null");
         }
     }
 

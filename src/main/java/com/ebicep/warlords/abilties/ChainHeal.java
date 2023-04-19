@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -157,14 +158,16 @@ public class ChainHeal extends AbstractChainBase {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 6 == 0) {
                         Location loc = we.getLocation().add(0, 1.2, 0);
-                        ParticleEffect.VILLAGER_HAPPY.display(
+                        loc.getWorld().spawnParticle(
+                                Particle.VILLAGER_HAPPY,
+                                loc,
+                                1,
                                 0.5F,
                                 0.3F,
                                 0.5F,
                                 0.01F,
-                                1,
-                                loc,
-                                500
+                                null,
+                                true
                         );
                     }
                 })

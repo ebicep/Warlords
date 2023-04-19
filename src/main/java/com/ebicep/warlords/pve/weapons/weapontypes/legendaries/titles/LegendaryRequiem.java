@@ -20,8 +20,9 @@ import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -82,7 +83,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                    .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
                                    .limit(Utils.generateRandomValueBetweenInclusive(1, 3))
                                    .forEach(convertedEnemy -> {
-                                       EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                                       EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
                                        convertedEnemy.setTeam(Team.BLUE);
                                        AbstractMob<?> mob = convertedEnemy.getMob();
                                        updateMobEquipment(mob, player);
@@ -90,7 +91,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                        PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                                           .aliveTeammatesOf(player)
                                                           .filter(teammate -> {
-                                                              EntityLiving target = teammate.getMob().getTarget();
+                                                              LivingEntity target = teammate.getMob().getTarget();
                                                               return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
                                                           })
                                                           .forEach(teammate -> teammate.getMob().removeTarget());
@@ -115,10 +116,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
                 if (player.isSneaking()) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         allSpawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC());
@@ -140,7 +141,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }
-                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     BasicZombie mob = new BasicZombie(player.getLocation());

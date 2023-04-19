@@ -102,7 +102,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
         int hitRadius = 15;
 
         if (ticksElapsed % 150 == 0) {
-            EffectUtils.playSphereAnimation(loc, hitRadius, ParticleEffect.FLAME, 1);
+            EffectUtils.playSphereAnimation(loc, hitRadius, Particle.FLAME, 1);
             for (WarlordsEntity knockTarget : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -125,7 +125,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledStateComplete) {
             entangledStateComplete = true;
             inEntangledState = true;
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.SLIME_ATTACK, 2, 1.5f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 1.5f);
             groundSlam();
             new GameRunnable(warlordsNPC.getGame()) {
                 private World world = warlordsNPC.getWorld();
@@ -172,7 +172,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                             webs.add(blockAt);
                         }
                     });
-                    setBlocks(Material.WEB);
+                    setBlocks(Material.COBWEB);
                 }
 
                 private void spawnEggSacs() {
@@ -298,14 +298,17 @@ public class EventMithra extends AbstractZombie implements BossMob {
                 false,
                 (cooldown, ticks) -> {
                     if (ticks % 3 == 0) {
-                        ParticleEffect.VILLAGER_ANGRY.display(
+                        Location location = warlordsNPC.getLocation();
+                        location.getWorld().spawnParticle(
+                                Particle.VILLAGER_ANGRY,
+                                location,
+                                1,
                                 0,
                                 0,
                                 0,
                                 0.1f,
-                                1,
-                                warlordsNPC.getLocation().add(0, 1.75, 0),
-                                500
+                                null,
+                                true
                         );
                     }
                 }
@@ -322,7 +325,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
     private void immolation(PveOption option, Location loc) {
         warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
@@ -361,9 +364,9 @@ public class EventMithra extends AbstractZombie implements BossMob {
 
                 counter++;
                 double radius = (2 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.8f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.FLAME, 2, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)

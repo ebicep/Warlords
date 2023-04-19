@@ -16,11 +16,11 @@ import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -75,7 +75,7 @@ public class ItemCraftingMenu {
         Menu menu = new Menu("Ethical Enya", 9 * 4);
 
         menu.setItem(1, 1,
-                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 4)
+                new ItemBuilder(Material.YELLOW_TERRACOTTA)
                         .name(ChatColor.GREEN + "Delta Forging")
                         .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
                         .get(),
@@ -83,7 +83,7 @@ public class ItemCraftingMenu {
         );
 
         menu.setItem(4, 1,
-                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 1)
+                new ItemBuilder(Material.WHITE_TERRACOTTA)
                         .name(ChatColor.GREEN + "Omega Forging")
                         .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
                         .get(),
@@ -252,8 +252,8 @@ public class ItemCraftingMenu {
                                 craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);
                                 AbstractItem.sendItemMessage(player,
-                                        new ComponentBuilder(ChatColor.GRAY + "You crafted ")
-                                                .appendHoverItem(craftedItem.getItemName(), craftedItem.generateItemStack())
+                                        Component.text(ChatColor.GRAY + "You crafted ")
+                                                 .hoverEvent(craftedItem.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
                                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);

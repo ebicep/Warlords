@@ -9,15 +9,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public enum ItemTier {
 
     NONE(
             "None",
             ChatColor.BLACK,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 0),
-            new ItemStack(Material.STAINED_CLAY, 1, (short) 0),
+            new ItemStack(Material.WHITE_STAINED_GLASS_PANE),
+            new ItemStack(Material.WHITE_TERRACOTTA),
             0,
             null,
             null,
@@ -31,8 +30,8 @@ public enum ItemTier {
     ALPHA(
             "Alpha",
             ChatColor.GREEN,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 5),
-            new ItemStack(Material.STAINED_CLAY, 1, (short) 5),
+            new ItemStack(Material.LIME_STAINED_GLASS_PANE),
+            new ItemStack(Material.LIME_TERRACOTTA),
             -.20f,
             new WeightRange(7, 10, 15),
             new Pair<>(1, 3),
@@ -48,8 +47,8 @@ public enum ItemTier {
     BETA(
             "Beta",
             ChatColor.BLUE,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 3),
-            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 3),
+            new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE),
+            new ItemStack(Material.LIGHT_BLUE_TERRACOTTA),
             -.10f,
             new WeightRange(15, 20, 30),
             new Pair<>(5, 10),
@@ -66,8 +65,8 @@ public enum ItemTier {
     GAMMA(
             "Gamma",
             ChatColor.LIGHT_PURPLE,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 2),
-            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 2),
+            new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE),
+            new ItemStack(Material.MAGENTA_TERRACOTTA),
             0,
             new WeightRange(22, 30, 45),
             new Pair<>(11, 20),
@@ -84,8 +83,8 @@ public enum ItemTier {
     DELTA(
             "Delta",
             ChatColor.YELLOW,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 4),
-            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 4),
+            new ItemStack(Material.YELLOW_STAINED_GLASS_PANE),
+            new ItemStack(Material.YELLOW_TERRACOTTA),
             .10f,
             new WeightRange(30, 40, 60),
             new Pair<>(21, 35),
@@ -102,8 +101,8 @@ public enum ItemTier {
     OMEGA(
             "Omega",
             ChatColor.GOLD,
-            new ItemStack(org.bukkit.Material.STAINED_GLASS_PANE, 1, (short) 1),
-            new ItemStack(org.bukkit.Material.STAINED_CLAY, 1, (short) 1),
+            new ItemStack(Material.ORANGE_STAINED_GLASS_PANE),
+            new ItemStack(Material.ORANGE_TERRACOTTA),
             .20f,
             new WeightRange(37, 50, 75),
             new Pair<>(36, 50),
@@ -125,31 +124,14 @@ public enum ItemTier {
                                                         .filter(itemTier -> itemTier != NONE)
                                                         .toArray(ItemTier[]::new);
 
-    private static Set<BasicStatPool> generateStatPoolWithSettings(
-            int initialPool,
-            double firstReducedPoolChance,
-            double secondReducedPoolChance
-    ) {
+    private static Set<BasicStatPool> generateStatPoolWithSettings(int initialPool) {
         Set<BasicStatPool> statPool = new HashSet<>();
         List<BasicStatPool> poolList = new ArrayList<>(Arrays.asList(BasicStatPool.VALUES));
         Collections.shuffle(poolList);
         for (int i = 0; i < initialPool; i++) {
             statPool.add(poolList.remove(0));
         }
-        addFromReducedPool(firstReducedPoolChance, statPool, poolList);
-        addFromReducedPool(secondReducedPoolChance, statPool, poolList);
         return statPool;
-    }
-
-    private static void addFromReducedPool(
-            double firstReducedPoolChance,
-            Set<BasicStatPool> statPool,
-            List<BasicStatPool> poolList
-    ) {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        if (firstReducedPoolChance != 0 && !poolList.isEmpty() && random.nextDouble() <= firstReducedPoolChance) {
-            statPool.add(poolList.remove(0));
-        }
     }
 
     public final String name;
@@ -196,7 +178,7 @@ public enum ItemTier {
     }
 
     public Set<BasicStatPool> generateStatPool() {
-        return generateStatPoolWithSettings(ordinal(), 0, 0);
+        return generateStatPoolWithSettings(ordinal());
     }
 
     public String getColoredName() {

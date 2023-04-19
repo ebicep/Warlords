@@ -126,10 +126,10 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     return;
                 }
                 if (player.isSneaking()) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCost() > 0) {

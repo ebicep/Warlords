@@ -209,9 +209,9 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> {
                     if (GameMode.isPvE(target.getGame().getGameMode())) {
                         if (Permissions.isAdmin(player)) {
-                            sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.", true);
+                            sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.");
                         } else {
-                            sendDebugMessage(player, ChatColor.RED + "Cannot change spec in wave defense.", true);
+                            sendDebugMessage(player, ChatColor.RED + "Cannot change spec in wave defense.");
                             return;
                         }
                     }

@@ -11,8 +11,8 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import net.kyori.adventure.text.Component;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -164,7 +164,7 @@ public class WeaponTitleMenu {
 
         menu.setItem(4, 4, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
         menu.setItem(5, 4,
-                new ItemBuilder(Material.SIGN)
+                new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Search Title")
                         .get(),
                 (m, e) ->

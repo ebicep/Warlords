@@ -37,7 +37,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
@@ -1135,25 +1134,23 @@ public abstract class WarlordsEntity {
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (playerSettings.getChatHealingMode()) {
-            switch (playerSettings.getChatHealingMode()) {
-                case ALL -> {
+            case ALL -> {
+                if (sender.showDebugMessage) {
+                    sender.sendMessage(Component.text(ownFeed.toString())
+                                                .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                    );
+                } else {
+                    sender.sendMessage(ownFeed.toString());
+                }
+            }
+            case CRITS_ONLY -> {
+                if (isCrit) {
                     if (sender.showDebugMessage) {
                         sender.sendMessage(Component.text(ownFeed.toString())
                                                     .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
                         sender.sendMessage(ownFeed.toString());
-                    }
-                }
-                case CRITS_ONLY -> {
-                    if (isCrit) {
-                        if (sender.showDebugMessage) {
-                            sender.sendMessage(Component.text(ownFeed.toString())
-                                                        .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
-                            );
-                        } else {
-                            sender.sendMessage(ownFeed.toString());
-                        }
                     }
                 }
             }
@@ -1957,21 +1954,14 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component) {
-        if (this.entity instanceof Player) {
-            ((Player) this.entity).spigot().sendMessage(message);
-            if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-                BaseComponent[] messageCopy = new BaseComponent[message.length];
-                for (int i = 0; i < message.length; i++) {
-                    BaseComponent duplicate = message[i].duplicate();
-                    duplicate.setHoverEvent(null);
-                    messageCopy[i] = duplicate;
-                }
-                game.spectators()
-                    .map(Bukkit::getPlayer)
-                    .filter(Objects::nonNull)
-                    .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                    .forEach(player -> player.spigot().sendMessage(messageCopy));
-            }
+        this.entity.sendMessage(component);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            component.hoverEvent(null);
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(component));
         }
     }
 
@@ -2516,10 +2506,6 @@ public abstract class WarlordsEntity {
         this.decrementRespawnTimer();
     }
 
-    public void runEverySecond() {
-        this.spec.runEverySecond();
-    }
-
     private void decrementRespawnTimer() {
         // Respawn
         if (respawnTickTimer == 20) {
@@ -2586,6 +2572,10 @@ public abstract class WarlordsEntity {
     }
 
     public abstract void updateEntity();
+
+    public void runEverySecond() {
+        this.spec.runEverySecond();
+    }
 
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {

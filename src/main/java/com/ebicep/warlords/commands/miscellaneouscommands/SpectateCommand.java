@@ -126,9 +126,9 @@ public class SpectateCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         game.setAcceptsSpectators(!game.acceptsSpectators());
         if (game.acceptsSpectators()) {
-            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spectating is now enabled for this game", true);
+            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spectating is now enabled for this game");
         } else {
-            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Spectating is now disabled for this game", true);
+            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Spectating is now disabled for this game");
         }
     }
 

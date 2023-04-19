@@ -10,7 +10,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -123,7 +122,7 @@ public interface CustomEntity<T extends Mob> {
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof PathfinderMob) {
-            entity.targetSelector.a(2, new PathfinderGoalTargetAgroWarlordsEntity((EntityCreature) entity));
+            entity.targetSelector.addGoal(2, new PathfinderGoalTargetAgroWarlordsEntity(entity));
         }
     }
 

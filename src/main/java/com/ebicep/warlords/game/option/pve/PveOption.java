@@ -16,9 +16,11 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Zombie;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -134,40 +136,38 @@ public interface PveOption {
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
                 Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof EntityLiving)) {
+                if (!(entity instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                EntityLiving entityLiving = (EntityLiving) entity;
-                if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
                     return;
                 }
-                if (entityLiving instanceof EntityInsentient) {
-                    Game game = getGame();
+                if (entityLiving instanceof Mob) {
                     LivingEntity newTarget = event.getTarget();
-                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
-                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                    LivingEntity oldTarget = ((Mob) entityLiving).getTarget();
+                    if (entityLiving.hasPotionEffect(PotionEffectType.BLINDNESS) && newTarget != null) {
                         event.setCancelled(true);
                         return;
                     }
                     if (newTarget == null) {
-                        if (oldTarget instanceof EntityPlayer) {
+                        if (oldTarget instanceof Player) {
                             //setting target to player zombie
-                            game.warlordsPlayers()
-                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
-                                .findFirst()
-                                .ifPresent(warlordsPlayer -> {
-                                    if (!(warlordsPlayer.getEntity() instanceof Player)) {
-                                        event.setTarget(warlordsPlayer.getEntity());
-                                    }
-                                });
+                            getGame().warlordsPlayers()
+                                     .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueId()))
+                                     .findFirst()
+                                     .ifPresent(warlordsPlayer -> {
+                                         if (!(warlordsPlayer.getEntity() instanceof Player)) {
+                                             event.setTarget(warlordsPlayer.getEntity());
+                                         }
+                                     });
                         }
                     } else {
-                        if (oldTarget instanceof EntityZombie) {
+                        if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
-                            game.warlordsPlayers()
-                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
-                                .findFirst()
-                                .ifPresent(warlordsPlayer -> event.setCancelled(true));
+                            getGame().warlordsPlayers()
+                                     .filter(warlordsPlayer -> warlordsPlayer.getEntity().equals(oldTarget))
+                                     .findFirst()
+                                     .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }
                         if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                             event.setCancelled(true);

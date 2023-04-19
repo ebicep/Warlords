@@ -42,7 +42,7 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
         if (this instanceof PvELeaderboard) {
             switch (collection) {
                 case LIFETIME -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 50;
-                case MONTHLY-> databasePlayer -> databasePlayer.getPveStats().getPlays() < 25;
+                case MONTHLY -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 25;
                 case WEEKLY -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 10;
             }
         } else {

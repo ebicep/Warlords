@@ -67,7 +67,7 @@ public class MobCommand extends BaseCommand {
                 AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
                 pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned Test Mob - " + mob.getWarlordsNPC().getUuid());
                 return;
             }
         }
@@ -79,7 +79,7 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption) {
                 PveOption pveOption = (PveOption) option;
                 pveOption.setPauseMobSpawn(!pveOption.isPauseMobSpawn());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + (pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning", true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + (pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning");
                 return;
             }
         }
@@ -89,9 +89,9 @@ public class MobCommand extends BaseCommand {
     public void toggleArmorStandEggSac(CommandIssuer issuer) {
         EventEggSac.ARMOR_STAND = !EventEggSac.ARMOR_STAND;
         if (EventEggSac.ARMOR_STAND) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Enabled armor stand egg sac", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Enabled armor stand egg sac");
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Disabled armor stand egg sac", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Disabled armor stand egg sac");
         }
     }
 
@@ -111,10 +111,7 @@ public class MobCommand extends BaseCommand {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
-        ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
-        );
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs");
     }
 
     @Subcommand("targetnpc")
@@ -123,9 +120,7 @@ public class MobCommand extends BaseCommand {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
-        ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs"
-        );
+        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs");
     }
 
     @Subcommand("alltarget")

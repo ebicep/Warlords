@@ -94,7 +94,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         return currentHealValue * healBoost;
                     }
                 });
-                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             }
 
         }.runTaskTimer(200, 20);

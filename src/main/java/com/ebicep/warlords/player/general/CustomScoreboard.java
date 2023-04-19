@@ -18,6 +18,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -228,18 +229,18 @@ public class CustomScoreboard {
                 continue;
             }
             String name = onlinePlayer.getName();
-            if (scoreboard.getTeam(name) == null) {
-                scoreboard.registerNewTeam(name);
-            }
             Team team = scoreboard.getTeam(name);
+            if (team == null) {
+                team = scoreboard.registerNewTeam(name);
+            }
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
             if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
-                team.setSuffix(" " + tag.getTag(false));
+                team.suffix(Component.text(" " + tag.getTag(false)));
             } else {
-                team.setSuffix("");
+                team.suffix(Component.empty());
             }
-            team.setPrefix(Permissions.getPrefixWithColor(onlinePlayer));
+            team.prefix(Permissions.getPrefixWithColor(onlinePlayer));
             team.addEntry(name);
         }
     }
@@ -249,8 +250,9 @@ public class CustomScoreboard {
         if (player == null || !player.getWorld().getName().equals("MainLobby")) {
             return;
         }
-        if (scoreboard.getObjective("health") != null) {
-            scoreboard.getObjective("health").unregister();
+        Objective healthObjective = scoreboard.getObjective("health");
+        if (healthObjective != null) {
+            healthObjective.unregister();
             health = null;
         }
 

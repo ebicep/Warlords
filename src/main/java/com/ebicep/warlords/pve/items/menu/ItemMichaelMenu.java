@@ -15,11 +15,11 @@ import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -294,7 +294,7 @@ public class ItemMichaelMenu {
                             .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing");
                 }
             } else {
-                selectedBlessing = new ItemBuilder(Material.EMPTY_MAP)
+                selectedBlessing = new ItemBuilder(Material.MAP)
                         .name(ChatColor.RED + "Select an Item first");
             }
 
@@ -509,9 +509,9 @@ public class ItemMichaelMenu {
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     int tier = blessing + 1;
-                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a" + (blessingFound ? "n unknown" : " bought tier " + tier) + " blessing on ")
-                                            .appendHoverItem(item.getItemName(), item.generateItemStack())
-                                            .append(ChatColor.GRAY + " and it became ");
+                                    Component component = Component.text(ChatColor.GRAY + "You applied a" + (blessingFound ? "n unknown" : " bought tier " + tier) + " blessing on ")
+                                                                   .hoverEvent(item.getHoverComponent())
+                                                                   .append(Component.text(ChatColor.GRAY + " and it became "));
 
                                     if (blessingFound) {
                                         pveStats.getItemsManager().subtractBlessingsFound(1);
@@ -527,7 +527,7 @@ public class ItemMichaelMenu {
                                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 2);
                                     player.closeInventory();
 
-                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getItemName(), item.generateItemStack()));
+                                    AbstractItem.sendItemMessage(player, component.hoverEvent(item.getHoverComponent()));
                                 },
                                 (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
                                 (m2) -> {
@@ -737,19 +737,19 @@ public class ItemMichaelMenu {
                                 }},
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
-                                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You decreased the tier of curse from ")
-                                            .appendHoverItem(item.getItemName(), item.generateItemStack())
-                                            .append(ChatColor.GRAY + " and it became ");
+                                    Component component = Component.text(ChatColor.GRAY + "You decreased the tier of curse from ")
+                                                                   .hoverEvent(item.getHoverComponent())
+                                                                   .append(Component.text(ChatColor.GRAY + " and it became "));
 
                                     for (Map.Entry<Spendable, Long> spendableLongEntry : removeCurseCost.entrySet()) {
                                         spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
                                     }
                                     item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    player.playSound(player.getLocation(), Sound.SPLASH, 2, 0.1f);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 2, 0.1f);
                                     player.closeInventory();
 
-                                    AbstractItem.sendItemMessage(player, componentBuilder.appendHoverItem(item.getItemName(), item.generateItemStack()));
+                                    AbstractItem.sendItemMessage(player, component.hoverEvent(item.getHoverComponent()));
                                 },
                                 (m2, e2) -> openPurifyItemMenu(player, databasePlayer, item),
                                 (m2) -> {

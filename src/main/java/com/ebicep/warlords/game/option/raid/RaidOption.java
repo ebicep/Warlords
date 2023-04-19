@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -17,8 +19,9 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class RaidOption implements Option {
+public class RaidOption implements Option, PveOption {
 
     private SimpleScoreboardHandler scoreboard;
     private final Set<AbstractMob<?>> mobs = new HashSet<>();
@@ -50,7 +53,7 @@ public class RaidOption implements Option {
 
                     ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
                     warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
                     player.updateEntity();
                 });
             });
@@ -67,9 +70,44 @@ public class RaidOption implements Option {
         }.runTaskLater(60);
     }
 
+    @Override
+    public int playerCount() {
+        return 0;
+    }
+
+    @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return null;
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return 0;
+    }
+
     public void spawnNewMob(AbstractMob<?> abstractMob) {
         //abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.add(abstractMob);
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return null;
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return null;
+    }
+
+    @Override
+    public Game getGame() {
+        return null;
     }
 }

@@ -511,7 +511,7 @@ public class EndState implements State, TimerDebugAble {
 
                 ChatUtils.sendCenteredMessage(player,
                         Component.text(ChatColor.GRAY + "+" +
-                                         ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromPvESummary.values().stream().mapToLong(Long::longValue).sum()) +
+                                         ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromPvE.values().stream().mapToLong(Long::longValue).sum()) +
                                          ChatColor.DARK_GREEN + " Guild Experience")
                                  .hoverEvent(HoverEvent.showText(Component.text(expFromPvESummary.toString())))
                 );
@@ -604,20 +604,21 @@ public class EndState implements State, TimerDebugAble {
                         if (amountFound > 0) {
                             boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
                             ChatUtils.sendCenteredMessage(player,
-                                    Component.text(rarity.chatColor.toString() + amountFound + " " + rarity.name + " Weapon" + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : "")
-                                         .hoverEvent(HoverEvent.showText(Component.text(weapons.stream()
-                                                                                               .map(abstractWeapon -> {
-                                                       String output = abstractWeapon.getName();
-                                                       if (abstractWeapon instanceof WeaponScore) {
-                                                           output += ChatColor.YELLOW + " (" + NumberFormat.formatOptionalHundredths(((WeaponScore) abstractWeapon).getWeaponScore()) + ")";
-                                                       }
-                                                       if (!weaponInventory.contains(abstractWeapon)) {
-                                                           output += ChatColor.WHITE + " (Auto Salvaged)";
-                                                       }
-                                                       return output;
-                                                   })
-                                                                                               .collect(Collectors.joining("\n"))))
-                                         )
+                                    Component.text(rarity.chatColor.toString() + amountFound + " " + rarity.name + " Weapon" + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : ""))
+                                             .hoverEvent(HoverEvent.showText(Component.text(weapons.stream()
+                                                                                                   .map(abstractWeapon -> {
+                                                                                                       String output = abstractWeapon.getName();
+                                                                                                       if (abstractWeapon instanceof WeaponScore) {
+                                                                                                           output += ChatColor.YELLOW + " (" + NumberFormat.formatOptionalHundredths(
+                                                                                                                   ((WeaponScore) abstractWeapon).getWeaponScore()) + ")";
+                                                                                                       }
+                                                                                                       if (!weaponInventory.contains(abstractWeapon)) {
+                                                                                                           output += ChatColor.WHITE + " (Auto Salvaged)";
+                                                                                                       }
+                                                                                                       return output;
+                                                                                                   })
+                                                                                                   .collect(Collectors.joining("\n"))))
+                                             )
                             );
                         }
                     });
@@ -654,10 +655,7 @@ public class EndState implements State, TimerDebugAble {
                 }
                 gotAnyDrops = true;
                 for (AbstractItem item : itemsFound) {
-                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                            .appendHoverItem(item.getItemName(), item.generateItemStack())
-                            .create()
-                    );
+                    ChatUtils.sendCenteredMessage(player, Component.empty().hoverEvent(item.getHoverComponent()));
                 }
             }
             int blessingsFound = playerPveRewards.getBlessingsFound();
@@ -677,27 +675,28 @@ public class EndState implements State, TimerDebugAble {
                 }
                 gotAnyDrops = true;
                 if (!syntheticPouch.isEmpty()) {
-                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                            .appendHoverText(ChatColor.AQUA + "Synthetic Pouch",
-                                    syntheticPouch.entrySet()
-                                                  .stream()
-                                                  .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                                                  .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
-                                                  .collect(Collectors.joining("\n"))
-                            )
-                            .create()
+                    ChatUtils.sendCenteredMessage(player,
+                            Component.text(ChatColor.AQUA + "Synthetic Pouch")
+                                     .hoverEvent(HoverEvent.showText(Component
+                                             .text(syntheticPouch.entrySet()
+                                                                 .stream()
+                                                                 .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                                                                 .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
+                                                                 .collect(Collectors.joining("\n"))
+                                             )))
                     );
+
                 }
                 if (!aspirantPouch.isEmpty()) {
-                    ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
-                            .appendHoverText(ChatColor.AQUA + "Aspirant Pouch",
-                                    aspirantPouch.entrySet()
-                                                 .stream()
-                                                 .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                                                 .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
-                                                 .collect(Collectors.joining("\n"))
-                            )
-                            .create()
+                    ChatUtils.sendCenteredMessage(player,
+                            Component.text(ChatColor.AQUA + "Aspirant Pouch")
+                                     .hoverEvent(HoverEvent.showText(Component
+                                             .text(aspirantPouch.entrySet()
+                                                                .stream()
+                                                                .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                                                                .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
+                                                                .collect(Collectors.joining("\n"))
+                                             )))
                     );
                 }
             }

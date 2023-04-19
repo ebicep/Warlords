@@ -33,7 +33,7 @@ public class PartyCommand extends BaseCommand {
     public void listAll(CommandIssuer issuer) {
         List<Party> parties = PartyManager.PARTIES;
         if (parties.isEmpty()) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!");
         } else {
             parties.forEach(party -> issuer.sendMessage(party.getPartyList()));
         }
