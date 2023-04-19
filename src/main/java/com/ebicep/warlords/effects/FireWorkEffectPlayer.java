@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -20,8 +21,13 @@ public class FireWorkEffectPlayer {
     private static Field expectedLifespan = null;
     private static boolean fireworksDisabled = false;
 
-    public static boolean playFirework(Location loc, FireworkEffect... fe) {
-        return playFirework(loc.getWorld(), loc, fe);
+    public static void playFirework(Location loc, FireworkEffect fe) {
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+        fireworkMeta.addEffect(fe); // add the effect to the firework
+        fireworkMeta.setPower(1); // set the power of the firework
+        firework.setFireworkMeta(fireworkMeta); // set the firework meta data
+        firework.detonate();
     }
 
     /**
@@ -67,7 +73,6 @@ public class FireWorkEffectPlayer {
         Object nms_firework;
         if (firework_getHandle == null) {
             firework_getHandle = getMethod(fw.getClass());
-
         }
         nms_firework = firework_getHandle.invoke(fw, (Object[]) null);
         if (fireworkTicksLived == null) {
