@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -67,7 +67,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoCustomConversions customConversions() {
-        return new MongoCustomConversions(Arrays.asList(
+        return new MongoCustomConversions(List.of(
                 new StringToSpendableConverter()
         ));
     }

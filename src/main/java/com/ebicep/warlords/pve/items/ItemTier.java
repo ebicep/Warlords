@@ -189,28 +189,7 @@ public enum ItemTier {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static class WeightRange {
-        private final int min;
-        private final int normal;
-        private final int max;
-
-        public WeightRange(int min, int normal, int max) {
-            this.min = min;
-            this.normal = normal;
-            this.max = max;
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public int getNormal() {
-            return normal;
-        }
-
-        public int getMax() {
-            return max;
-        }
+    public record WeightRange(int min, int normal, int max) {
     }
 
 }

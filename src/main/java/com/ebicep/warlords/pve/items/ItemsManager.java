@@ -234,15 +234,9 @@ public class ItemsManager {
             }
             int position = statsLeaderboard.getSortedPlayers(PlayersCollections.WEEKLY).indexOf(databasePlayer);
             switch (position) {
-                case 0:
-                    weight += 5;
-                    break;
-                case 1:
-                    weight += 3;
-                    break;
-                case 2:
-                    weight += 1;
-                    break;
+                case 0 -> weight += 5;
+                case 1 -> weight += 3;
+                case 2 -> weight += 1;
             }
         }
 

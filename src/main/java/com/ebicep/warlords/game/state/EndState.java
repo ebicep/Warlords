@@ -236,8 +236,7 @@ public class EndState implements State, TimerDebugAble {
             sendGlobalMessage(game, "", false);
             showExperienceSummary(players);
             for (Option option : options) {
-                if (option instanceof PveOption) {
-                    PveOption pveOption = (PveOption) option;
+                if (option instanceof PveOption pveOption) {
                     showCoinSummary(pveOption, players);
                     showDropsSummary(pveOption, players);
                     showQuestSummary(pveOption, players);
@@ -306,8 +305,7 @@ public class EndState implements State, TimerDebugAble {
     private void showWaveDefenseStats(PveOption pveOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         StringBuilder hover = new StringBuilder();
-        if (pveOption instanceof WaveDefenseOption) {
-            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+        if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
             hover.append(ChatColor.WHITE)
                  .append("Waves Cleared")
                  .append(ChatColor.GRAY)

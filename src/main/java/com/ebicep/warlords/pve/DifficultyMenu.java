@@ -10,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import static com.ebicep.warlords.game.option.raid.RaidMenu.openRaidMenu;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
@@ -30,18 +29,22 @@ public class DifficultyMenu {
                             .lore(ChatColor.GRAY + difficulty.getDescription())
                             .get(),
                     (m, e) -> {
-                        GameMap map = switch (finalI) {
+                        if (switch (finalI) {
                             case 0 -> GameMap.ILLUSION_APERTURE;
                             case 1 -> GameMap.ILLUSION_RIFT;
                             case 2 -> GameMap.ILLUSION_VALLEY;
                             case 3 -> GameMap.ILLUSION_CROSSFIRE;
                             default -> null;
-                        };
-                        GameMap finalMap = map;
-                        if (finalMap != null) {
-                            GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE,queueEntryBuilder ->
-                                        queueEntryBuilder.setMap(finalMap)
-                                                         .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                        } != null) {
+                            GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->
+                                    queueEntryBuilder.setMap(switch (finalI) {
+                                                         case 0 -> GameMap.ILLUSION_APERTURE;
+                                                         case 1 -> GameMap.ILLUSION_RIFT;
+                                                         case 2 -> GameMap.ILLUSION_VALLEY;
+                                                         case 3 -> GameMap.ILLUSION_CROSSFIRE;
+                                                         default -> null;
+                                                     })
+                                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         }

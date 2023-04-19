@@ -177,8 +177,7 @@ public class ExperienceManager {
                 DifficultyIndex difficulty = pveOption.getDifficulty();
                 Pair<String, Long> perBonus = null;
                 Pair<String, Long> winBonus = null;
-                if (pveOption instanceof WaveDefenseOption) {
-                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+                if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                     int maxWaves = difficulty.getMaxWaves();
                     int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
                     perBonus = new Pair<>("Waves Cleared", (long) wavesCleared * experienceGainOption.getPlayerExpPer());

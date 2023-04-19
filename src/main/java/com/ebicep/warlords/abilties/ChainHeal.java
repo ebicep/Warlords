@@ -145,7 +145,7 @@ public class ChainHeal extends AbstractChainBase {
 
     private void critStatsOnHit(WarlordsEntity we) {
         we.getCooldownManager().removeCooldown(ChainHeal.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<ChainHeal>(
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CHAIN CRIT",
                 ChainHeal.class,

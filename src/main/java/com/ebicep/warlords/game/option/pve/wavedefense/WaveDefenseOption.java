@@ -41,13 +41,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
@@ -59,8 +54,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
@@ -536,7 +529,7 @@ public class WaveDefenseOption implements Option, PveOption {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
@@ -571,13 +564,10 @@ public class WaveDefenseOption implements Option, PveOption {
 
                     if (difficulty == DifficultyIndex.ENDLESS) {
                         switch (waveCounter) {
-                            case 50:
-                            case 100:
-                                getGame().forEachOnlineWarlordsPlayer(wp -> {
-                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                                });
-                                break;
+                            case 50, 100 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                            });
                         }
                     }
                 }
@@ -606,8 +596,7 @@ public class WaveDefenseOption implements Option, PveOption {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
 
             player.setInPve(true);
             if (player.getEntity() instanceof Player) {

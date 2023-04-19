@@ -46,10 +46,9 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            if (!(ability instanceof AbstractChainBase)) {
+            if (!(ability instanceof AbstractChainBase chain)) {
                 continue;
             }
-            AbstractChainBase chain = (AbstractChainBase) ability;
             chain.setBounceRange(100);
             int additionalBounces = chain.getAdditionalBounces();
             if (ability instanceof ChainHeal) {

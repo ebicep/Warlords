@@ -66,7 +66,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      *
      * @param projectile
      */
-    @SuppressWarnings("deprecation")
     protected void playEffect(@Nonnull InternalProjectile projectile) {
         for (InternalProjectileTask task : projectile.tasks) {
             task.run(projectile);
@@ -90,7 +89,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      *
      * @param projectile
      */
-    @SuppressWarnings("deprecation")
     protected void updateSpeed(InternalProjectile projectile) {
         updateSpeed(projectile.getSpeed(), projectile.getTicksLived());
     }

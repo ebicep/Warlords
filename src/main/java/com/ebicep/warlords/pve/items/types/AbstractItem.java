@@ -101,12 +101,8 @@ public abstract class AbstractItem {
                 .add(1 - this.tier.blessedChance - this.tier.cursedChance, 0)
                 .next();
         switch (result) {
-            case 1:
-                this.modifier = Math.min(this.modifier + (tier == null ? ItemModifier.GENERATE_BLESSING.next() : tier), 5);
-                break;
-            case -1:
-                this.modifier = Math.max(this.modifier - (tier == null ? ItemModifier.GENERATE_CURSE.next() : tier), -5);
-                break;
+            case 1 -> this.modifier = Math.min(this.modifier + (tier == null ? ItemModifier.GENERATE_BLESSING.next() : tier), 5);
+            case -1 -> this.modifier = Math.max(this.modifier - (tier == null ? ItemModifier.GENERATE_CURSE.next() : tier), -5);
         }
     }
 
@@ -217,8 +213,8 @@ public abstract class AbstractItem {
                 double tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
-                int max = statRange.getMax() * stat.getDecimalPlace().value;
-                int min = statRange.getMin() * stat.getDecimalPlace().value;
+                int max = statRange.max() * stat.getDecimalPlace().value;
+                int min = statRange.min() * stat.getDecimalPlace().value;
                 int value = (int) ((max - min) * tieredDistribution + min);
                 // floor value
                 value = value / stat.getDecimalPlace().value * stat.getDecimalPlace().value;
@@ -239,9 +235,9 @@ public abstract class AbstractItem {
     public int getWeight() {
         float itemScore = getWeightScore();
         ItemTier.WeightRange weightRange = tier.weightRange;
-        int min = weightRange.getMin();
-        int normal = weightRange.getNormal();
-        int max = weightRange.getMax();
+        int min = weightRange.min();
+        int normal = weightRange.normal();
+        int max = weightRange.max();
 
         if (itemScore <= 10) {
             return max;

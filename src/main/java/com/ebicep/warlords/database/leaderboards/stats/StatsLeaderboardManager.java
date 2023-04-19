@@ -472,35 +472,23 @@ public class StatsLeaderboardManager {
         }
 
         public static GameType getAfter(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return CTF;
-                case CTF:
-                    return PVE;
-                case PVE:
-                    return WAVE_DEFENSE;
-                case WAVE_DEFENSE:
-                    return ONSLAUGHT;
-                case ONSLAUGHT:
-                    return ALL;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> CTF;
+                case CTF -> PVE;
+                case PVE -> WAVE_DEFENSE;
+                case WAVE_DEFENSE -> ONSLAUGHT;
+                case ONSLAUGHT -> ALL;
+            };
         }
 
         public static GameType getBefore(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return ONSLAUGHT;
-                case CTF:
-                    return ALL;
-                case PVE:
-                    return CTF;
-                case WAVE_DEFENSE:
-                    return PVE;
-                case ONSLAUGHT:
-                    return WAVE_DEFENSE;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> ONSLAUGHT;
+                case CTF -> ALL;
+                case PVE -> CTF;
+                case WAVE_DEFENSE -> PVE;
+                case ONSLAUGHT -> WAVE_DEFENSE;
+            };
         }
 
         public final String name;

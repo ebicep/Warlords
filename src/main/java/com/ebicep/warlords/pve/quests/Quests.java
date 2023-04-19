@@ -88,8 +88,7 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            if (pveOption instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                 return databasePlayer.getPveStats().getWins() >= 1 || waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
             }
             return false;
@@ -106,8 +105,7 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            if (pveOption instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                 return databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared() + waveDefenseOption.getWavesCleared() >= 20;
             }
             return false;
@@ -159,8 +157,7 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(PveOption pveOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            if (pveOption instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                 return waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS && waveDefenseOption.getWavesCleared() >= 30;
             }
             return false;

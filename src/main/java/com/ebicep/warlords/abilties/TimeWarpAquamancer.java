@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;

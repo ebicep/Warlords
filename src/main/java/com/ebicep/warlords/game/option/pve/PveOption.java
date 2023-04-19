@@ -101,10 +101,9 @@ public interface PveOption {
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
-                if (!(player instanceof WarlordsPlayer)) {
+                if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
                 AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
                 if (abilityTree == null) {
                     return;

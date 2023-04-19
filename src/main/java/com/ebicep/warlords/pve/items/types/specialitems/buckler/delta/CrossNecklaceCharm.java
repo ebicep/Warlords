@@ -45,8 +45,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            if (ability instanceof Consecrate) {
-                Consecrate consecrate = (Consecrate) ability;
+            if (ability instanceof Consecrate consecrate) {
                 consecrate.setTickDuration(consecrate.getTickDuration() + 40);
             }
         }

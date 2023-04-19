@@ -56,8 +56,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }
-                if (event.getWarlordsEntity() instanceof WarlordsNPC) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) event.getWarlordsEntity();
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                     if (ThreadLocalRandom.current().nextDouble() > 0.1) {
                         return;
                     }

@@ -95,15 +95,18 @@ public enum ItemType {
 
     public AbstractItem createBasic(ItemTier tier) {
         switch (tier) {
-            case ALPHA:
-            case BETA:
+            case ALPHA, BETA -> {
                 return new BasicItem(this, tier);
-            case GAMMA:
+            }
+            case GAMMA -> {
                 return SpecialItems.GAMMA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.GAMMA_ITEMS.length)].create.get();
-            case DELTA:
+            }
+            case DELTA -> {
                 return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create.get();
-            case OMEGA:
+            }
+            case OMEGA -> {
                 return SpecialItems.OMEGA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.OMEGA_ITEMS.length)].create.get();
+            }
         }
         ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
         return null;

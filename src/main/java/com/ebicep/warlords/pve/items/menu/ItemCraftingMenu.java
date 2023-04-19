@@ -108,10 +108,10 @@ public class ItemCraftingMenu {
         Menu menu = new Menu(itemTier.name + " Forging", 9 * 6);
 
         TierCostInfo tierCostInfo = TIER_COST_INFO.get(itemTier);
-        List<TierRequirement> requirements = tierCostInfo.getRequirements();
+        List<TierRequirement> requirements = tierCostInfo.requirements();
         for (TierRequirement requirement : requirements) {
-            ItemTier tier = requirement.getTier();
-            ItemMenuUtil.addItemTierRequirement(menu, tier, items.get(tier), requirement.getX(), requirement.getY(), (m, e) -> {
+            ItemTier tier = requirement.tier();
+            ItemMenuUtil.addItemTierRequirement(menu, tier, items.get(tier), requirement.x(), requirement.y(), (m, e) -> {
                 openItemSelectMenu(
                         player,
                         databasePlayer,
@@ -125,10 +125,10 @@ public class ItemCraftingMenu {
             });
         }
 
-        Pair<Integer, Integer> costLocation = tierCostInfo.getCostLocation();
+        Pair<Integer, Integer> costLocation = tierCostInfo.costLocation();
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
-        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
+        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, tierCostInfo.cost(), costLocation.getA(), costLocation.getB());
         ItemMenuUtil.addItemConfirmation(menu, () -> {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
@@ -178,9 +178,9 @@ public class ItemCraftingMenu {
             DatabasePlayerPvE pveStats,
             ItemTier tier
     ) {
-        boolean requirementsMet = requirements.stream().allMatch(requirement -> items.get(requirement.getTier()) != null);
+        boolean requirementsMet = requirements.stream().allMatch(requirement -> items.get(requirement.tier()) != null);
         boolean enoughMobDrops = TIER_COST_INFO.get(tier)
-                                               .getCost()
+                                               .cost()
                                                .entrySet()
                                                .stream()
                                                .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
@@ -203,7 +203,7 @@ public class ItemCraftingMenu {
                         return;
                     }
                     TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
-                    for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                    for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                         Spendable spendable = currenciesLongEntry.getKey();
                         Long cost = currenciesLongEntry.getValue();
                         if (spendable.getFromPlayer(databasePlayer) < cost) {
@@ -219,9 +219,9 @@ public class ItemCraftingMenu {
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                             (m2, e2) -> {
                                 for (TierRequirement requirement : requirements) {
-                                    pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
+                                    pveStats.getItemsManager().removeItem(items.get(requirement.tier()));
                                 }
-                                for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                                for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
 
@@ -384,52 +384,10 @@ public class ItemCraftingMenu {
 
     }
 
-    static class TierRequirement {
-        private final ItemTier tier;
-        private final int x;
-        private final int y;
-
-        TierRequirement(ItemTier tier, int x, int y) {
-            this.tier = tier;
-            this.x = x;
-            this.y = y;
-        }
-
-        public ItemTier getTier() {
-            return tier;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
+    record TierRequirement(ItemTier tier, int x, int y) {
     }
 
-    static class TierCostInfo {
-        private final LinkedHashMap<Spendable, Long> cost;
-        private final Pair<Integer, Integer> costLocation;
-        private final List<TierRequirement> requirements;
-
-        TierCostInfo(LinkedHashMap<Spendable, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
-            this.cost = cost;
-            this.costLocation = costLocation;
-            this.requirements = requirements;
-        }
-
-        public LinkedHashMap<Spendable, Long> getCost() {
-            return cost;
-        }
-
-        public Pair<Integer, Integer> getCostLocation() {
-            return costLocation;
-        }
-
-        public List<TierRequirement> getRequirements() {
-            return requirements;
-        }
+    record TierCostInfo(LinkedHashMap<Spendable, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
 
     }
 

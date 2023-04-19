@@ -57,9 +57,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
         );
         for (int i = 0; i < SHOP.size(); i++) {
             SpendableBuyShop reward = SHOP.get(i);
-            int rewardAmount = reward.getAmount();
-            Spendable rewardSpendable = reward.getSpendable();
-            int rewardPrice = reward.getPrice();
+            int rewardAmount = reward.amount();
+            Spendable rewardSpendable = reward.spendable();
+            int rewardPrice = reward.price();
             String mapName = reward.getMapName();
             Long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
             if (rewardSpendable == MobDrops.ZENITH_STAR) {
@@ -67,10 +67,10 @@ public class IllusionVendorTrait extends WarlordsTrait {
             }
 
             String stock;
-            if (reward.getStock() == -1) {
+            if (reward.stock() == -1) {
                 stock = "Unlimited";
             } else {
-                stock = "" + (reward.getStock() - purchasedAmount);
+                stock = "" + (reward.stock() - purchasedAmount);
             }
             int finalRewardPrice = rewardPrice;
             menu.setItem(i + 1, 1,
@@ -88,7 +88,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
                         }
-                        if (reward.getStock() != -1 && purchasedAmount >= reward.getStock()) {
+                        if (reward.stock() != -1 && purchasedAmount >= reward.stock()) {
                             player.sendMessage(ChatColor.RED + "This item is out of stock!");
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;

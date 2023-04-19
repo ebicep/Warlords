@@ -38,10 +38,9 @@ public class AbilityTree {
     }
 
     public void openAbilityTree() {
-        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+        if (!(warlordsPlayer.getEntity() instanceof Player player)) {
             return;
         }
-        Player player = (Player) warlordsPlayer.getEntity();
 
         Menu menu = new Menu("Upgrades", 9 * 5);
 

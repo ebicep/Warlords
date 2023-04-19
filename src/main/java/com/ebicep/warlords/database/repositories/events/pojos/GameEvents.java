@@ -844,18 +844,18 @@ public enum GameEvents {
             int x = 1;
             int y = 1;
             for (SpendableBuyShop reward : shopRewards) {
-                int rewardAmount = reward.getAmount();
-                Spendable rewardSpendable = reward.getSpendable();
-                int rewardPrice = reward.getPrice();
+                int rewardAmount = reward.amount();
+                Spendable rewardSpendable = reward.spendable();
+                int rewardPrice = reward.price();
                 String mapName = reward.getMapName();
 
                 String stock;
-                if (reward.getStock() == -1) {
+                if (reward.stock() == -1) {
                     stock = "Unlimited";
                 } else if (eventMode == null) {
-                    stock = "" + reward.getStock();
+                    stock = "" + reward.stock();
                 } else {
-                    stock = "" + (reward.getStock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
+                    stock = "" + (reward.stock() - eventMode.getRewardsPurchased().getOrDefault(mapName, 0L));
                 }
 
 
@@ -878,7 +878,7 @@ public enum GameEvents {
                                 return;
                             }
                             Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
-                            if (reward.getStock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.getStock()) {
+                            if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
                                 player.sendMessage(ChatColor.RED + "This item is out of stock!");
                                 return;
                             }

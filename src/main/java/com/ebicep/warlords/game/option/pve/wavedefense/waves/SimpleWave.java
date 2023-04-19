@@ -59,7 +59,7 @@ public class SimpleWave implements Wave {
         if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }
-        return spawnSettings.getMob().createMob.apply(spawnSettings.getLocation() == null ? loc : spawnSettings.getLocation());
+        return spawnSettings.mob().createMob.apply(spawnSettings.location() == null ? loc : spawnSettings.location());
     }
 
     @Override
@@ -97,27 +97,6 @@ public class SimpleWave implements Wave {
         return mobTier;
     }
 
-    static class SpawnSettings {
-        private final double weight;
-        private final Mobs mob;
-        private final Location location;
-
-        SpawnSettings(double weight, Mobs mob, Location location) {
-            this.weight = weight;
-            this.mob = mob;
-            this.location = location;
-        }
-
-        public double getWeight() {
-            return weight;
-        }
-
-        public Mobs getMob() {
-            return mob;
-        }
-
-        public Location getLocation() {
-            return location;
-        }
+    record SpawnSettings(double weight, Mobs mob, Location location) {
     }
 }

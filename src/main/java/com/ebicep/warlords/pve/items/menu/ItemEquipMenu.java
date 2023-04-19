@@ -65,7 +65,7 @@ public class ItemEquipMenu {
                                                  .stream()
                                                  .map(ItemLoadout::getItems)
                                                  .flatMap(Collection::stream)
-                                                 .collect(Collectors.toList());
+                                                 .toList();
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {
@@ -236,7 +236,7 @@ public class ItemEquipMenu {
         List<String> lore = new ArrayList<>();
         List<ItemLoadout> sortedLoadouts = loadouts.stream()
                                                    .sorted(Comparator.comparing(ItemLoadout::getCreationDate))
-                                                   .collect(Collectors.toList());
+                                                   .toList();
         for (int i = 0; i < sortedLoadouts.size(); i++) {
             ItemLoadout l = sortedLoadouts.get(i);
             DifficultyMode difficulty = l.getDifficultyMode();

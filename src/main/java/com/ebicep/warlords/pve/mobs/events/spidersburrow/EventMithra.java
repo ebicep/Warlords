@@ -339,19 +339,11 @@ public class EventMithra extends AbstractZombie implements BossMob {
             }
         }
 
-        float damage;
-        switch (option.getDifficulty()) {
-            case ENDLESS:
-            case HARD:
-                damage = 200;
-                break;
-            case EASY:
-                damage = 50;
-                break;
-            default:
-                damage = 100;
-                break;
-        }
+        float damage = switch (option.getDifficulty()) {
+            case ENDLESS, HARD -> 200;
+            case EASY -> 50;
+            default -> 100;
+        };
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
 

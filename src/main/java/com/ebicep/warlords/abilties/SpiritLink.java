@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class SpiritLink extends AbstractChainBase {
@@ -114,7 +113,7 @@ public class SpiritLink extends AbstractChainBase {
             List<RegularCooldown> currentSpiritLinks = new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                     .filterCooldownClass(SpiritLink.class)
                     .stream()
-                    .collect(Collectors.toList());
+                    .toList();
             if (currentSpiritLinks.size() >= 4) {
                 warlordsPlayer.getCooldownManager().removeCooldown(currentSpiritLinks.get(0));
             }

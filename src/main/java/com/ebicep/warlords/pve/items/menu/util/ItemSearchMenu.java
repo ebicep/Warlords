@@ -90,7 +90,7 @@ public class ItemSearchMenu extends Menu {
                                                  .stream()
                                                  .map(ItemLoadout::getItems)
                                                  .flatMap(Collection::stream)
-                                                 .collect(Collectors.toList());
+                                                 .toList();
         int page = menuSettings.getPage();
         List<AbstractItem> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
         int x = 0;

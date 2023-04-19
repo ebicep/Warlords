@@ -61,7 +61,7 @@ public class EventForsakenCruor extends AbstractZombie implements BossMob, Spide
                                .enemiesOf(warlordsNPC)
                                .forEach(receiver -> {
                                    receiver.getCooldownManager().removePreviousWounding();
-                                   receiver.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+                                   receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                                            name,
                                            "WND",
                                            WoundingStrikeBerserker.class,

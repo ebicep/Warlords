@@ -52,8 +52,7 @@ public class AGuideToMMA extends SpecialDeltaTome {
                 if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
                     return;
                 }
-                if (event.getWarlordsEntity() instanceof WarlordsNPC) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) event.getWarlordsEntity();
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                     if (warlordsNPC.getMobTier() == MobTier.BOSS) {
                         event.setMin(event.getMin() * 1.25f);
                         event.setMax(event.getMax() * 1.25f);

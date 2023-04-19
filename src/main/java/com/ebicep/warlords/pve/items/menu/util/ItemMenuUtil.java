@@ -19,7 +19,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class ItemMenuUtil {
 
@@ -124,15 +123,9 @@ public class ItemMenuUtil {
             ItemType type = equippedItem.getType();
             equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
             switch (type) {
-                case GAUNTLET:
-                    gauntletModifier += equippedItem.getModifierCalculated();
-                    break;
-                case TOME:
-                    tomeModifier += equippedItem.getModifierCalculated();
-                    break;
-                case BUCKLER:
-                    bucklerModifier += equippedItem.getModifierCalculated();
-                    break;
+                case GAUNTLET -> gauntletModifier += equippedItem.getModifierCalculated();
+                case TOME -> tomeModifier += equippedItem.getModifierCalculated();
+                case BUCKLER -> bucklerModifier += equippedItem.getModifierCalculated();
             }
         }
         List<String> bonusLore = BasicStatPool.getStatPoolLore(statPool, ChatColor.AQUA + "- ", true);
@@ -171,7 +164,7 @@ public class ItemMenuUtil {
                                                .map(BonusLore.class::cast)
                                                .map(BonusLore::getBonusLore)
                                                .filter(Objects::nonNull)
-                                               .collect(Collectors.toList());
+                                               .toList();
         //TODO stack same bonuses
         if (!bonusLores.isEmpty()) {
             bonusLore.add(ChatColor.AQUA + "Special Bonuses:");

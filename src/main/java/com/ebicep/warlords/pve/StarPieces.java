@@ -23,7 +23,7 @@ public enum StarPieces {
             30,
             new LinkedHashMap<>() {{
                 put(Currencies.COMMON_STAR_PIECE, 5L);
-                put(Currencies.COIN, 50 + 000L);
+                put(Currencies.COIN, 50_000L);
             }}
     ),
     EPIC(Currencies.EPIC_STAR_PIECE,

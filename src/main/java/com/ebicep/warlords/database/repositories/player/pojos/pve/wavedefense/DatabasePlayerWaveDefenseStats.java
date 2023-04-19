@@ -48,17 +48,13 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
     }
 
     public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
-        switch (difficultyIndex) {
-            case EASY:
-                return getEasyStats();
-            case NORMAL:
-                return getNormalStats();
-            case HARD:
-                return getHardStats();
-            case ENDLESS:
-                return getEndlessStats();
-        }
-        return null;
+        return switch (difficultyIndex) {
+            case EASY -> getEasyStats();
+            case NORMAL -> getNormalStats();
+            case HARD -> getHardStats();
+            case ENDLESS -> getEndlessStats();
+            default -> null;
+        };
     }
 
 

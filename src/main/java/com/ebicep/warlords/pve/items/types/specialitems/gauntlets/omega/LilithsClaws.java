@@ -57,8 +57,7 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                if (warlordsEntity instanceof WarlordsNPC) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) warlordsEntity;
+                if (warlordsEntity instanceof WarlordsNPC warlordsNPC) {
                     if (warlordsNPC.getMobTier() == MobTier.BOSS) {
                         return;
                     }

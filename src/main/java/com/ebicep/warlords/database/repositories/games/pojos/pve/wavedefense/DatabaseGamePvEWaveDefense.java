@@ -35,8 +35,7 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
         super(game, gameWinEvent, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+            if (option instanceof WaveDefenseOption waveDefenseOption) {
                 this.wavesCleared = waveDefenseOption.getWavesCleared();
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, waveDefenseOption)));
             }

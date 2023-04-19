@@ -98,7 +98,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             equipment.setLeggings(ee.getLeggings());
             equipment.setChestplate(ee.getChestplate());
             equipment.setHelmet(ee.getHelmet());
-            equipment.setItemInHand(ee.getItemInMainHand());
+            equipment.setItemInMainHand(ee.getItemInMainHand());
         } else {
             equipment.setHelmet(new ItemStack(Material.BARRIER));
         }

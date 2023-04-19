@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.illusionvendor;
 
 import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,12 @@ import java.util.List;
 @Service("illusionVendorService")
 public class IllusionVendorServiceImpl implements IllusionVendorService {
 
-    @Autowired
+    final
     IllusionVendorRepository illusionVendorRepository;
+
+    public IllusionVendorServiceImpl(IllusionVendorRepository illusionVendorRepository) {
+        this.illusionVendorRepository = illusionVendorRepository;
+    }
 
 
     @Override

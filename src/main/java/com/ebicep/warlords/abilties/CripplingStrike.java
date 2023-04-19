@@ -32,7 +32,7 @@ public class CripplingStrike extends AbstractStrikeBase {
             int tickDuration,
             float crippleAmount
     ) {
-        target.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CRIP",
                 CripplingStrike.class,

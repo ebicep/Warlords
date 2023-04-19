@@ -18,16 +18,16 @@ public class OldTestCommand implements CommandExecutor {
     private static double getWeight(float itemScore, ItemTier tier) {
         ItemTier.WeightRange weightRange = tier.weightRange;
         if (itemScore <= 10) {
-            return weightRange.getMax();
+            return weightRange.max();
         }
         if (45 <= itemScore && itemScore <= 55) {
-            return weightRange.getNormal();
+            return weightRange.normal();
         }
         if (itemScore >= 90) {
-            return weightRange.getMin();
+            return weightRange.min();
         }
-        int weight = weightRange.getMax();
-        double midWeight = weightRange.getNormal();
+        int weight = weightRange.max();
+        double midWeight = weightRange.normal();
         // 10-mid
         double bottomToMidIncrement = getBottomToMidIncrement(weightRange, midWeight);
         // 10-mid
@@ -61,13 +61,13 @@ public class OldTestCommand implements CommandExecutor {
     private static double getBottomToMidIncrement(ItemTier.WeightRange weightRange, double midWeight) {
 //        System.out.println("35 / (" + midWeight + " - " + weightRange.getMin() + " - 1)");
 //        System.out.println("35 / " + (midWeight - weightRange.getMin() - 1));
-        return 35d / (midWeight - weightRange.getMin() - 1);
+        return 35d / (midWeight - weightRange.min() - 1);
     }
 
     private static double getMidToTopIncrement(ItemTier.WeightRange weightRange, double midWeight) {
 //        System.out.println("35 / (" + weightRange.getMax() + " - " + midWeight + " - 1)");
 //        System.out.println("35 / " + (weightRange.getMax() - midWeight - 1));
-        return 35d / (weightRange.getMax() - midWeight - 1);
+        return 35d / (weightRange.max() - midWeight - 1);
     }
 
     private static void extracted(String collection) {
@@ -88,22 +88,20 @@ public class OldTestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
+        if (commandSender instanceof Player player) {
 
             if (!player.isOp()) {
                 return true;
             }
         }
 
-        if (commandSender instanceof Player) {
+        if (commandSender instanceof Player player) {
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
 //                }
 //            });
-            Player player = (Player) commandSender;
-//            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            //            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
 //                System.out.println("reformatting : " + databasePlayer.getName());
 //                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 //                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();

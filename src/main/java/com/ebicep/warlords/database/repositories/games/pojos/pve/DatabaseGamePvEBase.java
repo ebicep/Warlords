@@ -39,8 +39,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
         super(game, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 this.difficulty = pveOption.getDifficulty();
             }
         }

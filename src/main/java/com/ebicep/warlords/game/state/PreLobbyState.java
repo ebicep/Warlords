@@ -580,8 +580,8 @@ public class PreLobbyState implements State, TimerDebugAble {
         boolean canSwitchPeepTeam;
         if (entry.getValue().wantedTeam != target) {
             canSwitchPeepTeam = switch (entry.getValue().priority) {
-                case FORCED_PREFERENCE -> false;
-                case PLAYER_PREFERENCE -> false; // Always enforce teams people manually have picked, probably set to true in the future
+                case FORCED_PREFERENCE, PLAYER_PREFERENCE -> false;
+                // Always enforce teams people manually have picked, probably set to true in the future
                 default -> true;
             };
         } else {

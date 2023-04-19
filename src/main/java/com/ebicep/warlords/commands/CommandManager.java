@@ -597,7 +597,6 @@ public class CommandManager {
     @Nullable
     public static OnlinePlayer getOnlinePlayer(BukkitCommandIssuer issuer, String lookup, boolean allowMissing) throws InvalidCommandArgument {
         Player player = findPlayerSmart(issuer, lookup);
-        //noinspection Duplicates
         if (player == null) {
             if (allowMissing) {
                 return null;
@@ -672,7 +671,6 @@ public class CommandManager {
             return null;
         }
 
-        //noinspection Duplicates
         if (matches.isEmpty()) {
             Player player = ACFUtil.getFirstElement(confirmList);
             if (player == null) {

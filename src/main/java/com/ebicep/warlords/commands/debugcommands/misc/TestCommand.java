@@ -15,9 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Comparator;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")

@@ -46,7 +46,7 @@ public class ItemOption implements Option {
                 if (itemPlayerConfig == null) {
                     return;
                 }
-                event.addModifier(itemPlayerConfig.getDropRateModifier());
+                event.addModifier(itemPlayerConfig.dropRateModifier());
             }
 
         });
@@ -54,7 +54,7 @@ public class ItemOption implements Option {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (!(player instanceof WarlordsPlayer)) {
+        if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
             return;
         }
         Game game = player.getGame();
@@ -67,7 +67,6 @@ public class ItemOption implements Option {
         if (pveOption == null) {
             return;
         }
-        WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
         DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             //items
@@ -122,22 +121,7 @@ public class ItemOption implements Option {
         });
     }
 
-    static class ItemPlayerConfig {
+    record ItemPlayerConfig(ItemLoadout loadout, double dropRateModifier) {
 
-        private final ItemLoadout loadout;
-        private final double dropRateModifier;
-
-        public ItemPlayerConfig(ItemLoadout loadout, double dropRateModifier) {
-            this.loadout = loadout;
-            this.dropRateModifier = dropRateModifier;
-        }
-
-        public ItemLoadout getLoadout() {
-            return loadout;
-        }
-
-        public double getDropRateModifier() {
-            return dropRateModifier;
-        }
     }
 }

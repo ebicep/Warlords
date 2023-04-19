@@ -22,8 +22,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder);
-        if (this instanceof FixedItemAppliesToPlayer) {
-            FixedItemAppliesToPlayer bonus = (FixedItemAppliesToPlayer) this;
+        if (this instanceof FixedItemAppliesToPlayer bonus) {
             itemBuilder.addLore(
                     "",
                     ChatColor.GREEN + bonus.getEffect() + ":",
@@ -59,8 +58,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
 
     @Override
     public String getBonusLore() {
-        if (this instanceof FixedItemAppliesToPlayer) {
-            FixedItemAppliesToPlayer bonus = (FixedItemAppliesToPlayer) this;
+        if (this instanceof FixedItemAppliesToPlayer bonus) {
             return ChatColor.GREEN + bonus.getEffect() + ":\n" +
                     WordWrap.wrapWithNewline(ChatColor.GRAY + bonus.getEffectDescription(), 160);
         }

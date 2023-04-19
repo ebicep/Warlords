@@ -27,7 +27,6 @@ public class AchievementsMenu {
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
             .ofPattern("MM/dd/yyyy hh:mm")
             .withZone(ZoneId.of("America/New_York"));
-    ;
 
     //GENERAL - CTF - TDM - GAMEMODE - GAMEMODE
     //TIERED ACHIEVEMENTS - CHALLENGES

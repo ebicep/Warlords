@@ -128,8 +128,7 @@ public class BotManager {
                     eb.appendDescription("**Game**: " + game.getGameMode().name + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word);
-                    if (option instanceof WaveDefenseOption) {
-                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    if (option instanceof WaveDefenseOption waveDefenseOption) {
                         eb.appendDescription(" - " +
                                 waveDefenseOption.getDifficulty().getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
                     } else {

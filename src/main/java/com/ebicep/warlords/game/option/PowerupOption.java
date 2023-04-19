@@ -230,12 +230,11 @@ public class PowerupOption implements Option {
     }
 
     public void setCooldown(@Nonnegative int cooldown) {
-        int oldCooldown = cooldown;
         this.cooldown = cooldown;
-        if (oldCooldown == 0 && cooldown != 0) {
+        if (cooldown == 0 && cooldown != 0) {
             remove();
         }
-        if (oldCooldown != 0 && cooldown == 0 && hasStarted) {
+        if (cooldown != 0 && cooldown == 0 && hasStarted) {
             spawn();
         }
     }

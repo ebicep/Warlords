@@ -335,8 +335,7 @@ public enum SkillBoosts {
             "§aReduce the damage of Undying Army after dying by §c5% §aand increase the duration by §c5 §aseconds",
             UndyingArmy.class,
             abstractAbility -> {
-                if (abstractAbility instanceof UndyingArmy) {
-                    UndyingArmy undyingArmy = (UndyingArmy) abstractAbility;
+                if (abstractAbility instanceof UndyingArmy undyingArmy) {
                     undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 100);
                     undyingArmy.setMaxHealthDamage(undyingArmy.getMaxHealthDamage() - 5);
                 }
@@ -427,9 +426,8 @@ public enum SkillBoosts {
             "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
             LightInfusionCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionCrusader) {
+                if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    LightInfusionCrusader lightInfusion = (LightInfusionCrusader) abstractAbility;
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
@@ -485,9 +483,8 @@ public enum SkillBoosts {
             "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
             LightInfusionProtector.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionProtector) {
+                if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    LightInfusionProtector lightInfusion = (LightInfusionProtector) abstractAbility;
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }

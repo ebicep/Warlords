@@ -62,8 +62,7 @@ public class MobCommand extends BaseCommand {
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
                 pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
@@ -76,8 +75,7 @@ public class MobCommand extends BaseCommand {
     @Subcommand("togglespawning")
     public void toggleSpawning(@Conditions("requireGame:gamemode=PVE") Player player) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 pveOption.setPauseMobSpawn(!pveOption.isPauseMobSpawn());
                 ChatChannels.sendDebugMessage(player, ChatColor.GREEN + (pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning");
                 return;

@@ -43,7 +43,6 @@ import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -485,8 +484,7 @@ public class WarlordsEvents implements Listener {
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
         if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
-            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer) {
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) wp;
+            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                 if (weapon instanceof AbstractLegendaryWeapon) {
                     ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
