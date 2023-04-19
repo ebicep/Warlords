@@ -394,9 +394,9 @@ public class TestCommand extends BaseCommand {
 //        System.out.println(scoreboard.getTeams());
 //        //scoreboard.getTeam("sumSmash").unregister();
 //        Team team = scoreboard.registerNewTeam("sumSmash");
-//        team.setPrefix("1");
+//        team.prefix(Component.text("1");
 //        team.addEntry("sumSmash");
-//        team.setSuffix("2");
+//        team.suffix(Component.text("2");
 //        Instant now = Instant.now();
 //        System.out.println(now);
 //        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {

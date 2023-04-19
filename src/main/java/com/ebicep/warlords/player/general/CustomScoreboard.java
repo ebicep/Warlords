@@ -37,55 +37,6 @@ import static com.ebicep.warlords.util.java.NumberFormat.addCommaAndRound;
 public class CustomScoreboard {
 
     private static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
-    private static final String[] TEAM_ENTRIES = new String[]{
-            "🎂",
-            "🎉",
-            "🎁",
-            "👹",
-            "🏀",
-            "⚽",
-            "🍭",
-            "🌠",
-            "👾",
-            "🐍",
-            "🔮",
-            "👽",
-            "💣",
-            "🍫",
-            "🔫",
-            "🧭",
-            "🧱",
-            "💈",
-            "🦽",
-            "🦼"
-    };
-    private final UUID uuid;
-    private final Scoreboard scoreboard;
-    private Objective sideBar;
-    private Objective health;
-
-    public CustomScoreboard(UUID uuid) {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        scoreboard = manager.getNewScoreboard();
-
-        sideBar = scoreboard.registerNewObjective("WARLORDS", "dummy");
-        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("§e§lWARLORDS 2.0");
-
-        this.uuid = uuid;
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null) {
-            player.setScoreboard(scoreboard);
-        }
-    }
-
-    public static CustomScoreboard getPlayerScoreboard(UUID uuid) {
-        return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
-    }
-
-    public static CustomScoreboard getPlayerScoreboard(Player player) {
-        return getPlayerScoreboard(player.getUniqueId());
-    }
 
     public static void reloadPvEScoreboard(DatabasePlayerPvE databasePlayerPvE) {
         for (DatabasePlayer loadedPlayer : DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).values()) {
@@ -103,6 +54,10 @@ public class CustomScoreboard {
                 break;
             }
         }
+    }
+
+    public static CustomScoreboard getPlayerScoreboard(UUID uuid) {
+        return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
     }
 
     private void givePvEScoreboard(DatabasePlayerPvE pveStats, boolean forceClear) {
@@ -128,12 +83,26 @@ public class CustomScoreboard {
         );
     }
 
+    public CustomScoreboard(UUID uuid) {
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        scoreboard = manager.getNewScoreboard();
+
+        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("§e§lWARLORDS 2.0"));
+        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        this.uuid = uuid;
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.setScoreboard(scoreboard);
+        }
+    }
+
     public void giveNewSideBar(boolean forceClear, String... entries) {
         //clearing all teams if size doesnt match
         Set<Team> teams = scoreboard.getTeams()
-                .stream()
-                .filter(team -> team.getName().startsWith("!team"))
-                .collect(Collectors.toSet());
+                                    .stream()
+                                    .filter(team -> team.getName().startsWith("!team"))
+                                    .collect(Collectors.toSet());
         if (forceClear || entries.length != teams.size()) {
             teams.forEach(Team::unregister);
             clearSideBar();
@@ -141,8 +110,8 @@ public class CustomScoreboard {
             //making new sidebar
             for (int i = 0; i < entries.length; i++) {
                 Team tempTeam = scoreboard.registerNewTeam("!team_" + (i + 1));
-                tempTeam.addEntry(TEAM_ENTRIES[i]);
-                sideBar.getScore(TEAM_ENTRIES[i]).setScore(i + 1);
+                tempTeam.addEntry(ChatColor.values()[i].toString());
+                sideBar.getScore(ChatColor.values()[i].toString()).setScore(i + 1);
             }
         }
 
@@ -155,60 +124,37 @@ public class CustomScoreboard {
 
     private void clearSideBar() {
         sideBar.unregister();
-        sideBar = scoreboard.registerNewObjective("WARLORDS", "dummy");
+        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("§e§lWARLORDS 2.0"));
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("§e§lWARLORDS 2.0");
     }
 
     public void setSideBarTeam(int team, String entry) {
-        if (entry.length() > 16) {
-            if (entry.charAt(15) == '§') {
-                scoreboard.getTeam("!team_" + team).setPrefix(entry.substring(0, 15));
-                if (entry.length() > 31) {
-                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(15, 31));
+        Team scoreboardTeam = scoreboard.getTeam("!team_" + team);
+        if (scoreboardTeam == null) {
+            scoreboardTeam = scoreboard.registerNewTeam("!team_" + team);
+            scoreboardTeam.addEntry(ChatColor.values()[team - 1].toString());
+            sideBar.getScore(ChatColor.values()[team - 1].toString()).setScore(team);
+        }
+        if (entry.length() > 64) {
+            if (entry.charAt(63) == '§') {
+                scoreboardTeam.prefix(Component.text(entry.substring(0, 63)));
+                if (entry.length() > 127) {
+                    scoreboardTeam.suffix(Component.text(entry.substring(63, 127)));
                 } else {
-                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(15));
+                    scoreboardTeam.suffix(Component.text(entry.substring(63)));
                 }
             } else {
-                scoreboard.getTeam("!team_" + team).setPrefix(entry.substring(0, 16));
-                if (entry.length() > 32) {
-                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(16, 32));
+                scoreboardTeam.prefix(Component.text(entry.substring(0, 64)));
+                if (entry.length() > 128) {
+                    scoreboardTeam.suffix(Component.text(entry.substring(64, 128)));
                 } else {
-                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(16));
+                    scoreboardTeam.suffix(Component.text(entry.substring(64)));
                 }
             }
         } else {
-            scoreboard.getTeam("!team_" + team).setPrefix(entry);
-            scoreboard.getTeam("!team_" + team).setSuffix("");
+            scoreboardTeam.prefix(Component.text(entry));
+            scoreboardTeam.suffix(Component.text(""));
         }
-    }
-
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public Objective getHealth() {
-        return health;
-    }
-
-    public void setHealth(Objective health) {
-        this.health = health;
-    }
-
-    public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
-        if (prefix.length() > 16) {
-            prefix = "Error";
-        }
-        if (suffix.length() > 16) {
-            suffix = "Error";
-        }
-        scoreboard.getTeam("!team_" + team).setPrefix(prefix);
-        scoreboard.getTeam("!team_" + team).setSuffix(suffix);
-    }
-
-    public void giveNewSideBar(boolean forceClear, List<String> entries) {
-        // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
-        giveNewSideBar(forceClear, entries.toArray(new String[0]));
     }
 
     public static void updateLobbyPlayerNames() {
@@ -243,6 +189,32 @@ public class CustomScoreboard {
             team.prefix(Permissions.getPrefixWithColor(onlinePlayer));
             team.addEntry(name);
         }
+    }
+
+    public static CustomScoreboard getPlayerScoreboard(Player player) {
+        return getPlayerScoreboard(player.getUniqueId());
+    }
+
+    private final UUID uuid;
+    private final Scoreboard scoreboard;
+    private Objective sideBar;
+    private Objective health;
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    public Objective getHealth() {
+        return health;
+    }
+
+    public void setHealth(Objective health) {
+        this.health = health;
+    }
+
+    public void giveNewSideBar(boolean forceClear, List<String> entries) {
+        // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
+        giveNewSideBar(forceClear, entries.toArray(new String[0]));
     }
 
     public void giveMainLobbyScoreboard() {
@@ -297,8 +269,8 @@ public class CustomScoreboard {
             scoreboardSelection += selectedCollection.name;
 
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
-                    .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
-                    .findAny();
+                                                                                .filter(databasePlayer -> databasePlayer.getUuid().equals(uuid))
+                                                                                .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                 AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);

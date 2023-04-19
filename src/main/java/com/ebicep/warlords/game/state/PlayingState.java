@@ -34,6 +34,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -254,29 +255,29 @@ public class PlayingState implements State, TimerDebugAble {
             String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
             if (scoreboard.getTeam(name) == null) {
                 org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(name);
-                temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                          .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                temp.prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
+                                                                                                      .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor()));
                 temp.addEntry(name);
-                temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]");
+                temp.suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]"));
             } else {
-                scoreboard.getTeam(name).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                                              .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                scoreboard.getTeam(name).prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
+                                                                                                                          .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor()));
                 if (warlordsEntity.getCarriedFlag() != null) {
-                    scoreboard.getTeam(name).setSuffix(
+                    scoreboard.getTeam(name).suffix(Component.text(
                             ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GRAY + "Lv" +
                                     levelString +
                                     ChatColor.DARK_GRAY + "]" +
                                     ChatColor.WHITE + "⚑"
-                    );
+                    ));
                 } else {
                     String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + warlordsEntity.getMinuteStats().total().getKills();
-                    scoreboard.getTeam(name).setSuffix(
+                    scoreboard.getTeam(name).suffix(Component.text(
                             ChatColor.DARK_GRAY + " [" +
                                     ChatColor.GRAY + "Lv" +
                                     levelString +
                                     ChatColor.DARK_GRAY + "]"
-                    );
+                    ));
                 }
             }
         });
@@ -458,10 +459,10 @@ public class PlayingState implements State, TimerDebugAble {
             int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
             //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
             scoreboard.getTeam(we.getName())
-                      .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-                                                                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
+                      .prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
+                                                                                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor()));
             scoreboard.getTeam(we.getName())
-                      .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+                      .suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]"));
 
         });
     }

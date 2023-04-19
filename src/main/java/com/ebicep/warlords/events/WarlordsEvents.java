@@ -181,34 +181,33 @@ public class WarlordsEvents implements Listener {
                     //check all spec prestige
                     for (Specializations value : Specializations.VALUES) {
                         int level = ExperienceManager.getLevelForSpec(uuid, value);
-                        if (level >= ExperienceManager.LEVEL_TO_PRESTIGE) {
-                            databasePlayer.getSpec(value).addPrestige();
-                            int prestige = databasePlayer.getSpec(value).getPrestige();
-                            FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                                                                                  .with(FireworkEffect.Type.BALL)
-                                                                                                  .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige)
-                                                                                                                                              .getB())
-                                                                                                  .build()
-                            );
-                            PacketUtils.sendTitle(player,
-                                    ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
-                                    ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
-                                                                     .getA()
-                                                                     .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(
-                                                                                                                                                      prestige)
-                                                                                                                                                              .getA() + prestige,
-                                    20,
-                                    140,
-                                    20
-                            );
-                            //sumSmash is now prestige level 5 in Pyromancer!
-                            Bukkit.broadcast(Permissions.getPrefixWithColor(player)
-                                                        .append(Component.text(player.getName() + ChatColor.GRAY + " is now prestige level " +
-                                                                ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige +
-                                                                ChatColor.GRAY + " in " + ChatColor.GOLD + value.name)
-                                                        ));
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        if (level < ExperienceManager.LEVEL_TO_PRESTIGE) {
+                            continue;
                         }
+                        databasePlayer.getSpec(value).addPrestige();
+                        int prestige = databasePlayer.getSpec(value).getPrestige();
+                        FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
+                                                                                              .with(FireworkEffect.Type.BALL)
+                                                                                              .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
+                                                                                              .build()
+                        );
+                        PacketUtils.sendTitle(player,
+                                ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
+                                ExperienceManager.PRESTIGE_COLORS
+                                        .get(prestige - 1)
+                                        .getA()
+                                        .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige,
+                                20,
+                                140,
+                                20
+                        );
+                        //sumSmash is now prestige level 5 in Pyromancer!
+                        Bukkit.broadcast(Permissions.getPrefixWithColor(player)
+                                                    .append(Component.text(player.getName() + ChatColor.GRAY + " is now prestige level " +
+                                                            ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige +
+                                                            ChatColor.GRAY + " in " + ChatColor.GOLD + value.name)
+                                                    ));
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
                 } else {
                     databasePlayer.setLastLogin(Instant.now());
@@ -243,7 +242,7 @@ public class WarlordsEvents implements Listener {
                 }
             }, () -> {
                 if (!fromGame) {
-                    player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
+                    player.kick(Component.text("Unable to load player data. Report this if this issue persists.*"));
                 }
             });
             CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
