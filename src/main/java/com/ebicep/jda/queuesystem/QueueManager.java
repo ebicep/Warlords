@@ -4,8 +4,10 @@ import com.ebicep.jda.BotManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -42,29 +44,28 @@ public class QueueManager {
         }
     }
 
-    public static String getQueue() {
-        StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Queue -\n");
+    public static Component getQueue() {
+        TextComponent.Builder queueList = Component.text("Queue -", NamedTextColor.GREEN)
+                                                   .append(Component.newline())
+                                                   .toBuilder();
         for (int i = 0; i < queue.size(); i++) {
             UUID uuid = queue.get(i);
-            stringBuilder.append("    ").append(ChatColor.YELLOW).append(i + 1).append(". ").append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append("\n");
+            queueList.append(Component.text("    " + i + 1 + ". ", NamedTextColor.YELLOW))
+                     .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
+                     .append(Component.newline());
         }
         if (!futureQueue.isEmpty()) {
-            stringBuilder.append("\n");
-            stringBuilder.append(ChatColor.GREEN).append("Future Queue -\n");
+            queueList.append(Component.newline());
+            queueList.append(Component.text("Future Queue -", NamedTextColor.GREEN)
+                                      .append(Component.newline()));
             futureQueue.forEach(futureQueuePlayer -> {
-                stringBuilder.append("    ")
-                             .append(ChatColor.YELLOW)
-                             .append("- ")
-                             .append(ChatColor.AQUA)
-                             .append(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName())
-                             .append(ChatColor.GRAY)
-                             .append(" (")
-                             .append(futureQueuePlayer.timeString())
-                             .append(")")
-                             .append("\n");
+                queueList.append(Component.text("    - ", NamedTextColor.YELLOW))
+                         .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName()), NamedTextColor.AQUA))
+                         .append(Component.text(" (" + futureQueuePlayer.timeString() + ")", NamedTextColor.GRAY))
+                         .append(Component.newline());
             });
         }
-        return stringBuilder.toString();
+        return queueList.asComponent();
     }
 
     public static MessageEmbed getQueueDiscord() {
