@@ -198,7 +198,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             attribute.setBaseValue(0);
         }
         //prevents jimmy from moving
-        jimmy.setAI(true);
+        jimmy.setAI(false);
         if (isDead()) {
             jimmy.remove();
         }
