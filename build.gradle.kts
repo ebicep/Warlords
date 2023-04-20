@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.ebicep"
-version = "Forgotten Relics"
+version = "Echoes of Demise"
 description = "Warlords"
 
 java {
