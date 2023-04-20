@@ -14,9 +14,9 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
@@ -239,16 +239,19 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         String guildName = guild.getName();
-        SignGUI.open(player, new String[]{"", guildName, "Type your guild", "name to confirm"}, (p, lines) -> {
-            String confirmation = lines[0];
-            if (confirmation.equals(guildName)) {
-                guild.disband();
-            } else {
-                Guild.sendGuildMessage(player,
-                        ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
-                );
-            }
-        });
+        new SignGUI()
+                .lines("", guildName, "Type your guild", "name to confirm")
+                .onFinish((p, lines) -> {
+                    String confirmation = lines[0];
+                    if (confirmation.equals(guildName)) {
+                        guild.disband();
+                    } else {
+                        Guild.sendGuildMessage(player,
+                                ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
+                        );
+                    }
+                    return null;
+                }).open(player);
     }
 
     @Subcommand("leave")
@@ -277,16 +280,19 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "You are already the guild master.");
             return;
         }
-        SignGUI.open(player, new String[]{"", "Type CONFIRM", "Exiting will read", "current text!"}, (p, lines) -> {
-            String confirmation = lines[0];
-            if (confirmation.equals("CONFIRM")) {
-                guild.transfer(target);
-            } else {
-                Guild.sendGuildMessage(player,
-                        ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
-                );
-            }
-        });
+        new SignGUI()
+                .lines("", "Type CONFIRM", "Exiting will read", "current text!")
+                .onFinish((p, lines) -> {
+                    String confirmation = lines[0];
+                    if (confirmation.equals("CONFIRM")) {
+                        guild.transfer(target);
+                    } else {
+                        Guild.sendGuildMessage(player,
+                                ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
+                        );
+                    }
+                    return null;
+                }).open(player);
     }
 
     @Subcommand("kick|remove")

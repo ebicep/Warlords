@@ -25,8 +25,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -152,20 +152,23 @@ public class DebugMenuPlayerOptions {
                         .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
-                    SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter heal amount", "greater than 0"}, (p, lines) -> {
-                        String amount = lines[0];
-                        try {
-                            int amountNumber = Integer.parseInt(amount);
-                            if (amountNumber < 0) {
-                                throw new NumberFormatException();
-                            }
-                            target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
-                            sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber);
-                        } catch (NumberFormatException exception) {
-                            p.sendMessage(ChatColor.RED + "Invalid number");
-                        }
-                        openPlayerMenu(player, target);
-                    });
+                    new SignGUI()
+                            .lines("", "^^^^^^^", "Enter heal amount", "greater than 0")
+                            .onFinish((p, lines) -> {
+                                String amount = lines[0];
+                                try {
+                                    int amountNumber = Integer.parseInt(amount);
+                                    if (amountNumber < 0) {
+                                        throw new NumberFormatException();
+                                    }
+                                    target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
+                                    sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber);
+                                } catch (NumberFormatException exception) {
+                                    p.sendMessage(ChatColor.RED + "Invalid number");
+                                }
+                                openPlayerMenuAfterTick(player, target);
+                                return null;
+                            }).open(player);
                 }
         );
         secondRow.add(new ItemBuilder(Material.DIAMOND_SWORD)
@@ -173,20 +176,23 @@ public class DebugMenuPlayerOptions {
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(),
                 (m, e) -> {
-                    SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter damage amount", "greater than 0"}, (p, lines) -> {
-                        String amount = lines[0];
-                        try {
-                            int amountNumber = Integer.parseInt(amount);
-                            if (amountNumber < 0) {
-                                throw new NumberFormatException();
-                            }
-                            target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100, false);
-                            sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber);
-                        } catch (NumberFormatException exception) {
-                            p.sendMessage(ChatColor.RED + "Invalid number");
-                        }
-                        openPlayerMenu(player, target);
-                    });
+                    new SignGUI()
+                            .lines("", "^^^^^^^", "Enter damage amount", "greater than 0")
+                            .onFinish((p, lines) -> {
+                                String amount = lines[0];
+                                try {
+                                    int amountNumber = Integer.parseInt(amount);
+                                    if (amountNumber < 0) {
+                                        throw new NumberFormatException();
+                                    }
+                                    target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100, false);
+                                    sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber);
+                                } catch (NumberFormatException exception) {
+                                    p.sendMessage(ChatColor.RED + "Invalid number");
+                                }
+                                openPlayerMenuAfterTick(player, target);
+                                return null;
+                            }).open(player);
                 }
         );
         secondRow.add(new ItemBuilder(Material.BREWING_STAND)
@@ -233,6 +239,15 @@ public class DebugMenuPlayerOptions {
         });
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private static void openPlayerMenuAfterTick(Player player, WarlordsEntity target) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openPlayerMenu(player, target);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     static class PlayerOptionMenus {
@@ -313,32 +328,40 @@ public class DebugMenuPlayerOptions {
                                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                                 .get(),
                         (m, e) -> {
-                            SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter time of", "cooldown in seconds"}, (p, lines) -> {
-                                String amount = lines[0];
-                                try {
-                                    int amountNumber = Integer.parseInt(amount);
-                                    target.getCooldownManager().addRegularCooldown(cooldown.name,
-                                            cooldown.actionBarName,
-                                            cooldown.cooldownClass,
-                                            cooldown.cooldownObject,
-                                            target,
-                                            cooldown.cooldownType,
-                                            cooldownManager -> {
-                                            },
-                                            amountNumber * 20
-                                    );
-                                    if (cooldown == StatusEffectCooldowns.SPEED) {
-                                        target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
-                                    }
-                                    sendDebugMessage(player,
-                                            ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name
+                            new SignGUI()
+                                    .lines("", "^^^^^^^", "Enter time of", "cooldown in seconds")
+                                    .onFinish((p, lines) -> {
+                                        String amount = lines[0];
+                                        try {
+                                            int amountNumber = Integer.parseInt(amount);
+                                            target.getCooldownManager().addRegularCooldown(cooldown.name,
+                                                    cooldown.actionBarName,
+                                                    cooldown.cooldownClass,
+                                                    cooldown.cooldownObject,
+                                                    target,
+                                                    cooldown.cooldownType,
+                                                    cooldownManager -> {
+                                                    },
+                                                    amountNumber * 20
+                                            );
+                                            if (cooldown == StatusEffectCooldowns.SPEED) {
+                                                target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
+                                            }
+                                            sendDebugMessage(player,
+                                                    ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name
 
-                                    );
-                                } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid number");
-                                }
-                                openCooldownsMenu(player, target);
-                            });
+                                            );
+                                        } catch (NumberFormatException exception) {
+                                            p.sendMessage(ChatColor.RED + "Invalid number");
+                                        }
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                openCooldownsMenu(player, target);
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), 1);
+                                        return null;
+                                    }).open(player);
                         }
                 );
             }
@@ -428,26 +451,34 @@ public class DebugMenuPlayerOptions {
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter flag %", "0 < % < 10,000"}, (p, lines) -> {
-                                    String amount = lines[0];
-                                    try {
-                                        int amountNumber = Integer.parseInt(amount);
-                                        if (amountNumber < 0 || amountNumber > 10000) {
-                                            throw new NumberFormatException();
-                                        }
-                                        if (target.getCarriedFlag() != null) {
-                                            PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
-                                            flag.setPickUpTicks(amountNumber * 60);
-                                            sendDebugMessage(player,
-                                                    ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%"
+                                new SignGUI()
+                                        .lines("", "^^^^^^^", "Enter flag %", "0 < % < 10,000")
+                                        .onFinish((p, lines) -> {
+                                            String amount = lines[0];
+                                            try {
+                                                int amountNumber = Integer.parseInt(amount);
+                                                if (amountNumber < 0 || amountNumber > 10000) {
+                                                    throw new NumberFormatException();
+                                                }
+                                                if (target.getCarriedFlag() != null) {
+                                                    PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
+                                                    flag.setPickUpTicks(amountNumber * 60);
+                                                    sendDebugMessage(player,
+                                                            ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%"
 
-                                            );
-                                        }
-                                    } catch (NumberFormatException exception) {
-                                        p.sendMessage(ChatColor.RED + "Invalid number");
-                                    }
-                                    openFlagOptionMenu(player, target);
-                                });
+                                                    );
+                                                }
+                                            } catch (NumberFormatException exception) {
+                                                p.sendMessage(ChatColor.RED + "Invalid number");
+                                            }
+                                            new BukkitRunnable() {
+                                                @Override
+                                                public void run() {
+                                                    openFlagOptionMenu(player, target);
+                                                }
+                                            }.runTaskLater(Warlords.getInstance(), 1);
+                                            return null;
+                                        }).open(player);
                             } else {
                                 sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
                             }
@@ -611,20 +642,28 @@ public class DebugMenuPlayerOptions {
                                 return;
                             }
 
-                            SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter seconds", "to add"}, (p, lines) -> {
-                                String amount = lines[0];
-                                try {
-                                    int amountNumber = Integer.parseInt(amount);
-                                    ((RegularCooldown<?>) abstractCooldown).subtractTime(-amountNumber * 20);
-                                    sendDebugMessage(player,
-                                            ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName()
+                            new SignGUI()
+                                    .lines("", "^^^^^^^", "Enter seconds", "to add")
+                                    .onFinish((p, lines) -> {
+                                        String amount = lines[0];
+                                        try {
+                                            int amountNumber = Integer.parseInt(amount);
+                                            ((RegularCooldown<?>) abstractCooldown).subtractTime(-amountNumber * 20);
+                                            sendDebugMessage(player,
+                                                    ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName()
 
-                                    );
-                                } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid number");
-                                }
-                                openCooldownEditorMenu(player, target, abstractCooldown);
-                            });
+                                            );
+                                        } catch (NumberFormatException exception) {
+                                            p.sendMessage(ChatColor.RED + "Invalid number");
+                                        }
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                openCooldownEditorMenu(player, target, abstractCooldown);
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), 1);
+                                        return null;
+                                    }).open(player);
                         }
                 );
 

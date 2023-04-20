@@ -62,6 +62,10 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
@@ -71,6 +75,7 @@ dependencies {
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+    implementation("com.github.Rapha149.SignGUI:signgui:e87c00e073")
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.19.3-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.1-SNAPSHOT")

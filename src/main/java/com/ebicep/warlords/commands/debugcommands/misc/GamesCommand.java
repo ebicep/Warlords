@@ -14,15 +14,16 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.Utils;
+import de.rapha149.signgui.SignGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -137,14 +138,15 @@ public class GamesCommand extends BaseCommand {
                             .name(ChatColor.GREEN + "Edit Blue Score")
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints()},
-                                (p, lines) -> {
+                        new SignGUI()
+                                .lines("", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints())
+                                .onFinish((p, lines) -> {
                                     String score = lines[0];
                                     try {
                                         int newScore = Integer.parseInt(score);
                                         if (newScore < 0 || newScore > 1000) {
                                             p.sendMessage(ChatColor.RED + "Score must be between 0 and 1000");
-                                            return;
+                                            return lines;
                                         }
                                         player.sendMessage(ChatColor.GREEN + "Setting Score: " + ChatColor.YELLOW + game.getDate());
                                         p.sendMessage(ChatColor.GREEN + "Old Blue: " + ChatColor.BLUE + ((DatabaseGameCTF) game).getBluePoints());
@@ -153,9 +155,14 @@ public class GamesCommand extends BaseCommand {
                                     } catch (Exception e1) {
                                         p.sendMessage(ChatColor.RED + "Invalid Score");
                                     }
-                                    openGameEditorMenu(player, game);
-                                }
-                        );
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openGameEditorMenu(player, game);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     }
             );
             menu.setItem(5, 2,
@@ -163,14 +170,15 @@ public class GamesCommand extends BaseCommand {
                             .name(ChatColor.GREEN + "Edit Red Score")
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints()},
-                                (p, lines) -> {
+                        new SignGUI()
+                                .lines("", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints())
+                                .onFinish((p, lines) -> {
                                     String score = lines[0];
                                     try {
                                         int newScore = Integer.parseInt(score);
                                         if (newScore < 0 || newScore > 1000) {
                                             p.sendMessage(ChatColor.RED + "Score must be between 0 and 1000");
-                                            return;
+                                            return null;
                                         }
                                         player.sendMessage(ChatColor.GREEN + "Setting Score: " + ChatColor.YELLOW + game.getDate());
                                         p.sendMessage(ChatColor.GREEN + "Old Red: " + ChatColor.RED + ((DatabaseGameCTF) game).getRedPoints());
@@ -179,9 +187,14 @@ public class GamesCommand extends BaseCommand {
                                     } catch (Exception e1) {
                                         p.sendMessage(ChatColor.RED + "Invalid Score");
                                     }
-                                    openGameEditorMenu(player, game);
-                                }
-                        );
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openGameEditorMenu(player, game);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     }
             );
         }

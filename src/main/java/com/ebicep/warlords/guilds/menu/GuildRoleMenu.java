@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildRole;
@@ -8,11 +9,12 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLo
 import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLogPermissionRemove;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
+import de.rapha149.signgui.SignGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,27 +38,30 @@ public class GuildRoleMenu {
                         Guild.sendGuildMessage(player, ChatColor.RED + "You can only have a maximum of 7 roles.");
                         return;
                     }
-                    SignGUI.open(player, new String[]{"", "^^^^^^", "Enter new", "role name"}, (p, lines) -> {
-                        String roleName = lines[0].trim();
-                        if (roleName.isEmpty()) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
-                            return;
-                        }
-                        if (guildRoles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName))) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
-                            return;
-                        }
-                        if (roleName.length() < 3) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
-                            return;
-                        }
-                        GuildRole role = new GuildRole(roleName);
-                        guildRoles.add(1, role);
-                        Guild.sendGuildMessage(player, ChatColor.GREEN + "Role created: " + roleName);
-                        guild.log(new GuildLogRoleCreate(player.getUniqueId(), roleName));
-                        guild.queueUpdate();
-                        openRoleEditor(guild, role, player);
-                    });
+                    new SignGUI()
+                            .lines("", "^^^^^^", "Enter new", "role name")
+                            .onFinish((p, lines) -> {
+                                String roleName = lines[0].trim();
+                                if (roleName.isEmpty()) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
+                                    return null;
+                                }
+                                if (guildRoles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName))) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
+                                    return null;
+                                }
+                                if (roleName.length() < 3) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
+                                    return null;
+                                }
+                                GuildRole role = new GuildRole(roleName);
+                                guildRoles.add(1, role);
+                                Guild.sendGuildMessage(player, ChatColor.GREEN + "Role created: " + roleName);
+                                guild.log(new GuildLogRoleCreate(player.getUniqueId(), roleName));
+                                guild.queueUpdate();
+                                openRoleEditorAfterTick(guild, player, role);
+                                return null;
+                            }).open(player);
                 }
         );
 
@@ -72,6 +77,15 @@ public class GuildRoleMenu {
 
         menu.setItem(4, 4, MENU_BACK, (m, e) -> GuildMenu.openGuildMenu(guild, player, 1));
         menu.openForPlayer(player);
+    }
+
+    private static void openRoleEditorAfterTick(Guild guild, Player player, GuildRole role) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openRoleEditor(guild, role, player);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     public static void openRoleEditor(Guild guild, GuildRole role, Player player) {
@@ -134,29 +148,32 @@ public class GuildRoleMenu {
                         .lore(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
                         .get(),
                 (m, e) -> {
-                    SignGUI.open(player, new String[]{"", "^^^^^^", "Enter new", "role name"}, (p, lines) -> {
-                        String newRoleName = lines[0];
-                        if (newRoleName.isEmpty()) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
-                            return;
-                        }
-                        if (guildRoles.stream().anyMatch(r -> r.getRoleName().equalsIgnoreCase(newRoleName))) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
-                            return;
-                        }
-                        if (newRoleName.length() < 3) {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
-                            return;
-                        }
-                        if (guild.getDefaultRole().equals(role)) {
-                            guild.setDefaultRole(newRoleName);
-                        }
-                        Guild.sendGuildMessage(player, ChatColor.GREEN + "Role " + role.getRoleName() + " was renamed to " + newRoleName);
-                        guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
-                        role.setRoleName(newRoleName);
-                        guild.queueUpdate();
-                        openRoleEditor(guild, role, player);
-                    });
+                    new SignGUI()
+                            .lines("", "^^^^^^", "Enter new", "role name")
+                            .onFinish((p, lines) -> {
+                                String newRoleName = lines[0];
+                                if (newRoleName.isEmpty()) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
+                                    return null;
+                                }
+                                if (guildRoles.stream().anyMatch(r -> r.getRoleName().equalsIgnoreCase(newRoleName))) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
+                                    return null;
+                                }
+                                if (newRoleName.length() < 3) {
+                                    Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
+                                    return null;
+                                }
+                                if (guild.getDefaultRole().equals(role)) {
+                                    guild.setDefaultRole(newRoleName);
+                                }
+                                Guild.sendGuildMessage(player, ChatColor.GREEN + "Role " + role.getRoleName() + " was renamed to " + newRoleName);
+                                guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
+                                role.setRoleName(newRoleName);
+                                guild.queueUpdate();
+                                openRoleEditorAfterTick(guild, player, role);
+                                return null;
+                            }).open(player);
                 }
         );
 
@@ -199,19 +216,27 @@ public class GuildRoleMenu {
                         return;
                     }
 
-                    SignGUI.open(player, new String[]{"", "Type CONFIRM", "Exiting will read", "current text!"}, (p, lines) -> {
-                        String confirmation = lines[0];
-                        if (confirmation.equals("CONFIRM")) {
-                            guildRoles.remove(role);
-                            guild.log(new GuildLogRoleDelete(player.getUniqueId(), role.getRoleName()));
-                            guild.queueUpdate();
-                            openRoleSelectorMenu(guild, player);
-                        } else {
-                            Guild.sendGuildMessage(player,
-                                    ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM"
-                            );
-                        }
-                    });
+                    new SignGUI()
+                            .lines("", "Type CONFIRM", "Exiting will read", "current text!")
+                            .onFinish((p, lines) -> {
+                                String confirmation = lines[0];
+                                if (confirmation.equals("CONFIRM")) {
+                                    guildRoles.remove(role);
+                                    guild.log(new GuildLogRoleDelete(player.getUniqueId(), role.getRoleName()));
+                                    guild.queueUpdate();
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openRoleSelectorMenu(guild, player);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                } else {
+                                    Guild.sendGuildMessage(player,
+                                            ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM"
+                                    );
+                                }
+                                return null;
+                            }).open(player);
                 }
         );
 

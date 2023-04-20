@@ -64,17 +64,6 @@ public class SimpleWave implements Wave {
 
     @Override
     public AbstractMob<?> spawnMonster(Location loc) {
-        //TODO this always spawns the same mob?
-//        double index = totalWeight;
-//        for (SpawnSettings entry : entries) {
-//            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
-//                loc.getWorld().spigot().strikeLightningEffect(loc, false);
-//            }
-//            if (index < entry.getWeight()) {
-//                return entry.getMob().createMob.apply(loc);
-//            }
-//            index -= entry.getWeight();
-//        }
         return spawnRandomMonster(loc);
     }
 

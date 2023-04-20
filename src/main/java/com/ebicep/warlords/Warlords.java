@@ -51,7 +51,6 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
@@ -286,11 +285,6 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            SignGUI.destroy();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
     }
@@ -417,8 +411,6 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
-
-        SignGUI.init(this);
 
         Warlords.newChain()
                 .sync(NPCManager::createSupplyDropFairNPC)

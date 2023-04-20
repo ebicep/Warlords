@@ -15,14 +15,15 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -58,16 +59,25 @@ public class CompensateCommand extends BaseCommand {
                         String[] text = new String[]{"", "", "", ""};
                         String[] currencyNameSplit = currency.name.split(" ");
                         System.arraycopy(currencyNameSplit, 0, text, 1, currencyNameSplit.length);
-                        SignGUI.open(player, text, (p, lines) -> {
-                            String amount = lines[0];
-                            try {
-                                int amountInt = Integer.parseInt(amount);
-                                compensation.put(currency, (long) amountInt);
-                            } catch (Exception exception) {
-                                p.sendMessage(ChatColor.RED + "Invalid Amount");
-                            }
-                            openCompensateMenu(p, compensation, compensatedPlayers);
-                        });
+
+                        new SignGUI()
+                                .lines()
+                                .onFinish((p, lines) -> {
+                                    String amount = lines[0];
+                                    try {
+                                        int amountInt = Integer.parseInt(amount);
+                                        compensation.put(currency, (long) amountInt);
+                                    } catch (Exception exception) {
+                                        p.sendMessage(ChatColor.RED + "Invalid Amount");
+                                    }
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openCompensateMenu(p, compensation, compensatedPlayers);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     }
             );
 
@@ -84,18 +94,21 @@ public class CompensateCommand extends BaseCommand {
                                                                                                    .getName() : "All " + compensatedPlayers.size() + " Players"))
                         .get(),
                 (m, e) -> {
-                    SignGUI.open(player, new String[]{"", "Enter", "Player", "Name"}, (p, lines) -> {
-                        String playerName = lines[0];
-                        for (DatabasePlayer databasePlayer : compensatedPlayers) {
-                            if (databasePlayer.getName().equalsIgnoreCase(playerName)) {
-                                openCompensateMenu(player, compensation, List.of(databasePlayer));
-                                return;
-                            }
-                        }
-                        ChatChannels.sendDebugMessage(player,
-                                ChatColor.AQUA + playerName + ChatColor.RED + " was not found for compensation"
-                        );
-                    });
+                    new SignGUI()
+                            .lines("", "Enter", "Player", "Name")
+                            .onFinish((p, lines) -> {
+                                String playerName = lines[0];
+                                for (DatabasePlayer databasePlayer : compensatedPlayers) {
+                                    if (databasePlayer.getName().equalsIgnoreCase(playerName)) {
+                                        openCompensateMenu(player, compensation, List.of(databasePlayer));
+                                        return null;
+                                    }
+                                }
+                                ChatChannels.sendDebugMessage(player,
+                                        ChatColor.AQUA + playerName + ChatColor.RED + " was not found for compensation"
+                                );
+                                return null;
+                            }).open(player);
                 }
         );
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -126,14 +139,22 @@ public class CompensateCommand extends BaseCommand {
                         .get(),
                 (m, e) -> {
                     if (!e.isShiftClick()) {
-                        SignGUI.open(player, new String[]{"", "Enter Reward", "Title", "Blank to Cancel"}, (p, lines) -> {
-                            String title = lines[0];
-                            if (title.isEmpty()) {
-                                ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled");
-                                return;
-                            }
-                            compensate(player, compensation, compensatedPlayers, title);
-                        });
+                        new SignGUI()
+                                .lines("", "Enter Reward", "Title", "Blank to Cancel")
+                                .onFinish((p, lines) -> {
+                                    String title = lines[0];
+                                    if (title.isEmpty()) {
+                                        ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled");
+                                        return null;
+                                    }
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            compensate(player, compensation, compensatedPlayers, title);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     } else {
                         compensate(player, compensation, compensatedPlayers, null);
                     }

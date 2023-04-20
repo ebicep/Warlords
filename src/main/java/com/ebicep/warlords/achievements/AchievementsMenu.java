@@ -173,7 +173,6 @@ public class AchievementsMenu {
             x++;
             y = 0;
             if (x == 9) {
-                //TODO PAGE
                 x = 0;
 
             }
