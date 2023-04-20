@@ -133,18 +133,18 @@ tasks {
 
 
 tasks.withType<JavaCompile>().configureEach {
-    doFirst {
-        configure(options, closureOf<CompileOptions> {
-            configure(forkOptions, closureOf<ForkOptions> {
-                executable = null
-                javaHome = null
-            })
-        })
-    }
+//    doFirst {
+//        configure(options, closureOf<CompileOptions> {
+//            configure(forkOptions, closureOf<ForkOptions> {
+//                executable = null
+//                javaHome = null
+//            })
+//        })
+//    }
     options.encoding = "UTF-8"
     options.compilerArgs.add("-parameters")
     options.isFork = true
-    options.forkOptions.executable = "javac"
+//    options.forkOptions.executable = "javac"
 }
 
 // Configure plugin.yml generation https://github.com/Minecrell/plugin-yml
@@ -153,7 +153,7 @@ bukkit {
     main = "com.ebicep.warlords.Warlords"
     apiVersion = "1.19"
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens")
+    depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens", "SlimeWorldManager")
     commands {
         register("oldtest") {
             description = "Old test command"
