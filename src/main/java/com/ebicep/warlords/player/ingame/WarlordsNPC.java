@@ -11,8 +11,9 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.world.entity.Mob;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -59,6 +60,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     private float maxMeleeDamage;
     private AbstractMob<?> mob;
     private int stunTicks;
+
+    private Component mobNamePrefix = Component.empty();
 
     public WarlordsNPC(
             UUID uuid,
@@ -117,6 +120,9 @@ public final class WarlordsNPC extends WarlordsEntity {
     ) {
         super(uuid, name, entity, game, team, specClass);
         this.mob = mob;
+        if (mob != null && mob.getMobTier() != null) {
+            mobNamePrefix = Component.text(mob.getMobTier().getSymbol(), NamedTextColor.GOLD).append(Component.text(" - ", NamedTextColor.GRAY));
+        }
         this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
@@ -132,11 +138,9 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            Component oldName = getEntity().customName();
-            if (oldName != null) {
-                Component newName = oldName.append(Component.text(ChatColor.RED.toString() + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"));
-                getEntity().customName(newName);
-            }
+            getEntity().customName(Component.empty()
+                                            .append(mobNamePrefix)
+                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD)));
         }
     }
 
@@ -174,8 +178,9 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateEntity() {
-        entity.customName(Component.text(mob != null && mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " :
-                                         ChatColor.RED.toString() + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤")
+        getEntity().customName(Component.empty()
+                                        .append(mobNamePrefix)
+                                        .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
