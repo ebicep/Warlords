@@ -55,6 +55,7 @@ public abstract class GameRunnable implements Runnable {
      */
     public synchronized void cancel() throws IllegalStateException {
         Bukkit.getScheduler().cancelTask(getTaskId());
+        game.getGameTasks().removeIf(task -> task.getTaskId() == getTaskId());
     }
 
     /**

@@ -639,6 +639,10 @@ public final class Game implements Runnable, AutoCloseable {
         this.gameTasks.remove(Objects.requireNonNull(task, "task"));
     }
 
+    public List<BukkitTask> getGameTasks() {
+        return gameTasks;
+    }
+
     public BukkitTask registerGameTask(Runnable task) {
         return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
@@ -751,10 +755,6 @@ public final class Game implements Runnable, AutoCloseable {
                 false
         );
         for (BukkitTask task : gameTasks) {
-            ChatChannels.sendDebugMessage((CommandIssuer) null,
-                    ChatColor.LIGHT_PURPLE + "Closing Game: Tasks Sync " + task.isSync(),
-                    false
-            );
             task.cancel();
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null,
