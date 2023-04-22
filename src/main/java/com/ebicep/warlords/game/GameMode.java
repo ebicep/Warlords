@@ -268,8 +268,9 @@ public enum GameMode {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
                     "",
-                    color + "Survive against waves of",
-                    color + "monsters!",
+                    color + "Survive as long as possible while also killing",
+                    color + "as many monsters as possible! Every 5 minutes you will",
+                    color + "gain special reward pouches.",
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
