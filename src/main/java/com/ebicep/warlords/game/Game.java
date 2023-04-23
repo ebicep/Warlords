@@ -641,6 +641,10 @@ public final class Game implements Runnable, AutoCloseable {
         this.gameTasks.remove(Objects.requireNonNull(task, "task"));
     }
 
+    public List<BukkitTask> getGameTasks() {
+        return gameTasks;
+    }
+
     public BukkitTask registerGameTask(Runnable task) {
         return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
@@ -740,25 +744,41 @@ public final class Game implements Runnable, AutoCloseable {
         if (this.closed) {
             return;
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game",
+                false
+        );
         this.closed = true;
         List<Throwable> exceptions = new ArrayList<>();
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks = " + gameTasks.size(),
+                false
+        );
         for (BukkitTask task : gameTasks) {
             task.cancel();
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled",
+                false
+        );
         gameTasks.clear();
         for (Listener listener : eventHandlers) {
             HandlerList.unregisterAll(listener);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered",
+                false
+        );
         eventHandlers.clear();
         try {
             removeAllPlayers();
         } catch (Throwable e) {
             exceptions.add(e);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Players removed");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Players removed",
+                false
+        );
         for (Option option : options) {
             try {
                 option.onGameCleanup(this);
@@ -766,7 +786,10 @@ public final class Game implements Runnable, AutoCloseable {
                 exceptions.add(e);
             }
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up",
+                false
+        );
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
         this.nextState = null;
@@ -778,7 +801,10 @@ public final class Game implements Runnable, AutoCloseable {
             }
             this.state = new ClosedState(this);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: State end");
+        ChatChannels.sendDebugMessage((CommandIssuer) null,
+                ChatColor.LIGHT_PURPLE + "Closing Game: State end",
+                false
+        );
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
             RuntimeException e = new RuntimeException("Problems closing the game", exceptions.get(0));

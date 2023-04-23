@@ -33,6 +33,7 @@ import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -65,6 +66,7 @@ public class OnslaughtOption implements Option, PveOption {
     private int spawnLimit;
     private Location lastLocation;
     private float integrityCounter = 100;
+    private float integrityDecayIncrease = 0;
 
     public OnslaughtOption(Team team, WaveList waves) {
         this.team = team;
@@ -170,13 +172,12 @@ public class OnslaughtOption implements Option, PveOption {
 
         new GameRunnable(game) {
             int counter = 0;
-
             @Override
             public void run() {
                 ticksElapsed.getAndIncrement();
                 counter++;
                 if (counter % 20 == 0) {
-                    integrityCounter -= getIntegrityDecay((int) game.warlordsPlayers().count());
+                    integrityCounter -= (getIntegrityDecay((int) game.warlordsPlayers().count()) + integrityDecayIncrease);
                 }
 
                 if (integrityCounter <= 0) {
@@ -190,20 +191,23 @@ public class OnslaughtOption implements Option, PveOption {
 
                 if (ticksElapsed.get() % 36000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
+                        wp.playSound(wp.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
                                 playerAspirantPouch,
-                                "Aspirant Pouch"
+                                ChatColor.RED + "Aspirant Pouch"
                         );
                     });
                 } else if (ticksElapsed.get() % 6000 == 0) {
+                    integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
+                        wp.playSound(wp.getLocation(), Sound.LEVEL_UP, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL,
                                 playerSyntheticPouch,
-                                "Synthetic Pouch"
+                                ChatColor.AQUA + "Synthetic Pouch"
                         );
                     });
                 }
@@ -329,10 +333,10 @@ public class OnslaughtOption implements Option, PveOption {
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
             case 1 -> {
-                return 0.25f;
+                return 0.4f;
             }
             case 2 -> {
-                return 0.5f;
+                return 0.7f;
             }
             case 3 -> {
                 return 1;
@@ -372,16 +376,22 @@ public class OnslaughtOption implements Option, PveOption {
             Long amount = reward.getB();
             playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
                        .merge(spendable, amount, Long::sum);
+            String rewardString = spendable.getChatColor() + "+" + spendable.getCostColoredName(amount);
             RewardInventory.sendRewardMessage(uuid,
-                    ChatColor.GREEN + pouchName + ": " + spendable.getChatColor() + "+" + spendable.getCostColoredName(amount)
+                    pouchName + ": " + rewardString
+            );
+            ChatUtils.sendTitleToGamePlayers(
+                    game,
+                    pouchName + ":",
+                    rewardString
             );
         }
     }
 
     public int getSpawnLimit(int playerCount) {
         return switch (playerCount) {
-            case 1 -> 5;
-            case 2 -> 10;
+            case 1 -> 7;
+            case 2 -> 11;
             case 3 -> 15;
             case 4 -> 20;
             case 5 -> 25;

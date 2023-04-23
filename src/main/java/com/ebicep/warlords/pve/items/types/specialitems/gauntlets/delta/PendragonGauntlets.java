@@ -33,7 +33,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
     @Override
     public String getBonus() {
-        return "Increases Ground Slam's critical chance to 100%.";
+        return "Increases Ground Slam's critical chance by 30%.";
     }
 
     @Override
@@ -45,7 +45,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             if (ability instanceof GroundSlam) {
-                ability.setCritChance(100);
+                ability.setCritChance(ability.getCritChance() + 30);
             }
         }
     }
