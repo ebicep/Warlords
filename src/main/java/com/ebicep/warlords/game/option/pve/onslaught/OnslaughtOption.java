@@ -191,7 +191,7 @@ public class OnslaughtOption implements Option, PveOption {
 
                 if (ticksElapsed.get() % 36000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
-                        wp.playSound(wp.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.1f);
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
@@ -202,7 +202,7 @@ public class OnslaughtOption implements Option, PveOption {
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
-                        wp.playSound(wp.getLocation(), Sound.LEVEL_UP, 2, 0.1f);
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL,
