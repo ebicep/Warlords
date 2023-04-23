@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -129,7 +130,7 @@ public class DebugMenuGameOptions {
                 boolean isASelectedAddon = addons.contains(gameAddon);
                 ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                         .name(ChatColor.GREEN + gameAddon.getName())
-                        .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
+                        .loreLEGACY(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
                 if (isASelectedAddon) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
@@ -163,7 +164,7 @@ public class DebugMenuGameOptions {
                         0,
                         new ItemBuilder(Material.DIAMOND_BLOCK)
                                 .name(ChatColor.GREEN + "Comps Preset")
-                                .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
+                                .loreLEGACY(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
                                 .get(),
                         (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
                             queueEntryBuilder
@@ -210,7 +211,7 @@ public class DebugMenuGameOptions {
             for (Game game : games) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Game - " + game.getGameId())
-                        .lore(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
+                        .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
                                 ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
                                 ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
                                 ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
@@ -257,9 +258,9 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         if (game.isFrozen()) {
-                            game.removeFrozenCause("Debug");
+                            game.removeFrozenCause(Component.text("Debug"));
                         } else {
-                            game.addFrozenCause("Debug");
+                            game.addFrozenCause(Component.text("Debug"));
                         }
                         sendDebugMessage(player, player.getName() + " froze game " + game.getGameId());
                     }

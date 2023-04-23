@@ -10,8 +10,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -96,31 +97,31 @@ public class Intervene extends AbstractAbility implements Duration {
 
             veneTarget.getCooldownManager().getCooldowns().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
-                    cd.getFrom().sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                            ChatColor.GRAY + cd.getFrom().getName() + "'s " +
-                            ChatColor.YELLOW + "Intervene " +
-                            ChatColor.GRAY + "has expired!"
+                    cd.getFrom().sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                            .append(Component.text(" " + cd.getFrom().getName() + "'s ", NamedTextColor.GRAY))
+                            .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                            .append(Component.text(" has expired!", NamedTextColor.GRAY))
                     );
-                    veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                            ChatColor.GRAY + cd.getFrom().getName() + "'s " +
-                            ChatColor.YELLOW + "Intervene " +
-                            ChatColor.GRAY + "has expired!"
+                    veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                            .append(Component.text(" " + cd.getFrom().getName() + "'s ", NamedTextColor.GRAY))
+                            .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                            .append(Component.text(" has expired!", NamedTextColor.GRAY))
                     );
-
                     return true;
                 } else {
                     return false;
                 }
             });
 
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + "§7 You are now protecting " +
-                    veneTarget.getName() + " with your §eIntervene!"
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You are now protecting " + veneTarget.getName() + " with your ", NamedTextColor.GRAY))
+                    .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
-
-            veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + "§7 " +
-                    wp.getName() + " is shielding you with their " +
-                    ChatColor.YELLOW + "Intervene" +
-                    ChatColor.GRAY + "!"
+            veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
 
             LinkedCooldown<Intervene> interveneCooldown = new LinkedCooldown<>(
@@ -136,15 +137,18 @@ public class Intervene extends AbstractAbility implements Duration {
                         if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                             return;
                         }
-                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                ChatColor.GRAY + wp.getName() + "'s " +
-                                ChatColor.YELLOW + "Intervene " +
-                                ChatColor.GRAY + "has expired!"
+
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                .append(Component.text(" "))
+                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                                .append(Component.text(" has expired!", NamedTextColor.GRAY))
                         );
-                        veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                ChatColor.GRAY + wp.getName() + "'s " +
-                                ChatColor.YELLOW + "Intervene " +
-                                ChatColor.GRAY + "has expired!"
+                        veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                .append(Component.text(" "))
+                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                                .append(Component.text(" has expired!", NamedTextColor.GRAY))
                         );
                     },
                     tickDuration,
@@ -155,17 +159,13 @@ public class Intervene extends AbstractAbility implements Duration {
                         }
                         if (ticksElapsed % 20 == 0) {
                             int timeLeft = Math.round(ticksLeft / 20f);
-                            if (timeLeft == 1) {
-                                veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
-                                        timeLeft + "§7 second!"
-                                );
-                            } else {
-                                veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
-                                        timeLeft + "§7 seconds!"
-                                );
-                            }
+                            veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                    .append(Component.text("Intervene", NamedTextColor.YELLOW))
+                                    .append(Component.text(" will expire in ", NamedTextColor.GRAY))
+                                    .append(Component.text(timeLeft, NamedTextColor.GOLD))
+                                    .append(Component.text(" second" + (timeLeft == 1 ? "!" : "s!"), NamedTextColor.GRAY))
+                            );
                         }
                     }),
                     veneTarget

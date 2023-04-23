@@ -249,7 +249,7 @@ public enum GameEvents {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.IRON_BARS)
                             .name(ChatColor.GREEN + "Boltaro’s Lair")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.YELLOW + "Do you have what it takes to be a fighter?",
                                     "",
                                     ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
@@ -270,7 +270,7 @@ public enum GameEvents {
             menu.setItem(6, 1,
                     new ItemBuilder(SkullUtils.getSkullFrom(SkullID.DEMON))
                             .name(ChatColor.GREEN + "Boltaro Bonanza")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.YELLOW + "Kill as many Boltaro as possible!",
                                     "",
                                     ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "200 Seconds",
@@ -476,7 +476,7 @@ public enum GameEvents {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BONE)
                             .name(ChatColor.GREEN + "Narmer’s Tomb")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.YELLOW + "Something spooky here...",
                                     "",
                                     ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
@@ -684,7 +684,7 @@ public enum GameEvents {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BONE)
                             .name(ChatColor.GREEN + "Spiders Dwelling")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.YELLOW + "EEEEEK!",
                                     "",
                                     ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",

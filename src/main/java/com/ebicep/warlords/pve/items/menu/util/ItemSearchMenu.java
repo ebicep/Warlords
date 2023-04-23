@@ -127,7 +127,7 @@ public class ItemSearchMenu extends Menu {
         setItem(2, 5,
                 new ItemBuilder(Material.ZOMBIE_HEAD)
                         .name("§aYour Drops")
-                        .lore(
+                        .loreLEGACY(
                                 MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
                                 Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
                                 Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))
@@ -141,7 +141,7 @@ public class ItemSearchMenu extends Menu {
         setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.GREEN + "Reset Settings")
-                        .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .loreLEGACY(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
@@ -177,7 +177,7 @@ public class ItemSearchMenu extends Menu {
         setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
                         .name(ChatColor.GREEN + "Filter Settings")
-                        .lore(filterLore)
+                        .loreLEGACY(filterLore)
                         .get(),
                 (m, e) -> {
                     ItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
@@ -190,9 +190,9 @@ public class ItemSearchMenu extends Menu {
         setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
                         .name(ChatColor.GREEN + "Sort By")
-                        .lore(Arrays.stream(SortOptions.VALUES)
-                                    .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                    .collect(Collectors.joining("\n"))
+                        .loreLEGACY(Arrays.stream(SortOptions.VALUES)
+                                          .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                          .collect(Collectors.joining("\n"))
                         )
                         .get(),
                 (m, e) -> {
@@ -206,9 +206,9 @@ public class ItemSearchMenu extends Menu {
         setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "Sort Order")
-                        .lore(menuSettings.isAscending() ?
-                              ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
-                              ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
+                        .loreLEGACY(menuSettings.isAscending() ?
+                                    ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
+                                    ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
                         )
                         .get(),
                 (m, e) -> {
@@ -225,7 +225,7 @@ public class ItemSearchMenu extends Menu {
             setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
@@ -237,7 +237,7 @@ public class ItemSearchMenu extends Menu {
             setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);

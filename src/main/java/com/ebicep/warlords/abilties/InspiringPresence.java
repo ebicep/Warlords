@@ -9,7 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -105,10 +106,11 @@ public class InspiringPresence extends AbstractAbility implements Duration {
                 resetCooldowns(presenceTarget);
                 presenceTarget.setCooldownModifier(0.9);
             }
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " Your Inspiring Presence inspired " +
-                    ChatColor.YELLOW + presenceTarget.getName() +
-                    ChatColor.GRAY + "!"
+
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your Inspiring Presence inspired ", NamedTextColor.GRAY))
+                    .append(Component.text(presenceTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
 
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");

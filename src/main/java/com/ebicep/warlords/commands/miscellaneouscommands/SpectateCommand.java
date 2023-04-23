@@ -44,7 +44,7 @@ public class SpectateCommand extends BaseCommand {
         for (Game game : games) {
             ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
                     .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
-                    .lore(
+                    .loreLEGACY(
                             ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
                             ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
                             ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons()

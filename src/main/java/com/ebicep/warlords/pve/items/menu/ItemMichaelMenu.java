@@ -40,7 +40,7 @@ public class ItemMichaelMenu {
         menu.setItem(1, 1,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Your Blessings")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "View your found and bought blessings", 170))
+                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "View your found and bought blessings", 170))
                         .get(),
                 (m, e) -> {
                     YourBlessingsMenu.openYourBlessingsMenu(player, databasePlayer);
@@ -50,7 +50,7 @@ public class ItemMichaelMenu {
         menu.setItem(3, 1,
                 new ItemBuilder(Material.PAPER)
                         .name(ChatColor.GREEN + "Buy a Blessing")
-                        .lore(
+                        .loreLEGACY(
                                 WordWrap.wrapWithNewline(ChatColor.GRAY + "Buy blessings at the cost of mob drops.", 170),
                                 "",
                                 WordWrap.wrapWithNewline(
@@ -66,7 +66,7 @@ public class ItemMichaelMenu {
         menu.setItem(5, 1,
                 new ItemBuilder(Material.ANVIL)
                         .name(ChatColor.GREEN + "Apply a Blessing")
-                        .lore(
+                        .loreLEGACY(
                                 WordWrap.wrapWithNewline(ChatColor.GRAY + "Items have different modified values which range from being:", 170),
                                 ChatColor.GRAY + "  - " + ChatColor.DARK_RED + "Most Cursed (-5)",
                                 ChatColor.GRAY + "  - " + ChatColor.WHITE + "Normal (0)",
@@ -90,7 +90,7 @@ public class ItemMichaelMenu {
         menu.setItem(7, 1,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.GREEN + "Remove a Curse")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Removing a Curse on an Item will lower its curse effectiveness by a tier.", 150))
+                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Removing a Curse on an Item will lower its curse effectiveness by a tier.", 150))
                         .get(),
                 (m, e) -> {
                     RemoveACurseMenu.openPurifyItemMenu(player, databasePlayer, null);
@@ -110,7 +110,7 @@ public class ItemMichaelMenu {
             menu.setItem(1, 1,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Unknown Blessings")
-                            .lore(
+                            .loreLEGACY(
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "You can find unknown blessings by killing mobs.", 150),
                                     "",
                                     ChatColor.GREEN + "Bought Blessings",
@@ -125,7 +125,7 @@ public class ItemMichaelMenu {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.PAPER)
                             .name(ChatColor.GREEN + "Unknown Blessings")
-                            .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingsFound)
+                            .loreLEGACY(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingsFound)
                             .amount(blessingsFound)
                             .get(),
                     (m, e) -> {
@@ -137,7 +137,7 @@ public class ItemMichaelMenu {
                 menu.setItem(tier + 2, 1,
                         new ItemBuilder(Material.PAPER)
                                 .name(ChatColor.GREEN + "Tier " + tier + " Bought Blessings")
-                                .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
+                                .loreLEGACY(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
                                 .amount(blessingBoughtAmount)
                                 .enchant(Enchantment.OXYGEN, 1)
                                 .flags(ItemFlag.HIDE_ENCHANTS)
@@ -207,7 +207,7 @@ public class ItemMichaelMenu {
                 menu.setItem(tier + 1, 1,
                         new ItemBuilder(Material.PAPER)
                                 .name(ChatColor.GREEN + "Tier " + tier)
-                                .lore(
+                                .loreLEGACY(
                                         ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                                 )
                                 .addLore(lore)
@@ -383,7 +383,7 @@ public class ItemMichaelMenu {
             menu.setItem(1, 1,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Unknown Blessings")
-                            .lore(
+                            .loreLEGACY(
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "You can find unknown blessings by killing mobs.", 150),
                                     "",
                                     ChatColor.GREEN + "Bought Blessings",
@@ -398,7 +398,7 @@ public class ItemMichaelMenu {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.PAPER)
                             .name(ChatColor.GREEN + "Unknown Blessings")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingsFound,
                                     "",
                                     ChatColor.GRAY + "Bless Chance: " +
@@ -428,7 +428,7 @@ public class ItemMichaelMenu {
                 boolean normalItem = menuData.getItem().getModifier() == 0;
                 ItemBuilder itemBuilder = new ItemBuilder(normalItem ? Material.PAPER : Material.BARRIER)
                         .name(ChatColor.GREEN + "Tier " + tier)
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount,
                                 "",
                                 ChatColor.GRAY + "Bless Chance: " + ChatColor.YELLOW + "100%",
@@ -485,7 +485,7 @@ public class ItemMichaelMenu {
                                                             .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
             ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && (!blessingFound || enoughCost) ? Material.ANVIL : Material.BARRIER))
                     .name(ChatColor.GREEN + "Click to Apply Blessing")
-                    .lore(
+                    .loreLEGACY(
                             ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
                             ItemMenuUtil.getRequirementMetString(blessing != null, "Blessing Selected")
                     );
@@ -701,7 +701,7 @@ public class ItemMichaelMenu {
             menu.setItem(6, 2,
                     new ItemBuilder(item != null && enoughCost ? Material.MILK_BUCKET : Material.BARRIER)
                             .name(ChatColor.GREEN + "Click to Purify Item")
-                            .lore(
+                            .loreLEGACY(
                                     ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
                                     ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
                             )

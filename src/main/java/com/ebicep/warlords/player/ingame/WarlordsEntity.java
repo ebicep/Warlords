@@ -37,6 +37,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
@@ -66,13 +68,13 @@ import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 public abstract class WarlordsEntity {
 
     //RED << (Receiving from enemy / Negative from team?)
-    public static final String RECEIVE_ARROW_RED = ChatColor.RED + "«";
+    public static final Component RECEIVE_ARROW_RED = Component.text("«", NamedTextColor.RED);
     //GREEN << (Receiving from team / Positive from enemy?)
-    public static final String RECEIVE_ARROW_GREEN = ChatColor.GREEN + "«";
+    public static final Component RECEIVE_ARROW_GREEN = Component.text("«", NamedTextColor.GREEN);
     //RED >> (Doing negatives teammates?)
-    public static final String GIVE_ARROW_RED = ChatColor.RED + "»";
+    public static final Component GIVE_ARROW_RED = Component.text("»", NamedTextColor.RED);
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
-    public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "»";
+    public static final Component GIVE_ARROW_GREEN = Component.text("»", NamedTextColor.GREEN);
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
     protected boolean spawnGrave = true;
@@ -633,11 +635,11 @@ public abstract class WarlordsEntity {
                     }
 
                     if (isMeleeHit) {
-                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
+                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY)));
+                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text("Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
+                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s " + ability + " hit.", NamedTextColor.GRAY)));
+                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
@@ -775,12 +777,16 @@ public abstract class WarlordsEntity {
 
                     attacker.addKill();
 
-                    attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
-                    sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
+                    attacker.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
+                                                  .append(getColoredName()));
+                    sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
+                                         .append(attacker.getColoredName()));
 
                     game.forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
-                            p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                            p.sendMessage(getColoredName()
+                                    .append(Component.text(" was killed by ", NamedTextColor.GRAY))
+                                    .append(attacker.getColoredName()));
                         }
                     });
 
@@ -826,7 +832,11 @@ public abstract class WarlordsEntity {
         if (getEntity() instanceof Player) {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid());
             if (playerSettings.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
-                sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damage) + ChatColor.GRAY + " " + from + ".");
+                sendMessage(RECEIVE_ARROW_RED
+                        .append(Component.text("You took ", NamedTextColor.GRAY))
+                        .append(Component.text(Math.round(damage), NamedTextColor.RED))
+                        .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
+                );
             }
         }
     }
@@ -1042,44 +1052,50 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield,
             boolean isOverHeal
     ) {
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-               .append(" Your ").append(ability);
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
         if (isCrit) {
-            ownFeed.append(" critically");
+            healBuilder.decorate(TextDecoration.BOLD);
         }
-        ownFeed.append(" healed you for ").append(ChatColor.GREEN);
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-        ownFeed.append(Math.round(healValue));
-        ownFeed.append(isCrit ? "!" : "");
+        healBuilder.append(Component.text(Math.round(healValue)));
+        healBuilder.append(Component.text(isCrit ? "!" : ""));
         if (isLastStandFromShield) {
-            ownFeed.append(" Absorbed!");
+            healBuilder.append(Component.text(" Absorbed!"));
         }
-        ownFeed.append(ChatColor.GRAY).append(" health.");
+        secondHalf.append(healBuilder);
+        secondHalf.append(Component.text(" health."));
 
-        if (player.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUuid());
-            switch (playerSettings.getChatHealingMode()) {
-                case ALL -> {
+        // Own Message
+        TextComponent.Builder hitBuilder = Component.text(" Your " + ability, NamedTextColor.GRAY).toBuilder();
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+        hitBuilder.append(Component.text(" healed you for "));
+
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
+
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUuid(), player.getEntity() instanceof Player);
+        switch (playerSettings.getChatHealingMode()) {
+            case ALL -> {
+                if (player.showDebugMessage) {
+                    player.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                    );
+                } else {
+                    player.sendMessage(ownFeed.build());
+                }
+            }
+            case CRITS_ONLY -> {
+                if (isCrit) {
                     if (player.showDebugMessage) {
-                        player.sendMessage(Component.text(ownFeed.toString())
-                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        player.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
-                        player.sendMessage(ownFeed.toString());
-                    }
-                }
-                case CRITS_ONLY -> {
-                    if (isCrit) {
-                        if (player.showDebugMessage) {
-                            player.sendMessage(Component.text(ownFeed.toString())
-                                                        .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
-                            );
-                        } else {
-                            player.sendMessage(ownFeed.toString());
-                        }
+                        player.sendMessage(ownFeed.build());
                     }
                 }
             }
@@ -1104,105 +1120,94 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield,
             boolean isOverHeal
     ) {
-        // Own Message
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-               .append(" Your ").append(ability);
-
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
         if (isCrit) {
-            ownFeed.append(" critically");
+            healBuilder.decorate(TextDecoration.BOLD);
         }
-
-        if (isOverHeal) {
-            ownFeed.append(" overhealed ").append(name).append(" for ").append(ChatColor.GREEN);
-        } else {
-            ownFeed.append(" healed ").append(name).append(" for ").append(ChatColor.GREEN);
-        }
-
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-
-        ownFeed.append(Math.round(healValue));
-        ownFeed.append(isCrit ? "!" : "");
-
+        healBuilder.append(Component.text(Math.round(healValue)));
+        healBuilder.append(Component.text(isCrit ? "!" : ""));
         if (isLastStandFromShield) {
-            ownFeed.append(" Absorbed!");
+            healBuilder.append(Component.text(" Absorbed!"));
+        }
+        secondHalf.append(healBuilder);
+        secondHalf.append(Component.text(" health."));
+
+        // Own Message
+        TextComponent.Builder hitBuilder = Component.text(" Your " + ability, NamedTextColor.GRAY).toBuilder();
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+        if (isOverHeal) {
+            hitBuilder.append(Component.text(" overhealed " + name + " for "));
+        } else {
+            hitBuilder.append(Component.text(" healed " + name + " for "));
         }
 
-        ownFeed.append(ChatColor.GRAY).append(" health.");
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (playerSettings.getChatHealingMode()) {
             case ALL -> {
                 if (sender.showDebugMessage) {
-                    sender.sendMessage(Component.text(ownFeed.toString())
-                                                .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                    sender.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                     );
                 } else {
-                    sender.sendMessage(ownFeed.toString());
+                    sender.sendMessage(ownFeed.build());
                 }
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
-                        sender.sendMessage(Component.text(ownFeed.toString())
-                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        sender.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
-                        sender.sendMessage(ownFeed.toString());
+                        sender.sendMessage(ownFeed.build());
                     }
                 }
             }
         }
 
         // Ally Message
-        StringBuilder allyFeed = new StringBuilder();
-        allyFeed.append(RECEIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ").append(sender.getName())
-                .append("'s ").append(ability);
-
+        hitBuilder = Component.text(" " + sender.getName() + "'s " + ability, NamedTextColor.GRAY).toBuilder();
         if (isCrit) {
-            allyFeed.append(" critically");
+            hitBuilder.append(Component.text(" critically"));
         }
-
         if (isOverHeal) {
-            allyFeed.append(" overhealed you for ").append(ChatColor.GREEN);
+            hitBuilder.append(Component.text(" overhealed you for "));
         } else {
-            allyFeed.append(" healed you for ").append(ChatColor.GREEN);
+            hitBuilder.append(Component.text(" healed you for "));
         }
 
-        if (isCrit) {
-            allyFeed.append("§l");
-        }
-
-        allyFeed.append(Math.round(healValue));
-        allyFeed.append(isCrit ? "!" : "");
-
-        if (isLastStandFromShield) {
-            allyFeed.append(" Absorbed!");
-        }
-
-        allyFeed.append(ChatColor.GRAY).append(" health.");
+        TextComponent.Builder allyFeed = Component.text()
+                                                  .append(RECEIVE_ARROW_GREEN)
+                                                  .append(hitBuilder)
+                                                  .append(secondHalf);
 
         playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
         switch (playerSettings.getChatHealingMode()) {
             case ALL -> {
                 if (receiver.showDebugMessage) {
-                    receiver.sendMessage(Component.text(receiver.toString())
-                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                    receiver.sendMessage(allyFeed.build()
+                                                 .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                     );
                 } else {
-                    receiver.sendMessage(allyFeed.toString());
+                    receiver.sendMessage(allyFeed.build());
                 }
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
-                        receiver.sendMessage(Component.text(receiver.toString())
-                                                      .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        receiver.sendMessage(allyFeed.build()
+                                                     .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
-                        receiver.sendMessage(allyFeed.toString());
+                        receiver.sendMessage(allyFeed.build());
                     }
                 }
             }
@@ -1227,92 +1232,91 @@ public abstract class WarlordsEntity {
             boolean isCrit,
             boolean isMeleeHit
     ) {
-        // Receiver feed
-        StringBuilder enemyFeed = new StringBuilder();
-        enemyFeed.append(RECEIVE_ARROW_RED).append(ChatColor.GRAY).append(" ").append(sender.getName());
-        if (!isMeleeHit) {
-            enemyFeed.append("'s ").append(ability);
-        }
-        enemyFeed.append(" hit you for ").append(ChatColor.RED);
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder damageBuilder = Component.text().color(NamedTextColor.RED);
         if (isCrit) {
-            enemyFeed.append("§l");
+            damageBuilder.decorate(TextDecoration.BOLD);
         }
-        enemyFeed.append(Math.round(damageValue));
+        damageBuilder.append(Component.text(Math.round(damageValue)));
         if (isCrit) {
-            enemyFeed.append("! ").append(ChatColor.GRAY).append("critical");
+            damageBuilder.append(Component.text("! "));
+        }
+        secondHalf.append(damageBuilder);
+        if (isCrit) {
+            secondHalf.append(Component.text("critical"));
         }
         if (isMeleeHit) {
-            enemyFeed.append(ChatColor.GRAY).append(" melee");
+            secondHalf.append(Component.text(" melee"));
         }
-        enemyFeed.append(ChatColor.GRAY).append(" damage.");
+        secondHalf.append(Component.text(" damage."));
+
+        // Receiver feed
+        TextComponent.Builder hitBuilder = Component.text(" " + sender.getName(), NamedTextColor.GRAY).toBuilder();
+        if (!isMeleeHit) {
+            hitBuilder.append(Component.text("'s " + ability));
+        }
+        hitBuilder.append(Component.text(" hit you for "));
+        TextComponent.Builder enemyFeed = Component.text()
+                                                   .append(RECEIVE_ARROW_RED)
+                                                   .append(hitBuilder)
+                                                   .append(secondHalf);
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
         switch (playerSettings.getChatDamageMode()) {
             case ALL -> {
                 if (receiver.showDebugMessage) {
-                    receiver.sendMessage(Component.text(enemyFeed.toString())
+                    receiver.sendMessage(enemyFeed.build()
                                                   .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                     );
                 } else {
-                    receiver.sendMessage(enemyFeed.toString());
+                    receiver.sendMessage(enemyFeed.build());
                 }
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
-                        receiver.sendMessage(Component.text(enemyFeed.toString())
+                        receiver.sendMessage(enemyFeed.build()
                                                       .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
-                        receiver.sendMessage(enemyFeed.toString());
+                        receiver.sendMessage(enemyFeed.build());
                     }
                 }
             }
         }
 
-
         // Sender feed
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ");
+        hitBuilder = Component.text(" ", NamedTextColor.GRAY).toBuilder();
         if (isMeleeHit) {
-            ownFeed.append("You hit ");
+            hitBuilder.append(Component.text("You hit "));
         } else {
-            ownFeed.append("Your ").append(ability).append(" hit ");
+            hitBuilder.append(Component.text("Your " + ability + " hit "));
         }
-        ownFeed.append(name);
-        ownFeed.append(" for ").append(ChatColor.RED);
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-        ownFeed.append(Math.round(damageValue));
-        if (isCrit) {
-            ownFeed.append("! ").append(ChatColor.GRAY).append("critical");
-        }
-        if (isMeleeHit) {
-            ownFeed.append(ChatColor.GRAY).append(" melee");
-        }
-
-        ownFeed.append(ChatColor.GRAY).append(" damage.");
+        hitBuilder.append(Component.text(name + " for "));
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
 
         playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (playerSettings.getChatDamageMode()) {
             case ALL -> {
                 if (sender.showDebugMessage) {
-                    sender.sendMessage(Component.text(ownFeed.toString())
-                                                .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                    sender.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                     );
                 } else {
-                    sender.sendMessage(ownFeed.toString());
+                    sender.sendMessage(ownFeed.build());
                 }
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
-                        sender.sendMessage(Component.text(ownFeed.toString())
-                                                    .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                        sender.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
                         );
                     } else {
-                        sender.sendMessage(ownFeed.toString());
+                        sender.sendMessage(ownFeed.build());
                     }
                 }
             }
@@ -1455,20 +1459,15 @@ public abstract class WarlordsEntity {
         //giving out assists
         hitBy.forEach((assisted, value) -> {
             if (attacker == assisted || attacker == this) {
-                assisted.sendMessage(
-                        ChatColor.GRAY +
-                                "You assisted in killing " +
-                                getColoredName()
+                assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
+                                              .append(getColoredName())
                 );
             } else {
                 if (attacker != null) {
-                    assisted.sendMessage(
-                            ChatColor.GRAY +
-                                    "You assisted " +
-                                    attacker.getColoredName() +
-                                    ChatColor.GRAY + " in killing " +
-                                    getColoredName()
-                    );
+                    assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
+                                                  .append(attacker.getColoredName())
+                                                  .append(Component.text(" in killing "))
+                                                  .append(getColoredName()));
                 }
             }
             assisted.addAssist();
@@ -1897,14 +1896,26 @@ public abstract class WarlordsEntity {
                 PlayerSettings giverSettings = PlayerSettings.getPlayerSettings(giver.getUuid());
                 if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
                     if (this == giver) {
-                        sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
+                        sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your " + ability + " gave you ", NamedTextColor.GRAY))
+                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                                .append(Component.text(" energy.", NamedTextColor.GRAY))
+                        );
                     } else {
-                        sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
+                        sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                .append(Component.text(" " + giver.getName() + "'s " + ability + " gave you ", NamedTextColor.GRAY))
+                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                                .append(Component.text(" energy.", NamedTextColor.GRAY))
+                        );
                     }
                 }
                 if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
                     if (this != giver) {
-                        giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
+                        giver.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your " + ability + " gave " + name + " ", NamedTextColor.GRAY))
+                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                                .append(Component.text(" energy.", NamedTextColor.GRAY))
+                        );
                     }
                 }
             }
@@ -1934,25 +1945,6 @@ public abstract class WarlordsEntity {
         this.uuid = uuid;
     }
 
-    public void sendMessage(String message) {
-        this.entity.sendMessage(message);
-        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-            game.spectators()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(message));
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void sendMessage(Component component) {
         this.entity.sendMessage(component);
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
@@ -1963,6 +1955,14 @@ public abstract class WarlordsEntity {
                 .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
                 .forEach(player -> player.sendMessage(component));
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public float subtractEnergy(float amount, boolean fromAttacker) {
@@ -2327,8 +2327,8 @@ public abstract class WarlordsEntity {
                : 1;
     }
 
-    public String getColoredName() {
-        return getTeam().teamColor() + getName();
+    public Component getColoredName() {
+        return Component.text(getName(), getTeam().teamColor());
     }
 
     public String getColoredNameBold() {
@@ -2632,6 +2632,17 @@ public abstract class WarlordsEntity {
         this.currency += currencyToAdd.get();
         sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
+    }
+
+    public void sendMessage(String message) {
+        this.entity.sendMessage(message);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(message));
+        }
     }
 
     public void subtractCurrency(int currency) {

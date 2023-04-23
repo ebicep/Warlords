@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -15,10 +16,6 @@ import java.time.Instant;
 import java.util.function.Function;
 
 public interface Achievement {
-
-    String getName();
-
-    String getDescription();
 
     GameMode getGameMode();
 
@@ -29,28 +26,30 @@ public interface Achievement {
     Difficulty getDifficulty();
 
     default void sendAchievementUnlockMessage(Player player) {
-        TextComponent component = Component.text(ChatColor.GREEN + ">>  Achievement Unlocked: ")
-                                           .append(Component.text(ChatColor.GOLD + getName())
-                                                            .hoverEvent(HoverEvent.showText(Component.text(
-                                                                    WordWrap.wrapWithNewline(ChatColor.GREEN + getDescription(), 200
-                                                                    )))))
-                                           .append(Component.text(ChatColor.GREEN + "  <<"));
-        ChatUtils.sendMessageToPlayer(player, component, ChatColor.GREEN, true);
+        TextComponent component = Component.text(">>  Achievement Unlocked: ", NamedTextColor.GREEN)
+                                           .append(Component.text(getName(), NamedTextColor.GOLD)
+                                                            .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(getDescription(), NamedTextColor.GREEN), 200))))
+                                           .append(Component.text("  <<", NamedTextColor.GREEN));
+        ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
     }
 
+    String getName();
+
+    String getDescription();
+
     default void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
-        TextComponent component = Component.text(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: ")
+        TextComponent component = Component.text(">> ", NamedTextColor.GREEN)
+                                           .append(Component.text(warlordsEntity.getName(), NamedTextColor.AQUA))
+                                           .append(Component.text(" unlocked: ", NamedTextColor.GREEN))
                                            .append(Component.text(ChatColor.GOLD + getName())
-                                                            .hoverEvent(HoverEvent.showText(Component.text(
-                                                                    WordWrap.wrapWithNewline(ChatColor.GREEN + getDescription(), 200
-                                                                    )))))
-                                           .append(Component.text(ChatColor.GREEN + "  <<"));
+                                                            .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(getDescription(), NamedTextColor.GREEN), 200))))
+                                           .append(Component.text("  <<", NamedTextColor.GREEN));
         warlordsEntity.getGame().warlordsPlayers()
                       //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())
                       .filter(wp -> wp != warlordsEntity)
                       .filter(wp -> wp.getEntity() instanceof Player)
                       .map(wp -> (Player) wp.getEntity())
-                      .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, component, ChatColor.GREEN, true));
+                      .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true));
 
     }
 

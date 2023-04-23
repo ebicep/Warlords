@@ -13,7 +13,8 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -169,16 +170,18 @@ public class LastStand extends AbstractAbility implements Duration {
                 }
             });
 
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " Your Last Stand is now protecting " +
-                    ChatColor.YELLOW + standTarget.getName() +
-                    ChatColor.GRAY + "!"
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))
+                    .append(Component.text(standTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
 
-            standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " " + wp.getName() + "'s " +
-                    ChatColor.YELLOW + "Last Stand" +
-                    ChatColor.GRAY + " is now protecting you for §6" + format(allyTickDuration / 20f) + " §7seconds!"
+            standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Last Stand", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
         }
 

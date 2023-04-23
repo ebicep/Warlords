@@ -7,6 +7,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -90,6 +91,26 @@ public class ChatUtils {
             player.sendMessage(message);
             if (borderColor != null) {
                 player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        }
+    }
+
+    public static void sendMessageToPlayer(Player player, Component message, NamedTextColor borderColor, boolean centered) {
+        if (centered) {
+            if (borderColor != null) {
+                sendCenteredMessage(player, Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
+            }
+            sendCenteredMessage(player, message);
+            if (borderColor != null) {
+                sendCenteredMessage(player, Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
+            }
+        } else {
+            if (borderColor != null) {
+                player.sendMessage(Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
+            }
+            player.sendMessage(message);
+            if (borderColor != null) {
+                player.sendMessage(Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
             }
         }
     }

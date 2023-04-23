@@ -130,7 +130,7 @@ public class AchievementsMenu {
                         .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (!achievement.getDescription().isEmpty()) {
-                    itemBuilder.lore(
+                    itemBuilder.loreLEGACY(
                             WordWrap.wrapWithNewline(
                                     ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
                                     160
@@ -211,7 +211,7 @@ public class AchievementsMenu {
                     .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (!achievement.getDescription().isEmpty()) {
-                itemBuilder.lore(
+                itemBuilder.loreLEGACY(
                         WordWrap.wrapWithNewline(
                                 ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
                                 160
@@ -290,7 +290,7 @@ public class AchievementsMenu {
                     i / 9,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + achievement.getName())
-                            .lore(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
+                            .loreLEGACY(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
                             .get(),
                     (m, e) -> {
                     }
@@ -300,7 +300,7 @@ public class AchievementsMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
                         openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page - 1);
@@ -311,7 +311,7 @@ public class AchievementsMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {
                         openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page + 1);

@@ -14,7 +14,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -93,22 +98,22 @@ public class HealingTotem extends AbstractTotemBase implements Duration {
 
                     float healMultiplier = Math.min(1 + (convertToPercent(healingIncrement) * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                            .aliveTeammatesOf(wp)
-                            .forEach((nearPlayer) -> {
-                                playersHealed++;
-                                nearPlayer.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal * healMultiplier,
-                                        maxDamageHeal * healMultiplier,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                .aliveTeammatesOf(wp)
+                                .forEach((nearPlayer) -> {
+                                    playersHealed++;
+                                    nearPlayer.addHealingInstance(
+                                            wp,
+                                            name,
+                                            minDamageHeal * healMultiplier,
+                                            maxDamageHeal * healMultiplier,
+                                            critChance,
+                                            critMultiplier,
+                                            false,
+                                            false
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 });
-                            });
                     if (tempHealingTotem.getAmountHealed() >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
@@ -176,46 +181,46 @@ public class HealingTotem extends AbstractTotemBase implements Duration {
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
                         float healMultiplier = 1 + (convertToPercent(healingIncrement) * (ticksElapsed / 20f));
                         PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                                .aliveTeammatesOf(wp)
-                                .forEach(teammate -> {
-                                    playersHealed++;
-                                    teammate.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal * healMultiplier,
-                                            maxDamageHeal * healMultiplier,
-                                            critChance,
-                                            critMultiplier,
-                                            false, false
-                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                        tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                    .aliveTeammatesOf(wp)
+                                    .forEach(teammate -> {
+                                        playersHealed++;
+                                        teammate.addHealingInstance(
+                                                wp,
+                                                name,
+                                                minDamageHeal * healMultiplier,
+                                                maxDamageHeal * healMultiplier,
+                                                critChance,
+                                                critMultiplier,
+                                                false, false
+                                        ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                            tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        });
                                     });
-                                });
 
                         if (pveUpgrade) {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(enemy -> {
-                                        enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
-                                        enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
-                                        EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
-                                        enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                "Totem Crippling",
-                                                "CRIP",
-                                                HealingTotem.class,
-                                                tempHealingTotem,
-                                                wp,
-                                                CooldownTypes.DEBUFF,
-                                                cooldownManager -> {
-                                                },
-                                                20
-                                        ) {
-                                            @Override
-                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                return currentDamageValue * .5f;
-                                            }
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(enemy -> {
+                                            enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
+                                            enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
+                                            EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
+                                            enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                    "Totem Crippling",
+                                                    "CRIP",
+                                                    HealingTotem.class,
+                                                    tempHealingTotem,
+                                                    wp,
+                                                    CooldownTypes.DEBUFF,
+                                                    cooldownManager -> {
+                                                    },
+                                                    20
+                                            ) {
+                                                @Override
+                                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                    return currentDamageValue * .5f;
+                                                }
+                                            });
                                         });
-                                    });
                         }
                     }
                 })
@@ -227,27 +232,32 @@ public class HealingTotem extends AbstractTotemBase implements Duration {
                     new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
 
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
-                            .aliveEnemiesOf(wp)
-                            .forEach((p) -> {
-                                playersCrippled++;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
-                                p.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                        "Totem Crippling",
-                                        "CRIP",
-                                        HealingTotem.class,
-                                        tempHealingTotem,
-                                        wp,
-                                        CooldownTypes.DEBUFF,
-                                        cooldownManager -> {
-                                        },
-                                        crippleDuration * 20
-                                ) {
-                                    @Override
-                                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                        return currentDamageValue * .75f;
-                                    }
+                                .aliveEnemiesOf(wp)
+                                .forEach((p) -> {
+                                    playersCrippled++;
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text("Your Healing Totem has crippled ", NamedTextColor.GRAY))
+                                            .append(Component.text(p.getName(), NamedTextColor.YELLOW))
+                                            .append(Component.text("!", NamedTextColor.GRAY))
+                                    );
+
+                                    p.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Totem Crippling",
+                                            "CRIP",
+                                            HealingTotem.class,
+                                            tempHealingTotem,
+                                            wp,
+                                            CooldownTypes.DEBUFF,
+                                            cooldownManager -> {
+                                            },
+                                            crippleDuration * 20
+                                    ) {
+                                        @Override
+                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            return currentDamageValue * .75f;
+                                        }
+                                    });
                                 });
-                            });
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()

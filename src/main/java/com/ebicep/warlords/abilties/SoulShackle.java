@@ -6,10 +6,13 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -83,11 +86,10 @@ public class SoulShackle extends AbstractAbility {
                     .closestFirst(wp)
                     .limit(maxShackleTargets)
             ) {
-                wp.sendMessage(
-                        WarlordsEntity.GIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " You shackled " +
-                                ChatColor.YELLOW + shackleTarget.getName() +
-                                ChatColor.GRAY + "!"
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" You shackled ", NamedTextColor.GRAY))
+                        .append(Component.text(shackleTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
                 Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
                 Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
@@ -108,9 +110,9 @@ public class SoulShackle extends AbstractAbility {
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
         EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
         FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
-                .withColor(Color.YELLOW)
-                .with(FireworkEffect.Type.BALL)
-                .build());
+                                                                                     .withColor(Color.YELLOW)
+                                                                                     .with(FireworkEffect.Type.BALL)
+                                                                                     .build());
 
         wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
 
@@ -126,9 +128,11 @@ public class SoulShackle extends AbstractAbility {
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
         shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
         if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
-            if (shackleTarget.getEntity() instanceof Player) {
-                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, tickDuration, 0);
-            }
+            shackleTarget.getEntity().showTitle(Title.title(
+                    Component.empty(),
+                    Component.text("SILENCED", NamedTextColor.RED),
+                    Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
+            ));
         }
         shackleTarget.getCooldownManager().addRegularCooldown(
                 "Shackle Silence",

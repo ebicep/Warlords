@@ -8,7 +8,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -74,16 +79,16 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.POPPY), 8);
                 emitMarkRadiance(wp, markTarget);
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You have marked " +
-                        ChatColor.GREEN + markTarget.getName() +
-                        ChatColor.GRAY + "!"
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                        .append(Component.text(markTarget.getName(), NamedTextColor.GREEN))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You have been granted " +
-                        ChatColor.GREEN + "Protector's Mark" +
-                        ChatColor.GRAY + " by " + wp.getName() + "!"
+                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
+                        .append(Component.text("Protector's Mark", NamedTextColor.GREEN))
+                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
                 );
 
                 return true;

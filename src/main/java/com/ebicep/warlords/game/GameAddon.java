@@ -33,7 +33,7 @@ public enum GameAddon {
                 case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DEBUG, SIMULATION_TRIAL -> {
                     game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                             .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
-                            .lore(ChatColor.YELLOW + "Click to select your team!")
+                            .loreLEGACY(ChatColor.YELLOW + "Click to select your team!")
                             .get(), (g, p) -> openTeamMenu(p)));
                     game.getOptions().add(new AFKDetectionOption());
                 }

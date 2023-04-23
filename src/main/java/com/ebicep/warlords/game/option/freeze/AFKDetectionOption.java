@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -114,7 +116,9 @@ public class AFKDetectionOption implements Option {
                                                 );
                                                 Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                             }
-                                            game.addFrozenCause(ChatColor.AQUA + we.getName() + ChatColor.RED + " has been detected as AFK.");
+                                            game.addFrozenCause(Component.text(we.getName(), NamedTextColor.AQUA)
+                                                                         .append(Component.text(" has been detected as AFK.", NamedTextColor.RED))
+                                            );
                                             wasFrozen = true;
                                             continue;
                                         }

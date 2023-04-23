@@ -13,7 +13,8 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -33,12 +34,29 @@ public class DebugCommand extends BaseCommand {
     @Description("Prints class info (health, energy, etc)")
     public void printClassInfo(@Conditions("requireGame") WarlordsPlayer player) {
         AbstractPlayerClass specClass = player.getSpec();
-        sendDebugMessage(player, ChatColor.GOLD + "Class: " + ChatColor.WHITE + specClass.getName());
-        sendDebugMessage(player, ChatColor.GOLD + "Max Health: " + ChatColor.WHITE + specClass.getMaxHealth());
-        sendDebugMessage(player, ChatColor.GOLD + "Max Energy: " + ChatColor.WHITE + specClass.getMaxEnergy());
-        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Sec: " + ChatColor.WHITE + specClass.getEnergyPerSec());
-        sendDebugMessage(player, ChatColor.GOLD + "Energy Per Hit: " + ChatColor.WHITE + specClass.getEnergyPerHit());
-        sendDebugMessage(player, ChatColor.GOLD + "Damage Resistance: " + ChatColor.WHITE + specClass.getDamageResistance());
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Class: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getName(), NamedTextColor.WHITE)));
+
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Max Health: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getMaxHealth(), NamedTextColor.WHITE)));
+
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Max Energy: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getMaxEnergy(), NamedTextColor.WHITE)));
+
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Energy Per Sec: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getEnergyPerSec(), NamedTextColor.WHITE)));
+
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Energy Per Hit: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getEnergyPerHit(), NamedTextColor.WHITE)));
+
+        sendDebugMessage(player, Component.empty()
+                                          .append(Component.text("Damage Resistance: ", NamedTextColor.GOLD))
+                                          .append(Component.text(specClass.getDamageResistance(), NamedTextColor.WHITE)));
     }
 
     @Subcommand("freeze")
@@ -46,7 +64,7 @@ public class DebugCommand extends BaseCommand {
     public void freezeGame(@Conditions("requireGame") Player player, @Optional String message) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         if (game.getState() instanceof EndState) {
-            sendDebugMessage(player, ChatColor.RED + "Cannot freeze game in end state");
+            sendDebugMessage(player, Component.text("Cannot freeze game in end state", NamedTextColor.RED));
             return;
         }
         if (!game.isUnfreezeCooldown()) {
@@ -55,14 +73,14 @@ public class DebugCommand extends BaseCommand {
             } else {
                 if (message != null) {
                     message = message.replaceAll("&", "§");
-                    game.addFrozenCause(ChatColor.GOLD + message);
+                    game.addFrozenCause(Component.text(message, NamedTextColor.GOLD));
                 } else {
-                    game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + player.getName());
+                    game.addFrozenCause(Component.text("Manually paused by §c" + player.getName(), NamedTextColor.GOLD));
                 }
-                sendDebugMessage(player, ChatColor.GREEN + "The game has been frozen!");
+                sendDebugMessage(player, Component.text("The game has been frozen!", NamedTextColor.GREEN));
             }
         } else {
-            sendDebugMessage(player, ChatColor.RED + "The game is currently unfreezing!");
+            sendDebugMessage(player, Component.text("The game is currently unfreezing!", NamedTextColor.RED));
         }
     }
 
@@ -72,17 +90,17 @@ public class DebugCommand extends BaseCommand {
     public void timer(@Conditions("requireGame") Player player, @Values("reset|skip") String option) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         if (!(game.getState() instanceof TimerDebugAble timerDebugAble)) {
-            sendDebugMessage(player, ChatColor.RED + "This gamestate cannot be manipulated by the timer debug option!");
+            sendDebugMessage(player, Component.text("This gamestate cannot be manipulated by the timer debug option!", NamedTextColor.RED));
             return;
         }
         switch (option) {
             case "reset" -> {
                 timerDebugAble.resetTimer();
-                sendDebugMessage(player, ChatColor.GREEN + "Timer has been reset!");
+                sendDebugMessage(player, Component.text("Timer has been reset!", NamedTextColor.GREEN));
             }
             case "skip" -> {
                 timerDebugAble.skipTimer();
-                sendDebugMessage(player, ChatColor.GREEN + "Timer has been skipped!");
+                sendDebugMessage(player, Component.text("Timer has been skipped!", NamedTextColor.GREEN));
             }
         }
     }
@@ -100,7 +118,9 @@ public class DebugCommand extends BaseCommand {
     public void setEnergy(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setNoEnergyConsumption(enable);
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s No Energy Consumption was set to " + enable);
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s No Energy Consumption was set to " + enable, NamedTextColor.GREEN)));
     }
 
     @Subcommand("cooldown")
@@ -112,7 +132,9 @@ public class DebugCommand extends BaseCommand {
         if (disable) {
             target.resetAbilities(false);
         }
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!");
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s Cooldown Timers have been " + option + "d!", NamedTextColor.GREEN)));
     }
 
     @Subcommand("takedamage")
@@ -121,7 +143,9 @@ public class DebugCommand extends BaseCommand {
     public void setTakeDamage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setTakeDamage(enable);
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer take" : "start taking") + " damage!");
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text(" will " + (!enable ? "no longer take" : "start taking") + " damage!", NamedTextColor.GREEN)));
     }
 
     @Subcommand("crits")
@@ -130,7 +154,9 @@ public class DebugCommand extends BaseCommand {
     public void setCrits(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setCanCrit(enable);
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Crits have been " + option + "d!");
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s Crits have been " + option + "d!", NamedTextColor.GREEN)));
     }
 
     @Subcommand("heal")
@@ -139,7 +165,9 @@ public class DebugCommand extends BaseCommand {
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addHealingInstance(target, "God", amount, amount, 0, 100, false, false);
         target.resetRegenTimer();
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!");
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text(" was healed for " + amount + " health!", NamedTextColor.GREEN)));
     }
 
     @Subcommand("damage")
@@ -148,7 +176,9 @@ public class DebugCommand extends BaseCommand {
     public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addDamageInstance(target, "God", amount, amount, 0, 100, false);
         target.resetRegenTimer();
-        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!");
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text(" took " + amount + " damage!", NamedTextColor.GREEN)));
     }
 
     @Subcommand("debugmessage")
@@ -157,9 +187,10 @@ public class DebugCommand extends BaseCommand {
     public void damage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setShowDebugMessage(enable);
-        sendDebugMessage(issuer,
-                target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer see" : "start seeing") + " debug messages!"
-        );
+
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text(" will " + (!enable ? "no longer see" : "start seeing") + " debug messages!", NamedTextColor.GREEN)));
     }
 
     @HelpCommand

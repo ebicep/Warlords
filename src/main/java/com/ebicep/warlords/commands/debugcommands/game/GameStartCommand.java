@@ -13,7 +13,8 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -24,13 +25,12 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
-import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
 public class GameStartCommand {
 
     public static void startGamePvE(Player player, GameMode gameMode, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
             return;
         }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
@@ -39,30 +39,11 @@ public class GameStartCommand {
                             .setPriority(0)
                             .setOnResult((result, game) -> {
                                 if (game == null) {
-                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                    player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
                                 }
                             });
                 })
         );
-    }
-
-    public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
-        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
-            return;
-        }
-        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
-                    queueEntryBuilder
-                            .setGameMode(GameMode.RAID)
-                            .setPriority(0)
-                            .setOnResult((result, game) -> {
-                                if (game == null) {
-                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-                                }
-                            });
-                })
-        );
-
     }
 
     public static void startGame(
@@ -71,7 +52,7 @@ public class GameStartCommand {
             Consumer<GameManager.QueueEntryBuilder> entryEditor
     ) {
         if (GameManager.gameStartingDisabled) {
-            player.sendMessage(ChatColor.RED + "Games are currently disabled.");
+            player.sendMessage(Component.text("Games are currently disabled.", NamedTextColor.RED));
             return;
         }
         List<Player> people;
@@ -81,15 +62,15 @@ public class GameStartCommand {
         if (partyPlayerPair != null) {
             Party party = partyPlayerPair.getA();
             if (!party.getPartyLeader().getUUID().equals(uuid)) {
-                player.sendMessage(ChatColor.RED + "You are not the party leader");
+                player.sendMessage(Component.text("You are not the party leader", NamedTextColor.RED));
                 return;
             } else if (!party.allOnlineAndNoAFKs()) {
-                player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
+                player.sendMessage(Component.text("All party members must be online or not afk", NamedTextColor.RED));
                 return;
             }
             for (PartyPlayer partyPlayer : party.getPartyPlayers()) {
                 if (Warlords.getPlayer(partyPlayer.getUUID()) != null) {
-                    player.sendMessage(ChatColor.RED + "You cannot start a game with a player who is already in a game.");
+                    player.sendMessage(Component.text("You cannot start a game with a player who is already in a game.", NamedTextColor.RED));
                     return;
                 }
             }
@@ -113,7 +94,7 @@ public class GameStartCommand {
                                 .setMap(GameMap.TUTORIAL_MAP)
                                 .setOnResult((result, game) -> {
                                     if (game == null) {
-                                        people.get(0).sendMessage(ChatColor.RED + "Unable to find a valid tutorial map. Report this.");
+                                        people.get(0).sendMessage(Component.text("Unable to find a valid tutorial map. Report this.", NamedTextColor.RED));
                                     }
                                 });
                     }
@@ -125,14 +106,33 @@ public class GameStartCommand {
         entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
     }
 
+    public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
+        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
+            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
+            return;
+        }
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.RAID)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
+                                }
+                            });
+                })
+        );
+
+    }
+
     public static void startGamePvEEvent(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+            player.sendMessage(Component.text("You cannot start a new game 30 minutes before the server restarts.", NamedTextColor.RED));
             return;
         }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
-            player.sendMessage(ChatColor.RED + "The event is over!");
+            player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));
             return;
         }
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
@@ -141,7 +141,7 @@ public class GameStartCommand {
                             .setPriority(0)
                             .setOnResult((result, game) -> {
                                 if (game == null) {
-                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                    player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
                                 }
                             });
                 })
@@ -156,7 +156,7 @@ public class GameStartCommand {
                     .setPriority(0)
                     .setOnResult((result, game) -> {
                         if (game == null) {
-                            player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                            player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
                         }
                     });
         });
@@ -165,25 +165,46 @@ public class GameStartCommand {
     public static void startGameFromDebugMenu(Player player, boolean excludeStarter, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         startGame(player, excludeStarter, entryEditor.andThen(queueEntryBuilder -> queueEntryBuilder.setOnResult((result, game) -> {
             if (game == null) {
-                sendDebugMessage(player, ChatColor.RED + "Engine failed to find a game server suitable for your request:");
-                sendDebugMessage(player, ChatColor.GRAY + result.toString());
+                sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
+                sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
             } else {
                 sendDebugMessage(player,
-                        ChatColor.GREEN + "Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-                                " a game with the following parameters:"
+                        Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
+                                NamedTextColor.GREEN
+                        )
                 );
-                sendDebugMessage(player, ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
-                sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName());
-                sendDebugMessage(player,
-                        ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons()
-                                                                                  .stream()
-                                                                                  .map(e -> toTitleHumanCase(e.name()))
-                                                                                  .collect(Collectors.joining(", "))
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(Utils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Map: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(Utils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(game.getAddons()
+                                                                             .stream()
+                                                                             .map(e -> Utils.toTitleHumanCase(e.name()))
+                                                                             .collect(Collectors.joining(", ")), NamedTextColor.GOLD))
                 );
-                sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
-                sendDebugMessage(player, ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());
-                sendDebugMessage(player, ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
-                sendDebugMessage(player, ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Min players: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
+                );
+
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Max players: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
+                );
+
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
+                );
+
+                sendDebugMessage(player, Component.empty()
+                                                  .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
+                                                  .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
+                );
             }
         })));
     }

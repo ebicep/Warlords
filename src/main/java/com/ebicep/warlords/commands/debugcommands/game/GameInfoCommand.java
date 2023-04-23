@@ -7,7 +7,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class GameInfoCommand extends BaseCommand {
         Game playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameManager.GameHolder game : Warlords.getGameManager().getGames()) {
             if (Objects.equals(game.getGame(), playerGame)) {
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Game info: " + game.getGame().toString());
+                ChatChannels.sendDebugMessage(player, Component.text("Game info: " + game.getGame().toString(), NamedTextColor.GREEN));
                 break;
             }
         }

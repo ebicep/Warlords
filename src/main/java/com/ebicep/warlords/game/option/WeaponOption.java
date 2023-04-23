@@ -10,6 +10,9 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,8 +34,8 @@ public class WeaponOption implements Option {
                 .addLore(
                         "",
                         ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
-                                .getWeapon()
-                                .getName(),
+                                                                                                                                            .getWeapon()
+                                                                                                                                            .getName(),
                         ChatColor.GREEN + "stats!"
                 )
                 .get());
@@ -56,8 +59,8 @@ public class WeaponOption implements Option {
                 0,
                 new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
                         .name(ChatColor.GOLD + "Warlord's " + wp.getCosmeticSettings().getWeaponSkin()
-                                .getName() + " of the " + spec.getName())
-                        .lore(
+                                                                .getName() + " of the " + spec.getName())
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
                                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
@@ -77,7 +80,7 @@ public class WeaponOption implements Option {
                                 ChatColor.AQUA + "BOUND",
                                 "",
                                 ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon()
-                                        .getName(),
+                                                                                                                                                      .getName(),
                                 ChatColor.GREEN + "stats!"
                         )
                         .unbreakable()
@@ -89,25 +92,24 @@ public class WeaponOption implements Option {
     public static void showWeaponStats(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
         AbstractAbility weapon = spec.getWeapon();
-        player.getInventory().setItem(
-                0,
-                new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
-                        .name(ChatColor.GREEN + weapon.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
-                        .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(
-                                        weapon.getEnergyCost()),
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                                        weapon.getCritChance()) + "%",
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                                        weapon.getCritMultiplier()) + "%",
-                                "",
-                                weapon.getDescription(),
-                                "",
-                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!"
-                        )
-                        .unbreakable()
-                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                        .get()
-        );
+        ItemBuilder itemBuilder = new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
+                .name(ChatColor.GREEN + weapon.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                .unbreakable()
+                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+
+        itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
+                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCost()), NamedTextColor.GRAY)));
+        itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritChance()) + "%", NamedTextColor.RED)));
+        itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritMultiplier()) + "%", NamedTextColor.RED)));
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLoreC(weapon.getDescription());
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                     .append(Component.text("to view weapon stats!", NamedTextColor.GREEN)));
+
+        player.getInventory().setItem(0, itemBuilder.get());
     }
 
     @Override

@@ -27,6 +27,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -52,7 +54,7 @@ public class DebugMenuPlayerOptions {
             return;
         }
         String targetName = target.getName();
-        String coloredName = target.getColoredName();
+        Component coloredName = target.getColoredName();
 
         Menu menu = new Menu("Player Options: " + targetName, 9 * 5);
 
@@ -129,9 +131,11 @@ public class DebugMenuPlayerOptions {
                     }
                     target.updateArmor();
                     openPlayerMenu(player, target);
-                    sendDebugMessage(player,
-                            ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team"
-
+                    sendDebugMessage(player, Component.text("Swapped ", NamedTextColor.GREEN)
+                                                      .append(coloredName)
+                                                      .append(Component.text(" to the "))
+                                                      .append(otherTeam.coloredPrefix())
+                                                      .append(Component.text(" team"))
                     );
                 }
         );
@@ -162,9 +166,12 @@ public class DebugMenuPlayerOptions {
                                         throw new NumberFormatException();
                                     }
                                     target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber);
+                                    sendDebugMessage(player, Component.text("Healed ", NamedTextColor.GREEN)
+                                                                      .append(coloredName)
+                                                                      .append(Component.text(" for " + amountNumber))
+                                    );
                                 } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid number");
+                                    p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                 }
                                 openPlayerMenuAfterTick(player, target);
                                 return null;
@@ -186,9 +193,12 @@ public class DebugMenuPlayerOptions {
                                         throw new NumberFormatException();
                                     }
                                     target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100, false);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber);
+                                    sendDebugMessage(player, Component.text("Damaged ", NamedTextColor.GREEN)
+                                                                      .append(coloredName)
+                                                                      .append(Component.text(" for " + amountNumber))
+                                    );
                                 } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid number");
+                                    p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                 }
                                 openPlayerMenuAfterTick(player, target);
                                 return null;
@@ -216,9 +226,9 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> {
                     if (GameMode.isPvE(target.getGame().getGameMode())) {
                         if (Permissions.isAdmin(player)) {
-                            sendDebugMessage(player, ChatColor.RED + "Changing spec is not advised.");
+                            sendDebugMessage(player, Component.text("Changing spec is not advised.", NamedTextColor.RED));
                         } else {
-                            sendDebugMessage(player, ChatColor.RED + "Cannot change spec in wave defense.");
+                            sendDebugMessage(player, Component.text("Cannot change spec in wave defense.", NamedTextColor.RED));
                             return;
                         }
                     }
@@ -254,7 +264,7 @@ public class DebugMenuPlayerOptions {
 
         public static void openCooldownsMenu(Player player, WarlordsEntity target) {
             String name = target.getName();
-            String coloredName = target.getColoredName();
+            Component coloredName = target.getColoredName();
 
             int menuY = Math.min(5 + StatusEffectCooldowns.values().length / 7, 6);
             Menu menu = new Menu("Cooldowns: " + name, 9 * menuY);
@@ -282,7 +292,10 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().clearAllCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Cooldowns");
+                        sendDebugMessage(player, Component.text("Cleared ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text("'s Cooldowns"))
+                        );
                     }
             );
 
@@ -291,7 +304,10 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeBuffCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Buffs");
+                        sendDebugMessage(player, Component.text("Cleared ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text("'s Buffs"))
+                        );
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
@@ -299,7 +315,10 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeDebuffCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Debuffs");
+                        sendDebugMessage(player, Component.text("Cleared ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text("'s Debuffs"))
+                        );
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
@@ -307,7 +326,10 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeAbilityCooldowns();
-                        sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Ability Cooldowns");
+                        sendDebugMessage(player, Component.text("Cleared ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text("'s Ability Cooldowns"))
+                        );
                     }
             );
 
@@ -347,12 +369,12 @@ public class DebugMenuPlayerOptions {
                                             if (cooldown == StatusEffectCooldowns.SPEED) {
                                                 target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
                                             }
-                                            sendDebugMessage(player,
-                                                    ChatColor.GREEN + "Gave " + coloredName + " " + ChatColor.GREEN + amountNumber + " seconds of " + cooldown.name
-
+                                            sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
+                                                                              .append(coloredName)
+                                                                              .append(Component.text(" " + amountNumber + " seconds of " + cooldown.name))
                                             );
                                         } catch (NumberFormatException exception) {
-                                            p.sendMessage(ChatColor.RED + "Invalid number");
+                                            p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                         }
                                         new BukkitRunnable() {
                                             @Override
@@ -379,7 +401,10 @@ public class DebugMenuPlayerOptions {
             for (DebugLocationMarker marker : game.getMarkers(DebugLocationMarker.class)) {
                 menu.setItem(x, y, marker.getAsItem(), (m, e) -> {
                     target.teleport(marker.getLocation());
-                    sendDebugMessage(player, ChatColor.GREEN + "Teleported " + target.getColoredName() + ChatColor.GREEN + " to " + marker.getName());
+                    sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
+                                                      .append(target.getColoredName())
+                                                      .append(Component.text(" to " + marker.getName()))
+                    );
                 });
 
                 x++;
@@ -403,12 +428,13 @@ public class DebugMenuPlayerOptions {
                 }
                 row++;
                 MenuItemPairList menuItemPairList = new MenuItemPairList();
+                Component targetColoredName = target.getColoredName();
                 menuItemPairList.add(new ItemBuilder(Material.BLACK_BANNER)
-                                .name(ChatColor.GREEN + "Pick Up Flag")
+                                .name(Component.text("Pick Up Flag", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                sendDebugMessage(player, ChatColor.RED + "That player already has the flag");
+                                sendDebugMessage(player, Component.text("That player already has the flag", NamedTextColor.RED));
                             } else {
                                 FlagHolder.update(
                                         target.getGame(),
@@ -418,36 +444,40 @@ public class DebugMenuPlayerOptions {
                                                 PlayerFlagLocation.of(info.getFlag(), target) :
                                                 null
                                 );
-                                sendDebugMessage(player, ChatColor.GREEN + "Picked up the flag for " + target.getColoredName());
+                                sendDebugMessage(player, Component.text("Picked up the flag for ", NamedTextColor.GREEN)
+                                                                  .append(targetColoredName));
                             }
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.BLACK_BED)
-                                .name(ChatColor.GREEN + "Return the Flag")
+                                .name(Component.text("Return the Flag", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 holder.getInfo().setFlag(new SpawnFlagLocation(holder.getInfo().getSpawnLocation(), null));
-                                sendDebugMessage(player, ChatColor.GREEN + "Returned the flag for " + target.getColoredName());
+                                sendDebugMessage(player, Component.text("Returned the flag for ", NamedTextColor.GREEN)
+                                                                  .append(targetColoredName));
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
+                                sendDebugMessage(player, Component.text("That player does not have the flag", NamedTextColor.RED));
                             }
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.GRASS)
-                                .name(ChatColor.GREEN + "Drop Flag")
+                                .name(Component.text("Drop Flag", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
                                 holder.getInfo().setFlag(GroundFlagLocation.of(holder.getFlag()));
-                                sendDebugMessage(player, ChatColor.GREEN + "Dropped the flag for " + target.getColoredName());
+                                sendDebugMessage(player, Component.text("Dropped the flag for ", NamedTextColor.GREEN)
+                                                                  .append(targetColoredName));
+
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
+                                sendDebugMessage(player, Component.text("That player does not have the flag", NamedTextColor.RED));
                             }
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.COMPARATOR)
-                                .name(ChatColor.GREEN + "Set Multiplier")
+                                .name(Component.text("Set Multiplier", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
@@ -463,13 +493,14 @@ public class DebugMenuPlayerOptions {
                                                 if (target.getCarriedFlag() != null) {
                                                     PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
                                                     flag.setPickUpTicks(amountNumber * 60);
-                                                    sendDebugMessage(player,
-                                                            ChatColor.GREEN + "Set the " + target.getTeam().name + ChatColor.GREEN + " flag carrier multiplier to " + amount + "%"
-
+                                                    sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
+                                                                                      .append(target.getTeam().chatTagColored)
+                                                                                      .append(Component.text(" flag carrier multiplier to " + amount + "%"))
                                                     );
+
                                                 }
                                             } catch (NumberFormatException exception) {
-                                                p.sendMessage(ChatColor.RED + "Invalid number");
+                                                p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                             }
                                             new BukkitRunnable() {
                                                 @Override
@@ -480,7 +511,7 @@ public class DebugMenuPlayerOptions {
                                             return null;
                                         }).open(player);
                             } else {
-                                sendDebugMessage(player, ChatColor.RED + "That player does not have the flag");
+                                sendDebugMessage(player, Component.text("That player does not have the flag", NamedTextColor.RED));
                             }
                         }
                 );
@@ -535,7 +566,7 @@ public class DebugMenuPlayerOptions {
                         1,
                         new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
-                                .lore(WordWrap.wrapWithNewline(skillBoost.description, 150),
+                                .loreLEGACY(WordWrap.wrapWithNewline(skillBoost.description, 150),
                                         "",
                                         ChatColor.YELLOW + "Click to select!"
                                 ).get(),
@@ -544,9 +575,9 @@ public class DebugMenuPlayerOptions {
 
                             target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             openSpecMenu(player, target);
-                            sendDebugMessage(player,
-                                    ChatColor.GREEN + "Changed " + target.getColoredName() + ChatColor.GREEN + "'s spec to " + selectedSpec.name
-
+                            sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
+                                                              .append(target.getColoredName())
+                                                              .append(Component.text("'s spec to " + selectedSpec.name))
                             );
                         }
                 );
@@ -566,7 +597,7 @@ public class DebugMenuPlayerOptions {
                 menu.setItem(4, 0,
                         new ItemBuilder(HeadUtils.getHead(player))
                                 .name(ChatColor.GREEN + "Cooldown Stats")
-                                .lore(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
+                                .loreLEGACY(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
                                         ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
                                 )
                                 .get(),
@@ -589,10 +620,12 @@ public class DebugMenuPlayerOptions {
                     menu.setItem((i % 7) + 1, yLevel,
                             new ItemBuilder(Utils.getWoolFromIndex(i))
                                     .name(ChatColor.GOLD + abstractCooldown.getName())
-                                    .lore(abstractCooldown instanceof RegularCooldown ?
-                                          ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0) + "s" :
-                                          ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + "N/A",
-                                            ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
+                                    .lore(Component.empty()
+                                                   .append(Component.text("Time Left: ", NamedTextColor.GREEN))
+                                                   .append(Component.text(abstractCooldown instanceof RegularCooldown ? Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0 + "s" : "N/A",
+                                                           NamedTextColor.GOLD
+                                                   )),
+                                            Component.text("From: " + abstractCooldown.getFrom().getColoredName(), NamedTextColor.GREEN)
                                     )
                                     .get(),
                             (m, e) -> openCooldownEditorMenu(player, target, abstractCooldown)
@@ -623,9 +656,9 @@ public class DebugMenuPlayerOptions {
                                     }
                                 }
                             }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                            sendDebugMessage(player,
-                                    ChatColor.GREEN + "Removed " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName() + " cooldown"
-
+                            sendDebugMessage(player, Component.text("Removed ", NamedTextColor.GREEN)
+                                                              .append(target.getColoredName())
+                                                              .append(Component.text("'s " + abstractCooldown.getName() + " cooldown"))
                             );
                         }
                 );
@@ -635,7 +668,7 @@ public class DebugMenuPlayerOptions {
                         (m, e) -> {
                             if (!target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
                                 openCooldownsMenu(player, target);
-                                sendDebugMessage(player, ChatColor.RED + "That cooldown no longer exists");
+                                sendDebugMessage(player, Component.text("That cooldown no longer exists", NamedTextColor.RED));
                                 return;
                             }
                             if (!(abstractCooldown instanceof RegularCooldown)) {
@@ -649,12 +682,12 @@ public class DebugMenuPlayerOptions {
                                         try {
                                             int amountNumber = Integer.parseInt(amount);
                                             ((RegularCooldown<?>) abstractCooldown).subtractTime(-amountNumber * 20);
-                                            sendDebugMessage(player,
-                                                    ChatColor.GREEN + "Added " + amountNumber + " seconds to " + target.getColoredName() + ChatColor.GREEN + "'s " + abstractCooldown.getName()
-
+                                            sendDebugMessage(player, Component.text("Added " + amountNumber + " seconds to ", NamedTextColor.GREEN)
+                                                                              .append(target.getColoredName())
+                                                                              .append(Component.text("'s " + abstractCooldown.getName()))
                                             );
                                         } catch (NumberFormatException exception) {
-                                            p.sendMessage(ChatColor.RED + "Invalid number");
+                                            p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                         }
                                         new BukkitRunnable() {
                                             @Override

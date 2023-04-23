@@ -19,10 +19,12 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
@@ -35,37 +37,37 @@ public class ExperienceManager {
     public static final DecimalFormat EXPERIENCE_DECIMAL_FORMAT = new DecimalFormat("#,###.#");
     public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
-    public static final List<Pair<ChatColor, Color>> PRESTIGE_COLORS = Arrays.asList(
-            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
-            new Pair<>(ChatColor.RED, Color.RED), //1
-            new Pair<>(ChatColor.YELLOW, Color.YELLOW), //2
-            new Pair<>(ChatColor.GREEN, Color.GREEN), //3
-            new Pair<>(ChatColor.AQUA, Color.AQUA), //4
-            new Pair<>(ChatColor.BLUE, Color.BLUE), //5
-            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //6
-            new Pair<>(ChatColor.BLACK, Color.BLACK), //7
-            new Pair<>(ChatColor.WHITE, Color.WHITE), //8
-            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY), //9
-            new Pair<>(ChatColor.DARK_RED, Color.RED), //10
-            new Pair<>(ChatColor.GOLD, Color.ORANGE), //11
-            new Pair<>(ChatColor.DARK_AQUA, Color.AQUA), //12
-            new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
-            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE), //13
-            new Pair<>(ChatColor.GRAY, Color.GRAY), //0
-            new Pair<>(ChatColor.RED, Color.RED), //1
-            new Pair<>(ChatColor.YELLOW, Color.YELLOW),  //2
-            new Pair<>(ChatColor.GREEN, Color.GREEN),//3
-            new Pair<>(ChatColor.AQUA, Color.AQUA), //4
-            new Pair<>(ChatColor.BLUE, Color.BLUE), //5
-            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //6
-            new Pair<>(ChatColor.BLACK, Color.BLACK), //7
-            new Pair<>(ChatColor.WHITE, Color.WHITE), //8
-            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY), //9
-            new Pair<>(ChatColor.DARK_RED, Color.RED), //10
-            new Pair<>(ChatColor.GOLD, Color.ORANGE), //11
-            new Pair<>(ChatColor.DARK_AQUA, Color.AQUA), //12
-            new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
-            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //13
+    public static final List<NamedTextColor> PRESTIGE_COLORS = Arrays.asList(
+            NamedTextColor.GRAY,
+            NamedTextColor.RED,
+            NamedTextColor.YELLOW,
+            NamedTextColor.GREEN,
+            NamedTextColor.AQUA,
+            NamedTextColor.BLUE,
+            NamedTextColor.LIGHT_PURPLE,
+            NamedTextColor.BLACK,
+            NamedTextColor.WHITE,
+            NamedTextColor.DARK_GRAY,
+            NamedTextColor.DARK_RED,
+            NamedTextColor.GOLD,
+            NamedTextColor.DARK_AQUA,
+            NamedTextColor.DARK_BLUE,
+            NamedTextColor.DARK_PURPLE,
+            NamedTextColor.GRAY,
+            NamedTextColor.RED,
+            NamedTextColor.YELLOW,
+            NamedTextColor.GREEN,
+            NamedTextColor.AQUA,
+            NamedTextColor.BLUE,
+            NamedTextColor.LIGHT_PURPLE,
+            NamedTextColor.BLACK,
+            NamedTextColor.WHITE,
+            NamedTextColor.DARK_GRAY,
+            NamedTextColor.DARK_RED,
+            NamedTextColor.GOLD,
+            NamedTextColor.DARK_AQUA,
+            NamedTextColor.DARK_BLUE,
+            NamedTextColor.DARK_PURPLE
     );
     public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(2, 1));
@@ -340,56 +342,63 @@ public class ExperienceManager {
         return level < 10 ? "0" + level : String.valueOf(level);
     }
 
-    public static String getProgressString(long currentExperience, int nextLevel) {
-        String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+    public static List<Component> getProgressString(long currentExperience, int nextLevel) {
+        TextComponent progress = Component.text("Progress to Level " + nextLevel + ": ", NamedTextColor.GRAY);
         return getProgressString(currentExperience, nextLevel, progress);
     }
 
-    private static String getProgressString(long currentExperience, int nextLevel, String progress) {
+    private static List<Component> getProgressString(long currentExperience, int nextLevel, TextComponent progress) {
         Long exp = LEVEL_TO_EXPERIENCE.get(nextLevel);
         Long nextExp = LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
         if (exp == null || nextExp == null) {
-            return progress + "Report this!";
+            return Collections.singletonList(progress.append(Component.text("Report this!")));
         }
         long experience = currentExperience - nextExp;
         long experienceNeeded = exp - nextExp;
         double progressPercentage = (double) experience / experienceNeeded * 100;
 
-        progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
         int greenBars = (int) Math.round(progressPercentage * 20 / 100);
-        progress = progress + "-".repeat(Math.max(0, greenBars));
-        progress += ChatColor.WHITE;
-        progress = progress + "-".repeat(Math.max(0, 20 - greenBars));
-        progress += " " + ChatColor.YELLOW + EXPERIENCE_DECIMAL_FORMAT.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(
-                experienceNeeded);
-
-        return progress;
+        return Arrays.asList(
+                progress.append(Component.text(NumberFormat.formatOptionalTenths(progressPercentage) + "%", NamedTextColor.YELLOW)),
+                Component.text("-".repeat(Math.max(0, greenBars)), NamedTextColor.GREEN)
+                         .append(Component.text("-".repeat(Math.max(0, 20 - greenBars)) + " ", NamedTextColor.WHITE))
+                         .append(Component.text(EXPERIENCE_DECIMAL_FORMAT.format(experience), NamedTextColor.YELLOW))
+                         .append(Component.text("/", NamedTextColor.GOLD))
+                         .append(Component.text(NumberFormat.getSimplifiedNumber(experienceNeeded), NamedTextColor.YELLOW))
+        );
     }
 
-    public static String getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
-        String progress = nextLevel == 100 ?
-                          ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1)
-                                                                           .getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
-                          ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
-        return getProgressString(currentExperience, nextLevel, progress);
+    public static List<Component> getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
+        TextComponent.Builder progress = Component.text();
+        if (nextLevel == 100) {
+            progress.append(Component.text("Progress to ", NamedTextColor.GRAY))
+                    .append(Component.text("PRESTIGE", PRESTIGE_COLORS.get(currentPrestige + 1)))
+                    .append(Component.text(": ", NamedTextColor.GRAY));
+        } else {
+            progress.append(Component.text("Progress to Level " + nextLevel, NamedTextColor.GRAY))
+                    .append(Component.text(": ", NamedTextColor.GRAY));
+        }
+        return getProgressString(currentExperience, nextLevel, progress.build());
     }
 
-    public static String getPrestigeLevelString(UUID uuid, Specializations spec) {
+    public static TextComponent getPrestigeLevelString(UUID uuid, Specializations spec) {
         if (DatabaseManager.playerService == null) {
-            return PRESTIGE_COLORS.get(0).getA() + "[-]";
+            return Component.text("[-]", PRESTIGE_COLORS.get(0));
         }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         if (databasePlayer == null) {
-            return PRESTIGE_COLORS.get(0).getA() + "[-]";
+            return Component.text("[-]", PRESTIGE_COLORS.get(0));
         }
         int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
-        return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel)
-                                                          .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+        return Component.text("[", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(prestigeLevel, PRESTIGE_COLORS.get(prestigeLevel)))
+                        .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 
-    public static String getPrestigeLevelString(int prestigeLevel) {
-        return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel)
-                                                          .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+    public static TextComponent getPrestigeLevelString(int prestigeLevel) {
+        return Component.text("[", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(prestigeLevel, PRESTIGE_COLORS.get(prestigeLevel)))
+                        .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 
     public static double calculateExpFromLevel(int level) {

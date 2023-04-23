@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
@@ -139,7 +140,7 @@ public abstract class AbstractPlayerClass {
 
             if (slot == 0) {
                 if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
-                    player.sendMessage(ChatColor.RED + "You have been silenced!");
+                    player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
                     if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
@@ -322,8 +323,10 @@ public abstract class AbstractPlayerClass {
         return classNameShort;
     }
 
-    public String getClassNameShortWithBrackets() {
-        return ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + this.classNameShort + ChatColor.DARK_GRAY + "]";
+    public Component getClassNameShortWithBrackets() {
+        return Component.text("[", NamedTextColor.DARK_GRAY)
+                        .append(Component.text(this.classNameShort, NamedTextColor.GOLD))
+                        .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 
     public void runEverySecond() {

@@ -39,6 +39,9 @@ import com.ebicep.warlords.util.warlords.Utils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.*;
 import org.bukkit.entity.*;
@@ -188,25 +191,26 @@ public class WarlordsEvents implements Listener {
                         int prestige = databasePlayer.getSpec(value).getPrestige();
                         FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
                                                                                               .with(FireworkEffect.Type.BALL)
-                                                                                              .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
+                                                                                              .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
                                                                                               .build()
                         );
-                        PacketUtils.sendTitle(player,
-                                ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
-                                ExperienceManager.PRESTIGE_COLORS
-                                        .get(prestige - 1)
-                                        .getA()
-                                        .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige,
-                                20,
-                                140,
-                                20
-                        );
+                        player.showTitle(Title.title(
+                                Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
+                                         .append(Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD))
+                                         .append(Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)),
+                                Component.text(prestige - 1, ExperienceManager.PRESTIGE_COLORS.get(prestige - 1))
+                                         .append(Component.text(" > ", NamedTextColor.GRAY))
+                                         .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige))),
+                                Title.Times.times(Ticks.duration(20), Ticks.duration(140), Ticks.duration(20))
+                        ));
                         //sumSmash is now prestige level 5 in Pyromancer!
                         Bukkit.broadcast(Permissions.getPrefixWithColor(player)
-                                                    .append(Component.text(player.getName() + ChatColor.GRAY + " is now prestige level " +
-                                                            ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige +
-                                                            ChatColor.GRAY + " in " + ChatColor.GOLD + value.name)
-                                                    ));
+                                                    .append(Component.text(player.getName()))
+                                                    .append(Component.text(" is now prestige level ", NamedTextColor.GRAY))
+                                                    .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige)))
+                                                    .append(Component.text(" in ", NamedTextColor.GRAY))
+                                                    .append(Component.text(value.name, NamedTextColor.GOLD)));
+
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
                 } else {
@@ -336,19 +340,15 @@ public class WarlordsEvents implements Listener {
                                            boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
                                        });
                         } else {
-                            wpVictim.sendMessage(
-                                    WarlordsEntity.RECEIVE_ARROW_RED +
-                                            ChatColor.GRAY + "You have been bound by " +
-                                            wpAttacker.getName() + "'s " +
-                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
-                                            ChatColor.GRAY + "!"
+                            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                    .append(Component.text("You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                                    .append(Component.text("!", NamedTextColor.GRAY))
                             );
-                            wpAttacker.sendMessage(
-                                    WarlordsEntity.GIVE_ARROW_GREEN +
-                                            ChatColor.GRAY + "Your " +
-                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
-                                            ChatColor.GRAY + "has bound " +
-                                            wpVictim.getName() + "!"
+                            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                    .append(Component.text("Your ", NamedTextColor.GRAY))
+                                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
                             );
                             soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
                             Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
@@ -763,8 +763,8 @@ public class WarlordsEvents implements Listener {
         FlagLocation eventNew = event.getNew();
         FlagLocation eventOld = event.getOld();
         Team eventTeam = event.getTeam();
-        ChatColor teamColor = eventTeam.teamColor();
-        String coloredPrefix = eventTeam.coloredPrefix();
+        NamedTextColor teamColor = eventTeam.teamColor();
+        Component coloredPrefix = eventTeam.coloredPrefix();
 
         if (eventOld instanceof PlayerFlagLocation) {
             ((PlayerFlagLocation) eventOld).getPlayer().setCarriedFlag(null);
@@ -782,14 +782,29 @@ public class WarlordsEvents implements Listener {
                     game.forEachOnlinePlayer((p, t) -> {
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                         if (t != null && playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                            ChatColor playerColor = pfl.getPlayer().getTeam().teamColor;
+                            NamedTextColor playerColor = pfl.getPlayer().getTeam().teamColor;
                             if (t != eventTeam) {
-                                p.sendMessage(playerColor + "YOUR" + " §eflag carrier now takes §c" + computedHumanMultiplier + "% §eincreased damage!");
+                                p.sendMessage(Component.text("", NamedTextColor.YELLOW)
+                                                       .append(Component.text("YOUR", playerColor))
+                                                       .append(Component.text(" flag carrier now takes "))
+                                                       .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                                       .append(Component.text(" increased damage!"))
+                                );
                             } else {
-                                p.sendMessage("§eThe " + playerColor + "ENEMY" + " §eflag carrier now takes §c" + computedHumanMultiplier + "% §eincreased damage!");
+                                p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                                       .append(Component.text("ENEMY", playerColor))
+                                                       .append(Component.text(" flag carrier now takes "))
+                                                       .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                                       .append(Component.text(" increased damage!"))
+                                );
                             }
                         } else {
-                            p.sendMessage("§eThe " + coloredPrefix + " §eflag carrier now takes §c" + computedHumanMultiplier + "% §eincreased damage!");
+                            p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                                   .append(coloredPrefix)
+                                                   .append(Component.text(" flag carrier now takes "))
+                                                   .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
+                                                   .append(Component.text(" increased damage!"))
+                            );
                         }
                     });
                 }
@@ -798,22 +813,40 @@ public class WarlordsEvents implements Listener {
                 // or SPAWN -> PLAYER
                 game.forEachOnlinePlayer((p, t) -> {
                     PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    String flagMessage = player.getColoredName() + " §epicked up the " + coloredPrefix + " §eflag!";
+                    Component playerColoredName = player.getColoredName();
+                    Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                     .append(playerColoredName)
+                                                     .append(Component.text(" picked up the "))
+                                                     .append(coloredPrefix)
+                                                     .append(Component.text(" §eflag!"));
                     if (t != null) {
                         if (t == eventTeam) {
                             p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
                             if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                                flagMessage = player.getColoredName() + " §epicked up " + teamColor + "YOUR" + " §eflag!";
+                                flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                       .append(playerColoredName)
+                                                       .append(Component.text(" picked up "))
+                                                       .append(Component.text("YOUR", teamColor))
+                                                       .append(Component.text(" flag!"));
                             }
                         } else {
                             p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
                             if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                                flagMessage = player.getColoredName() + " §epicked up the " + teamColor + "ENEMY" + " §eflag!";
+                                flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                       .append(playerColoredName)
+                                                       .append(Component.text(" picked up the "))
+                                                       .append(Component.text("ENEMY", teamColor))
+                                                       .append(Component.text(" flag!"));
                             }
                         }
                     }
                     p.sendMessage(flagMessage);
-                    PacketUtils.sendTitle(p, "", flagMessage, 0, 60, 0);
+                    p.showTitle(Title.title(
+                            Component.empty(),
+                            flagMessage,
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                    ));
+
                 });
             }
         } else if (eventNew instanceof SpawnFlagLocation) {
@@ -824,16 +857,33 @@ public class WarlordsEvents implements Listener {
                     game.forEachOnlinePlayer((p, t) -> {
                         boolean sameTeam = t == eventTeam;
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        String flagMessage = toucher.getColoredName() + " §ehas returned the " + coloredPrefix + " §eflag!";
+                        Component toucherColoredName = toucher.getColoredName();
+                        Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                         .append(toucherColoredName)
+                                                         .append(Component.text(" has returned the "))
+                                                         .append(coloredPrefix)
+                                                         .append(Component.text(" flag!"));
                         if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             if (sameTeam) {
-                                flagMessage = toucher.getColoredName() + " §ehas returned " + teamColor + "YOUR" + " §eflag!";
+                                flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                       .append(toucherColoredName)
+                                                       .append(Component.text(" has returned "))
+                                                       .append(Component.text("YOUR", teamColor))
+                                                       .append(Component.text(" flag!"));
                             } else {
-                                flagMessage = toucher.getColoredName() + " §ehas returned the " + teamColor + "ENEMY" + " §eflag!";
+                                flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                       .append(toucherColoredName)
+                                                       .append(Component.text(" has returned the "))
+                                                       .append(Component.text("ENEMY", teamColor))
+                                                       .append(Component.text(" flag!"));
                             }
                         }
                         p.sendMessage(flagMessage);
-                        PacketUtils.sendTitle(p, "", flagMessage, 0, 60, 0);
+                        p.showTitle(Title.title(
+                                Component.empty(),
+                                flagMessage,
+                                Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                        ));
 
                         if (sameTeam) {
                             p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
@@ -844,12 +894,21 @@ public class WarlordsEvents implements Listener {
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                         if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             if (t == eventTeam) {
-                                p.sendMessage(teamColor + "YOUR §eflag has returned to base!");
+                                p.sendMessage(Component.text("", NamedTextColor.YELLOW)
+                                                       .append(Component.text("YOUR", teamColor))
+                                                       .append(Component.text(" flag has returned to base!"))
+                                );
                             } else {
-                                p.sendMessage("§eThe " + teamColor + "ENEMY §eflag has returned to base!");
+                                p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                                       .append(Component.text("ENEMY", teamColor))
+                                                       .append(Component.text(" flag has returned to base!"))
+                                );
                             }
                         } else {
-                            p.sendMessage("§eThe " + coloredPrefix + "§eflag has returned to base!");
+                            p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
+                                                   .append(coloredPrefix)
+                                                   .append(Component.text(" flag has returned to base!"))
+                            );
                         }
                     });
                 }
@@ -859,16 +918,33 @@ public class WarlordsEvents implements Listener {
                 pfl.getPlayer().updateArmor();
                 game.forEachOnlinePlayer((p, t) -> {
                     PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    String flagMessage = pfl.getPlayer().getColoredName() + " §ehas dropped the " + coloredPrefix + " §eflag!";
+                    Component coloredName = pfl.getPlayer().getColoredName();
+                    Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                     .append(coloredName)
+                                                     .append(Component.text(" has dropped the "))
+                                                     .append(coloredPrefix)
+                                                     .append(Component.text(" flag!"));
                     if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                         if (t == eventTeam) {
-                            flagMessage = pfl.getPlayer().getColoredName() + " §ehas dropped " + teamColor + "YOUR" + " §eflag!";
+                            flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                   .append(coloredName)
+                                                   .append(Component.text(" has dropped "))
+                                                   .append(Component.text("YOUR", teamColor))
+                                                   .append(Component.text(" flag!"));
                         } else {
-                            flagMessage = pfl.getPlayer().getColoredName() + " §ehas dropped the " + teamColor + "ENEMY" + " §eflag!";
+                            flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                   .append(coloredName)
+                                                   .append(Component.text(" has dropped the "))
+                                                   .append(Component.text("ENEMY", teamColor))
+                                                   .append(Component.text(" flag!"));
                         }
                     }
                     p.sendMessage(flagMessage);
-                    PacketUtils.sendTitle(p, "", flagMessage, 0, 60, 0);
+                    p.showTitle(Title.title(
+                            Component.empty(),
+                            flagMessage,
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                    ));
                 });
             }
         } else if (eventNew instanceof WaitingFlagLocation && ((WaitingFlagLocation) eventNew).getScorer() != null) {
@@ -877,16 +953,33 @@ public class WarlordsEvents implements Listener {
             game.forEachOnlinePlayer((p, t) -> {
                 boolean sameTeam = t == eventTeam;
                 PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                String flagMessage = player.getColoredName() + " §ehas captured the " + coloredPrefix + " §eflag!";
+                Component coloredName = player.getColoredName();
+                Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                 .append(coloredName)
+                                                 .append(Component.text(" has captured the "))
+                                                 .append(coloredPrefix)
+                                                 .append(Component.text(" flag!"));
                 if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                     if (sameTeam) {
-                        flagMessage = player.getColoredName() + " §ehas captured " + teamColor + "YOUR" + " §eflag!";
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has captured "))
+                                               .append(Component.text("YOUR", teamColor))
+                                               .append(Component.text(" flag!"));
                     } else {
-                        flagMessage = player.getColoredName() + " §ehas captured the " + teamColor + "ENEMY" + " §eflag!";
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has captured the "))
+                                               .append(Component.text("ENEMY", teamColor))
+                                               .append(Component.text(" flag!"));
                     }
                 }
                 p.sendMessage(flagMessage);
-                PacketUtils.sendTitle(p, "", flagMessage, 0, 60, 0);
+                p.showTitle(Title.title(
+                        Component.empty(),
+                        flagMessage,
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
 
                 if (t != null) {
                     if (sameTeam) {

@@ -49,7 +49,7 @@ public class WeaponSkinSelectorMenu {
                         (i - (pageNumber - 1) * 21) / 7 + 1,
                         new ItemBuilder(weaponsPvE.glassItem)
                                 .name(weaponsPvE.chatColor + "LOCKED")
-                                .lore(
+                                .loreLEGACY(
                                         ChatColor.GRAY + "This skin is locked to a weapon",
                                         ChatColor.GRAY + "of " + weaponsPvE.getChatColorName()
                                                                            .toUpperCase() + ChatColor.GRAY + " rarity of higher."
@@ -62,7 +62,7 @@ public class WeaponSkinSelectorMenu {
                 boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
                 ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
                         .name(ChatColor.GREEN + weaponSkin.getName())
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
                                 ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
                                 "",
@@ -123,7 +123,7 @@ public class WeaponSkinSelectorMenu {
                     5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
                     (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber - 1)
             );
@@ -134,7 +134,7 @@ public class WeaponSkinSelectorMenu {
                     5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
                     (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber + 1)
             );

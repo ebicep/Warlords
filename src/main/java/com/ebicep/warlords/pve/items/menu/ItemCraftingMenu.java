@@ -77,7 +77,7 @@ public class ItemCraftingMenu {
         menu.setItem(1, 1,
                 new ItemBuilder(Material.YELLOW_TERRACOTTA)
                         .name(ChatColor.GREEN + "Delta Forging")
-                        .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
+                        .loreLEGACY(ChatColor.GRAY + "Craft a Delta Tiered Item")
                         .get(),
                 (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, new HashMap<>())
         );
@@ -85,7 +85,7 @@ public class ItemCraftingMenu {
         menu.setItem(4, 1,
                 new ItemBuilder(Material.WHITE_TERRACOTTA)
                         .name(ChatColor.GREEN + "Omega Forging")
-                        .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
+                        .loreLEGACY(ChatColor.GRAY + "Craft an Omega Tiered Item")
                         .get(),
                 (m, e) -> {
                     player.sendMessage(ChatColor.RED + "The time for this has not yet come.");
@@ -95,7 +95,7 @@ public class ItemCraftingMenu {
         menu.setItem(7, 1,
                 new ItemBuilder(Material.ANVIL)
                         .name(ChatColor.GREEN + "Celestial Smeltery")
-                        .lore(ChatColor.GRAY + "Smelt Celestial Bronze")
+                        .loreLEGACY(ChatColor.GRAY + "Smelt Celestial Bronze")
                         .get(),
                 (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
         );
@@ -187,7 +187,7 @@ public class ItemCraftingMenu {
         menu.setItem(6, 2,
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(ChatColor.GREEN + "Click to Craft Item")
-                        .lore(
+                        .loreLEGACY(
                                 ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                                 ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
                                 "",
@@ -314,7 +314,7 @@ public class ItemCraftingMenu {
             menu.setItem(tier + 1, 1,
                     new ItemBuilder(Material.PAPER)
                             .name(ChatColor.GREEN + "Tier " + tier + " Bought Blessings")
-                            .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
+                            .loreLEGACY(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
                             .amount(blessingBoughtAmount)
                             .enchant(Enchantment.OXYGEN, 1)
                             .flags(ItemFlag.HIDE_ENCHANTS)
@@ -340,7 +340,7 @@ public class ItemCraftingMenu {
                                                     .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         ItemBuilder itemBuilder = new ItemBuilder(hasBoughtBlessing && enoughCost ? Material.ANVIL : Material.BARRIER)
                 .name(ChatColor.GREEN + "Click to Smelt a Celestial Bronze")
-                .lore(
+                .loreLEGACY(
                         ItemMenuUtil.getRequirementMetString(hasBoughtBlessing, "Blessing Selected"),
                         ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
                 );

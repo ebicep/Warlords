@@ -123,7 +123,7 @@ public class GuildRoleMenu {
             menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
                             .name(ChatColor.GREEN + "Click to set as default role")
-                            .lore(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
+                            .loreLEGACY(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
                             .get(),
                     (m, e) -> {
                         guild.setDefaultRole(role.getRoleName());
@@ -145,7 +145,7 @@ public class GuildRoleMenu {
         menu.setItem(3, 4,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Click to rename role")
-                        .lore(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
+                        .loreLEGACY(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -184,7 +184,7 @@ public class GuildRoleMenu {
         menu.setItem(5, 4,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Click to change role level")
-                        .lore(lore)
+                        .loreLEGACY(lore)
                         .get(),
                 (m, e) -> {
                     int roleIndex = guildRoles.indexOf(role);

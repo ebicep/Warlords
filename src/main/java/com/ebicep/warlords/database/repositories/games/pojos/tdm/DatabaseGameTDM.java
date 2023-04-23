@@ -119,7 +119,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
         HashMap<DatabaseGamePlayerTDM, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerTDM>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerTDM gamePlayerTDM : teamListEntry.getValue()) {
-                playerColor.put(gamePlayerTDM, teamListEntry.getKey().teamColor);
+               // playerColor.put(gamePlayerTDM, teamListEntry.getKey().teamColor); TODO
             }
         }
 

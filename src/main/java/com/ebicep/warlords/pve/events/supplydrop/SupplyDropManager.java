@@ -41,7 +41,7 @@ public class SupplyDropManager {
                     1,
                     new ItemBuilder(Material.GOLD_NUGGET)
                             .name(ChatColor.GREEN + "Click to buy a supply drop token")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GREEN + "Cost: " + Currencies.COIN.getCostColoredName(10000),
                                     ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins"
                             )
@@ -65,7 +65,7 @@ public class SupplyDropManager {
                     3,
                     new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                             .name(ChatColor.GREEN + "Click to call a supply drop")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1),
                                     ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     "",
@@ -91,7 +91,7 @@ public class SupplyDropManager {
                     3,
                     new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                             .name(ChatColor.GREEN + "Click to call all available supply drops (Max 25)")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     "",
@@ -127,9 +127,9 @@ public class SupplyDropManager {
                     5,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Your most recent supply drops")
-                            .lore(IntStream.range(0, supplyDropHistory.size())
-                                           .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
-                                           .toList())
+                            .loreLEGACY(IntStream.range(0, supplyDropHistory.size())
+                                                 .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
+                                                 .toList())
                             .get(),
                     (m, e) -> {
 

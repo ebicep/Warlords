@@ -8,8 +8,8 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.Bukkit;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,7 +25,7 @@ public class WeaponSalvageMenu {
         menu.setItem(2, 1,
                 new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(ChatColor.GREEN + "Confirm")
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Salvage this weapon and claim its materials.",
                                 "",
                                 ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
@@ -46,7 +46,7 @@ public class WeaponSalvageMenu {
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                        .loreLEGACY(ChatColor.GRAY + "Go back.")
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );

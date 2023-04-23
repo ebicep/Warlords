@@ -8,7 +8,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -111,16 +116,16 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                     }
                 });
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You have marked " +
-                        ChatColor.YELLOW + markTarget.getName() +
-                        ChatColor.GRAY + "!"
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                        .append(Component.text(markTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You have been granted " +
-                        ChatColor.YELLOW + "Crusader's Mark" +
-                        ChatColor.GRAY + " by " + wp.getName() + "!"
+                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
+                        .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
+                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
                 );
 
                 return true;

@@ -15,9 +15,14 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -192,12 +197,11 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                             }
                         }.runTaskTimer(0, 1);
 
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " Your current " +
-                                ChatColor.GREEN + name +
-                                ChatColor.GRAY + " will now levitate towards you or a teammate!"
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your current ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.GREEN))
+                                .append(Component.text(" will now levitate towards you or a teammate!", NamedTextColor.GRAY))
                         );
-
                     }
                 },
                 true,

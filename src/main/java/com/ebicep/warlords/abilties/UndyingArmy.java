@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,8 +26,8 @@ import java.util.List;
 
 public class UndyingArmy extends AbstractAbility implements Duration {
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
-            .name(ChatColor.RED + "Instant Kill")
-            .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
+            .name(Component.text("Instant Kill", NamedTextColor.RED))
+            .loreLEGACY("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
 
     public int playersArmied = 0;
@@ -131,22 +133,17 @@ public class UndyingArmy extends AbstractAbility implements Duration {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
                 playersArmied++;
-
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " Your " +
-                        ChatColor.YELLOW + "Undying Army" +
-                        ChatColor.GRAY + " is now protecting " +
-                        teammate.getName() +
-                        ChatColor.GRAY + "."
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text("Undying Army", NamedTextColor.YELLOW))
+                        .append(Component.text(" is now protecting " + teammate.getName() + ".", NamedTextColor.GRAY))
                 );
-
-                teammate.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " " +
-                        ChatColor.GRAY + wp.getName() + "'s " +
-                        ChatColor.YELLOW + "Undying Army" +
-                        ChatColor.GRAY + " is now protecting you for " +
-                        ChatColor.GOLD + format(tickDuration / 20f) +
-                        ChatColor.GRAY + " seconds."
+                teammate.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                        .append(Component.text("Undying Army", NamedTextColor.YELLOW))
+                        .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                        .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                        .append(Component.text(" seconds.", NamedTextColor.GRAY))
                 );
             }
             teammate.getCooldownManager().addRegularCooldown(

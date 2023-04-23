@@ -28,7 +28,7 @@ public class HorseOption implements Option, Listener {
 
     public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
             .name(ChatColor.GREEN + "Mount " + ChatColor.GRAY + "- §eRight-Click!")
-            .lore(ChatColor.GRAY + "Cooldown: §b15 seconds",
+            .loreLEGACY(ChatColor.GRAY + "Cooldown: §b15 seconds",
                     "",
                     ChatColor.GRAY + "Call your steed to assists you in battle"
             )

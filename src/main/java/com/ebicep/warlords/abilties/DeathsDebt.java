@@ -16,7 +16,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -216,10 +221,14 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
 
                     if (ticksElapsed % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                        wp.sendMessage(ChatColor.GREEN + WarlordsEntity.GIVE_ARROW_GREEN + " §2Spirit's Respite §7delayed §c" +
-                                Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" +
-                                Math.round(ticksLeft / 20f) + " §7seconds left."
-                        );
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text("Spirit's Respite", NamedTextColor.DARK_GREEN)
+                                                 .append(Component.text(" delayed ", NamedTextColor.GRAY))
+                                                 .append(Component.text(Math.round(tempDeathsDebt.getDelayedDamage()), NamedTextColor.RED))
+                                                 .append(Component.text(" damage. ", NamedTextColor.GRAY))
+                                                 .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
+                                                 .append(Component.text(" seconds left.", NamedTextColor.GRAY))
+                                ));
 
                         if (wp.isInPve()) {
                             for (WarlordsEntity we : PlayerFilter

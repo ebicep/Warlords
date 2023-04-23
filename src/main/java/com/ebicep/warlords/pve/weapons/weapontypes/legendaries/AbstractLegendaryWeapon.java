@@ -594,7 +594,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         upgradeLore.addAll(getTitleUpgradeCostLore());
         return new ItemBuilder(Material.GREEN_CONCRETE)
                 .name(ChatColor.GREEN + "Confirm")
-                .lore(upgradeLore)
+                .loreLEGACY(upgradeLore)
                 .get();
 
     }

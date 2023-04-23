@@ -75,7 +75,7 @@ public class ItemMenuUtil {
         menu.setItem(x, y,
                 new ItemBuilder(Material.BOOK)
                         .name(name)
-                        .lore(costLore)
+                        .loreLEGACY(costLore)
                         .get(),
                 (m, e) -> {
                 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.party;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -68,9 +69,8 @@ public class Party {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.BLUE, true);
     }
 
-    public void invite(String name) {
-        Player player = Bukkit.getPlayer(name);
-        invites.put(player.getUniqueId(), 60);
+    public static void sendPartyMessage(Player player, Component message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.BLUE, true);
     }
 
     public void invite(UUID uuid) {

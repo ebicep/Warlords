@@ -77,9 +77,9 @@ public class MasterworksFairMenu {
                 menu.setItem(column, 3,
                         new ItemBuilder(Material.BOOK)
                                 .name(ChatColor.GREEN + "Your most recent placements")
-                                .lore(IntStream.range(0, placementHistory.size())
-                                               .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
-                                               .toList())
+                                .loreLEGACY(IntStream.range(0, placementHistory.size())
+                                                     .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
+                                                     .toList())
                                 .get(), (m, e) -> {
 
                         }
@@ -96,7 +96,7 @@ public class MasterworksFairMenu {
                     infoLore.add(value.getChatColorName() + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
                 }
             }
-            infoItemBuilder.lore(infoLore);
+            infoItemBuilder.loreLEGACY(infoLore);
             menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {
             });
 
@@ -191,7 +191,7 @@ public class MasterworksFairMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
                         openSubmissionMenu(player, databasePlayer, weaponType, page - 1);
@@ -202,7 +202,7 @@ public class MasterworksFairMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {
                         openSubmissionMenu(player, databasePlayer, weaponType, page + 1);

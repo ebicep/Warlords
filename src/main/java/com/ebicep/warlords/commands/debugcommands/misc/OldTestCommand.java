@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -125,6 +126,16 @@ public class OldTestCommand implements CommandExecutor {
 //            });
 
 
+//            TextComponent component = Component.text(">>  Achievement Unlocked: ", NamedTextColor.GREEN)
+//                                               .append(Component.text(ChallengeAchievements.RETRIBUTION_OF_THE_DEAD.name, NamedTextColor.GOLD)
+//                                                                .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(ChallengeAchievements.RETRIBUTION_OF_THE_DEAD.description, NamedTextColor.GREEN), 200))))
+//                                               .append(Component.text("  <<"));
+//            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+
+            Component component = Component.text("TEST")
+                                           .append(Component.newline())
+                                           .append(Component.text("TEST2"));
+            player.sendMessage(component);
         }
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {

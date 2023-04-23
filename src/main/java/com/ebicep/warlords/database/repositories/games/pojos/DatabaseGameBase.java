@@ -477,7 +477,7 @@ public abstract class DatabaseGameBase {
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);
             if (team != null) {
-                playerColor.put(allPlayer, team.teamColor);
+                //playerColor.put(allPlayer, team.teamColor); TODO
             }
         }
 

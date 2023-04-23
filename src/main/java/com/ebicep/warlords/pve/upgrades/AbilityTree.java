@@ -53,7 +53,7 @@ public class AbilityTree {
                     2,
                     new ItemBuilder(upgradeBranch.getItemStack())
                             .name(ChatColor.GOLD + upgradeBranch.getItemName())
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + upgradeBranch.getMaxUpgrades(),
                                     ChatColor.GRAY + "Free Upgrades Available: " + ChatColor.GREEN + upgradeBranch.getFreeUpgrades(),
                                     "",
@@ -72,7 +72,7 @@ public class AbilityTree {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.GOLD_INGOT)
                         .name(ChatColor.GRAY + "Insignia: " + ChatColor.GOLD + "❂ " + NumberFormat.addCommas(warlordsPlayer.getCurrency()))
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Master Upgrades Remaining: " + ChatColor.GOLD + maxMasterUpgrades,
                                 "",
                                 ChatColor.RED + "■ " + "Upgrade is locked",
@@ -126,7 +126,7 @@ public class AbilityTree {
             menu.setItem(1, 4,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Change Profile")
-                            .lore(lore)
+                            .loreLEGACY(lore)
                             .get(),
                     (m, e) -> {
                         int index = autoUpgradeProfiles.indexOf(autoUpgradeProfile);
@@ -138,7 +138,7 @@ public class AbilityTree {
             menu.setItem(2, 4,
                     new ItemBuilder(Material.WRITABLE_BOOK)
                             .name(ChatColor.GREEN + "Create Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
                             .get(),
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() >= 4) {
@@ -171,7 +171,7 @@ public class AbilityTree {
             menu.setItem(3, 4,
                     new ItemBuilder(Material.NAME_TAG)
                             .name(ChatColor.GREEN + "Rename Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
                             .get(),
                     (m, e) -> {
                         new SignGUI()
@@ -198,7 +198,7 @@ public class AbilityTree {
             menu.setItem(5, 4,
                     new ItemBuilder(Material.LAVA_BUCKET)
                             .name(ChatColor.RED + "Delete Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
                             .get(),
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() == 1) {
@@ -233,7 +233,7 @@ public class AbilityTree {
             menu.setItem(6, 4,
                     new ItemBuilder(Material.TRIPWIRE_HOOK)
                             .name(ChatColor.GREEN + "Change Profile Priority")
-                            .lore(lore)
+                            .loreLEGACY(lore)
                             .addLore(
                                     "",
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current profile, for when you have " +
@@ -264,7 +264,7 @@ public class AbilityTree {
             menu.setItem(7, 4,
                     new ItemBuilder(Material.COMPARATOR)
                             .name(ChatColor.GREEN + "Bind to Mode")
-                            .lore(lore)
+                            .loreLEGACY(lore)
                             .get(),
                     (m, e) -> {
                         autoUpgradeProfile.setDifficultyMode(autoUpgradeProfile.getDifficultyMode().next());
@@ -280,12 +280,12 @@ public class AbilityTree {
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.GREEN + "Auto Upgrade Queue")
-                        .lore(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
-                              Collections.singletonList(WordWrap.wrapWithNewline(
-                                      ChatColor.GRAY + "You have no upgrades queued. " +
-                                              ChatColor.YELLOW + ChatColor.BOLD + "RIGHT-CLICK " +
-                                              ChatColor.GRAY + "upgrades to add/remove them.", 130)
-                              ) : autoUpgradeProfile.getLore(this)
+                        .loreLEGACY(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
+                                    Collections.singletonList(WordWrap.wrapWithNewline(
+                                            ChatColor.GRAY + "You have no upgrades queued. " +
+                                                    ChatColor.YELLOW + ChatColor.BOLD + "RIGHT-CLICK " +
+                                                    ChatColor.GRAY + "upgrades to add/remove them.", 130)
+                                    ) : autoUpgradeProfile.getLore(this)
                         )
                         .addLore("",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to clear the queue."

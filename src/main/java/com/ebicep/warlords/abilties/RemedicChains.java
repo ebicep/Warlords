@@ -11,8 +11,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -67,7 +68,7 @@ public class RemedicChains extends AbstractAbility implements Duration {
                 .collect(Collectors.toSet());
 
         if (teammatesNear.size() < 1) {
-            wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
+            wp.sendMessage(Component.text("There are no allies nearby to link!", NamedTextColor.RED));
             return false;
         }
 
@@ -76,17 +77,19 @@ public class RemedicChains extends AbstractAbility implements Duration {
 
         HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " Your Remedic Chains is now protecting " +
-                    ChatColor.YELLOW + warlordsEntity.getName() +
-                    ChatColor.GRAY + "!"
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
+                    .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
-            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
-                    ChatColor.GRAY + wp.getName() + "'s" +
-                    ChatColor.YELLOW + " Remedic Chains" +
-                    ChatColor.GRAY + " is now increasing your §cdamage §7for " +
-                    ChatColor.GOLD + format(tickDuration / 20f) +
-                    ChatColor.GRAY + " seconds!"
+            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s", NamedTextColor.GRAY))
+                    .append(Component.text(" Remedic Chains", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now increasing your ", NamedTextColor.GRAY))
+                    .append(Component.text("damage", NamedTextColor.RED))
+                    .append(Component.text(" for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             healthBoosts.put(warlordsEntity, healthIncrease);

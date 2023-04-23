@@ -112,7 +112,7 @@ public class RegularGamesMenu {
                 3,
                 new ItemBuilder(Material.WRITABLE_BOOK)
                         .name(ChatColor.GREEN + "Editors")
-                        .lore(editors)
+                        .loreLEGACY(editors)
                         .get(),
                 (m, e) -> {
                 }
@@ -122,7 +122,7 @@ public class RegularGamesMenu {
                 4,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "General Information")
-                        .lore(playerOnSpecs)
+                        .loreLEGACY(playerOnSpecs)
                         .get(),
                 (m, e) -> {
                 }
@@ -213,11 +213,11 @@ public class RegularGamesMenu {
             if (selectedPlayersToSwap.get(team).contains(uuid)) {
                 itemBuilder = new ItemBuilder(new ItemStack(Material.CREEPER_HEAD))
                         .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
-                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
+                        .loreLEGACY(ChatColor.GOLD + p.getSelectedSpec().name);
             } else {
                 itemBuilder = new ItemBuilder(HeadUtils.getHead(uuid))
                         .name(ChatColor.AQUA + name)
-                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
+                        .loreLEGACY(ChatColor.GOLD + p.getSelectedSpec().name);
             }
 
             menu.setItem(

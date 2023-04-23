@@ -109,7 +109,7 @@ public class RewardInventory {
                 menu.setItem(0, 5,
                         new ItemBuilder(Material.ARROW)
                                 .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                                .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                                 .get(),
                         (m, e) -> {
                             openRewardInventory(player, page - 1);
@@ -120,7 +120,7 @@ public class RewardInventory {
                 menu.setItem(8, 5,
                         new ItemBuilder(Material.ARROW)
                                 .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                                .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                                 .get(),
                         (m, e) -> {
                             openRewardInventory(player, page + 1);

@@ -13,7 +13,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -58,9 +58,9 @@ public class SoulSwitch extends AbstractAbility {
                 .lookingAtFirst(wp)
         ) {
             if (swapTarget.getCarriedFlag() != null) {
-                wp.sendMessage(ChatColor.RED + "You cannot Soul Switch with a player holding the flag!");
+                wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
             } else if (wp.getCarriedFlag() != null) {
-                wp.sendMessage(ChatColor.RED + "You cannot Soul Switch while holding the flag!");
+                wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             } else {
                 wp.subtractEnergy(energyCost, false);
                 Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
@@ -72,7 +72,11 @@ public class SoulSwitch extends AbstractAbility {
                 EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
 
                 swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
-                swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
+                swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
+                        .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
                         ownLocation.getX(),
@@ -82,7 +86,11 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getPitch()
                 ));
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" You swapped with ", NamedTextColor.GRAY))
+                        .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
                 wp.teleport(new Location(
                         swapLocation.getWorld(),
                         swapLocation.getX(),
@@ -97,7 +105,7 @@ public class SoulSwitch extends AbstractAbility {
                     decoy.setVisible(false);
                     decoy.setGravity(false);
                     decoy.setCustomNameVisible(true);
-                    decoy.customName(Component.text(wp.getColoredName() + "'s Decoy"));
+                    decoy.customName(wp.getColoredName().append(Component.text("'s Decoy")));
                     EntityEquipment equipment = decoy.getEquipment();
                     equipment.setItemInMainHand(player.getInventory().getItem(0));
                     equipment.setHelmet(HeadUtils.getHead(player.getUniqueId()));
@@ -131,39 +139,39 @@ public class SoulSwitch extends AbstractAbility {
                         public void run() {
                             decoy.remove();
                             PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(hit -> {
-                                        hit.addDamageInstance(
-                                                wp,
-                                                name,
-                                                782 * (pveUpgrade ? 2 : 1),
-                                                1034 * (pveUpgrade ? 2 : 1),
-                                                0,
-                                                100,
-                                                false
-                                        );
-                                        if (pveUpgrade) {
-                                            hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                    "Switch Crippling",
-                                                    "CRIP",
-                                                    SoulSwitch.class,
-                                                    new SoulSwitch(),
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(hit -> {
+                                            hit.addDamageInstance(
                                                     wp,
-                                                    CooldownTypes.DEBUFF,
-                                                    cooldownManager -> {
-                                                    },
-                                                    20 * 5
-                                            ) {
-                                                @Override
-                                                public float modifyDamageBeforeInterveneFromAttacker(
-                                                        WarlordsDamageHealingEvent event,
-                                                        float currentDamageValue
+                                                    name,
+                                                    782 * (pveUpgrade ? 2 : 1),
+                                                    1034 * (pveUpgrade ? 2 : 1),
+                                                    0,
+                                                    100,
+                                                    false
+                                            );
+                                            if (pveUpgrade) {
+                                                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                        "Switch Crippling",
+                                                        "CRIP",
+                                                        SoulSwitch.class,
+                                                        new SoulSwitch(),
+                                                        wp,
+                                                        CooldownTypes.DEBUFF,
+                                                        cooldownManager -> {
+                                                        },
+                                                        20 * 5
                                                 ) {
-                                                    return currentDamageValue * .5f;
-                                                }
-                                            });
-                                        }
-                                    });
+                                                    @Override
+                                                    public float modifyDamageBeforeInterveneFromAttacker(
+                                                            WarlordsDamageHealingEvent event,
+                                                            float currentDamageValue
+                                                    ) {
+                                                        return currentDamageValue * .5f;
+                                                    }
+                                                });
+                                            }
+                                        });
 
                             ownLocation.getWorld().spawnParticle(
                                     Particle.EXPLOSION_LARGE,

@@ -49,7 +49,6 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -59,6 +58,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -246,7 +246,7 @@ public class Warlords extends JavaPlugin {
                 player.removePotionEffect(PotionEffectType.BLINDNESS);
                 player.getActivePotionEffects().clear();
                 player.removeMetadata("WARLORDS_PLAYER", this);
-                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+                player.clearTitle();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -600,106 +600,106 @@ public class Warlords extends JavaPlugin {
                                 .toList()
                         ) {
                             UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-                            if (!undyingArmy.isArmyDead(wp)) {
-                                undyingArmy.pop(wp);
-
-                                // Drops the flag when popped.
-                                FlagHolder.dropFlagForPlayer(wp);
-
-                                // Sending the message + check if getFrom is self
-                                if (undyingArmyCooldown.getFrom() == wp) {
-                                    wp.sendMessage("§a»§7 " +
-                                            ChatColor.LIGHT_PURPLE +
-                                            "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
-                                            ChatColor.RED +
-                                            (wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
-                                            ChatColor.LIGHT_PURPLE +
-                                            " every second."
-                                    );
-                                } else {
-                                    wp.sendMessage("§a»§7 " +
-                                            ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
-                                            "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
-                                            ChatColor.RED +
-                                            Math.round(wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
-                                            ChatColor.LIGHT_PURPLE +
-                                            " every second."
-                                    );
-                                }
-
-                                FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                                                  .withColor(Color.LIME)
-                                                                                                  .with(FireworkEffect.Type.BALL)
-                                                                                                  .build());
-
-                                wp.heal();
-
-                                if (player != null) {
-                                    player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), false);
-                                    player.getInventory().setItem(5, UndyingArmy.BONE);
-                                }
-                                newHealth = 40;
-
-                                //gives 50% of max energy if player is less than half
-                                if (wp.getEnergy() < wp.getMaxEnergy() / 2) {
-                                    wp.setEnergy(wp.getMaxEnergy() / 2);
-                                }
-
-                                if (undyingArmy.isPveUpgrade()) {
-                                    wp.addSpeedModifier(wp, "ARMY", 40, 16 * 20, "BASE");
-                                }
-
-                                undyingArmyCooldown.setNameAbbreviation("POPPED");
-                                undyingArmyCooldown.setTicksLeft(16 * 20);
-                                undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                                    if (wp.getEntity() instanceof Player) {
-                                        if (cooldownManager.checkUndyingArmy(true)) {
-                                            ((Player) wp.getEntity()).getInventory().remove(UndyingArmy.BONE);
-                                        }
-                                    }
-                                });
-                                undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
-                                    if (ticksElapsed % 20 == 0) {
-                                        wp.addDamageInstance(
-                                                wp,
-                                                "",
-                                                wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                                wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                                0,
-                                                100,
-                                                false
-                                        );
-
-                                        if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
-                                            PlayerFilter.entitiesAround(wp, 6, 6, 6)
-                                                        .aliveEnemiesOf(wp)
-                                                        .forEach(enemy -> {
-                                                            float healthDamage = enemy.getMaxHealth() * .02f;
-                                                            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                                                healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                                            }
-                                                            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                                                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                                            }
-                                                            enemy.addDamageInstance(
-                                                                    wp,
-                                                                    "Undying Army",
-                                                                    458 + healthDamage,
-                                                                    612 + healthDamage,
-                                                                    0,
-                                                                    100,
-                                                                    false
-                                                            );
-                                                        });
-
-                                        }
-                                    }
-                                });
-
-                                Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(wp, undyingArmy));
-
-                                break;
+                            if (undyingArmy.isArmyDead(wp)) {
+                                continue;
                             }
+                            undyingArmy.pop(wp);
+
+                            // Drops the flag when popped.
+                            FlagHolder.dropFlagForPlayer(wp);
+
+                            // Sending the message + check if getFrom is self
+                            int armyDamage = Math.round(wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
+                            if (undyingArmyCooldown.getFrom() == wp) {
+                                wp.sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                                        .append(Component.text(
+                                                                "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                                                NamedTextColor.LIGHT_PURPLE
+                                                        ))
+                                                        .append(Component.text(armyDamage, NamedTextColor.RED))
+                                                        .append(Component.text(" every second.", NamedTextColor.GRAY))
+                                );
+                            } else {
+                                wp.sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                                        .append(Component.text(undyingArmyCooldown.getFrom()
+                                                                                                  .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                                                NamedTextColor.LIGHT_PURPLE
+                                                        ))
+                                                        .append(Component.text(armyDamage, NamedTextColor.RED))
+                                                        .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
+                                );
+                            }
+
+                            FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+                                                                                              .withColor(Color.LIME)
+                                                                                              .with(FireworkEffect.Type.BALL)
+                                                                                              .build());
+
+                            wp.heal();
+
+                            if (player != null) {
+                                player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), false);
+                                player.getInventory().setItem(5, UndyingArmy.BONE);
+                            }
+                            newHealth = 40;
+
+                            //gives 50% of max energy if player is less than half
+                            if (wp.getEnergy() < wp.getMaxEnergy() / 2) {
+                                wp.setEnergy(wp.getMaxEnergy() / 2);
+                            }
+
+                            if (undyingArmy.isPveUpgrade()) {
+                                wp.addSpeedModifier(wp, "ARMY", 40, 16 * 20, "BASE");
+                            }
+
+                            undyingArmyCooldown.setNameAbbreviation("POPPED");
+                            undyingArmyCooldown.setTicksLeft(16 * 20);
+                            undyingArmyCooldown.setOnRemove(cooldownManager -> {
+                                if (wp.getEntity() instanceof Player) {
+                                    if (cooldownManager.checkUndyingArmy(true)) {
+                                        ((Player) wp.getEntity()).getInventory().remove(UndyingArmy.BONE);
+                                    }
+                                }
+                            });
+                            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (ticksElapsed % 20 == 0) {
+                                    wp.addDamageInstance(
+                                            wp,
+                                            "",
+                                            wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                            wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                            0,
+                                            100,
+                                            false
+                                    );
+
+                                    if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
+                                        PlayerFilter.entitiesAround(wp, 6, 6, 6)
+                                                    .aliveEnemiesOf(wp)
+                                                    .forEach(enemy -> {
+                                                        float healthDamage = enemy.getMaxHealth() * .02f;
+                                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                                        }
+                                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                                        }
+                                                        enemy.addDamageInstance(
+                                                                wp,
+                                                                "Undying Army",
+                                                                458 + healthDamage,
+                                                                612 + healthDamage,
+                                                                0,
+                                                                100,
+                                                                false
+                                                        );
+                                                    });
+
+                                    }
+                                }
+                            });
+                            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(wp, undyingArmy));
+                            break;
                         }
                     }
 
@@ -932,17 +932,17 @@ public class Warlords extends JavaPlugin {
                 Instant now = Instant.now();
                 if (!SENT_HOUR_REMINDER.get()) {
                     if (now.plus(1, ChronoUnit.HOURS).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 1 hour."));
+                        Bukkit.broadcast(Component.text("The server will restart in 1 hour.", NamedTextColor.RED));
                         SENT_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_HALF_HOUR_REMINDER.get()) {
                     if (now.plus(30, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 30 minutes."));
+                        Bukkit.broadcast(Component.text("The server will restart in 30 minutes.", NamedTextColor.RED));
                         SENT_HALF_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_FIFTEEN_MINUTE_REMINDER.get()) {
                     if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcast(Component.text(ChatColor.RED + "The server will restart in 15 minutes."));
+                        Bukkit.broadcast(Component.text("The server will restart in 15 minutes.", NamedTextColor.RED));
                         SENT_FIFTEEN_MINUTE_REMINDER.set(true);
                         cancel(); // Can cancel since there are no more checks
                     }

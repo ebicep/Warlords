@@ -42,7 +42,7 @@ public class WeaponUpgradeMenu {
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                        .loreLEGACY(ChatColor.GRAY + "Go back.")
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );

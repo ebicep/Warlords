@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -73,7 +74,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final GameMode gameMode;
     @Nonnull
     private final EnumSet<GameAddon> addons;
-    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private final List<Component> frozenCauses = new CopyOnWriteArrayList<>();
     private final LocationFactory locations;
     private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
     @Nonnull
@@ -215,16 +216,16 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     @Nonnull
-    public List<String> getFrozenCauses() {
+    public List<Component> getFrozenCauses() {
         return Collections.unmodifiableList(frozenCauses);
     }
 
-    public void addFrozenCause(String cause) {
+    public void addFrozenCause(Component cause) {
         frozenCauses.add(cause);
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
 
-    public void removeFrozenCause(String cause) {
+    public void removeFrozenCause(Component cause) {
         frozenCauses.remove(cause);
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }

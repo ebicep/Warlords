@@ -149,7 +149,7 @@ public class WeaponTitleMenu {
             menu.setItem(0, 4,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
             );
@@ -158,7 +158,7 @@ public class WeaponTitleMenu {
             menu.setItem(8, 4,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page + 1)
             );
@@ -262,7 +262,7 @@ public class WeaponTitleMenu {
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                        .loreLEGACY(ChatColor.GRAY + "Go back.")
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );

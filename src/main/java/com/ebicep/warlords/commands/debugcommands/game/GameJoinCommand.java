@@ -9,7 +9,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -26,7 +27,7 @@ public class GameJoinCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 if (game.getPlayers().get(player.getUniqueId()) != null) {
-                    ChatChannels.sendDebugMessage(player, ChatColor.RED + "You are already in this game!");
+                    ChatChannels.sendDebugMessage(player, Component.text("You are already in this game!", NamedTextColor.RED));
                     return;
                 }
 

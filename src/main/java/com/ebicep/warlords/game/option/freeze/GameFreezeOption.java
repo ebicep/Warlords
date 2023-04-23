@@ -8,6 +8,10 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
@@ -133,7 +137,7 @@ public class GameFreezeOption implements Option, Listener {
                          .forEach(mob -> mob.setNoAi(true));
             }
         }
-        String message = game.getFrozenCauses().get(0);
+        Component message = game.getFrozenCauses().get(0);
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
     }
 
@@ -141,12 +145,16 @@ public class GameFreezeOption implements Option, Listener {
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
     }
 
-    private void freezePlayer(Player p, String message) {
+    private void freezePlayer(Player p, Component message) {
         if (p.getVehicle() instanceof Horse horse) {
             horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
+        p.showTitle(Title.title(
+                Component.text("Game Paused", NamedTextColor.RED),
+                message,
+                Title.Times.times(Ticks.duration(0), Ticks.duration(9999999), Ticks.duration(0))
+        ));
     }
 
     private void unfreezePlayer(Player p) {

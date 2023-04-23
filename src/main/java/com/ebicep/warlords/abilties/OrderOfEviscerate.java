@@ -13,7 +13,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
@@ -109,7 +110,11 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                 WarlordsEntity victim = event.getWarlordsEntity();
                 if (victim != wp) {
                     if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                                .append(Component.text(victim.getName(), NamedTextColor.YELLOW))
+                                .append(Component.text("!", NamedTextColor.GRAY))
+                        );
                     }
                     tempOrderOfEviscerate.setMarkedPlayer(victim);
                 }
@@ -160,18 +165,18 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                         public void run() {
                             if (pveUpgrade) {
                                 int reduction = masterUpgrade ? 12 : 8;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                        ChatColor.GRAY + " You killed your mark," +
-                                        ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
-                                        ChatColor.GRAY + "!"
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
                                 );
                                 wp.subtractPurpleCooldown(2);
                                 wp.subtractOrangeCooldown(reduction);
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                        ChatColor.GRAY + " You killed your mark," +
-                                        ChatColor.YELLOW + " your cooldowns have been reset" +
-                                        ChatColor.GRAY + "!"
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your cooldowns have been reset", NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
                                 );
                                 wp.setPurpleCurrentCooldown(0);
                                 wp.setOrangeCurrentCooldown(0);
@@ -187,18 +192,19 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                         public void run() {
                             if (pveUpgrade) {
                                 int reduction = masterUpgrade ? 6 : 4;
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                        ChatColor.GRAY + " You assisted in killing your mark," +
-                                        ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
-                                        ChatColor.GRAY + "!"
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
                                 );
+
                                 //wp.getPurpleAbility().subtractCooldown(reduction);
                                 wp.subtractOrangeCooldown(reduction);
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                        ChatColor.GRAY + " You assisted in killing your mark," +
-                                        ChatColor.YELLOW + " your cooldowns have been reduced by half" +
-                                        ChatColor.GRAY + "!"
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
+                                        .append(Component.text(" your cooldowns have been reduced by half", NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
                                 );
                                 wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
                                 wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
@@ -236,14 +242,6 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
         if (getDamageThreshold() >= 600) {
             OrderOfEviscerate.removeCloak(warlordsPlayer, false);
         }
-    }
-
-    public void addToDamageThreshold(float damageThreshold) {
-        this.damageThreshold += damageThreshold;
-    }
-
-    public float getDamageThreshold() {
-        return damageThreshold;
     }
 
     public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
@@ -289,6 +287,14 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
         );
         wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
         return orderOfEviscerateCooldown;
+    }
+
+    public void addToDamageThreshold(float damageThreshold) {
+        this.damageThreshold += damageThreshold;
+    }
+
+    public float getDamageThreshold() {
+        return damageThreshold;
     }
 
     public void setMarkedPlayer(WarlordsEntity markedPlayer) {

@@ -254,7 +254,7 @@ public enum Quests {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.MAP : Material.PAPER)
                 .name(ChatColor.GREEN + time.name + ": " + name)
                 //.name(ChatColor.GREEN + name)
-                .lore(
+                .loreLEGACY(
                         ChatColor.GRAY + description,
                         "",
                         ChatColor.GRAY + "Progress: " + (completed ? ChatColor.GREEN + "Completed" :

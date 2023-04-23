@@ -94,7 +94,7 @@ public class WeaponManagerMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
@@ -106,7 +106,7 @@ public class WeaponManagerMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);
@@ -119,7 +119,7 @@ public class WeaponManagerMenu {
         menu.setItem(1, 5,
                 new ItemBuilder(Material.FURNACE)
                         .name(ChatColor.GREEN + "Salvage All Weapons")
-                        .lore(
+                        .loreLEGACY(
                                 WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " +
                                         ChatColor.GRAY + "to salvage all weapons below " + ChatColor.GREEN + menuSettings.getWeaponScoreSalvage() +
                                         "% " + ChatColor.GRAY + "weapon score, excluding bound weapons.", 160),
@@ -189,7 +189,7 @@ public class WeaponManagerMenu {
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.DARK_AQUA + "Your Weapon Drops")
-                        .lore(
+                        .loreLEGACY(
                                 Currencies.STAR_PIECES.stream()
                                                       .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
                                                       .collect(Collectors.joining("\n")),
@@ -204,7 +204,7 @@ public class WeaponManagerMenu {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.GREEN + "Reset Settings")
-                        .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .loreLEGACY(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
@@ -214,7 +214,7 @@ public class WeaponManagerMenu {
         menu.setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
                         .name(ChatColor.GREEN + "Filter By")
-                        .lore(
+                        .loreLEGACY(
                                 Arrays.stream(WeaponsPvE.VALUES)
                                       .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                       .collect(Collectors.joining("\n")),
@@ -244,9 +244,9 @@ public class WeaponManagerMenu {
         menu.setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
                         .name(ChatColor.GREEN + "Sort By")
-                        .lore(Arrays.stream(SortOptions.VALUES)
-                                    .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                    .collect(Collectors.joining("\n"))
+                        .loreLEGACY(Arrays.stream(SortOptions.VALUES)
+                                          .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                          .collect(Collectors.joining("\n"))
                         )
                         .get(),
                 (m, e) -> {
@@ -257,9 +257,9 @@ public class WeaponManagerMenu {
         menu.setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "Sort Order")
-                        .lore(menuSettings.isAscending() ?
-                              ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
-                              ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
+                        .loreLEGACY(menuSettings.isAscending() ?
+                                    ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
+                                    ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
                         )
                         .get(),
                 (m, e) -> {
@@ -282,7 +282,7 @@ public class WeaponManagerMenu {
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.SLIME_BALL)
                         .name(ChatColor.GREEN + "Bind Weapon")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY +
                                         "Only the weapon bound to your selected specialization will be used in game." +
                                         "\n\nIf you want to use this weapon, bind it to its specialization.",
                                 180
@@ -294,7 +294,7 @@ public class WeaponManagerMenu {
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.PAINTING)
                         .name(ChatColor.GREEN + "Skin Selector")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY +
                                         "Change the skin of your weapon to better match your tastes.",
                                 180
                         ))
@@ -308,7 +308,7 @@ public class WeaponManagerMenu {
                     !(weapon instanceof EpicWeapon) ?
                     new ItemBuilder(Material.FURNACE)
                             .name(ChatColor.GREEN + "Salvage Weapon")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
                                     "",
                                     ChatColor.YELLOW + "Shift-Click" + ChatColor.GRAY + " to instantly salvage this weapon.",
@@ -320,7 +320,7 @@ public class WeaponManagerMenu {
                             .get() :
                     new ItemBuilder(Material.FURNACE)
                             .name(ChatColor.GREEN + "Salvage Weapon")
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
                                     "",
                                     ChatColor.GREEN + "Rewards: " + ((Salvageable) weapon).getSalvageRewardMessage(),
@@ -357,7 +357,7 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.CRAFTING_TABLE)
                             .name(ChatColor.GREEN + "Weapon Stats Reroll")
-                            .lore(((StatsRerollable) weapon).getRerollCostLore())
+                            .loreLEGACY(((StatsRerollable) weapon).getRerollCostLore())
                             .get(),
                     (m, e) -> {
                         int rerollCost = ((StatsRerollable) weapon).getRerollCost();
@@ -375,7 +375,7 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
-                            .lore(upgradeable.getUpgradeCostLore())
+                            .loreLEGACY(upgradeable.getUpgradeCostLore())
                             .get(),
                     (m, e) -> {
                         if (upgradeable.getUpgradeLevel() >= upgradeable.getMaxUpgradeLevel()) {
@@ -403,7 +403,7 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
                             .name(ChatColor.GREEN + "Apply a " + selectedStarPiece.currency.name)
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY +
                                             "This star piece provides a " + selectedStarPiece.currency.chatColor + selectedStarPiece.starPieceBonusValue +
                                             "% " + ChatColor.GRAY + "stat boost to a random stat.",
                                     180
@@ -445,7 +445,7 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
                             .name(ChatColor.GREEN + "Change Weapon Title " + ChatColor.YELLOW + ChatColor.BOLD + "[LEFT-CLICK]")
-                            .lore(upgradeWeaponTitleLore)
+                            .loreLEGACY(upgradeWeaponTitleLore)
                             .get(),
                     (m, e) -> {
                         if (e.isLeftClick()) {
@@ -480,7 +480,7 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.BOOKSHELF)
                             .name(ChatColor.GREEN + "Change Skill Boost")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY +
                                             "Change the skill boost of this weapon.",
                                     180
                             ))

@@ -48,7 +48,7 @@ public abstract class AbstractReward {
         lore.add(ChatColor.YELLOW + "Click to claim!");
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
-                .lore(lore)
+                .loreLEGACY(lore)
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
@@ -56,7 +56,7 @@ public abstract class AbstractReward {
     public ItemStack getItemWithoutClaim() {
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
-                .lore(getLore())
+                .loreLEGACY(getLore())
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }

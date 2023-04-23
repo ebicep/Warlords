@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
@@ -96,7 +97,7 @@ public class FlagSpawnPointOption implements Option {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                String flagName = info.getTeam().coloredPrefix();
+                Component flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {
                     return singletonList(flagName + " Flag: " + ChatColor.GREEN + "Safe");

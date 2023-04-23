@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -18,7 +20,7 @@ import java.util.UUID;
 
 public class GameFreezeWhenOfflineOption implements Option {
 
-    private static final String FROZEN_MESSAGE = ChatColor.YELLOW + "Missing player detected!";
+    private static final Component FROZEN_MESSAGE = Component.text("Missing player detected!", NamedTextColor.YELLOW);
     public static boolean enabled = true;
 
     @Override

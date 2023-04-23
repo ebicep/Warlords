@@ -31,7 +31,7 @@ public interface Upgradeable {
         upgradeLore.addAll(getUpgradeCostLore());
         return new ItemBuilder(Material.GREEN_CONCRETE)
                 .name(ChatColor.GREEN + "Confirm")
-                .lore(upgradeLore)
+                .loreLEGACY(upgradeLore)
                 .get();
     }
 

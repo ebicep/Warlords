@@ -36,7 +36,7 @@ public enum GuildPermissions {
     public ItemStack getItemStack(boolean enabled) {
         return new ItemBuilder(material)
                 .name(ChatColor.GREEN + name)
-                .lore(
+                .loreLEGACY(
                         ChatColor.GRAY + description,
                         "",
                         enabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled",

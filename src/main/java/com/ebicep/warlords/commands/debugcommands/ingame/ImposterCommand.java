@@ -11,6 +11,8 @@ import com.ebicep.warlords.game.option.pvp.ImposterModeOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -38,8 +40,8 @@ public class ImposterCommand extends BaseCommand {
     @Description("Vote to vote out a player")
     public void vote(@Conditions("requireGame:withAddon=IMPOSTER_MODE") WarlordsPlayer warlordsPlayer) {
         if (warlordsPlayer.getGame().getState(PlayingState.class)
-                .map(PlayingState::getTicksElapsed)
-                .orElse(0) < 60 * 20 * 5) {
+                          .map(PlayingState::getTicksElapsed)
+                          .orElse(0) < 60 * 20 * 5) {
             warlordsPlayer.sendMessage(ChatColor.RED + "You cannot request to vote before 5 minutes have past!");
             return;
         }
@@ -61,16 +63,16 @@ public class ImposterCommand extends BaseCommand {
                 }
 
                 if (imposterModeOption.getVoters()
-                        .values()
-                        .stream()
-                        .anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer.getUuid()))
+                                      .values()
+                                      .stream()
+                                      .anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer.getUuid()))
                 ) {
                     warlordsPlayer.sendMessage(ChatColor.RED + "You already voted to vote!");
                     return;
                 }
                 imposterModeOption.getVoters()
-                        .computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>())
-                        .add(warlordsPlayer.getUuid());
+                                  .computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>())
+                                  .add(warlordsPlayer.getUuid());
 
                 int votesNeeded = (int) (warlordsPlayer.getGame()
                                                        .warlordsPlayers()
@@ -79,7 +81,8 @@ public class ImposterCommand extends BaseCommand {
                 if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                     Team team = warlordsPlayer.getTeam();
                     imposterModeOption.sendPoll(team);
-                    warlordsPlayer.getGame().addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
+                    warlordsPlayer.getGame().addFrozenCause(Component.text(team.name, team.teamColor)
+                                                                     .append(Component.text(" is voting!", NamedTextColor.GREEN)));
                 } else {
                     warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((p, team) -> {
                         if (team == warlordsPlayer.getTeam()) {

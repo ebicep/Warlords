@@ -39,7 +39,7 @@ public class WeaponLegendaryCraftMenu {
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
                         .name(ChatColor.GREEN + "Craft Legendary Weapon")
-                        .lore(COST_LORE)
+                        .loreLEGACY(COST_LORE)
                         .get(),
                 (m, e) -> {
                     List<String> confirmLore = new ArrayList<>();

@@ -50,6 +50,8 @@ import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -133,7 +135,7 @@ public class CommandManager {
                                                                       .findAny();
             if (optionalWarlordsPlayer.isEmpty()) {
                 if (target.equals(name)) {
-                    throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+                    throw new ConditionFailedException("You must be in an active game to use this command!");
                 } else {
                     throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
                 }
@@ -151,7 +153,7 @@ public class CommandManager {
                 }
                 return new PartyPlayerWrapper(partyPlayerPair);
             }
-            throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+            throw new ConditionFailedException("You must be in a party to use this command!");
         });
         manager.getCommandContexts().registerIssuerOnlyContext(GuildPlayerWrapper.class, command -> {
             Player player = command.getPlayer();
@@ -163,7 +165,7 @@ public class CommandManager {
                 }
                 return new GuildPlayerWrapper(guildPlayerPair);
             }
-            throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+            throw new ConditionFailedException("You must be in a guild to use this command!");
         });
         //Contexts
         manager.getCommandContexts().registerContext(WarlordsNPC.class, command -> {
@@ -205,7 +207,7 @@ public class CommandManager {
             String arg = command.popFirstArg();
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(command.getPlayer().getUniqueId());
             if (partyPlayerPair == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+                throw new ConditionFailedException("You must be in a party to use this command!");
             }
             for (PartyPlayer partyPlayer : partyPlayerPair.getA().getPartyPlayers()) {
                 if (Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
@@ -218,7 +220,7 @@ public class CommandManager {
             String arg = command.popFirstArg();
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(command.getPlayer());
             if (guildPlayerPair == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+                throw new ConditionFailedException("You must be in a guild to use this command!");
             }
             for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
                 if (Bukkit.getOfflinePlayer(guildPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
@@ -230,10 +232,10 @@ public class CommandManager {
         manager.getCommandContexts().registerContext(AbstractPoll.class, command -> {
             Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
             if (optionalPoll.isEmpty()) {
-                throw new InvalidCommandArgument(ChatColor.RED + "Could not find a poll with that ID");
+                throw new InvalidCommandArgument("Could not find a poll with that ID");
             }
             if (!optionalPoll.get().getUUIDsAllowedToVote().contains(command.getPlayer().getUniqueId())) {
-                throw new ConditionFailedException(ChatColor.RED + "You can't vote in this poll!");
+                throw new ConditionFailedException("You can't vote in this poll!");
             }
             return optionalPoll.get();
         });
@@ -249,7 +251,7 @@ public class CommandManager {
             if (game.isPresent()) {
                 return game.get();
             } else {
-                throw new InvalidCommandArgument(ChatColor.RED + "Could not find a game with that ID");
+                throw new InvalidCommandArgument("Could not find a game with that ID");
             }
         });
         manager.getCommandContexts().registerContext(Instant.class, command -> Instant.parse(command.popFirstArg()));
@@ -374,21 +376,21 @@ public class CommandManager {
     public static void registerConditions() {
         manager.getCommandConditions().addCondition("database", command -> {
             if (!DatabaseManager.enabled) {
-                throw new ConditionFailedException(ChatColor.RED + "The database is currently disabled!");
+                throw new ConditionFailedException("The database is currently disabled!");
             }
             if (command.hasConfig("player") && DatabaseManager.playerService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Player database is currently disabled!");
+                throw new ConditionFailedException("Player database is currently disabled!");
             }
             if (command.hasConfig("game") && DatabaseManager.gameService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Games are currently disabled!");
+                throw new ConditionFailedException("Games are currently disabled!");
             }
             if (command.hasConfig("guild") && DatabaseManager.guildService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Guilds are current disabled!");
+                throw new ConditionFailedException("Guilds are current disabled!");
             }
         });
         manager.getCommandConditions().addCondition("bot", command -> {
             if (BotManager.jda == null) {
-                throw new ConditionFailedException(ChatColor.RED + "The bot is not enabled!");
+                throw new ConditionFailedException("The bot is not enabled!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(player));
@@ -398,9 +400,9 @@ public class CommandManager {
             if (game.isEmpty()) {
                 BukkitCommandIssuer issuer = command.getIssuer();
                 if (issuer.isPlayer() && issuer.getPlayer().equals(player)) {
-                    throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+                    throw new ConditionFailedException("You must be in an active game to use this command!");
                 } else {
-                    throw new ConditionFailedException(ChatColor.RED + "Target player must be in an active game to use this command!");
+                    throw new ConditionFailedException("Target player must be in an active game to use this command!");
                 }
             }
             requireGameConfig(command, game.get());
@@ -408,7 +410,7 @@ public class CommandManager {
         manager.getCommandConditions().addCondition(WarlordsPlayer.class, "requireGame", (command, exec, warlordsPlayer) -> {
             Game game = warlordsPlayer.getGame();
             if (game == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+                throw new ConditionFailedException("You must be in an active game to use this command!");
             }
             requireGameConfig(command, game);
         });
@@ -418,26 +420,26 @@ public class CommandManager {
 
         manager.getCommandConditions().addCondition(Player.class, "outsideGame", (command, exec, player) -> {
             if (Warlords.hasPlayer(player)) {
-                throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while in an active game!");
+                throw new ConditionFailedException("You cannot use this command while in an active game!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "party", (command, exec, player) -> {
             Pair<Party, PartyPlayer> optionalParty = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
             if (optionalParty == null && command.hasConfig("true")) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+                throw new ConditionFailedException("You must be in a party to use this command!");
             }
             if (optionalParty != null && command.hasConfig("false")) {
-                throw new ConditionFailedException(ChatColor.RED + "You cannot be in a party to use this command!");
+                throw new ConditionFailedException("You cannot be in a party to use this command!");
 
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "guild", (command, exec, player) -> {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair == null && command.hasConfig("true")) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+                throw new ConditionFailedException("You must be in a guild to use this command!");
             }
             if (guildPlayerPair != null && command.hasConfig("false")) {
-                throw new ConditionFailedException(ChatColor.RED + "You cannot be in a guild to use this command!");
+                throw new ConditionFailedException("You cannot be in a guild to use this command!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
@@ -445,7 +447,7 @@ public class CommandManager {
             if (command.hasConfig("target")) {
                 ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
                 if (selectedChatChannel == currentChatChannel) {
-                    throw new ConditionFailedException(ChatColor.RED + "You are already in this channel");
+                    throw new ConditionFailedException("You are already in this channel");
                 }
             }
         });
@@ -478,10 +480,10 @@ public class CommandManager {
             Player player = command.getIssuer().getPlayer();
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
             if (partyPlayerPair == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+                throw new ConditionFailedException("You must be in a party to use this command!");
             }
             if (partyPlayerPair.getB().getPartyPlayerType().ordinal() >= partyPlayer.getPartyPlayerType().ordinal()) {
-                Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
                 throw new ConditionFailedException();
             }
         });
@@ -489,11 +491,11 @@ public class CommandManager {
             Player player = command.getIssuer().getPlayer();
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+                throw new ConditionFailedException("You must be in a party to use this command!");
             }
             Guild guild = guildPlayerPair.getA();
             if (guild.getRoleLevel(guildPlayerPair.getB()) >= guild.getRoleLevel(guildPlayer)) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
                 throw new ConditionFailedException();
             }
         });
@@ -501,7 +503,7 @@ public class CommandManager {
             Player player = command.getIssuer().getPlayer();
             GuildPermissions perm = GuildPermissions.valueOf(command.getConfigValue("perm", ""));
             if (!guildPlayerWrapper.getGuild().playerHasPermission(guildPlayerWrapper.getGuildPlayer(), perm)) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
                 throw new ConditionFailedException();
             }
         });
@@ -609,7 +611,7 @@ public class CommandManager {
     public static void requireWarlordsPlayer(Player player) {
         WarlordsEntity issuerWarlordsPlayer = Warlords.getPlayer(player);
         if (issuerWarlordsPlayer == null) {
-            throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+            throw new ConditionFailedException("You must be in an active game to use this command!");
         }
     }
 
@@ -630,18 +632,18 @@ public class CommandManager {
                 }
             }
             if (!hasGameMode) {
-                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + configValue);
+                throw new ConditionFailedException("Game does not contain gamemode " + configValue);
             }
         }
         if (command.hasConfig("withAddon")) {
             GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
             if (!game.getAddons().contains(addon)) {
-                throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
+                throw new ConditionFailedException("Game does not contain addon " + addon.name());
             }
         }
         if (command.hasConfig("unfrozen")) {
             if (game.isFrozen()) {
-                throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
+                throw new ConditionFailedException("You cannot use this command while the game is frozen!");
             }
         }
     }
@@ -687,7 +689,7 @@ public class CommandManager {
 
     public static void requirePlayer(BukkitCommandIssuer issuer) {
         if (!issuer.isPlayer()) {
-            throw new ConditionFailedException(ChatColor.RED + "This command requires a player!");
+            throw new ConditionFailedException("This command requires a player!");
         }
     }
 }

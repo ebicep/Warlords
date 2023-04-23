@@ -11,7 +11,6 @@ import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -22,9 +21,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -130,11 +132,14 @@ public class BotListener extends ListenerAdapter implements Listener {
                         Player player = Bukkit.getPlayer(name);
                         if (player != null) {
                             Random random = new Random();
-                            PacketUtils.sendTitle(player,
-                                    ChatColor.GREEN + Utils.specsOrdered[random.nextInt(Utils.specsOrdered.length)],
-                                    random.nextInt(2) == 0 ? ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE" : ChatColor.RED.toString() + ChatColor.BOLD + "RED",
-                                    0, 5, 0
-                            );
+                            TextComponent subtitle = random.nextInt(2) == 0 ?
+                                                     Component.text("BLUE", NamedTextColor.BLUE) :
+                                                     Component.text("RED", NamedTextColor.RED);
+                            player.showTitle(Title.title(
+                                    Component.text(Utils.specsOrdered[random.nextInt(Utils.specsOrdered.length)], NamedTextColor.GREEN),
+                                    subtitle,
+                                    Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
+                            ));
                         }
                     });
                     //auto cancel after 15 seconds
@@ -152,8 +157,8 @@ public class BotListener extends ListenerAdapter implements Listener {
             cancelOnGoingBalance();
             MessageEmbed embed = message.getEmbeds().get(0);
             boolean isExperimental = embed.getTitle().contains("*");
-            List<String> blueTeam = new ArrayList<>();
-            List<String> redTeam = new ArrayList<>();
+            List<TextComponent> blueTeam = new ArrayList<>();
+            List<TextComponent> redTeam = new ArrayList<>();
             for (MessageEmbed.Field field : embed.getFields()) {
                 String fieldName = field.getName();
                 String fieldValue = field.getValue();
@@ -164,18 +169,22 @@ public class BotListener extends ListenerAdapter implements Listener {
                             .split("\n");
 
                     if (fieldName.contains("Blue Team")) {
-                        blueTeam.add(ChatColor.DARK_BLUE.toString() + ChatColor.BOLD + "Blue Team" + ChatColor.DARK_GRAY + " - ");
+                        blueTeam.add(Component.text("Blue Team", NamedTextColor.DARK_BLUE, TextDecoration.BOLD).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                         for (String player : players) {
                             String name = player.substring(0, player.indexOf('-'));
                             String spec = player.substring(player.indexOf('-') + 1);
-                            blueTeam.add(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + spec);
+                            blueTeam.add(Component.text(name, NamedTextColor.BLUE)
+                                                  .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
+                                                  .append(Component.text(spec, NamedTextColor.YELLOW)));
                         }
                     } else if (fieldName.contains("Red Team")) {
-                        redTeam.add(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Red Team" + ChatColor.DARK_GRAY + " - ");
+                        blueTeam.add(Component.text("Blue Team", NamedTextColor.DARK_RED, TextDecoration.BOLD).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                         for (String player : players) {
                             String name = player.substring(0, player.indexOf('-'));
                             String spec = player.substring(player.indexOf('-') + 1);
-                            redTeam.add(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + spec);
+                            blueTeam.add(Component.text(name, NamedTextColor.RED)
+                                                  .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
+                                                  .append(Component.text(spec, NamedTextColor.YELLOW)));
                         }
                     }
                 }
@@ -201,6 +210,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 if (offlinePlayer == null) {
                                     continue;
                                 }
+                                Player targetPlayer = offlinePlayer.getPlayer();
                                 UUID uuid = offlinePlayer.getUniqueId();
                                 Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
                                 if (resetMenu.get()) {
@@ -240,8 +250,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     }
                                 }
                                 if (!isExperimental) {
-                                    if (partyPlayerPair != null && offlinePlayer.isOnline()) {
-                                        offlinePlayer.getPlayer().getInventory().setItem(7,
+                                    if (partyPlayerPair != null && targetPlayer != null) {
+                                        targetPlayer.getInventory().setItem(7,
                                                 new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getItem())
                                                         .name("§aTeam Builder")
                                                         .get()
@@ -250,40 +260,52 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     }
                                 }
                                 //only send messages to online
-                                if (offlinePlayer.isOnline()) {
-                                    Player targetPlayer = offlinePlayer.getPlayer();
-                                    targetPlayer.sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
+                                if (targetPlayer != null) {
+                                    targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
                                     if (isBlueTeam) {
-                                        targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " team!");
+                                        targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
+                                                                          .append(Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD))
+                                                                          .append(Component.text(" team!", NamedTextColor.GREEN)));
                                     } else if (isRedTeam) {
-                                        targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.RED + "RED" + ChatColor.GREEN + " team!");
+                                        targetPlayer.sendMessage(Component.text("You were automatically put into the ", NamedTextColor.GREEN)
+                                                                          .append(Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD))
+                                                                          .append(Component.text(" team!", NamedTextColor.GREEN)));
                                     }
                                     if (!spec.isEmpty()) {
-                                        PacketUtils.sendTitle(targetPlayer,
-                                                ChatColor.GREEN + spec,
-                                                isBlueTeam ? ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE"
-                                                           : isRedTeam ? ChatColor.RED.toString() + ChatColor.BOLD + "RED"
-                                                                       : "",
-                                                0, 100, 40
-                                        );
-                                        targetPlayer.sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec + ChatColor.GREEN + "!");
+                                        TextComponent subtitle = isBlueTeam ? Component.text("BLUE", NamedTextColor.BLUE, TextDecoration.BOLD)
+                                                                            : isRedTeam ? Component.text("RED", NamedTextColor.RED, TextDecoration.BOLD)
+                                                                                        : Component.empty();
+                                        targetPlayer.showTitle(Title.title(
+                                                Component.text(spec, NamedTextColor.GREEN),
+                                                subtitle,
+                                                Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(40))
+                                        ));
+                                        targetPlayer.sendMessage(Component.text("Your spec was automatically changed to ", NamedTextColor.GREEN)
+                                                                          .append(Component.text(spec, NamedTextColor.YELLOW))
+                                                                          .append(Component.text("!", NamedTextColor.GREEN)));
                                     }
                                     targetPlayer.sendMessage("");
                                     blueTeam.forEach(s -> {
-                                        if (s.contains(name)) {
-                                            targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf('-') - 2) + s.substring(s.indexOf('-') - 2));
+                                        String content = s.content();
+                                        if (content.contains(name)) {
+                                            targetPlayer.sendMessage(Component.text(content.substring(2, content.indexOf('-') - 2) + content.substring(content.indexOf('-') - 2),
+                                                    NamedTextColor.GREEN
+                                            ));
                                         } else {
                                             targetPlayer.sendMessage(s);
                                         }
                                     });
                                     redTeam.forEach(s -> {
-                                        if (s.contains(name)) {
-                                            targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf('-') - 2) + s.substring(s.indexOf('-') - 2));
+                                        String content = s.content();
+                                        if (content.contains(name)) {
+                                            targetPlayer.sendMessage(Component.text(content.substring(2, content.indexOf('-') - 2) + content.substring(content.indexOf('-') - 2),
+                                                    NamedTextColor.GREEN
+                                            ));
                                         } else {
                                             targetPlayer.sendMessage(s);
                                         }
                                     });
-                                    targetPlayer.sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
+                                    targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
                                 }
                             }
                             return null;

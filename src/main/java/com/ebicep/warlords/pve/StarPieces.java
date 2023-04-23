@@ -57,7 +57,7 @@ public enum StarPieces {
                 menu.setItem(col, row,
                         new ItemBuilder(Material.NETHER_STAR)
                                 .name(ChatColor.GREEN + "Synthesize: " + starPiece.currency.getColoredName())
-                                .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Combines lower tier star pieces to create a higher one.", 140))
+                                .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Combines lower tier star pieces to create a higher one.", 140))
                                 .addLore(costLore)
                                 .get(),
                         (m, e) -> {

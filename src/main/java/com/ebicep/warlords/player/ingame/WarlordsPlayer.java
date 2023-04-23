@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -187,7 +188,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.customName(Component.text(getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(this.getHealth()) + "❤")); // TODO add level and class into the name of this jimmy
+        jimmy.customName(Component.empty()
+                                  .append(getSpec().getClassNameShortWithBrackets())
+                                  .append(Component.text(" "))
+                                  .append(this.getColoredName())
+                                  .append(Component.text(" " + Math.round(this.getHealth()) + "❤", NamedTextColor.RED))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         if (attribute != null) {

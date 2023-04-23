@@ -78,7 +78,7 @@ public class Menu extends AbstractMenuBase {
         menu.setItem(2, 1,
                 new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(confirmName)
-                        .lore(confirmLore)
+                        .loreLEGACY(confirmLore)
                         .get(),
                 onConfirm
         );
@@ -86,7 +86,7 @@ public class Menu extends AbstractMenuBase {
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(cancelName)
-                        .lore(cancelLore)
+                        .loreLEGACY(cancelLore)
                         .get(),
                 onCancel
         );

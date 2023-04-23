@@ -13,7 +13,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -26,13 +27,12 @@ import java.util.List;
 
 public class Vindicate extends AbstractAbility implements Duration {
 
+    private static int knockbackResistance = 50;
     public int debuffsRemovedOnCast = 0;
-
     private final int radius = 8;
     private int vindTickDuration = 240;
     private int damageReductionTickDuration = 160;
     private float vindicateDamageReduction = 30;
-    private static int knockbackResistance = 50;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25);
@@ -78,18 +78,18 @@ public class Vindicate extends AbstractAbility implements Duration {
                 .closestFirst(wp)
         ) {
             if (vindicateTarget != wp) {
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " Your Vindicate is now protecting " +
-                        ChatColor.YELLOW + vindicateTarget.getName() +
-                        ChatColor.GRAY + "!"
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your Vindicate is now protecting ", NamedTextColor.GRAY))
+                        .append(Component.text(vindicateTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
-
-                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
-                        ChatColor.GRAY + wp.getName() + "'s" +
-                        ChatColor.YELLOW + " Vindicate" +
-                        ChatColor.GRAY + " is now protecting you from de-buffs for " +
-                        ChatColor.GOLD + (vindTickDuration / 20f) +
-                        ChatColor.GRAY + " seconds!"
+                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" "))
+                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                        .append(Component.text("Vindicate", NamedTextColor.YELLOW))
+                        .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
+                        .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
+                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
                 );
             }
 

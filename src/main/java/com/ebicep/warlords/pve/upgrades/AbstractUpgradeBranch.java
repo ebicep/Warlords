@@ -284,7 +284,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
         ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
-                .lore(lore);
+                .loreLEGACY(lore);
         if (!upgrade.isUnlocked()) {
             String position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
             if (position != null) {
@@ -310,7 +310,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                                   new ItemStack(Material.ORANGE_WOOL) :
                                                   new ItemStack(Material.LIGHT_GRAY_WOOL))
                 .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
-                .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                .loreLEGACY((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                         "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
         if (!upgrade.isUnlocked()) {
             String position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);

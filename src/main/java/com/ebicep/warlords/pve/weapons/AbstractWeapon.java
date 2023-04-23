@@ -6,8 +6,8 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import net.kyori.adventure.text.Component;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -115,7 +115,7 @@ public abstract class AbstractWeapon {
             }
         }
         return itemBuilder
-                .lore(lore)
+                .loreLEGACY(lore)
                 .get();
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractWeapon {
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
-                .lore(lore)
+                .loreLEGACY(lore)
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
     }

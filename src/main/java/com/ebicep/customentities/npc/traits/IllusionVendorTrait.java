@@ -76,7 +76,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
             menu.setItem(i + 1, 1,
                     new ItemBuilder(rewardSpendable.getItem())
                             .name(rewardSpendable.getCostColoredName(rewardAmount))
-                            .lore(
+                            .loreLEGACY(
                                     ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice),
                                     ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
                             )

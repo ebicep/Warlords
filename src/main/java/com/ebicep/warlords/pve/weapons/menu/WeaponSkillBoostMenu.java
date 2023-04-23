@@ -60,7 +60,7 @@ public class WeaponSkillBoostMenu {
                     lore.addAll(WeaponSkillBoostMenu.costLore);
                 }
             }
-            builder.lore(lore);
+            builder.loreLEGACY(lore);
             menu.setItem(
                     i + 2,
                     3,

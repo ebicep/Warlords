@@ -9,7 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -117,16 +118,16 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                     }
                 });
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You have marked " +
-                        ChatColor.GOLD + markTarget.getName() +
-                        ChatColor.GRAY + "!"
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                        .append(Component.text(markTarget.getName(), NamedTextColor.GOLD))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED +
-                        ChatColor.GRAY + " You have been cursed with " +
-                        ChatColor.GOLD + "Avenger's Mark" +
-                        ChatColor.GRAY + " by " + wp.getName() + "!"
+                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
+                        .append(Component.text("Avenger's Mark", NamedTextColor.GOLD))
+                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
                 );
 
                 return true;

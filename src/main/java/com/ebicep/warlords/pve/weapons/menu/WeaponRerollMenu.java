@@ -21,7 +21,7 @@ public class WeaponRerollMenu {
         menu.setItem(2, 1,
                 new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(ChatColor.GREEN + "Confirm")
-                        .lore(ChatColor.GRAY + "Reroll this weapon and reset its stats.")
+                        .loreLEGACY(ChatColor.GRAY + "Reroll this weapon and reset its stats.")
                         .addLore(weapon.getRerollCostLore())
                         .addLore(
                                 "",
@@ -44,7 +44,7 @@ public class WeaponRerollMenu {
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                        .loreLEGACY(ChatColor.GRAY + "Go back.")
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );

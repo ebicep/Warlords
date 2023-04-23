@@ -43,7 +43,7 @@ public class GuildMenu {
         menu.setItem(0, 0,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(ChatColor.GREEN + "Guild Information")
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Name: " + ChatColor.YELLOW + guild.getName(),
                                 ChatColor.GRAY + "Created: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guild.getCreationDate()),
                                 ChatColor.GRAY + "Level: " + ChatColor.YELLOW + guildLevel,
@@ -60,7 +60,7 @@ public class GuildMenu {
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                         .name(ChatColor.GREEN + "Temporary Blessings")
-                        .lore(ChatColor.GRAY + "These upgrades last 24 hours and " +
+                        .loreLEGACY(ChatColor.GRAY + "These upgrades last 24 hours and " +
                                 "\nwill only affect players in the guild.")
                         .get(),
                 (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES)
@@ -68,7 +68,7 @@ public class GuildMenu {
         menu.setItem(3, 0,
                 new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                         .name(ChatColor.GREEN + "Permanent Upgrades")
-                        .lore(ChatColor.GRAY + "These upgrades last permanently and " +
+                        .loreLEGACY(ChatColor.GRAY + "These upgrades last permanently and " +
                                 "\nwill only affect players in the guild."
                         ).get(),
                 (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Permanent Upgrades", GuildUpgradesPermanent.VALUES)
@@ -77,7 +77,7 @@ public class GuildMenu {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.EMERALD)
                         .name(ChatColor.GREEN + "Convert Coins")
-                        .lore(
+                        .loreLEGACY(
                                 ChatColor.GRAY + "Convert your Player Coins to Guild Coins",
                                 "",
                                 ChatColor.GOLD + "Conversion Ratios",
@@ -125,7 +125,7 @@ public class GuildMenu {
                 menu.setItem(i % 9, i / 9 + 1,
                         new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID()))
                                 .name(ChatColor.GREEN + guildPlayer.getName())
-                                .lore(
+                                .loreLEGACY(
                                         ChatColor.GRAY + "Join Date: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()),
                                         ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName(),
                                         ChatColor.GRAY + "Coins: ",
@@ -154,7 +154,7 @@ public class GuildMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> openGuildMenu(guild, player, page - 1)
             );
@@ -163,7 +163,7 @@ public class GuildMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> openGuildMenu(guild, player, page + 1)
             );

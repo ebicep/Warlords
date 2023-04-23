@@ -26,7 +26,7 @@ public class DifficultyMenu {
                     1,
                     new ItemBuilder(Material.REDSTONE_LAMP)
                             .name(difficulty.getDifficultyColor() + ChatColor.BOLD.toString() + difficulty.getName())
-                            .lore(ChatColor.GRAY + difficulty.getDescription())
+                            .loreLEGACY(ChatColor.GRAY + difficulty.getDescription())
                             .get(),
                     (m, e) -> {
                         if (switch (finalI) {

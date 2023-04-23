@@ -1,7 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -13,10 +12,7 @@ import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ItemBuilder {
 
@@ -28,10 +24,6 @@ public class ItemBuilder {
     private final ItemStack item;
     @Nullable
     private ItemMeta meta = null;
-
-    public ItemBuilder(@Nonnull Material type) {
-        item = new ItemStack(type);
-    }
 
     public ItemBuilder(@Nonnull Material type, int amount) {
         item = new ItemStack(type, amount);
@@ -46,6 +38,10 @@ public class ItemBuilder {
         PotionMeta potionMeta = (PotionMeta) meta();
         potionMeta.setBasePotionData(new PotionData(potionType));
         item.setItemMeta(potionMeta);
+    }
+
+    public ItemBuilder(@Nonnull Material type) {
+        item = new ItemStack(type);
     }
 
     protected ItemMeta meta() {
@@ -64,7 +60,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(Component component) {
-        meta().displayName(component);
+        meta().displayName(ComponentUtils.nonItalicBase().append(component));
         return this;
     }
 
@@ -78,34 +74,41 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder lore(String... lore) {
-        return lore(Arrays.asList(lore));
+    public ItemBuilder loreLEGACY(String... lore) {
+        return loreLEGACY(Arrays.asList(lore));
     }
 
-    public ItemBuilder lore(Collection<String> lore) {
-        for (String row : lore) {
-            if (row == null || row.contains("\n")) {
-                // Fix for \n and null
-                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
-                for (String loreRow : lore) {
-                    if (loreRow != null) {
-                        if (loreRow.contains("\n")) {
-                            String chatColor = "";
-                            for (String split : loreRow.split("\n")) {
-                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
-                                newLore.add(combined);
-                                chatColor = ChatColor.getLastColors(combined);
-                            }
-                        } else {
-                            newLore.add(loreRow);
-                        }
-                    }
-                }
-                meta().setLore(newLore);
-                return this;
+    public ItemBuilder loreLEGACY(Collection<String> lore2) {
+        List<Component> lore = new ArrayList<>(lore2.size());
+        for (String s : lore2) {
+            if (s == null) {
+                continue;
             }
+            lore.add(Component.text(s));
         }
-        meta().setLore(lore instanceof List<?> ? (List<String>) lore : new ArrayList<>(lore));
+//        for (String row : lore) {
+//            if (row == null || row.contains("\n")) {
+//                // Fix for \n and null
+//                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
+//                for (String loreRow : lore) {
+//                    if (loreRow != null) {
+//                        if (loreRow.contains("\n")) {
+//                            String chatColor = "";
+//                            for (String split : loreRow.split("\n")) {
+//                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
+//                                newLore.add(combined);
+//                                chatColor = ChatColor.getLastColors(combined);
+//                            }
+//                        } else {
+//                            newLore.add(loreRow);
+//                        }
+//                    }
+//                }
+//                meta().setLore(newLore);
+//                return this;
+//            }
+//        }
+        meta().lore(ComponentUtils.flattenComponents(lore));
         return this;
     }
 
@@ -113,36 +116,67 @@ public class ItemBuilder {
         return addLore(Arrays.asList(lore));
     }
 
-    public ItemBuilder addLore(Collection<String> lore) {
-        if (meta().getLore() == null) {
-            return lore(lore);
+    public ItemBuilder addLore(Collection<String> lore2) {
+        List<Component> lore = new ArrayList<>(lore2.size());
+        for (String s : lore2) {
+            lore.add(Component.text(s));
         }
-        for (String row : lore) {
-            if (row == null || row.contains("\n")) {
-                // Fix for \n and null
-                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
-                newLore.addAll(meta().getLore());
-                for (String loreRow : lore) {
-                    if (loreRow != null) {
-                        if (loreRow.contains("\n")) {
-                            String chatColor = "";
-                            for (String split : loreRow.split("\n")) {
-                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
-                                newLore.add(combined);
-                                chatColor = ChatColor.getLastColors(combined);
-                            }
-                        } else {
-                            newLore.add(loreRow);
-                        }
-                    }
-                }
-                meta().setLore(newLore);
-                return this;
-            }
+        return addLoreC(lore);
+//        for (String row : lore) {
+//            if (row == null || row.contains("\n")) {
+//                // Fix for \n and null
+//                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
+//                newLore.addAll(meta().getLore());
+//                for (String loreRow : lore) {
+//                    if (loreRow != null) {
+//                        if (loreRow.contains("\n")) {
+//                            String chatColor = "";
+//                            for (String split : loreRow.split("\n")) {
+//                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
+//                                newLore.add(combined);
+//                                chatColor = ChatColor.getLastColors(combined);
+//                            }
+//                        } else {
+//                            newLore.add(loreRow);
+//                        }
+//                    }
+//                }
+//                meta().setLore(newLore);
+//                return this;
+//            }
+//        }
+    }
+
+    public ItemBuilder lore(Collection<Component> lore) {
+        meta().lore(new ArrayList<>());
+        addLoreC(lore);
+        return this;
+    }
+
+    public ItemBuilder lore(Component... lore) {
+        lore(Arrays.asList(lore));
+        return this;
+    }
+
+    public ItemBuilder addLore(Component lore) {
+        addLoreC(Collections.singletonList(lore));
+        return this;
+    }
+
+    public ItemBuilder addLore(Component... lore) {
+        addLoreC(Arrays.asList(lore));
+        return this;
+    }
+
+    public ItemBuilder addLoreC(Collection<Component> lore) {
+        List<Component> components = meta().lore();
+        if (components == null) {
+            components = new ArrayList<>();
         }
-        List<String> newLore = new ArrayList<>(meta().getLore());
-        newLore.addAll(lore);
-        meta().setLore(newLore);
+        for (Component component : lore) {
+            components.add(ComponentUtils.nonItalicBase().append(component));
+        }
+        meta().lore(components);
         return this;
     }
 

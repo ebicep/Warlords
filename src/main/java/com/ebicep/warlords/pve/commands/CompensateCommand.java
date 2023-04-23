@@ -52,7 +52,7 @@ public class CompensateCommand extends BaseCommand {
             menu.setItem(col, row,
                     new ItemBuilder(currency.item)
                             .name(currency.getColoredName())
-                            .lore(ChatColor.GREEN.toString() + compensation.getOrDefault(currency, 0L))
+                            .loreLEGACY(ChatColor.GREEN.toString() + compensation.getOrDefault(currency, 0L))
                             .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
@@ -90,8 +90,8 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.PLAYER_HEAD)
                         .name(ChatColor.GREEN + "Player")
-                        .lore(ChatColor.AQUA + (compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
-                                                                                                   .getName() : "All " + compensatedPlayers.size() + " Players"))
+                        .loreLEGACY(ChatColor.AQUA + (compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
+                                                                                                         .getName() : "All " + compensatedPlayers.size() + " Players"))
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -115,9 +115,9 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(5, 5,
                 new ItemBuilder(Material.CHEST)
                         .name(ChatColor.GREEN + "All Players")
-                        .lore(compensatedPlayers.stream()
-                                                .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
-                                                .collect(Collectors.joining("\n")))
+                        .loreLEGACY(compensatedPlayers.stream()
+                                                      .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
+                                                      .collect(Collectors.joining("\n")))
                         .get(),
                 (m, e) -> {
                     openCompensateMenu(player, compensation, new ArrayList<>(compensatedPlayers));
@@ -126,11 +126,11 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(8, 5,
                 new ItemBuilder(Colors.GREEN.wool)
                         .name(ChatColor.GREEN + "Confirm Compensate")
-                        .lore(compensation.entrySet()
-                                          .stream()
-                                          .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                                                            .getCostColoredName(currenciesValues.getValue()))
-                                          .toArray(String[]::new))
+                        .loreLEGACY(compensation.entrySet()
+                                                .stream()
+                                                .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
+                                                                                                                  .getCostColoredName(currenciesValues.getValue()))
+                                                .toArray(String[]::new))
                         .addLore(
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to directly give through the Rewards Inventory",

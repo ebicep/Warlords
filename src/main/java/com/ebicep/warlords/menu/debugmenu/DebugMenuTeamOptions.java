@@ -38,7 +38,7 @@ public class DebugMenuTeamOptions {
             menu.setItem(i % 7 + 1, i / 7 + 1,
                     new ItemBuilder(team.item)
                             .name(team.chatTagColored)
-                            .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
+                            .loreLEGACY(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, 1));
             i++;
@@ -85,7 +85,7 @@ public class DebugMenuTeamOptions {
                 menu.setItem(i % 9, i / 9,
                         new ItemBuilder(itemStack)
                                 .name(team.teamColor + warlordsEntity.getName() + (warlordsEntity.hasFlag() ? ChatColor.WHITE + " ⚑" : ""))
-                                .lore(lore)
+                                .loreLEGACY(lore)
                                 .get(),
                         (m, e) -> {
                             if (e.isRightClick() && player.getUniqueId() != warlordsEntity.getUuid()) {
@@ -103,7 +103,7 @@ public class DebugMenuTeamOptions {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page - 1)
             );
@@ -112,7 +112,7 @@ public class DebugMenuTeamOptions {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page + 1)
             );
@@ -123,13 +123,13 @@ public class DebugMenuTeamOptions {
         menu.setItem(5, 5,
                 new ItemBuilder(team.item)
                         .name(team.chatTagColored)
-                        .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
+                        .loreLEGACY(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                         .get(),
                 ACTION_DO_NOTHING);
         menu.setItem(5, 5,
                 new ItemBuilder(Material.DIAMOND_SWORD)
                         .name(ChatColor.RED + "Kill All")
-                        .lore(ChatColor.GRAY + "Kills all the players on the team")
+                        .loreLEGACY(ChatColor.GRAY + "Kills all the players on the team")
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(), (m, e) -> {
                     warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100, false));

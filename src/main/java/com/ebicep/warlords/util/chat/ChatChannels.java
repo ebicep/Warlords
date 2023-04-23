@@ -314,6 +314,12 @@ public enum ChatChannels {
         ChatChannels.playerSendMessage(player, chatChannel, Component.text(message));
     }
 
+    public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, Component message) {
+        if (warlordsPlayer.getEntity() instanceof Player) {
+            ChatChannels.playerSendMessage((Player) warlordsPlayer.getEntity(), ChatChannels.DEBUG, message);
+        }
+    }
+
     /**
      * @param player      Sender of the message
      * @param chatChannel Channel to send the message to
@@ -356,7 +362,27 @@ public enum ChatChannels {
         }
     }
 
+    public static void sendDebugMessage(CommandIssuer commandIssuer, Component message) {
+        if (commandIssuer != null && commandIssuer.getIssuer() instanceof Player) {
+            sendDebugMessage((Player) commandIssuer.getIssuer(), message);
+        } else {
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (Permissions.isAdmin(onlinePlayer)) {
+                    onlinePlayer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+                }
+            }
+            if (commandIssuer != null) {
+                commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            }
+            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+        }
+    }
+
     public static void sendDebugMessage(Player player, String message) {
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
+    }
+
+    public static void sendDebugMessage(Player player, Component message) {
         ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
 

@@ -18,14 +18,12 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import net.minecraft.world.entity.Mob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @CommandAlias("mob")
 @CommandPermission("group.administrator")
@@ -140,17 +138,17 @@ public class MobCommand extends BaseCommand {
         //Ghoul Caller - @MainLobby | 10,-3,3
         for (Option option : game.getOptions()) {
             if (option instanceof PveOption) {
-                String message = ((PveOption) option)
-                        .getMobs()
-                        .stream()
-                        .map(abstractMob -> {
-                            Mob mob = abstractMob.getMob();
-                            return abstractMob.getWarlordsNPC().getColoredName() +
-                                    ChatColor.GREEN + " @" + mob.getLevel().getWorld().getName() +
-                                    ChatColor.GRAY + " | " + ChatColor.GREEN + mob.getX() + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + mob.getY() + ChatColor.GRAY + "," + ChatColor.GREEN + mob.getZ();
-                        })
-                        .collect(Collectors.joining("\n"));
-                ChatChannels.sendDebugMessage(issuer, message);
+//                Component message = ((PveOption) option)
+//                        .getMobs()
+//                        .stream()
+//                        .map(abstractMob -> {
+//                            Mob mob = abstractMob.getMob();
+//                            return abstractMob.getWarlordsNPC().getColoredName() +
+//                                    ChatColor.GREEN + " @" + mob.getLevel().getWorld().getName() +
+//                                    ChatColor.GRAY + " | " + ChatColor.GREEN + mob.getX() + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + mob.getY() + ChatColor.GRAY + "," + ChatColor.GREEN + mob.getZ();
+//                        })
+//                        .collect(Collectors.joining("\n"));
+//                ChatChannels.sendDebugMessage(issuer, message);
                 return;
             }
         }

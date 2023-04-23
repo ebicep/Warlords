@@ -101,7 +101,7 @@ public interface DebugLocationMarker extends LocationMarker {
             }
             lore.add(newString);
         }
-        item.lore(lore);
+        item.loreLEGACY(lore);
         return item.get();
     }
 

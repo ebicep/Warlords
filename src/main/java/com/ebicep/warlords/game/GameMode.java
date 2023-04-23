@@ -144,7 +144,7 @@ public enum GameMode {
             ));
             options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                     .name(ChatColor.AQUA + "Pre-game Menu ")
-                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                    .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                     .get(), (g, p) -> openMainMenu(p)));
 
             options.add(new WeaponOption());
@@ -535,11 +535,11 @@ public enum GameMode {
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                 .name(ChatColor.AQUA + "Pre-game Menu ")
-                .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                 .get(), (g, p) -> openMainMenu(p)));
         options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                        .name(ChatColor.AQUA + "Player Spec Information")
-                        .lore(ChatColor.GRAY + "Displays the amount of people on each specialization.")
+                .name(ChatColor.AQUA + "Player Spec Information")
+                .loreLEGACY(ChatColor.GRAY + "Displays the amount of people on each specialization.")
                         .get(),
                         (g, p) -> {
                             openPlayerSpecInfoMenu(g, p);
@@ -558,8 +558,8 @@ public enum GameMode {
                 )
         );
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
-                        .name(ChatColor.RED + "Leave")
-                        .lore(ChatColor.GRAY + "Right-Click to leave the game.")
+                .name(ChatColor.RED + "Leave")
+                .loreLEGACY(ChatColor.GRAY + "Right-Click to leave the game.")
                         .get(),
                         (g, p) -> {
                             if (g.acceptsPeople()) {
@@ -590,18 +590,18 @@ public enum GameMode {
                     .filter(classes -> classes.specType == value)
                     .forEach(classes -> {
                         int playersOnSpec = (int) game.getPlayers().keySet().stream()
-                                .map(PlayerSettings::getPlayerSettings)
-                                .map(PlayerSettings::getSelectedSpec)
-                                .filter(c -> c == classes)
-                                .count();
+                                                      .map(PlayerSettings::getPlayerSettings)
+                                                      .map(PlayerSettings::getSelectedSpec)
+                                                      .filter(c -> c == classes)
+                                                      .count();
                         lore.append(ChatColor.GREEN)
-                                .append(classes.name)
-                                .append(": ")
-                                .append(ChatColor.YELLOW)
-                                .append(playersOnSpec)
-                                .append("\n");
+                            .append(classes.name)
+                            .append(": ")
+                            .append(ChatColor.YELLOW)
+                            .append(playersOnSpec)
+                            .append("\n");
                     });
-            itemBuilder.lore(lore.toString());
+            itemBuilder.loreLEGACY(lore.toString());
             menu.setItem(
                     x,
                     1,

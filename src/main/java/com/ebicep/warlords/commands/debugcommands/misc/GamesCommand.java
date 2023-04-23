@@ -48,7 +48,7 @@ public class GamesCommand extends BaseCommand {
                     i / 7 + 1,
                     new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + game.getDate())
-                            .lore(game.getLore())
+                            .loreLEGACY(game.getLore())
                             .get(),
                     (m, e) -> openGameEditorMenu(player, game)
             );
@@ -76,7 +76,7 @@ public class GamesCommand extends BaseCommand {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + game.getDate())
-                        .lore(game.getLore())
+                        .loreLEGACY(game.getLore())
                         .get(),
                 (m, e) -> {
                 }
@@ -210,7 +210,7 @@ public class GamesCommand extends BaseCommand {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + game.getDate())
-                        .lore(game.getLore())
+                        .loreLEGACY(game.getLore())
                         .get(),
                 (m, e) -> {
                 }
@@ -222,7 +222,7 @@ public class GamesCommand extends BaseCommand {
             boolean isASelectedAddon = addons.contains(gameAddon);
             ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                     .name(ChatColor.GREEN + gameAddon.getName())
-                    .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
+                    .loreLEGACY(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
             if (isASelectedAddon) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);

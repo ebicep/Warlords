@@ -13,7 +13,8 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -45,24 +46,30 @@ public class GameTerminateCommand extends BaseCommand {
             if (gamePredicate.test(gameHolder)) {
                 game.setNextState(new EndState(game, null));
                 ChatChannels.sendDebugMessage(issuer,
-                        ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap()
-                                                                                                                       .getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s")
+                        Component.text("Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap()
+                                                                                                                    .getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"),
+                                NamedTextColor.GREEN
+                        )
                 );
             }
         }
         ChatChannels.sendDebugMessage(
                 issuer,
-                ChatColor.RED + "(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
-                        inactiveGames.stream()
-                                     .map(GameHolder::getName)
-                                     .collect(Collectors.joining(", "))
+                Component.text("(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
+                                inactiveGames.stream()
+                                             .map(GameHolder::getName)
+                                             .collect(Collectors.joining(", ")),
+                        NamedTextColor.RED
+                )
         );
         ChatChannels.sendDebugMessage(
                 issuer,
-                ChatColor.RED + "(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
-                        otherStateGames.stream()
-                                       .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
-                                       .collect(Collectors.joining(", "))
+                Component.text("(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
+                                otherStateGames.stream()
+                                               .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
+                                               .collect(Collectors.joining(", ")),
+                        NamedTextColor.RED
+                )
         );
     }
 
@@ -74,7 +81,7 @@ public class GameTerminateCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 game.setNextState(new EndState(game, null));
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName());
+                ChatChannels.sendDebugMessage(player, Component.text("Terminated own game " + gameHolder.getName(), NamedTextColor.GREEN));
                 break;
             }
         }

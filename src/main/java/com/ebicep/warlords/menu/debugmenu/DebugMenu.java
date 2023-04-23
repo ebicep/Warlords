@@ -39,7 +39,7 @@ public class DebugMenu {
             Game game = warlordsPlayer.getGame();
             items.put(new ItemBuilder(Material.BOOK)
                             .name(ChatColor.GREEN + "Game - " + game.getGameId())
-                            .lore(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
+                            .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
                                     ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
                                     ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
                                     ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()

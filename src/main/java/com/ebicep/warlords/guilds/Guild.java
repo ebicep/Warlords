@@ -16,6 +16,7 @@ import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -193,6 +194,10 @@ public class Guild {
     }
 
     public static void sendGuildMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
+    }
+
+    public static void sendGuildMessage(Player player, Component message) {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 

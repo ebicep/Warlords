@@ -25,7 +25,7 @@ public class RaidMenu {
                     1,
                     new ItemBuilder(Material.REDSTONE)
                             .name(ChatColor.RED + ChatColor.BOLD.toString() + raid.getName())
-                            .lore(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 150) +
+                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 150) +
                                     "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel() +
                                     "\n§7Minimum player requirement: §64" +
                                     "\n\n§7Completion Rewards:" +

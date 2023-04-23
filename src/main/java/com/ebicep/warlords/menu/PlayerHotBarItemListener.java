@@ -39,7 +39,7 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND)
             .name("§aPvP Menu")
-            .lore(
+            .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvP.", 160),
                     "",
                     ChatColor.YELLOW + "Click to view!"
@@ -47,7 +47,7 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
             .name("§aPvE Menu")
-            .lore(
+            .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvE.", 160),
                     "",
                     ChatColor.YELLOW + "Click to view!"
@@ -58,7 +58,7 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.ENDER_EYE)
             .name("§aSpectate")
-            .lore(
+            .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
                     "",
                     ChatColor.YELLOW + "Click to open!"
@@ -66,7 +66,7 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR)
             .name("§aWarlords Menu")
-            .lore(
+            .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View your specializations, settings, PvP/PvE stats, and more!", 160),
                     "",
                     ChatColor.YELLOW + "Click to open!"
@@ -74,7 +74,7 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK)
             .name("§aSettings Menu")
-            .lore(
+            .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all your in game settings.", 160),
                     "",
                     ChatColor.YELLOW + "Click to view!"

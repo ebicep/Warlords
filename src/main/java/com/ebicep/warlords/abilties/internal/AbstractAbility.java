@@ -7,6 +7,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -69,16 +71,16 @@ public abstract class AbstractAbility {
      */
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
 
-    public void updateCustomStats(AbstractPlayerClass apc) {
-
-    }
-
     public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {
             boosted = true;
             skillBoost.applyBoost.accept(this);
             updateCustomStats(abstractPlayerClass);
         }
+    }
+
+    public void updateCustomStats(AbstractPlayerClass apc) {
+
     }
 
     public void addTimesUsed() {
@@ -166,22 +168,25 @@ public abstract class AbstractAbility {
     }
 
     public ItemStack getItem(ItemStack baseItem) {
-        return new ItemBuilder(baseItem)
-                .name(ChatColor.GOLD + getName())
-                .lore(
-                        getCooldown() == 0 ? null :
-                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalTenths(getCooldown()) + " seconds",
-                        getEnergyCost() == 0 ? null :
-                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalTenths(getEnergyCost()),
-                        getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + "\n" +
-                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%",
-                        "",
-                        getDescription()
-                )
+        ItemBuilder itemBuilder = new ItemBuilder(baseItem)
+                .name(Component.text(getName(), NamedTextColor.GOLD))
                 .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                .get();
+                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+
+        if (getCooldown() != 0) {
+            itemBuilder.addLore(Component.text("Cooldown: " + NumberFormat.formatOptionalTenths(getCooldown()) + " seconds", NamedTextColor.GRAY));
+        }
+        if (getEnergyCost() != 0) {
+            itemBuilder.addLore(Component.text("Energy Cost: " + NumberFormat.formatOptionalTenths(getEnergyCost()), NamedTextColor.YELLOW));
+        }
+        if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
+            itemBuilder.addLore(Component.text("Crit Chance: " + NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED));
+            itemBuilder.addLore(Component.text("Crit Multiplier: " + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED));
+        }
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLoreC(getDescription());
+
+        return itemBuilder.get();
     }
 
     public String getName() {
@@ -220,8 +225,8 @@ public abstract class AbstractAbility {
         this.critMultiplier = critMultiplier;
     }
 
-    public String getDescription() {
-        return WordWrap.wrapWithNewline(ChatColor.GRAY + description, DESCRIPTION_WIDTH);
+    public List<Component> getDescription() {
+        return WordWrap.wrap(Component.text(description, NamedTextColor.GRAY), DESCRIPTION_WIDTH);
     }
 
     public String formatRangeDamage(float min, float max) {

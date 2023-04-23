@@ -7,11 +7,14 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -111,48 +114,51 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                     );
                 }
                 PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5)
-                        .excluding(playersHit)
-                        .forEach(otherPlayer -> {
-                            playersHit.add(otherPlayer);
+                            .excluding(playersHit)
+                            .forEach(otherPlayer -> {
+                                playersHit.add(otherPlayer);
 
-                            if (otherPlayer.isEnemyAlive(wp)) {
-                                playersCharged++;
-                                otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                if (otherPlayer.isEnemyAlive(wp)) {
+                                    playersCharged++;
+                                    otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-                                if (otherPlayer instanceof WarlordsNPC) {
-                                    ((WarlordsNPC) otherPlayer).setStunTicks(getStunTimeInTicks());
-                                    //otherPlayer.addSpeedModifier(wp, "Charge Stun", -99, getStunTimeInTicks(), "BASE");
-                                } else if (otherPlayer instanceof WarlordsPlayer) {
-                                    ((WarlordsPlayer) otherPlayer).stun();
-                                    new GameRunnable(wp.getGame()) {
+                                    if (otherPlayer instanceof WarlordsNPC) {
+                                        ((WarlordsNPC) otherPlayer).setStunTicks(getStunTimeInTicks());
+                                        //otherPlayer.addSpeedModifier(wp, "Charge Stun", -99, getStunTimeInTicks(), "BASE");
+                                    } else if (otherPlayer instanceof WarlordsPlayer) {
+                                        ((WarlordsPlayer) otherPlayer).stun();
+                                        new GameRunnable(wp.getGame()) {
+                                            @Override
+                                            public void run() {
+                                                ((WarlordsPlayer) otherPlayer).unstun();
+                                            }
+                                        }.runTaskLater(getStunTimeInTicks());
+                                        otherPlayer.getEntity().showTitle(Title.title(
+                                                Component.empty(),
+                                                Component.text("IMMOBILIZED", NamedTextColor.LIGHT_PURPLE),
+                                                Title.Times.times(Ticks.duration(0), Ticks.duration(stunTimeInTicks), Ticks.duration(0))
+                                        ));
+
+                                    }
+                                } else if (pveUpgrade && otherPlayer.isTeammateAlive(wp)) {
+                                    otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Probiotic",
+                                            "PROBIO",
+                                            RecklessCharge.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.ABILITY,
+                                            cooldownManager -> {
+                                            },
+                                            8 * 20
+                                    ) {
                                         @Override
-                                        public void run() {
-                                            ((WarlordsPlayer) otherPlayer).unstun();
+                                        public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                            return currentHealValue * 2;
                                         }
-                                    }.runTaskLater(getStunTimeInTicks());
-                                    if (otherPlayer.getEntity() instanceof Player) {
-                                        PacketUtils.sendTitle((Player) otherPlayer.getEntity(), "", "§dIMMOBILIZED", 0, stunTimeInTicks, 0);
-                                    }
+                                    });
                                 }
-                            } else if (pveUpgrade && otherPlayer.isTeammateAlive(wp)) {
-                                otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                        "Probiotic",
-                                        "PROBIO",
-                                        RecklessCharge.class,
-                                        null,
-                                        wp,
-                                        CooldownTypes.ABILITY,
-                                        cooldownManager -> {
-                                        },
-                                        8 * 20
-                                ) {
-                                    @Override
-                                    public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                        return currentHealValue * 2;
-                                    }
-                                });
-                            }
-                        });
+                            });
 
                 maxChargeDuration--;
             }

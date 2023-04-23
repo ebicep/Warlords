@@ -9,7 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -65,7 +66,11 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         } else {
             if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()
                                                                                                           .hasCooldown(WoundingStrikeDefender.class))) {
-                nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                nearPlayer.sendMessage(
+                        Component.text("You are ", NamedTextColor.GRAY)
+                                 .append(Component.text("wounded", NamedTextColor.RED))
+                                 .append(Component.text(".", NamedTextColor.GRAY))
+                );
             }
             nearPlayer.getCooldownManager().removePreviousWounding();
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -79,7 +84,11 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                     },
                     cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                            nearPlayer.sendMessage(
+                                    Component.text("You are no longer ", NamedTextColor.GRAY)
+                                             .append(Component.text("wounded", NamedTextColor.RED))
+                                             .append(Component.text(".", NamedTextColor.GRAY))
+                            );
                         }
                     },
                     woundingDuration * 20

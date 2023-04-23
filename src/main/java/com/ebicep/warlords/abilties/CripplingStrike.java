@@ -9,7 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -43,7 +44,9 @@ public class CripplingStrike extends AbstractStrikeBase {
                 },
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                        target.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                        target.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
+                                                    .append(Component.text("crippled", NamedTextColor.RED))
+                                                    .append(Component.text(".", NamedTextColor.GRAY)));
                     }
                 },
                 tickDuration
@@ -121,7 +124,9 @@ public class CripplingStrike extends AbstractStrikeBase {
                     ((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * (cripplePerStrike / 100f)
             );
         } else {
-            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+            nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
+                                            .append(Component.text("crippled", NamedTextColor.RED))
+                                            .append(Component.text(".", NamedTextColor.GRAY)));
             cripple(wp, nearPlayer, name, crippleDuration * 20, (100 - cripple) / 100f);
         }
 
