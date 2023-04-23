@@ -21,6 +21,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -65,11 +67,12 @@ public class BotListener extends ListenerAdapter implements Listener {
                     event.getPrivateChannel()
                          .sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").")
                          .queue();
-                    if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-                        Bukkit.getOfflinePlayer(uuid)
-                              .getPlayer()
-                              .sendMessage(ChatColor.GREEN + "Your account was linked to the discord account " + event.getAuthor()
-                                                                                                                      .getAsTag() + " (" + id + ").");
+                    Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+                    if (player != null) {
+                        player.sendMessage(Component.text(
+                                "Your account was linked to the discord account " + event.getAuthor().getAsTag() + " (" + id + ").",
+                                NamedTextColor.GREEN
+                        ));
                     }
 
                     BotManager.sendDebugMessage(

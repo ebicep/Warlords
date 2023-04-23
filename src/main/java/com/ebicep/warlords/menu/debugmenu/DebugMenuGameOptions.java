@@ -12,8 +12,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -316,24 +316,32 @@ public class DebugMenuGameOptions {
                     (m, e) -> {
                         for (Option option : game.getOptions()) {
                             if (option instanceof WinAfterTimeoutOption) {
-                                SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new Time Left", "XX:XX"}, (p, lines) -> {
-                                    String time = lines[0];
-                                    try {
-                                        if (!time.contains(":")) {
-                                            throw new Exception();
-                                        }
-                                        int minutes = Integer.parseInt(time.split(":")[0]);
-                                        int seconds = Integer.parseInt(time.split(":")[1]);
-                                        if (minutes < 0 || seconds < 0) {
-                                            throw new Exception();
-                                        }
-                                        ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                        sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time);
-                                    } catch (Exception exception) {
-                                        p.sendMessage(ChatColor.RED + "Invalid time");
-                                    }
-                                    openTimerMenu(player, game);
-                                });
+                                new SignGUI()
+                                        .lines("", "^^^^^^^", "Enter new Time Left", "XX:XX")
+                                        .onFinish((p, lines) -> {
+                                            String time = lines[0];
+                                            try {
+                                                if (!time.contains(":")) {
+                                                    throw new Exception();
+                                                }
+                                                int minutes = Integer.parseInt(time.split(":")[0]);
+                                                int seconds = Integer.parseInt(time.split(":")[1]);
+                                                if (minutes < 0 || seconds < 0) {
+                                                    throw new Exception();
+                                                }
+                                                ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
+                                                sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time);
+                                            } catch (Exception exception) {
+                                                p.sendMessage(ChatColor.RED + "Invalid time");
+                                            }
+                                            new BukkitRunnable() {
+                                                @Override
+                                                public void run() {
+                                                    openTimerMenu(player, game);
+                                                }
+                                            }.runTaskLater(Warlords.getInstance(), 1);
+                                            return null;
+                                        }).open(player);
                                 break;
                             }
                         }
@@ -355,20 +363,28 @@ public class DebugMenuGameOptions {
                                 .name(team.teamColor + team.name)
                                 .get(),
                         (m, e) -> {
-                            SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new score", "Team: " + team.getName()}, (p, lines) -> {
-                                String line = lines[0];
-                                try {
-                                    int score = Integer.parseInt(line);
-                                    if (score < 0) {
-                                        throw new NumberFormatException();
-                                    }
-                                    game.setPoints(team, score);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score);
-                                } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid score");
-                                }
-                                openTeamScoreEditorMenu(player, game);
-                            });
+                            new SignGUI()
+                                    .lines("", "^^^^^^^", "Enter new score", "Team: " + team.getName())
+                                    .onFinish((p, lines) -> {
+                                        String line = lines[0];
+                                        try {
+                                            int score = Integer.parseInt(line);
+                                            if (score < 0) {
+                                                throw new NumberFormatException();
+                                            }
+                                            game.setPoints(team, score);
+                                            sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score);
+                                        } catch (NumberFormatException exception) {
+                                            p.sendMessage(ChatColor.RED + "Invalid score");
+                                        }
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                openTeamScoreEditorMenu(player, game);
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), 1);
+                                        return null;
+                                    }).open(player);
                         }
                 );
                 x++;

@@ -63,6 +63,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder name(Component component) {
+        meta().displayName(component);
+        return this;
+    }
+
     public ItemBuilder enchant(@Nonnull Enchantment enchant, int level) {
         meta().addEnchant(enchant, level, true);
         return this;

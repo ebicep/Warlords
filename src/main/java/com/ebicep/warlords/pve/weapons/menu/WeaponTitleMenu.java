@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -11,7 +12,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,6 +20,7 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -168,27 +170,44 @@ public class WeaponTitleMenu {
                         .name(ChatColor.GREEN + "Search Title")
                         .get(),
                 (m, e) ->
-                        SignGUI.open(player, new String[]{"", "^ Search Query ^", "Returns titles", "containing query"}, (p, lines) -> {
-                            String titleName = lines[0];
-                            if (titleName.isEmpty()) {
-                                player.sendMessage(ChatColor.RED + "Query cannot be empty!");
-                                openWeaponEditor(player, databasePlayer, weapon);
-                                return;
-                            }
-                            titleName = titleName.toLowerCase();
-                            String finalTitleName = titleName;
-                            LegendaryTitles[] legendaryTitles = Arrays.stream(LegendaryTitles.VALUES)
-                                                                      .filter(title -> title.name.toLowerCase().contains(finalTitleName))
-                                                                      .toArray(LegendaryTitles[]::new);
-                            if (legendaryTitles.length == 0) {
-                                player.sendMessage(ChatColor.RED + "No titles with that name found!");
-                                openWeaponEditor(player, databasePlayer, weapon);
-                                return;
-                            }
-                            openWeaponTitleMenu(player, databasePlayer, weapon, legendaryTitles, 1);
-                        })
+                        new SignGUI()
+                                .lines("", "^ Search Query ^", "Returns titles", "containing query")
+                                .onFinish((p, lines) -> {
+                                    String titleName = lines[0];
+                                    if (titleName.isEmpty()) {
+                                        player.sendMessage(ChatColor.RED + "Query cannot be empty!");
+                                        openWeaponEditorAfterTick(player, databasePlayer, weapon);
+                                        return null;
+                                    }
+                                    titleName = titleName.toLowerCase();
+                                    String finalTitleName = titleName;
+                                    LegendaryTitles[] legendaryTitles = Arrays.stream(LegendaryTitles.VALUES)
+                                                                              .filter(title -> title.name.toLowerCase().contains(finalTitleName))
+                                                                              .toArray(LegendaryTitles[]::new);
+                                    if (legendaryTitles.length == 0) {
+                                        player.sendMessage(ChatColor.RED + "No titles with that name found!");
+                                        openWeaponEditorAfterTick(player, databasePlayer, weapon);
+                                    } else {
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                openWeaponTitleMenu(player, databasePlayer, weapon, legendaryTitles, 1);
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), 1);
+                                    }
+                                    return null;
+                                }).open(player)
         );
         menu.openForPlayer(player);
+    }
+
+    private static void openWeaponEditorAfterTick(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openWeaponEditor(player, databasePlayer, weapon);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {

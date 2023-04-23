@@ -51,7 +51,6 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
@@ -63,7 +62,6 @@ import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
-import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.GameMode;
@@ -83,7 +81,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -288,11 +285,6 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            SignGUI.destroy();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
     }
@@ -419,31 +411,6 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
-        protocolManager.addPacketListener(
-                new PacketAdapter(this, ListenerPriority.LOWEST, PacketType.Play.Client.STEER_VEHICLE) {
-                    @Override
-                    public void onPacketReceiving(PacketEvent e) {
-                        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-                            if (e.getPacket().getHandle() instanceof ServerboundPlayerInputPacket) {
-                                boolean dismount = ((ServerboundPlayerInputPacket) e.getPacket().getHandle()).isShiftKeyDown();
-                                Field f;
-                                try {
-                                    f = ServerboundPlayerInputPacket.class.getDeclaredField("isShiftKeyDown");
-                                    f.setAccessible(true);
-                                    f.set(e.getPacket().getHandle(), false);
-                                } catch (Exception e1) {
-                                    e1.printStackTrace();
-                                }
-                                if (dismount && e.getPlayer().getVehicle() != null) {
-                                    e.getPlayer().getVehicle().remove();
-                                }
-                            }
-                        }
-                    }
-                }
-        );
-
-        SignGUI.init(this);
 
         Warlords.newChain()
                 .sync(NPCManager::createSupplyDropFairNPC)

@@ -38,9 +38,11 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -49,7 +51,6 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 
 public class EndState implements State, TimerDebugAble {
@@ -98,28 +99,40 @@ public class EndState implements State, TimerDebugAble {
             return;
         }
         sendGlobalMessage(game,
-                "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                 true
         );
-        sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.text("  Warlords 2.0", NamedTextColor.WHITE, TextDecoration.BOLD), true);
+        sendGlobalMessage(game, Component.empty(), false);
         if (teamBlueWins) {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "PLAYERS", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("PLAYERS", NamedTextColor.BLUE)), true);
             } else {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("BLU", NamedTextColor.BLUE)), true);
             }
         } else if (teamRedWins) {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "MONSTERS", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("MONSTERS", NamedTextColor.RED)), true);
             } else {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("RED", NamedTextColor.RED)), true);
             }
         } else {
             if (options.stream().anyMatch(EventGameEndOption.class::isInstance)) {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("GAME END", NamedTextColor.LIGHT_PURPLE)), true);
             } else {
-                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
+                sendGlobalMessage(game, Component.text("Winner", NamedTextColor.YELLOW)
+                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                 .append(Component.text("DRAW", NamedTextColor.LIGHT_PURPLE)), true);
             }
         }
 
@@ -145,13 +158,13 @@ public class EndState implements State, TimerDebugAble {
                 showTopHealing(players);
                 break;
             default:
-                sendGlobalMessage(game, "", false);
+                sendGlobalMessage(game, Component.empty(), false);
                 break;
         }
 
         //PLAYER STATS
 
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.empty(), false);
         int totalKills = players
                 .stream()
                 .mapToInt(wp -> wp.getMinuteStats().total().getKills())
@@ -164,17 +177,24 @@ public class EndState implements State, TimerDebugAble {
             if (player == null) {
                 continue;
             }
-
             ChatUtils.sendCenteredMessage(player,
-                    Component.text(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚")
-                             .hoverEvent(HoverEvent.showText(Component.text(ChatColor.WHITE + "Total Kills (everyone): " +
-                                     ChatColor.GREEN + NumberFormat.addCommaAndRound(totalKills) + "\n" +
-                                     ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalAssists) + "\n" +
-                                     ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalDeaths) + "\n" +
-                                     ChatColor.WHITE + "Total Melee Hits (you): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(wp.getMinuteStats()
-                                                                                                                                      .total()
-                                                                                                                                      .getMeleeHits()))))
-
+                    Component.text("✚ YOUR STATISTICS ✚", NamedTextColor.GOLD, TextDecoration.BOLD)
+                             .hoverEvent(HoverEvent.showText(
+                                     Component.text("Total Kills (everyone): ", NamedTextColor.WHITE)
+                                              .append(Component.text(NumberFormat.addCommaAndRound(totalKills), NamedTextColor.GREEN))
+                                              .append(Component.newline())
+                                              .append(Component.text("Total Assists (everyone): ", NamedTextColor.WHITE))
+                                              .append(Component.text(NumberFormat.addCommaAndRound(totalAssists), NamedTextColor.GREEN))
+                                              .append(Component.newline())
+                                              .append(Component.text("Total Deaths (everyone): ", NamedTextColor.WHITE))
+                                              .append(Component.text(NumberFormat.addCommaAndRound(totalDeaths), NamedTextColor.GREEN))
+                                              .append(Component.newline())
+                                              .append(Component.text("Total Melee Hits (you): ", NamedTextColor.WHITE))
+                                              .append(Component.text(NumberFormat.addCommaAndRound(wp.getMinuteStats()
+                                                                                                     .total()
+                                                                                                     .getMeleeHits()),
+                                                      NamedTextColor.GREEN
+                                              ))))
             );
 
             boolean hoverable = !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
@@ -202,6 +222,7 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
+            //TODO MERGE ERROR
             if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) &&
                     options.stream().noneMatch(BoltaroBonanzaOption.class::isInstance) &&
                     options.stream().noneMatch(BoltarosLairOption.class::isInstance)
@@ -225,15 +246,15 @@ public class EndState implements State, TimerDebugAble {
         System.out.println("Game Added = " + gameAdded);
         if (gameAdded.get() && DatabaseManager.playerService != null) {
             sendGlobalMessage(game,
-                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                     true
             );
-            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game, Component.empty(), false);
             sendGlobalMessage(game,
-                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                     true
             );
-            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game, Component.empty(), false);
             showExperienceSummary(players);
             for (Option option : options) {
                 if (option instanceof PveOption pveOption) {
@@ -243,15 +264,15 @@ public class EndState implements State, TimerDebugAble {
                     break;
                 }
             }
-            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game, Component.empty(), false);
             sendGlobalMessage(game,
-                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                     true
             );
             if (game.getGameMode() == com.ebicep.warlords.game.GameMode.EVENT_WAVE_DEFENSE) {
-                sendGlobalMessage(game, "", false);
+                sendGlobalMessage(game, Component.empty(), false);
                 sendGlobalMessage(game,
-                        "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                        Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                         true
                 );
                 showEventStats(players);
@@ -259,7 +280,7 @@ public class EndState implements State, TimerDebugAble {
         }
 
         sendGlobalMessage(game,
-                "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                 true
         );
 
@@ -302,17 +323,24 @@ public class EndState implements State, TimerDebugAble {
         });
     }
 
+    private void sendGlobalMessage(Game game, Component message, boolean centered) {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
+            if (centered) {
+                ChatUtils.sendCenteredMessage(p, message);
+            } else {
+                p.sendMessage(message);
+            }
+        });
+    }
+
     private void showWaveDefenseStats(PveOption pveOption, List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        StringBuilder hover = new StringBuilder();
+        sendGlobalMessage(game, Component.empty(), false);
+        TextComponent.Builder hover = Component.empty().toBuilder();
         if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
-            hover.append(ChatColor.WHITE)
-                 .append("Waves Cleared")
-                 .append(ChatColor.GRAY)
-                 .append(": ")
-                 .append(ChatColor.GREEN)
-                 .append(waveDefenseOption.getWavesCleared())
-                 .append("\n");
+            hover.append(Component.text("Waves Cleared", NamedTextColor.WHITE))
+                 .append(Component.text(": ", NamedTextColor.GRAY))
+                 .append(Component.text(waveDefenseOption.getWavesCleared(), NamedTextColor.GREEN))
+                 .append(Component.newline());
         }
         game.getOptions()
             .stream()
@@ -320,112 +348,133 @@ public class EndState implements State, TimerDebugAble {
             .map(RecordTimeElapsedOption.class::cast)
             .findAny()
             .ifPresent(recordTimeElapsedOption -> {
-                hover.append(ChatColor.WHITE).append("Time Elapsed").append(ChatColor.GRAY).append(": ")
-                     .append(ChatColor.GREEN).append(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20));
+                hover.append(Component.text("Time Elapsed", NamedTextColor.WHITE))
+                     .append(Component.text(": ", NamedTextColor.GRAY))
+                     .append(Component.text(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20), NamedTextColor.GREEN));
             });
-        sendGlobalEventMessage(game, Component.text(ChatColor.BLUE.toString() + ChatColor.BOLD + "✚ GAME STATS ✚")
-                                              .hoverEvent(HoverEvent.showText(Component.text(hover.toString()))));
+        sendGlobalEventMessage(game, Component.text("✚ GAME STATS ✚", NamedTextColor.BLUE, TextDecoration.BOLD)
+                                              .hoverEvent(HoverEvent.showText(hover.build())));
     }
 
     private void showTopDamage(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.empty(), false);
         sendGlobalEventMessage(game,
-                Component.text(ChatColor.RED.toString() + ChatColor.BOLD + "✚ TOP DAMAGE ✚")
-                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.RED + "Total Damage (everyone)" +
-                                 ChatColor.GRAY + ": " +
-                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
-                                                                                       .sum())
-                         )))
+                Component.text("✚ TOP DAMAGE ✚", NamedTextColor.RED, TextDecoration.BOLD)
+                         .hoverEvent(HoverEvent.showText(
+                                 Component.text("Total Damage (everyone)", NamedTextColor.RED)
+                                          .append(Component.text(": ", NamedTextColor.GRAY))
+                                          .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
+                                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getDamage())
+                                                                                                      .sum()), NamedTextColor.GOLD))
+                         ))
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed())
                          .toList();
-        Component leaderboardPlayersDamage = Component.empty();
+        TextComponent.Builder leaderboardPlayersDamage = Component.empty().toBuilder();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
             leaderboardPlayersDamage.append(
-                    Component.text(ChatColor.AQUA + we.getName() + ChatColor.GRAY + ": " +
-                                     ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()))
-                             .hoverEvent(HoverEvent.showText(Component.text(
-                                     ChatColor.DARK_GRAY + "Lv" +
-                                             ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
-                                             ChatColor.GOLD + we.getSpec().getClassName() +
-                                             ChatColor.GREEN + " (" + we.getSpec().getClass().getSimpleName() + ")"
-                             ))));
+                    Component.text(we.getName(), NamedTextColor.AQUA)
+                             .append(Component.text(": ", NamedTextColor.GRAY))
+                             .append(Component.text(NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()), NamedTextColor.GOLD))
+                             .hoverEvent(HoverEvent.showText(
+                                     Component.text("Lv", NamedTextColor.DARK_GRAY)
+                                              .append(Component.text(ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " ",
+                                                      NamedTextColor.GRAY
+                                              ))
+                                              .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
+                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")",
+                                                      NamedTextColor.GREEN
+                                              ))
+
+                             )));
 
             if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersDamage.append(ChatUtils.SPACER);
             }
         }
-        sendGlobalEventMessage(game, leaderboardPlayersDamage);
+        sendGlobalEventMessage(game, leaderboardPlayersDamage.build());
     }
 
     private void showTopHealing(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.empty(), false);
         sendGlobalEventMessage(game,
-                Component.text(ChatColor.GREEN.toString() + ChatColor.BOLD + "✚ TOP HEALING ✚")
-                         .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + "Total Healing (everyone)" +
-                                 ChatColor.GRAY + ": " +
-                                 ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream()
-                                                                                       .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
-                                                                                       .sum())
-                         )))
+                Component.text("✚ TOP HEALING ✚", NamedTextColor.GREEN, TextDecoration.BOLD)
+                         .hoverEvent(HoverEvent.showText(
+                                 Component.text("Total Healing (everyone)", NamedTextColor.GREEN)
+                                          .append(Component.text(": ", NamedTextColor.GRAY))
+                                          .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
+                                                                                                      .mapToLong(wp -> wp.getMinuteStats().total().getHealing())
+                                                                                                      .sum()), NamedTextColor.GOLD))
+                         ))
         );
         players = players.stream()
                          .sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()).reversed())
                          .toList();
-        Component leaderboardPlayersHealing = Component.empty();
+        TextComponent.Builder leaderboardPlayersHealing = Component.empty().toBuilder();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
             leaderboardPlayersHealing.append(
-                    Component.text(ChatColor.AQUA + we.getName() + ChatColor.GRAY + ": " +
-                                     ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getHealing()))
-                             .hoverEvent(HoverEvent.showText(Component.text(
-                                     ChatColor.DARK_GRAY + "Lv" +
-                                             ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
-                                             ChatColor.GOLD + we.getSpec().getClassName() +
-                                             ChatColor.GREEN + " (" + we.getSpec().getClass().getSimpleName() + ")"
-                             ))));
+                    Component.text(we.getName(), NamedTextColor.AQUA)
+                             .append(Component.text(": ", NamedTextColor.GRAY))
+                             .append(Component.text(NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getHealing()), NamedTextColor.GOLD))
+                             .hoverEvent(HoverEvent.showText(
+                                     Component.text("Lv", NamedTextColor.DARK_GRAY)
+                                              .append(Component.text(ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " ",
+                                                      NamedTextColor.GRAY
+                                              ))
+                                              .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
+                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")",
+                                                      NamedTextColor.GREEN
+                                              ))
+                             )));
 
             if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersHealing.append(ChatUtils.SPACER);
             }
         }
-        sendGlobalEventMessage(game, leaderboardPlayersHealing);
+        sendGlobalEventMessage(game, leaderboardPlayersHealing.build());
     }
 
     /**
      * @param players player collection to give the capture message module to.
      */
     private void showFlagCaptures(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.empty(), false);
         sendGlobalEventMessage(game,
-                Component.text(ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ MVP ✚")
-                         .hoverEvent(HoverEvent.showText(Component.text(
-                                 ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " +
-                                         ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsEntity::getFlagsCaptured).sum()) +
-                                         "\n" +
-                                         ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " +
-                                         ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsEntity::getFlagsReturned).sum())
-                         )))
+                Component.text("✚ MVP ✚", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD)
+                         .hoverEvent(HoverEvent.showText(
+                                 Component.text("Total Flag Captures (everyone): ", NamedTextColor.LIGHT_PURPLE)
+                                          .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
+                                                                                                      .mapToInt(WarlordsEntity::getFlagsCaptured)
+                                                                                                      .sum()), NamedTextColor.GOLD))
+                                          .append(Component.newline())
+                                          .append(Component.text("Total Flag Returns (everyone): ", NamedTextColor.LIGHT_PURPLE))
+                                          .append(Component.text(NumberFormat.addCommaAndRound(players.stream()
+                                                                                                      .mapToInt(WarlordsEntity::getFlagsReturned)
+                                                                                                      .sum()), NamedTextColor.GOLD))
+
+                         ))
         );
         players = players.stream()
                          .sorted(Comparator.comparing(WarlordsEntity::getTotalCapsAndReturnsWeighted).reversed())
                          .toList();
         WarlordsPlayer topPlayer = players.get(0);
         sendGlobalEventMessage(game,
-                Component.text(ChatColor.AQUA + topPlayer.getName())
-                         .hoverEvent(HoverEvent.showText(Component.text(
-                                 ChatColor.LIGHT_PURPLE + "Flag Captures: " +
-                                         ChatColor.GOLD + topPlayer.getFlagsCaptured() + "\n" +
-                                         ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + topPlayer.getFlagsReturned()
-                         )))
+                Component.text(topPlayer.getName(), NamedTextColor.AQUA)
+                         .hoverEvent(HoverEvent.showText(
+                                 Component.text("Flag Captures: ", NamedTextColor.LIGHT_PURPLE)
+                                          .append(Component.text(topPlayer.getFlagsCaptured(), NamedTextColor.GOLD))
+                                          .append(Component.newline())
+                                          .append(Component.text("Flag Returns: ", NamedTextColor.LIGHT_PURPLE))
+                                          .append(Component.text(topPlayer.getFlagsReturned(), NamedTextColor.GOLD))
+                         ))
         );
     }
 
     private void showExperienceSummary(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
+        sendGlobalMessage(game, Component.text("✚ EXPERIENCE SUMMARY ✚", NamedTextColor.YELLOW, TextDecoration.BOLD), true);
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
@@ -437,90 +486,86 @@ public class EndState implements State, TimerDebugAble {
             long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
             long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
             long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
-            StringBuilder specExpSummary = new StringBuilder();
-            StringBuilder universalExpSummary = new StringBuilder();
-            expSummary.forEach((s, aLong) -> {
-                if (
-                        !s.equals("First Game of the Day") &&
-                                !s.equals("Second Game of the Day") &&
-                                !s.equals("Third Game of the Day")
+            TextComponent.Builder specExpSummary = Component.empty().toBuilder();
+            TextComponent.Builder universalExpSummary = Component.empty().toBuilder();
+            int counter = 0;
+            for (Map.Entry<String, Long> entry : expSummary.entrySet()) {
+                String key = entry.getKey();
+                Long value = entry.getValue();
+                if (!key.equals("First Game of the Day") &&
+                        !key.equals("Second Game of the Day") &&
+                        !key.equals("Third Game of the Day")
                 ) {
-                    specExpSummary.append(ChatColor.AQUA)
-                                  .append(s).append(ChatColor.WHITE)
-                                  .append(": ")
-                                  .append(ChatColor.DARK_GRAY)
-                                  .append("+")
-                                  .append(ChatColor.DARK_GREEN)
-                                  .append(aLong)
-                                  .append("\n");
+                    specExpSummary.append(Component.text(key, NamedTextColor.AQUA))
+                                  .append(Component.text(": ", NamedTextColor.WHITE))
+                                  .append(Component.text("+", NamedTextColor.DARK_GRAY))
+                                  .append(Component.text(value, NamedTextColor.DARK_GREEN));
+                    if (counter != expSummary.size() - 1) {
+                        specExpSummary.append(Component.newline());
+                    }
                 }
-
-                universalExpSummary.append(ChatColor.AQUA)
-                                   .append(s)
-                                   .append(ChatColor.WHITE)
-                                   .append(": ")
-                                   .append(ChatColor.DARK_GRAY)
-                                   .append("+")
-                                   .append(ChatColor.DARK_GREEN)
-                                   .append(aLong)
-                                   .append("\n");
-            });
-
-            specExpSummary.setLength(specExpSummary.length() - 1);
-            universalExpSummary.setLength(universalExpSummary.length() - 1);
-
+                universalExpSummary.append(Component.text(key, NamedTextColor.AQUA))
+                                   .append(Component.text(": ", NamedTextColor.WHITE))
+                                   .append(Component.text("+", NamedTextColor.DARK_GRAY))
+                                   .append(Component.text(value, NamedTextColor.DARK_GREEN));
+                if (counter != expSummary.size() - 1) {
+                    universalExpSummary.append(Component.newline());
+                }
+                counter++;
+            }
             ChatUtils.sendCenteredMessage(player,
-                    Component.text(ChatColor.GRAY + "+" +
-                                     ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(experienceEarnedSpec) + " " +
-                                     ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " +
-                                     ChatColor.GRAY + "(" +
-                                     wp.getSpecClass().specType.chatColor + wp.getSpecClass().name +
-                                     ChatColor.GRAY + ")")
-                             .hoverEvent(HoverEvent.showText(Component.text(specExpSummary.toString())))
+                    Component.text("+", NamedTextColor.GRAY)
+                             .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedSpec), NamedTextColor.DARK_GREEN))
+                             .append(Component.text(" " + wp.getSpec().getClassName() + " Experience", NamedTextColor.GOLD))
+                             .append(Component.text(" (", NamedTextColor.GRAY))
+                             .append(Component.text(wp.getSpecClass().name, wp.getSpecClass().specType.textColor))
+                             .append(Component.text(")", NamedTextColor.GRAY))
+                             .hoverEvent(HoverEvent.showText(specExpSummary.build()))
             );
 
             ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
             ChatUtils.sendCenteredMessage(player,
-                    Component.text(ChatColor.GRAY + "+" +
-                                     ChatColor.DARK_AQUA + NumberFormat.addCommaAndRound(experienceEarnedUniversal) + " " +
-                                     ChatColor.GOLD + "Universal Experience ")
-                             .hoverEvent(HoverEvent.showText(Component.text(universalExpSummary.toString())))
+                    Component.text("+", NamedTextColor.DARK_GRAY)
+                             .append(Component.text(NumberFormat.addCommaAndRound(experienceUniversal), NamedTextColor.DARK_AQUA))
+                             .append(Component.text(" Universal Experience", NamedTextColor.GOLD))
+                             .hoverEvent(HoverEvent.showText(universalExpSummary.build()))
             );
 
             ExperienceManager.giveLevelUpMessage(player, experienceUniversal - experienceEarnedUniversal, experienceUniversal);
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
 
-
             LinkedHashMap<String, Long> expFromPvE = GuildExperienceUtils.getExpFromPvE(wp, null, false);
             if (expFromPvE.size() > 0) {
-                StringBuilder expFromPvESummary = new StringBuilder();
-                expFromPvE.forEach((s, aLong) -> {
-                    expFromPvESummary.append(ChatColor.AQUA)
-                                     .append(s)
-                                     .append(ChatColor.WHITE)
-                                     .append(": ")
-                                     .append(ChatColor.DARK_GRAY)
-                                     .append("+")
-                                     .append(ChatColor.DARK_GREEN)
-                                     .append(aLong)
-                                     .append("\n");
-                });
-                expFromPvESummary.setLength(expFromPvESummary.length() - 1);
+                TextComponent.Builder expFromPvESummary = Component.empty().toBuilder();
+                counter = 0;
+                for (Map.Entry<String, Long> entry : expFromPvE.entrySet()) {
+                    String s = entry.getKey();
+                    Long aLong = entry.getValue();
+                    expFromPvESummary.append(Component.text(s, NamedTextColor.AQUA))
+                                     .append(Component.text(": ", NamedTextColor.WHITE))
+                                     .append(Component.text("+", NamedTextColor.DARK_GRAY))
+                                     .append(Component.text(aLong, NamedTextColor.DARK_GREEN));
+                    if (counter != expFromPvE.size() - 1) {
+                        expFromPvESummary.append(Component.newline());
+                    }
+                    counter++;
+                }
 
                 ChatUtils.sendCenteredMessage(player,
-                        Component.text(ChatColor.GRAY + "+" +
-                                         ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromPvE.values().stream().mapToLong(Long::longValue).sum()) +
-                                         ChatColor.DARK_GREEN + " Guild Experience")
-                                 .hoverEvent(HoverEvent.showText(Component.text(expFromPvESummary.toString())))
+                        Component.text("+", NamedTextColor.DARK_GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(expFromPvE.values().stream().mapToLong(Long::longValue).sum()),
+                                         NamedTextColor.GREEN
+                                 ))
+                                 .append(Component.text(" Guild Experience", NamedTextColor.DARK_GREEN))
+                                 .hoverEvent(HoverEvent.showText(expFromPvESummary.build()))
                 );
-
             }
         }
     }
 
     private void showCoinSummary(PveOption pveOption, List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ COINS SUMMARY ✚", true);
+        sendGlobalMessage(game, Component.empty(), false);
+        sendGlobalMessage(game, Component.text("✚ COINS SUMMARY ✚", NamedTextColor.DARK_AQUA, TextDecoration.BOLD), true);
 
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
@@ -529,42 +574,41 @@ public class EndState implements State, TimerDebugAble {
             }
             Currencies.PvECoinSummary pvECoinSummary = Currencies.getCoinGainFromGameStats(wp, pveOption, false);
 
-            StringBuilder coinSummaryString = new StringBuilder();
-            pvECoinSummary.getCoinSummary().forEach((s, aLong) -> {
-                coinSummaryString.append(ChatColor.AQUA)
-                                 .append(s)
-                                 .append(ChatColor.WHITE)
-                                 .append(": ")
-                                 .append(ChatColor.DARK_GRAY)
-                                 .append("+")
-                                 .append(ChatColor.GOLD)
-                                 .append(aLong)
-                                 .append("\n");
-            });
-            coinSummaryString.setLength(coinSummaryString.length() - 1);
+            TextComponent.Builder coinSummaryString = Component.empty().toBuilder();
+            int counter = 0;
+            for (Map.Entry<String, Long> entry : pvECoinSummary.getCoinSummary().entrySet()) {
+                String s = entry.getKey();
+                Long aLong = entry.getValue();
+                coinSummaryString.append(Component.text(s, NamedTextColor.AQUA))
+                                 .append(Component.text(": ", NamedTextColor.WHITE))
+                                 .append(Component.text("+", NamedTextColor.DARK_GRAY))
+                                 .append(Component.text(aLong, NamedTextColor.GOLD));
+                if (counter != pvECoinSummary.getCoinSummary().size() - 1) {
+                    coinSummaryString.append(Component.newline());
+                }
+            }
 
             ChatUtils.sendCenteredMessage(player,
-                    Component.text(ChatColor.GRAY + "+" +
-                                     ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalCoinsGained()) +
-                                     ChatColor.GOLD + " Coins")
-                             .hoverEvent(HoverEvent.showText(Component.text(coinSummaryString.toString())))
+                    Component.text("+", NamedTextColor.GRAY)
+                             .append(Component.text(NumberFormat.addCommaAndRound(pvECoinSummary.getTotalCoinsGained()), NamedTextColor.YELLOW))
+                             .append(Component.text(" Coins", NamedTextColor.GOLD))
+                             .hoverEvent(HoverEvent.showText(coinSummaryString.build()))
             );
-
 
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
             if (guildGuildPlayerPair != null) {
-                ChatUtils.sendMessage(player, true,
-                        ChatColor.GRAY + "+" +
-                                ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalGuildCoinsGained()) + " " +
-                                ChatColor.GOLD + "Guild Coins"
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(pvECoinSummary.getTotalGuildCoinsGained()), NamedTextColor.YELLOW))
+                                 .append(Component.text(" Guild Coins", NamedTextColor.GOLD))
                 );
             }
         }
     }
 
     private void showDropsSummary(PveOption pveOption, List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ DROPS SUMMARY ✚", true);
+        sendGlobalMessage(game, Component.empty(), false);
+        sendGlobalMessage(game, Component.text("✚ DROPS SUMMARY ✚", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD), true);
 
 
         for (WarlordsPlayer wp : players) {
@@ -577,15 +621,16 @@ public class EndState implements State, TimerDebugAble {
             long illusionShardGain = playerPveRewards.getIllusionShardGain();
             if (illusionShardGain > 0) {
                 gotAnyDrops = true;
-                ChatUtils.sendMessage(player,
-                        true,
-                        ChatColor.GRAY + "+" + ChatColor.GREEN + illusionShardGain + " " + Currencies.ILLUSION_SHARD.getColoredName() + (illusionShardGain == 1 ? "" : "s")
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(illusionShardGain), NamedTextColor.GREEN))
+                                 .append(Component.text(" " + Currencies.ILLUSION_SHARD.getColoredName() + (illusionShardGain == 1 ? "" : "s")))
                 );
             }
             List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
             if (!weaponsFound.isEmpty()) {
                 if (gotAnyDrops) {
-                    ChatUtils.sendMessage(player, true, "");
+                    ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
                 LinkedHashMap<WeaponsPvE, List<AbstractWeapon>> weaponsFoundByType = new LinkedHashMap<>();
@@ -601,22 +646,27 @@ public class EndState implements State, TimerDebugAble {
                         int amountFound = weapons.size();
                         if (amountFound > 0) {
                             boolean autoSalvaged = weapons.stream().anyMatch(abstractWeapon -> !weaponInventory.contains(abstractWeapon));
+                            TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
+                            for (int i = 0; i < weapons.size(); i++) {
+                                AbstractWeapon weapon = weapons.get(i);
+                                weaponTypeSummary.append(Component.text(weapon.getName(), NamedTextColor.WHITE));
+                                if (weapon instanceof WeaponScore) {
+                                    weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
+                                            NamedTextColor.YELLOW
+                                    ));
+                                }
+                                if (!weaponInventory.contains(weapon)) {
+                                    weaponTypeSummary.append(Component.text(" (Auto Salvaged)", NamedTextColor.WHITE));
+                                }
+                                if (i != weapons.size() - 1) {
+                                    weaponTypeSummary.append(Component.newline());
+                                }
+                            }
                             ChatUtils.sendCenteredMessage(player,
-                                    Component.text(rarity.chatColor.toString() + amountFound + " " + rarity.name + " Weapon" + (amountFound == 1 ? "" : "s") + (autoSalvaged ? ChatColor.WHITE + "*" : ""))
-                                             .hoverEvent(HoverEvent.showText(Component.text(weapons.stream()
-                                                                                                   .map(abstractWeapon -> {
-                                                                                                       String output = abstractWeapon.getName();
-                                                                                                       if (abstractWeapon instanceof WeaponScore) {
-                                                                                                           output += ChatColor.YELLOW + " (" + NumberFormat.formatOptionalHundredths(
-                                                                                                                   ((WeaponScore) abstractWeapon).getWeaponScore()) + ")";
-                                                                                                       }
-                                                                                                       if (!weaponInventory.contains(abstractWeapon)) {
-                                                                                                           output += ChatColor.WHITE + " (Auto Salvaged)";
-                                                                                                       }
-                                                                                                       return output;
-                                                                                                   })
-                                                                                                   .collect(Collectors.joining("\n"))))
-                                             )
+                                    Component.text(amountFound + " ", rarity.textColor)
+                                             .append(Component.text(rarity.name + " Weapon" + (amountFound == 1 ? "" : "s")))
+                                             .append(Component.text(autoSalvaged ? "*" : "", NamedTextColor.WHITE))
+                                             .hoverEvent(HoverEvent.showText(weaponTypeSummary.build()))
                             );
                         }
                     });
@@ -625,43 +675,42 @@ public class EndState implements State, TimerDebugAble {
             long fragmentGain = playerPveRewards.getLegendFragmentGain();
             if (fragmentGain > 0) {
                 gotAnyDrops = true;
-                ChatUtils.sendMessage(player,
-                        true,
-                        ChatColor.GRAY + "+" + ChatColor.GREEN + fragmentGain + " " + Currencies.LEGEND_FRAGMENTS.getColoredName() + "s"
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(fragmentGain), NamedTextColor.GREEN))
+                                 .append(Component.text(" " + Currencies.LEGEND_FRAGMENTS.getColoredName() + (fragmentGain == 1 ? "" : "s")))
                 );
             }
             HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
             if (!mobDropsGained.isEmpty()) {
                 if (gotAnyDrops) {
-                    ChatUtils.sendMessage(player, true, "");
+                    ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
                 List<MobDrops> mobDrops = new ArrayList<>(mobDropsGained.keySet());
                 mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal));
                 for (MobDrops mobDrop : mobDrops) {
                     long amountFound = mobDropsGained.get(mobDrop);
-                    ChatUtils.sendMessage(player,
-                            true,
-                            mobDrop.getCostColoredName(amountFound)
-                    );
+                    ChatUtils.sendCenteredMessage(player, Component.text(mobDrop.getCostColoredName(amountFound)));
                 }
             }
             List<AbstractItem> itemsFound = playerPveRewards.getItemsFound();
             if (!itemsFound.isEmpty()) {
                 if (gotAnyDrops) {
-                    ChatUtils.sendMessage(player, true, "");
+                    ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
                 for (AbstractItem item : itemsFound) {
-                    ChatUtils.sendCenteredMessage(player, Component.empty().hoverEvent(item.getHoverComponent()));
+                    ChatUtils.sendCenteredMessage(player, item.getHoverComponent());
                 }
             }
             int blessingsFound = playerPveRewards.getBlessingsFound();
             if (blessingsFound > 0) {
                 gotAnyDrops = true;
-                ChatUtils.sendMessage(player,
-                        true,
-                        ChatColor.GRAY + "+" + ChatColor.GREEN + blessingsFound + ChatColor.GRAY + " Unknown Blessings"
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(blessingsFound), NamedTextColor.GREEN))
+                                 .append(Component.text(" Unknown Blessings", NamedTextColor.GRAY))
                 );
             }
 
@@ -669,40 +718,42 @@ public class EndState implements State, TimerDebugAble {
             Map<Spendable, Long> aspirantPouch = playerPveRewards.getAspirantPouch();
             if (!syntheticPouch.isEmpty() || !aspirantPouch.isEmpty()) {
                 if (gotAnyDrops) {
-                    ChatUtils.sendMessage(player, true, "");
+                    ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
                 if (!syntheticPouch.isEmpty()) {
                     ChatUtils.sendCenteredMessage(player,
-                            Component.text(ChatColor.AQUA + "Synthetic Pouch")
-                                     .hoverEvent(HoverEvent.showText(Component
-                                             .text(syntheticPouch.entrySet()
-                                                                 .stream()
-                                                                 .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                                                                 .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
-                                                                 .collect(Collectors.joining("\n"))
-                                             )))
+                            Component.text("Synthetic Pouch", NamedTextColor.AQUA)
+                                     .hoverEvent(HoverEvent.showText(getPouchSummary(syntheticPouch)))
                     );
-
                 }
                 if (!aspirantPouch.isEmpty()) {
                     ChatUtils.sendCenteredMessage(player,
-                            Component.text(ChatColor.AQUA + "Aspirant Pouch")
-                                     .hoverEvent(HoverEvent.showText(Component
-                                             .text(aspirantPouch.entrySet()
-                                                                .stream()
-                                                                .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                                                                .map(entry -> ChatColor.GRAY + " - " + entry.getKey().getCostColoredName(entry.getValue()))
-                                                                .collect(Collectors.joining("\n"))
-                                             )))
+                            Component.text("Aspirant Pouch", NamedTextColor.AQUA)
+                                     .hoverEvent(HoverEvent.showText(getPouchSummary(aspirantPouch)))
                     );
                 }
             }
 
             if (!gotAnyDrops) {
-                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not receive any drops this game!");
+                ChatUtils.sendCenteredMessage(player, Component.text("You did not receive any drops this game!", NamedTextColor.GOLD));
             }
         }
+    }
+
+    private static TextComponent getPouchSummary(Map<Spendable, Long> syntheticPouch) {
+        TextComponent.Builder pouch = Component.empty().toBuilder();
+        List<Map.Entry<Spendable, Long>> toSort = new ArrayList<>(syntheticPouch.entrySet());
+        toSort.sort((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()));
+        for (int i = 0; i < toSort.size(); i++) {
+            Map.Entry<Spendable, Long> entry = toSort.get(i);
+            pouch.append(Component.text(" - ", NamedTextColor.GRAY)
+                                  .append(Component.text(entry.getKey().getCostColoredName(entry.getValue()))));
+            if (i != toSort.size() - 1) {
+                pouch.append(Component.newline());
+            }
+        }
+        return pouch.build();
     }
 
 
@@ -715,20 +766,20 @@ public class EndState implements State, TimerDebugAble {
             List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
             if (!quests.isEmpty()) {
                 player.sendMessage("");
-                ChatUtils.sendCenteredMessage(player, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚");
+                ChatUtils.sendCenteredMessage(player, Component.text("✚ QUESTS SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD));
             }
             for (Quests quest : quests) {
                 ChatUtils.sendCenteredMessage(player,
-                        Component.text(ChatColor.GREEN + quest.name)
-                                 .hoverEvent(HoverEvent.showText(Component.text(ChatColor.GREEN + quest.description)))
+                        Component.text(quest.name, NamedTextColor.GREEN)
+                                 .hoverEvent(HoverEvent.showText(Component.text(quest.description, NamedTextColor.GREEN)))
                 );
             }
         }
     }
 
     private void showEventStats(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ EVENT SUMMARY ✚", true);
+        sendGlobalMessage(game, Component.empty(), false);
+        sendGlobalMessage(game, Component.text("✚ EVENT SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD), true);
         EventPointsOption eventPointsOption = game
                 .getOptions()
                 .stream()
@@ -744,11 +795,10 @@ public class EndState implements State, TimerDebugAble {
 
             if (eventPointsOption != null) {
                 Integer points = eventPointsOption.getPoints().getOrDefault(player.getUniqueId(), 0);
-                ChatUtils.sendMessage(player,
-                        true,
-                        ChatColor.GRAY + "+" + ChatColor.YELLOW + NumberFormat.addCommas(Math.min(points,
-                                eventPointsOption.getCap()
-                        )) + " Point" + (points == 1 ? "" : "s")
+                String pointsFormatted = NumberFormat.addCommas(Math.min(points, eventPointsOption.getCap()));
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(pointsFormatted + " Points" + (points == 1 ? "" : "s"), NamedTextColor.YELLOW))
                 );
             }
 
@@ -756,7 +806,7 @@ public class EndState implements State, TimerDebugAble {
                 option.sendEventStatsMessage(game, player);
             }
         }
-        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, Component.empty(), false);
     }
 
     public void sendGlobalEventMessage(Game game, Component component) {

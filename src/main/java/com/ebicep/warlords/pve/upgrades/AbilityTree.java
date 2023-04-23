@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -8,13 +9,14 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
+import de.rapha149.signgui.SignGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -145,24 +147,27 @@ public class AbilityTree {
                         if (autoUpgradeProfiles.size() >= 4) {
                             warlordsPlayer.sendMessage(ChatColor.RED + "You can only have up to 4 profiles per spec!");
                         } else {
-                            SignGUI.open(player, new String[]{"", "Enter", "Profile Name", ""}, (p, lines) -> {
-                                String name = lines[0];
-                                if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                    warlordsPlayer.sendMessage(ChatColor.RED + "Invalid name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                    return;
-                                }
-                                if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                    warlordsPlayer.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                    return;
-                                }
-                                AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
-                                autoUpgradeProfiles.add(newProfile);
-                                autoUpgradeProfile = newProfile;
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openAbilityTree();
-                            });
+                            new SignGUI()
+                                    .lines("", "Enter", "Profile Name", "")
+                                    .onFinish((p, lines) -> {
+                                        String name = lines[0];
+                                        if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                            warlordsPlayer.sendMessage(ChatColor.RED + "Invalid name!");
+                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                            return null;
+                                        }
+                                        if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                            warlordsPlayer.sendMessage(ChatColor.RED + "You already have a profile with that name!");
+                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                            return null;
+                                        }
+                                        AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
+                                        autoUpgradeProfiles.add(newProfile);
+                                        autoUpgradeProfile = newProfile;
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        openAbilityTreeAfterTick();
+                                        return null;
+                                    }).open(player);
                         }
                     }
             );
@@ -172,22 +177,25 @@ public class AbilityTree {
                             .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "Enter", "Profile Name", ""}, (p, lines) -> {
-                            String name = lines[0];
-                            if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                player.sendMessage(ChatColor.RED + "Invalid name!");
-                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            autoUpgradeProfile.setName(name);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            openAbilityTree();
-                        });
+                        new SignGUI()
+                                .lines("", "Enter", "Profile Name", "")
+                                .onFinish((p, lines) -> {
+                                    String name = lines[0];
+                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                        player.sendMessage(ChatColor.RED + "Invalid name!");
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                        player.sendMessage(ChatColor.RED + "You already have a profile with that name!");
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    autoUpgradeProfile.setName(name);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openAbilityTreeAfterTick();
+                                    return null;
+                                }).open(player);
                     }
             );
             menu.setItem(5, 4,
@@ -297,6 +305,15 @@ public class AbilityTree {
         );
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private void openAbilityTreeAfterTick() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openAbilityTree();
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     public String getUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, List<Upgrade> upgrades) {

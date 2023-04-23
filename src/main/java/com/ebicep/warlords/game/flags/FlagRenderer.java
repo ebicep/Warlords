@@ -75,7 +75,7 @@ public class FlagRenderer {
                 .getWorld()
                 .playEffect(info.getFlag().getLocation().clone().add(0, offset, 0),
                         Effect.STEP_SOUND,
-                        info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK.getId() : Material.LAPIS_BLOCK.getId() //TODO check
+                        info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK : Material.LAPIS_BLOCK
                 );
         }
         timer--;

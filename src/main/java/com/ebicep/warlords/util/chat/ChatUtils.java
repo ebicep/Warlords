@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class ChatUtils {
 
-    public static final Component SPACER = Component.text(ChatColor.GRAY + " - ");
+    public static final Component SPACER = Component.text(" - ", NamedTextColor.GRAY);
     private static final int CENTER_PX = 164;
 
     public static String addStrikeThrough(String message) {

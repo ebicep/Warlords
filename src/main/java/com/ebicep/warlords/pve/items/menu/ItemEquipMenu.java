@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -17,15 +18,16 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
+import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -264,23 +266,26 @@ public class ItemEquipMenu {
                     if (itemsManager.getLoadouts().size() >= 9) {
                         player.sendMessage(ChatColor.RED + "You can only have up to 9 loadouts!");
                     } else {
-                        SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
-                            String name = lines[0];
-                            if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                player.sendMessage(ChatColor.RED + "Invalid name!");
-                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
-                                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            ItemLoadout newLoadout = new ItemLoadout(name);
-                            loadouts.add(newLoadout);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            openItemLoadoutMenu(player, newLoadout, databasePlayer);
-                        });
+                        new SignGUI()
+                                .lines("", "Enter", "Loadout Name", "")
+                                .onFinish((p, lines) -> {
+                                    String name = lines[0];
+                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                        player.sendMessage(ChatColor.RED + "Invalid name!");
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                        player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    ItemLoadout newLoadout = new ItemLoadout(name);
+                                    loadouts.add(newLoadout);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openItemLoadoutMenuAfterTick(player, databasePlayer, newLoadout);
+                                    return null;
+                                }).open(player);
                     }
                 }
         );
@@ -294,22 +299,25 @@ public class ItemEquipMenu {
                         player.sendMessage(ChatColor.RED + "You cannot rename the default loadout!");
                         return;
                     }
-                    SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
-                        String name = lines[0];
-                        if (!name.matches("[a-zA-Z0-9 ]+")) {
-                            player.sendMessage(ChatColor.RED + "Invalid name!");
-                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                            player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
-                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        itemLoadout.setName(name);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        openItemLoadoutMenu(player, itemLoadout, databasePlayer);
-                    });
+                    new SignGUI()
+                            .lines("", "Enter", "Loadout Name", "")
+                            .onFinish((p, lines) -> {
+                                String name = lines[0];
+                                if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                    player.sendMessage(ChatColor.RED + "Invalid name!");
+                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                    return null;
+                                }
+                                if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                    player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                    return null;
+                                }
+                                itemLoadout.setName(name);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                openItemLoadoutMenuAfterTick(player, databasePlayer, itemLoadout);
+                                return null;
+                            }).open(player);
                 }
         );
 
@@ -416,6 +424,15 @@ public class ItemEquipMenu {
                 }
         );
         menu.openForPlayer(player);
+    }
+
+    private static void openItemLoadoutMenuAfterTick(Player player, DatabasePlayer databasePlayer, ItemLoadout itemLoadout) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {

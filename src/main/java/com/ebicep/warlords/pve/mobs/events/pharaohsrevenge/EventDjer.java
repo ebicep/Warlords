@@ -28,7 +28,7 @@ import java.util.List;
 
 public class EventDjer extends AbstractZombie implements BossMob {
 
-    private final int earthQuakeRadius = 12; //TODO
+    private final int earthQuakeRadius = 12;
     private final HashSet<String> skillsImmuneTo = new HashSet<>() {{
         add("Seismic Wave");
         add("Ground Slam");
@@ -106,7 +106,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
         Location loc = warlordsNPC.getLocation();
 
         if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f); //TODO animations
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
@@ -120,7 +120,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                 Utils.addKnockback(name, loc, warlordsPlayer, -2.5, 0.25);
                 warlordsPlayer.addDamageInstance(
                         warlordsNPC,
-                        "Ground Shred", //TODO
+                        "Ground Shred",
                         920,
                         1080,
                         0,
