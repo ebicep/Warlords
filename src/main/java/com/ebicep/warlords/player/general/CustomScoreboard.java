@@ -46,7 +46,7 @@ public class CustomScoreboard {
                     UUID playerUUID = player.getUniqueId();
                     validatePlayerHolograms(playerUUID);
                     PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(playerUUID);
-                    if (playerLeaderboardInfo.getStatsGameType() == GameType.PVE) {
+                    if (GameType.isPve(playerLeaderboardInfo.getStatsGameType())) {
                         CustomScoreboard customScoreboard = getPlayerScoreboard(playerUUID);
                         customScoreboard.givePvEScoreboard(databasePlayerPvE, false);
                     }

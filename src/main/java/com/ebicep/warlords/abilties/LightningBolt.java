@@ -23,7 +23,6 @@ import java.util.List;
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
     private double hitbox = 3;
-    private int maxReductions = 0;
 
     public LightningBolt() {
         super("Lightning Bolt", 228, 385, 0, 60, 20, 200, 2.5, 60, false);
@@ -82,7 +81,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             //reducing chain cooldown
-            if (!(wp.isInPve() && maxReductions >= 2)) {
+            if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 wp.subtractRedCooldown(2);
             }
         }
@@ -92,7 +91,6 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
-        maxReductions = 0;
         return false;
     }
 
@@ -107,7 +105,6 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
-            maxReductions++;
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
@@ -116,7 +113,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             //reducing chain cooldown
-            if (!(wp.isInPve() && maxReductions >= 2)) {
+            if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 wp.subtractRedCooldown(2);
             }
         }

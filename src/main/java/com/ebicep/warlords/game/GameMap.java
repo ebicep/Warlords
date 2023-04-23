@@ -3676,7 +3676,7 @@ public enum GameMap {
                     .guildCoinInsigniaConvertBonus(1000)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPer(80)
+                    .playerExpPer(160)
                     .guildExpPer(5)
             );
 

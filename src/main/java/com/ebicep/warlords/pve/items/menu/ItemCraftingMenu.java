@@ -88,8 +88,7 @@ public class ItemCraftingMenu {
                         .loreLEGACY(ChatColor.GRAY + "Craft an Omega Tiered Item")
                         .get(),
                 (m, e) -> {
-                    player.sendMessage(ChatColor.RED + "The time for this has not yet come.");
-                    //openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
+                    openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
                 }
         );
         menu.setItem(7, 1,

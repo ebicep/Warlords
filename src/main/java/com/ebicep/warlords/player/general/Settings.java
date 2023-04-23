@@ -151,6 +151,22 @@ public class Settings {
                         openChatSettingsMenu(player);
                     }
             );
+            menu.setItem(4, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(ChatColor.GREEN + "Kill Messages")
+                            .lore(
+                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatKillsMode().name,
+                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Kill messages", 150),
+                                    "",
+                                    ChatColor.YELLOW + "Click to change"
+                            )
+                            .get(),
+                    (m, e) -> {
+                        settings.setChatKillsMode(settings.getChatKillsMode().next());
+                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatKillsMode(settings.getChatKillsMode()));
+                        openChatSettingsMenu(player);
+                    }
+            );
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -200,6 +216,21 @@ public class Settings {
             }
 
             public ChatEnergy next() {
+                return values()[(ordinal() + 1) % values().length];
+            }
+        }
+
+        public enum ChatKills {
+            ALL("All"),
+            OFF("Off");
+
+            public final String name;
+
+            ChatKills(String name) {
+                this.name = name;
+            }
+
+            public ChatKills next() {
                 return values()[(ordinal() + 1) % values().length];
             }
         }
