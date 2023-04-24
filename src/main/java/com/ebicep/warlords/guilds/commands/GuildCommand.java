@@ -19,6 +19,8 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,25 +39,28 @@ public class GuildCommand extends BaseCommand {
     public void create(@Conditions("guild:false") Player player, String guildName) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             if (!Guild.CAN_CREATE.test(databasePlayer)) {
-                player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 10 Normal/Hard PvE wins to create a guild.");
+                player.sendMessage(Component.text("You need at least 500,000 coins and 10 Normal/Hard PvE wins to create a guild.", NamedTextColor.RED));
                 return;
             }
             if (guildName.length() > 15) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
+                Guild.sendGuildMessage(player, Component.text("Guild name cannot be longer than 15 characters.", NamedTextColor.RED));
                 return;
             }
             //check if name has special characters
             if (!guildName.matches("[a-zA-Z0-9 ]+")) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot contain special characters.");
+                Guild.sendGuildMessage(player, Component.text("Guild name cannot contain special characters.", NamedTextColor.RED));
                 return;
             }
             if (GuildManager.existingGuildWithName(guildName)) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that name already exists.");
+                Guild.sendGuildMessage(player, Component.text("A guild with that name already exists.", NamedTextColor.RED));
                 return;
             }
             databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, Guild.CREATE_COIN_COST);
             GuildManager.addGuild(new Guild(player, guildName));
-            Guild.sendGuildMessage(player, ChatColor.GREEN + "You created guild " + ChatColor.GOLD + guildName);
+            Guild.sendGuildMessage(player, Component.textOfChildren(
+                    Component.text("You created guild ", NamedTextColor.RED),
+                    Component.text(guildName, NamedTextColor.GOLD)
+            ));
         });
     }
 
@@ -65,18 +70,18 @@ public class GuildCommand extends BaseCommand {
     public void join(@Conditions("guild:false") Player player, String guildName) {
         Optional<Guild> optionalGuild = GuildManager.getGuildFromName(guildName);
         if (optionalGuild.isEmpty()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " does not exist.");
+            Guild.sendGuildMessage(player, Component.text("Guild " + guildName + " does not exist.", NamedTextColor.RED));
             return;
         }
         Guild guild = optionalGuild.get();
         if (!guild.isOpen() && !GuildManager.hasInviteFromGuild(player, guild)) {
             Guild.sendGuildMessage(player,
-                    ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
+                    Component.text("Guild " + guildName + " is not open or you are not invited to it.", NamedTextColor.RED)
             );
             return;
         }
         if (guild.getPlayers().size() >= guild.getPlayerLimit()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " is full.");
+            Guild.sendGuildMessage(player, Component.text("Guild " + guildName + " is full.", NamedTextColor.RED));
             return;
         }
         GuildManager.removeGuildInvite(player, guild);
@@ -108,25 +113,25 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You cannot invite yourself to your own guild.");
+            Guild.sendGuildMessage(player, Component.text("You cannot invite yourself to your own guild.", NamedTextColor.RED));
             return;
         }
         if (guild.getPlayerMatchingUUID(target.getUniqueId()).isPresent()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "That player is already in your guild.");
+            Guild.sendGuildMessage(player, Component.text("That player is already in your guild.", NamedTextColor.RED));
             return;
         }
         if (GuildManager.hasInviteFromGuild(target, guild)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "That player has already been invited to your guild.");
+            Guild.sendGuildMessage(player, Component.text("That player has already been invited to your guild.", NamedTextColor.RED));
             return;
         }
         if (guild.getPlayers().size() >= guild.getPlayerLimit()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Your guild is full.");
+            Guild.sendGuildMessage(player, Component.text("Your guild is full.", NamedTextColor.RED));
             return;
         }
         GuildManager.addInvite(player, target, guild);
         Guild.sendGuildMessage(player,
                 ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
-                        ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
+                        ChatColor.YELLOW + "They have" + Component.text(" 5 " + ChatColor.YELLOW + "minutes to accept!", NamedTextColor.RED)
         );
     }
 
@@ -139,11 +144,11 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to mute your guild.");
+            Guild.sendGuildMessage(player, Component.text("You do not have permission to mute your guild.", NamedTextColor.RED));
             return;
         }
         if (guild.isMuted()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "The guild is already muted.");
+            Guild.sendGuildMessage(player, Component.text("The guild is already muted.", NamedTextColor.RED));
             return;
         }
         guild.setMuted(guildPlayer, true);
@@ -158,11 +163,11 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to unmute your guild.");
+            Guild.sendGuildMessage(player, Component.text("You do not have permission to unmute your guild.", NamedTextColor.RED));
             return;
         }
         if (!guild.isMuted()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "The guild is already unmuted.");
+            Guild.sendGuildMessage(player, Component.text("The guild is already unmuted.", NamedTextColor.RED));
             return;
         }
         guild.setMuted(guildPlayer, false);
@@ -181,29 +186,35 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE_PLAYERS)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to mute players in the guild.");
+            Guild.sendGuildMessage(player, Component.text("You do not have permission to mute players in the guild.", NamedTextColor.RED));
             return;
         }
         if (target.isMuted()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "That player is already muted.");
+            Guild.sendGuildMessage(player, Component.text("That player is already muted.", NamedTextColor.RED));
             return;
         }
         if (duration == null || timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
             if (timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
                 guild.mutePlayer(guildPlayer, target);
-                Guild.sendGuildMessage(player, ChatColor.GREEN + "Muted " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " permanently.");
+                Guild.sendGuildMessage(player, Component.text("Muted ", NamedTextColor.RED)
+                                                        .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                                        .append(Component.text(" permanently.", NamedTextColor.DARK_RED))
+                );
             } else {
-                Guild.sendGuildMessage(player, ChatColor.RED + "You must specify a duration for temporary mutes.");
+                Guild.sendGuildMessage(player, Component.text("You must specify a duration for temporary mutes.", NamedTextColor.RED));
             }
         } else if (duration <= 0) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Duration must be greater than 0.");
+            Guild.sendGuildMessage(player, Component.text("Duration must be greater than 0.", NamedTextColor.RED));
         } else if (duration > timeUnit.maxAmount) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Duration must be less than " + timeUnit.maxAmount + "for " + timeUnit.lyName + " mutes.");
+            Guild.sendGuildMessage(player,
+                    Component.text("Duration must be less than " + timeUnit.maxAmount + "for " + timeUnit.lyName + " mutes.", NamedTextColor.RED)
+            );
         } else {
             guild.mutePlayer(guildPlayer, target, timeUnit, duration);
-            Guild.sendGuildMessage(player,
-                    ChatColor.RED + "Muted " + ChatColor.AQUA + target.getName() + ChatColor.RED + " for " + duration + " " +
-                            ChatColor.DARK_RED + timeUnit.name + (duration > 1 ? "s" : "") + "."
+            Guild.sendGuildMessage(player, Component.text("Muted ", NamedTextColor.RED)
+                                                    .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                                    .append(Component.text(" for " + duration + " "))
+                                                    .append(Component.text(timeUnit.name + (duration > 1 ? "s" : ""), NamedTextColor.DARK_RED))
             );
         }
     }
@@ -219,15 +230,18 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE_PLAYERS)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to unmute players in the guild.");
+            Guild.sendGuildMessage(player, Component.text("You do not have permission to unmute players in the guild.", NamedTextColor.RED));
             return;
         }
         if (!target.isMuted()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "That player is not muted.");
+            Guild.sendGuildMessage(player, Component.text("That player is not muted.", NamedTextColor.RED));
             return;
         }
         guild.unmutePlayer(guildPlayer, target);
-        Guild.sendGuildMessage(player, ChatColor.GREEN + "Unmuted " + ChatColor.AQUA + target.getName());
+        Guild.sendGuildMessage(player, Component.textOfChildren(
+                Component.text("Unmuted ", NamedTextColor.RED),
+                Component.text(target.getName(), NamedTextColor.AQUA)
+        ));
     }
 
     @Subcommand("disband")
@@ -247,7 +261,7 @@ public class GuildCommand extends BaseCommand {
                         guild.disband();
                     } else {
                         Guild.sendGuildMessage(player,
-                                ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
+                                Component.text("Guild was not disbanded because your input did not match your guild name.", NamedTextColor.RED)
                         );
                     }
                     return null;
@@ -260,7 +274,7 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getCurrentMaster().equals(player.getUniqueId())) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild Masters can only leave through disbanding or transferring the guild!");
+            Guild.sendGuildMessage(player, Component.text("Guild Masters can only leave through disbanding or transferring the guild!", NamedTextColor.RED));
             return;
         }
         guild.leave(player);
@@ -277,7 +291,7 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.equals(guildPlayer)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You are already the guild master.");
+            Guild.sendGuildMessage(player, Component.text("You are already the guild master.", NamedTextColor.RED));
             return;
         }
         new SignGUI()
@@ -288,7 +302,7 @@ public class GuildCommand extends BaseCommand {
                         guild.transfer(target);
                     } else {
                         Guild.sendGuildMessage(player,
-                                ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
+                                Component.text("Guild was not transferred because you did not input CONFIRM", NamedTextColor.RED)
                         );
                     }
                     return null;
@@ -306,14 +320,14 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.equals(guildPlayer)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You cannot kick yourself from your own guild.");
+            Guild.sendGuildMessage(player, Component.text("You cannot kick yourself from your own guild.", NamedTextColor.RED));
             return;
         }
 
         guild.kick(guildPlayer, target);
         Player kickedPlayer = Bukkit.getPlayer(target.getUUID());
         if (kickedPlayer != null) {
-            Guild.sendGuildMessage(kickedPlayer, ChatColor.RED + "You were kicked from the guild!");
+            Guild.sendGuildMessage(kickedPlayer, Component.text("You were kicked from the guild!", NamedTextColor.RED));
         }
     }
 
@@ -329,7 +343,9 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoleLevel(guildPlayer) + 1 == guild.getRoleLevel(target)) {
             Guild.sendGuildMessage(player,
-                    ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!"
+                    Component.text("You cannot promote ", NamedTextColor.RED)
+                             .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                             .append(Component.text(" any higher!"))
             );
             return;
         }
@@ -348,7 +364,7 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoles().get(guild.getRoles().size() - 1).getPlayers().contains(target.getUUID())) {
             Guild.sendGuildMessage(player,
-                    ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!"
+                    ChatColor.AQUA + target.getName() + Component.text(" already has the lowest role!", NamedTextColor.RED)
             );
             return;
         }
@@ -365,16 +381,16 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (newName.length() > 15 && !player.isOp()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
+            Guild.sendGuildMessage(player, Component.text("Guild name cannot be longer than 15 characters.", NamedTextColor.RED));
             return;
         }
         //check if name has special characters
         if (!newName.matches("[a-zA-Z\\d ]+")) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot contain special characters.");
+            Guild.sendGuildMessage(player, Component.text("Guild name cannot contain special characters.", NamedTextColor.RED));
             return;
         }
         if (GuildManager.existingGuildWithName(newName)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that name already exists.");
+            Guild.sendGuildMessage(player, Component.text("A guild with that name already exists.", NamedTextColor.RED));
             return;
         }
         guild.setName(newName);
@@ -418,20 +434,20 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (tag.isEmpty()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Tag cannot be empty.");
+            Guild.sendGuildMessage(player, Component.text("Tag cannot be empty.", NamedTextColor.RED));
             return;
         }
         if (tag.length() > 6) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild tag cannot be longer than 6 characters.");
+            Guild.sendGuildMessage(player, Component.text("Guild tag cannot be longer than 6 characters.", NamedTextColor.RED));
             return;
         }
         //check if name has special characters
         if (!tag.matches("[a-zA-Z\\d ]+")) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild tag cannot contain special characters.");
+            Guild.sendGuildMessage(player, Component.text("Guild tag cannot contain special characters.", NamedTextColor.RED));
             return;
         }
 //        if (GuildManager.existingGuildWithTag(tag)) {
-//            Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that tag already exists.");
+//            Guild.sendGuildMessage(player, Component.text("A guild with that tag already exists.");
 //            return;
 //        }
         guild.setTag(guildPlayer, tag);
@@ -479,7 +495,7 @@ public class GuildCommand extends BaseCommand {
             GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
             List<String> motd = guild.getMotd();
             if (motd.size() >= 10) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
+                Guild.sendGuildMessage(player, Component.text("You can only have up to 10 lines in your MOTD.", NamedTextColor.RED));
                 return;
             }
             message = message.replaceAll("&", "§");
@@ -501,15 +517,15 @@ public class GuildCommand extends BaseCommand {
             GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
             List<String> motd = guild.getMotd();
             if (line > motd.size() + 1) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "You can only edit lines that already exist.");
+                Guild.sendGuildMessage(player, Component.text("You can only edit lines that already exist.", NamedTextColor.RED));
                 return;
             }
             if (line < 1) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Line number must be greater than 0.");
+                Guild.sendGuildMessage(player, Component.text("Line number must be greater than 0.", NamedTextColor.RED));
                 return;
             }
             if (line > 10) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
+                Guild.sendGuildMessage(player, Component.text("You can only have up to 10 lines in your MOTD.", NamedTextColor.RED));
                 return;
             }
             message = message.replaceAll("&", "§");
@@ -520,9 +536,11 @@ public class GuildCommand extends BaseCommand {
             }
             guild.queueUpdate();
             Guild.sendGuildMessage(player,
-                    ChatColor.GRAY + "Set line " + ChatColor.GREEN + line + ChatColor.GRAY + " to " +
-                            ChatColor.RESET + message +
-                            ChatColor.GRAY + "."
+                    Component.text("Set line ", NamedTextColor.GRAY)
+                             .append(Component.text(line, NamedTextColor.RED))
+                             .append(Component.text(" to "))
+                             .append(PlainTextComponentSerializer.plainText().deserialize(message))
+                             .append(Component.text("."))
             );
         }
 
@@ -536,7 +554,7 @@ public class GuildCommand extends BaseCommand {
             GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
             List<String> motd = guild.getMotd();
             if (motd == null || motd.isEmpty()) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Your guild does not have a MOTD.");
+                Guild.sendGuildMessage(player, Component.text("Your guild does not have a MOTD.", NamedTextColor.RED));
                 return;
             }
             guild.sendMOTD(player);
@@ -552,12 +570,12 @@ public class GuildCommand extends BaseCommand {
             GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
             List<String> motd = guild.getMotd();
             if (motd == null || motd.isEmpty()) {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Your guild does not have a MOTD.");
+                Guild.sendGuildMessage(player, Component.text("Your guild does not have a MOTD.", NamedTextColor.RED));
                 return;
             }
             guild.getMotd().clear();
             guild.queueUpdate();
-            Guild.sendGuildMessage(player, ChatColor.GREEN + "Cleared the MOTD.");
+            Guild.sendGuildMessage(player, Component.text("Cleared the MOTD.", NamedTextColor.GREEN));
         }
 
     }
@@ -589,7 +607,7 @@ public class GuildCommand extends BaseCommand {
         @CommandPermission("warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateAllLeaderboards();
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards");
+            ChatChannels.sendDebugMessage(issuer, Component.text("Recalculated Guild Leaderboards", NamedTextColor.RED));
         }
 
     }
