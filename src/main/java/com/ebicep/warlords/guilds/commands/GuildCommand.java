@@ -20,9 +20,9 @@ import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -130,8 +130,13 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.addInvite(player, target, guild);
         Guild.sendGuildMessage(player,
-                ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
-                        ChatColor.YELLOW + "They have" + Component.text(" 5 " + ChatColor.YELLOW + "minutes to accept!", NamedTextColor.RED)
+                Component.text("You invited ", NamedTextColor.YELLOW)
+                         .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                         .append(Component.text(" to the guild!"))
+                         .append(Component.newline())
+                         .append(Component.text("They have"))
+                         .append(Component.text(" 5 ", NamedTextColor.RED))
+                         .append(Component.text("minutes to accept!"))
         );
     }
 
@@ -363,9 +368,10 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoles().get(guild.getRoles().size() - 1).getPlayers().contains(target.getUUID())) {
-            Guild.sendGuildMessage(player,
-                    ChatColor.AQUA + target.getName() + Component.text(" already has the lowest role!", NamedTextColor.RED)
-            );
+            Guild.sendGuildMessage(player, Component.textOfChildren(
+                    Component.text(target.getName(), NamedTextColor.AQUA),
+                    Component.text(" already has the lowest role!", NamedTextColor.RED)
+            ));
             return;
         }
         guild.demote(guildPlayer, target);
@@ -467,11 +473,18 @@ public class GuildCommand extends BaseCommand {
             if (!onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
                 party.invite(onlinePlayer.getUniqueId());
             }
-            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
-            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " created a guild party!");
-            ChatUtils.sendCenteredMessage(onlinePlayer, Component.text(ChatColor.GOLD.toString() + ChatColor.BOLD + "Click here to join!")
+            ChatUtils.sendCenteredMessage(onlinePlayer,
+                    Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD)
+            );
+            ChatUtils.sendCenteredMessage(onlinePlayer, Component.textOfChildren(
+                    Component.text(player.getName(), NamedTextColor.AQUA),
+                    Component.text(" created a guild party!", NamedTextColor.YELLOW)
+            ));
+            ChatUtils.sendCenteredMessage(onlinePlayer, Component.text("Click here to join!", NamedTextColor.GOLD, TextDecoration.BOLD)
                                                                  .clickEvent(ClickEvent.runCommand("/party join " + player.getName())));
-            ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
+            ChatUtils.sendCenteredMessage(onlinePlayer,
+                    Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD)
+            );
         }
     }
 
@@ -501,7 +514,11 @@ public class GuildCommand extends BaseCommand {
             message = message.replaceAll("&", "§");
             motd.add(message);
             guild.queueUpdate();
-            Guild.sendGuildMessage(player, ChatColor.GRAY + "Appended " + ChatColor.RESET + message + ChatColor.GRAY + " to the MOTD.");
+            Guild.sendGuildMessage(player, Component.text("Appended ", NamedTextColor.GRAY)
+                                                    .append(PlainTextComponentSerializer.plainText().deserialize(message))
+                                                    .append(Component.text(" to the MOTD."))
+            );
+
         }
 
 
