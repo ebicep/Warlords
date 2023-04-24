@@ -285,7 +285,7 @@ public class WarlordsNewHotbarMenu {
                                                   .map(currenciesLongEntry -> {
                                                       Spendable spendable = currenciesLongEntry.getKey();
                                                       Long value = currenciesLongEntry.getValue();
-                                                      return spendable.getChatColor()
+                                                      return spendable.getTextColor()
                                                                       .toString() + value + " " + spendable.getName() + (spendable != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
                                                   }).collect(Collectors.toList());
                 lore.add(0, "");
@@ -833,11 +833,11 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(2, 1,
                         new ItemBuilder(Material.ZOMBIE_HEAD)
                                 .name("§aMob Drops")
-                                .loreLEGACY(Arrays.stream(MobDrops.VALUES)
-                                                  .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
-                                                                                                     .getMobDrops()
-                                                                                                     .getOrDefault(drop, 0L)))
-                                                  .collect(Collectors.joining("\n")))
+                                .lore(Arrays.stream(MobDrops.VALUES)
+                                            .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
+                                                                                               .getMobDrops()
+                                                                                               .getOrDefault(drop, 0L)))
+                                            .collect(Collectors.toList()))
                                 .get(),
                         (m, e) -> {}
                 );

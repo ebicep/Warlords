@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -96,7 +97,7 @@ public enum WeaponsPvE {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public String getChatColorName() {
-        return chatColor.toString() + name;
+    public Component getChatColorName() {
+        return Component.text(name, textColor);
     }
 }

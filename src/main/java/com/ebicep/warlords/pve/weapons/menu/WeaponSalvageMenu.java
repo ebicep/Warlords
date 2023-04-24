@@ -45,8 +45,8 @@ public class WeaponSalvageMenu {
 
         menu.setItem(6, 1,
                 new ItemBuilder(Material.RED_CONCRETE)
-                        .name(ChatColor.RED + "Deny")
-                        .loreLEGACY(ChatColor.GRAY + "Go back.")
+                        .name(Menu.DENY)
+                        .lore(WeaponManagerMenu.GO_BACK)
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );

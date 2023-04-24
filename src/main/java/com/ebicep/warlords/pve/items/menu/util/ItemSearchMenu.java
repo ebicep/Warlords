@@ -127,7 +127,7 @@ public class ItemSearchMenu extends Menu {
         setItem(2, 5,
                 new ItemBuilder(Material.ZOMBIE_HEAD)
                         .name("§aYour Drops")
-                        .loreLEGACY(
+                        .lore(
                                 MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
                                 Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
                                 Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))

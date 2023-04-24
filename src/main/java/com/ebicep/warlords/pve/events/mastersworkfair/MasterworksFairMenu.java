@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Utils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -137,18 +138,21 @@ public class MasterworksFairMenu {
                                 MasterworksFairManager.sendMasterworksFairMessage(player, ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
                                 return;
                             }
-                            Menu.openConfirmationMenu(
+                            Menu.openConfirmationMenu0(
                                     player,
                                     "Submit Weapon",
                                     3,
                                     Arrays.asList(
-                                            ChatColor.GRAY + "Submit " + weapon.getName(),
-                                            ChatColor.GRAY + "to the Masterworks Fair?",
-                                            "",
-                                            ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override any previous",
-                                            ChatColor.GRAY + "weapon and you cannot get this weapon back!"
+                                            Component.text("Submit " + weapon.getName(), NamedTextColor.GRAY),
+                                            Component.text("to the Masterworks Fair?", NamedTextColor.GRAY),
+                                            Component.empty(),
+                                            Component.textOfChildren(
+                                                    Component.text("WARNING: ", NamedTextColor.RED),
+                                                    Component.text("This will override any previous", NamedTextColor.GRAY)
+                                            ),
+                                            Component.text("weapon and you cannot get this weapon back!", NamedTextColor.GRAY)
                                     ),
-                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    Menu.GO_BACK,
                                     (m2, e2) -> {
                                         //submit weapon to fair
                                         MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(uuid));

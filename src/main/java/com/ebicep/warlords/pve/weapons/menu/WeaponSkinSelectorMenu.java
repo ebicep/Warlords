@@ -6,19 +6,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponEditor;
@@ -39,6 +39,9 @@ public class WeaponSkinSelectorMenu {
         List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
         int weaponSkinCost = weapon.getRarity().fairyEssenceCost;
+        LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
+        cost.put(Currencies.FAIRY_ESSENCE, (long) weaponSkinCost);
+
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {
             Weapons weaponSkin = weaponSkins.get(i);
             //cant reskin weapon to higher rarity than current weapon
@@ -48,11 +51,11 @@ public class WeaponSkinSelectorMenu {
                         (i - (pageNumber - 1) * 21) % 7 + 1,
                         (i - (pageNumber - 1) * 21) / 7 + 1,
                         new ItemBuilder(weaponsPvE.glassItem)
-                                .name(weaponsPvE.chatColor + "LOCKED")
-                                .loreLEGACY(
-                                        ChatColor.GRAY + "This skin is locked to a weapon",
-                                        ChatColor.GRAY + "of " + weaponsPvE.getChatColorName()
-                                                                           .toUpperCase() + ChatColor.GRAY + " rarity of higher."
+                                .name(Component.text("LOCKED", weaponsPvE.textColor))
+                                .lore(Component.text("This skin is locked to a weapon", NamedTextColor.GRAY),
+                                        Component.text("of ", NamedTextColor.GRAY)
+                                                 .append(Component.text(weaponsPvE.name.toUpperCase(), weaponsPvE.textColor))
+                                                 .append(Component.text(" rarity of higher."))
                                 )
                                 .get(),
                         (m, e) -> {
@@ -61,19 +64,26 @@ public class WeaponSkinSelectorMenu {
             } else {
                 boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
                 ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
-                        .name(ChatColor.GREEN + weaponSkin.getName())
-                        .loreLEGACY(
-                                ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
-                                ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
-                                "",
-                                isUnlocked ?
-                                ChatColor.AQUA + "Cost: " + ChatColor.GREEN + "Unlocked" :
-                                ChatColor.AQUA + "Cost: \n" + ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
+                        .name(Component.text(weaponSkin.getName(), NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("This change is cosmetic only and has no effect on gameplay.", NamedTextColor.GRAY), 150))
+                        .addLore(
+                                Component.text("Obtain ", NamedTextColor.GRAY)
+                                         .append(Component.text("Fairy Essence", NamedTextColor.LIGHT_PURPLE))
+                                         .append(Component.text(" through "))
+                                         .append(Component.text(" different rewards.")),
+                                Component.empty()
                         );
+                if (isUnlocked) {
+                    itemBuilder.addLore(
+                            Component.text("Cost: ", NamedTextColor.AQUA).append(Component.text("Unlocked", NamedTextColor.GREEN))
+                    );
+                } else {
+                    itemBuilder.addLoreC(PvEUtils.getCostLore(cost, false));
+                }
                 if (weapon.getSelectedWeaponSkin() == weaponSkin) {
                     itemBuilder.addLore(
-                            "",
-                            ChatColor.YELLOW + "SELECTED"
+                            Component.empty(),
+                            Component.text("SELECTED", NamedTextColor.YELLOW)
                     );
                 }
                 menu.setItem(
@@ -89,20 +99,24 @@ public class WeaponSkinSelectorMenu {
                                 }
                             } else {
                                 if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkinCost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost) + ChatColor.RED + " to unlock this skin.");
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost))
+                                                                .append(Component.text(" to unlock this skin."))
+                                    );
                                     return;
                                 }
-                                Menu.openConfirmationMenu(
+                                Menu.openConfirmationMenu0(
                                         player,
                                         "Unlock Weapon Skin",
                                         3,
-                                        Arrays.asList(
-                                                ChatColor.GRAY + "Unlock" + ChatColor.LIGHT_PURPLE + " " + weaponSkin.getName() + ChatColor.GRAY + " Weapon Skin",
-                                                "",
-                                                ChatColor.AQUA + "Cost: ",
-                                                ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
-                                        ),
-                                        Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                        new ArrayList<>() {{
+                                            add(Component.text("Unlock ", NamedTextColor.GRAY)
+                                                         .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
+                                                         .append(Component.text(" Weapon Skin")));
+                                            add(Component.empty());
+                                            addAll(PvEUtils.getCostLore(cost, false));
+                                        }},
+                                        Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                                         (m2, e2) -> {
                                             unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin, pageNumber);
                                             openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
@@ -122,8 +136,8 @@ public class WeaponSkinSelectorMenu {
                     0,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber - 1)
             );
@@ -133,8 +147,8 @@ public class WeaponSkinSelectorMenu {
                     8,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber + 1)
             );
@@ -145,7 +159,9 @@ public class WeaponSkinSelectorMenu {
                 4,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getCurrencyValue(Currencies.FAIRY_ESSENCE))
+                        .name(Component.text("Total Fairy Essence: ", NamedTextColor.LIGHT_PURPLE)
+                                       .append(Component.text(databasePlayerPvE.getCurrencyValue(Currencies.FAIRY_ESSENCE), NamedTextColor.AQUA))
+                        )
                         .get(),
                 (m, e) -> openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -162,11 +178,13 @@ public class WeaponSkinSelectorMenu {
             databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, weapon.getRarity().fairyEssenceCost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.sendMessage(Component.text(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for ")
-                                        .append(weapon.getHoverComponent(false))
+            player.sendMessage(Component.text("You unlocked ", NamedTextColor.GRAY)
+                                        .append(Component.text(weaponSkin.getName(), NamedTextColor.LIGHT_PURPLE))
+                                        .append(Component.text(" for ")
+                                                         .append(weapon.getHoverComponent(false))
+                                        )
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-
 
             openWeaponSkinSelectorMenu(player, databasePlayer, weapon, page);
         }

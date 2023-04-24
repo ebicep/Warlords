@@ -376,7 +376,7 @@ public class OnslaughtOption implements Option, PveOption {
             Long amount = reward.getB();
             playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
                        .merge(spendable, amount, Long::sum);
-            String rewardString = spendable.getChatColor() + "+" + spendable.getCostColoredName(amount);
+            String rewardString = spendable.getTextColor() + "+" + spendable.getCostColoredName(amount);
             RewardInventory.sendRewardMessage(uuid,
                     pouchName + ": " + rewardString
             );

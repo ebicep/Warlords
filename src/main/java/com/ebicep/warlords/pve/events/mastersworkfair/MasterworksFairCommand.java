@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -167,10 +168,10 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 }
                                                 if (resent) {
                                                     databasePlayer.addFutureMessage(new FutureMessage(Arrays.asList(
-                                                            ChatColor.GOLD + "------------------------------------------------",
-                                                            ChatColor.GREEN + "Hey! We noticed you didn't get all your previous Masterworks",
-                                                            ChatColor.GREEN + "Fair rewards, so we've given them to you!",
-                                                            ChatColor.GOLD + "------------------------------------------------"
+                                                            Component.text("------------------------------------------------", NamedTextColor.GOLD),
+                                                            Component.text("Hey! We noticed you didn't get all your previous Masterworks", NamedTextColor.GREEN),
+                                                            Component.text("Fair rewards, so we've given them to you!", NamedTextColor.GREEN),
+                                                            Component.text("------------------------------------------------", NamedTextColor.GOLD)
                                                     ), true));
                                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                                 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.items.modifiers;
 
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.HashMap;
 
@@ -29,11 +30,11 @@ public interface ItemModifier {
 
     String getName();
 
-    String getDescription();
+    TextComponent getDescription();
 
-    String getDescriptionCalculated(float amount);
+    TextComponent getDescriptionCalculated(float amount);
 
-    String getDescriptionCalculatedInverted(float amount);
+    TextComponent getDescriptionCalculatedInverted(float amount);
 
     float getIncreasePerTier();
 

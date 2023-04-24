@@ -12,10 +12,14 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WeaponLegendaryCraftMenu {
 
@@ -23,7 +27,7 @@ public class WeaponLegendaryCraftMenu {
         put(Currencies.COIN, 1000000L);
         put(Currencies.SYNTHETIC_SHARD, 10000L);
     }};
-    public static final List<String> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
+    public static final List<Component> COST_LORE = PvEUtils.getCostLore(COST, "Craft Cost", true);
 
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -39,33 +43,29 @@ public class WeaponLegendaryCraftMenu {
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
                         .name(ChatColor.GREEN + "Craft Legendary Weapon")
-                        .loreLEGACY(COST_LORE)
+                        .lore(COST_LORE)
                         .get(),
                 (m, e) -> {
-                    List<String> confirmLore = new ArrayList<>();
-                    confirmLore.add(ChatColor.GRAY + "Craft a Legendary Weapon");
+                    List<Component> confirmLore = new ArrayList<>();
+                    confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
                     confirmLore.addAll(COST_LORE);
-                    Menu.openConfirmationMenu(
+                    Menu.openConfirmationMenu0(
                             player,
                             "Craft Legendary Weapon",
                             3,
                             confirmLore,
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
                                 COST.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 Location loc = player.getLocation();
-                                player.playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 500, 2);
-                                player.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.1f);
-                                Utils.playGlobalSound(loc, "legendaryfind", 500, 1);
-                                EffectUtils.strikeLightning(loc, false, 3);
-                                player.sendMessage(Component.text(ChatColor.GRAY + "Crafted Legendary Weapon: ")
-                                                            .append(weapon.getHoverComponent(false))
-                                );
+                                playCraftEffects(player, loc);
+                                player.sendMessage(Component.text("Crafted Legendary Weapon: ", NamedTextColor.GRAY).append(weapon.getHoverComponent(false)));
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                                     onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player)
-                                                                        .append(Component.text(player.getName() + ChatColor.GRAY + " crafted "))
+                                                                        .append(Component.text(player.getName()))
+                                                                        .append(Component.text(" crafted ", NamedTextColor.GRAY))
                                                                         .append(weapon.getHoverComponent(false))
                                     );
                                 }
@@ -90,6 +90,13 @@ public class WeaponLegendaryCraftMenu {
 
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private static void playCraftEffects(Player player, Location loc) {
+        player.playSound(loc, Sound.BLOCK_NOTE_BLOCK_PLING, 500, 2);
+        player.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.1f);
+        Utils.playGlobalSound(loc, "legendaryfind", 500, 1);
+        EffectUtils.strikeLightning(loc, false, 3);
     }
 
 }

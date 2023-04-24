@@ -1,23 +1,24 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.Currencies;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.Spendable;
+import net.kyori.adventure.text.Component;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface StatsRerollable {
 
-    int getRerollCost();
-
     void reroll();
 
-    default List<String> getRerollCostLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.AQUA + "Cost: ");
-        lore.add(ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(getRerollCost()));
-        return lore;
+    default List<Component> getRerollCostLore() {
+        LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>() {{
+            put(Currencies.COIN, (long) getRerollCost());
+        }};
+        return PvEUtils.getCostLore(cost, true);
     }
+
+    int getRerollCost();
 
 }

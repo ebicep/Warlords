@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.BonusLore;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -69,13 +70,13 @@ public class ItemMenuUtil {
             int x,
             int y
     ) {
-        List<String> costLore = PvEUtils.getCostLore(cost, false);
-        String name = costLore.get(0);
+        List<Component> costLore = PvEUtils.getCostLore(cost, false);
+        Component name = costLore.get(0);
         costLore.remove(0);
         menu.setItem(x, y,
                 new ItemBuilder(Material.BOOK)
                         .name(name)
-                        .loreLEGACY(costLore)
+                        .lore(costLore)
                         .get(),
                 (m, e) -> {
                 }

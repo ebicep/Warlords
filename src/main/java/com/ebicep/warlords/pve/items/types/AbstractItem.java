@@ -32,7 +32,7 @@ public abstract class AbstractItem {
         return (current - min) / (max - min);
     }
 
-    public static String getModifierCalculatedLore(
+    public static Component getModifierCalculatedLore(
             ItemModifier[] blessings,
             ItemModifier[] curses,
             float modifierCalculated,
@@ -138,7 +138,7 @@ public abstract class AbstractItem {
         itemBuilder.addLore(getStatPoolLore());
         if (modifier != 0) {
             itemBuilder.addLore(
-                    "",
+                    Component.empty(),
                     getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false)
             );
         }

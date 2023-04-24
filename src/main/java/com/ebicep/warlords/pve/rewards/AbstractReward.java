@@ -3,6 +3,8 @@ package com.ebicep.warlords.pve.rewards;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -13,6 +15,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AbstractReward {
 
@@ -34,21 +37,21 @@ public abstract class AbstractReward {
         setTimeClaimed();
     }
 
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return rewards.entrySet()
                       .stream()
                       .map(currencyValue -> currencyValue.getKey().getCostColoredName(currencyValue.getValue()))
-                      .toList();
+                      .collect(Collectors.toList());
     }
 
     public ItemStack getItem() {
-        List<String> lore = getLore();
-        lore.add(0, "");
-        lore.add("");
-        lore.add(ChatColor.YELLOW + "Click to claim!");
+        List<Component> lore = getLore();
+        lore.add(0, Component.empty());
+        lore.add(Component.empty());
+        lore.add(Component.text("Click to claim!", NamedTextColor.YELLOW));
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
-                .loreLEGACY(lore)
+                .lore(lore)
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
@@ -56,7 +59,7 @@ public abstract class AbstractReward {
     public ItemStack getItemWithoutClaim() {
         return new ItemBuilder(Material.CHEST)
                 .name(getNameColor() + from + " Reward")
-                .loreLEGACY(getLore())
+                .lore(getLore())
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }

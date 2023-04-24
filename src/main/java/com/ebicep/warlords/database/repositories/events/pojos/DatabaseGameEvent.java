@@ -13,7 +13,8 @@ import com.ebicep.warlords.guilds.logs.types.general.GuildLogGameEventReward;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,7 +35,8 @@ public class DatabaseGameEvent {
     public static DatabaseGameEvent currentGameEvent = null;
 
     public static void sendGameEventMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GOLD + "Game Events" + ChatColor.DARK_GRAY + " > " + message);
+        player.sendMessage(Component.text("Game Events", NamedTextColor.GOLD)
+                                    .append(Component.text(" > " + message, NamedTextColor.DARK_GRAY)));
     }
 
     public static void startGameEvent() {
@@ -157,7 +159,7 @@ public class DatabaseGameEvent {
                 ))
                 .toList();
         ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
-        HashMap<DatabasePlayer, List<String>> playerMessages = new HashMap<>();
+        HashMap<DatabasePlayer, List<Component>> playerMessages = new HashMap<>();
         for (int i = 0; i < databasePlayers.size(); i++) {
             int position = i + 1;
             DatabasePlayer databasePlayer = databasePlayers.get(i);
@@ -165,16 +167,19 @@ public class DatabaseGameEvent {
                           .getGameEventRewards()
                           .add(new GameEventReward(event.getRewards(position), event.name + " Event", getStartDateSecond()));
 
-            List<String> messages = new ArrayList<>();
-            messages.add(ChatColor.GOLD + "------------------------------------------------");
-            messages.add(ChatColor.RED + event.name + " Event has Ended!");
-            messages.add("");
-            messages.add(ChatColor.YELLOW + "#" + position + ". " +
-                    ChatColor.AQUA + databasePlayer.getName() +
-                    ChatColor.GRAY + " - " +
-                    ChatColor.YELLOW + NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
-                                                                                       .get(getStartDateSecond())
-                                                                                       .getEventPointsCumulative()) + " Points");
+            List<Component> messages = new ArrayList<>();
+            messages.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
+            messages.add(Component.text(event.name + " Event has Ended!", NamedTextColor.RED));
+            messages.add(Component.empty());
+            messages.add(Component.textOfChildren(
+                            Component.text("#" + position + ". ", NamedTextColor.YELLOW),
+                            Component.text(databasePlayer.getName(), NamedTextColor.AQUA),
+                            Component.text(" - ", NamedTextColor.GRAY),
+                            Component.text(NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                           .get(getStartDateSecond())
+                                                                                           .getEventPointsCumulative()) + " Points", NamedTextColor.YELLOW)
+                    )
+            );
             playerMessages.put(databasePlayer, messages);
         }
         //guild rewards
@@ -197,10 +202,14 @@ public class DatabaseGameEvent {
             for (GuildPlayer player : guild.getPlayers()) {
                 for (DatabasePlayer databasePlayer : playerMessages.keySet()) {
                     if (databasePlayer.getUuid().equals(player.getUUID())) {
-                        playerMessages.get(databasePlayer).add(ChatColor.YELLOW + "#" + position + ". " +
-                                ChatColor.GOLD + guild.getName() +
-                                ChatColor.GRAY + " - " +
-                                ChatColor.YELLOW + NumberFormat.addCommas(guild.getEventPoints(event, getStartDateSecond())) + " Points");
+                        playerMessages.get(databasePlayer).add(
+                                Component.textOfChildren(
+                                        Component.text("#" + position + ". ", NamedTextColor.YELLOW),
+                                        Component.text(guild.getName(), NamedTextColor.AQUA),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text(NumberFormat.addCommas(guild.getEventPoints(event, getStartDateSecond())) + " Points", NamedTextColor.GOLD)
+                                )
+                        );
                         break;
                     }
                 }
@@ -210,10 +219,10 @@ public class DatabaseGameEvent {
         }
         //player reward message
         playerMessages.forEach((databasePlayer, messages) -> {
-            messages.add("");
-            messages.add(ChatColor.GREEN + "Claim your rewards through your");
-            messages.add(ChatColor.GREEN + "Reward Inventory!");
-            messages.add(ChatColor.GOLD + "------------------------------------------------");
+            messages.add(Component.empty());
+            messages.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
+            messages.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
+            messages.add(Component.text("------------------------------------------------", NamedTextColor.GREEN));
             databasePlayer.addFutureMessage(new FutureMessage(messages, true));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });

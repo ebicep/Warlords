@@ -1,20 +1,24 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.util.java.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public interface Salvageable {
-
-    int getMinSalvageAmount();
-
-    int getMaxSalvageAmount();
 
     default int getSalvageAmount() {
         return Utils.generateRandomValueBetweenInclusive(getMinSalvageAmount(), getMaxSalvageAmount());
     }
 
-    default String getSalvageRewardMessage() {
-        return ChatColor.WHITE.toString() + getMinSalvageAmount() + "-" + getMaxSalvageAmount() + " Synthetic Shards" + ChatColor.GRAY + ".";
+    int getMinSalvageAmount();
+
+    int getMaxSalvageAmount();
+
+    default Component getSalvageRewardMessage() {
+        return Component.textOfChildren(
+                Component.text(getMinSalvageAmount() + "-" + getMaxSalvageAmount() + " Synthetic Shards", NamedTextColor.WHITE),
+                Component.text(".", NamedTextColor.GRAY)
+        );
     }
 
 }

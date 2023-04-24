@@ -691,7 +691,7 @@ public class EndState implements State, TimerDebugAble {
                 mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal));
                 for (MobDrops mobDrop : mobDrops) {
                     long amountFound = mobDropsGained.get(mobDrop);
-                    ChatUtils.sendCenteredMessage(player, Component.text(mobDrop.getCostColoredName(amountFound)));
+                    ChatUtils.sendCenteredMessage(player, mobDrop.getCostColoredName(amountFound));
                 }
             }
             List<AbstractItem> itemsFound = playerPveRewards.getItemsFound();
@@ -748,7 +748,7 @@ public class EndState implements State, TimerDebugAble {
         for (int i = 0; i < toSort.size(); i++) {
             Map.Entry<Spendable, Long> entry = toSort.get(i);
             pouch.append(Component.text(" - ", NamedTextColor.GRAY)
-                                  .append(Component.text(entry.getKey().getCostColoredName(entry.getValue()))));
+                                  .append(entry.getKey().getCostColoredName(entry.getValue())));
             if (i != toSort.size() - 1) {
                 pouch.append(Component.newline());
             }

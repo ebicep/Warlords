@@ -4,7 +4,8 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,7 +15,7 @@ public enum ItemTier {
 
     NONE(
             "None",
-            ChatColor.BLACK,
+            NamedTextColor.BLACK,
             new ItemStack(Material.WHITE_STAINED_GLASS_PANE),
             new ItemStack(Material.WHITE_TERRACOTTA),
             0,
@@ -29,7 +30,7 @@ public enum ItemTier {
     ),
     ALPHA(
             "Alpha",
-            ChatColor.GREEN,
+            NamedTextColor.GREEN,
             new ItemStack(Material.LIME_STAINED_GLASS_PANE),
             new ItemStack(Material.LIME_TERRACOTTA),
             -.20f,
@@ -46,7 +47,7 @@ public enum ItemTier {
     ),
     BETA(
             "Beta",
-            ChatColor.BLUE,
+            NamedTextColor.BLUE,
             new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE),
             new ItemStack(Material.LIGHT_BLUE_TERRACOTTA),
             -.10f,
@@ -64,7 +65,7 @@ public enum ItemTier {
     ),
     GAMMA(
             "Gamma",
-            ChatColor.LIGHT_PURPLE,
+            NamedTextColor.LIGHT_PURPLE,
             new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE),
             new ItemStack(Material.MAGENTA_TERRACOTTA),
             0,
@@ -82,7 +83,7 @@ public enum ItemTier {
     ),
     DELTA(
             "Delta",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.YELLOW_STAINED_GLASS_PANE),
             new ItemStack(Material.YELLOW_TERRACOTTA),
             .10f,
@@ -100,7 +101,7 @@ public enum ItemTier {
     ),
     OMEGA(
             "Omega",
-            ChatColor.GOLD,
+            NamedTextColor.GOLD,
             new ItemStack(Material.ORANGE_STAINED_GLASS_PANE),
             new ItemStack(Material.ORANGE_TERRACOTTA),
             .20f,
@@ -135,7 +136,7 @@ public enum ItemTier {
     }
 
     public final String name;
-    public final ChatColor chatColor;
+    public final NamedTextColor chatColor;
     public final ItemStack glassPane;
     public final ItemStack clayBlock;
     public final float statDistributionModifier;
@@ -150,7 +151,7 @@ public enum ItemTier {
 
     ItemTier(
             String name,
-            ChatColor chatColor,
+            NamedTextColor textColor,
             ItemStack glassPane,
             ItemStack clayBlock,
             float statDistributionModifier,
@@ -163,7 +164,7 @@ public enum ItemTier {
             int maxThornsDamage
     ) {
         this.name = name;
-        this.chatColor = chatColor;
+        this.chatColor = textColor;
         this.glassPane = glassPane;
         this.clayBlock = clayBlock;
         this.statDistributionModifier = statDistributionModifier;
@@ -181,8 +182,8 @@ public enum ItemTier {
         return generateStatPoolWithSettings(ordinal());
     }
 
-    public String getColoredName() {
-        return chatColor + name;
+    public Component getColoredName() {
+        return Component.text(name, chatColor);
     }
 
     public ItemTier next() {

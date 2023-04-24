@@ -1,8 +1,10 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,27 +76,53 @@ public class WordWrap {
         List<Component> components = new ArrayList<>();
         components.add(component);
         components.addAll(component.children());
+        List<Pair<String, Style>> words = new ArrayList<>();
         for (Component child : components) {
             if (!(child instanceof TextComponent textComponent)) {
                 continue;
             }
             String content = textComponent.content();
-            String[] words = content.split(" ");
-            StringBuilder toAppend = new StringBuilder();
-            for (String word : words) {
-                int wordLength = DefaultFontInfo.getStringLength(word);
-                if (currentWidth + wordLength <= width) {
-                    toAppend.append(word).append(" ");
-                    currentWidth += wordLength;
-                } else {
-                    toAppend.setLength(toAppend.length() - 1);
-                    output.add(Component.text(toAppend.toString(), child.style()));
-                    toAppend.setLength(0);
-                    toAppend.append(word).append(" ");
-                    currentWidth = wordLength;
-                }
+            if (content.isEmpty()) {
+                continue;
             }
-            output.add(Component.text(toAppend.toString(), child.style()));
+            for (String s : content.split(" ")) {
+                if (s.isEmpty()) {
+                    continue;
+                }
+                words.add(new Pair<>(s, child.style()));
+            }
+        }
+        TextComponent.Builder toAppend = Component.text().append(Component.text());
+        TextComponent.Builder lastComponent = Component.text();
+        Style lastStyle = Style.empty();
+        for (int i = 0; i < words.size(); i++) {
+            Pair<String, Style> wordStylePair = words.get(i);
+            String word = wordStylePair.getA();
+            Style currentStyle = wordStylePair.getB();
+
+            int wordLength = DefaultFontInfo.getStringLength(word);
+            if (currentWidth + wordLength <= width) {
+                if (lastStyle == currentStyle) {
+                    lastComponent.content(lastComponent.content() + word + " ");
+                } else {
+                    if (!lastComponent.content().isEmpty()) {
+                        toAppend.append(lastComponent);
+                    }
+                    lastComponent = Component.text(word + " ", currentStyle).toBuilder();
+                }
+                currentWidth += wordLength;
+            } else {
+                toAppend.append(lastComponent);
+                output.add(toAppend.build());
+                toAppend = Component.text();
+                lastComponent = Component.text(word + " ", currentStyle).toBuilder();
+                currentWidth = wordLength;
+            }
+            if (i == words.size() - 1) {
+                toAppend.append(lastComponent);
+                output.add(toAppend.build());
+            }
+            lastStyle = currentStyle;
         }
         return output;
     }
@@ -117,6 +145,10 @@ public class WordWrap {
                 continue;
             }
             String content = textComponent.content();
+            if (content.isEmpty()) {
+                continue;
+            }
+            //TODO check blank
             String[] words = content.split(" ");
             StringBuilder toAppend = new StringBuilder();
             for (String word : words) {
@@ -125,7 +157,7 @@ public class WordWrap {
                     toAppend.append(word).append(" ");
                     currentWidth += wordLength;
                 } else {
-                    toAppend.setLength(toAppend.length() - 1);
+                    toAppend.setLength(Math.max(toAppend.length() - 1, 0));
                     output.append(Component.text(toAppend.toString(), child.style()));
                     output.append(Component.newline());
                     toAppend.setLength(0);

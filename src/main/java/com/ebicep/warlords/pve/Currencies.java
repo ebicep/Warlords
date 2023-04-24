@@ -10,8 +10,9 @@ import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.google.common.util.concurrent.AtomicDouble;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,17 +22,17 @@ public enum Currencies implements Spendable {
 
     SYNTHETIC_SHARD(
             "Synthetic Shard",
-            ChatColor.WHITE,
+            NamedTextColor.WHITE,
             new ItemStack(Material.GRAY_STAINED_GLASS_PANE)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
-            ChatColor.GOLD,
+            NamedTextColor.GOLD,
             new ItemStack(Material.BLAZE_POWDER)
     ),
     FAIRY_ESSENCE(
             "Fairy Essence",
-            ChatColor.LIGHT_PURPLE,
+            NamedTextColor.LIGHT_PURPLE,
             new ItemStack(Material.MAGENTA_DYE)
     ) {
         @Override
@@ -41,87 +42,87 @@ public enum Currencies implements Spendable {
     },
     COMMON_STAR_PIECE(
             "Common Star Piece",
-            ChatColor.GREEN,
+            NamedTextColor.GREEN,
             new ItemStack(Material.NETHER_STAR)
     ),
     RARE_STAR_PIECE(
             "Rare Star Piece",
-            ChatColor.BLUE,
+            NamedTextColor.BLUE,
             new ItemStack(Material.NETHER_STAR)
     ),
     EPIC_STAR_PIECE(
             "Epic Star Piece",
-            ChatColor.DARK_PURPLE,
+            NamedTextColor.DARK_PURPLE,
             new ItemStack(Material.NETHER_STAR)
     ),
     LEGENDARY_STAR_PIECE(
             "Legendary Star Piece",
-            ChatColor.GOLD,
+            NamedTextColor.GOLD,
             new ItemStack(Material.NETHER_STAR)
     ),
     SUPPLY_DROP_TOKEN(
             "Supply Drop Token",
-            ChatColor.GOLD,
+            NamedTextColor.GOLD,
             new ItemStack(Material.FIREWORK_STAR)
     ),
     COIN(
             "Coin",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.GOLD_NUGGET)
     ),
     SKILL_BOOST_MODIFIER(
             "Skill Boost Modifier",
-            ChatColor.DARK_GRAY,
+            NamedTextColor.DARK_GRAY,
             new ItemStack(Material.BOOKSHELF)
     ),
     EVENT_POINTS_BOLTARO(
             "Boltaro Event Point",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
     EVENT_POINTS_NARMER(
             "Narmer Event Point",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
     EVENT_POINTS_MITHRA(
             "Mithra Event Point",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SNOWBALL)
     ),
     TITLE_TOKEN_PHARAOHS_REVENGE(
             "Pharaoh's Revenge Title Token",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SNOWBALL)
     ),
     TITLE_TOKEN_SPIDERS_BURROW(
             "Spiders Burrow Title Token",
-            ChatColor.YELLOW,
+            NamedTextColor.YELLOW,
             new ItemStack(Material.SNOWBALL)
     ),
     LIMIT_BREAKER(
             "Limit Breaker",
-            ChatColor.DARK_GRAY,
+            NamedTextColor.DARK_GRAY,
             new ItemStack(Material.CLOCK)
     ),
     MYSTERIOUS_TOKEN(
             "Mysterious Token",
-            ChatColor.MAGIC,
+            NamedTextColor.DARK_GRAY,
             new ItemStack(Material.BEDROCK)
     ),
     ILLUSION_SHARD(
             "Illusion Shard",
-            ChatColor.DARK_PURPLE,
+            NamedTextColor.DARK_PURPLE,
             new ItemStack(Material.GRAY_STAINED_GLASS_PANE)
     ),
     CELESTIAL_BRONZE(
             "Celestial Bronze",
-            ChatColor.GOLD,
+            NamedTextColor.GOLD,
             new ItemStack(Material.RABBIT_SPAWN_EGG)
     ) {
         @Override
@@ -131,7 +132,7 @@ public enum Currencies implements Spendable {
     },
     SCRAP_METAL(
             "Scrap Metal",
-            ChatColor.GRAY,
+            NamedTextColor.GRAY,
             new ItemStack(Material.MELON_SEEDS)
     ) {
         @Override
@@ -231,12 +232,12 @@ public enum Currencies implements Spendable {
     }
 
     public final String name;
-    public final ChatColor chatColor;
+    public final NamedTextColor textColor;
     public final ItemStack item;
 
-    Currencies(String name, ChatColor chatColor, ItemStack item) {
+    Currencies(String name, NamedTextColor textColor, ItemStack item) {
         this.name = name;
-        this.chatColor = chatColor;
+        this.textColor = textColor;
         this.item = item;
     }
 
@@ -246,8 +247,8 @@ public enum Currencies implements Spendable {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return chatColor;
+    public NamedTextColor getTextColor() {
+        return textColor;
     }
 
     @Override
@@ -265,8 +266,8 @@ public enum Currencies implements Spendable {
         return databasePlayer.getPveStats().getCurrencyValue(this);
     }
 
-    public String getColoredName() {
-        return chatColor + name;
+    public Component getColoredName() {
+        return Component.text(name, textColor);
     }
 
     public static class PvECoinSummary {

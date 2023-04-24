@@ -19,11 +19,15 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +41,9 @@ import static com.ebicep.warlords.util.java.NumberFormat.addCommaAndRound;
 public class CustomScoreboard {
 
     private static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
+    private static final TextComponent UPDATE_TEXT = Component.text("          Update", NamedTextColor.WHITE, TextDecoration.BOLD);
+    private static final TextComponent VERSION_TEXT = Component.text("    " + Warlords.VERSION, NamedTextColor.RED, TextDecoration.BOLD);
+
 
     public static void reloadPvEScoreboard(DatabasePlayerPvE databasePlayerPvE) {
         for (DatabasePlayer loadedPlayer : DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).values()) {
@@ -48,7 +55,7 @@ public class CustomScoreboard {
                     PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(playerUUID);
                     if (GameType.isPve(playerLeaderboardInfo.getStatsGameType())) {
                         CustomScoreboard customScoreboard = getPlayerScoreboard(playerUUID);
-                        customScoreboard.givePvEScoreboard(databasePlayerPvE, false);
+                        customScoreboard.givePvESidebar(databasePlayerPvE, false);
                     }
                 }
                 break;
@@ -60,26 +67,27 @@ public class CustomScoreboard {
         return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
     }
 
-    private void givePvEScoreboard(DatabasePlayerPvE pveStats, boolean forceClear) {
+    private void givePvESidebar(DatabasePlayerPvE pveStats, boolean forceClear) {
+        long starPieces = pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
+                pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +
+                pveStats.getCurrencyValue(Currencies.EPIC_STAR_PIECE) +
+                pveStats.getCurrencyValue(Currencies.LEGENDARY_STAR_PIECE);
         giveNewSideBar(forceClear,
-                ChatColor.GRAY + "PvE",
-                "",
-                "Kills: " + ChatColor.GREEN + addCommaAndRound(pveStats.getKills()),
-                "Assists: " + ChatColor.GREEN + addCommaAndRound(pveStats.getAssists()),
-                "Wins: " + ChatColor.GREEN + addCommaAndRound(pveStats.getWins()),
-                " ",
-                "Coins: " + Currencies.COIN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COIN)),
-                "Synthetic Shards: " + Currencies.SYNTHETIC_SHARD.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SYNTHETIC_SHARD)),
-                "Legend Fragments: " + Currencies.LEGEND_FRAGMENTS.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.LEGEND_FRAGMENTS)),
-                "Star Pieces: " + ChatColor.GREEN + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.EPIC_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.LEGENDARY_STAR_PIECE)),
-                "Supply Drop Tokens: " + Currencies.SUPPLY_DROP_TOKEN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)),
-                "Fairy Essence: " + Currencies.FAIRY_ESSENCE.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.FAIRY_ESSENCE)),
-                "  ",
-                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "    " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
+                Component.text("PvE", NamedTextColor.GRAY),
+                Component.empty(),
+                Component.text("Kills: ").append(getSidebarComponent(pveStats.getKills(), NamedTextColor.GREEN)),
+                Component.text("Assists: ").append(getSidebarComponent(pveStats.getAssists(), NamedTextColor.GREEN)),
+                Component.text("Wins: ").append(getSidebarComponent(pveStats.getWins(), NamedTextColor.GREEN)),
+                Component.text(" "),
+                Component.text("Coins: ").append(getCurrencyComponent(pveStats, Currencies.COIN)),
+                Component.text("Synthetic Shards: ").append(getCurrencyComponent(pveStats, Currencies.SYNTHETIC_SHARD)),
+                Component.text("Legend Fragments: ").append(getCurrencyComponent(pveStats, Currencies.LEGEND_FRAGMENTS)),
+                Component.text("Star Pieces: ").append(getSidebarComponent(starPieces, NamedTextColor.GREEN)),
+                Component.text("Supply Drop Tokens: ").append(getCurrencyComponent(pveStats, Currencies.SUPPLY_DROP_TOKEN)),
+                Component.text("Fairy Essence: ").append(getCurrencyComponent(pveStats, Currencies.FAIRY_ESSENCE)),
+                Component.empty(),
+                UPDATE_TEXT,
+                VERSION_TEXT
         );
     }
 
@@ -97,7 +105,7 @@ public class CustomScoreboard {
         }
     }
 
-    public void giveNewSideBar(boolean forceClear, String... entries) {
+    public void giveNewSideBar(boolean forceClear, Component... entries) {
         //clearing all teams if size doesnt match
         Set<Team> teams = scoreboard.getTeams()
                                     .stream()
@@ -117,9 +125,19 @@ public class CustomScoreboard {
 
         //giving prefix/suffix from pairs
         for (int i = entries.length; i > 0; i--) {
-            String entry = entries[entries.length - i];
-            setSideBarTeam(i, entry == null ? "" : entry);
+            Component entry = entries[entries.length - i];
+            setSideBarTeam(i, entry == null ? Component.empty() : entry);
         }
+    }
+
+    @Nonnull
+    private static TextComponent getSidebarComponent(long currencyValue, NamedTextColor textColor) {
+        return Component.text(addCommaAndRound(currencyValue), textColor);
+    }
+
+    @Nonnull
+    private static TextComponent getCurrencyComponent(DatabasePlayerPvE pveStats, Currencies currency) {
+        return getSidebarComponent(pveStats.getCurrencyValue(currency), currency.textColor);
     }
 
     private void clearSideBar() {
@@ -128,33 +146,14 @@ public class CustomScoreboard {
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
-    public void setSideBarTeam(int team, String entry) {
+    public void setSideBarTeam(int team, Component entry) {
         Team scoreboardTeam = scoreboard.getTeam("!team_" + team);
         if (scoreboardTeam == null) {
             scoreboardTeam = scoreboard.registerNewTeam("!team_" + team);
             scoreboardTeam.addEntry(ChatColor.values()[team - 1].toString());
             sideBar.getScore(ChatColor.values()[team - 1].toString()).setScore(team);
         }
-        if (entry.length() > 64) {
-            if (entry.charAt(63) == '§') {
-                scoreboardTeam.prefix(Component.text(entry.substring(0, 63)));
-                if (entry.length() > 127) {
-                    scoreboardTeam.suffix(Component.text(entry.substring(63, 127)));
-                } else {
-                    scoreboardTeam.suffix(Component.text(entry.substring(63)));
-                }
-            } else {
-                scoreboardTeam.prefix(Component.text(entry.substring(0, 64)));
-                if (entry.length() > 128) {
-                    scoreboardTeam.suffix(Component.text(entry.substring(64, 128)));
-                } else {
-                    scoreboardTeam.suffix(Component.text(entry.substring(64)));
-                }
-            }
-        } else {
-            scoreboardTeam.prefix(Component.text(entry));
-            scoreboardTeam.suffix(Component.text(""));
-        }
+        scoreboardTeam.prefix(entry);
     }
 
     public static void updateLobbyPlayerNames() {
@@ -212,9 +211,41 @@ public class CustomScoreboard {
         this.health = health;
     }
 
+    @Deprecated
     public void giveNewSideBar(boolean forceClear, List<String> entries) {
         // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
         giveNewSideBar(forceClear, entries.toArray(new String[0]));
+    }
+
+    @Deprecated
+    public void giveNewSideBar(boolean forceClear, String... entries) {
+        //clearing all teams if size doesnt match
+        Set<Team> teams = scoreboard.getTeams()
+                                    .stream()
+                                    .filter(team -> team.getName().startsWith("!team"))
+                                    .collect(Collectors.toSet());
+        if (forceClear || entries.length != teams.size()) {
+            teams.forEach(Team::unregister);
+            clearSideBar();
+
+            //making new sidebar
+            for (int i = 0; i < entries.length; i++) {
+                Team tempTeam = scoreboard.registerNewTeam("!team_" + (i + 1));
+                tempTeam.addEntry(ChatColor.values()[i].toString());
+                sideBar.getScore(ChatColor.values()[i].toString()).setScore(i + 1);
+            }
+        }
+
+        //giving prefix/suffix from pairs
+        for (int i = entries.length; i > 0; i--) {
+            String entry = entries[entries.length - i];
+            setSideBarTeam(i, entry == null ? "" : entry);
+        }
+    }
+
+    @Deprecated
+    public void setSideBarTeam(int team, String entry) {
+        setSideBarTeam(team, Component.text(entry));
     }
 
     public void giveMainLobbyScoreboard() {
@@ -236,7 +267,7 @@ public class CustomScoreboard {
         }
 
         if (!StatsLeaderboardManager.enabled) {
-            givePvEScoreboard();
+            givePvESidebar();
             return;
         }
 
@@ -249,7 +280,7 @@ public class CustomScoreboard {
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
             GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
             if (GameType.isPve(selectedGameType)) {
-                givePvEScoreboard();
+                givePvESidebar();
                 return;
             }
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
@@ -274,23 +305,7 @@ public class CustomScoreboard {
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
                 AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
-                giveNewSideBar(true,
-                        ChatColor.GRAY + scoreboardSelection,
-                        "",
-                        "Kills: " + ChatColor.GREEN + addCommaAndRound(playerInformation.getKills()),
-                        "Assists: " + ChatColor.GREEN + addCommaAndRound(playerInformation.getAssists()),
-                        "Deaths: " + ChatColor.GREEN + addCommaAndRound(playerInformation.getDeaths()),
-                        " ",
-                        "Wins: " + ChatColor.GREEN + addCommaAndRound(playerInformation.getWins()),
-                        "Losses: " + ChatColor.GREEN + addCommaAndRound(playerInformation.getLosses()),
-                        "  ",
-                        "Damage: " + ChatColor.RED + addCommaAndRound(playerInformation.getDamage()),
-                        "Healing: " + ChatColor.DARK_GREEN + addCommaAndRound(playerInformation.getHealing()),
-                        "Absorbed: " + ChatColor.GOLD + addCommaAndRound(playerInformation.getAbsorbed()),
-                        "    ",
-                        "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                        "    " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
-                );
+                givePvPSidebar(scoreboardSelection, playerInformation);
             } else {
                 giveNASidebar(scoreboardSelection);
             }
@@ -298,57 +313,56 @@ public class CustomScoreboard {
         }
 
         DatabaseManager.getPlayer(uuid,
-                databasePlayer -> {
-                    giveNewSideBar(true,
-                            ChatColor.GRAY + "Lifetime",
-                            " ",
-                            "Kills: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getKills()),
-                            "Assists: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getAssists()),
-                            "Deaths: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getDeaths()),
-                            " ",
-                            "Wins: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getWins()),
-                            "Losses: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getLosses()),
-                            "  ",
-                            "Damage: " + ChatColor.RED + addCommaAndRound(databasePlayer.getDamage()),
-                            "Healing: " + ChatColor.DARK_GREEN + addCommaAndRound(databasePlayer.getHealing()),
-                            "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
-                            "    ",
-                            "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                            "    " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
-                    );
-                },
-                () -> {
-                    giveNASidebar("Lifetime");
-                }
+                databasePlayer -> givePvPSidebar("Lifetime", databasePlayer),
+                () -> giveNASidebar("Lifetime")
         );
     }
 
     private void giveNASidebar(String title) {
         giveNewSideBar(true,
-                ChatColor.GRAY + title,
-                " ",
-                "Kills: " + ChatColor.GREEN + "N/A",
-                "Assists: " + ChatColor.GREEN + "N/A",
-                "Deaths: " + ChatColor.GREEN + "N/A",
-                " " + "",
-                "Wins: " + ChatColor.GREEN + "N/A",
-                "Losses: " + ChatColor.GREEN + "N/A",
-                "  " + "",
-                "Damage: " + ChatColor.RED + "N/A",
-                "Healing: " + ChatColor.DARK_GREEN + "N/A",
-                "Absorbed: " + ChatColor.GOLD + "N/A",
-                "    ",
-                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "    " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION//"    " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                Component.text(title, NamedTextColor.GRAY),
+                Component.empty(),
+                Component.text("Kills: ").append(Component.text("N/A", NamedTextColor.GREEN)),
+                Component.text("Assists: ").append(Component.text("N/A", NamedTextColor.GREEN)),
+                Component.text("Deaths: ").append(Component.text("N/A", NamedTextColor.GREEN)),
+                Component.empty(),
+                Component.text("Wins: ").append(Component.text("N/A", NamedTextColor.GREEN)),
+                Component.text("Losses: ").append(Component.text("N/A", NamedTextColor.GREEN)),
+                Component.empty(),
+                Component.text("Damage: ").append(Component.text("N/A", NamedTextColor.RED)),
+                Component.text("Healing: ").append(Component.text("N/A", NamedTextColor.DARK_GREEN)),
+                Component.text("Absorbed: ").append(Component.text("N/A", NamedTextColor.GOLD)),
+                Component.empty(),
+                UPDATE_TEXT,
+                VERSION_TEXT
         );
     }
 
-    private void givePvEScoreboard() {
+    private void givePvESidebar() {
         DatabaseManager.getPlayer(uuid,
-                databasePlayer -> givePvEScoreboard(databasePlayer.getPveStats(), true),
+                databasePlayer -> givePvESidebar(databasePlayer.getPveStats(), true),
                 () -> giveNASidebar("PvE")
         );
     }
 
 
+    private void givePvPSidebar(String title, AbstractDatabaseStatInformation statInformation) {
+        giveNewSideBar(true,
+                Component.text(title, NamedTextColor.GRAY),
+                Component.empty(),
+                Component.text("Kills: ").append(getSidebarComponent(statInformation.getKills(), NamedTextColor.GREEN)),
+                Component.text("Assists: ").append(getSidebarComponent(statInformation.getAssists(), NamedTextColor.GREEN)),
+                Component.text("Deaths: ").append(getSidebarComponent(statInformation.getDeaths(), NamedTextColor.GREEN)),
+                Component.empty(),
+                Component.text("Wins: ").append(getSidebarComponent(statInformation.getWins(), NamedTextColor.GREEN)),
+                Component.text("Losses: ").append(getSidebarComponent(statInformation.getLosses(), NamedTextColor.GREEN)),
+                Component.empty(),
+                Component.text("Damage: ").append(getSidebarComponent(statInformation.getDamage(), NamedTextColor.RED)),
+                Component.text("Healing: ").append(getSidebarComponent(statInformation.getHealing(), NamedTextColor.DARK_GREEN)),
+                Component.text("Absorbed: ").append(getSidebarComponent(statInformation.getAbsorbed(), NamedTextColor.GOLD)),
+                Component.empty(),
+                UPDATE_TEXT,
+                VERSION_TEXT
+        );
+    }
 }

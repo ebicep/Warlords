@@ -22,6 +22,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -89,17 +90,23 @@ public class ItemEquipMenu {
                         return;
                     }
                     Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Scrap",
                             3,
                             new ArrayList<>() {{
-                                add(ChatColor.GRAY + "Scrap this item and claim its materials.");
-                                add("");
-                                add(ChatColor.GREEN + "Rewards: " + ChatColor.GRAY + scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.");
-                                add("");
-                                add(ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone.");
+                                add(Component.text("Scrap this item and claim its materials.", NamedTextColor.GRAY));
+                                add(Component.empty());
+                                add(Component.textOfChildren(
+                                        Component.text("Rewards: ", NamedTextColor.GREEN),
+                                        Component.text(scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.", NamedTextColor.GRAY)
+                                ));
+                                add(Component.empty());
+                                add(Component.textOfChildren(
+                                        Component.text("WARNING: ", NamedTextColor.RED),
+                                        Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+                                ));
                             }},
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 ItemsManager itemsManager = pveStats.getItemsManager();
@@ -331,16 +338,22 @@ public class ItemEquipMenu {
                         player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
                         return;
                     }
-                    Menu.openConfirmationMenu(
+                    Menu.openConfirmationMenu0(
                             player,
                             "Delete Loadout",
                             3,
                             Arrays.asList(
-                                    ChatColor.GRAY + "Delete Loadout: " + ChatColor.GOLD + itemLoadout.getName(),
-                                    "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
+                                    Component.textOfChildren(
+                                            Component.text("Delete Loadout: ", NamedTextColor.GRAY),
+                                            Component.text(itemLoadout.getName(), NamedTextColor.GOLD)
+                                    ),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("WARNING: ", NamedTextColor.RED),
+                                            Component.text("This cannot be undone!", NamedTextColor.GRAY)
+                                    )
                             ),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 loadouts.remove(itemLoadout);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

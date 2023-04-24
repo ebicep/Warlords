@@ -203,7 +203,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
                                            StringBuilder stolenMessage = new StringBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
                                                    ChatColor.GRAY + " obtained a " +
-                                                   drop.chatColor + drop.name +
+                                                   drop.textColor + drop.name +
                                                    ChatColor.GRAY + " but it was stolen by " +
                                                    Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + firstStealer.getName() +
                                                    ChatColor.GRAY + "!");
@@ -221,7 +221,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                        } else {
                                            String obtainMessage = Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
                                                    ChatColor.GRAY + " obtained a " +
-                                                   drop.chatColor + drop.name +
+                                                   drop.textColor + drop.name +
                                                    ChatColor.GRAY + "!";
                                            game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage));
                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);

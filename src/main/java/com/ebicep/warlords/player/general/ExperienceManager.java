@@ -126,7 +126,14 @@ public class ExperienceManager {
                     playerAwardSummary.putIfAbsent(uuid, new AwardSummary());
                     AwardSummary awardSummary = playerAwardSummary.get(uuid);
                     awardSummary.getMessages()
-                                .add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                                .add(Component.textOfChildren(
+                                        Component.text("#" + (i + 1) + ". ", NamedTextColor.YELLOW),
+                                        Component.text(name, NamedTextColor.AQUA),
+                                        Component.text(": ", NamedTextColor.WHITE),
+                                        Component.text("+", NamedTextColor.DARK_GRAY),
+                                        Component.text(experienceGain, NamedTextColor.DARK_AQUA),
+                                        Component.text(" Universal Experience", NamedTextColor.GOLD)
+                                ));
                     awardSummary.addTotalExperienceGain(experienceGain);
                 }
             }
@@ -138,8 +145,13 @@ public class ExperienceManager {
         playerAwardSummary.forEach((s, awardSummary) -> {
             long totalExperienceGain = awardSummary.getTotalExperienceGain();
 
-            awardSummary.addMessage(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + totalExperienceGain);
-            awardSummary.addMessage(ChatColor.BLUE + "---------------------------------------------------");
+            awardSummary.addMessage(Component.textOfChildren(
+                    Component.text("Total Experience Gain", NamedTextColor.GOLD),
+                    Component.text(": ", NamedTextColor.WHITE),
+                    Component.text("+", NamedTextColor.DARK_GRAY),
+                    Component.text(totalExperienceGain, NamedTextColor.DARK_AQUA)
+            ));
+            awardSummary.addMessage(Component.text("---------------------------------------------------", NamedTextColor.BLUE));
 
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(s)))
@@ -437,15 +449,16 @@ public class ExperienceManager {
     }
 
     static class AwardSummary {
-        List<String> messages = new ArrayList<>();
+        List<Component> messages = new ArrayList<>();
         long totalExperienceGain = 0L;
 
         public AwardSummary() {
-            messages.add(ChatColor.BLUE + "---------------------------------------------------");
-            messages.add(ChatColor.GREEN + "Weekly Experience Bonus\n ");
+            messages.add(Component.text("---------------------------------------------------", NamedTextColor.BLUE));
+            messages.add(Component.text("Weekly Experience Bonus", NamedTextColor.GREEN));
+            messages.add(Component.empty());
         }
 
-        public List<String> getMessages() {
+        public List<Component> getMessages() {
             return messages;
         }
 
@@ -453,7 +466,7 @@ public class ExperienceManager {
             return totalExperienceGain;
         }
 
-        public void addMessage(String message) {
+        public void addMessage(Component message) {
             messages.add(message);
         }
 

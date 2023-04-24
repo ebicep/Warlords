@@ -16,6 +16,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +26,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
@@ -234,15 +235,15 @@ public class GuildMenu {
                             @Override
                             public void run() {
                                 int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
-                                Menu.openConfirmationMenu(
+                                Menu.openConfirmationMenu0(
                                         player,
                                         "Confirm Conversion",
                                         3,
                                         Arrays.asList(
-                                                ChatColor.GREEN + "+" + guildCoinsGained + " Guild Coins",
-                                                ChatColor.RED + "-" + playerCoinsToConvert + " Player Coins"
+                                                Component.text("+" + guildCoinsGained + " Guild Coins", NamedTextColor.GREEN),
+                                                Component.text("-" + playerCoinsToConvert + " Player Coins", NamedTextColor.RED)
                                         ),
-                                        Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                        Menu.GO_BACK,
                                         (m2, e2) -> {
                                             databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, playerCoinsToConvert);
                                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

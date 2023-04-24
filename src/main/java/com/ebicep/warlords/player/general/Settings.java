@@ -5,6 +5,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -155,10 +157,10 @@ public class Settings {
                     new ItemBuilder(Material.BONE)
                             .name(ChatColor.GREEN + "Kill Messages")
                             .lore(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatKillsMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Kill messages", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
+                                    Component.text("Currently Selected ", NamedTextColor.AQUA).append(Component.text(settings.getChatKillsMode().name, NamedTextColor.YELLOW)),
+                                    WordWrap.wrapWithNewline(Component.text("Kill messages", NamedTextColor.GRAY), 150),
+                                    Component.empty(),
+                                    Component.text("Click to change", NamedTextColor.YELLOW)
                             )
                             .get(),
                     (m, e) -> {

@@ -12,6 +12,8 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -208,16 +210,22 @@ public class AbilityTree {
                             player.sendMessage(ChatColor.RED + "You must have at least one profile!");
                             return;
                         }
-                        Menu.openConfirmationMenu(
+                        Menu.openConfirmationMenu0(
                                 player,
                                 "Delete Profile",
                                 3,
                                 Arrays.asList(
-                                        ChatColor.GRAY + "Delete Profile: " + ChatColor.GOLD + autoUpgradeProfile.getName(),
-                                        "",
-                                        ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
+                                        Component.textOfChildren(
+                                                Component.text("Delete Profile: ", NamedTextColor.GRAY),
+                                                Component.text(autoUpgradeProfile.getName(), NamedTextColor.GOLD)
+                                        ),
+                                        Component.empty(),
+                                        Component.textOfChildren(
+                                                Component.text("WARNING: ", NamedTextColor.RED),
+                                                Component.text("This cannot be undone!", NamedTextColor.GRAY)
+                                        )
                                 ),
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                Menu.GO_BACK,
                                 (m2, e2) -> {
                                     autoUpgradeProfiles.remove(autoUpgradeProfile);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

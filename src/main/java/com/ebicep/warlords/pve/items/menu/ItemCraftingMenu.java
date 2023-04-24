@@ -21,7 +21,8 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -76,16 +77,16 @@ public class ItemCraftingMenu {
 
         menu.setItem(1, 1,
                 new ItemBuilder(Material.YELLOW_TERRACOTTA)
-                        .name(ChatColor.GREEN + "Delta Forging")
-                        .loreLEGACY(ChatColor.GRAY + "Craft a Delta Tiered Item")
+                        .name(Component.text("Delta Forging", NamedTextColor.GREEN))
+                        .lore(Component.text("Craft a Delta Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, new HashMap<>())
         );
 
         menu.setItem(4, 1,
                 new ItemBuilder(Material.WHITE_TERRACOTTA)
-                        .name(ChatColor.GREEN + "Omega Forging")
-                        .loreLEGACY(ChatColor.GRAY + "Craft an Omega Tiered Item")
+                        .name(Component.text("Omega Forging", NamedTextColor.GREEN))
+                        .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
                     openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
@@ -93,8 +94,8 @@ public class ItemCraftingMenu {
         );
         menu.setItem(7, 1,
                 new ItemBuilder(Material.ANVIL)
-                        .name(ChatColor.GREEN + "Celestial Smeltery")
-                        .loreLEGACY(ChatColor.GRAY + "Smelt Celestial Bronze")
+                        .name(Component.text("Celestial Smeltery", NamedTextColor.GREEN))
+                        .lore(Component.text("Smelt Celestial Bronze", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
         );
@@ -149,8 +150,11 @@ public class ItemCraftingMenu {
                 "Select an Item",
                 onClick,
                 itemBuilder -> itemBuilder.addLore(
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to select", NamedTextColor.GREEN)
+                        )
                 ),
                 new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
                         .setItemInventory(databasePlayer.getPveStats()
@@ -185,20 +189,22 @@ public class ItemCraftingMenu {
                                                .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         menu.setItem(6, 2,
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
-                        .name(ChatColor.GREEN + "Click to Craft Item")
+                        .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
                         .loreLEGACY(
                                 ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                                 ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
-                                "",
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
-                                                "It will also have an additional random stat and become reblessed.",
+                                ""
+                        )
+                        .addLore(
+                                WordWrap.wrapWithNewline(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                                "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
                                         160
                                 )
                         )
                         .get(),
                 (m, e) -> {
                     if (!requirementsMet) {
-                        player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
+                        player.sendMessage(Component.text("You do not have all the required items to craft this item!", NamedTextColor.RED));
                         return;
                     }
                     TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
@@ -206,16 +212,23 @@ public class ItemCraftingMenu {
                         Spendable spendable = currenciesLongEntry.getKey();
                         Long cost = currenciesLongEntry.getValue();
                         if (spendable.getFromPlayer(databasePlayer) < cost) {
-                            player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                        .append(spendable.getCostColoredName(cost))
+                                                        .append(Component.text(" to craft this item!"))
+                            );
                             return;
                         }
                     }
 
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Item Craft",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Craft " + tier.getColoredName() + ChatColor.GRAY + " Item"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.textOfChildren(
+                                    Component.text("Craft ", NamedTextColor.GRAY),
+                                    tier.getColoredName(),
+                                    Component.text(" Item")
+                            )),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 for (TierRequirement requirement : requirements) {
                                     pveStats.getItemsManager().removeItem(items.get(requirement.tier()));
@@ -251,8 +264,7 @@ public class ItemCraftingMenu {
                                 craftedItem.bless(null);
                                 pveStats.getItemsManager().addItem(craftedItem);
                                 AbstractItem.sendItemMessage(player,
-                                        Component.text(ChatColor.GRAY + "You crafted ")
-                                                 .hoverEvent(craftedItem.getHoverComponent())
+                                        Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), craftedItem.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
                                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
@@ -270,17 +282,25 @@ public class ItemCraftingMenu {
         Menu menu = new Menu("Celestial Smeltery", 9 * 6);
 
         ItemBuilder itemBuilder = new ItemBuilder(Material.PAPER)
-                .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" +
-                        ChatColor.GREEN + " to select a" + (boughtBlessing != null ? " different " : " ") + "blessing")
+                .name(Component.textOfChildren(
+                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text(" to select a" + (boughtBlessing != null ? " different " : " ") + "blessing", NamedTextColor.GREEN)
+                ))
                 .enchant(Enchantment.OXYGEN, 1)
                 .flags(ItemFlag.HIDE_ENCHANTS);
         if (boughtBlessing == null) {
-            itemBuilder.name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing");
+            itemBuilder.name(Component.textOfChildren(
+                    Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.text(" to select a blessing", NamedTextColor.GREEN)
+            ));
         } else {
-            itemBuilder.name(ChatColor.GREEN + "Tier " + (boughtBlessing) + " Bought Blessing")
+            itemBuilder.name(Component.text("Tier " + (boughtBlessing) + " Bought Blessing", NamedTextColor.GREEN))
                        .addLore(
-                               "",
-                               ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                               Component.empty(),
+                               Component.textOfChildren(
+                                       Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                       Component.text(" to select a different blessing", NamedTextColor.GREEN)
+                               )
                        );
         }
 
@@ -312,8 +332,11 @@ public class ItemCraftingMenu {
             int finalTier = tier;
             menu.setItem(tier + 1, 1,
                     new ItemBuilder(Material.PAPER)
-                            .name(ChatColor.GREEN + "Tier " + tier + " Bought Blessings")
-                            .loreLEGACY(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
+                            .name(Component.text("Tier " + tier + " Bought Blessings", NamedTextColor.GREEN))
+                            .lore(Component.textOfChildren(
+                                    Component.text("Amount: ", NamedTextColor.GRAY),
+                                    Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
+                            ))
                             .amount(blessingBoughtAmount)
                             .enchant(Enchantment.OXYGEN, 1)
                             .flags(ItemFlag.HIDE_ENCHANTS)
@@ -338,7 +361,7 @@ public class ItemCraftingMenu {
                                                     .stream()
                                                     .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         ItemBuilder itemBuilder = new ItemBuilder(hasBoughtBlessing && enoughCost ? Material.ANVIL : Material.BARRIER)
-                .name(ChatColor.GREEN + "Click to Smelt a Celestial Bronze")
+                .name(Component.text("Click to Smelt a Celestial Bronze", NamedTextColor.GREEN))
                 .loreLEGACY(
                         ItemMenuUtil.getRequirementMetString(hasBoughtBlessing, "Blessing Selected"),
                         ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
@@ -351,15 +374,18 @@ public class ItemCraftingMenu {
                         return;
                     }
 
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Smelt",
                             3,
                             new ArrayList<>() {{
-                                add(ChatColor.GRAY + "Smelt a Celestial Bronze");
+                                add(Component.text("Smelt a Celestial Bronze", NamedTextColor.GRAY));
                                 addAll(PvEUtils.getCostLore(CELESTIAL_SMELTERY_COST, "Smelt Cost", true));
-                                add(ChatColor.GRAY + " - " + ChatColor.GREEN + "Tier " + boughtBlessing + " Bought Blessing");
+                                add(Component.textOfChildren(
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Tier " + boughtBlessing + " Bought Blessing", NamedTextColor.GREEN)
+                                ));
                             }},
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 for (Map.Entry<Spendable, Long> spendableLongEntry : CELESTIAL_SMELTERY_COST.entrySet()) {
                                     spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
@@ -372,7 +398,7 @@ public class ItemCraftingMenu {
                                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                                 player.closeInventory();
 
-                                AbstractItem.sendItemMessage(player, ChatColor.GREEN + "You smelted a Celestial Bronze");
+                                AbstractItem.sendItemMessage(player, Component.text("You smelted a Celestial Bronze", NamedTextColor.GREEN));
                             },
                             (m2, e2) -> openCelestialSmelteryMenu(player, databasePlayer, boughtBlessing),
                             (m2) -> {

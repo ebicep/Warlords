@@ -12,7 +12,8 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -88,7 +89,10 @@ public class MasterworksFair {
                                                                                                                      rarity
                                                                                                              ));
                                                                                                          } else {
-                                                                                                             rewards.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
+                                                                                                             rewards.forEach((spendable, amount) -> spendable.addToPlayer(
+                                                                                                                     databasePlayer,
+                                                                                                                     amount
+                                                                                                             ));
                                                                                                          }
                                                                                                      }
 
@@ -166,44 +170,56 @@ public class MasterworksFair {
     }
 
     public void sendResults(HashMap<UUID, List<MasterworksFairEntry>> playerFairResults, boolean inCaseYouMissedIt) {
-        playerFairResults.forEach((uuid, masterworksFairEntries) -> Warlords.newChain()
-                                                                            .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                                                            .syncLast(databasePlayer -> {
-                                                                                if (databasePlayer == null) {
-                                                                                    return;
-                                                                                }
-                                                                                List<String> message = new ArrayList<>();
-                                                                                message.add(ChatColor.GOLD + "------------------------------------------------");
-                                                                                if (inCaseYouMissedIt) {
-                                                                                    message.add(ChatColor.AQUA + "In case you missed it!");
-                                                                                }
-                                                                                message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
-                                                                                for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
-                                                                                    if (rarity.getPlayerEntries == null) {
-                                                                                        continue;
-                                                                                    }
-                                                                                    Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
-                                                                                                                                                                .filter(entry -> entry.getRarity() == rarity)
-                                                                                                                                                                .findAny();
-                                                                                    if (masterworksFairEntry.isPresent()) {
-                                                                                        MasterworksFairEntry fairEntry = masterworksFairEntry.get();
-                                                                                        message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " +
-                                                                                                ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(
-                                                                                                fairEntry.getScore()) + "% " +
-                                                                                                ChatColor.GRAY + "(" + ChatColor.AQUA + "#" + fairEntry.getPlacement() + ChatColor.GRAY + ")"
-                                                                                        );
-                                                                                    } else {
-                                                                                        message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Not Submitted");
-                                                                                    }
-                                                                                }
-                                                                                message.add("");
-                                                                                message.add(ChatColor.GREEN + "Claim your rewards through your");
-                                                                                message.add(ChatColor.GREEN + "Reward Inventory!");
-                                                                                message.add(ChatColor.GOLD + "------------------------------------------------");
-                                                                                databasePlayer.addFutureMessage(new FutureMessage(message, true));
-                                                                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                                                            })
-                                                                            .execute());
+        playerFairResults.forEach((uuid, masterworksFairEntries) ->
+                Warlords.newChain()
+                        .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                        .syncLast(databasePlayer -> {
+                            if (databasePlayer == null) {
+                                return;
+                            }
+                            List<Component> message = new ArrayList<>();
+                            message.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
+                            if (inCaseYouMissedIt) {
+                                message.add(Component.text("In case you missed it!", NamedTextColor.AQUA));
+                            }
+                            message.add(Component.text("Masterworks Fair #" + fairNumber + " Results", NamedTextColor.GREEN));
+                            for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+                                if (rarity.getPlayerEntries == null) {
+                                    continue;
+                                }
+                                Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
+                                                                                                            .filter(entry -> entry.getRarity() == rarity)
+                                                                                                            .findAny();
+                                if (masterworksFairEntry.isPresent()) {
+                                    MasterworksFairEntry fairEntry = masterworksFairEntry.get();
+                                    message.add(
+                                            Component.textOfChildren(
+                                                    rarity.getChatColorName(),
+                                                    Component.text(": ", NamedTextColor.GRAY),
+                                                    Component.text(NumberFormat.formatOptionalHundredths(fairEntry.getScore()) + "% ", NamedTextColor.YELLOW),
+                                                    Component.text("(", NamedTextColor.GRAY),
+                                                    Component.text("#" + fairEntry.getPlacement(), NamedTextColor.AQUA),
+                                                    Component.text(")", NamedTextColor.GRAY)
+                                            )
+                                    );
+                                } else {
+                                    message.add(
+                                            Component.textOfChildren(
+                                                    rarity.getChatColorName(),
+                                                    Component.text(": ", NamedTextColor.GRAY),
+                                                    Component.text("Not Submitted", NamedTextColor.YELLOW)
+                                            )
+                                    );
+                                }
+                            }
+                            message.add(Component.empty());
+                            message.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
+                            message.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
+                            message.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
+                            databasePlayer.addFutureMessage(new FutureMessage(message, true));
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        })
+                        .execute());
     }
 
     public void sendResults(boolean inCaseYouMissedIt) {

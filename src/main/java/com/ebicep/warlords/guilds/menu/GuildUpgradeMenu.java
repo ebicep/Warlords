@@ -15,6 +15,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -22,7 +24,6 @@ import org.bukkit.inventory.ItemFlag;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,19 +102,28 @@ public class GuildUpgradeMenu {
                             )
                             .get(),
                     (m, e) -> {
-                        Menu.openConfirmationMenu(
+                        Menu.openConfirmationMenu0(
                                 player,
                                 upgradesTemporary.name + " (T" + tier + ")",
                                 3,
-                                ChatColor.GREEN + "Purchase Upgrade",
+                                Component.text("Purchase Upgrade", NamedTextColor.GREEN),
                                 Arrays.asList(
-                                        ChatColor.GRAY + "Tier: " + ChatColor.GREEN + tier,
-                                        ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
-                                        "",
-                                        ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradesTemporary.getCost(tier)) + " Guild Coins"
+                                        Component.textOfChildren(
+                                                Component.text("Tier: ", NamedTextColor.GRAY),
+                                                Component.text(tier, NamedTextColor.GREEN)
+                                        ),
+                                        Component.textOfChildren(
+                                                Component.text("Effect Bonus: ", NamedTextColor.GRAY),
+                                                Component.text(upgradesTemporary.getEffectBonusFromTier(tier), NamedTextColor.GREEN)
+                                        ),
+                                        Component.empty(),
+                                        Component.textOfChildren(
+                                                Component.text("Cost: ", NamedTextColor.GRAY),
+                                                Component.text(NumberFormat.addCommas(upgradeCost) + " Guild Coins", NamedTextColor.GREEN)
+                                        )
                                 ),
-                                ChatColor.RED + "Cancel",
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                Component.text("Cancel", NamedTextColor.RED),
+                                Menu.GO_BACK,
                                 (m2, e2) -> {
                                     if (guild.getCurrentCoins() >= upgradeCost) {
                                         guild.addCurrentCoins(-upgradeCost);
@@ -157,20 +167,29 @@ public class GuildUpgradeMenu {
             player.sendMessage(ChatColor.RED + "You have reached the maximum tier for this upgrade.");
             return;
         }
-        Menu.openConfirmationMenu(player,
+        long upgradeCost = upgradesPermanent.getCost(nextTier);
+        Menu.openConfirmationMenu0(player,
                 upgradesPermanent.name + " (T" + nextTier + ")",
                 3,
-                ChatColor.GREEN + "Purchase Upgrade",
+                Component.text("Purchase Upgrade", NamedTextColor.GREEN),
                 Arrays.asList(
-                        ChatColor.GRAY + "Tier: " + ChatColor.GREEN + nextTier,
-                        ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesPermanent.getEffectBonusFromTier(nextTier),
-                        "",
-                        ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradesPermanent.getCost(nextTier)) + " Guild Coins"
+                        Component.textOfChildren(
+                                Component.text("Tier: ", NamedTextColor.GRAY),
+                                Component.text(nextTier, NamedTextColor.GREEN)
+                        ),
+                        Component.textOfChildren(
+                                Component.text("Effect Bonus: ", NamedTextColor.GRAY),
+                                Component.text(upgradesPermanent.getEffectBonusFromTier(nextTier), NamedTextColor.GREEN)
+                        ),
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("Cost: ", NamedTextColor.GRAY),
+                                Component.text(NumberFormat.addCommas(upgradeCost) + " Guild Coins", NamedTextColor.GREEN)
+                        )
                 ),
-                ChatColor.RED + "Cancel",
-                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                Component.text("Cancel", NamedTextColor.RED),
+                Menu.GO_BACK,
                 (m2, e2) -> {
-                    long upgradeCost = upgradesPermanent.getCost(nextTier);
                     if (guild.getCurrentCoins() >= upgradeCost) {
                         guild.addCurrentCoins(-upgradeCost);
                         guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));

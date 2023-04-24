@@ -6,12 +6,16 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum StarPieces {
 
@@ -53,12 +57,12 @@ public enum StarPieces {
                 if (starPiece.synthesisCosts.isEmpty()) {
                     continue;
                 }
-                List<String> costLore = starPiece.getCostLore();
+                List<Component> costLore = starPiece.getCostLore();
                 menu.setItem(col, row,
                         new ItemBuilder(Material.NETHER_STAR)
-                                .name(ChatColor.GREEN + "Synthesize: " + starPiece.currency.getColoredName())
-                                .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Combines lower tier star pieces to create a higher one.", 140))
-                                .addLore(costLore)
+                                .name(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GREEN), starPiece.currency.getColoredName()))
+                                .lore(WordWrap.wrapWithNewline(Component.text("Combines lower tier star pieces to create a higher one.", NamedTextColor.GRAY), 140))
+                                .addLoreC(costLore)
                                 .get(),
                         (m, e) -> {
                             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
@@ -71,20 +75,24 @@ public enum StarPieces {
                                     return;
                                 }
                             }
-                            List<String> confirmLore = new ArrayList<>();
-                            confirmLore.add(ChatColor.GRAY + "Synthesize: " + starPiece.currency.getColoredName());
+                            List<Component> confirmLore = new ArrayList<>();
+                            confirmLore.add(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GRAY), starPiece.currency.getColoredName()));
                             confirmLore.addAll(costLore);
-                            Menu.openConfirmationMenu(player,
+                            Menu.openConfirmationMenu0(player,
                                     "Confirm Synthesis",
                                     3,
                                     confirmLore,
-                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    Menu.GO_BACK,
                                     (m2, e2) -> {
                                         starPiece.synthesisCosts.forEach(pveStats::subtractCurrency);
                                         pveStats.addCurrency(starPiece.currency, 1);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                        player.sendMessage(Component.text(ChatColor.GREEN + "Synthesized " + starPiece.currency.getCostColoredName(1) + ChatColor.GRAY + "!"));
+                                        player.sendMessage(Component.textOfChildren(
+                                                Component.text("Synthesized ", NamedTextColor.GREEN),
+                                                starPiece.currency.getCostColoredName(1),
+                                                Component.text("!", NamedTextColor.GRAY)
+                                        ));
                                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
                                         openStarPieceSynthesizerMenu(player);
@@ -118,7 +126,7 @@ public enum StarPieces {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public List<String> getCostLore() {
+    public List<Component> getCostLore() {
         return PvEUtils.getCostLore(synthesisCosts, true);
     }
 

@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -26,6 +28,7 @@ import java.util.UUID;
  */
 public abstract class AbstractWeapon {
 
+    public static final TextComponent GREEN_ARROW = Component.text(" > ", NamedTextColor.DARK_GREEN);
     protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
 
     static {

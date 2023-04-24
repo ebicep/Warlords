@@ -22,6 +22,8 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -89,16 +91,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return titles;
     }
 
-    public List<String> getCostLore() {
-        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
-
-        List<String> loreCost = new ArrayList<>();
-        loreCost.add("");
-        loreCost.add(ChatColor.AQUA + "Title Cost: ");
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
-        }
-        return loreCost;
+    public List<Component> getCostLore() {
+        return PvEUtils.getCostLore(getCost(), "Title Cost", true);
     }
 
     public LinkedHashMap<Currencies, Long> getCost() {
@@ -114,44 +108,77 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public List<String> getUpgradeLore() {
+    public List<Component> getUpgradeLore() {
         float minDamageUpgradeDiff = getMeleeDamageMinValue() < 0 ? 0 : getMeleeDamageMinValue() * getUpgradeMultiplier() - getMeleeDamageMinValue();
-        List<String> upgradeLore = new ArrayList<>(Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED +
-                        formatOptionalTenths(getMeleeDamageMin()) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(getMeleeDamageMax()) +
-                        ChatColor.DARK_GREEN + " > " + ChatColor.RED +
-                        formatOptionalTenths(getMeleeDamageMin() * (getMeleeDamageMin() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())) +
-                        ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(getMeleeDamageMax() + minDamageUpgradeDiff),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(getCritChance()) + "%" + ChatColor.DARK_GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(getCritChance()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(getCritMultiplier()) + "%" + ChatColor.DARK_GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(getCritMultiplier()) + "%",
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                        format(getHealthBonus() * (getHealthBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                        format(getSpeedBonus() * (getSpeedBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())) + "%"
+        List<Component> upgradeLore = new ArrayList<>(Arrays.asList(
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin()), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMax()), NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin() * (getMeleeDamageMin() > 0 ?
+                                                                                            getUpgradeMultiplier() :
+                                                                                            getUpgradeMultiplierNegative())), NamedTextColor.RED
+                         ))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMax() + minDamageUpgradeDiff), NamedTextColor.RED)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(getHealthBonus() * (getHealthBonus() > 0 ?
+                                                                           getUpgradeMultiplier() :
+                                                                           getUpgradeMultiplierNegative())), NamedTextColor.GREEN)),
+                Component.text("Speed: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(getSpeedBonus() * getUpgradeMultiplier()) + "%", NamedTextColor.GREEN))
         ));
         if (getEnergyPerSecondBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Energy per Second: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getEnergyPerSecondBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ?
+                                                                                                getUpgradeMultiplier() :
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
         if (getEnergyPerHitBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getEnergyPerHitBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ?
+                                                                                             getUpgradeMultiplier() :
+                                                                                             getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
+
         upgradeLore.addAll(Arrays.asList(
-                "",
-                ChatColor.GREEN + "Skill Boost (" + selectedSkillBoost.name + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline("1 Free Ability Upgrade", 175)
+                Component.empty(),
+                Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN),
+                Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY)
         ));
         if (getSkillCritChanceBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getSkillCritChanceBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ?
+                                                                                                getUpgradeMultiplier() :
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
         if (getSkillCritMultiplierBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getSkillCritMultiplierBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ?
+                                                                                                    getUpgradeMultiplier() :
+                                                                                                    getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
 
         return upgradeLore;
@@ -302,17 +329,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
     }
 
-    protected void updateItemCounter(WarlordsPlayer player) {
-        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
-        int amount = cooldown > 0 ? cooldown : 1;
-        if (player.getEntity() instanceof Player) {
-            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
-            if (item != null && item.getAmount() != amount) {
-                item.setAmount(amount);
-            }
-        }
-    }
-
     @Override
     public float getHealthBonus() {
         float healthBonus = getHealthBonusValue();
@@ -460,6 +476,17 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return LegendaryTitles.NONE;
     }
 
+    protected void updateItemCounter(WarlordsPlayer player) {
+        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
+        int amount = cooldown > 0 ? cooldown : 1;
+        if (player.getEntity() instanceof Player) {
+            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+            if (item != null && item.getAmount() != amount) {
+                item.setAmount(amount);
+            }
+        }
+    }
+
     public void upgradeTitleLevel() {
         this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).upgrade();
     }
@@ -585,16 +612,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
             passiveEffect = passiveEffect.replaceAll(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
         }
-        List<String> upgradeLore = new ArrayList<>(Arrays.asList(
-                ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175),
-                ""
-        ));
-        upgradeLore.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + getTitleLevelUpgraded() + "/4]");
+        List<Component> upgradeLore = new ArrayList<>();
+        upgradeLore.add(Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN));
+        upgradeLore.addAll(WordWrap.wrap(Component.text(passiveEffect, NamedTextColor.GRAY), 175));
+        upgradeLore.add(Component.empty());
+        upgradeLore.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE)
+                                 .append(Component.text(" > ", NamedTextColor.GREEN))
+                                 .append(Component.text("[" + getTitleLevelUpgraded() + "/4]"))
+        );
         upgradeLore.addAll(getTitleUpgradeCostLore());
         return new ItemBuilder(Material.GREEN_CONCRETE)
                 .name(ChatColor.GREEN + "Confirm")
-                .loreLEGACY(upgradeLore)
+                .lore(upgradeLore)
                 .get();
 
     }
@@ -605,12 +634,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel() + 1;
     }
 
-    public List<String> getTitleUpgradeCostLore() {
+    public List<Component> getTitleUpgradeCostLore() {
         LinkedHashMap<Spendable, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         if (upgradeCost == null) {
-            return Collections.singletonList(ChatColor.RED + "Unavailable!");
+            return Collections.singletonList(Component.text("Unavailable!", NamedTextColor.RED));
         } else if (upgradeCost.isEmpty()) {
-            return Collections.singletonList("\n" + ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Arrays.asList(
+                    Component.empty(),
+                    Component.text("Max Level!", NamedTextColor.LIGHT_PURPLE)
+            );
         } else {
             return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }

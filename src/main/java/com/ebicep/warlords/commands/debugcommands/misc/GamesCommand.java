@@ -17,6 +17,8 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -87,11 +89,11 @@ public class GamesCommand extends BaseCommand {
                         .name(ChatColor.GREEN + "Add Game")
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Add Game",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Add Game"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.text("Add Game", NamedTextColor.GRAY)),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 player.sendMessage(ChatColor.GREEN + "Adding Game: " + ChatColor.YELLOW + game.getDate());
                                 DatabaseGameBase.addGameToDatabase(game, player);
@@ -109,11 +111,11 @@ public class GamesCommand extends BaseCommand {
                         .name(ChatColor.GREEN + "Remove Game")
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Remove Game",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Remove Game"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.text("Remove Game", NamedTextColor.GRAY)),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 player.sendMessage(ChatColor.GREEN + "Removing Game: " + ChatColor.YELLOW + game.getDate());
                                 DatabaseGameBase.removeGameFromDatabase(game, player);
@@ -248,11 +250,11 @@ public class GamesCommand extends BaseCommand {
                         .name(ChatColor.GREEN + "Set")
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu(player,
+                    Menu.openConfirmationMenu0(player,
                             "Confirm Set Addons",
                             3,
-                            addons.stream().map(gameAddon -> ChatColor.GOLD + gameAddon.getName()).toList(),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            addons.stream().map(gameAddon -> Component.text(gameAddon.getName(), NamedTextColor.GOLD)).collect(Collectors.toList()),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 player.sendMessage(ChatColor.GREEN + "Setting Addons: " + ChatColor.YELLOW + game.getDate());
                                 player.sendMessage(ChatColor.GREEN + "Old Addons: " + ChatColor.GOLD + game.getGameAddons()

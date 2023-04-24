@@ -2,14 +2,15 @@ package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 
 public interface Spendable {
 
     String getName();
 
-    ChatColor getChatColor();
+    NamedTextColor getTextColor();
 
     ItemStack getItem();
 
@@ -21,8 +22,8 @@ public interface Spendable {
         addToPlayer(databasePlayer, -amount);
     }
 
-    default String getCostColoredName(long cost) {
-        return getChatColor().toString() + NumberFormat.addCommas(cost) + " " + getName() + (cost == 1 || !pluralIncludeS() ? "" : "s");
+    default Component getCostColoredName(long cost) {
+        return Component.text(NumberFormat.addCommas(cost) + " " + getName() + (cost == 1 || !pluralIncludeS() ? "" : "s"), getTextColor());
     }
 
     default boolean pluralIncludeS() {
