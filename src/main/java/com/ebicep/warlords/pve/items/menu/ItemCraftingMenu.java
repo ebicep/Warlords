@@ -89,7 +89,7 @@ public class ItemCraftingMenu {
                         .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
-                    player.sendMessage(ChatColor.RED + "The time for this has not yet come.");
+                    player.sendMessage(Component.text("The time for this has not yet come.", NamedTextColor.RED));
                     //openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
                 }
         );
