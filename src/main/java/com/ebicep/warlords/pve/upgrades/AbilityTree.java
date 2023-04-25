@@ -110,8 +110,8 @@ public class AbilityTree {
                                 .stream()
                                 .filter(profile -> {
                                     DifficultyMode difficultyMode = profile.getDifficultyMode();
-                                    return !(difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) &&
-                                            !difficultyMode.validDifficulty(pveOption.getDifficulty()));
+                                    return difficultyMode == null || (difficultyMode.validGameMode(game.getGameMode()) &&
+                                            difficultyMode.validDifficulty(pveOption.getDifficulty()));
                                 })
                                 .findFirst()
                                 .orElse(autoUpgradeProfiles.get(0));
