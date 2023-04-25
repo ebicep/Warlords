@@ -12,8 +12,10 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -116,7 +118,7 @@ public class WinAfterTimeoutOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(scoreboardPriority, scoreboardGroup) {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
                 Team winner = null;
@@ -124,9 +126,9 @@ public class WinAfterTimeoutOption implements Option {
                     List<PointPredicterMarker> predictionMarkers = game
                             .getMarkers(PointPredicterMarker.class);
                     int scoreNeededToEndGame = game.getOptions()
-                            .stream()
-                            .filter(e -> e instanceof WinByPointsOption)
-                            .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
+                                                   .stream()
+                                                   .filter(e -> e instanceof WinByPointsOption)
+                                                   .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
                             .sorted()
                             .findFirst()
                             .orElse(Integer.MAX_VALUE);
@@ -171,15 +173,15 @@ public class WinAfterTimeoutOption implements Option {
                     }
                 }
 
-                StringBuilder message = new StringBuilder(64);
+                TextComponent.Builder message = Component.text();
                 if (winner != null) {
-                    message.append(winner.coloredPrefix()).append(ChatColor.GOLD).append(" Wins in: ");
+                    message.append(winner.coloredPrefix())
+                           .append(Component.text(" Wins in: ", NamedTextColor.GOLD));
                 } else {
-                    message.append(ChatColor.WHITE).append("Time Left: ");
+                    message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
                 }
-                message.append(ChatColor.GREEN);
-                Utils.formatTimeLeft(message, timeRemaining);
-                return Collections.singletonList(message.toString());
+                message.append(Component.text(Utils.formatTimeLeft(timeRemaining), NamedTextColor.GREEN));
+                return Collections.singletonList(message.build());
             }
         });
     }

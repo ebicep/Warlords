@@ -40,7 +40,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -176,21 +178,24 @@ public class WaveDefenseOption implements Option, PveOption {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return getWaveScoreboard(player);
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Monsters Left: " + (spawnCount > 0 || ticksElapsed.get() < 10 ? ChatColor.RED : ChatColor.GREEN) + mobCount());
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(
+                        Component.text("Monsters Left: ")
+                                 .append(Component.text(mobCount(), (spawnCount > 0 || ticksElapsed.get() < 10 ? NamedTextColor.RED : NamedTextColor.GREEN)))
+                );
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });
@@ -210,42 +215,20 @@ public class WaveDefenseOption implements Option, PveOption {
         }.register(game);
     }
 
-    public List<String> getWaveScoreboard(WarlordsPlayer player) {
-        return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter +
-                ChatColor.RESET +
-                (maxWave != Integer.MAX_VALUE ? "/" + ChatColor.GREEN + maxWave : "") +
-                ChatColor.RESET +
-                (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
-    }
-
-    private List<String> healthScoreboard(Game game) {
-        List<String> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
-            ChatColor healthColor;
-            String name = we.getName();
-            String newName;
-
-            if (healthRatio >= .5) {
-                healthColor = ChatColor.GREEN;
-            } else if (healthRatio >= .25) {
-                healthColor = ChatColor.YELLOW;
-            } else {
-                healthColor = ChatColor.RED;
-            }
-
-            if (name.length() >= 8) {
-                newName = name.substring(0, 8);
-            } else {
-                newName = name;
-            }
-
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤ " + (int) we.getHealth()) + ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
-                                                                                                                                                                                   .total()
-                                                                                                                                                                                   .getKills());
+    public List<Component> getWaveScoreboard(WarlordsPlayer player) {
+        TextComponent.Builder waveScoreboard = Component.text();
+        waveScoreboard.append(Component.text("Wave: "))
+                      .append(Component.text(waveCounter, NamedTextColor.GREEN));
+        if (maxWave != Integer.MAX_VALUE) {
+            waveScoreboard.append(Component.text(" / "))
+                          .append(Component.text(maxWave, NamedTextColor.GREEN));
         }
-
-        return list;
+        if (currentWave != null && currentWave.getMessage() != null) {
+            waveScoreboard.append(Component.text(" ("))
+                          .append(Component.text(currentWave.getMessage(), NamedTextColor.GREEN))
+                          .append(Component.text(")"));
+        }
+        return Collections.singletonList(waveScoreboard.build());
     }
 
     public void newWave() {

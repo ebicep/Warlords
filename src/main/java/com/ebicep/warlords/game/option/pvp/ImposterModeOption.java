@@ -50,21 +50,26 @@ public class ImposterModeOption implements Option, EventGameEndOption {
                 new SimpleScoreboardHandler(Integer.MAX_VALUE - 15, "imposter") {
                     @Nonnull
                     @Override
-                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
+                    public List<Component> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
                         if (warlordsPlayer == null) {
-                            return Collections.singletonList("");
+                            return Collections.singletonList(Component.empty());
                         }
                         if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
-                            return Collections.singletonList("");
+                            return Collections.singletonList(Component.empty());
                         }
                         if (imposters.entrySet()
                                      .stream()
                                      .anyMatch(teamListEntry -> teamListEntry.getValue()
                                                                              .contains(warlordsPlayer.getUuid()))) {
-                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
+                            return Collections.singletonList(
+                                    Component.text("Role: ", NamedTextColor.WHITE)
+                                             .append(Component.text("Imposter", NamedTextColor.RED))
+                            );
                         }
-
-                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
+                        return Collections.singletonList(
+                                Component.text("Role: ", NamedTextColor.WHITE)
+                                         .append(Component.text("Innocent", NamedTextColor.GREEN))
+                        );
                     }
 
                     @Override

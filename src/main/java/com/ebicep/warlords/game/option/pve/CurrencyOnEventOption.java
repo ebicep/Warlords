@@ -10,7 +10,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -69,8 +70,13 @@ public class CurrencyOnEventOption implements Option, Listener {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "currency") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(player != null ? "Insignia: " + ChatColor.GOLD + "❂ " + NumberFormat.addCommas(player.getCurrency()) : "");
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                if (player != null) {
+                    return Collections.singletonList(
+                            Component.text("Insignia: ")
+                                     .append(Component.text("❂ " + NumberFormat.addCommas(player.getCurrency()), NamedTextColor.GOLD)));
+                }
+                return Collections.singletonList(Component.empty());
             }
         });
     }

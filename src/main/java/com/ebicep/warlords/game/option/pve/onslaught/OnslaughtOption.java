@@ -37,7 +37,8 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -128,21 +129,21 @@ public class OnslaughtOption implements Option, PveOption {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Difficulty: " + currentMobSet.getMessage());
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(Component.text("Difficulty: " + currentMobSet.getMessage()));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(integrityScoreboard());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });
@@ -172,6 +173,7 @@ public class OnslaughtOption implements Option, PveOption {
 
         new GameRunnable(game) {
             int counter = 0;
+
             @Override
             public void run() {
                 ticksElapsed.getAndIncrement();
@@ -471,50 +473,18 @@ public class OnslaughtOption implements Option, PveOption {
         warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
-    private String integrityScoreboard() {
-        ChatColor color;
+    private Component integrityScoreboard() {
+        NamedTextColor color;
         if (integrityCounter >= 50) {
-            color = ChatColor.AQUA;
+            color = NamedTextColor.AQUA;
         } else if (integrityCounter >= 25) {
-            color = ChatColor.GOLD;
+            color = NamedTextColor.GOLD;
         } else {
-            color = ChatColor.RED;
+            color = NamedTextColor.RED;
         }
 
-        return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
-    }
-
-    private List<String> healthScoreboard(Game game) {
-        List<String> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
-            ChatColor healthColor;
-            String name = we.getName();
-            String newName;
-
-            if (healthRatio >= .5) {
-                healthColor = ChatColor.GREEN;
-            } else if (healthRatio >= .25) {
-                healthColor = ChatColor.YELLOW;
-            } else {
-                healthColor = ChatColor.RED;
-            }
-
-            if (name.length() >= 8) {
-                newName = name.substring(0, 8);
-            } else {
-                newName = name;
-            }
-
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor +
-                    "❤ " + (int) we.getHealth()) +
-                    ChatColor.RESET + " / " +
-                    ChatColor.RED + "⚔ " + we.getMinuteStats()
-                                             .total()
-                                             .getKills());
-        }
-
-        return list;
+        return Component.text("Soul Energy: ")
+                        .append(Component.text(Math.round(integrityCounter) + "%", color));
     }
 
     public void setSpawnLimit(int spawnLimit) {

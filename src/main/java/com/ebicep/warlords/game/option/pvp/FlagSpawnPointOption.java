@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
@@ -96,18 +97,21 @@ public class FlagSpawnPointOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 Component flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
+                Component component = Component.text(flagName + " Flag: ");
                 if (flag instanceof SpawnFlagLocation) {
-                    return singletonList(flagName + " Flag: " + ChatColor.GREEN + "Safe");
+                    return singletonList(component.append(Component.text("Safe", NamedTextColor.GREEN)));
                 } else if (flag instanceof PlayerFlagLocation pFlag) {
                     String extra = pFlag.getPickUpTicks() == 0 ? "" : ChatColor.YELLOW + " +" + pFlag.getComputedHumanMultiplier() + "§e%";
-                    return singletonList(flagName + " Flag: " + ChatColor.RED + "Stolen!" + extra);
+                    return singletonList(component.append(Component.text("Stolen!" + extra, NamedTextColor.RED)));
                 } else if (flag instanceof GroundFlagLocation gFlag) {
-                    return singletonList(flagName + " Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + gFlag.getDespawnTimerSeconds());
+                    return singletonList(component.append(Component.text("Dropped! " + ChatColor.GRAY + gFlag.getDespawnTimerSeconds(),
+                            NamedTextColor.YELLOW
+                    )));
                 } else {
-                    return singletonList(flagName + " Flag: " + ChatColor.GRAY + "Respawning...");
+                    return singletonList(component.append(Component.text("Respawning...", NamedTextColor.GRAY)));
                 }
             }
         });

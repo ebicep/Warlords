@@ -7,7 +7,8 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,8 +34,8 @@ public class BasicScoreboardOption implements Option {
         SimpleScoreboardHandler simpleScoreboardHandler = new SimpleScoreboardHandler(0, "date") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(ChatColor.GRAY + format.format(DateUtil.getCurrentDateEST()));
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(Component.text(format.format(DateUtil.getCurrentDateEST()), NamedTextColor.GRAY));
             }
         };
         new GameRunnable(game) {
@@ -50,9 +51,14 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 20, "spec") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return player == null ? Collections.singletonList("")
-                        : Collections.singletonList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                if (player == null) {
+                    return Collections.singletonList(Component.empty());
+                }
+                return Collections.singletonList(
+                        Component.text("Spec: ", NamedTextColor.WHITE)
+                                 .append(Component.text(player.getSpec().getClass().getSimpleName(), NamedTextColor.GREEN))
+                );
             }
         };
     }
@@ -62,11 +68,16 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 10, "player-stats") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return player == null ? Collections.singletonList("")
-                        : Collections.singletonList(ChatColor.GREEN.toString()
-                        + player.getMinuteStats().total().getKills() + ChatColor.RESET + " Kills "
-                        + ChatColor.GREEN + player.getMinuteStats().total().getAssists() + ChatColor.RESET + " Assists");
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                if (player == null) {
+                    return Collections.singletonList(Component.empty());
+                }
+                return Collections.singletonList(
+                        Component.text(player.getMinuteStats().total().getKills(), NamedTextColor.GREEN)
+                                 .append(Component.text(" Kills ", NamedTextColor.WHITE))
+                                 .append(Component.text(player.getMinuteStats().total().getAssists()))
+                                 .append(Component.text(" Assists", NamedTextColor.WHITE))
+                );
             }
         };
     }
@@ -75,8 +86,8 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(ChatColor.YELLOW + Warlords.VERSION);
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(Component.text(Warlords.VERSION, NamedTextColor.YELLOW));
             }
         };
     }

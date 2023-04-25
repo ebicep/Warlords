@@ -16,6 +16,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
@@ -28,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -220,6 +224,27 @@ public interface PveOption {
         getRewards().getPlayerRewards(event.getUuid())
                     .getMobDropsGained()
                     .merge(event1, 1L, Long::sum);
+    }
+
+    default List<Component> healthScoreboard(Game game) {
+        List<Component> list = new ArrayList<>();
+        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
+            float healthRatio = we.getHealth() / we.getMaxHealth();
+            NamedTextColor healthColor;
+            if (healthRatio >= .5) {
+                healthColor = NamedTextColor.GREEN;
+            } else if (healthRatio >= .25) {
+                healthColor = NamedTextColor.YELLOW;
+            } else {
+                healthColor = NamedTextColor.RED;
+            }
+
+            list.add(Component.text(we.getName() + ": ")
+                              .append(Component.text(we.isDead() ? "DEAD" : "❤ ", we.isDead() ? NamedTextColor.DARK_RED : healthColor))
+                              .append(Component.text(" / "))
+                              .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
+        }
+        return list;
     }
 
 }

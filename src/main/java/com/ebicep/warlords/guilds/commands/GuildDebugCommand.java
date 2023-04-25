@@ -12,6 +12,8 @@ import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -32,8 +34,8 @@ public class GuildDebugCommand extends BaseCommand {
         guildPlayerWrapper.getGuild().setExperience(timing, amount);
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                                                                   .getName() + " experience to " + ChatColor.YELLOW + amount
+                Component.text("Set guild " + guildPlayerWrapper.getGuild().getName() + " experience to ", NamedTextColor.GREEN)
+                         .append(Component.text(amount, NamedTextColor.YELLOW))
         );
     }
 
@@ -48,8 +50,8 @@ public class GuildDebugCommand extends BaseCommand {
         guildPlayerWrapper.getGuild().setCurrentCoins(amount);
         GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild()
-                                                                   .getName() + " current coins to " + ChatColor.YELLOW + amount
+                Component.text("Set guild " + guildPlayerWrapper.getGuild().getName() + " current coins to ", NamedTextColor.GREEN)
+                         .append(Component.text(amount, NamedTextColor.YELLOW))
         );
     }
 
@@ -66,25 +68,20 @@ public class GuildDebugCommand extends BaseCommand {
         GuildTag tag = new GuildTag(tagName, nameColor.toString(), bracketColor.toString());
         guild.setTag(tag);
         GuildManager.queueUpdateGuild(guild);
-        ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(false)
+        ChatChannels.sendDebugMessage(player, Component.text("Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(false), NamedTextColor.GREEN)
         );
     }
 
     @Subcommand("getlog")
     @Description("Gets audit log of a guild")
     public void getLog(Player player, String guildName) {
-        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
-            guild.printAuditLog(player, Integer.MAX_VALUE);
-        });
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> guild.printAuditLog(player, Integer.MAX_VALUE));
     }
 
     @Subcommand("getlogpaged")
     @Description("Gets audit log of a guild at page")
     public void getLogPaged(Player player, Integer page, String guildName) {
-        GuildManager.getGuildFromName(guildName).ifPresent(guild -> {
-            guild.printAuditLog(player, page);
-        });
+        GuildManager.getGuildFromName(guildName).ifPresent(guild -> guild.printAuditLog(player, page));
     }
 
     @Subcommand("openmenu")
@@ -115,7 +112,9 @@ public class GuildDebugCommand extends BaseCommand {
             guildPlayerWrapper.getGuild().addUpgrade(upgrade.createUpgrade(tier));
             GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
             ChatChannels.sendDebugMessage(player,
-                    ChatColor.GREEN + "Added upgrade " + ChatColor.YELLOW + upgrade.name + " (" + tier + ") " + ChatColor.GREEN + "to guild"
+                    Component.text("Added upgrade ", NamedTextColor.GREEN)
+                             .append(Component.text(upgrade.name + " (" + tier + ") ", NamedTextColor.YELLOW))
+                             .append(Component.text("to guild"))
             );
         }
 
@@ -126,8 +125,7 @@ public class GuildDebugCommand extends BaseCommand {
                 GuildPlayerWrapper guildPlayerWrapper
         ) {
             guildPlayerWrapper.getGuild().getUpgrades().clear();
-            ChatChannels.sendDebugMessage(player,
-                    ChatColor.GREEN + "Cleared upgrades of guild"
+            ChatChannels.sendDebugMessage(player, Component.text("Cleared upgrades of guild", NamedTextColor.GREEN)
             );
         }
 

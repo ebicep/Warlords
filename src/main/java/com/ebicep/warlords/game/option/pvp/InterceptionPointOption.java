@@ -16,6 +16,9 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
@@ -138,25 +141,19 @@ public class InterceptionPointOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
 			@Nonnull
 			@Override
-			public List<String> computeLines(@Nullable WarlordsPlayer player) {
-				StringBuilder status = new StringBuilder();
-				if (teamAttacking == null) {
-					status.append(ChatColor.GRAY);
-				} else {
-					status.append(teamAttacking.teamColor());
-				}
-				status.append(name);
-				status.append(ChatColor.WHITE);
-				status.append(": ");
-
-				if (teamInCircle == null) {
-					status.append(ChatColor.GRAY);
-				} else {
-					status.append(teamInCircle.teamColor());
-				}
-				status.append((int)Math.floor(captureProgress * 100)).append("%");
-                return Collections.singletonList(status.toString());
-            }
+			public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+				TextComponent.Builder component = Component.text();
+				component.append(Component.text(
+						name,
+						teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.teamColor()
+				));
+				component.append(Component.text(": ", NamedTextColor.WHITE));
+				component.append(Component.text(
+						(int) Math.floor(captureProgress * 100) + "%",
+						teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.teamColor()
+				));
+				return Collections.singletonList(component.build());
+			}
         });
 	}
     

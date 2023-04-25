@@ -17,6 +17,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,16 +73,21 @@ public class EventPointsOption implements Option, Listener {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(CurrencyOnEventOption.SCOREBOARD_PRIORITY + 1, "currency") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(player != null ?
-                                                 "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points.getOrDefault(player.getUuid(), 0)) :
-                                                 new HashSet<>(points.values()).size() <= 1 ? "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points
-                                                         .values()
-                                                         .stream()
-                                                         .findFirst()
-                                                         .orElse(0)) :
-                                                 ""
-                );
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                String playerPoints = null;
+                if (player != null) {
+                    playerPoints = NumberFormat.addCommas(points.getOrDefault(player.getUuid(), 0));
+                }
+                if (new HashSet<>(points.values()).size() <= 1) {
+                    playerPoints = NumberFormat.addCommas(points.values()
+                                                                .stream()
+                                                                .findFirst()
+                                                                .orElse(0));
+                }
+                if (playerPoints != null) {
+                    return Collections.singletonList(Component.text("Points: ").append(Component.text("✪ " + playerPoints, NamedTextColor.YELLOW)));
+                }
+                return Collections.singletonList(Component.empty());
             }
         });
     }
