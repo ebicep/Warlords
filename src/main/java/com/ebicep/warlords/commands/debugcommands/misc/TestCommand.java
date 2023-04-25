@@ -11,7 +11,8 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -45,9 +46,9 @@ public class TestCommand extends BaseCommand {
     public void test(CommandIssuer issuer) {
         //doTest(issuer);
         Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName());
+            ChatChannels.sendDebugMessage(issuer, Component.text(uuid + " - " + warlordsEntity.getName(), NamedTextColor.GREEN));
         });
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
+        ChatChannels.sendDebugMessage(issuer, Component.text("Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testguild")
@@ -69,7 +70,7 @@ public class TestCommand extends BaseCommand {
 
          */
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed");
+        ChatChannels.sendDebugMessage(issuer, Component.text("Guild Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testdatabase")
@@ -374,7 +375,7 @@ public class TestCommand extends BaseCommand {
 //                        }).execute();
 
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed");
+        ChatChannels.sendDebugMessage(issuer, Component.text("Database Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testgame")
@@ -383,7 +384,7 @@ public class TestCommand extends BaseCommand {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.updateDescription((Player) warlordsPlayer.getEntity());
         }
-        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed");
+        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("In Game Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testplayer")

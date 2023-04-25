@@ -9,7 +9,8 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -33,7 +34,7 @@ public class SpectateCommand extends BaseCommand {
         //8-14 = 4
         if (games.isEmpty()) {
             player.closeInventory();
-            player.sendMessage(ChatColor.RED + "There are no active games right now!");
+            player.sendMessage(Component.text("There are no active games right now!", NamedTextColor.GREEN));
             return;
         }
         int rows = (games.size() - 1) / 7 + 3;
@@ -43,19 +44,19 @@ public class SpectateCommand extends BaseCommand {
         int row = 1;
         for (Game game : games) {
             ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
-                    .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
-                    .loreLEGACY(
-                            ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
-                            ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
-                            ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons()
-                                                                              .stream()
-                                                                              .map(e -> toTitleHumanCase(e.name()))
-                                                                              .collect(Collectors.joining(", ")),
-                            ChatColor.GRAY + "Players: " + ChatColor.RED + game.warlordsPlayers().count()
+                    .name(Component.text("Game - ID: " + game.getGameId(), NamedTextColor.GREEN))
+                    .lore(
+                            Component.text("Map: ", NamedTextColor.GRAY).append(Component.text(game.getMap().getMapName(), NamedTextColor.RED)),
+                            Component.text("Gamemode: ", NamedTextColor.GRAY).append(Component.text(game.getGameMode().getName(), NamedTextColor.RED)),
+                            Component.text("Addons: ", NamedTextColor.GRAY).append(Component.text(game.getAddons()
+                                                                                                      .stream()
+                                                                                                      .map(e -> toTitleHumanCase(e.name()))
+                                                                                                      .collect(Collectors.joining(", ")), NamedTextColor.RED)),
+                            Component.text("Players: ", NamedTextColor.GRAY).append(Component.text(game.warlordsPlayers().count(), NamedTextColor.RED))
                     );
             if (GameMode.isPvE(game.getGameMode())) {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
-                    itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.AQUA + warlordsPlayer.getName() + "\n");
+                    itemBuilder.addLore(Component.text(" - ", NamedTextColor.GRAY).append(Component.text(warlordsPlayer.getName(), NamedTextColor.AQUA)));
                 });
             }
             menu.setItem(column,
@@ -63,20 +64,20 @@ public class SpectateCommand extends BaseCommand {
                     itemBuilder.get(),
                     (m, e) -> {
                         if (game.isClosed()) {
-                            player.sendMessage(ChatColor.RED + "This game is no longer running");
+                            player.sendMessage(Component.text("This game is no longer running", NamedTextColor.RED));
                             openSpectateMenu(player);
                             return;
                         }
                         if (!game.acceptsSpectators()) {
-                            player.sendMessage(ChatColor.RED + "This game does not accepts spectators");
+                            player.sendMessage(Component.text("This game does not accepts spectators", NamedTextColor.RED));
                             openSpectateMenu(player);
                             return;
                         }
                         Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                         if (currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
-                            player.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+                            player.sendMessage(Component.text("You cannot use this command inside a game!", NamedTextColor.RED));
                         } else if (currentGame.isPresent() && currentGame.get().equals(game)) {
-                            player.sendMessage(ChatColor.RED + "You are already spectating this game");
+                            player.sendMessage(Component.text("You are already spectating this game", NamedTextColor.RED));
                         } else {
                             currentGame.ifPresent(value -> value.removePlayer(player.getUniqueId()));
                             game.addPlayer(player, true);
@@ -97,12 +98,12 @@ public class SpectateCommand extends BaseCommand {
                     4,
                     rows - 1,
                     new ItemBuilder(Material.BARRIER)
-                            .name(ChatColor.GREEN + "Return to the lobby")
+                            .name(Component.text("Return to the lobby", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         Optional<Game> currentGame1 = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                         if (currentGame1.isPresent() && currentGame1.get().getPlayerTeam(player.getUniqueId()) != null) {
-                            player.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+                            player.sendMessage(Component.text("You cannot use this command inside a game!", NamedTextColor.GREEN));
                         } else {
                             currentGame1.get().removePlayer(player.getUniqueId());
                         }
@@ -126,9 +127,9 @@ public class SpectateCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         game.setAcceptsSpectators(!game.acceptsSpectators());
         if (game.acceptsSpectators()) {
-            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spectating is now enabled for this game");
+            ChatChannels.sendDebugMessage(player, Component.text("Spectating is now enabled for this game", NamedTextColor.GREEN));
         } else {
-            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Spectating is now disabled for this game");
+            ChatChannels.sendDebugMessage(player, Component.text("Spectating is now disabled for this game", NamedTextColor.RED));
         }
     }
 

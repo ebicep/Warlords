@@ -9,8 +9,9 @@ import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Flags;
 import co.aikar.commands.annotation.HelpCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -28,12 +29,20 @@ public class MessageCommand extends BaseCommand {
             return;
         }
         if (player.getUniqueId().equals(target.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "You cannot message yourself!");
+            player.sendMessage(Component.text("You cannot message yourself!", NamedTextColor.RED));
             return;
         }
 
-        player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-        target.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+        player.sendMessage(Component.empty()
+                                    .append(Component.text("To ", NamedTextColor.DARK_PURPLE))
+                                    .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                    .append(Component.text(": ", NamedTextColor.WHITE))
+                                    .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+        target.sendMessage(Component.empty()
+                                    .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
+                                    .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                    .append(Component.text(": ", NamedTextColor.WHITE))
+                                    .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
         PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), target.getUniqueId());
         LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
     }
@@ -51,15 +60,23 @@ public class MessageCommand extends BaseCommand {
         if (playerMessage.isPresent() && Instant.now().isBefore(LAST_PLAYER_MESSAGES.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
             Player otherPlayer = Bukkit.getPlayer(playerMessage.get().from());
             if (otherPlayer != null) {
-                player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                player.sendMessage(Component.empty()
+                                            .append(Component.text("To ", NamedTextColor.DARK_PURPLE))
+                                            .append(Component.text(otherPlayer.getName(), NamedTextColor.AQUA))
+                                            .append(Component.text(": ", NamedTextColor.WHITE))
+                                            .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+                otherPlayer.sendMessage(Component.empty()
+                                                 .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
+                                                 .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                 .append(Component.text(": ", NamedTextColor.WHITE))
+                                                 .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
                 PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
                 LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
             } else {
-                player.sendMessage(ChatColor.RED + "That player is no longer online!");
+                player.sendMessage(Component.text("That player is no longer online!", NamedTextColor.RED));
             }
         } else {
-            player.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes.");
+            player.sendMessage(Component.text("Nobody has messages you within the last 5 minutes.", NamedTextColor.RED));
         }
     }
 

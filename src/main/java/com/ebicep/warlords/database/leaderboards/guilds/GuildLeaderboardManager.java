@@ -6,7 +6,9 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -42,29 +44,6 @@ public class GuildLeaderboardManager {
         resetEventBoards();
     }
 
-    public static void recalculateLeaderboard(Timing timing) {
-        EXPERIENCE_LEADERBOARD.get(timing).clear();
-        EXPERIENCE_LEADERBOARD.get(timing).addAll(GuildManager.GUILDS);
-        COINS_LEADERBOARD.get(timing).clear();
-        COINS_LEADERBOARD.get(timing).addAll(GuildManager.GUILDS);
-    }
-
-    public static String getLeaderboardList(TreeSet<Guild> leaderboard, String leaderboardName, Function<Guild, Number> valueFunction) {
-        StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Guild " + leaderboardName + " Leaderboards\n");
-
-        int index = 0;
-        for (Guild guild : leaderboard) {
-            stringBuilder.append(ChatColor.GRAY).append(index + 1).append(". ")
-                         .append(ChatColor.GOLD).append(guild.getName())
-                         .append(ChatColor.GRAY).append(" - ")
-                         .append(ChatColor.GREEN).append(NumberFormat.addCommaAndRound(valueFunction.apply(guild).doubleValue()))
-                         .append("\n");
-            index++;
-        }
-
-        return stringBuilder.toString();
-    }
-
     public static void resetEventBoards() {
 //        EVENT_LEADERBOARDS.forEach(Hologram::delete);
 //        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
@@ -91,6 +70,31 @@ public class GuildLeaderboardManager {
 //        }
 //
 //        EVENT_LEADERBOARDS.add(hologram);
+    }
+
+    public static void recalculateLeaderboard(Timing timing) {
+        EXPERIENCE_LEADERBOARD.get(timing).clear();
+        EXPERIENCE_LEADERBOARD.get(timing).addAll(GuildManager.GUILDS);
+        COINS_LEADERBOARD.get(timing).clear();
+        COINS_LEADERBOARD.get(timing).addAll(GuildManager.GUILDS);
+    }
+
+    public static Component getLeaderboardList(TreeSet<Guild> leaderboard, String leaderboardName, Function<Guild, Number> valueFunction) {
+        TextComponent.Builder componentBuilder = Component.text("Guild " + leaderboardName + " Leaderboards", NamedTextColor.GREEN)
+                                                          .append(Component.newline())
+                                                          .toBuilder();
+
+        int index = 0;
+        for (Guild guild : leaderboard) {
+            componentBuilder.append(Component.text(index + 1 + ". ", NamedTextColor.GRAY))
+                            .append(Component.text(guild.getName(), NamedTextColor.GOLD))
+                            .append(Component.text(" - ", NamedTextColor.GRAY))
+                            .append(Component.text(NumberFormat.addCommaAndRound(valueFunction.apply(guild).doubleValue())))
+                            .append(Component.newline());
+            index++;
+        }
+
+        return componentBuilder.build();
     }
 
 }

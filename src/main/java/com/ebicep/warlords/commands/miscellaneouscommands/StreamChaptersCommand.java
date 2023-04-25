@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.player.general.Specializations;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -46,7 +47,7 @@ public class StreamChaptersCommand extends BaseCommand {
     public void start(Player player) {
         PLAYER_TIME_START.put(player.getUniqueId(), Instant.now());
         GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
-        player.sendMessage(ChatColor.GREEN + "Began recording game time");
+        player.sendMessage(Component.text("Began recording game time", NamedTextColor.GREEN));
     }
 
     @Subcommand("get")

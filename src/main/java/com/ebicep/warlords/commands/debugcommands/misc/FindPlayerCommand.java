@@ -6,7 +6,8 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("findplayer")
@@ -20,7 +21,10 @@ public class FindPlayerCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         boolean isSpectator = game.spectators().toList().contains(player.getUniqueId());
         ChatChannels.sendDebugMessage(issuer,
-                ChatColor.GREEN + "Found player " + ChatColor.RED + player.getName() + (isSpectator ? ChatColor.GREEN + " (Spectating)" : " (Playing)") + ChatColor.GREEN + " in game " + ChatColor.RED + game.getGameId()
+                Component.text("Found player ", NamedTextColor.GREEN)
+                         .append(Component.text(player.getName(), NamedTextColor.RED))
+                         .append(Component.text(isSpectator ? " (Spectating)" : " (Playing)" + " in game ", NamedTextColor.GREEN))
+                         .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
         );
 
     }

@@ -10,8 +10,9 @@ import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -25,7 +26,7 @@ public class GetPlayersCommand extends co.aikar.commands.BaseCommand {
     public void getPlayers(@Conditions("party:true") Player player) {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         if (partyPlayerPair != null) {
-            player.sendMessage(Component.text(ChatColor.GREEN.toString() + ChatColor.UNDERLINE + ChatColor.BOLD + "CLICK ME FOR PLAYERS")
+            player.sendMessage(Component.text("CLICK ME FOR PLAYERS - AUTO COPIED TO CLIPBOARD", NamedTextColor.GREEN, TextDecoration.UNDERLINED, TextDecoration.BOLD)
                                         .clickEvent(ClickEvent.copyToClipboard(partyPlayerPair.getA()
                                                                                               .getPartyPlayers()
                                                                                               .stream()

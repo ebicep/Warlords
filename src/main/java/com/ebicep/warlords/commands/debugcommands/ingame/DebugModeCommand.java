@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,7 @@ public class DebugModeCommand extends BaseCommand {
             }
         }
         ChatChannels.sendDebugMessage(warlordsPlayer,
-                ChatColor.GREEN + "You now have infinite energy, no cooldowns, will take no damage, and have debug messages!"
+                Component.text("You now have infinite energy, no cooldowns, will take no damage, and have debug messages!", NamedTextColor.RED)
         );
     }
 

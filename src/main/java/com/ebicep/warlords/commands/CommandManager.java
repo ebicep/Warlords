@@ -53,7 +53,6 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -148,7 +147,7 @@ public class CommandManager {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
             if (partyPlayerPair != null) {
                 if (command.hasFlag("leader") && partyPlayerPair.getB().getPartyPlayerType() != PartyPlayerType.LEADER) {
-                    Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
                     throw new ConditionFailedException();
                 }
                 return new PartyPlayerWrapper(partyPlayerPair);
@@ -160,7 +159,7 @@ public class CommandManager {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair != null) {
                 if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
-                    Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    Guild.sendGuildMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
                     throw new ConditionFailedException();
                 }
                 return new GuildPlayerWrapper(guildPlayerPair);

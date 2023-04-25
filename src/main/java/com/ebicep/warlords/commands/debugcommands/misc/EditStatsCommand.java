@@ -13,7 +13,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.Wa
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
@@ -32,29 +33,30 @@ public class EditStatsCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             Object object = databasePlayer;
             for (String s : query) {
-                player.sendMessage(ChatColor.GREEN + "Querying " + s);
+                player.sendMessage(Component.text("Querying " + s, NamedTextColor.GREEN));
                 Object[] arguments = new Object[0];
                 if (s.contains("(")) {
                     String[] split = s.substring(s.indexOf("(") + 1, s.indexOf(")")).split(",");
                     arguments = new Object[split.length];
                     System.arraycopy(split, 0, arguments, 0, split.length);
                 }
-                player.sendMessage(ChatColor.GREEN + "Arguments: " + Arrays.toString(arguments));
+                player.sendMessage(Component.text("Arguments: " + Arrays.toString(arguments), NamedTextColor.GREEN));
                 Method[] methods = object.getClass().getMethods();
-                player.sendMessage(ChatColor.GREEN + "Methods: " + ChatColor.GRAY + Arrays.stream(methods)
-                                                                                          .map(Method::getName)
-                                                                                          .collect(Collectors.joining(", ")));
+                player.sendMessage(Component.text("Methods: ", NamedTextColor.GREEN)
+                                            .append(Component.text(Arrays.stream(methods)
+                                                                         .map(Method::getName)
+                                                                         .collect(Collectors.joining(", ")), NamedTextColor.GRAY)));
                 String methodToFind = s;
                 if (arguments.length > 0) {
                     methodToFind = s.substring(0, s.indexOf("("));
                 }
-                player.sendMessage(ChatColor.GREEN + "Method to Find: " + methodToFind);
+                player.sendMessage(Component.text("Method to Find: " + methodToFind, NamedTextColor.GREEN));
                 for (Method method : methods) {
                     if (method.getName().equalsIgnoreCase(methodToFind)) {
                         try {
-                            player.sendMessage(ChatColor.YELLOW + "Found Method " + method.getName());
+                            player.sendMessage(Component.text("Found Method " + method.getName(), NamedTextColor.YELLOW));
                             Class<?>[] methodArguments = method.getParameterTypes();
-                            player.sendMessage(ChatColor.YELLOW + "Arguments: " + Arrays.toString(methodArguments));
+                            player.sendMessage(Component.text("Arguments: " + Arrays.toString(methodArguments), NamedTextColor.YELLOW));
                             for (int i = 0; i < methodArguments.length; i++) {
                                 if (methodArguments[i] == int.class) {
                                     arguments[i] = Integer.parseInt((String) arguments[i]);
@@ -69,8 +71,8 @@ public class EditStatsCommand extends BaseCommand {
                                 }
                             }
                             object = method.invoke(object, arguments);
-                            player.sendMessage(ChatColor.YELLOW + "Invoked Method " + method.getName());
-                            player.sendMessage(ChatColor.YELLOW + "Returned: " + object);
+                            player.sendMessage(Component.text("Invoked Method " + method.getName(), NamedTextColor.YELLOW));
+                            player.sendMessage(Component.text("Returned: " + object, NamedTextColor.YELLOW));
                         } catch (Exception e) {
                             player.sendMessage("Error: " + e.getMessage());
                             e.printStackTrace();
@@ -79,7 +81,7 @@ public class EditStatsCommand extends BaseCommand {
                     }
                 }
             }
-            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Done: " + Arrays.toString(query));
+            ChatChannels.sendDebugMessage(player, Component.text("Done: " + Arrays.toString(query), NamedTextColor.DARK_GREEN));
         });
     }
 
@@ -87,7 +89,7 @@ public class EditStatsCommand extends BaseCommand {
     public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
         return databasePlayerFuture.future().thenAccept(databasePlayer -> {
             wipeTopStats(databasePlayer);
-            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Wiped Top Stats of " + databasePlayer.getName());
+            ChatChannels.sendDebugMessage(player, Component.text("Wiped Top Stats of " + databasePlayer.getName(), NamedTextColor.DARK_GREEN));
         });
     }
 
