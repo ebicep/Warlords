@@ -37,7 +37,7 @@ public class Menu extends AbstractMenuBase {
             .name(Component.text("Back", NamedTextColor.GREEN))
             .get();
     public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-            .name(" ")
+            .name(Component.text(" "))
             .get();
 
     public static final List<Component> GO_BACK = Collections.singletonList(Component.text("Go Back", NamedTextColor.GRAY));

@@ -464,7 +464,7 @@ public class ItemEquipMenu {
                 itemBuilder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
             }
             if (!overweight) {
-                itemBuilder.name(" ");
+                itemBuilder.name(Component.text(" "));
             }
             menu.setItem(i, 0,
                     itemBuilder.get(),

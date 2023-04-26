@@ -82,7 +82,7 @@ public class WeaponLegendaryCraftMenu {
 
         menu.fillEmptySlots(
                 new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                        .name(" ")
+                        .name(Component.text(" "))
                         .get(),
                 (m, e) -> {
                 }

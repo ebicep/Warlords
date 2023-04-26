@@ -36,7 +36,7 @@ public class WeaponTitleMenu {
         for (int i = 0; i < 9 * 5; i++) {
             menu.addItem(
                     new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                            .name(" ")
+                            .name(Component.text(" "))
                             .get(),
                     (m, e) -> {
                     }
@@ -97,7 +97,7 @@ public class WeaponTitleMenu {
                                 k + i * 3,
                                 j + 1,
                                 new ItemBuilder(title.glassPane)
-                                        .name(" ")
+                                        .name(Component.text(" "))
                                         .get(),
                                 (m, e) -> {
                                 }

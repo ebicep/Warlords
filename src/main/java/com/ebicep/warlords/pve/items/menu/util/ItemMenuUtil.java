@@ -57,7 +57,7 @@ public class ItemMenuUtil {
     public static void addPaneRequirement(Menu menu, int x, int y, boolean requirementMet) {
         menu.setItem(x, y,
                 new ItemBuilder(requirementMet ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE)
-                        .name(" ")
+                        .name(Component.text(" "))
                         .get(),
                 (m, e) -> {
                 }
@@ -88,7 +88,7 @@ public class ItemMenuUtil {
                 .allMatch(spendableLongEntry -> spendableLongEntry.getKey().getFromPlayer(databasePlayer) >= spendableLongEntry.getValue());
         menu.setItem(x + 1, y,
                 new ItemBuilder(hasRequiredCosts ? Material.GREEN_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE)
-                        .name(" ")
+                        .name(Component.text(" "))
                         .get(),
                 (m, e) -> {
                 }
@@ -106,7 +106,7 @@ public class ItemMenuUtil {
                 } else {
                     menu.setItem(i, j,
                             new ItemBuilder(Material.IRON_BARS)
-                                    .name(" ")
+                                    .name(Component.text(" "))
                                     .get(),
                             (m, e) -> {
                             }

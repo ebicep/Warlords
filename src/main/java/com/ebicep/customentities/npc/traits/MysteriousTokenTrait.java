@@ -7,6 +7,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class MysteriousTokenTrait extends WarlordsTrait {
 
         menu.fillEmptySlots(
                 new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
-                        .name(" ")
+                        .name(Component.text(" "))
                         .get(),
                 (m, e) -> {
                 }
