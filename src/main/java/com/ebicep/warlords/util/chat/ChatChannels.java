@@ -19,8 +19,9 @@ import com.ebicep.warlords.util.java.Pair;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -32,13 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum ChatChannels {
 
     DEBUG("Debug",
-            ChatColor.RED
+            NamedTextColor.RED
     ) {
-        @Override
-        public String getFormat(Player player) {
-            return getColoredName() + CHAT_ARROW;
-        }
-
         @Override
         public void setRecipients(Player player, Set<Audience> audience) {
             audience.removeIf(a -> a instanceof Player p && !Permissions.isAdmin(p));
@@ -48,13 +44,12 @@ public enum ChatChannels {
         public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
             Player player = e.getPlayer();
             e.renderer((source, sourceDisplayName, message, viewer) ->
-                    Component.text()
-                             .append(Component.text(getFormat(player)))
-                             .append(prefixWithColor)
-                             .append(sourceDisplayName.color(prefixWithColor.color()))
-                             .append(Component.text(": ")
-                                              .append(message))
-                             .build()
+                    Component.textOfChildren(
+                            getFormat(player),
+                            prefixWithColor,
+                            sourceDisplayName.color(prefixWithColor.color()),
+                            Component.text(": ").append(message)
+                    )
             );
             setRecipients(player, e.viewers());
             SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
@@ -64,35 +59,35 @@ public enum ChatChannels {
             null
     ) {
         @Override
-        public String getFormat(Player player) {
+        public Component getFormat(Player player) {
             UUID uuid = player.getUniqueId();
             WarlordsEntity wp = Warlords.getPlayer(player);
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
 
             if (wp != null) {
-                return wp.getTeam().teamColor() + "[" +
-                        wp.getTeam().prefix() + "]" +
-                        ChatColor.DARK_GRAY + "[" +
-                        ChatColor.GOLD + wp.getSpec().getClassNameShort() +
-                        ChatColor.DARK_GRAY + "][" +
-                        ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                        ChatColor.DARK_GRAY + "]" +
-                        ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
-                        ChatColor.DARK_GRAY + "[" +
-                        playerSettings.getSelectedSpec().specType.getColoredSymbol() +
-                        ChatColor.DARK_GRAY + "] " +
-                        (wp.isDead() ? ChatColor.GRAY + "[SPECTATOR] " : "");
+                return Component.empty().color(NamedTextColor.DARK_GRAY)
+                                .append(Component.text("[" + wp.getTeam().prefix() + "]", wp.getTeam().teamColor()))
+                                .append(Component.text("["))
+                                .append(Component.text(wp.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                .append(Component.text("]["))
+                                .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
+                                .append(Component.text("]"))
+                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()))
+                                .append(Component.text("["))
+                                .append(playerSettings.getSelectedSpec().specType.getColoredSymbol())
+                                .append(Component.text("] "))
+                                .append(Component.text(wp.isDead() ? "[SPECTATOR] " : "", NamedTextColor.GRAY));
             } else {
-                return ChatColor.DARK_GRAY + "[" +
-                        ChatColor.GOLD + Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3) +
-                        ChatColor.DARK_GRAY + "][" +
-                        ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                        ChatColor.DARK_GRAY + "]" +
-                        ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
-                        ChatColor.DARK_GRAY + "[" +
-                        playerSettings.getSelectedSpec().specType.getColoredSymbol() +
-                        ChatColor.DARK_GRAY + "] ";
+                return Component.text("[", NamedTextColor.DARK_GRAY)
+                                .append(Component.text(Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3), NamedTextColor.GOLD))
+                                .append(Component.text("]["))
+                                .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
+                                .append(Component.text("]"))
+                                .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()))
+                                .append(Component.text("["))
+                                .append(playerSettings.getSelectedSpec().specType.getColoredSymbol())
+                                .append(Component.text("] "));
             }
         }
 
@@ -113,26 +108,20 @@ public enum ChatChannels {
         public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
             Player player = e.getPlayer();
             e.renderer((source, sourceDisplayName, message, viewer) ->
-                    Component.text()
-                             .append(Component.text(getFormat(player)))
-                             .append(prefixWithColor)
-                             .append(sourceDisplayName.color(prefixWithColor.color()))
-                             .append(Component.text(": ")
-                                              .append(message))
-                             .build()
+                    Component.textOfChildren(
+                            getFormat(player),
+                            prefixWithColor,
+                            sourceDisplayName.color(prefixWithColor.color()),
+                            Component.text(": ").append(message)
+                    )
             );
             setRecipients(player, e.viewers());
             SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
         }
     },
     PARTY("Party",
-            ChatColor.BLUE
+            NamedTextColor.BLUE
     ) {
-        @Override
-        public String getFormat(Player player) {
-            return getColoredName() + CHAT_ARROW;
-        }
-
         @Override
         public void setRecipients(Player player, Set<Audience> audience) {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
@@ -149,31 +138,25 @@ public enum ChatChannels {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
             if (partyPlayerPair != null) {
                 e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.text()
-                                 .append(Component.text(getFormat(player)))
-                                 .append(prefixWithColor)
-                                 .append(sourceDisplayName.color(prefixWithColor.color()))
-                                 .append(Component.text(": ")
-                                                  .append(message))
-                                 .build()
+                        Component.textOfChildren(
+                                getFormat(player),
+                                prefixWithColor,
+                                sourceDisplayName.color(prefixWithColor.color()),
+                                Component.text(": ").append(message)
+                        )
                 );
                 setRecipients(player, e.viewers());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
             } else {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
-                player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
+                player.sendMessage(Component.text("You are not in a party and were moved to the ALL channel.", NamedTextColor.RED));
                 e.setCancelled(true);
             }
         }
     },
     GUILD("Guild",
-            ChatColor.GREEN
+            NamedTextColor.GREEN
     ) {
-        @Override
-        public String getFormat(Player player) {
-            return getColoredName() + CHAT_ARROW;
-        }
-
         @Override
         public void setRecipients(Player player, Set<Audience> audience) {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
@@ -192,49 +175,44 @@ public enum ChatChannels {
                 Guild guild = guildPlayerPair.getA();
                 GuildPlayer guildPlayer = guildPlayerPair.getB();
                 if (guild.isMuted() && !guild.playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
-                    Guild.sendGuildMessage(player, ChatColor.RED + "The guild is currently muted.");
+                    Guild.sendGuildMessage(player, Component.text("The guild is currently muted.", NamedTextColor.RED));
                     e.setCancelled(true);
                     return;
                 }
                 if (guildPlayer.isMuted()) {
                     GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
                     if (muteEntry.getTimeUnit() == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You are currently permanently muted in the guild.");
+                        Guild.sendGuildMessage(player, Component.text("You are currently permanently muted in the guild.", NamedTextColor.RED));
                     } else {
                         Guild.sendGuildMessage(player,
-                                ChatColor.RED + "You are currently muted in the guild.\n" + ChatColor.GRAY + "Expires at " + AbstractGuildLog.FORMATTER.format(
-                                        muteEntry.getEnd())
+                                Component.text("You are currently muted in the guild.", NamedTextColor.RED)
+                                         .append(Component.newline())
+                                         .append(Component.text("Expires at " + AbstractGuildLog.FORMATTER.format(muteEntry.getEnd()), NamedTextColor.GRAY))
                         );
                     }
                     e.setCancelled(true);
                     return;
                 }
                 e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.text()
-                                 .append(Component.text(getFormat(player)))
-                                 .append(prefixWithColor)
-                                 .append(sourceDisplayName.color(prefixWithColor.color()))
-                                 .append(Component.text(": ")
-                                                  .append(message))
-                                 .build()
+                        Component.textOfChildren(
+                                getFormat(player),
+                                prefixWithColor,
+                                sourceDisplayName.color(prefixWithColor.color()),
+                                Component.text(": ").append(message)
+                        )
                 );
                 setRecipients(player, e.viewers());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
             } else {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
-                player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
+                player.sendMessage(Component.text("You are not in a guild and were moved to the ALL channel.", NamedTextColor.RED));
                 e.setCancelled(true);
             }
         }
     },
     GUILD_OFFICER("Guild Officer",
-            ChatColor.GREEN
+            NamedTextColor.GREEN
     ) {
-        @Override
-        public String getFormat(Player player) {
-            return getColoredName() + CHAT_ARROW;
-        }
-
         @Override
         public void setRecipients(Player player, Set<Audience> audience) {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
@@ -255,30 +233,30 @@ public enum ChatChannels {
                 if (guildPlayer.isMuted()) {
                     GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
                     if (muteEntry.getTimeUnit() == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You are currently permanently muted in the guild.");
+                        Guild.sendGuildMessage(player, Component.text("You are currently permanently muted in the guild.", NamedTextColor.RED));
                     } else {
                         Guild.sendGuildMessage(player,
-                                ChatColor.RED + "You are currently muted in the guild.\n" + ChatColor.GRAY + "Expires at " + AbstractGuildLog.FORMATTER.format(
-                                        muteEntry.getEnd())
+                                Component.text("You are currently muted in the guild.", NamedTextColor.RED)
+                                         .append(Component.newline())
+                                         .append(Component.text("Expires at " + AbstractGuildLog.FORMATTER.format(muteEntry.getEnd()), NamedTextColor.GRAY))
                         );
                     }
                     e.setCancelled(true);
                     return;
                 }
                 e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.text()
-                                 .append(Component.text(getFormat(player)))
-                                 .append(prefixWithColor)
-                                 .append(sourceDisplayName.color(prefixWithColor.color()))
-                                 .append(Component.text(": ")
-                                                  .append(message))
-                                 .build()
+                        Component.textOfChildren(
+                                getFormat(player),
+                                prefixWithColor,
+                                sourceDisplayName.color(prefixWithColor.color()),
+                                Component.text(": ").append(message)
+                        )
                 );
                 setRecipients(player, e.viewers());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
             } else {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
-                player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
+                player.sendMessage(Component.text("You are not in a guild and were moved to the ALL channel.", NamedTextColor.RED));
                 e.setCancelled(true);
             }
         }
@@ -288,7 +266,7 @@ public enum ChatChannels {
 
     public static final ConcurrentHashMap<UUID, ChatChannels> PLAYER_CHAT_CHANNELS = new ConcurrentHashMap<>();
 
-    public static final String CHAT_ARROW = ChatColor.DARK_GRAY + " > ";
+    public static final Component CHAT_ARROW = Component.text(" > ", NamedTextColor.DARK_GRAY);
 
     public static void playerSendMessage(Player player, String message) {
         new BukkitRunnable() {
@@ -301,7 +279,10 @@ public enum ChatChannels {
 
     public static void switchChannels(Player player, ChatChannels chatChannel) {
         PLAYER_CHAT_CHANNELS.put(player.getUniqueId(), chatChannel);
-        player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name.toUpperCase() + ChatColor.GREEN + " channel");
+        player.sendMessage(Component.text("You are now in the ", NamedTextColor.GREEN)
+                                    .append(Component.text(chatChannel.name.toUpperCase(), NamedTextColor.GOLD))
+                                    .append(Component.text(" channel"))
+        );
     }
 
     public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, String message) {
@@ -314,12 +295,6 @@ public enum ChatChannels {
         ChatChannels.playerSendMessage(player, chatChannel, Component.text(message));
     }
 
-    public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, Component message) {
-        if (warlordsPlayer.getEntity() instanceof Player) {
-            ChatChannels.playerSendMessage((Player) warlordsPlayer.getEntity(), ChatChannels.DEBUG, message);
-        }
-    }
-
     /**
      * @param player      Sender of the message
      * @param chatChannel Channel to send the message to
@@ -328,9 +303,9 @@ public enum ChatChannels {
     public static void playerSendMessage(Player player, ChatChannels chatChannel, Component message) {
         try {
             Component prefixWithColor = Permissions.getPrefixWithColor(player);
-            Component component = Component.text(chatChannel.getFormat(player))
-                                           .append(prefixWithColor.append(Component.text(player.getName())))
-                                           .append(Component.text(": ").append(message));
+            Component component = chatChannel.getFormat(player)
+                                             .append(prefixWithColor.append(Component.text(player.getName())))
+                                             .append(Component.text(": ").append(message));
             Set<Audience> viewers = new HashSet<>(Bukkit.getOnlinePlayers());
             chatChannel.setRecipients(player, viewers);
             viewers.add(Bukkit.getConsoleSender());
@@ -342,9 +317,21 @@ public enum ChatChannels {
         }
     }
 
-    public abstract String getFormat(Player player);
+    public Component getFormat(Player player) {
+        return getColoredName().append(CHAT_ARROW);
+    }
 
     public abstract void setRecipients(Player player, Set<Audience> audience);
+
+    public Component getColoredName() {
+        return Component.text(name, textColor);
+    }
+
+    public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, Component message) {
+        if (warlordsPlayer.getEntity() instanceof Player) {
+            ChatChannels.playerSendMessage((Player) warlordsPlayer.getEntity(), ChatChannels.DEBUG, message);
+        }
+    }
 
     public static void sendDebugMessage(CommandIssuer commandIssuer, String message) {
         if (commandIssuer != null && commandIssuer.getIssuer() instanceof Player) {
@@ -352,14 +339,28 @@ public enum ChatChannels {
         } else {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (Permissions.isAdmin(onlinePlayer)) {
-                    onlinePlayer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+                    onlinePlayer.sendMessage(DEBUG.getColoredName()
+                                                  .append(CHAT_ARROW)
+                                                  .append(Component.text("Console: ", NamedTextColor.YELLOW))
+                                                  .append(Component.text(message, NamedTextColor.WHITE)));
                 }
             }
             if (commandIssuer != null) {
-                commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+                commandIssuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(
+                        DEBUG.getColoredName()
+                             .append(CHAT_ARROW)
+                             .append(Component.text(message, NamedTextColor.WHITE))
+                ));
             }
-            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName()
+                                                                   .append(CHAT_ARROW)
+                                                                   .append(Component.text("Console: ", NamedTextColor.YELLOW))
+                                                                   .append(Component.text(message, NamedTextColor.WHITE)));
         }
+    }
+
+    public static void sendDebugMessage(Player player, String message) {
+        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
 
     public static void sendDebugMessage(CommandIssuer commandIssuer, Component message) {
@@ -368,34 +369,36 @@ public enum ChatChannels {
         } else {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (Permissions.isAdmin(onlinePlayer)) {
-                    onlinePlayer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+                    onlinePlayer.sendMessage(DEBUG.getColoredName()
+                                                  .append(CHAT_ARROW)
+                                                  .append(Component.text("Console: ", NamedTextColor.YELLOW))
+                                                  .append(message));
                 }
             }
             if (commandIssuer != null) {
-                commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+                commandIssuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(
+                        DEBUG.getColoredName()
+                             .append(CHAT_ARROW)
+                             .append(message)
+                ));
             }
-            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName()
+                                                                   .append(CHAT_ARROW)
+                                                                   .append(Component.text("Console: ", NamedTextColor.YELLOW))
+                                                                   .append(message));
         }
-    }
-
-    public static void sendDebugMessage(Player player, String message) {
-        ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
 
     public static void sendDebugMessage(Player player, Component message) {
         ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
 
-    public String getColoredName() {
-        return chatColor + name;
-    }
-
     public final String name;
-    public final ChatColor chatColor;
+    public final NamedTextColor textColor;
 
-    ChatChannels(String name, ChatColor chatColor) {
+    ChatChannels(String name, NamedTextColor textColor) {
         this.name = name;
-        this.chatColor = chatColor;
+        this.textColor = textColor;
     }
 
     public abstract void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor);

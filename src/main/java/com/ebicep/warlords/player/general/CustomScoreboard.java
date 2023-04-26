@@ -216,37 +216,6 @@ public class CustomScoreboard {
         giveNewSideBar(forceClear, entries.toArray(new Component[0]));
     }
 
-    @Deprecated
-    public void giveNewSideBar(boolean forceClear, String... entries) {
-        //clearing all teams if size doesnt match
-        Set<Team> teams = scoreboard.getTeams()
-                                    .stream()
-                                    .filter(team -> team.getName().startsWith("!team"))
-                                    .collect(Collectors.toSet());
-        if (forceClear || entries.length != teams.size()) {
-            teams.forEach(Team::unregister);
-            clearSideBar();
-
-            //making new sidebar
-            for (int i = 0; i < entries.length; i++) {
-                Team tempTeam = scoreboard.registerNewTeam("!team_" + (i + 1));
-                tempTeam.addEntry(ChatColor.values()[i].toString());
-                sideBar.getScore(ChatColor.values()[i].toString()).setScore(i + 1);
-            }
-        }
-
-        //giving prefix/suffix from pairs
-        for (int i = entries.length; i > 0; i--) {
-            String entry = entries[entries.length - i];
-            setSideBarTeam(i, entry == null ? "" : entry);
-        }
-    }
-
-    @Deprecated
-    public void setSideBarTeam(int team, String entry) {
-        setSideBarTeam(team, Component.text(entry));
-    }
-
     public void giveMainLobbyScoreboard() {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.getWorld().getName().equals("MainLobby")) {

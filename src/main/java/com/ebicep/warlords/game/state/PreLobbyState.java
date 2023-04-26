@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.state;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
@@ -13,10 +14,15 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.SRCalculator;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.*;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -25,7 +31,6 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
-    public static final String WARLORDS_DATABASE_MESSAGEFEED = "warlords.database.messagefeed";
 
     private final Game game;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
@@ -69,23 +74,32 @@ public class PreLobbyState implements State, TimerDebugAble {
                 });
                 if (time == 30) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!");
+                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
+                                                            .append(Component.text("30 ", NamedTextColor.GREEN))
+                                                            .append(Component.text("seconds!"))
+                        );
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 20) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, ChatColor.YELLOW + "The game starts in 20 seconds!");
+                        sendMessage(player, false, Component.text("The game starts in 20 seconds!", NamedTextColor.YELLOW));
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 10) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!");
+                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
+                                                            .append(Component.text("10 ", NamedTextColor.GOLD))
+                                                            .append(Component.text("seconds!"))
+                        );
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time <= 5 && time != 0) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         String s = time == 1 ? "!" : "s!";
-                        sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second" + s);
+                        sendMessage(player, false, Component.text("The game starts in ", NamedTextColor.YELLOW)
+                                                            .append(Component.text(time, NamedTextColor.RED))
+                                                            .append(Component.text(" second" + s))
+                        );
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
                     });
                 } else if (time == 0) {
@@ -105,7 +119,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player,
                                 false,
-                                ChatColor.RED + "WARNING: Currently disabled specs: " + bannedSpecs + ". Your spec will be automatically switched if any of those are selected."
+                                Component.text("WARNING: Currently disabled specs: " + bannedSpecs + ". Your spec will be automatically switched if any of those are selected.",
+                                        NamedTextColor.RED
+                                )
                         );
                     });
                 }
@@ -374,49 +390,38 @@ public class PreLobbyState implements State, TimerDebugAble {
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
                     int redPlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
 
-                    for (Map.Entry<UUID, Team> uuidTeamEntry : game.getPlayers().entrySet()) {
-                        Player value = Bukkit.getPlayer(uuidTeamEntry.getKey());
-                        if (value == null) {
-                            continue;
-                        }
-                        if (value.hasPermission(WARLORDS_DATABASE_MESSAGEFEED)) {
-                            value.sendMessage(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
-                            value.sendMessage(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
-                            value.sendMessage(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
-                            value.sendMessage(ChatColor.BLUE + "Blue Players: " + ChatColor.GOLD + bluePlayers + ChatColor.GRAY + " - " + ChatColor.BLUE + "SR: " + ChatColor.GOLD + bestBlueSR);
-                            value.sendMessage(ChatColor.RED + "Red Players: " + ChatColor.GOLD + redPlayers + ChatColor.GRAY + " - " + ChatColor.RED + "SR: " + ChatColor.GOLD + bestRedSR);
-                            value.sendMessage(ChatColor.GREEN + "Fail Safe: " + ChatColor.GOLD + failSafeActive);
-                            value.sendMessage(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
-                            value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
-                            bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("----- BALANCE INFORMATION -----", NamedTextColor.DARK_AQUA));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Max SR Diff: " + maxSRDiff, NamedTextColor.GREEN));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("SR Diff: " + bestTeamSRDifference, NamedTextColor.GREEN));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Blue Players: ", NamedTextColor.BLUE)
+                                                                                 .append(Component.text(bluePlayers, NamedTextColor.GOLD))
+                                                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                                 .append(Component.text("SR: "))
+                                                                                 .append(Component.text(bestBlueSR, NamedTextColor.GOLD)));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Red Players: ", NamedTextColor.RED)
+                                                                                 .append(Component.text(redPlayers, NamedTextColor.GOLD))
+                                                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                                 .append(Component.text("SR: "))
+                                                                                 .append(Component.text(bestRedSR, NamedTextColor.GOLD)));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Fail Safe: ", NamedTextColor.GREEN)
+                                                                                 .append(Component.text(failSafeActive, NamedTextColor.GOLD)));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Second Fail Safe: ", NamedTextColor.GREEN)
+                                                                                 .append(Component.text(secondFailSafeActive, NamedTextColor.GOLD)));
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("-------------------------------", NamedTextColor.DARK_AQUA));
+                    bestTeam.entrySet().stream()
+                            .sorted(Map.Entry.comparingByValue())
+                            .forEach(playerTeamEntry -> {
                                 Specializations specializations = PlayerSettings.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
-                                value.sendMessage(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey()
-                                                                                                          .getName() + ChatColor.GRAY + " - " +
-                                        specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
-                                        ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId()));
+                                ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(playerTeamEntry.getKey().getName(), playerTeamEntry.getValue().teamColor())
+                                                                                             .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                                             .append(Component.text(specializations.name, specializations.specType.textColor))
+                                                                                             .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                                             .append(Component.text(playersSR.get(playerTeamEntry.getKey().getUniqueId()),
+                                                                                                     NamedTextColor.GOLD
+                                                                                             )));
                             });
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("-------------------------------", NamedTextColor.DARK_AQUA));
 
-                            value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
-                        }
-                    }
-
-                    System.out.println(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
-                    System.out.println(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
-                    System.out.println(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
-                    System.out.println(ChatColor.BLUE + "Blue Players: " + ChatColor.GOLD + bluePlayers + ChatColor.GRAY + " - " + ChatColor.BLUE + "SR: " + ChatColor.GOLD + bestBlueSR);
-                    System.out.println(ChatColor.RED + "Red Players: " + ChatColor.GOLD + redPlayers + ChatColor.GRAY + " - " + ChatColor.RED + "SR: " + ChatColor.GOLD + bestRedSR);
-                    System.out.println(ChatColor.GREEN + "Fail Safe: " + ChatColor.GOLD + failSafeActive);
-                    System.out.println(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
-                    System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
-                    bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
-                        Specializations specializations = PlayerSettings.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
-                        System.out.println(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey()
-                                                                                                   .getName() + ChatColor.GRAY + " - " +
-                                specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
-                                ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId()));
-                    });
-
-                    System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
                 }
 
                 if (game.getPlayers().size() >= 14) {
@@ -446,50 +451,48 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void giveLobbyScoreboard(boolean init, Player player) {
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
 
-        String dateString = DateUtil.formatCurrentDateEST("MM/dd/yyyy");
-
-        String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
-        String mapSuffix;
-        if (game.getMap().getMapName().length() >= 16) {
-            mapPrefix += game.getMap().getMapName().substring(0, 7);
-            mapSuffix = game.getMap().getMapName().substring(7);
-        } else {
-            mapSuffix = game.getMap().getMapName();
-        }
-
+        Component date = Component.text(DateUtil.formatCurrentDateEST("MM/dd/yyyy"), NamedTextColor.GRAY);
+        Component map = Component.text("Map: ", NamedTextColor.WHITE).append(Component.text(game.getMap().getMapName(), NamedTextColor.GREEN));
+        Component players = Component.text("Players: ", NamedTextColor.WHITE)
+                                     .append(Component.text(game.playersCount() + "/" + game.getMaxPlayers(), NamedTextColor.GREEN));
         Specializations specializations = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Component level = Component.text("Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), specializations)) + " ",
+                                           NamedTextColor.GRAY
+                                   )
+                                   .append(Component.text(Specializations.getClass(specializations).name, NamedTextColor.GOLD));
+        Component spec = Component.text("Spec: ", NamedTextColor.WHITE).append(Component.text(specializations.name, NamedTextColor.GREEN));
+        Component version = Component.text(Warlords.VERSION, NamedTextColor.YELLOW);
         if (hasEnoughPlayers()) {
             customScoreboard.giveNewSideBar(init,
-                    ChatColor.GRAY + dateString,
-                    "  ",
-                    mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
-                    "   ",
-                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
-                    "    ",
-                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(),
-                            specializations
-                    )) + " " + ChatColor.GOLD + Specializations.getClass(specializations).name,
-                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + specializations.name,
-                    "     ",
-                    ChatColor.YELLOW + Warlords.VERSION
+                    date,
+                    Component.empty(),
+                    map,
+                    players,
+                    Component.empty(),
+                    Component.text("Starting in: ", NamedTextColor.WHITE)
+                             .append(Component.text(getTimeLeftString(), NamedTextColor.GREEN)),
+                    Component.empty(),
+                    level,
+                    spec,
+                    Component.empty(),
+                    version
             );
         } else {
             customScoreboard.giveNewSideBar(init,
-                    ChatColor.GRAY + dateString,
-                    "  ",
-                    mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
-                    "   ",
-                    ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
-                    ChatColor.WHITE + "players join ",
-                    "    ",
-                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(),
-                            specializations
-                    )) + " " + ChatColor.GOLD + Specializations.getClass(specializations).name,
-                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + specializations.name,
-                    "     ",
-                    ChatColor.YELLOW + Warlords.VERSION
+                    date,
+                    Component.empty(),
+                    map,
+                    players,
+                    Component.empty(),
+                    Component.text("Starting if ", NamedTextColor.WHITE)
+                             .append(Component.text((game.getMap().getMinPlayers() - game.playersCount()), NamedTextColor.GREEN))
+                             .append(Component.text(" more")),
+                    Component.text("players join ", NamedTextColor.WHITE),
+                    Component.empty(),
+                    level,
+                    spec,
+                    Component.empty(),
+                    version
             );
         }
     }
@@ -564,7 +567,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
             Team selectedTeam = PlayerSettings.getPlayerSettings(e.getKey().getUniqueId()).getWantedTeam();
             if (selectedTeam == null) {
-                Bukkit.broadcast(Component.text(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!"));
+                Bukkit.broadcast(Component.text(Objects.requireNonNull(e.getKey().getName()), NamedTextColor.GOLD)
+                                          .append(Component.text("did not choose a team!", NamedTextColor.GRAY)));
             }
             TeamPreference newPref = new TeamPreference(
                     e.getValue(),
@@ -575,25 +579,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                     oldPref == null || oldPref.priority() < newPref.priority() ? newPref : oldPref
             );
         });
-    }
-
-    private boolean tryMovePeep(Map.Entry<UUID, TeamPreference> entry, Team target) {
-        boolean canSwitchPeepTeam;
-        if (entry.getValue().wantedTeam != target) {
-            canSwitchPeepTeam = switch (entry.getValue().priority) {
-                case FORCED_PREFERENCE, PLAYER_PREFERENCE -> false;
-                // Always enforce teams people manually have picked, probably set to true in the future
-                default -> true;
-            };
-        } else {
-            canSwitchPeepTeam = true;
-        }
-
-        if (canSwitchPeepTeam) {
-            this.game.setPlayerTeam(Bukkit.getOfflinePlayer(entry.getKey()), entry.getValue().wantedTeam);
-            return true;
-        }
-        return false;
     }
 
     private void distributePeopleOverTeams() {
@@ -631,6 +616,25 @@ public class PreLobbyState implements State, TimerDebugAble {
                 }
             } while ((canPickRed || canPickBlue) && redIndex <= blueIndex);
         }
+    }
+
+    private boolean tryMovePeep(Map.Entry<UUID, TeamPreference> entry, Team target) {
+        boolean canSwitchPeepTeam;
+        if (entry.getValue().wantedTeam != target) {
+            canSwitchPeepTeam = switch (entry.getValue().priority) {
+                case FORCED_PREFERENCE, PLAYER_PREFERENCE -> false;
+                // Always enforce teams people manually have picked, probably set to true in the future
+                default -> true;
+            };
+        } else {
+            canSwitchPeepTeam = true;
+        }
+
+        if (canSwitchPeepTeam) {
+            this.game.setPlayerTeam(Bukkit.getOfflinePlayer(entry.getKey()), entry.getValue().wantedTeam);
+            return true;
+        }
+        return false;
     }
 
     @Override

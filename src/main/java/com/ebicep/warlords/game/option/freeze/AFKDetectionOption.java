@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -110,11 +109,12 @@ public class AFKDetectionOption implements Option {
                                                 fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
                                             //hasnt moved for 12.5 seconds
                                             for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                                Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                                Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                                 Permissions.sendMessageToDebug(wp,
-                                                        ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)"
+                                                        Component.text(we.getName(), NamedTextColor.AQUA)
+                                                                 .append(Component.text(" is AFK. (Hasn't moved for 12.5 seconds)", NamedTextColor.RED))
                                                 );
-                                                Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                                Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                             }
                                             game.addFrozenCause(Component.text(we.getName(), NamedTextColor.AQUA)
                                                                          .append(Component.text(" has been detected as AFK.", NamedTextColor.RED))
@@ -126,11 +126,12 @@ public class AFKDetectionOption implements Option {
                                     if (thirdLastLocation.equals(fourthLastLocation)) {
                                         //hasnt moved for 10 seconds
                                         for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                            Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                             Permissions.sendMessageToDebug(wp,
-                                                    ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)"
+                                                    Component.text(we.getName(), NamedTextColor.AQUA)
+                                                             .append(Component.text(" is AFK. (Hasn't moved for 10 seconds)", NamedTextColor.RED))
                                             );
-                                            Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                         }
                                     }
                                     continue;
@@ -138,11 +139,12 @@ public class AFKDetectionOption implements Option {
                                 if (secondLastLocation.equals(thirdLastLocation)) {
                                     //hasnt moved for 7.5 seconds
                                     for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                        Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                        Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                         Permissions.sendMessageToDebug(wp,
-                                                ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)"
+                                                Component.text(we.getName(), NamedTextColor.AQUA)
+                                                         .append(Component.text(" is AFK. (Hasn't moved for 7.5 seconds)", NamedTextColor.RED))
                                         );
-                                        Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                        Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                     }
                                 }
                                 continue;
@@ -150,11 +152,12 @@ public class AFKDetectionOption implements Option {
                             if (lastLocation.equals(secondLastLocation)) {
                                 //hasnt moved for 5 seconds
                                 for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                    Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                    Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                     Permissions.sendMessageToDebug(wp,
-                                            ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)"
+                                            Component.text(we.getName(), NamedTextColor.AQUA)
+                                                     .append(Component.text(" is AFK. (Hasn't moved for 5 seconds)", NamedTextColor.RED))
                                     );
-                                    Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                    Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
                                 }
                             }
                         }

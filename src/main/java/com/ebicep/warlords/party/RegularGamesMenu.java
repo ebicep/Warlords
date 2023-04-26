@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -73,7 +74,7 @@ public class RegularGamesMenu {
         //row of spec icons
         for (int i = 0; i < SpecType.VALUES.length; i++) {
             SpecType specType = SpecType.VALUES[i];
-            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(specType.chatColor + specType.name).get(), (m, e) -> {
+            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(Component.text(specType.name, specType.textColor)).get(), (m, e) -> {
             });
         }
 

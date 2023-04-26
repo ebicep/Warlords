@@ -6,11 +6,11 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -91,15 +91,9 @@ public enum Permissions {
         return player.hasPermission(DEFAULT.permission);
     }
 
-    public static void sendMessageToDebug(Player player, String message) {
-        if (player.hasPermission("warlords.database.messagefeed")) {
-            player.sendMessage(message);
-        }
-    }
-
-    public static void sendMessageToDebug(WarlordsEntity player, String message) {
+    public static void sendMessageToDebug(WarlordsEntity player, Component message) {
         if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
-            player.getEntity().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            player.getEntity().sendMessage(DEBUG.getColoredName().append(CHAT_ARROW).append(message));
         }
     }
 

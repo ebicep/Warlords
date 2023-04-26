@@ -592,7 +592,7 @@ public enum GameMode {
         int x = 3;
         for (SpecType value : SpecType.VALUES) {
             ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
-                    .name(value.chatColor + value.name);
+                    .name(Component.text(value.name, value.textColor));
             StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
                     (int) game.getPlayers().keySet().stream()
                               .map(PlayerSettings::getPlayerSettings)
