@@ -105,6 +105,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         long playerCount = option.getGame().warlordsPlayers().count();
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.8f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
+            preventArmageddon = true;
             immolation(option, loc);
         }
 
@@ -119,6 +120,7 @@ public class Void extends AbstractSkeleton implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
             flamePhaseTriggerTwo = true;
+            preventArmageddon = true;
             immolation(option, loc);
         }
 
@@ -151,8 +153,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
-                        750,
                         900,
+                        1200,
                         0,
                         100,
                         false
@@ -173,15 +175,15 @@ public class Void extends AbstractSkeleton implements BossMob {
                     }
 
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 10, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius, 10, playerCount, 1);
+                    shockwave(loc, stormRadius, 10, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 20, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 5, 20, playerCount, 1);
+                    shockwave(loc, stormRadius + 5, 20, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 30, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 10, 30, playerCount, 1);
+                    shockwave(loc, stormRadius + 10, 30, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 20, false, 40, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 20, 40, playerCount, 1);
+                    shockwave(loc, stormRadius + 20, 40, playerCount);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 25, false, 50, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 25, 50, playerCount, 1);
+                    shockwave(loc, stormRadius + 25, 50, playerCount);
                 }
             }.runTaskLater(60);
         }
@@ -280,12 +282,13 @@ public class Void extends AbstractSkeleton implements BossMob {
                 if (counter == 60) {
                     this.cancel();
                     warlordsNPC.getSpeed().addBaseModifier(40);
+                    preventArmageddon = false;
                 }
             }
         }.runTaskTimer(40, 4);
     }
 
-    private void shockwave(Location loc, double radius, int tickDelay, long playerCount, float damageMultiplier) {
+    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
         new GameRunnable(warlordsNPC.getGame()) {
             @Override
             public void run() {
@@ -303,8 +306,8 @@ public class Void extends AbstractSkeleton implements BossMob {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
                         we.addDamageInstance(warlordsNPC,
                                 "Augmented Armageddon",
-                                (550 * playerCount) * damageMultiplier,
-                                (700 * playerCount) * damageMultiplier,
+                                (550 * playerCount),
+                                (700 * playerCount),
                                 0,
                                 100,
                                 false
