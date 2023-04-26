@@ -66,6 +66,14 @@ public class ChatUtils {
         }
     }
 
+    public static void sendMessage(Player player, boolean centered, Component message) {
+        if (centered) {
+            sendCenteredMessage(player, message);
+        } else {
+            player.sendMessage(message);
+        }
+    }
+
     public static void sendMessageToPlayer(WarlordsPlayer player, String message, ChatColor borderColor, boolean centered) {
         if (player.getEntity() instanceof Player) {
             sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);

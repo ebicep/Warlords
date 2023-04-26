@@ -21,7 +21,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -96,7 +95,7 @@ public class GamesCommand extends BaseCommand {
                             Collections.singletonList(Component.text("Add Game", NamedTextColor.GRAY)),
                             Menu.GO_BACK,
                             (m2, e2) -> {
-                                player.sendMessage(Component.text("Adding Game: " + ChatColor.YELLOW + game.getDate(), NamedTextColor.GREEN));
+                                player.sendMessage(Component.text("Adding Game: ", NamedTextColor.GREEN).append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
                                 DatabaseGameBase.addGameToDatabase(game, player);
                                 openGameEditorMenu(player, game);
                             },

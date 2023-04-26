@@ -284,7 +284,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
-        List<String> scoreboard = new ArrayList<>();
+        List<Component> scoreboard = new ArrayList<>();
 
         ScoreboardHandler lastHandler = null;
         String lastGroup = null;
@@ -296,12 +296,12 @@ public class PlayingState implements State, TimerDebugAble {
         )) {
             String group = handler.getGroup();
             if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty && handler.emptyLinesBetween() && lastHandler.emptyLinesBetween()) {
-                scoreboard.add("");
+                scoreboard.add(Component.empty());
                 lastWasEmpty = true;
             }
             lastHandler = handler;
             lastGroup = group;
-            List<String> handlerContents = handler.computeLines(warlordsPlayer);
+            List<Component> handlerContents = handler.computeLines(warlordsPlayer);
             if (!handlerContents.isEmpty()) {
                 lastWasEmpty = false;
                 scoreboard.addAll(handlerContents);

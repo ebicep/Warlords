@@ -11,7 +11,8 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
@@ -32,8 +33,8 @@ public enum GameAddon {
             switch (game.getGameMode()) {
                 case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DEBUG, SIMULATION_TRIAL -> {
                     game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                            .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
-                            .loreLEGACY(ChatColor.YELLOW + "Click to select your team!")
+                            .name(Component.text("Team Selector ", NamedTextColor.GREEN).append(Component.text("(Right-Click)", NamedTextColor.GRAY)))
+                            .lore(Component.text("Click to select your team!", NamedTextColor.YELLOW))
                             .get(), (g, p) -> openTeamMenu(p)));
                     game.getOptions().add(new AFKDetectionOption());
                 }

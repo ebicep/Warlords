@@ -31,6 +31,9 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -62,19 +65,23 @@ public enum GameMode {
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
 
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Steal and capture the enemy team's flag to",
-                    color + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a",
-                    color + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Steal and capture the enemy team's flag to")),
+                    base.append(Component.text("earn "))
+                        .append(Component.text("250 ", NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(base.append(Component.text("points! The first team with a"))),
+                    base.append(Component.text("score of "))
+                        .append(Component.text("1000 ", NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(base.append(Component.text("wins!"))),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Steal and capture the enemy flag!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Steal and capture the enemy flag!", NamedTextColor.YELLOW)
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
@@ -96,19 +103,21 @@ public enum GameMode {
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
 
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Capture the marked points to",
-                    color + "earn points! The first team with a",
-                    color + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1500 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Capture the marked points to")),
+                    base.append(Component.text("earn points! The first team with a")),
+                    base.append(Component.text("score of "))
+                        .append(Component.text("1500 ", NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(base.append(Component.text("wins!"))),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Capture the marked points!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Capture the marked points!", NamedTextColor.YELLOW)
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
@@ -129,18 +138,21 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Eliminate players from the enemy team to",
-                    color + "gain points for your team! The first team",
-                    color + "to reach " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + color + "points wins the game!"
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Eliminate players from the enemy team to")),
+                    base.append(Component.text("gain points for your team! The first team")),
+                    base.append(Component.text("to reach "))
+                        .append(Component.text("1000 ", NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(base.append(Component.text("points wins the game!"))),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "First team to reach 1000 points wins!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("First team to reach 1000 points wins!", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                     .name(ChatColor.AQUA + "Pre-game Menu ")
@@ -165,17 +177,17 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "First player to kill their opponent",
-                    color + "5 times wins the duel!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("First player to kill their opponent")),
+                    base.append(Component.text("5 times wins the duel!")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!"
+                    Component.text("GO!", NamedTextColor.GREEN)
             ));
 
             options.add(new WeaponOption());
@@ -197,18 +209,18 @@ public enum GameMode {
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
 
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Simulation Trial",
-                    "",
-                    color + "The goal is to either defend your flag holder as long",
-                    color + "as possible or return the flag as soon as possible.",
-                    ""
+                    Component.text("Simulation Trial", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("The goal is to either defend your flag holder as long")),
+                    base.append(Component.text("as possible or return the flag as soon as possible.")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the trials begin!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the trials begin!", NamedTextColor.YELLOW)
             ));
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
@@ -229,18 +241,18 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Survive against waves of",
-                    color + "monsters!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive against waves of")),
+                    base.append(Component.text("monsters!")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the wave defense commence."
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the wave defense commence.", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
@@ -265,19 +277,19 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Survive as long as possible while also killing",
-                    color + "as many monsters as possible! Every 5 minutes you will",
-                    color + "gain special reward pouches.",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive as long as possible while also killing")),
+                    base.append(Component.text("as many monsters as possible! Every 5 minutes you will")),
+                    base.append(Component.text("gain special reward pouches.")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the onslaught begin!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the onslaught begin!", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
@@ -308,18 +320,18 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Survive against waves of",
-                    color + "monsters!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive against waves of")),
+                    base.append(Component.text("monsters!")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Kill all bosses in order to win!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Kill all bosses in order to win!", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
@@ -345,18 +357,18 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Survive against waves of",
-                    color + "monsters!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Survive against waves of")),
+                    base.append(Component.text("monsters!")),
+                    Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the onslaught begin!"
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the onslaught begin!", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new RecordTimeElapsedOption());
@@ -382,20 +394,20 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "Face the ultimate challenge in",
-                    color + "the raid trials!",
-                    ""
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Face the ultimate challenge in")),
+                    base.append(Component.text("the raid trials!")),
+                    Component.empty()
             ));
             options.add(new PreGameItemOption(4, PlayerHotBarItemListener.SELECTION_MENU, (g, p) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(p)));
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Let the raid trials begin."
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Let the raid trials begin.", NamedTextColor.YELLOW)
             ));
             options.add(new RecordTimeElapsedOption());
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
@@ -421,7 +433,7 @@ public enum GameMode {
 
             options.add(TextOption.Type.TITLE.create(
                     3,
-                    ChatColor.GREEN + "GO!"
+                    Component.text("GO!", NamedTextColor.GREEN)
             ));
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
@@ -529,8 +541,8 @@ public enum GameMode {
             AbstractPlayerClass apc = selectedSpec.create.get();
 
             return new ItemBuilder(apc.getWeapon()
-                    .getItem(playerSettings.getWeaponSkins()
-                            .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                                      .getItem(playerSettings.getWeaponSkins()
+                                                             .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                     .name("§aWeapon Skin Preview")
                     .get();
         }));
@@ -583,25 +595,25 @@ public enum GameMode {
                     .name(value.chatColor + value.name);
             StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
                     (int) game.getPlayers().keySet().stream()
-                            .map(PlayerSettings::getPlayerSettings)
-                            .map(PlayerSettings::getSelectedSpec)
-                            .filter(c -> c.specType == value)
-                            .count() + "\n\n");
+                              .map(PlayerSettings::getPlayerSettings)
+                              .map(PlayerSettings::getSelectedSpec)
+                              .filter(c -> c.specType == value)
+                              .count() + "\n\n");
             Arrays.stream(Specializations.VALUES)
-                    .filter(classes -> classes.specType == value)
-                    .forEach(classes -> {
-                        int playersOnSpec = (int) game.getPlayers().keySet().stream()
-                                                      .map(PlayerSettings::getPlayerSettings)
-                                                      .map(PlayerSettings::getSelectedSpec)
-                                                      .filter(c -> c == classes)
-                                                      .count();
-                        lore.append(ChatColor.GREEN)
-                            .append(classes.name)
-                            .append(": ")
-                            .append(ChatColor.YELLOW)
-                            .append(playersOnSpec)
-                            .append("\n");
-                    });
+                  .filter(classes -> classes.specType == value)
+                  .forEach(classes -> {
+                      int playersOnSpec = (int) game.getPlayers().keySet().stream()
+                                                    .map(PlayerSettings::getPlayerSettings)
+                                                    .map(PlayerSettings::getSelectedSpec)
+                                                    .filter(c -> c == classes)
+                                                    .count();
+                      lore.append(ChatColor.GREEN)
+                          .append(classes.name)
+                          .append(": ")
+                          .append(ChatColor.YELLOW)
+                          .append(playersOnSpec)
+                          .append("\n");
+                  });
             itemBuilder.loreLEGACY(lore.toString());
             menu.setItem(
                     x,

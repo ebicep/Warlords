@@ -46,7 +46,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -231,13 +232,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(ChatColor.GREEN + "Start a private Boltaro event game")
+                            .name(Component.text("Start a private Boltaro event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(ChatColor.GREEN + "Join a public Boltaro event game")
+                            .name(Component.text("Join a public Boltaro event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -248,12 +249,12 @@ public enum GameEvents {
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.IRON_BARS)
-                            .name(ChatColor.GREEN + "Boltaro’s Lair")
-                            .loreLEGACY(
-                                    ChatColor.YELLOW + "Do you have what it takes to be a fighter?",
-                                    "",
-                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
-                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            .name(Component.text("Boltaro’s Lair", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("Do you have what it takes to be a fighter?", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
@@ -269,22 +270,25 @@ public enum GameEvents {
             );
             menu.setItem(6, 1,
                     new ItemBuilder(SkullUtils.getSkullFrom(SkullID.DEMON))
-                            .name(ChatColor.GREEN + "Boltaro Bonanza")
-                            .loreLEGACY(
-                                    ChatColor.YELLOW + "Kill as many Boltaro as possible!",
-                                    "",
-                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "200 Seconds",
-                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            .name(Component.text("Boltaro Bonanza", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("Kill as many Boltaro as possible!", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("200 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
                         if (privateGame) {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         } else {
-                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2));
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_2)
+                            );
                         }
                     }
             );
@@ -458,13 +462,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(ChatColor.GREEN + "Start a private Narmer event game")
+                            .name(Component.text("Start a private Narmer event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(ChatColor.GREEN + "Join a public Narmer event game")
+                            .name(Component.text("Join a public Narmer event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -475,22 +479,25 @@ public enum GameEvents {
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BONE)
-                            .name(ChatColor.GREEN + "Narmer’s Tomb")
-                            .loreLEGACY(
-                                    ChatColor.YELLOW + "Something spooky here...",
-                                    "",
-                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
-                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            .name(Component.text("Narmer’s Tomb", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("Something spooky here...", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
                         if (privateGame) {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         } else {
-                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3));
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_3)
+                            );
                         }
                     }
             );
@@ -666,13 +673,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(ChatColor.GREEN + "Start a private Mithra event game")
+                            .name(Component.text("Start a private Mithra event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(ChatColor.GREEN + "Join a public Mithra event game")
+                            .name(Component.text("Join a public Mithra event game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -683,22 +690,25 @@ public enum GameEvents {
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BONE)
-                            .name(ChatColor.GREEN + "Spiders Dwelling")
-                            .loreLEGACY(
-                                    ChatColor.YELLOW + "EEEEEK!",
-                                    "",
-                                    ChatColor.GRAY + "Game Duration: " + ChatColor.GREEN + "600 Seconds",
-                                    ChatColor.GRAY + "Player Capacity: " + ChatColor.GREEN + "2-4 Players"
+                            .name(Component.text("Spiders Dwelling", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("EEEEEK!", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
                         if (privateGame) {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4).setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         } else {
-                            GameStartCommand.startGamePvEEvent(player, queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4));
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
+                            );
                         }
                     }
             );
@@ -799,7 +809,7 @@ public enum GameEvents {
 
         menu.setItem(4, 3,
                 new ItemBuilder(Material.ENDER_CHEST)
-                        .name(ChatColor.GREEN + "Event Shop")
+                        .name(Component.text("Event Shop", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> openShopMenu(player)
         );
@@ -819,7 +829,7 @@ public enum GameEvents {
                 currentEvent = false;
                 gameEvent = previousEvent;
             } else {
-                player.sendMessage(ChatColor.RED + "There is no event shop for this event!");
+                player.sendMessage(Component.text("There is no event shop for this event!", NamedTextColor.RED));
                 return;
             }
         }
@@ -867,19 +877,22 @@ public enum GameEvents {
                 menu.setItem(x, y,
                         itemBuilder
                                 .addLore(
-                                        ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + currency.getCostColoredName(rewardPrice),
-                                        ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
+                                        Component.text("Cost: ", NamedTextColor.GRAY).append(currency.getCostColoredName(rewardPrice)),
+                                        Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
                                 )
                                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                 .get(),
                         (m, e) -> {
                             if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {
-                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(rewardPrice) + ChatColor.RED + " to purchase this item!");
+                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                            .append(currency.getCostColoredName(rewardPrice))
+                                                            .append(Component.text(" to purchase this item!"))
+                                );
                                 return;
                             }
                             Map<String, Long> rewardsPurchased = eventMode.getRewardsPurchased();
                             if (reward.stock() != -1 && rewardsPurchased.getOrDefault(mapName, 0L) >= reward.stock()) {
-                                player.sendMessage(ChatColor.RED + "This item is out of stock!");
+                                player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
                                 return;
                             }
                             pveStats.subtractCurrency(currency, rewardPrice);
@@ -892,8 +905,12 @@ public enum GameEvents {
                             //event in event mode
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
 
-                            player.sendMessage(ChatColor.GREEN + "Purchased " + rewardSpendable.getCostColoredName(rewardAmount) + ChatColor.GREEN + " for " + currency.getCostColoredName(
-                                    rewardPrice) + ChatColor.GREEN + "!");
+                            player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
+                                                        .append(rewardSpendable.getCostColoredName(rewardAmount))
+                                                        .append(Component.text(" for "))
+                                                        .append(currency.getCostColoredName(rewardPrice))
+                                                        .append(Component.text("!"))
+                            );
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
                             openShopMenu(player);
 

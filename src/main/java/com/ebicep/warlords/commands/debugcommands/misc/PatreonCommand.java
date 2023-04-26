@@ -12,7 +12,6 @@ import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 
 import java.time.Month;
 import java.time.Year;
@@ -37,7 +36,8 @@ public class PatreonCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(issuer,
                         Component.text("Gave ", NamedTextColor.GREEN)
                                  .append(Component.text(finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH), NamedTextColor.LIGHT_PURPLE))
-                                 .append(Component.text(" Patreon reward to " + ChatColor.AQUA + databasePlayer.getName()))
+                                 .append(Component.text(" Patreon reward to "))
+                                 .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
                 );
             } else {
                 ChatChannels.sendDebugMessage(issuer,

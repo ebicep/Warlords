@@ -26,6 +26,8 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.hologram.line.ClickableHologramLine;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -151,9 +153,9 @@ public abstract class DatabaseGameBase {
 
             //sending message if player information remained the same
             ChatChannels.sendDebugMessage((CommandIssuer) null,
-                    ChatColor.GREEN + (updatePlayerStats ?
-                                       "This game was added to the database and player information was updated" :
-                                       "This game was added to the database but player information remained the same")
+                    Component.text((updatePlayerStats ?
+                                    "This game was added to the database and player information was updated" :
+                                    "This game was added to the database but player information remained the same"), NamedTextColor.GREEN)
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,12 +174,12 @@ public abstract class DatabaseGameBase {
             //game in the database
             if (DatabaseManager.gameService.exists(databaseGame, collection)) {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Game Found");
+                    sendDebugMessage(player, Component.text("Game Found", NamedTextColor.GREEN));
                 }
                 //if not counted then update player stats then set counted to true, else do nothing
                 if (!databaseGame.isCounted()) {
                     if (player != null) {
-                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats");
+                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                     }
                     databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                     databaseGame.setCounted(true);
@@ -185,17 +187,17 @@ public abstract class DatabaseGameBase {
                 }
             } else {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Game Not Found");
+                    sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
                 }
                 //game not in database then add game and update player stats if counted
                 if (databaseGame.isCounted()) {
                     if (player != null) {
-                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats");
+                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                     }
                     databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                 }
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Creating Game");
+                    sendDebugMessage(player, Component.text("Creating Game", NamedTextColor.GREEN));
                 }
                 //only add game if comps
                 //if (databaseGame.isPrivate) {
@@ -229,7 +231,7 @@ public abstract class DatabaseGameBase {
             //if counted then remove player stats then set counted to false, else do nothing
             if (databaseGame.isCounted()) {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats");
+                    sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                 }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, -1);
                 databaseGame.setCounted(false);
@@ -237,7 +239,7 @@ public abstract class DatabaseGameBase {
             }
         } else { //else game not in database then do nothing
             if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Game Not Found");
+                sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
             }
         }
     }

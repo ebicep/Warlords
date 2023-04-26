@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -102,7 +101,7 @@ public class PatreonReward extends AbstractReward implements Listener {
     }
 
     @Override
-    public ChatColor getNameColor() {
-        return ChatColor.LIGHT_PURPLE;
+    public NamedTextColor getNameColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 }

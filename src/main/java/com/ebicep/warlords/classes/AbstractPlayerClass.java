@@ -10,17 +10,16 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AbstractPlayerClass {
 
@@ -83,26 +82,24 @@ public abstract class AbstractPlayerClass {
     }
 
     public List<Component> getFormattedData() {
-        ChatColor[] chatColors = {
-                ChatColor.GREEN,
-                ChatColor.RED,
-                ChatColor.LIGHT_PURPLE,
-                ChatColor.AQUA,
-                ChatColor.GOLD,
-                ChatColor.GRAY,
-                ChatColor.GRAY,
-                ChatColor.GRAY,
-                ChatColor.GRAY
+        NamedTextColor[] textColors = {
+                NamedTextColor.GREEN,
+                NamedTextColor.RED,
+                NamedTextColor.LIGHT_PURPLE,
+                NamedTextColor.AQUA,
+                NamedTextColor.GOLD
         };
         List<Component> components = new ArrayList<>();
         for (int i = 0; i < getAbilities().length; i++) {
             AbstractAbility ability = getAbilities()[i];
-            String abilityInfo = ability.getAbilityInfo()
-                                        .stream()
-                                        .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
-                                        .collect(Collectors.joining("\n"));
-            components.add(Component.text(chatColors[i] + ability.getName())
-                                    .hoverEvent(HoverEvent.showText(Component.text(abilityInfo)))
+            TextComponent.Builder abilityInfo = Component.text();
+            ability.getAbilityInfo().forEach(stringStringPair -> {
+                abilityInfo.append(Component.text(stringStringPair.getA() + ": ", NamedTextColor.WHITE))
+                           .append(Component.text(stringStringPair.getB(), NamedTextColor.GOLD));
+                abilityInfo.append(Component.newline());
+            });
+            components.add(Component.text(textColors[i] + ability.getName())
+                                    .hoverEvent(HoverEvent.showText(abilityInfo))
             );
         }
 

@@ -130,7 +130,7 @@ public class OnslaughtOption implements Option, PveOption {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(Component.text("Difficulty: " + currentMobSet.getMessage()));
+                return Collections.singletonList(Component.text("Difficulty: ").append(currentMobSet.getMessage()));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {

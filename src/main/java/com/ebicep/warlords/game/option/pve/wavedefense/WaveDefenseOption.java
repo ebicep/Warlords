@@ -225,7 +225,7 @@ public class WaveDefenseOption implements Option, PveOption {
         }
         if (currentWave != null && currentWave.getMessage() != null) {
             waveScoreboard.append(Component.text(" ("))
-                          .append(Component.text(currentWave.getMessage(), NamedTextColor.GREEN))
+                          .append(currentWave.getMessage())
                           .append(Component.text(")"));
         }
         return Collections.singletonList(waveScoreboard.build());
@@ -233,15 +233,15 @@ public class WaveDefenseOption implements Option, PveOption {
 
     public void newWave() {
         if (currentWave != null) {
-            String message;
+            TextComponent.Builder message = Component.text("Wave Complete!", NamedTextColor.GREEN).toBuilder();
             if (currentWave.getMessage() != null) {
-                message = ChatColor.GREEN + "Wave complete! (" + currentWave.getMessage() + ")";
-            } else {
-                message = ChatColor.GREEN + "Wave complete!";
+                message.append(Component.text(" ("))
+                       .append(currentWave.getMessage())
+                       .append(Component.text(")"));
             }
 
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-                sendMessage(entry.getKey(), false, message);
+                sendMessage(entry.getKey(), false, message.build());
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
             }
         }

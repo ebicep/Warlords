@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.rewards.types;
 
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.LinkedHashMap;
 
@@ -16,7 +16,7 @@ public class CompensationReward extends AbstractReward {
     }
 
     @Override
-    public ChatColor getNameColor() {
-        return ChatColor.DARK_AQUA;
+    public NamedTextColor getNameColor() {
+        return NamedTextColor.DARK_AQUA;
     }
 }

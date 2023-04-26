@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
@@ -13,22 +14,22 @@ public class SimpleWave implements Wave {
     private int delay;
     private final RandomCollection<SpawnSettings> randomCollection = new RandomCollection<>();
     private final int count;
-    private final String message;
+    private final Component message;
     private MobTier mobTier;
 
-    public SimpleWave(@Nullable String message) {
+    public SimpleWave(@Nullable Component message) {
         this.delay = 0;
         this.count = 0;
         this.message = message;
     }
 
-    public SimpleWave(int count, int delay, @Nullable String message) {
+    public SimpleWave(int count, int delay, @Nullable Component message) {
         this.count = count;
         this.delay = delay;
         this.message = message;
     }
 
-    public SimpleWave(int count, int delay, @Nullable String message, MobTier mobTier) {
+    public SimpleWave(int count, int delay, @Nullable Component message, MobTier mobTier) {
         this.count = count;
         this.delay = delay;
         this.message = message;
@@ -78,7 +79,7 @@ public class SimpleWave implements Wave {
     }
 
     @Override
-    public String getMessage() {
+    public Component getMessage() {
         return message;
     }
 

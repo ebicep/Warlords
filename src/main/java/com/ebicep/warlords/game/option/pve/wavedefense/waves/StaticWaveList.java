@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,7 +9,7 @@ import java.util.Random;
 public class StaticWaveList implements WaveList {
 
     private final Map<Integer, Wave> waves = new HashMap<>();
-    private static final Wave EMPTY_WAVE_LIST = new SimpleWave(0, 20, "No wave objects");
+    private static final Wave EMPTY_WAVE_LIST = new SimpleWave(0, 20, Component.text("No wave objects"));
     private Wave lastWave = EMPTY_WAVE_LIST;
 
     public StaticWaveList add(int w, Wave wave) {

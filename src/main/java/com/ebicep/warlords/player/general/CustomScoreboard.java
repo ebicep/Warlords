@@ -211,10 +211,9 @@ public class CustomScoreboard {
         this.health = health;
     }
 
-    @Deprecated
-    public void giveNewSideBar(boolean forceClear, List<String> entries) {
+    public void giveNewSideBar(boolean forceClear, List<Component> entries) {
         // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
-        giveNewSideBar(forceClear, entries.toArray(new String[0]));
+        giveNewSideBar(forceClear, entries.toArray(new Component[0]));
     }
 
     @Deprecated

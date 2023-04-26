@@ -5,7 +5,6 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +49,7 @@ public abstract class AbstractReward {
         lore.add(Component.empty());
         lore.add(Component.text("Click to claim!", NamedTextColor.YELLOW));
         return new ItemBuilder(Material.CHEST)
-                .name(getNameColor() + from + " Reward")
+                .name(Component.text(from + " Reward", getNameColor()))
                 .lore(lore)
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
@@ -58,14 +57,14 @@ public abstract class AbstractReward {
 
     public ItemStack getItemWithoutClaim() {
         return new ItemBuilder(Material.CHEST)
-                .name(getNameColor() + from + " Reward")
+                .name(Component.text(from + " Reward", getNameColor()))
                 .lore(getLore())
                 .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
 
-    public ChatColor getNameColor() {
-        return ChatColor.GREEN;
+    public NamedTextColor getNameColor() {
+        return NamedTextColor.GREEN;
     }
 
     public Map<Spendable, Long> getRewards() {

@@ -32,7 +32,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -118,10 +117,13 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.joinMessage(Component.text(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!"));
+            e.joinMessage(wp.getColoredNameBold().append(Component.text(" rejoined the game!", NamedTextColor.YELLOW)));
         } else {
             player.setAllowFlight(true);
-            e.joinMessage(Permissions.getPrefixWithColor(player).append(Component.text(player.getName() + ChatColor.GOLD + " joined the lobby!")));
+            e.joinMessage(Permissions.getPrefixWithColor(player)
+                                     .append(Component.text(player.getName()))
+                                     .append(Component.text(" joined the lobby!", NamedTextColor.GOLD))
+            );
         }
 
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
@@ -129,10 +131,12 @@ public class WarlordsEvents implements Listener {
         joinInteraction(player, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p,
-                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
-                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size()
-            );
+            p.showTitle(Title.title(
+                    Component.text("Welcome to ", NamedTextColor.AQUA)
+                             .append(Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)),
+                    Component.text("Players Online: ", NamedTextColor.GREEN)
+                             .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.GRAY))
+            ));
         });
         Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
     }
@@ -146,10 +150,10 @@ public class WarlordsEvents implements Listener {
             player.teleport(rejoinPoint);
         }
         if (playerIsInWrongWorld && isSpawnWorld) {
-            player.sendMessage(ChatColor.RED + "The game you were previously playing is no longer running!");
+            player.sendMessage(Component.text("The game you were previously playing is no longer running!", NamedTextColor.RED));
         }
         if (playerIsInWrongWorld && !isSpawnWorld) {
-            player.sendMessage(ChatColor.RED + "The game started without you, but we still love you enough and you were warped into the game");
+            player.sendMessage(Component.text("The game started without you, but we still love you enough and you were warped into the game", NamedTextColor.RED));
         }
         if (isSpawnWorld) {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
@@ -159,21 +163,32 @@ public class WarlordsEvents implements Listener {
             player.setMaxHealth(20);
             player.setHealth(20);
 
-            ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
+            ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
+            ChatUtils.sendCenteredMessage(player, Component.textOfChildren(
+                    Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
+                    Component.text("(", NamedTextColor.GRAY),
+                    Component.text(Warlords.VERSION, NamedTextColor.RED),
+                    Component.text(")", NamedTextColor.GRAY)
+            ));
+
             ChatUtils.sendCenteredMessage(player,
-                    ChatColor.GOLD + "" + ChatColor.BOLD + "Welcome to Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")"
+                    Component.text("Developed by ", NamedTextColor.GOLD)
+                             .append(Component.text("sumSmash", NamedTextColor.RED))
+                             .append(Component.text(" & "))
+                             .append(Component.text("Plikie", NamedTextColor.RED))
+            );
+            ChatUtils.sendCenteredMessage(player, Component.empty());
+            ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED));
+            ChatUtils.sendCenteredMessage(player, Component.empty());
+            ChatUtils.sendCenteredMessage(player,
+                    Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD))
             );
             ChatUtils.sendCenteredMessage(player,
-                    ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie"
+                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD))
             );
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "More Information: ");
-            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "§lhttps://docs.flairy.me/index.html");
-            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "§lhttps://ojagerl.nl/");
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Discord: " + ChatColor.DARK_PURPLE + "§ldiscord.gg/GWPAx9sEG7");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Resource Pack: " + ChatColor.GREEN + "§lhttps://bit.ly/3J1lGGn");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
+            ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
@@ -270,9 +285,12 @@ public class WarlordsEvents implements Listener {
         WarlordsPlayer wp = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (wp != null) {
             wp.updatePlayerReference(null);
-            e.quitMessage(Component.text(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!"));
+            e.quitMessage(wp.getColoredNameBold().append(Component.text(" left the game!", NamedTextColor.GOLD)));
         } else {
-            e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer()).append(Component.text(e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!")));
+            e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer())
+                                     .append(Component.text(e.getPlayer().getName()))
+                                     .append(Component.text(" left the lobby!", NamedTextColor.GOLD))
+            );
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -281,10 +299,12 @@ public class WarlordsEvents implements Listener {
         StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p,
-                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
-                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1)
-            );
+            p.showTitle(Title.title(
+                    Component.text("     Welcome to ", NamedTextColor.AQUA)
+                             .append(Component.text("Warlords 2.0     ", NamedTextColor.YELLOW, TextDecoration.BOLD)),
+                    Component.text("Players Online: ", NamedTextColor.GREEN)
+                             .append(Component.text(Bukkit.getOnlinePlayers().size() - 1, NamedTextColor.GRAY))
+            ));
         });
 
         for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
@@ -414,9 +434,9 @@ public class WarlordsEvents implements Listener {
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
                 if (itemHeld.getType().name().endsWith("_BANNER")) {
                     if (wp.getFlagDropCooldown() > 0) {
-                        player.sendMessage("§cYou cannot drop the flag yet, please wait 3 seconds!");
+                        player.sendMessage(Component.text("You cannot drop the flag yet, please wait 3 seconds!", NamedTextColor.RED));
                     } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class)) {
-                        player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
+                        player.sendMessage(Component.text("You cannot drop the flag with a Time Warp active!", NamedTextColor.RED));
                     } else {
                         FlagHolder.dropFlagForPlayer(wp);
                         wp.setFlagDropCooldown(5);

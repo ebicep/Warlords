@@ -22,10 +22,10 @@ import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -745,28 +745,26 @@ public final class Game implements Runnable, AutoCloseable {
         if (this.closed) {
             return;
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game");
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Closing Game", NamedTextColor.LIGHT_PURPLE));
         this.closed = true;
         List<Throwable> exceptions = new ArrayList<>();
         ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks = " + gameTasks.size()
+                Component.text("Closing Game: Tasks = " + gameTasks.size(), NamedTextColor.LIGHT_PURPLE)
         );
         for (BukkitTask task : gameTasks) {
             task.cancel();
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled");
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Closing Game: Tasks cancelled", NamedTextColor.LIGHT_PURPLE));
         gameTasks.clear();
         for (Listener listener : eventHandlers) {
             HandlerList.unregisterAll(listener);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered");
         eventHandlers.clear();
         try {
             removeAllPlayers();
         } catch (Throwable e) {
             exceptions.add(e);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Players removed");
         for (Option option : options) {
             try {
                 option.onGameCleanup(this);
@@ -774,7 +772,6 @@ public final class Game implements Runnable, AutoCloseable {
                 exceptions.add(e);
             }
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up");
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
         this.nextState = null;
@@ -786,7 +783,6 @@ public final class Game implements Runnable, AutoCloseable {
             }
             this.state = new ClosedState(this);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.LIGHT_PURPLE + "Closing Game: State end");
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
             RuntimeException e = new RuntimeException("Problems closing the game", exceptions.get(0));
@@ -798,7 +794,7 @@ public final class Game implements Runnable, AutoCloseable {
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (gameHolder.getGame() == this) {
                 ChatChannels.sendDebugMessage((CommandIssuer) null,
-                        ChatColor.LIGHT_PURPLE + "Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName()
+                        Component.text("Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                 );
                 gameHolder.setGame(null);
                 break;

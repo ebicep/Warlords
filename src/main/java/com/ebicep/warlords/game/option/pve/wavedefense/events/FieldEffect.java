@@ -19,13 +19,14 @@ import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -39,20 +40,13 @@ public class FieldEffect implements Option {
     }
 
     private void addOptions(List<Option> options) {
-        List<String> lines = new ArrayList<>();
-        lines.add(ChatColor.WHITE.toString() + ChatColor.BOLD + "Field Effects");
-        lines.add("");
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.text("Field Effects", NamedTextColor.WHITE, TextDecoration.BOLD));
+        lines.add(Component.empty());
         fieldEffects.forEach(effect -> {
-            List<String> effectLore = Arrays.asList(WordWrap.wrapWithNewline(ChatColor.GREEN + effect.name + ": " + ChatColor.GRAY + effect.description, 200)
-                                                            .split("\n"));
-            for (int i = 0; i < effectLore.size(); i++) {
-                if (i != 0) {
-                    lines.add(ChatColor.GRAY + effectLore.get(i));
-                } else {
-                    lines.add(effectLore.get(i));
-                }
-            }
-            lines.add("");
+            lines.addAll(WordWrap.wrap(Component.text(effect.name + ": ", NamedTextColor.GREEN)
+                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 200));
+            lines.add(Component.empty());
         });
         options.add(TextOption.Type.CHAT_CENTERED.create(lines));
     }

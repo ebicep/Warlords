@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -23,7 +24,7 @@ public class MyLocationCommand extends BaseCommand {
         String locationString = NumberFormat.formatOptionalTenths(roundToHalf(location.getX())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getY())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getZ()));
-        player.sendMessage(Component.text(ChatColor.AQUA.toString() + ChatColor.BOLD + locationString)
+        player.sendMessage(Component.text(locationString, NamedTextColor.AQUA, TextDecoration.BOLD)
                                     .clickEvent(ClickEvent.copyToClipboard(locationString)));
 
     }

@@ -2342,8 +2342,8 @@ public abstract class WarlordsEntity {
         return Component.text(getName(), getTeam().teamColor());
     }
 
-    public String getColoredNameBold() {
-        return getTeam().teamColor().toString() + ChatColor.BOLD + getName();
+    public Component getColoredNameBold() {
+        return Component.text(getName(), getTeam().teamColor(), TextDecoration.BOLD);
     }
 
     public void setVelocity(String from, Vector v, boolean ignoreModifications) {

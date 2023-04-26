@@ -66,9 +66,9 @@ public class RewardInventory {
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         Component.text(ChatColor.GREEN + "Claimed: ")
-                                                 .append(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")
+                                                 .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
                                                                   .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
-                                                 .hoverEvent(HoverEvent.showText(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")))
+                                                 .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
                                 );
 
                                 if (rewards.size() > 1) {
@@ -95,9 +95,9 @@ public class RewardInventory {
                             sendRewardMessage(
                                     player.getUniqueId(),
                                     Component.text(ChatColor.GREEN + "Claimed: ")
-                                             .append(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")
+                                             .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
                                                               .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
-                                             .hoverEvent(HoverEvent.showText(Component.text(reward.getNameColor() + reward.getFrom() + " Reward")))
+                                             .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
                             );
                         }
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
