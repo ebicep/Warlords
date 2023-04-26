@@ -1,6 +1,8 @@
 package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +37,7 @@ public enum GuildPermissions {
 
     public ItemStack getItemStack(boolean enabled) {
         return new ItemBuilder(material)
-                .name(ChatColor.GREEN + name)
+                .name(Component.text(name, NamedTextColor.GREEN))
                 .loreLEGACY(
                         ChatColor.GRAY + description,
                         "",

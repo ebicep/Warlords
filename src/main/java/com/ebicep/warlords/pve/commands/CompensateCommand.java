@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -89,7 +90,7 @@ public class CompensateCommand extends BaseCommand {
 
         menu.setItem(3, 5,
                 new ItemBuilder(Material.PLAYER_HEAD)
-                        .name(ChatColor.GREEN + "Player")
+                        .name(Component.text("Player", NamedTextColor.GREEN))
                         .loreLEGACY(ChatColor.AQUA + (compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
                                                                                                          .getName() : "All " + compensatedPlayers.size() + " Players"))
                         .get(),
@@ -114,7 +115,7 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
                 new ItemBuilder(Material.CHEST)
-                        .name(ChatColor.GREEN + "All Players")
+                        .name(Component.text("All Players", NamedTextColor.GREEN))
                         .loreLEGACY(compensatedPlayers.stream()
                                                       .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
                                                       .collect(Collectors.joining("\n")))
@@ -125,7 +126,7 @@ public class CompensateCommand extends BaseCommand {
         );
         menu.setItem(8, 5,
                 new ItemBuilder(Colors.GREEN.wool)
-                        .name(ChatColor.GREEN + "Confirm Compensate")
+                        .name(Component.text("Confirm Compensate", NamedTextColor.GREEN))
                         .loreLEGACY(compensation.entrySet()
                                                 .stream()
                                                 .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()

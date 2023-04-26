@@ -55,7 +55,7 @@ public class CustomHorse extends net.minecraft.world.entity.animal.horse.Horse {
 //        owner.setTimeAfterMount(0);
 //        if (hasTurboSpeed) {
 //            player.getInventory().setItem(7, new ItemBuilder(Material.SUGAR)
-//                    .name(ChatColor.GREEN + "Turbo Speed" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Right-Click")
+//                    .name(Component.text("Turbo Speed" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Right-Click")
 //                    .get());
 //        }
 //        if (hasDivineMount) {

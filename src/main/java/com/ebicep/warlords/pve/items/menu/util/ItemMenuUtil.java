@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.items.types.BonusLore;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -38,7 +39,7 @@ public class ItemMenuUtil {
         ItemBuilder itemBuilder;
         if (item == null) {
             itemBuilder = new ItemBuilder(tier.clayBlock)
-                    .name(ChatColor.GREEN + "Click to Select Item");
+                    .name(Component.text("Click to Select Item", NamedTextColor.GREEN));
         } else {
             itemBuilder = item.generateItemBuilder()
                               .addLore(

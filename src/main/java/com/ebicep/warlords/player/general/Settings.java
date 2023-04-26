@@ -19,11 +19,11 @@ public class Settings {
     public enum HotkeyMode {
 
         NEW_MODE(new ItemBuilder(Material.REDSTONE)
-                .name(ChatColor.GREEN + "Hotkey Mode")
+                .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
                 .loreLEGACY(ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "NEW", "", ChatColor.YELLOW + "Click here to enable Classic mode.")
                 .get()),
         CLASSIC_MODE(new ItemBuilder(Material.SNOWBALL)
-                .name(ChatColor.GREEN + "Hotkey Mode")
+                .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
                 .loreLEGACY(ChatColor.YELLOW + "Currently selected " + ChatColor.AQUA + "Classic", "", ChatColor.YELLOW + "Click here to enable NEW mode.")
                 .get()),
 
@@ -47,7 +47,7 @@ public class Settings {
                 ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.",
                 4
         ),
-        HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(ChatColor.GREEN + "High Quality").get(),
+        HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(Component.text("High Quality", NamedTextColor.GREEN)).get(),
                 ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience.",
                 100000
         ),
@@ -69,7 +69,7 @@ public class Settings {
     public enum FlagMessageMode {
 
         RELATIVE(new ItemBuilder(Material.COMPASS)
-                .name(ChatColor.GREEN + "Flag Message Mode")
+                .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .loreLEGACY(
                         ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Relative",
                         ChatColor.GRAY + "Prints out flag messages with 'YOUR/ENEMY'",
@@ -79,7 +79,7 @@ public class Settings {
                 .get()
         ),
         ABSOLUTE(new ItemBuilder(Material.WHITE_WOOL)
-                .name(ChatColor.GREEN + "Flag Message Mode")
+                .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .loreLEGACY(
                         ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Absolute",
                         ChatColor.GRAY + "Prints out flag messages with team names",
@@ -107,7 +107,7 @@ public class Settings {
 
             menu.setItem(1, 1,
                     new ItemBuilder(Material.NETHER_WART)
-                            .name(ChatColor.GREEN + "Damage Messages")
+                            .name(Component.text("Damage Messages", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatDamageMode().name,
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Damage received and damage dealt", 150),
@@ -123,7 +123,7 @@ public class Settings {
             );
             menu.setItem(2, 1,
                     new ItemBuilder(Material.CYAN_DYE)
-                            .name(ChatColor.GREEN + "Healing Messages")
+                            .name(Component.text("Healing Messages", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatHealingMode().name,
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Healing received and healing given", 150),
@@ -139,7 +139,7 @@ public class Settings {
             );
             menu.setItem(3, 1,
                     new ItemBuilder(Material.SUGAR_CANE)
-                            .name(ChatColor.GREEN + "Energy Messages")
+                            .name(Component.text("Energy Messages", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatEnergyMode().name,
                                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Energy received and energy given", 150),
@@ -155,7 +155,7 @@ public class Settings {
             );
             menu.setItem(4, 1,
                     new ItemBuilder(Material.BONE)
-                            .name(ChatColor.GREEN + "Kill Messages")
+                            .name(Component.text("Kill Messages", NamedTextColor.GREEN))
                             .lore(
                                     Component.text("Currently Selected ", NamedTextColor.AQUA).append(Component.text(settings.getChatKillsMode().name, NamedTextColor.YELLOW)),
                                     WordWrap.wrapWithNewline(Component.text("Kill messages", NamedTextColor.GRAY), 150),

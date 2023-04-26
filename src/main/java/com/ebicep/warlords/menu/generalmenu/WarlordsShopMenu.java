@@ -35,11 +35,11 @@ import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 public class WarlordsShopMenu {
 
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
-            .name(ChatColor.GREEN + "Back")
+            .name(Component.text("Back", NamedTextColor.GREEN))
             .loreLEGACY(ChatColor.GRAY + "To Pre-game Menu")
             .get();
     private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
-            .name(ChatColor.GREEN + "Mini Games")
+            .name(Component.text("Mini Games", NamedTextColor.GREEN))
             .loreLEGACY("§7Try your luck in rerolling or\nopening skin shards here!\n")
             .get();
 
@@ -94,10 +94,14 @@ public class WarlordsShopMenu {
         for (int i = 0; i < values.size(); i++) {
             Specializations spec = values.get(i);
             ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
-                    .name(ChatColor.GREEN + "Specialization: " + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(
-                            ExperienceManager.getLevelForSpec(player.getUniqueId(),
-                                    spec
-                            )) + ChatColor.DARK_GRAY + "] " + ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
+                    .name(Component.text("Specialization: " + spec.name, NamedTextColor.GREEN)
+                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                   .append(Component.text("Lv" + ExperienceManager.getLevelString(
+                                           ExperienceManager.getLevelForSpec(player.getUniqueId(),
+                                                   spec
+                                           )), NamedTextColor.GRAY))
+                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                   .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec)))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.addLore(spec.description);
             itemBuilder.addLore("");
@@ -238,7 +242,7 @@ public class WarlordsShopMenu {
             if (weapon.isUnlocked) {
 
                 builder = new ItemBuilder(weapon.getItem())
-                        .name(ChatColor.GREEN + weapon.getName())
+                        .name(Component.text(weapon.getName(), NamedTextColor.GREEN))
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 List<String> lore = new ArrayList<>();
 
@@ -282,7 +286,7 @@ public class WarlordsShopMenu {
                     0,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
                     (m, e) -> openWeaponMenu(player, pageNumber - 1)
@@ -293,7 +297,7 @@ public class WarlordsShopMenu {
                     8,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
                     (m, e) -> openWeaponMenu(player, pageNumber + 1)
@@ -380,7 +384,7 @@ public class WarlordsShopMenu {
                     8,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
                     (m, e) -> openArmorMenu(player, pageNumber + 1)
@@ -390,7 +394,7 @@ public class WarlordsShopMenu {
                     8,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
                     (m, e) -> openArmorMenu(player, pageNumber + 1)
@@ -399,7 +403,7 @@ public class WarlordsShopMenu {
                     0,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
                     (m, e) -> openArmorMenu(player, pageNumber - 1)
@@ -409,7 +413,7 @@ public class WarlordsShopMenu {
                     0,
                     5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
                     (m, e) -> openArmorMenu(player, pageNumber - 1)
@@ -546,7 +550,7 @@ public class WarlordsShopMenu {
         AbstractPlayerClass apc = selectedSpec.create.get();
 
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
-        icon.name(ChatColor.GREEN + selectedSpec.name);
+        icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));
         icon.loreLEGACY(
                 selectedSpec.description,
                 "",

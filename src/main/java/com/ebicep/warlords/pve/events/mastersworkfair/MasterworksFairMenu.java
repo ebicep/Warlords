@@ -53,7 +53,7 @@ public class MasterworksFairMenu {
                 ItemBuilder itemBuilder;
                 if (playerEntry.isEmpty()) {
                     itemBuilder = new ItemBuilder(value.glassItem);
-                    itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
+                    itemBuilder.name(Component.text("Click to submit a " + value.name + " weapon", NamedTextColor.GREEN));
                 } else {
                     itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack(false));
                     itemBuilder.addLore(
@@ -77,7 +77,7 @@ public class MasterworksFairMenu {
                         .toList();
                 menu.setItem(column, 3,
                         new ItemBuilder(Material.BOOK)
-                                .name(ChatColor.GREEN + "Your most recent placements")
+                                .name(Component.text("Your most recent placements", NamedTextColor.GREEN))
                                 .loreLEGACY(IntStream.range(0, placementHistory.size())
                                                      .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
                                                      .toList())
@@ -89,7 +89,7 @@ public class MasterworksFairMenu {
             }
 
             ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK_ROCKET)
-                    .name(ChatColor.GREEN + "Current Submissions");
+                    .name(Component.text("Current Submissions", NamedTextColor.GREEN));
             List<String> infoLore = new ArrayList<>();
             for (WeaponsPvE value : values) {
                 if (value.getPlayerEntries != null) {
@@ -194,7 +194,7 @@ public class MasterworksFairMenu {
         if (page - 1 > 0) {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
@@ -205,7 +205,7 @@ public class MasterworksFairMenu {
         if (filteredWeaponInventory.size() > (page * 45)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {

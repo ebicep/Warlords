@@ -48,7 +48,7 @@ public class WeaponSkillBoostMenu {
         for (int i = 0; i < values.size(); i++) {
             SkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(specializations.specType.itemStack)
-                    .name(ChatColor.GREEN + skillBoost.name)
+                    .name(Component.text(skillBoost.name, NamedTextColor.GREEN))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<Component> lore = new ArrayList<>();
             boolean selected = skillBoost == weapon.getSelectedSkillBoost();

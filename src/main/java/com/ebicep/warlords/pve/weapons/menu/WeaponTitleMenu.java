@@ -161,7 +161,7 @@ public class WeaponTitleMenu {
         if (page - 1 > 0) {
             menu.setItem(0, 4,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
@@ -170,7 +170,7 @@ public class WeaponTitleMenu {
         if (titles.length > (page * 3)) {
             menu.setItem(8, 4,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page + 1)
@@ -180,7 +180,7 @@ public class WeaponTitleMenu {
         menu.setItem(4, 4, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
         menu.setItem(5, 4,
                 new ItemBuilder(Material.OAK_SIGN)
-                        .name(ChatColor.GREEN + "Search Title")
+                        .name(Component.text("Search Title", NamedTextColor.GREEN))
                         .get(),
                 (m, e) ->
                         new SignGUI()

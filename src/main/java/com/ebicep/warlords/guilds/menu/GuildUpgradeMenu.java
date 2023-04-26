@@ -43,7 +43,7 @@ public class GuildUpgradeMenu {
         int index = 0;
         for (T value : values) {
             ItemBuilder itemBuilder = new ItemBuilder(value.getMaterial())
-                    .name(ChatColor.GREEN + value.getName())
+                    .name(Component.text(value.getName(), NamedTextColor.GREEN))
                     .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + value.getDescription(), 160))
                     .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
             AbstractGuildUpgrade<?> upgrade = null;
@@ -92,7 +92,7 @@ public class GuildUpgradeMenu {
             long upgradeCost = upgradesTemporary.getCost(tier);
             menu.setItem(i % 7 + 1, i / 7 + 1,
                     new ItemBuilder(Utils.getWoolFromIndex(i + 5))
-                            .name(ChatColor.GREEN + "Tier " + tier)
+                            .name(Component.text("Tier " + tier, NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
                                     ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +

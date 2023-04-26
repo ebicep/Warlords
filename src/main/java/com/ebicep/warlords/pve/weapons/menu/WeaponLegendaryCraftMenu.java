@@ -42,7 +42,7 @@ public class WeaponLegendaryCraftMenu {
 
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
-                        .name(ChatColor.GREEN + "Craft Legendary Weapon")
+                        .name(Component.text("Craft Legendary Weapon", NamedTextColor.GREEN))
                         .lore(COST_LORE)
                         .get(),
                 (m, e) -> {

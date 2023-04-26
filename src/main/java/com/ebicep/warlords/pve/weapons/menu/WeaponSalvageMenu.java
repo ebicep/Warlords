@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,7 +25,7 @@ public class WeaponSalvageMenu {
 
         menu.setItem(2, 1,
                 new ItemBuilder(Material.GREEN_CONCRETE)
-                        .name(ChatColor.GREEN + "Confirm")
+                        .name(Component.text("Confirm", NamedTextColor.GREEN))
                         .loreLEGACY(
                                 ChatColor.GRAY + "Salvage this weapon and claim its materials.",
                                 "",

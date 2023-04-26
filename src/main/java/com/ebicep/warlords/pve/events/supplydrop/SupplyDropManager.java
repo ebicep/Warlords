@@ -9,6 +9,8 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,7 +42,7 @@ public class SupplyDropManager {
                     4,
                     1,
                     new ItemBuilder(Material.GOLD_NUGGET)
-                            .name(ChatColor.GREEN + "Click to buy a supply drop token")
+                            .name(Component.text("Click to buy a supply drop token", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.GREEN + "Cost: " + Currencies.COIN.getCostColoredName(10000),
                                     ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins"
@@ -64,7 +66,7 @@ public class SupplyDropManager {
                     2,
                     3,
                     new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-                            .name(ChatColor.GREEN + "Click to call a supply drop")
+                            .name(Component.text("Click to call a supply drop", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1),
                                     ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
@@ -90,7 +92,7 @@ public class SupplyDropManager {
                     6,
                     3,
                     new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
-                            .name(ChatColor.GREEN + "Click to call all available supply drops (Max 25)")
+                            .name(Component.text("Click to call all available supply drops (Max 25)", NamedTextColor.GREEN))
                             .loreLEGACY(
                                     ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
@@ -126,7 +128,7 @@ public class SupplyDropManager {
                     5,
                     5,
                     new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + "Your most recent supply drops")
+                            .name(Component.text("Your most recent supply drops", NamedTextColor.GREEN))
                             .loreLEGACY(IntStream.range(0, supplyDropHistory.size())
                                                  .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
                                                  .toList())

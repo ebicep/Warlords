@@ -8,6 +8,8 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,7 +37,7 @@ public class ItemFilterMenu {
         ItemTier tierFilter = menuSettings.getTierFilter();
         menu.setItem(2, 1,
                 new ItemBuilder(tierFilter.clayBlock)
-                        .name(ChatColor.GREEN + "Tier")
+                        .name(Component.text("Tier", NamedTextColor.GREEN))
                         .loreLEGACY(Arrays.stream(ItemTier.VALUES)
                                           .map(value -> (tierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                           .collect(Collectors.joining("\n")),
@@ -53,7 +55,7 @@ public class ItemFilterMenu {
         ItemType typeFilter = menuSettings.getTypeFilter();
         menu.setItem(3, 1,
                 new ItemBuilder(typeFilter.skull)
-                        .name(ChatColor.GREEN + "Type")
+                        .name(Component.text("Type", NamedTextColor.GREEN))
                         .loreLEGACY(Arrays.stream(ItemType.VALUES)
                                           .map(value -> (typeFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                           .collect(Collectors.joining("\n")),
@@ -71,7 +73,7 @@ public class ItemFilterMenu {
         ItemSearchMenu.ModifierFilter modifierFilter = menuSettings.getModifierFilter();
         menu.setItem(4, 1,
                 new ItemBuilder(modifierFilter.itemStack)
-                        .name(ChatColor.GREEN + "Modifier")
+                        .name(Component.text("Modifier", NamedTextColor.GREEN))
                         .loreLEGACY(Arrays.stream(ItemSearchMenu.ModifierFilter.VALUES)
                                           .map(value -> (modifierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                           .collect(Collectors.joining("\n")),
@@ -90,7 +92,7 @@ public class ItemFilterMenu {
         Specializations lastSpec = databasePlayer.getLastSpec();
         menu.setItem(5, 1,
                 new ItemBuilder(!addonFilter ? new ItemStack(Material.BARRIER) : Specializations.getClass(lastSpec).item)
-                        .name(ChatColor.GREEN + "Modifier")
+                        .name(Component.text("Modifier", NamedTextColor.GREEN))
                         .loreLEGACY(!addonFilter ? ChatColor.AQUA + "None\n" + ChatColor.GRAY + "Selected Spec (" + lastSpec.name + ")" :
                                     ChatColor.GRAY + "None\n" + ChatColor.AQUA + "Selected Spec (" + lastSpec.name + ")",
                                 "",
@@ -107,7 +109,7 @@ public class ItemFilterMenu {
         boolean favoriteFilter = menuSettings.getFavoriteFilter();
         menu.setItem(6, 1,
                 new ItemBuilder(!favoriteFilter ? new ItemStack(Material.BARRIER) : new ItemStack(Material.DIAMOND))
-                        .name(ChatColor.GREEN + "Modifier")
+                        .name(Component.text("Modifier", NamedTextColor.GREEN))
                         .loreLEGACY(!favoriteFilter ? ChatColor.AQUA + "All\n" + ChatColor.GRAY + "Favorites" :
                                     ChatColor.GRAY + "All\n" + ChatColor.AQUA + "Favorites",
                                 "",

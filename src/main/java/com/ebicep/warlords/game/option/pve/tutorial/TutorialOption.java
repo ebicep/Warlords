@@ -25,6 +25,8 @@ import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -347,7 +349,8 @@ public class TutorialOption implements Option {
                         if (index < tutorialCompletionPrompts.length) {
                             if (index == 5) {
                                 warlordsPlayer.setCurrency(5000);
-                                p.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
+                                p.getInventory()
+                                 .setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
                             }
                             sendTutorialMessage(p, tutorialCompletionPrompts[index]);
                         } else {
@@ -391,7 +394,7 @@ public class TutorialOption implements Option {
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         if (stage.get() == 3 && stageSection.get() == 5 && stageSectionCounter.get() >= 11) {
-            player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
+            player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
         }
     }
 

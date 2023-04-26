@@ -49,7 +49,7 @@ public class FlagSpawnPointOption implements Option {
 
     public static final boolean DEFAULT_REGISTER_COMPASS_MARKER = true;
     public static final ItemStack COMPASS = new ItemBuilder(Material.COMPASS)
-            .name(ChatColor.GREEN + "Flag Finder")
+            .name(Component.text("Flag Finder", NamedTextColor.GREEN))
             .unbreakable()
             .get();
 

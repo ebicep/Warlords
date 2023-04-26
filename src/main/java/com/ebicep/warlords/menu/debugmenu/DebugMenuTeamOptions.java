@@ -10,6 +10,8 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -102,7 +104,7 @@ public class DebugMenuTeamOptions {
         if (page - 1 > 0) {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page - 1)
@@ -111,7 +113,7 @@ public class DebugMenuTeamOptions {
         if (warlordsEntities.size() > (page * playerPerPage)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page + 1)

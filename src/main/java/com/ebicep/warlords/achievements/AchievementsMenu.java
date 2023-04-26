@@ -8,6 +8,8 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -39,7 +41,7 @@ public class AchievementsMenu {
                     1,
                     1,
                     new ItemBuilder(Material.STONE_AXE)
-                            .name(ChatColor.GREEN + "General")
+                            .name(Component.text("General", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openAchievementTypeMenu(player, databasePlayer, null)
             );
@@ -53,7 +55,7 @@ public class AchievementsMenu {
                         x + 2,
                         1,
                         new ItemBuilder(gameMode.getItemStack())
-                                .name(ChatColor.GREEN + gameMode.getName())
+                                .name(Component.text(gameMode.getName(), NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode)
                 );
@@ -72,7 +74,7 @@ public class AchievementsMenu {
                 2,
                 1,
                 new ItemBuilder(Material.DIAMOND)
-                        .name(ChatColor.GREEN + "Challenge Achievements")
+                        .name(Component.text("Challenge Achievements", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> openAchievementsGameModeMenu(player,
                         databasePlayer,
@@ -86,7 +88,7 @@ public class AchievementsMenu {
                 6,
                 1,
                 new ItemBuilder(Material.DIAMOND_BLOCK)
-                        .name(ChatColor.GREEN + "Tiered Achievements")
+                        .name(Component.text("Tiered Achievements", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> openAchievementsGameModeMenu(player,
                         databasePlayer,
@@ -136,16 +138,18 @@ public class AchievementsMenu {
                                     160
                             ));
                 }
-                itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
-                        ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
-                        :
-                        "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any"))
+                itemBuilder.addLore(Component.text((shouldObfuscate ?
+                                                    ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
+                                                                    :
+                                                    "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")),
+                                NamedTextColor.GREEN
+                        )
                 );
                 if (achievement.getDifficulty() != null) {
-                    itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
-                            ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
-                            :
-                            "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName())
+                    itemBuilder.addLore(Component.text((shouldObfuscate ?
+                                                        ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
+                                                                        :
+                                                        "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName()), NamedTextColor.GREEN)
                     );
                 }
                 if (hasAchievement) {
@@ -217,15 +221,17 @@ public class AchievementsMenu {
                                 160
                         ));
             }
-            itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
-                    ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
-                    :
-                    "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")));
+            itemBuilder.addLore(Component.text((shouldObfuscate ?
+                                                ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
+                                                                :
+                                                "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")),
+                    NamedTextColor.GREEN
+            ));
             if (achievement.getDifficulty() != null) {
-                itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
-                        ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
-                        :
-                        "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName())
+                itemBuilder.addLore(Component.text((shouldObfuscate ?
+                                                    ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
+                                                                    :
+                                                    "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName()), NamedTextColor.GREEN)
                 );
             }
             if (hasAchievement) {
@@ -289,7 +295,7 @@ public class AchievementsMenu {
                     i % 9,
                     i / 9,
                     new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + achievement.getName())
+                            .name(Component.text(achievement.getName(), NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
                             .get(),
                     (m, e) -> {
@@ -299,7 +305,7 @@ public class AchievementsMenu {
         if (page - 1 > 0) {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
@@ -310,7 +316,7 @@ public class AchievementsMenu {
         if (achievementRecords.size() > (page * 45)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {

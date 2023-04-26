@@ -98,7 +98,7 @@ public class DebugMenuPlayerOptions {
                 }
         );
         firstRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_DAMAGE)
-                        .name(ChatColor.GREEN + "Kill")
+                        .name(Component.text("Kill", NamedTextColor.GREEN))
                         .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
@@ -107,8 +107,10 @@ public class DebugMenuPlayerOptions {
                 }
         );
         firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().item))
-                        .name(ChatColor.GREEN + "Swap to the " + (PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                                                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
+                        .name(Component.text("Swap to the ", NamedTextColor.GREEN)
+                                       .append(PlayerSettings.getPlayerSettings(player.getUniqueId())
+                                                             .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix())
+                                       .append(Component.text(" team")))
                         .get(),
                 (m, e) -> {
                     Game game = target.getGame();
@@ -146,13 +148,13 @@ public class DebugMenuPlayerOptions {
 
         MenuItemPairList secondRow = new MenuItemPairList();
         secondRow.add(new ItemBuilder(Material.SUGAR)
-                        .name(ChatColor.GREEN + "Modify Speed")
+                        .name(Component.text("Modify Speed", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                 }
         );
         secondRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_HEAL)
-                        .name(ChatColor.GREEN + "Add Health")
+                        .name(Component.text("Add Health", NamedTextColor.GREEN))
                         .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
@@ -179,7 +181,7 @@ public class DebugMenuPlayerOptions {
                 }
         );
         secondRow.add(new ItemBuilder(Material.DIAMOND_SWORD)
-                        .name(ChatColor.GREEN + "Take Damage")
+                        .name(Component.text("Take Damage", NamedTextColor.GREEN))
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(),
                 (m, e) -> {
@@ -206,22 +208,22 @@ public class DebugMenuPlayerOptions {
                 }
         );
         secondRow.add(new ItemBuilder(Material.BREWING_STAND)
-                        .name(ChatColor.GREEN + "Cooldowns")
+                        .name(Component.text("Cooldowns", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> PlayerOptionMenus.openCooldownsMenu(player, target)
         );
         secondRow.add(new ItemBuilder(Material.ENDER_EYE)
-                        .name(ChatColor.GREEN + "Teleport To")
+                        .name(Component.text("Teleport To", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> PlayerOptionMenus.openTeleportLocations(player, target)
         );
         secondRow.add(new ItemBuilder(Material.BLACK_BANNER)
-                        .name(ChatColor.GREEN + "Flag Options")
+                        .name(Component.text("Flag Options", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> PlayerOptionMenus.openFlagOptionMenu(player, target)
         );
         secondRow.add(new ItemBuilder(Material.NETHER_STAR)
-                        .name(ChatColor.GREEN + "Change Spec")
+                        .name(Component.text("Change Spec", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     if (GameMode.isPvE(target.getGame().getGameMode())) {
@@ -532,7 +534,7 @@ public class DebugMenuPlayerOptions {
                 Classes group = values[i];
                 menu.setItem(2, i,
                         new ItemBuilder(group.item)
-                                .name(ChatColor.GREEN + group.name)
+                                .name(Component.text(group.name, NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                         }
@@ -540,7 +542,7 @@ public class DebugMenuPlayerOptions {
                 List<Specializations> aClasses = group.subclasses;
                 for (int j = 0; j < aClasses.size(); j++) {
                     int finalJ = j;
-                    ItemBuilder spec = new ItemBuilder(aClasses.get(j).specType.itemStack).name(ChatColor.GREEN + aClasses.get(j).name);
+                    ItemBuilder spec = new ItemBuilder(aClasses.get(j).specType.itemStack).name(Component.text(aClasses.get(j).name, NamedTextColor.GREEN));
                     if (target.getSpecClass() == aClasses.get(j)) {
                         spec.enchant(Enchantment.OXYGEN, 1);
                         spec.flags(ItemFlag.HIDE_ENCHANTS);
@@ -596,7 +598,7 @@ public class DebugMenuPlayerOptions {
                 //general info
                 menu.setItem(4, 0,
                         new ItemBuilder(HeadUtils.getHead(player))
-                                .name(ChatColor.GREEN + "Cooldown Stats")
+                                .name(Component.text("Cooldown Stats", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
                                         ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
                                 )

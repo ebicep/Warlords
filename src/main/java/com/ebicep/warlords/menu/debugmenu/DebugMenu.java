@@ -6,6 +6,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +32,7 @@ public class DebugMenu {
         Menu menu = new Menu("Debug Options", 9 * 4);
 
         LinkedHashMap<ItemStack, BiConsumer<Menu, InventoryClickEvent>> items = new LinkedHashMap<>();
-        items.put(new ItemBuilder(Material.END_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
+        items.put(new ItemBuilder(Material.END_PORTAL_FRAME).name(Component.text("Game Options", NamedTextColor.GREEN)).get(),
                 (m, e) -> DebugMenuGameOptions.openGameMenu(player)
         );
 
@@ -38,7 +40,7 @@ public class DebugMenu {
         if (warlordsPlayer != null) {
             Game game = warlordsPlayer.getGame();
             items.put(new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + "Game - " + game.getGameId())
+                            .name(Component.text("Game - " + game.getGameId(), NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
                                     ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
                                     ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
@@ -49,10 +51,10 @@ public class DebugMenu {
                             .get(),
                     (m, e) -> DebugMenuGameOptions.GamesMenu.openGameEditorMenu(player, game)
             );
-            items.put(new ItemBuilder(HeadUtils.getHead(player)).name(ChatColor.GREEN + "Player Options").get(),
+            items.put(new ItemBuilder(HeadUtils.getHead(player)).name(Component.text("Player Options", NamedTextColor.GREEN)).get(),
                     (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
             );
-            items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
+            items.put(new ItemBuilder(Material.NOTE_BLOCK).name(Component.text("Team Options", NamedTextColor.GREEN)).get(),
                     (m, e) -> {
                         DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                         new BukkitRunnable() {

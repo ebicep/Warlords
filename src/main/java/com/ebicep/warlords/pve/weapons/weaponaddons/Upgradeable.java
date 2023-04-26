@@ -6,7 +6,6 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +35,7 @@ public interface Upgradeable {
         );
         upgradeLore.addAll(getUpgradeCostLore());
         return new ItemBuilder(Material.GREEN_CONCRETE)
-                .name(ChatColor.GREEN + "Confirm")
+                .name(Component.text("Confirm", NamedTextColor.GREEN))
                 .lore(upgradeLore)
                 .get();
     }

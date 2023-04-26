@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -65,9 +66,9 @@ public class RegularGamesMenu {
         //two columns of class icons
         for (int i = 0; i < Classes.VALUES.length; i++) {
             Classes spec = Classes.VALUES[i];
-            menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
+            menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(Component.text(spec.name, NamedTextColor.GREEN)).get(), (m, e) -> {
             });
-            menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
+            menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(Component.text(spec.name, NamedTextColor.GREEN)).get(), (m, e) -> {
             });
         }
 
@@ -112,7 +113,7 @@ public class RegularGamesMenu {
                 7,
                 3,
                 new ItemBuilder(Material.WRITABLE_BOOK)
-                        .name(ChatColor.GREEN + "Editors")
+                        .name(Component.text("Editors", NamedTextColor.GREEN))
                         .loreLEGACY(editors)
                         .get(),
                 (m, e) -> {
@@ -122,7 +123,7 @@ public class RegularGamesMenu {
                 7,
                 4,
                 new ItemBuilder(Material.OAK_SIGN)
-                        .name(ChatColor.GREEN + "General Information")
+                        .name(Component.text("General Information", NamedTextColor.GREEN))
                         .loreLEGACY(playerOnSpecs)
                         .get(),
                 (m, e) -> {
@@ -132,7 +133,7 @@ public class RegularGamesMenu {
                 7,
                 5,
                 new ItemBuilder(Material.LIME_WOOL)
-                        .name(ChatColor.GREEN + "Confirm Team")
+                        .name(Component.text("Confirm Team", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     if (!uuidsWithPerms.contains(player.getUniqueId())) return;

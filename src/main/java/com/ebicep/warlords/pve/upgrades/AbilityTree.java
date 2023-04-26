@@ -130,7 +130,7 @@ public class AbilityTree {
             }
             menu.setItem(1, 4,
                     new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + "Change Profile")
+                            .name(Component.text("Change Profile", NamedTextColor.GREEN))
                             .loreLEGACY(lore)
                             .get(),
                     (m, e) -> {
@@ -142,7 +142,7 @@ public class AbilityTree {
             );
             menu.setItem(2, 4,
                     new ItemBuilder(Material.WRITABLE_BOOK)
-                            .name(ChatColor.GREEN + "Create Profile")
+                            .name(Component.text("Create Profile", NamedTextColor.GREEN))
                             .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
                             .get(),
                     (m, e) -> {
@@ -175,7 +175,7 @@ public class AbilityTree {
             );
             menu.setItem(3, 4,
                     new ItemBuilder(Material.NAME_TAG)
-                            .name(ChatColor.GREEN + "Rename Profile")
+                            .name(Component.text("Rename Profile", NamedTextColor.GREEN))
                             .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
                             .get(),
                     (m, e) -> {
@@ -245,7 +245,7 @@ public class AbilityTree {
             }
             menu.setItem(6, 4,
                     new ItemBuilder(Material.TRIPWIRE_HOOK)
-                            .name(ChatColor.GREEN + "Change Profile Priority")
+                            .name(Component.text("Change Profile Priority", NamedTextColor.GREEN))
                             .loreLEGACY(lore)
                             .addLore(
                                     "",
@@ -276,7 +276,7 @@ public class AbilityTree {
             }
             menu.setItem(7, 4,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(ChatColor.GREEN + "Bind to Mode")
+                            .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
                             .loreLEGACY(lore)
                             .get(),
                     (m, e) -> {
@@ -292,7 +292,7 @@ public class AbilityTree {
                 0,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.GREEN + "Auto Upgrade Queue")
+                        .name(Component.text("Auto Upgrade Queue", NamedTextColor.GREEN))
                         .loreLEGACY(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
                                     Collections.singletonList(WordWrap.wrapWithNewline(
                                             ChatColor.GRAY + "You have no upgrades queued. " +

@@ -93,7 +93,9 @@ public class WeaponOption implements Option {
         AbstractPlayerClass spec = wp.getSpec();
         AbstractAbility weapon = spec.getWeapon();
         ItemBuilder itemBuilder = new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
-                .name(ChatColor.GREEN + weapon.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                .name(Component.text(weapon.getName(), NamedTextColor.GREEN)
+                               .append(Component.text(" - ", NamedTextColor.GRAY))
+                               .append(Component.text(" Right-Click!", NamedTextColor.YELLOW)))
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
 

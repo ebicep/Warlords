@@ -15,6 +15,8 @@ import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -140,7 +142,7 @@ public class ItemSearchMenu extends Menu {
     private void addResetSetting() {
         setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
-                        .name(ChatColor.GREEN + "Reset Settings")
+                        .name(Component.text("Reset Settings", NamedTextColor.GREEN))
                         .loreLEGACY(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
@@ -176,7 +178,7 @@ public class ItemSearchMenu extends Menu {
         filterLore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GRAY + " to change");
         setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Filter Settings")
+                        .name(Component.text("Filter Settings", NamedTextColor.GREEN))
                         .loreLEGACY(filterLore)
                         .get(),
                 (m, e) -> {
@@ -189,7 +191,7 @@ public class ItemSearchMenu extends Menu {
         SortOptions sortedBy = menuSettings.getSortOption();
         setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
-                        .name(ChatColor.GREEN + "Sort By")
+                        .name(Component.text("Sort By", NamedTextColor.GREEN))
                         .loreLEGACY(Arrays.stream(SortOptions.VALUES)
                                           .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                           .collect(Collectors.joining("\n"))
@@ -205,7 +207,7 @@ public class ItemSearchMenu extends Menu {
     private void addSortOrderSetting() {
         setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
-                        .name(ChatColor.GREEN + "Sort Order")
+                        .name(Component.text("Sort Order", NamedTextColor.GREEN))
                         .loreLEGACY(menuSettings.isAscending() ?
                                     ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
                                     ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
@@ -224,7 +226,7 @@ public class ItemSearchMenu extends Menu {
         if (page - 1 > 0) {
             setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
@@ -236,7 +238,7 @@ public class ItemSearchMenu extends Menu {
         if (itemInventory.size() > (page * 45)) {
             setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {

@@ -11,6 +11,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +33,7 @@ public class GuildRoleMenu {
         List<GuildRole> guildRoles = guild.getRoles();
         menu.setItem(4, 0,
                 new ItemBuilder(Material.OAK_SIGN)
-                        .name(ChatColor.GREEN + "Create a new role")
+                        .name(Component.text("Create a new role", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     if (guildRoles.size() >= 8) {
@@ -69,7 +71,7 @@ public class GuildRoleMenu {
             GuildRole role = guildRoles.get(i);
             menu.setItem(i, 2,
                     new ItemBuilder(Utils.getWoolFromIndex(i + 4))
-                            .name(ChatColor.GREEN + role.getRoleName())
+                            .name(Component.text(role.getRoleName(), NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openRoleEditor(guild, role, player)
             );
@@ -122,7 +124,7 @@ public class GuildRoleMenu {
         if (!guild.getDefaultRole().equals(role)) {
             menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
-                            .name(ChatColor.GREEN + "Click to set as default role")
+                            .name(Component.text("Click to set as default role", NamedTextColor.GREEN))
                             .loreLEGACY(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
                             .get(),
                     (m, e) -> {
@@ -135,7 +137,7 @@ public class GuildRoleMenu {
         } else {
             menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
-                            .name(ChatColor.GREEN + "This is the default role")
+                            .name(Component.text("This is the default role", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
 
@@ -144,7 +146,7 @@ public class GuildRoleMenu {
         }
         menu.setItem(3, 4,
                 new ItemBuilder(Material.NAME_TAG)
-                        .name(ChatColor.GREEN + "Click to rename role")
+                        .name(Component.text("Click to rename role", NamedTextColor.GREEN))
                         .loreLEGACY(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
                         .get(),
                 (m, e) -> {
@@ -183,7 +185,7 @@ public class GuildRoleMenu {
         }
         menu.setItem(5, 4,
                 new ItemBuilder(Material.OAK_SIGN)
-                        .name(ChatColor.GREEN + "Click to change role level")
+                        .name(Component.text("Click to change role level", NamedTextColor.GREEN))
                         .loreLEGACY(lore)
                         .get(),
                 (m, e) -> {
@@ -204,7 +206,7 @@ public class GuildRoleMenu {
 
         menu.setItem(7, 4,
                 new ItemBuilder(Material.LAVA_BUCKET)
-                        .name(ChatColor.GREEN + "Click to delete role")
+                        .name(Component.text("Click to delete role", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     if (guild.getDefaultRole().equals(role)) {

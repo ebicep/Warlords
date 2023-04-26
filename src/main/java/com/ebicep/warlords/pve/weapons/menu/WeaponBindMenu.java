@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.bukkit.ChatColor;
@@ -58,7 +59,7 @@ public class WeaponBindMenu {
                     column,
                     row,
                     new ItemBuilder(value.item)
-                            .name(ChatColor.GREEN + value.name)
+                            .name(Component.text(value.name, NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                     }
@@ -117,7 +118,7 @@ public class WeaponBindMenu {
                             row + 1,
                             spec == weaponSpec ?
                             new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE)
-                                    .name(ChatColor.GREEN + "Click to bind")
+                                    .name(Component.text("Click to bind", NamedTextColor.GREEN))
                                     .get() :
                             new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
                                     .name(ChatColor.RED + "You cannot bind this weapon to " + spec.name)

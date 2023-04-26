@@ -333,7 +333,7 @@ public class WarlordsNewHotbarMenu {
 
             if (currentPrestige != 0) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Click to Cycle Between Prestige Rewards");
+                        .name(Component.text("Click to Cycle Between Prestige Rewards", NamedTextColor.GREEN));
                 List<String> lore = new ArrayList<>();
                 for (int i = 0; i <= currentPrestige; i++) {
                     lore.add((i == selectedPrestige ? ChatColor.AQUA : ChatColor.GRAY) + "Prestige " + i);
@@ -356,7 +356,7 @@ public class WarlordsNewHotbarMenu {
                         0,
                         3,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                                 .get(),
                         (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
@@ -367,7 +367,7 @@ public class WarlordsNewHotbarMenu {
                         8,
                         3,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                                 .get(),
                         (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
@@ -385,7 +385,7 @@ public class WarlordsNewHotbarMenu {
     public static class PvPMenu {
 
         public static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
-                .name(ChatColor.GREEN + "Weapon Skin Selector")
+                .name(Component.text("Weapon Skin Selector", NamedTextColor.GREEN))
                 .loreLEGACY("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
@@ -406,11 +406,11 @@ public class WarlordsNewHotbarMenu {
                 )
                 .get();
         public static final ItemStack MENU_BACK_PVP = new ItemBuilder(Material.ARROW)
-                .name(ChatColor.GREEN + "Back")
+                .name(Component.text("Back", NamedTextColor.GREEN))
                 .loreLEGACY(ChatColor.GRAY + "To PvP Menu")
                 .get();
         public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
-                .name(ChatColor.GREEN + "Class Information")
+                .name(Component.text("Class Information", NamedTextColor.GREEN))
                 .loreLEGACY(
                         "§7Preview of your ability \ndescriptions and specialization \nstats.",
                         "",
@@ -445,7 +445,7 @@ public class WarlordsNewHotbarMenu {
                 if (weapon.isUnlocked) {
 
                     builder = new ItemBuilder(weapon.getItem())
-                            .name(ChatColor.GREEN + weapon.getName())
+                            .name(Component.text(weapon.getName(), NamedTextColor.GREEN))
                             .flags(ItemFlag.HIDE_ENCHANTS);
                     List<String> lore = new ArrayList<>();
 
@@ -490,7 +490,7 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber - 1)
@@ -501,7 +501,7 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber + 1)
@@ -520,7 +520,7 @@ public class WarlordsNewHotbarMenu {
             AbstractPlayerClass apc = selectedSpec.create.get();
 
             ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
-            icon.name(ChatColor.GREEN + selectedSpec.name);
+            icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));
             icon.loreLEGACY(
                     selectedSpec.description,
                     "",
@@ -641,7 +641,7 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
@@ -651,7 +651,7 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
@@ -660,7 +660,7 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
@@ -670,7 +670,7 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
@@ -772,7 +772,7 @@ public class WarlordsNewHotbarMenu {
     public static class PvEMenu {
 
         public static final ItemStack MENU_BACK_PVE = new ItemBuilder(Material.ARROW)
-                .name(ChatColor.GREEN + "Back")
+                .name(Component.text("Back", NamedTextColor.GREEN))
                 .loreLEGACY(ChatColor.GRAY + "To PvE Menu")
                 .get();
         public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
@@ -800,7 +800,7 @@ public class WarlordsNewHotbarMenu {
                 )
                 .get();
         public static final ItemStack ABILITY_TREE_MENU = new ItemBuilder(Material.GOLD_NUGGET)
-                .name(ChatColor.GREEN + "Upgrade Talisman")
+                .name(Component.text("Upgrade Talisman", NamedTextColor.GREEN))
                 .loreLEGACY(
                         WordWrap.wrapWithNewline(ChatColor.GRAY + "View your ability upgrades.", 160),
                         "",
@@ -862,11 +862,11 @@ public class WarlordsNewHotbarMenu {
                 .loreLEGACY("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
                 .get();
         public static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.GREEN + "Particle Quality")
+                .name(Component.text("Particle Quality", NamedTextColor.GREEN))
                 .loreLEGACY("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
                 .get();
         public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
-                .name(ChatColor.GREEN + "Chat Settings")
+                .name(Component.text("Chat Settings", NamedTextColor.GREEN))
                 .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Configure which chat messages you see in-game", 150))
                 .get();
 

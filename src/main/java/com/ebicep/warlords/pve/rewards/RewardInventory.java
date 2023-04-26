@@ -7,6 +7,7 @@ import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -86,7 +87,7 @@ public class RewardInventory {
 
             menu.setItem(3, 5,
                     new ItemBuilder(Material.GOLD_BLOCK)
-                            .name(ChatColor.GREEN + "Click to claim all rewards!")
+                            .name(Component.text("Click to claim all rewards!", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         for (AbstractReward reward : rewards) {
@@ -108,7 +109,7 @@ public class RewardInventory {
             if (page - 1 > 0) {
                 menu.setItem(0, 5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
                                 .get(),
                         (m, e) -> {
@@ -119,7 +120,7 @@ public class RewardInventory {
             if (rewards.size() > (page * 45)) {
                 menu.setItem(8, 5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
                                 .get(),
                         (m, e) -> {

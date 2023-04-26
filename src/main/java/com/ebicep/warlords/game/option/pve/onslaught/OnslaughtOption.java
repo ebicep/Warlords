@@ -319,7 +319,7 @@ public class OnslaughtOption implements Option, PveOption {
             WeaponOption.showPvEWeapon(wp, player);
         }
 
-        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
         if (wp.getWeapon() instanceof AbstractLegendaryWeapon) {
             ((AbstractLegendaryWeapon) wp.getWeapon()).updateAbilityItem(wp, player);
         }

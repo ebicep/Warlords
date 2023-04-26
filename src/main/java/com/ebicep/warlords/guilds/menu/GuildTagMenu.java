@@ -8,7 +8,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import de.rapha149.signgui.SignGUI;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -51,7 +52,7 @@ public class GuildTagMenu {
 
         menu.setItem(4, 2,
                 new ItemBuilder(Material.OAK_SIGN)
-                        .name(ChatColor.GREEN + "Change Tag Name")
+                        .name(Component.text("Change Tag Name", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     new SignGUI()

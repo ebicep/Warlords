@@ -14,6 +14,8 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -252,8 +254,8 @@ public enum Quests {
 
     public ItemStack getItemStack(DatabasePlayer databasePlayer, boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.MAP : Material.PAPER)
-                .name(ChatColor.GREEN + time.name + ": " + name)
-                //.name(ChatColor.GREEN + name)
+                .name(Component.text(time.name + ": " + name, NamedTextColor.GREEN))
+                //.name(Component.text(name)
                 .loreLEGACY(
                         ChatColor.GRAY + description,
                         "",

@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +29,7 @@ import java.util.UUID;
 public class HorseOption implements Option, Listener {
 
     public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-            .name(ChatColor.GREEN + "Mount " + ChatColor.GRAY + "- §eRight-Click!")
+            .name(Component.text("Mount ", NamedTextColor.GREEN).append(Component.text("- §eRight-Click!", NamedTextColor.GRAY)))
             .loreLEGACY(ChatColor.GRAY + "Cooldown: §b15 seconds",
                     "",
                     ChatColor.GRAY + "Call your steed to assists you in battle"

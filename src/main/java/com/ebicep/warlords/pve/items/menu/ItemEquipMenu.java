@@ -40,7 +40,7 @@ public class ItemEquipMenu {
 
     public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
     private static final ItemStack ITEM_EQUIP_MENU = new ItemBuilder(Material.ARMOR_STAND)
-            .name(ChatColor.GREEN + "Item Equip Menu")
+            .name(Component.text("Item Equip Menu", NamedTextColor.GREEN))
             .loreLEGACY(ChatColor.GRAY + "Click to customize your Item Loadouts")
             .get();
 
@@ -229,7 +229,7 @@ public class ItemEquipMenu {
                 if (!equipped) {
                     menu.setItem(x, y + 1,
                             new ItemBuilder(ItemTier.NONE.clayBlock)
-                                    .name(ChatColor.GREEN + "Click to Equip Item")
+                                    .name(Component.text("Click to Equip Item", NamedTextColor.GREEN))
                                     .get(),
                             (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, tier, null)
                     );
@@ -255,7 +255,7 @@ public class ItemEquipMenu {
         }
         menu.setItem(0, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Change Loadout (Weight | Difficulty | Spec)")
+                        .name(Component.text("Change Loadout (Weight | Difficulty | Spec)", NamedTextColor.GREEN))
                         .loreLEGACY(lore)
                         .get(),
                 (m, e) -> {
@@ -266,7 +266,7 @@ public class ItemEquipMenu {
         );
         menu.setItem(1, 5,
                 new ItemBuilder(Material.WRITABLE_BOOK)
-                        .name(ChatColor.GREEN + "Create Loadout")
+                        .name(Component.text("Create Loadout", NamedTextColor.GREEN))
                         .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new loadout to customize your experience.", 150))
                         .get(),
                 (m, e) -> {
@@ -298,7 +298,7 @@ public class ItemEquipMenu {
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
-                        .name(ChatColor.GREEN + "Rename Loadout")
+                        .name(Component.text("Rename Loadout", NamedTextColor.GREEN))
                         .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout.", 150))
                         .get(),
                 (m, e) -> {
@@ -372,7 +372,7 @@ public class ItemEquipMenu {
         }
         menu.setItem(5, 5,
                 new ItemBuilder(Material.TRIPWIRE_HOOK)
-                        .name(ChatColor.GREEN + "Change Loadout Priority")
+                        .name(Component.text("Change Loadout Priority", NamedTextColor.GREEN))
                         .loreLEGACY(
                                 WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current loadout, for when you have " +
                                                 "multiple loadouts with the same filters.",
@@ -403,7 +403,7 @@ public class ItemEquipMenu {
         }
         menu.setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
-                        .name(ChatColor.GREEN + "Bind to Mode")
+                        .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
                         .loreLEGACY(lore)
                         .get(),
                 (m, e) -> {
@@ -420,7 +420,7 @@ public class ItemEquipMenu {
         }
         menu.setItem(7, 5,
                 new ItemBuilder(Material.SLIME_BALL)
-                        .name(ChatColor.GREEN + "Bind to Specialization")
+                        .name(Component.text("Bind to Specialization", NamedTextColor.GREEN))
                         .loreLEGACY(lore)
                         .get(),
                 (m, e) -> {

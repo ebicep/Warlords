@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,10 +38,10 @@ public class DebugMenuGameOptions {
         Menu menu = new Menu("Game Options", 9 * 4);
         ItemStack[] itemStack = {
                 new ItemBuilder(Material.DARK_OAK_DOOR)
-                        .name(ChatColor.GREEN + "Start")
+                        .name(Component.text("Start", NamedTextColor.GREEN))
                         .get(),
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Games")
+                        .name(Component.text("Games", NamedTextColor.GREEN))
                         .get(),
         };
         for (int i = 0; i < itemStack.length; i++) {
@@ -98,7 +99,7 @@ public class DebugMenuGameOptions {
                 i++;
                 menu.setItem(i % 7 + 1, 1 + i / 7,
                         new ItemBuilder(Utils.getWoolFromIndex(i + 5))
-                                .name(ChatColor.GREEN + map.getMapName())
+                                .name(Component.text(map.getMapName(), NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                             EnumSet<GameAddon> addons = EnumSet.noneOf(GameAddon.class);
@@ -129,7 +130,7 @@ public class DebugMenuGameOptions {
 
                 boolean isASelectedAddon = addons.contains(gameAddon);
                 ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
-                        .name(ChatColor.GREEN + gameAddon.getName())
+                        .name(Component.text(gameAddon.getName(), NamedTextColor.GREEN))
                         .loreLEGACY(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
                 if (isASelectedAddon) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -163,7 +164,7 @@ public class DebugMenuGameOptions {
                 menu.setItem(4,
                         0,
                         new ItemBuilder(Material.DIAMOND_BLOCK)
-                                .name(ChatColor.GREEN + "Comps Preset")
+                                .name(Component.text("Comps Preset", NamedTextColor.GREEN))
                                 .loreLEGACY(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
                                 .get(),
                         (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
@@ -175,7 +176,7 @@ public class DebugMenuGameOptions {
                 );
                 menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
                 menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.LIME_WOOL).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
+                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.LIME_WOOL).name(Component.text("Start", NamedTextColor.GREEN)).get(), (m, e) -> {
                     //safe guard
                     if (!player.isOp()) {
                         addons.remove(GameAddon.TOURNAMENT_MODE);
@@ -210,7 +211,7 @@ public class DebugMenuGameOptions {
             int y = 1;
             for (Game game : games) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Game - " + game.getGameId())
+                        .name(Component.text("Game - " + game.getGameId(), NamedTextColor.GREEN))
                         .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
                                 ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
                                 ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
@@ -242,19 +243,19 @@ public class DebugMenuGameOptions {
             Menu menu = new Menu("Game Editor", 9 * 5);
             menu.setItem(1, 1,
                     new ItemBuilder(Material.REPEATER)
-                            .name(ChatColor.GREEN + "Timer")
+                            .name(Component.text("Timer", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openTimerMenu(player, game)
             );
             menu.setItem(2, 1,
                     new ItemBuilder(Material.OAK_SIGN)
-                            .name(ChatColor.GREEN + "Edit Team Scores")
+                            .name(Component.text("Edit Team Scores", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openTeamScoreEditorMenu(player, game)
             );
             menu.setItem(3, 1,
                     new ItemBuilder(Material.ICE)
-                            .name(ChatColor.GREEN + "Freeze Game")
+                            .name(Component.text("Freeze Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         if (game.isFrozen()) {
@@ -269,14 +270,14 @@ public class DebugMenuGameOptions {
             if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
                 menu.setItem(1, 2,
                         new ItemBuilder(HeadUtils.getHead(player))
-                                .name(ChatColor.GREEN + "Player Options")
+                                .name(Component.text("Player Options", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
                 );
             }
             menu.setItem(2, 2,
                     new ItemBuilder(Material.NOTE_BLOCK)
-                            .name(ChatColor.GREEN + "Team Options")
+                            .name(Component.text("Team Options", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
@@ -303,7 +304,7 @@ public class DebugMenuGameOptions {
             Menu menu = new Menu("Timer", 9 * 4);
             menu.setItem(3, 1,
                     new ItemBuilder(Material.STONE_BUTTON)
-                            .name(ChatColor.GREEN + "Skip")
+                            .name(Component.text("Skip", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         timerDebugAble.skipTimer();
@@ -312,7 +313,7 @@ public class DebugMenuGameOptions {
             );
             menu.setItem(5, 1,
                     new ItemBuilder(Material.CLOCK)
-                            .name(ChatColor.GREEN + "Set")
+                            .name(Component.text("Set", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
                         for (Option option : game.getOptions()) {
