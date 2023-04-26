@@ -621,7 +621,7 @@ public class DebugMenuPlayerOptions {
                     AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
                     menu.setItem((i % 7) + 1, yLevel,
                             new ItemBuilder(Utils.getWoolFromIndex(i))
-                                    .name(ChatColor.GOLD + abstractCooldown.getName())
+                                    .name(Component.text(abstractCooldown.getName(), NamedTextColor.GOLD))
                                     .lore(Component.empty()
                                                    .append(Component.text("Time Left: ", NamedTextColor.GREEN))
                                                    .append(Component.text(abstractCooldown instanceof RegularCooldown ? Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0 + "s" : "N/A",

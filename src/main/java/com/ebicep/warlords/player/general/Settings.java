@@ -39,11 +39,11 @@ public class Settings {
 
     public enum ParticleQuality {
 
-        LOW(new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).name(ChatColor.GOLD + "Low Quality").get(),
+        LOW(new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).name(Component.text("Low Quality", NamedTextColor.GOLD)).get(),
                 ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see.",
                 2
         ),
-        MEDIUM(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(ChatColor.YELLOW + "Medium Quality").get(),
+        MEDIUM(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(Component.text("Medium Quality", NamedTextColor.YELLOW)).get(),
                 ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.",
                 4
         ),

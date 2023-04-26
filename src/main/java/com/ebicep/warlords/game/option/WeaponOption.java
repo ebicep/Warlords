@@ -58,8 +58,9 @@ public class WeaponOption implements Option {
         player.getInventory().setItem(
                 0,
                 new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
-                        .name(ChatColor.GOLD + "Warlord's " + wp.getCosmeticSettings().getWeaponSkin()
-                                                                .getName() + " of the " + spec.getName())
+                        .name(Component.text("Warlord's " + wp.getCosmeticSettings().getWeaponSkin().getName() + " of the " + spec.getName(),
+                                NamedTextColor.GOLD
+                        ))
                         .loreLEGACY(
                                 ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",

@@ -8,6 +8,8 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,10 +42,12 @@ public abstract class AbstractItem {
     ) {
         if (modifierCalculated > 0) {
             ItemModifier blessing = blessings[0];
-            return WordWrap.wrapWithNewline(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(modifierCalculated), 150);
+            return WordWrap.wrapWithNewline(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
         } else {
             ItemModifier curse = curses[0];
-            return WordWrap.wrapWithNewline(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(modifierCalculated), 150);
+            return WordWrap.wrapWithNewline(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
         }
     }
 
@@ -111,7 +115,7 @@ public abstract class AbstractItem {
     }
 
     public Component getHoverComponent() {
-        return Component.text(getItemName()).hoverEvent(generateItemStack());
+        return getItemName().hoverEvent(generateItemStack());
     }
 
     public ItemBuilder generateItemBuilder() {
@@ -152,16 +156,19 @@ public abstract class AbstractItem {
         );
     }
 
-    public String getItemName() {
-        String name = "";
+    public Component getItemName() {
         ItemModifier itemModifier = getItemModifier();
+        TextComponent.Builder name = Component.text()
+                                              .color(itemModifier != null ?
+                                                     modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED :
+                                                     NamedTextColor.GRAY);
         if (itemModifier != null) {
-            name += (modifier > 0 ? ChatColor.GREEN : ChatColor.RED) + itemModifier.getName() + " ";
+            name.append(Component.text(itemModifier.getName() + " "));
         } else {
-            name += ChatColor.GRAY + "Normal ";
+            name.append(Component.text("Normal "));
         }
-        name += getType().name;
-        return name;
+        name.append(Component.text(getType().name));
+        return name.build();
     }
 
     public ItemModifier getItemModifier() {

@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,7 +75,7 @@ public class DebugMenuGameOptions {
                 i++;
                 menu.setItem(i % 7 + 1, i / 7 + 1,
                         new ItemBuilder(Material.BLACK_WOOL)
-                                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + gm.getName())
+                                .name(Component.text(gm.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                                 .get(),
                         (m, e) -> openMapMenu(player, gm)
                 );

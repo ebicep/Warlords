@@ -54,7 +54,7 @@ public class AbilityTree {
                     i + 2,
                     2,
                     new ItemBuilder(upgradeBranch.getItemStack())
-                            .name(ChatColor.GOLD + upgradeBranch.getItemName())
+                            .name(Component.text(upgradeBranch.getItemName(), NamedTextColor.GOLD))
                             .loreLEGACY(
                                     ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + upgradeBranch.getMaxUpgrades(),
                                     ChatColor.GRAY + "Free Upgrades Available: " + ChatColor.GREEN + upgradeBranch.getFreeUpgrades(),

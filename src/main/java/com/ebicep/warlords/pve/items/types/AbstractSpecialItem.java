@@ -6,6 +6,8 @@ import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 import java.util.Set;
@@ -40,12 +42,12 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     }
 
     @Override
-    public String getItemName() {
+    public Component getItemName() {
         ItemModifier itemModifier = getItemModifier();
         if (itemModifier != null) {
-            return (modifier > 0 ? ChatColor.GREEN : ChatColor.RED) + getName();
+            return Component.text(getName(), modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED);
         }
-        return ChatColor.GRAY + getName();
+        return Component.text(getName(), NamedTextColor.GRAY);
     }
 
     public abstract String getName();

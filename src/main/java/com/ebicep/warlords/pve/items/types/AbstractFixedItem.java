@@ -5,6 +5,8 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItemAppliesToPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 import java.util.HashMap;
@@ -34,8 +36,8 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     }
 
     @Override
-    public String getItemName() {
-        return ChatColor.GRAY + getName();
+    public Component getItemName() {
+        return Component.text(getName(), NamedTextColor.GRAY);
     }
 
     public abstract String getName();

@@ -180,9 +180,11 @@ public class WarlordsNewHotbarMenu {
                 }
 
                 ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
-                        .name(ChatColor.GOLD + spec.name + " " + ChatColor.DARK_GRAY + "[" +
-                                ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
-                                ExperienceManager.getPrestigeLevelString(prestige)
+                        .name(Component.text(spec.name, NamedTextColor.GOLD)
+                                       .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                       .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
+                                       .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                       .append(ExperienceManager.getPrestigeLevelString(prestige))
                         )
                         .lore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige))
                         .addLore(
@@ -258,8 +260,12 @@ public class WarlordsNewHotbarMenu {
                     4,
                     0,
                     new ItemBuilder(spec.specType.itemStack)
-                            .name(ChatColor.GOLD + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(
-                                    level) + ChatColor.DARK_GRAY + "] " + ExperienceManager.getPrestigeLevelString(currentPrestige))
+                            .name(Component.text(spec.name, NamedTextColor.GOLD)
+                                           .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                           .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
+                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                           .append(ExperienceManager.getPrestigeLevelString(currentPrestige))
+                            )
                             .lore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, currentPrestige))
                             .get(),
                     (m, e) -> {

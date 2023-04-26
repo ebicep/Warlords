@@ -116,8 +116,9 @@ public class ItemEquipMenu {
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                AbstractItem.sendItemMessage(player, Component.text(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
-                                                                              .hoverEvent(i.getHoverComponent())
+                                AbstractItem.sendItemMessage(player,
+                                        Component.text(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
+                                                 .hoverEvent(i.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
 
@@ -171,10 +172,11 @@ public class ItemEquipMenu {
         );
         menu.setItem(6, 1,
                 new ItemBuilder(Material.ANVIL)
-                        .name(ChatColor.GOLD + "Weight: " +
-                                (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight +
-                                ChatColor.GRAY + "/" +
-                                ChatColor.GREEN + maxWeight)
+                        .name(Component.text("Weight: ", NamedTextColor.GOLD)
+                                       .append(Component.text(loadoutWeight, (loadoutWeight <= maxWeight ? NamedTextColor.GREEN : NamedTextColor.RED)))
+                                       .append(Component.text(" / ", NamedTextColor.GRAY))
+                                       .append(Component.text(maxWeight, NamedTextColor.GREEN))
+                        )
                         .loreLEGACY("",
                                 ChatColor.AQUA + "Breakdown (" + selectedSpec.name + "):"
                         )

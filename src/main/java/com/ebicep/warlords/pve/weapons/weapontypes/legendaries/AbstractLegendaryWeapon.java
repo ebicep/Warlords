@@ -385,70 +385,87 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public String getName() {
+    public Component getName() {
         if (getTitleName().isEmpty()) {
             return super.getName();
         } else {
-            return ChatColor.GOLD + getTitleName() + " " + super.getName();
+            return Component.text(getTitleName() + " ", NamedTextColor.GOLD)
+                            .append(super.getName());
         }
     }
 
     @Override
-    public List<String> getBaseStats() {
+    public List<Component> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
-                        getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + getStarPieceBonusString(
-                        WeaponStats.CRIT_CHANCE),
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(
-                        WeaponStats.CRIT_MULTIPLIER),
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getMeleeDamageMin()), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(getMeleeDamageMax()), NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.MELEE_DAMAGE)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()), NamedTextColor.RED))
+                         .append(Component.text("%", NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.CRIT_CHANCE)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()), NamedTextColor.RED))
+                         .append(Component.text("%", NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.CRIT_MULTIPLIER)),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
+                         .append(getStarPieceBonusString(WeaponStats.HEALTH_BONUS))
         );
     }
 
     @Override
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
+    public List<Component> getLore() {
+        List<Component> lore = new ArrayList<>();
         if (getSpeedBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
+            lore.add(Component.text("Speed: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SPEED_BONUS)));
         }
         if (getEnergyPerSecondBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
+            lore.add(Component.text("Energy per Second: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getEnergyPerSecondBonus()), NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS)));
         }
         if (getEnergyPerHitBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
+            lore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getEnergyPerHitBonus()), NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS)));
         }
         lore.addAll(Arrays.asList(
-                "",
-                ChatColor.GREEN + "Skill Boost (" + selectedSkillBoost.name + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline("1 Free Ability Upgrade", 175)
+                Component.empty(),
+                Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN)
         ));
+        lore.addAll(WordWrap.wrap(Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY), 175));
         if (getSkillCritChanceBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
+            lore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSkillCritChanceBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS)));
         }
         if (getSkillCritMultiplierBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(
-                    WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
+            lore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSkillCritMultiplierBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS)));
         }
         String passiveEffect = getPassiveEffect();
         if (!passiveEffect.isEmpty()) {
             lore.addAll(Arrays.asList(
-                    "",
-                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
+                    Component.empty(),
+                    Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN)
             ));
+            lore.addAll(WordWrap.wrap(Component.text(passiveEffect, NamedTextColor.GRAY), 175));
         }
-
         return lore;
     }
 
     @Override
-    public List<String> getLoreAddons() {
-        List<String> loreAddons = new ArrayList<>();
-        loreAddons.add(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+    public List<Component> getLoreAddons() {
+        List<Component> loreAddons = new ArrayList<>();
+        loreAddons.add(Component.text("Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
         if (getPassiveEffect() != null) {
-            loreAddons.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]");
+            loreAddons.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE));
         }
         return loreAddons;
     }
@@ -464,8 +481,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GOLD;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.GOLD;
     }
 
     public String getTitleName() {
@@ -524,8 +541,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
     }
 
-    public String getStarPieceBonusString(WeaponStats weaponStats) {
-        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : "";
+    public Component getStarPieceBonusString(WeaponStats weaponStats) {
+        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : Component.empty();
     }
 
     @Override

@@ -8,7 +8,8 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,14 +49,14 @@ public class CommonWeapon extends AbstractTierTwoWeapon implements Salvageable, 
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GREEN;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.GREEN;
     }
 
     @Override
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Arrays.asList(
-                "",
+                Component.empty(),
                 getWeaponScoreString()
         );
     }

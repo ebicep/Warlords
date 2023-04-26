@@ -75,7 +75,7 @@ public class WeaponBindMenu {
                         menu.setItem(
                                 column + i,
                                 row + 1,
-                                boundWeapon.generateItemStackInLore(ChatColor.GREEN + "Click to replace binding")
+                                boundWeapon.generateItemStackInLore(Component.text("Click to replace binding"))
                                            .enchant(Enchantment.OXYGEN, 1)
                                            .get(),
                                 (m, e) -> {
@@ -84,11 +84,11 @@ public class WeaponBindMenu {
 
                                     player.sendMessage(
                                             Component.text(ChatColor.GRAY + "You unbounded ")
-                                                     .append(Component.text(boundWeapon.getName())
-                                                                      .hoverEvent(boundWeapon.generateItemStack(false).asHoverEvent()))
+                                                     .append(boundWeapon.getName()
+                                                                        .hoverEvent(boundWeapon.generateItemStack(false).asHoverEvent()))
                                                      .append(Component.text(ChatColor.GRAY + " and bound "))
-                                                     .append(Component.text(selectedWeapon.getName())
-                                                                      .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
+                                                     .append(selectedWeapon.getName()
+                                                                           .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
                                                      )
                                     );
 
@@ -132,7 +132,7 @@ public class WeaponBindMenu {
 
                                     player.sendMessage(
                                             Component.text(ChatColor.AQUA + "You bound ")
-                                                     .append(Component.text(selectedWeapon.getName()))
+                                                     .append(selectedWeapon.getName())
                                                      .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
                                     );
                                 }

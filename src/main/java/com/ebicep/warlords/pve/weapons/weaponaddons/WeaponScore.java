@@ -2,7 +2,8 @@ package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -40,8 +41,11 @@ public interface WeaponScore {
         return Math.round(sum / averageScores.size() * 10000) / 100f;
     }
 
-    default String getWeaponScoreString() {
-        return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getWeaponScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
+    default Component getWeaponScoreString() {
+        return Component.text("Score: ", NamedTextColor.GRAY)
+                        .append(Component.text(NumberFormat.formatOptionalHundredths(getWeaponScore()), NamedTextColor.YELLOW))
+                        .append(Component.text("/"))
+                        .append(Component.text("100", NamedTextColor.GREEN));
     }
 
     List<Double> getWeaponScoreAverageValues();

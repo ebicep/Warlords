@@ -6,7 +6,7 @@ import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,8 +22,8 @@ public interface StarPieceBonus {
 
     List<WeaponStats> getRandomStatBonus();
 
-    default String getStarPieceBonusString() {
-        return ChatColor.WHITE + " (+" + getStarPieceBonusValue() + "% ✦)";
+    default Component getStarPieceBonusString() {
+        return Component.text("(+" + getStarPieceBonusValue() + "% ✦)", NamedTextColor.WHITE);
     }
 
     int getStarPieceBonusValue();

@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -79,22 +78,23 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%",
-                "",
+                Component.text("Speed :", NamedTextColor.GRAY)
+                         .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN)),
+                Component.empty(),
                 getWeaponScoreString()
         );
     }
 
     @Override
-    public List<String> getLoreAddons() {
-        return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+    public List<Component> getLoreAddons() {
+        return Collections.singletonList(Component.text("Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.DARK_PURPLE;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.DARK_PURPLE;
     }
 
     public float getSpeedBonus() {

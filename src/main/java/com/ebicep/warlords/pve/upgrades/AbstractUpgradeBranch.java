@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -283,7 +285,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                 "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
         ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
-                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
+                .name(Component.text(masterUpgrade.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                 .loreLEGACY(lore);
         if (!upgrade.isUnlocked()) {
             String position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);

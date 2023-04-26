@@ -37,9 +37,9 @@ public class WeaponCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
             ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text(ChatColor.GRAY + "Spawned weapon: ")
-                                                                                .append(Component.text(abstractWeapon.getName())
-                                                                                                 .hoverEvent(abstractWeapon.generateItemStack(false)
-                                                                                                                           .asHoverEvent()))
+                                                                                .append(abstractWeapon.getName()
+                                                                                                      .hoverEvent(abstractWeapon.generateItemStack(false)
+                                                                                                                                .asHoverEvent()))
             );
         });
     }

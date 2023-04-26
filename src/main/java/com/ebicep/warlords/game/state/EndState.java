@@ -649,7 +649,7 @@ public class EndState implements State, TimerDebugAble {
                             TextComponent.Builder weaponTypeSummary = Component.empty().toBuilder();
                             for (int i = 0; i < weapons.size(); i++) {
                                 AbstractWeapon weapon = weapons.get(i);
-                                weaponTypeSummary.append(Component.text(weapon.getName(), NamedTextColor.WHITE));
+                                weaponTypeSummary.append(weapon.getName());
                                 if (weapon instanceof WeaponScore) {
                                     weaponTypeSummary.append(Component.text(" (" + NumberFormat.formatOptionalHundredths(((WeaponScore) weapon).getWeaponScore()) + ")",
                                             NamedTextColor.YELLOW

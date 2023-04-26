@@ -17,6 +17,8 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -120,7 +122,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                       .sorted(Comparator.comparing(o -> o.getValue().getTier())).forEachOrdered(entry -> {
                           String mapName = entry.getKey();
                           AbstractItem item = entry.getValue();
-                          String itemName = item.getItemName();
+                          Component itemName = item.getItemName();
                           IllusionVendorWeeklyShop.PurchasableItem purchasableItem = itemCosts.get(mapName);
                           if (purchasableItem == null) {
                               ChatUtils.MessageTypes.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop: " + mapName);
@@ -156,9 +158,12 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                       pveStats.getIllusionVendorRewardsPurchased().merge(mapName, 1L, Long::sum);
                                       weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
 
-                                      player.sendMessage(ChatColor.GREEN + "Purchased " + itemName +
-                                              ChatColor.GREEN + " for " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) +
-                                              ChatColor.GREEN + "!");
+                                      player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
+                                                                  .append(itemName)
+                                                                  .append(Component.text(" for "))
+                                                                  .append(Currencies.ILLUSION_SHARD.getCostColoredName(cost))
+                                                                  .append(Component.text("!"))
+                                      );
                                       player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                                       openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
 

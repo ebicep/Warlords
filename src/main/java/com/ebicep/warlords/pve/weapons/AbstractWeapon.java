@@ -103,57 +103,57 @@ public abstract class AbstractWeapon {
                 .name(getName())
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        List<String> loreAddons = getLoreAddons();
+        List<Component> loreAddons = getLoreAddons();
         if (!loreAddons.isEmpty() || isBound) {
-            lore.add("");
+            lore.add(Component.empty());
         }
         lore.addAll(loreAddons);
         if (isBound) {
-            lore.add(ChatColor.AQUA + "BOUND");
+            lore.add(Component.text("BOUND", NamedTextColor.AQUA));
             if (enchantIfBound) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
             }
         }
         return itemBuilder
-                .loreLEGACY(lore)
+                .lore(lore)
                 .get();
     }
 
     public Component getHoverComponent(boolean enchantIfBound) {
-        return Component.text(getName()).hoverEvent(generateItemStack(enchantIfBound));
+        return getName().hoverEvent(generateItemStack(enchantIfBound));
     }
 
-    public String getName() {
-        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    public Component getName() {
+        return Component.text(selectedWeaponSkin.getName() + " of the " + specialization.name, getTextColor());
     }
 
-    public abstract List<String> getBaseStats();
+    public abstract List<Component> getBaseStats();
 
-    public abstract List<String> getLore();
+    public abstract List<Component> getLore();
 
-    public List<String> getLoreAddons() {
+    public List<Component> getLoreAddons() {
         return new ArrayList<>();
     }
 
-    public abstract ChatColor getChatColor();
+    public abstract NamedTextColor getTextColor();
 
-    public ItemBuilder generateItemStackInLore(String name) {
-        List<String> lore = new ArrayList<>();
+    public ItemBuilder generateItemStackInLore(Component name) {
+        List<Component> lore = new ArrayList<>();
         lore.add(getName());
-        lore.add("");
+        lore.add(Component.empty());
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        lore.add("");
+        lore.add(Component.empty());
         lore.addAll(getLoreAddons());
         if (isBound) {
-            lore.add(ChatColor.AQUA + "BOUND");
+            lore.add(Component.text("BOUND", NamedTextColor.AQUA));
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
-                .loreLEGACY(lore)
+                .lore(lore)
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
     }
