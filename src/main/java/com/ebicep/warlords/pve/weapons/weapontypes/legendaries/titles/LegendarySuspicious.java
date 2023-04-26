@@ -1,9 +1,12 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
@@ -52,26 +55,28 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Play an among us sound and gain " + formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()) + " energy whenever you land a melee crit.";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()),
-                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevelUpgraded())
-        ));
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Suspicious Weapon",
+                null,
+                LegendarySuspicious.class,
+                null,
+                player,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+
+                },
+                false
+        ) {
+            @Override
+            public float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (event.getAbility().isEmpty()) {
+                    return 50;
+                }
+                return currentCritChance;
+            }
+        });
         player.getGame().registerEvents(new Listener() {
             BukkitTask sound;
 
@@ -116,6 +121,11 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Play an among us sound and gain " + formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()) + " energy whenever you land a melee crit.";
+    }
+
+    @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.SUSPICIOUS;
     }
@@ -123,16 +133,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     @Override
     protected float getMeleeDamageMinValue() {
         return 180;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 50;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return -50;
     }
 
     @Override
@@ -158,5 +158,28 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     @Override
     protected float getSkillCritMultiplierBonusValue() {
         return 15;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 50;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return -50;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()),
+                formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevelUpgraded())
+        ));
     }
 }
