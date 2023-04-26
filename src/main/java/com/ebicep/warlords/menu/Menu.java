@@ -31,7 +31,7 @@ public class Menu extends AbstractMenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {
     };
     public static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
-            .name(ChatColor.RED + "Close")
+            .name(Component.text("Close", NamedTextColor.RED))
             .get();
     public static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
             .name(Component.text("Back", NamedTextColor.GREEN))

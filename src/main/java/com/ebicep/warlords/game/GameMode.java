@@ -571,7 +571,7 @@ public enum GameMode {
                 )
         );
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
-                .name(ChatColor.RED + "Leave")
+                .name(Component.text("Leave", NamedTextColor.RED))
                 .loreLEGACY(ChatColor.GRAY + "Right-Click to leave the game.")
                         .get(),
                         (g, p) -> {

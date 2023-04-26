@@ -130,7 +130,7 @@ public class DebugMenuTeamOptions {
                 ACTION_DO_NOTHING);
         menu.setItem(5, 5,
                 new ItemBuilder(Material.DIAMOND_SWORD)
-                        .name(ChatColor.RED + "Kill All")
+                        .name(Component.text("Kill All", NamedTextColor.RED))
                         .loreLEGACY(ChatColor.GRAY + "Kills all the players on the team")
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(), (m, e) -> {

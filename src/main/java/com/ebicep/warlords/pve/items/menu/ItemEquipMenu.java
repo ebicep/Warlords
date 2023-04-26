@@ -330,7 +330,7 @@ public class ItemEquipMenu {
 
         menu.setItem(3, 5,
                 new ItemBuilder(Material.LAVA_BUCKET)
-                        .name(ChatColor.RED + "Delete Loadout")
+                        .name(Component.text("Delete Loadout", NamedTextColor.RED))
                         .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout.", 150))
                         .get(),
                 (m, e) -> {
@@ -455,7 +455,7 @@ public class ItemEquipMenu {
             ItemBuilder itemBuilder;
             if (overweight) {
                 itemBuilder = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                        .name(ChatColor.RED + "Overweight!");
+                        .name(Component.text("Overweight!", NamedTextColor.RED));
             } else if (i <= ratio - 1) {
                 itemBuilder = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE);
             } else if (i != 0 && i <= ratio - .5) {

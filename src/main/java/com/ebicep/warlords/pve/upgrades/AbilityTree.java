@@ -202,7 +202,7 @@ public class AbilityTree {
             );
             menu.setItem(5, 4,
                     new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(ChatColor.RED + "Delete Profile")
+                            .name(Component.text("Delete Profile", NamedTextColor.RED))
                             .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
                             .get(),
                     (m, e) -> {

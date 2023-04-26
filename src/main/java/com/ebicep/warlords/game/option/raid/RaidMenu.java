@@ -6,6 +6,9 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +27,7 @@ public class RaidMenu {
                     i % 7 + 1,
                     1,
                     new ItemBuilder(Material.REDSTONE)
-                            .name(ChatColor.RED + ChatColor.BOLD.toString() + raid.getName())
+                            .name(Component.text(raid.getName(), NamedTextColor.RED, TextDecoration.BOLD))
                             .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 150) +
                                     "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel() +
                                     "\n§7Minimum player requirement: §64" +
@@ -50,7 +53,7 @@ public class RaidMenu {
                         if (finalMap != null) {
                             GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
                                     queueEntryBuilder.setMap(finalMap)
-                                            .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         }

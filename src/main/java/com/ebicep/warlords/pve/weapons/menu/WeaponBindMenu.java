@@ -121,7 +121,7 @@ public class WeaponBindMenu {
                                     .name(Component.text("Click to bind", NamedTextColor.GREEN))
                                     .get() :
                             new ItemBuilder(Material.RED_STAINED_GLASS_PANE)
-                                    .name(ChatColor.RED + "You cannot bind this weapon to " + spec.name)
+                                    .name(Component.text("You cannot bind this weapon to " + spec.name, NamedTextColor.RED))
                                     .get(),
                             (m, e) -> {
                                 if (spec == weaponSpec) {

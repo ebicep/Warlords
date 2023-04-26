@@ -462,7 +462,7 @@ public class WarlordsNewHotbarMenu {
 
                     builder.loreLEGACY(lore);
                 } else {
-                    builder = new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "Locked Weapon Skin");
+                    builder = new ItemBuilder(Material.BARRIER).name(Component.text("Locked Weapon Skin", NamedTextColor.RED));
                 }
 
                 menu.setItem(
