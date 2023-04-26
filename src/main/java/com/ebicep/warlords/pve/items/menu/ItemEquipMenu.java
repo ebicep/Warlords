@@ -164,7 +164,7 @@ public class ItemEquipMenu {
         addWeightPercentageBar(menu, maxWeight, loadoutWeight);
         menu.setItem(2, 1,
                 new ItemBuilder(HeadUtils.getHead(player))
-                        .name(ChatColor.AQUA + "Stat Bonuses")
+                        .name(Component.text("Stat Bonuses", NamedTextColor.AQUA))
                         .loreLEGACY(ItemMenuUtil.getTotalBonusLore(equippedItems, true))
                         .get(),
                 (m, e) -> {}

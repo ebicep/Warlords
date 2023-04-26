@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -166,7 +167,7 @@ public class FlagRenderer {
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
                 item.setItemMeta(banner);
                 player.getInventory().setHelmet(item);
-                player.getInventory().setItem(6, new ItemBuilder(Material.BLACK_BANNER, 1).name("§aDrop Flag").get());
+                player.getInventory().setItem(6, new ItemBuilder(Material.BLACK_BANNER, 1).name(Component.text("Drop Flag", NamedTextColor.GREEN)).get());
             }
         }
     }

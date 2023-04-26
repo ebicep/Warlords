@@ -155,7 +155,7 @@ public enum GameMode {
                     Component.text("First team to reach 1000 points wins!", NamedTextColor.YELLOW)
             ));
             options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
                     .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                     .get(), (g, p) -> openMainMenu(p)));
 
@@ -543,15 +543,15 @@ public enum GameMode {
             return new ItemBuilder(apc.getWeapon()
                                       .getItem(playerSettings.getWeaponSkins()
                                                              .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                    .name("§aWeapon Skin Preview")
+                    .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                     .get();
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.AQUA + "Pre-game Menu ")
+                .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
                 .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                 .get(), (g, p) -> openMainMenu(p)));
         options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                .name(ChatColor.AQUA + "Player Spec Information")
+                .name(Component.text("Player Spec Information", NamedTextColor.AQUA))
                 .loreLEGACY(ChatColor.GRAY + "Displays the amount of people on each specialization.")
                         .get(),
                         (g, p) -> {

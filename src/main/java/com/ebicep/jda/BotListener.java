@@ -253,7 +253,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     if (partyPlayerPair != null && targetPlayer != null) {
                                         targetPlayer.getInventory().setItem(7,
                                                 new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getItem())
-                                                        .name("§aTeam Builder")
+                                                        .name(Component.text("Team Builder", NamedTextColor.GREEN))
                                                         .get()
                                         );
 

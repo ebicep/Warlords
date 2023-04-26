@@ -13,6 +13,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,10 +37,10 @@ import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.
 public class PlayerHotBarItemListener implements Listener {
 
     public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD)
-            .name("§aDebug Menu")
+            .name(Component.text("Debug Menu", NamedTextColor.GREEN))
             .get();
     public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND)
-            .name("§aPvP Menu")
+            .name(Component.text("PvP Menu", NamedTextColor.GREEN))
             .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvP.", 160),
                     "",
@@ -46,7 +48,7 @@ public class PlayerHotBarItemListener implements Listener {
             )
             .get();
     public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
-            .name("§aPvE Menu")
+            .name(Component.text("PvE Menu", NamedTextColor.GREEN))
             .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvE.", 160),
                     "",
@@ -54,10 +56,10 @@ public class PlayerHotBarItemListener implements Listener {
             )
             .get();
     public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
-            .name("§aStart Menu")
+            .name(Component.text("Start Menu", NamedTextColor.GREEN))
             .get();
     public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.ENDER_EYE)
-            .name("§aSpectate")
+            .name(Component.text("Spectate", NamedTextColor.GREEN))
             .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
                     "",
@@ -65,7 +67,7 @@ public class PlayerHotBarItemListener implements Listener {
             )
             .get();
     public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR)
-            .name("§aWarlords Menu")
+            .name(Component.text("Warlords Menu", NamedTextColor.GREEN))
             .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View your specializations, settings, PvP/PvE stats, and more!", 160),
                     "",
@@ -73,7 +75,7 @@ public class PlayerHotBarItemListener implements Listener {
             )
             .get();
     public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK)
-            .name("§aSettings Menu")
+            .name(Component.text("Settings Menu", NamedTextColor.GREEN))
             .loreLEGACY(
                     WordWrap.wrapWithNewline(ChatColor.GRAY + "View all your in game settings.", 160),
                     "",
@@ -132,16 +134,19 @@ public class PlayerHotBarItemListener implements Listener {
                 List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
                 if (!playerList.isEmpty()) {
                     playerList.stream()
-                            .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                            .findFirst()
-                            .ifPresent(regularGamePlayer -> setItem(player, 0, new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get()));
+                              .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
+                              .findFirst()
+                              .ifPresent(regularGamePlayer -> setItem(player,
+                                      0,
+                                      new ItemBuilder(regularGamePlayer.getTeam().item).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
+                              ));
                 }
             }
         }
         setItem(player,
                 1,
                 new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                        .name("§aWeapon Skin Preview")
+                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                         .get()
         );
 

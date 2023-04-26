@@ -214,11 +214,11 @@ public class RegularGamesMenu {
             String name = offlinePlayer.getName();
             if (selectedPlayersToSwap.get(team).contains(uuid)) {
                 itemBuilder = new ItemBuilder(new ItemStack(Material.CREEPER_HEAD))
-                        .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
+                        .name(Component.text(name, NamedTextColor.AQUA).append(Component.text(" SELECTED", NamedTextColor.GREEN)))
                         .loreLEGACY(ChatColor.GOLD + p.getSelectedSpec().name);
             } else {
                 itemBuilder = new ItemBuilder(HeadUtils.getHead(uuid))
-                        .name(ChatColor.AQUA + name)
+                        .name(Component.text(name, NamedTextColor.AQUA))
                         .loreLEGACY(ChatColor.GOLD + p.getSelectedSpec().name);
             }
 

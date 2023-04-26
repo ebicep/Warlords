@@ -217,7 +217,7 @@ public class WarlordsNewHotbarMenu {
                                         .getWeaponSkins()
                                         .getOrDefault(spec, Weapons.FELFLAME_BLADE)
                                         .getItem()))
-                                        .name("§aWeapon Skin Preview")
+                                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
@@ -389,7 +389,11 @@ public class WarlordsNewHotbarMenu {
                 .loreLEGACY("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
-                .name(ChatColor.AQUA + "Armor Sets " + ChatColor.GRAY + "& " + ChatColor.AQUA + "Helmets " + ChatColor.GOLD + "(Cosmetic)")
+                .name(Component.text("Armor Sets ", NamedTextColor.AQUA)
+                               .append(Component.text("& ", NamedTextColor.GRAY))
+                               .append(Component.text("Helmets "))
+                               .append(Component.text("(Cosmetic)", NamedTextColor.GOLD))
+                )
                 .loreLEGACY(
                         "§7Equip your favorite armor\n§7sets or class helmets",
                         "",
@@ -397,7 +401,7 @@ public class WarlordsNewHotbarMenu {
                 )
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
-                .name(ChatColor.AQUA + "Weapon Skill Boost")
+                .name(Component.text("Weapon Skill Boost", NamedTextColor.AQUA))
                 .loreLEGACY("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
                         "",
                         "§cWARNING: §7This does not apply to PvE.",
@@ -474,7 +478,7 @@ public class WarlordsNewHotbarMenu {
                                 player.getInventory().setItem(1, new ItemBuilder(apc
                                         .getWeapon()
                                         .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                                        .name("§aWeapon Skin Preview")
+                                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
@@ -776,7 +780,7 @@ public class WarlordsNewHotbarMenu {
                 .loreLEGACY(ChatColor.GRAY + "To PvE Menu")
                 .get();
         public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
-                .name("§aWeapons")
+                .name(Component.text("Weapons", NamedTextColor.GREEN))
                 .loreLEGACY(
                         WordWrap.wrapWithNewline(ChatColor.GRAY + "View and modify all your weapons, also accessible through The Weaponsmith.", 160),
                         "",
@@ -784,7 +788,7 @@ public class WarlordsNewHotbarMenu {
                 )
                 .get();
         public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
-                .name("§aItems")
+                .name(Component.text("Items", NamedTextColor.GREEN))
                 .loreLEGACY(
                         WordWrap.wrapWithNewline(ChatColor.GRAY + "View and equip all your Items.", 160),
                         "",
@@ -792,7 +796,7 @@ public class WarlordsNewHotbarMenu {
                 )
                 .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
-                .name("§aReward Inventory")
+                .name(Component.text("Reward Inventory", NamedTextColor.GREEN))
                 .loreLEGACY(
                         WordWrap.wrapWithNewline(ChatColor.GRAY + "View and claim all your rewards.", 160),
                         "",
@@ -832,7 +836,7 @@ public class WarlordsNewHotbarMenu {
                 });
                 menu.setItem(2, 1,
                         new ItemBuilder(Material.ZOMBIE_HEAD)
-                                .name("§aMob Drops")
+                                .name(Component.text("Mob Drops", NamedTextColor.GREEN))
                                 .lore(Arrays.stream(MobDrops.VALUES)
                                             .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
                                                                                                .getMobDrops()
@@ -858,7 +862,7 @@ public class WarlordsNewHotbarMenu {
     public static class SettingsMenu extends BaseCommand {
 
         public static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.AQUA + "Settings")
+                .name(Component.text("Settings", NamedTextColor.AQUA))
                 .loreLEGACY("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
                 .get();
         public static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)

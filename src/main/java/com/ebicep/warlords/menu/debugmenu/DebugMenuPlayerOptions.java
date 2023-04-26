@@ -273,7 +273,7 @@ public class DebugMenuPlayerOptions {
 
             MenuItemPairList firstRow = new MenuItemPairList();
             firstRow.add(new ItemBuilder(Material.BEACON)
-                            .name(ChatColor.AQUA + "Manage Cooldowns")
+                            .name(Component.text("Manage Cooldowns", NamedTextColor.AQUA))
                             .get(),
                     (m, e) -> {
                         CooldownOptionMenus.openCooldownManagerMenu(player, target);
@@ -290,7 +290,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
-                            .name(ChatColor.AQUA + "Clear All Cooldowns")
+                            .name(Component.text("Clear All Cooldowns", NamedTextColor.AQUA))
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().clearAllCooldowns();
@@ -302,7 +302,7 @@ public class DebugMenuPlayerOptions {
             );
 
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
-                            .name(ChatColor.AQUA + "Clear All Buffs")
+                            .name(Component.text("Clear All Buffs", NamedTextColor.AQUA))
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeBuffCooldowns();
@@ -313,7 +313,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
-                            .name(ChatColor.AQUA + "Clear All Debuffs")
+                            .name(Component.text("Clear All Debuffs", NamedTextColor.AQUA))
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeDebuffCooldowns();
@@ -324,7 +324,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
             firstRow.add(new ItemBuilder(Material.MILK_BUCKET)
-                            .name(ChatColor.AQUA + "Clear All Abilities")
+                            .name(Component.text("Clear All Abilities", NamedTextColor.AQUA))
                             .get(),
                     (m, e) -> {
                         target.getCooldownManager().removeAbilityCooldowns();
@@ -643,7 +643,7 @@ public class DebugMenuPlayerOptions {
 
                 MenuItemPairList menuItemPairList = new MenuItemPairList();
                 menuItemPairList.add(new ItemBuilder(Material.MILK_BUCKET)
-                                .name(ChatColor.AQUA + "Remove")
+                                .name(Component.text("Remove", NamedTextColor.AQUA))
                                 .get(),
                         (m, e) -> {
                             target.getCooldownManager().getCooldowns().remove(abstractCooldown);
@@ -665,7 +665,7 @@ public class DebugMenuPlayerOptions {
                         }
                 );
                 menuItemPairList.add(new ItemBuilder(Material.REDSTONE)
-                                .name(ChatColor.AQUA + "Add duration")
+                                .name(Component.text("Add duration", NamedTextColor.AQUA))
                                 .get(),
                         (m, e) -> {
                             if (!target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {

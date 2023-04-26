@@ -128,9 +128,10 @@ public class WarlordsShopMenu {
 
                         AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                                                                                               .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name(
-                                                                                                                                                                              "§aWeapon Skin Preview")
-                                                                                                                                                                      .get());
+                                                                                                               .getOrDefault(spec, Weapons.FELFLAME_BLADE)
+                                                                                                               .getItem())).name(
+                                                                                                                                   "§aWeapon Skin Preview")
+                                                                                                                           .get());
 
                         openClassMenu(player, selectedGroup);
                         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
@@ -269,9 +270,12 @@ public class WarlordsShopMenu {
                             openWeaponMenu(player, pageNumber);
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                                                                                                   .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
-                                                                                                                   .getItem())).name("§aWeapon Skin Preview")
-                                                                                                                               .get());
+                                                                                                                   .getOrDefault(selectedSpec,
+                                                                                                                           Weapons.FELFLAME_BLADE
+                                                                                                                   )
+                                                                                                                   .getItem()))
+                                    .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                    .get());
 
                             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                         } else {
