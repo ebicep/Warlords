@@ -44,8 +44,8 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
                 .builder()
                 .applyConnectionString(new ConnectionString(key))
                 .uuidRepresentation(UuidRepresentation.STANDARD)
-                .applyToSocketSettings(builder -> builder.connectTimeout(20, TimeUnit.SECONDS)
-                                                         .readTimeout(20, TimeUnit.SECONDS))
+                .applyToSocketSettings(builder -> builder.connectTimeout(300, TimeUnit.SECONDS)
+                                                         .readTimeout(3020, TimeUnit.SECONDS))
                 .build();
         MongoClient mongoClient = MongoClients.create(mongoClientSettings);
         DatabaseManager.mongoClient = mongoClient;

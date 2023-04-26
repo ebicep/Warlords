@@ -77,11 +77,21 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 if (!Objects.equals(event.getWarlordsEntity(), player)) {
                     return;
                 }
+                int alliedNPCs = (int) game.warlordsNPCs()
+                                           .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
+                                           .count();
+                int spawnAmount = Utils.generateRandomValueBetweenInclusive(1, 3);
+                if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
+                    spawnAmount = SPAWN_LIMIT - alliedNPCs;
+                }
+                if (spawnAmount <= 0) {
+                    return;
+                }
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                    .aliveEnemiesOf(player)
                                    .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
                                    .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
-                                   .limit(Utils.generateRandomValueBetweenInclusive(1, 3))
+                                   .limit(spawnAmount)
                                    .forEach(convertedEnemy -> {
                                        EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
                                        convertedEnemy.setTeam(Team.BLUE);
@@ -140,6 +150,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                            .count();
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
+                }
+                if (spawnAmount <= 0) {
+                    return;
                 }
                 player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
