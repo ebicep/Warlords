@@ -316,7 +316,7 @@ public class WarlordsNewHotbarMenu {
                                         Material.LIME_STAINED_GLASS_PANE :
                                         Material.YELLOW_STAINED_GLASS_PANE :
                                         Material.BLACK_STAINED_GLASS_PANE)
-                                .name((menuLevel <= level ? ChatColor.GREEN : ChatColor.RED) + "Level Reward " + menuLevel)
+                                .name(Component.text("Level Reward " + menuLevel, menuLevel <= level ? NamedTextColor.GREEN : NamedTextColor.RED))
                                 .loreLEGACY(lore)
                                 .get(),
                         (m, e) -> {
@@ -604,7 +604,7 @@ public class WarlordsNewHotbarMenu {
             for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.length; i++) {
                 ArmorManager.Helmets helmet = helmets[i];
                 ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                        .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
+                        .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .loreLEGACY(HELMET_DESCRIPTION, "")
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (selectedHelmet.contains(helmet)) {
@@ -633,7 +633,7 @@ public class WarlordsNewHotbarMenu {
                 ArmorManager.ArmorSets armorSet = ArmorManager.ArmorSets.VALUES[(i % 3) * 3];
                 Classes classes = Classes.VALUES[i / 3];
                 ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorManager.ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
-                        .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
+                        .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .loreLEGACY(ARMOR_DESCRIPTION, "")
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (playerSettings.getArmorSet(classes) == armorSet) {

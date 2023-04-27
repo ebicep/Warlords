@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -119,7 +120,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.OAK_FENCE_GATE, 0, this.getClass(),
-                "Gates",
+                Component.text("Gates"),
                 new Location(
                         min.getWorld(),
                         (min.getX() + max.getX()) / 2,

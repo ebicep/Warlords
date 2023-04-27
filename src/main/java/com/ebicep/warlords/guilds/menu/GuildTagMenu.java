@@ -30,16 +30,18 @@ public class GuildTagMenu {
         int column = 1;
         for (Colors color : GuildTag.COLORS) {
             ItemBuilder itemBuilder = new ItemBuilder(color.wool)
-                    .name(color.chatColor + "[" + guildTag.getColoredName() + color.chatColor + "]");
-            if (Objects.equals(color.chatColor.toString(), guildTag.getBracketColor())) {
+                    .name(Component.text("[", color.textColor)
+                                   .append(guildTag.getColoredName())
+                                   .append(Component.text("]")));
+            if (Objects.equals(color.textColor.toString(), guildTag.getBracketColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
-                        guild.log(new GuildLogTagBracketColor(player.getUniqueId(), guildTag.getBracketColor(), color.chatColor.toString()));
-                        guildTag.setBracketColor(color.chatColor.toString());
+                        guild.log(new GuildLogTagBracketColor(player.getUniqueId(), guildTag.getBracketColor(), color.textColor.toString()));
+                        guildTag.setBracketColor(color.textColor);
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);
                     }
@@ -69,16 +71,18 @@ public class GuildTagMenu {
         column = 1;
         for (Colors color : GuildTag.COLORS) {
             ItemBuilder itemBuilder = new ItemBuilder(color.wool)
-                    .name(guildTag.getBracketColor() + "[" + color.chatColor + guildTag.getName() + guildTag.getBracketColor() + "]");
-            if (Objects.equals(color.chatColor.toString(), guildTag.getNameColor())) {
+                    .name(Component.text("[", guildTag.getBracketTextColor())
+                                   .append(Component.text(guildTag.getName(), color.textColor))
+                                   .append(Component.text("]")));
+            if (Objects.equals(color.textColor.toString(), guildTag.getNameColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
-                        guild.log(new GuildLogTagNameColor(player.getUniqueId(), guildTag.getNameColor(), color.chatColor.toString()));
-                        guildTag.setNameColor(color.chatColor.toString());
+                        guild.log(new GuildLogTagNameColor(player.getUniqueId(), guildTag.getNameColor(), color.textColor.toString()));
+                        guildTag.setNameColor(color.textColor);
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);
                     }

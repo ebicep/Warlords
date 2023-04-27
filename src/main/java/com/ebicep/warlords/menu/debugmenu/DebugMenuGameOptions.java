@@ -363,7 +363,7 @@ public class DebugMenuGameOptions {
                         x,
                         1,
                         new ItemBuilder(team.item)
-                                .name(team.teamColor + team.name)
+                                .name(Component.text(team.name, team.teamColor))
                                 .get(),
                         (m, e) -> {
                             new SignGUI()

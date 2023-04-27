@@ -129,9 +129,9 @@ public class WarlordsShopMenu {
                         AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                                                                                                .getOrDefault(spec, Weapons.FELFLAME_BLADE)
-                                                                                                               .getItem())).name(
-                                                                                                                                   "§aWeapon Skin Preview")
-                                                                                                                           .get());
+                                                                                                               .getItem()))
+                                .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                .get());
 
                         openClassMenu(player, selectedGroup);
                         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
@@ -153,7 +153,9 @@ public class WarlordsShopMenu {
         for (int i = 0; i < values.size(); i++) {
             SkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(selectedSpec.specType.itemStack)
-                    .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED))
+                    .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
+                            skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
+                    ))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
             lore.add(Component.empty());
@@ -324,7 +326,7 @@ public class WarlordsShopMenu {
         for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.length; i++) {
             Helmets helmet = helmets[i];
             ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                    .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
+                    .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                     .loreLEGACY(HELMET_DESCRIPTION, "")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (selectedHelmet.contains(helmet)) {
@@ -353,7 +355,7 @@ public class WarlordsShopMenu {
             ArmorSets armorSet = ArmorSets.VALUES[(i % 3) * 3];
             Classes classes = Classes.VALUES[i / 3];
             ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
-                    .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
+                    .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                     .loreLEGACY(ARMOR_DESCRIPTION, "")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (playerSettings.getArmorSet(classes) == armorSet) {
@@ -495,7 +497,7 @@ public class WarlordsShopMenu {
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
             ItemBuilder builder = new ItemBuilder(team.getItem())
-                    .name(team.teamColor() + team.getName())
+                    .name(Component.text(team.getName(), team.teamColor))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             if (team == selectedTeam) {
@@ -555,7 +557,8 @@ public class WarlordsShopMenu {
                 Component.empty(),
                 Component.text("Specialization Stats:", NamedTextColor.GOLD),
                 Component.empty(),
-                Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
                          .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))

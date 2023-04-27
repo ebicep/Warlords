@@ -129,15 +129,17 @@ public class InterceptionPointOption implements Option {
 				return location;
 			}
 		});
-		game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.TORCH, 0, this.getClass(), "Capture point: " + name, () -> location, () -> Arrays.asList(
-				"inConflict: " + inConflict,
-				"teamOwning: " + teamOwning,
-				"teamAttacking: " + teamAttacking,
-				"teamInCircle: " + teamInCircle,
-				"minCaptureRadius: " + minCaptureRadius,
-				"maxCaptureRadius: " + maxCaptureRadius,
-				"radius: " + computeCurrentRadius()
-		)));
+		game.registerGameMarker(DebugLocationMarker.class,
+                DebugLocationMarker.create(Material.TORCH, 0, this.getClass(), Component.text("Capture point: " + name), () -> location, () -> Arrays.asList(
+                        "inConflict: " + inConflict,
+                        "teamOwning: " + teamOwning,
+                        "teamAttacking: " + teamAttacking,
+                        "teamInCircle: " + teamInCircle,
+                        "minCaptureRadius: " + minCaptureRadius,
+                        "maxCaptureRadius: " + maxCaptureRadius,
+                        "radius: " + computeCurrentRadius()
+                ))
+        );
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
 			@Nonnull
 			@Override

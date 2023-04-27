@@ -1,6 +1,9 @@
 package com.ebicep.warlords.game.option.marker;
 
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,7 +27,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return the name
      */
     @Nonnull
-    String getName();
+    TextComponent getName();
 
     /**
      * Get the extra debug information for this marker. Different calls to this
@@ -70,16 +73,18 @@ public interface DebugLocationMarker extends LocationMarker {
     @Nonnull
     default ItemStack getAsItem() {
         ItemBuilder item = new ItemBuilder(getMaterial(), 1);
-        String name = getName();
-        String newName;
-        if (name.indexOf(ChatColor.COLOR_CHAR) >= 0) {
+        TextComponent name = getName();
+        String nameContent = name.content();
+        TextComponent newName;
+        if (name.color() != null) {
             newName = name;
         } else {
-            int index = name.indexOf(": ");
+            int index = nameContent.indexOf(": ");
             if (index > 0) {
-                newName = ChatColor.GOLD + name.substring(0, index + 1) + ChatColor.WHITE + name.substring(index + 1);
+                newName = Component.text(nameContent.substring(0, index + 1), NamedTextColor.GOLD)
+                                   .append(Component.text(nameContent.substring(index + 1), NamedTextColor.WHITE));
             } else {
-                newName = ChatColor.GOLD + name;
+                newName = Component.text(nameContent, NamedTextColor.GOLD);
             }
         }
         item.name(newName);
@@ -105,27 +110,54 @@ public interface DebugLocationMarker extends LocationMarker {
         return item.get();
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, TextComponent name, Location location) {
         return create(material, data, () -> creator, () -> name, () -> location, Collections::emptyList);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(
+            @Nullable Material material,
+            int data,
+            Class<?> creator,
+            TextComponent name,
+            Location location,
+            Supplier<List<String>> extra
+    ) {
         return create(material, data, () -> creator, () -> name, () -> location, extra);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(
+            @Nullable Material material,
+            int data,
+            Class<?> creator,
+            TextComponent name,
+            Supplier<Location> location,
+            Supplier<List<String>> extra
+    ) {
         return create(material, data, () -> creator, () -> name, location, extra);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<TextComponent> name, Supplier<Location> location) {
         return create(material, data, () -> creator, name, location, Collections::emptyList);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(
+            @Nullable Material material,
+            int data,
+            Class<?> creator,
+            Supplier<TextComponent> name,
+            Supplier<Location> location,
+            Supplier<List<String>> extra
+    ) {
         return create(material, data, () -> creator, name, location, extra);
     }
 
-    static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location) {
+    static DebugLocationMarker create(
+            @Nullable Material material,
+            int data,
+            Supplier<Class<?>> creator,
+            Supplier<TextComponent> name,
+            Supplier<Location> location
+    ) {
         return create(material, data, creator, name, location, Collections::emptyList);
     }
 
@@ -133,7 +165,7 @@ public interface DebugLocationMarker extends LocationMarker {
             @Nullable Material material,
             int data,
             Supplier<Class<?>> creator,
-            Supplier<String> name,
+            Supplier<TextComponent> name,
             Supplier<Location> location,
             Supplier<List<String>> extra
     ) {
@@ -144,14 +176,14 @@ public interface DebugLocationMarker extends LocationMarker {
     static DebugLocationMarker create(
             Supplier<Material> material,
             Supplier<Class<?>> creator,
-            Supplier<String> name,
+            Supplier<TextComponent> name,
             Supplier<Location> location,
             Supplier<List<String>> extra
     ) {
         return new DebugLocationMarker() {
             @Nonnull
             @Override
-            public String getName() {
+            public TextComponent getName() {
                 return name.get();
             }
 

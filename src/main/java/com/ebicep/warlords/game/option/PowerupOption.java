@@ -98,7 +98,7 @@ public class PowerupOption implements Option {
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(
                 () -> type.getDebugMaterial(),
                 this::getClass,
-                () -> this.getClass().getSimpleName() + ": " + this.type.name(),
+                () -> Component.text(this.getClass().getSimpleName() + ": " + this.type.name()),
                 this::getLocation,
                 () -> Arrays.asList(
                         "Type: " + this.getType(),

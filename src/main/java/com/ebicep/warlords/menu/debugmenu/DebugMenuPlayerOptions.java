@@ -61,7 +61,9 @@ public class DebugMenuPlayerOptions {
         MenuItemPairList firstRow = new MenuItemPairList();
 
         firstRow.add(new ItemBuilder(Material.EXPERIENCE_BOTTLE)
-                        .name(target.isNoEnergyConsumption() ? ChatColor.GREEN + "Enable Energy Consumption" : ChatColor.RED + "Disable Energy Consumption")
+                        .name(Component.text(target.isNoEnergyConsumption() ? "Enable Energy Consumption" : "Disable Energy Consumption",
+                                target.isNoEnergyConsumption() ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ))
                         .get(),
                 (m, e) -> {
                     player.performCommand("wl energy " + (target.isNoEnergyConsumption() ? "disable " : "enable ") + targetName);
@@ -69,7 +71,9 @@ public class DebugMenuPlayerOptions {
                 }
         );
         firstRow.add(new ItemBuilder(Material.GRAY_DYE)
-                        .name(target.isDisableCooldowns() ? ChatColor.GREEN + "Enable Cooldowns Timers" : ChatColor.RED + "Disable Cooldown Timers")
+                        .name(Component.text(target.isDisableCooldowns() ? "Enable Cooldowns Timers" : "Disable Cooldown Timers",
+                                target.isDisableCooldowns() ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ))
                         .get(),
                 (m, e) -> {
                     player.performCommand("wl cooldown " + (target.isDisableCooldowns() ? "enable " : "disable ") + targetName);
@@ -77,7 +81,9 @@ public class DebugMenuPlayerOptions {
                 }
         );
         firstRow.add(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
-                        .name(target.isTakeDamage() ? ChatColor.RED + "Disable Taking Damage" : ChatColor.GREEN + "Enable Taking Damage")
+                        .name(Component.text(target.isTakeDamage() ? "Disable Taking Damage" : "Enable Taking Damage",
+                                target.isTakeDamage() ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ))
                         .get(),
                 (m, e) -> {
                     player.performCommand("wl takedamage " + (target.isTakeDamage() ? "disable " : "enable ") + targetName);
@@ -85,7 +91,9 @@ public class DebugMenuPlayerOptions {
                 }
         );
         firstRow.add(new ItemBuilder(Material.RABBIT_FOOT)
-                        .name(target.isCanCrit() ? ChatColor.RED + "Disable Crits" : ChatColor.GREEN + "Enable Crits")
+                        .name(Component.text(target.isCanCrit() ? "Disable Crits" : "Enable Crits",
+                                target.isCanCrit() ? NamedTextColor.RED : NamedTextColor.GREEN
+                        ))
                         .get(),
                 (m, e) -> {
                     player.performCommand("wl crits " + (target.isCanCrit() ? "disable " : "enable ") + targetName);
@@ -348,7 +356,7 @@ public class DebugMenuPlayerOptions {
                 StatusEffectCooldowns cooldown = StatusEffectCooldowns.values()[i];
                 menu.setItem((i % 7) + 1, yLevel,
                         new ItemBuilder(cooldown.itemStack)
-                                .name(cooldown.color + cooldown.name)
+                                .name(Component.text(cooldown.name, cooldown.color))
                                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                                 .get(),
                         (m, e) -> {
@@ -652,7 +660,9 @@ public class DebugMenuPlayerOptions {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("CD Manager: " + target.getName())) {
+                                    if (PlainTextComponentSerializer.plainText()
+                                                                    .serialize(player.getOpenInventory().title())
+                                                                    .equals("CD Manager: " + target.getName())) {
                                         openCooldownManagerMenu(player, target);
                                     } else {
                                         this.cancel();
@@ -712,7 +722,9 @@ public class DebugMenuPlayerOptions {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title()).equals("CD Manager: " + target.getName())) {
+                            if (PlainTextComponentSerializer.plainText()
+                                                            .serialize(player.getOpenInventory().title())
+                                                            .equals("CD Manager: " + target.getName())) {
                                 openCooldownManagerMenu(player, target);
                             } else {
                                 this.cancel();

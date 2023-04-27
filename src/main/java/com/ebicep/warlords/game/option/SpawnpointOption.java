@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -31,7 +32,7 @@ public class SpawnpointOption extends MarkerOption {
                   }
 
                 },
-                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, "Spawnpoint", location, () -> debugExtra)
+                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, Component.text("Spawnpoint"), location, () -> debugExtra)
         );
     }
 

@@ -86,7 +86,8 @@ public class DebugMenuTeamOptions {
                 }
                 menu.setItem(i % 9, i / 9,
                         new ItemBuilder(itemStack)
-                                .name(team.teamColor + warlordsEntity.getName() + (warlordsEntity.hasFlag() ? ChatColor.WHITE + " ⚑" : ""))
+                                .name(Component.text(warlordsEntity.getName(), team.teamColor)
+                                               .append(Component.text(warlordsEntity.hasFlag() ? " ⚑" : "", NamedTextColor.WHITE)))
                                 .loreLEGACY(lore)
                                 .get(),
                         (m, e) -> {

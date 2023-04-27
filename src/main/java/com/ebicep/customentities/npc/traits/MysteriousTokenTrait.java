@@ -8,6 +8,8 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -42,7 +44,7 @@ public class MysteriousTokenTrait extends WarlordsTrait {
 
         menu.setItem(4, 2,
                 new ItemBuilder(Material.BEDROCK)
-                        .name(ChatColor.DARK_GRAY.toString() + ChatColor.MAGIC + name)
+                        .name(Component.text(name, NamedTextColor.DARK_GRAY, TextDecoration.OBFUSCATED))
                         .get(),
                 (m, e) -> {
 

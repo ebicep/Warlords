@@ -262,7 +262,9 @@ public class RegularGamesMenu {
                     menu.setItem(
                             x,
                             y,
-                            new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(ChatColor.GRAY + "Available Spec").get(),
+                            new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+                                    .name(Component.text("Available Spec", NamedTextColor.GRAY))
+                                    .get(),
                             (m, e) -> {
                                 if (!uuidsWithPerms.contains(player.getUniqueId())) {
                                     return;

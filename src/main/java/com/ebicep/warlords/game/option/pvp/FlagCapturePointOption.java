@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.MarkerOption;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.FlagCaptureMarker;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -23,7 +24,7 @@ public class FlagCapturePointOption extends MarkerOption {
         super(
                 FlagCaptureMarker.aroundLocation(loc, radius, forTeams),
                 DebugLocationMarker.create(Material.BLACK_CARPET, 0, FlagCapturePointOption.class,
-                        "Capture zone",
+                        Component.text("Capture zone"),
                         loc,
                         () -> Arrays.asList(
                                 "Ignoring teams: " + Arrays.toString(forTeams),
@@ -38,7 +39,7 @@ public class FlagCapturePointOption extends MarkerOption {
         super(
                 FlagCaptureMarker.zonedCapture(a, b, forTeams),
                 DebugLocationMarker.create(Material.BLACK_CARPET, 0, FlagCapturePointOption.class,
-                        "Capture zone",
+                        Component.text("Capture zone"),
                         new Location(
                                 a.getWorld(),
                                 (a.getX() + b.getX()) / 2,

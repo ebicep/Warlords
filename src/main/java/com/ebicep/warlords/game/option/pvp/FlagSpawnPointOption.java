@@ -81,11 +81,11 @@ public class FlagSpawnPointOption implements Option {
             return !(info.getFlag() instanceof SpawnFlagLocation) && info.getTeam() == pFlag.getPlayer().getTeam();
         });
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 0, this.getClass(),
-                "Flag spawn: " + info.getTeam(),
+                Component.text("Flag spawn: " + info.getTeam()),
                 this.info.getSpawnLocation()
         ));
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BLACK_BANNER, 15, this.getClass(),
-                "Flag: " + info.getTeam(),
+                Component.text("Flag: " + info.getTeam()),
                 () -> info.getFlag().getLocation(),
                 () -> info.getFlag().getDebugInformation()
         ));
