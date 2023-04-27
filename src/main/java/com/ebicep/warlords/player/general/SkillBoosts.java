@@ -2,13 +2,16 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.function.Consumer;
 
 public enum SkillBoosts {
     FIREBALL("Fireball",
-            "§7Increases the damage you deal with Fireball by 20%",
-            "§aIncreases the damage you deal with Fireball by §c20%",
+            Component.text("Increases the damage you deal with Fireball by 20%", NamedTextColor.GRAY),
+            Component.text("Increases the damage you deal with Fireball by ", NamedTextColor.GREEN).append(Component.text("20%", NamedTextColor.RED)),
             Fireball.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball) {
@@ -18,8 +21,11 @@ public enum SkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you deal with Flame Burst by 25% and reduce the energy cost by 40",
-            "§aIncreases the damage you deal with Flame Burst by §c25% §aand reduce the energy cost by §c40",
+            Component.text("Increases the damage you deal with Flame Burst by 25% and reduce the energy cost by 40", NamedTextColor.GRAY),
+            Component.text("Increases the damage you deal with Flame Burst by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("40", NamedTextColor.RED)),
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
@@ -30,8 +36,11 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you restore with Time Warp by 10% and reduce the cooldown by 50%.",
-            "§aIncrease the amount of health you restore with Time Warp by §c10% §aand reduce the cooldown by §c50%.",
+            Component.text("Increase the amount of health you restore with Time Warp by 10% and reduce the cooldown by 50%.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("50%.", NamedTextColor.RED)),
             TimeWarpPyromancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer) {
@@ -41,8 +50,9 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -52,8 +62,8 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of Inferno by 60%",
-            "§aIncrease the Crit Multiplier bonus of Inferno by §c60%",
+            Component.text("Increase the Crit Multiplier bonus of Inferno by 60%", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier bonus of Inferno by ", NamedTextColor.GREEN).append(Component.text("60%", NamedTextColor.RED)),
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
@@ -62,8 +72,11 @@ public enum SkillBoosts {
             }
     ),
     FROST_BOLT("Frostbolt",
-            "§7Increases the damage you deal with Frostbolt by 20% and increase the slowness by 5%",
-            "§aIncreases the damage you deal with Frostbolt by §c20% §aand increase the slowness by §c5%",
+            Component.text("Increases the damage you deal with Frostbolt by 20% and increase the slowness by 5%", NamedTextColor.GRAY),
+            Component.text("Increases the damage you deal with Frostbolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the slowness by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED)),
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt) {
@@ -74,8 +87,11 @@ public enum SkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%",
-            "§aIncrease the damage you deal with Freezing Breath §aby §c20% §aand reduce the cooldown §aby §c20%",
+            Component.text("Increase the damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Freezing Breath by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED)),
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
@@ -86,8 +102,9 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp §7by 40%",
-            "§aReduce the cooldown of Time Warp §aby §c40%",
+            Component.text("Reduce the cooldown of Time Warp by 40%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED)),
             TimeWarpCryomancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpCryomancer) {
@@ -96,8 +113,9 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Reduce the cooldown of Arcane Shield §7by 30%",
-            "§aReduce the cooldown of Arcane Shield §aby §c30%",
+            Component.text("Reduce the cooldown of Arcane Shield by 30%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Arcane Shield by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -106,8 +124,12 @@ public enum SkillBoosts {
             }
     ),
     ICE_BARRIER("Ice Barrier",
-            "§7Increase the amount damage you reduce with Ice Barrier by §75% §7and increase the duration by 2 seconds",
-            "§aIncrease the amount damage you reduce with Ice Barrier by §c5% §aand increase the duration by §c2 §aseconds",
+            Component.text("Increase the amount damage you reduce with Ice Barrier by 5% and increase the duration by 2 seconds", NamedTextColor.GRAY),
+            Component.text("Increase the amount damage you reduce with Ice Barrier by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
@@ -117,8 +139,8 @@ public enum SkillBoosts {
             }
     ),
     WATER_BOLT("Water Bolt",
-            "§7Increases the amount of health you restore with Water Bolt by 20%",
-            "§aIncreases the amount of health you restore with Water Bolt by §c20%",
+            Component.text("Increases the amount of health you restore with Water Bolt by 20%", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Water Bolt by ", NamedTextColor.GREEN).append(Component.text("20%", NamedTextColor.RED)),
             WaterBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBolt) {
@@ -128,8 +150,11 @@ public enum SkillBoosts {
             }
     ),
     WATER_BREATH("Water Breath",
-            "§7Increases the amount of health you restore with Water Breath by 15% and reduce the energy cost by 30",
-            "§aIncreases the amount of health you restore with Water Breath by §c15% §aand reduce the energy cost by §c30",
+            Component.text("Increases the amount of health you restore with Water Breath by 15% and reduce the energy cost by 30", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Water Breath by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("30", NamedTextColor.RED)),
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
@@ -140,8 +165,9 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp §7by 50%",
-            "§aReduce the cooldown of Time Warp §aby §c50%",
+            Component.text("Reduce the cooldown of Time Warp by 50%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("50%", NamedTextColor.RED)),
             TimeWarpAquamancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpAquamancer) {
@@ -150,8 +176,9 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -161,8 +188,11 @@ public enum SkillBoosts {
             }
     ),
     HEALING_RAIN("Healing Rain",
-            "§7Increases the duration of §7Healing Rain by 4 seconds and §7reduce the cooldown by 20%",
-            "§aIncreases the duration of §aHealing Rain by §c4 §aseconds and §areduce the cooldown by §c20%",
+            Component.text("Increases the duration of Healing Rain by 4 seconds and reduce the cooldown by 20%", NamedTextColor.GRAY),
+            Component.text("Increases the duration of Healing Rain by ", NamedTextColor.GREEN)
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED)),
             HealingRain.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain) {
@@ -172,8 +202,11 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_BERSERKER("Wounding Strike",
-            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and reduce the energy cost by 10",
-            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand reduce the energy cost by §c10",
+            Component.text("Increase the damage you deal with Wounding Strike by 10% and reduce the energy cost by 10", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("10", NamedTextColor.RED)),
             WoundingStrikeBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
@@ -184,8 +217,11 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you §7deal with Seismic Wave by §715% and reduce the cooldown §7by 25%",
-            "§aIncrease the damage you §adeal with Seismic Wave by §c15% §aand reduce the cooldown §aby §c25%",
+            Component.text("Increase the damage you deal with Seismic Wave by 15% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Seismic Wave by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
@@ -196,8 +232,11 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you §7deal with Ground Slam by §735% §7and reduce the cooldown by §710%",
-            "§aIncrease the damage you §adeal with Ground Slam by §c35% §aand reduce the cooldown by §c10%",
+            Component.text("Increase the damage you deal with Ground Slam by 35% and reduce the cooldown by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Ground Slam by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED)),
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -208,8 +247,11 @@ public enum SkillBoosts {
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Reduce the cooldown of Blood Lust by 30% and increase damage converted to healing by 5%",
-            "§aReduce the cooldown of Blood Lust §aby §c30% §aand increase damage converted to healing by §c5%",
+            Component.text("Reduce the cooldown of Blood Lust by 30% and increase damage converted to healing by 5%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Blood Lust by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and increase damage converted to healing by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED)),
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
@@ -219,8 +261,11 @@ public enum SkillBoosts {
             }
     ),
     BERSERK("Berserk",
-            "§7Increase the damage bonus of Berserk §7by 15% and increase the speed §7by 10%",
-            "§aIncrease the damage bonus of Berserk §aby §c15% §aand increase the speed §aby §c10%",
+            Component.text("Increase the damage bonus of Berserk by 15% and increase the speed by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the damage bonus of Berserk by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED)),
             Berserk.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Berserk) {
@@ -230,8 +275,11 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
-            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and increase wounding by 25%",
-            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand increase wounding by §c25%",
+            Component.text("Increase the damage you deal with Wounding Strike by 10% and increase wounding by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase wounding by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             WoundingStrikeDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeDefender) {
@@ -242,8 +290,12 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the amount knockback you §7deal with Seismic Wave by §735% and reduce the cooldown §7by 25%",
-            "§aIncrease the amount knockback you §adeal with Seismic Wave by §c35% §aand reduce the cooldown §aby §c25%",
+            Component.text("Increase the amount knockback you deal with Seismic Wave by 35% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount knockback you deal with Seismic Wave by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
@@ -253,8 +305,11 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Increase the amount of knockback you deal with Ground Slam by 10% and reduce the cooldown by 20%",
-            "§aIncrease the amount of knockback you deal with Ground Slam by §c10% §aand reduce the cooldown by §c20%",
+            Component.text("Increase the amount of knockback you deal with Ground Slam by 10% and reduce the cooldown by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of knockback you deal with Ground Slam by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED)),
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -264,8 +319,11 @@ public enum SkillBoosts {
             }
     ),
     INTERVENE("Intervene",
-            "§7Increase the cast and break radius §7of Intervene by 5 blocks and increase §7the max amount of damage you can §7absorb by 400",
-            "§aIncrease the cast and break radius §aof Intervene by §c5 §ablocks and increase §athe max amount of damage you can §aabsorb by §c400",
+            Component.text("Increase the cast and break radius of Intervene by 5 blocks and increase the max amount of damage you can absorb by 400", NamedTextColor.GRAY),
+            Component.text("Increase the cast and break radius of Intervene by ", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and increase the max amount of damage you can absorb by ", NamedTextColor.GREEN))
+                     .append(Component.text("400", NamedTextColor.RED)),
             Intervene.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Intervene) {
@@ -276,8 +334,11 @@ public enum SkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you §7reduce with Last Stand by §75% §7and reduce the cooldown by 10%",
-            "§aIncrease the amount damage you §areduce with Last Stand by §c5% §aand reduce the cooldown by §c10%",
+            Component.text("Increase the amount damage you reduce with Last Stand by 5% and reduce the cooldown by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the amount damage you reduce with Last Stand by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED)),
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
@@ -288,8 +349,11 @@ public enum SkillBoosts {
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
-            "§7Increase the damage you §7reduce with Crippling Strike §7by 10% and increase the additional reduction per strike by 5%",
-            "§aIncrease the damage you §areduce with Crippling Strike §aby §c10% §aand increase the additional reduction per strike by §c5%",
+            Component.text("Increase the damage you reduce with Crippling Strike by 10% and increase the additional reduction per strike by 5%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you reduce with Crippling Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the additional reduction per strike by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED)),
             CripplingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CripplingStrike) {
@@ -299,8 +363,11 @@ public enum SkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the immobilize duration §7of your Reckless Charge by §70.3 seconds and reduce the §7cooldown by 30%",
-            "§aIncrease the immobilize duration §aof your Reckless Charge by §c0.3 §aseconds and reduce the §acooldown by §c30%",
+            Component.text("Increase the immobilize duration of your Reckless Charge by 0.3 seconds and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Increase the immobilize duration of your Reckless Charge by ", NamedTextColor.GREEN)
+                     .append(Component.text("0.3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED)),
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge) {
@@ -310,8 +377,9 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_REVENANT("Ground Slam",
-            "§7Reduce the cooldown of Ground Slam §7by 40%",
-            "§aReduce the cooldown of Ground Slam §aby §c40%",
+            Component.text("Reduce the cooldown of Ground Slam by 40%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Ground Slamby  ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED)),
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -320,8 +388,9 @@ public enum SkillBoosts {
             }
     ),
     ORBS_OF_LIFE("Orbs of Life",
-            "§7Increases the amount of §7health you restore with §7Orbs of Life by 20%",
-            "§aIncreases the amount of §ahealth you restore with §aOrbs of Life by §c20%",
+            Component.text("Increases the amount of health you restore with Orbs of Life by 20%", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Orbs of Life by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             OrbsOfLife.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrbsOfLife) {
@@ -331,8 +400,12 @@ public enum SkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Reduce the damage of Undying Army after dying by 5% and increase the duration by 5 seconds",
-            "§aReduce the damage of Undying Army after dying by §c5% §aand increase the duration by §c5 §aseconds",
+            Component.text("Reduce the damage of Undying Army after dying by 5% and increase the duration by 5 seconds", NamedTextColor.GRAY),
+            Component.text("Reduce the damage of Undying Army after dying by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy undyingArmy) {
@@ -342,8 +415,11 @@ public enum SkillBoosts {
             }
     ),
     AVENGER_STRIKE("Avenger's Strike",
-            "§7Increase the damage you §7deal with Avenger's Strike §7by 15% and increase the energy you steal by 5",
-            "§aIncrease the damage you §adeal with Avenger's Strike §aby §c15% §aand increase the energy you steal by §c5",
+            Component.text("Increase the damage you deal with Avenger's Strike by 15% and increase the energy you steal by 5", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Avenger's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the energy you steal by ", NamedTextColor.GREEN))
+                     .append(Component.text("5", NamedTextColor.RED)),
             AvengersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersStrike) {
@@ -354,8 +430,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Remove the energy cost of Consecrate and increase the damage by 35%",
-            "§aRemove the energy cost of Consecrate and increase the damage by §c35%",
+            Component.text("Remove the energy cost of Consecrate and increase the damage by 35%", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Consecrate and increase the damage by ", NamedTextColor.GREEN).append(Component.text("35%", NamedTextColor.RED)),
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -366,8 +442,11 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_AVENGER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 25% and increase the energy you restore by 40",
-            "§aReduce the cooldown of Light Infusion §aby §c25% §aand increase the energy §ayou restore by §c40",
+            Component.text("Reduce the cooldown of Light Infusion by 25% and increase the energy you restore by 40", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the energy you restore by ", NamedTextColor.GREEN))
+                     .append(Component.text("40", NamedTextColor.RED)),
             LightInfusionAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionAvenger) {
@@ -377,8 +456,10 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance §7by 20% and double the energy drain of Avenger's Mark",
-            "§aReduce the cooldown of Holy Radiance §aby §c20% §aand double the energy drain of Avenger's Mark",
+            Component.text("Reduce the cooldown of Holy Radiance by 20% and double the energy drain of Avenger's Mark", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and double the energy drain of Avenger's Mark", NamedTextColor.GREEN)),
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger) {
@@ -388,8 +469,12 @@ public enum SkillBoosts {
             }
     ),
     AVENGERS_WRATH("Avenger's Wrath",
-            "§7Increase the energy per second of Avenger's Wrath by 10 and increase the duration by 5 seconds",
-            "§aIncrease the energy per second of Avenger's Wrath by §c10 §aand increase the duration §aby §c5 §aseconds",
+            Component.text("Increase the energy per second of Avenger's Wrath by 10 and increase the duration by 5 seconds", NamedTextColor.GRAY),
+            Component.text("Increase the energy per second of Avenger's Wrath by ", NamedTextColor.GREEN)
+                     .append(Component.text("10 ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
@@ -399,8 +484,9 @@ public enum SkillBoosts {
             }
     ),
     CRUSADER_STRIKE("Crusader's Strike",
-            "§7Increase the damage you §7deal with Crusader's Strike §7by 20%",
-            "§aIncrease the damage you §adeal with Crusader's Strike §aby §c20%",
+            Component.text("Increase the damage you deal with Crusader's Strike by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Crusader's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             CrusadersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CrusadersStrike) {
@@ -410,8 +496,9 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Remove the energy cost of Consecrate and increase the damage §7by 35%",
-            "§aRemove the energy cost of Consecrate and increase the damage §aby §c35%",
+            Component.text("Remove the energy cost of Consecrate and increase the damage by 35%", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Consecrate and increase the damage by ", NamedTextColor.GREEN)
+                     .append(Component.text("35%", NamedTextColor.RED)),
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -422,8 +509,12 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_CRUSADER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
+            Component.text("Reduce the cooldown of Light Infusion by 35% and increase the speed duration by 3 seconds", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             LightInfusionCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
@@ -433,8 +524,13 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance §7by 25%, increase the duration §7of Crusader's Mark by 4 seconds and speed bonus by 15%",
-            "§aReduce the cooldown of Holy Radiance §aby §c25%§a, increase the duration §aof Crusader's Mark by §c4 §aseconds and speed bonus by §c15%",
+            Component.text("Reduce the cooldown of Holy Radiance by 25%, increase the duration of Crusader's Mark by 4 seconds and speed bonus by 15%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(", increase the duration of Crusader's Mark by ", NamedTextColor.GREEN))
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and speed bonus by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED)),
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
@@ -445,8 +541,11 @@ public enum SkillBoosts {
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring §7Presence by 25% and increase the speed by 10%",
-            "§aReduce the cooldown of Inspiring §aPresence by §c25% §aand increase the speed by §c10%",
+            Component.text("Reduce the cooldown of Inspiring Presence by 25% and increase the speed by 10%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Inspiring Presence by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED)),
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence) {
@@ -456,8 +555,12 @@ public enum SkillBoosts {
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            "§7Increase the amount of damage §7you convert into healing for allies with §7Protector's Strike by 10% and heal 1 more ally.",
-            "§aIncrease the amount of damage §ayou convert into healing for allies with §aProtector's Strike by §c10% §aand heal §c1 §amore ally.",
+            Component.text("Increase the amount of damage you convert into healing for allies with Protector's Strike by 10% and heal 1 more ally.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you convert into healing for allies with Protector's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and heal ", NamedTextColor.GREEN))
+                     .append(Component.text("1 ", NamedTextColor.RED))
+                     .append(Component.text("more ally.", NamedTextColor.GREEN)),
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
@@ -468,8 +571,11 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of §7Consecrate by 2 blocks and §7reduce the cooldown §7by 30%",
-            "§aIncreases the range of §aConsecrate by §c2 §ablocks and §areduce the cooldown §aby §c30%",
+            Component.text("Increases the range of Consecrate by 2 blocks and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Increases the range of Consecrate by ", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED)),
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -479,8 +585,12 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
+            Component.text("Reduce the cooldown of Light Infusion by 35% and increase the speed duration by 3 seconds", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             LightInfusionProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
@@ -490,8 +600,9 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_PROTECTOR("Holy Radiance",
-            "§7Increases the amount of §7health you restore with §7Holy Radiance by 20%",
-            "§aIncreases the amount of §ahealth you restore with §aHoly Radiance by §c20%",
+            Component.text("Increases the amount of health you restore with Holy Radiance by 20%", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             HolyRadianceProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceProtector) {
@@ -501,8 +612,11 @@ public enum SkillBoosts {
             }
     ),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of §7health you restore with §7Hammer of Light by 25% and reduce the cooldown by 25%",
-            "§aIncreases the amount of §ahealth you restore with §aHammer of Light by §c25% §aand reduce the cooldown by §c25%",
+            Component.text("Increases the amount of health you restore with Hammer of Light by 25% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Hammer of Light by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             HammerOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HammerOfLight) {
@@ -513,8 +627,9 @@ public enum SkillBoosts {
             }
     ),
     LIGHTNING_BOLT("Lightning Bolt",
-            "§7Increase the damage you §7deal with Lightning Bolt by §720%",
-            "§aIncrease the damage you §adeal with Lightning Bolt by §c20%",
+            Component.text("Increase the damage you deal with Lightning Bolt by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Lightning Bolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             LightningBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningBolt) {
@@ -524,8 +639,11 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            "§7Increase the damage you §7deal with Chain Lightning §7by 20% and reduce the cooldown by 15%",
-            "§aIncrease the damage you §adeal with Chain Lightning §aby §c20% §aand reduce the cooldown by §c15%",
+            Component.text("Increase the damage you deal with Chain Lightning by 20% and reduce the cooldown by 15%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Chain Lightning by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED)),
             ChainLightning.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
@@ -536,8 +654,12 @@ public enum SkillBoosts {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you §7deal with Windfury Weapon §7by 40% and increase the proc §7chance by 20%",
-            "§aIncrease the damage you §adeal with Windfury Weapon §aby §c40% §aand increase the proc §achance by §c20%",
+            Component.text("Increase the damage you deal with Windfury Weapon by 40% and increase the proc chance by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Windfury Weapon by ", NamedTextColor.GREEN)
+                     .append(Component.text("40% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the proc ", NamedTextColor.RED))
+                     .append(Component.text("chance by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED)),
             Windfury.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
@@ -547,8 +669,9 @@ public enum SkillBoosts {
             }
     ),
     LIGHTNING_ROD("Lightning Rod",
-            "§7Reduce the cooldown of Lightning Rod §7by 40%",
-            "§aReduce the cooldown of Lightning Rod §aby §c40%",
+            Component.text("Reduce the cooldown of Lightning Rod by 40%", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Lightning Rod by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED)),
             LightningRod.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningRod) {
@@ -557,8 +680,11 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you §7deal with Capacitor Totem §7by 30% and reduce the cooldown §7by 15%",
-            "§aIncrease the damage you §adeal with Capacitor Totem §aby §c30% §aand reduce the cooldown §aby §c15%",
+            Component.text("Increase the damage you deal with Capacitor Totem by 30% and reduce the cooldown by 15%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Capacitor Totem by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED)),
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
@@ -569,8 +695,9 @@ public enum SkillBoosts {
             }
     ),
     FALLEN_SOULS("Fallen Souls",
-            "§7Increase the damage you §7deal with Fallen Souls by §720%",
-            "§aIncrease the damage you §adeal with Fallen Souls by §c20%",
+            Component.text("Increase the damage you deal with Fallen Souls by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Fallen Souls by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             FallenSouls.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FallenSouls) {
@@ -580,8 +707,12 @@ public enum SkillBoosts {
             }
     ),
     SPIRIT_LINK("Spirit Link",
-            "§7Increase the damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds",
-            "§aIncrease the damage you §adeal with Spirit Link by §c25% §aand increase the speed duration by §c0.5 §aseconds",
+            Component.text("Increase the damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Spirit Link by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             SpiritLink.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SpiritLink) {
@@ -592,8 +723,10 @@ public enum SkillBoosts {
             }
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
-            "§7Increase the duration of §7binds by 2 seconds.",
-            "§aIncrease the duration of §abinds by §c2 §aseconds.",
+            Component.text("Increase the duration of binds by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of binds by ", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             Soulbinding.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding) {
@@ -602,8 +735,11 @@ public enum SkillBoosts {
             }
     ),
     REPENTANCE("Repentance",
-            "§7Increase the damage you convert by 5% and reduce the cooldown by 10%",
-            "§aIncrease the damage you §aconvert by §c5% §aand reduce the §acooldown by §c10%",
+            Component.text("Increase the damage you convert by 5% and reduce the cooldown by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you convert by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED)),
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
@@ -613,8 +749,11 @@ public enum SkillBoosts {
             }
     ),
     DEATHS_DEBT("Death's Debt",
-            "§7Increase the range of Death's Debt §7by 5 blocks and reduce the §7amount of delayed damage you take §7by 40%",
-            "§aIncrease the range of Death's Debt §aby §c5 §ablocks and reduce the §aamount of delayed damage you take §aby §c40%",
+            Component.text("Increase the range of Death's Debt by 5 blocks and reduce the amount of delayed damage you take by 40%", NamedTextColor.GRAY),
+            Component.text("Increase the range of Death's Debt by", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and reduce the amount of delayed damage you take by ", NamedTextColor.GREEN))
+                     .append(Component.text("40%", NamedTextColor.RED)),
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt) {
@@ -625,8 +764,11 @@ public enum SkillBoosts {
             }
     ),
     EARTHEN_SPIKE("Earthen Spike",
-            "§7Increase the damage you §7deal with Earthen Spike by §715% and increase the speed by 30%",
-            "§aIncrease the damage you §adeal with Earthen Spike by §c15% §aand increase the speed by §c30%",
+            Component.text("Increase the damage you deal with Earthen Spike by 15% and increase the speed by 30%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Earthen Spike by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED)),
             EarthenSpike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthenSpike) {
@@ -637,8 +779,10 @@ public enum SkillBoosts {
             }
     ),
     BOULDER("Boulder",
-            "§7Increase the damage you §7deal with Boulder by 25%",
-            "§aIncrease the damage you §adeal with Boulder by §c25%",
+            Component.text("Increase the damage you deal with Boulder by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you ", NamedTextColor.RED)
+                     .append(Component.text("deal with Boulder by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             Boulder.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Boulder) {
@@ -648,8 +792,8 @@ public enum SkillBoosts {
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the proc chance by of Earthliving Weapon§7 by 20%",
-            "§aIncrease the proc chance by of Earthliving Weapon by §c20%",
+            Component.text("Increase the proc chance by of Earthliving Weapon by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the proc chance by of Earthliving Weapon by ", NamedTextColor.GREEN).append(Component.text("20%", NamedTextColor.RED)),
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
@@ -658,8 +802,8 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_HEAL("Chain Heal",
-            "§7Increases the amount of health you restore with Chain Heal by 30%",
-            "§aIncreases the amount of health you restore with Chain Heal by §c30%",
+            Component.text("Increases the amount of health you restore with Chain Heal by 30%", NamedTextColor.GRAY),
+            Component.text("Increases the amount of health you restore with Chain Heal by ", NamedTextColor.GREEN).append(Component.text("30%", NamedTextColor.RED)),
             ChainHeal.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainHeal) {
@@ -669,8 +813,11 @@ public enum SkillBoosts {
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increase the amount of health you restore with Healing Totem by 25% and reduce the cooldown by 25%",
-            "§aIncrease the amount of health you restore with Healing Totem by §c25% §aand reduce the cooldown by §c25%",
+            Component.text("Increase the amount of health you restore with Healing Totem by 25% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Healing Totem by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             HealingTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
@@ -681,8 +828,9 @@ public enum SkillBoosts {
             }
     ),
     JUDGEMENT_STRIKE("Judgement Strike",
-            "§7Increase the amount of damage you §7deal with Judgement Strike §7by 20%",
-            "§aIncrease the amount of damage you §adeal with Judgement Strike §aby §c20%",
+            Component.text("Increase the amount of damage you deal with Judgement Strike by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Judgement Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             JudgementStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof JudgementStrike) {
@@ -692,8 +840,12 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 1.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse by §c35% §aand increase the blind duration by §c1.5 §aseconds.",
+            Component.text("Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 1.5 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Incendiary Curse by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the blind duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("1.5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
@@ -703,8 +855,10 @@ public enum SkillBoosts {
             }
     ),
     BLINDING_ASSAULT("Shadow Step",
-            "§7Reduce the cooldown by Shadow Step by 40% and become temporarily immune to fall damage after leaping.",
-            "§aReduce the cooldown by Shadow Step by §c40% §aand become temporarily immune to fall damage after leaping.",
+            Component.text("Reduce the cooldown by Shadow Step by 40% and become temporarily immune to fall damage after leaping.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown by Shadow Step by ", NamedTextColor.GREEN)
+                     .append(Component.text("40% ", NamedTextColor.RED))
+                     .append(Component.text("and become temporarily immune to fall damage after leaping.", NamedTextColor.GREEN)),
             ShadowStep.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep) {
@@ -714,8 +868,12 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch by 50% and increase the range by 2 blocks.",
-            "§aReduce the cooldown by Soul Switch by §c50% §aand increase the range by §c2 §ablocks",
+            Component.text("Reduce the cooldown by Soul Switch by 50% and increase the range by 2 blocks.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown by Soul Switch by ", NamedTextColor.GREEN)
+                     .append(Component.text("50% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the range by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("blocks", NamedTextColor.GREEN)),
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch) {
@@ -725,8 +883,11 @@ public enum SkillBoosts {
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "§7Increase the duration of Order Of Eviscerate by 4 seconds and reduce the cooldown by 30%.",
-            "§aIncrease the duration of Order Of Eviscerate by §c4 §aseconds and reduce the cooldown by §c30%.",
+            Component.text("Increase the duration of Order Of Eviscerate by 4 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Order Of Eviscerate by ", NamedTextColor.GREEN)
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%.", NamedTextColor.RED)),
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
@@ -736,8 +897,9 @@ public enum SkillBoosts {
             }
     ),
     RIGHTEOUS_STRIKE("Righteous Strike",
-            "§7Increase the amount of damage you §7deal with Righteous Strike §7by 20%",
-            "§aIncrease the amount of damage you §adeal with Righteous Strike §aby §c20%",
+            Component.text("Increase the amount of damage you deal with Righteous Strike by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Righteous Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED)),
             RighteousStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RighteousStrike) {
@@ -747,8 +909,12 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle by 15% and increase the silence duration by 0.5 seconds",
-            "§aReduce the cooldown of Soul Shackle by §c15% §aand increase the silence duration by §c0.5 §aseconds",
+            Component.text("Reduce the cooldown of Soul Shackle by 15% and increase the silence duration by 0.5 seconds", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Soul Shackle by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the silence duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds", NamedTextColor.GREEN)),
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
@@ -759,8 +925,11 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart by 30% and increase the amount of health you restore by 300",
-            "§aReduce the cooldown of Heart ot Heart by §c30% §aand increase the amount of health you restore by §c300",
+            Component.text("Reduce the cooldown of Heart ot Heart by 30% and increase the amount of health you restore by 300", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Heart ot Heart by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the amount of health you restore by ", NamedTextColor.GREEN))
+                     .append(Component.text("300", NamedTextColor.RED)),
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
@@ -770,8 +939,11 @@ public enum SkillBoosts {
             }
     ),
     PRISM_GUARD("Prism Guard",
-            "§7Increase the damage reduction of Prism Guard by 15% and increase the amount of health you restore by 300",
-            "§aIncrease the damage reduction of Prism Guard by §c15% §aand increase the amount of health you restore by §c300",
+            Component.text("Increase the damage reduction of Prism Guard by 15% and increase the amount of health you restore by 300", NamedTextColor.GRAY),
+            Component.text("Increase the damage reduction of Prism Guard by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the amount of health you restore by ", NamedTextColor.GREEN))
+                     .append(Component.text("300", NamedTextColor.RED)),
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard) {
@@ -781,8 +953,11 @@ public enum SkillBoosts {
             }
     ),
     VINDICATE("Vindicate",
-            "§7Increase the damage reduction of Vindicate by 10% and reduce the cooldown by 25%",
-            "§aIncrease the damage reduction of Vindicate by §c10% §aand reduce the cooldown by §c25%",
+            Component.text("Increase the damage reduction of Vindicate by 10% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the damage reduction of Vindicate by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED)),
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate) {
@@ -792,8 +967,12 @@ public enum SkillBoosts {
             }
     ),
     IMPALING_STRIKE("Impaling Strike",
-            "§7Increase the amount of damage you §7deal with Impaling Strike §7by 10% and increase the leech duration by 5 seconds.",
-            "§aIncrease the amount of damage you §adeal with Impaling Strike §aby §c10% §aand increase the leech duration by §c5 §aseconds.",
+            Component.text("Increase the amount of damage you deal with Impaling Strike by 10% and increase the leech duration by 5 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Impaling Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the leech duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike) {
@@ -804,8 +983,9 @@ public enum SkillBoosts {
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            "§7Increase the amount of health you §7restore with Soothing Elixir §7by 25%",
-            "§aIncrease the amount of health you §arestore with Soothing Elixir §aby §c25%",
+            Component.text("Increase the amount of health you restore with Soothing Elixir by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Soothing Elixir by ", NamedTextColor.GREEN)
+                     .append(Component.text("25%", NamedTextColor.RED)),
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
@@ -815,8 +995,11 @@ public enum SkillBoosts {
             }
     ),
     VITALITY_LIQUOR("Vitality Liquor",
-            "§7Increase the amount of health you §7restore with Vitality Liquor §7by 15% and reduce the cooldown by 30%",
-            "§aIncrease the amount of health you §arestore with Vitality Liquor §aby §c15% §aand reduce the cooldown by §c30%",
+            Component.text("Increase the amount of health you restore with Vitality Liquor by 15% and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Vitality Liquor by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED)),
             VitalityLiquor.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityLiquor) {
@@ -829,8 +1012,12 @@ public enum SkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of health you restore with Remedic Chains by 10% and increase the link break radius by 10 blocks.",
-            "§aIncrease the amount of health you restore with Remedic Chains by §c10% §aand increase the link break radius by §c10 §ablocks.",
+            Component.text("Increase the amount of health you restore with Remedic Chains by 10% and increase the link break radius by 10 blocks.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Remedic Chains by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the link break radius by ", NamedTextColor.GREEN))
+                     .append(Component.text("10 ", NamedTextColor.RED))
+                     .append(Component.text("blocks.", NamedTextColor.GREEN)),
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
@@ -841,8 +1028,11 @@ public enum SkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the leech duration of Draining Miasma by 5 seconds and reduce the cooldown by 30%",
-            "§aIncrease the leech duration of Draining Miasma by §c5 §aseconds and reduce the cooldown by §c30%",
+            Component.text("Increase the leech duration of Draining Miasma by 5 seconds and reduce the cooldown by 30%", NamedTextColor.GRAY),
+            Component.text("Increase the leech duration of Draining Miasma by ", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED)),
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
@@ -856,12 +1046,12 @@ public enum SkillBoosts {
 
     public static final SkillBoosts[] VALUES = values();
     public final String name;
-    public final String description;
-    public final String selectedDescription;
+    public final TextComponent description;
+    public final TextComponent selectedDescription;
     public final Class<?> ability;
     public final Consumer<AbstractAbility> applyBoost;
 
-    SkillBoosts(String name, String description, String selectedDescription, Class<?> ability, Consumer<AbstractAbility> applyBoost) {
+    SkillBoosts(String name, TextComponent description, TextComponent selectedDescription, Class<?> ability, Consumer<AbstractAbility> applyBoost) {
         this.name = name;
         this.description = description;
         this.selectedDescription = selectedDescription;

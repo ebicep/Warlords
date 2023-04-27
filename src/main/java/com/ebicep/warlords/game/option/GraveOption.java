@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
@@ -30,29 +30,33 @@ public class GraveOption implements Option, Listener {
 
     public static final Material DEFAULT_GRAVE_MATERIAL = Material.DARK_OAK_SAPLING;
     public static final byte DEFAULT_GRAVE_MATERIAL_DATA = (byte) 5;
-    public static final Function<WarlordsEntity, String> DEFAULT_GRAVE_TEXT = wp
-            -> wp.getTeam().teamColor() + wp.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD";
+    public static final Function<WarlordsEntity, Component> DEFAULT_GRAVE_TEXT = wp ->
+            Component.textOfChildren(
+                    Component.text(wp.getName(), wp.getTeam().teamColor()),
+                    Component.text(" - ", NamedTextColor.GRAY),
+                    Component.text("DEAD", NamedTextColor.YELLOW)
+            );
 
     private final List<Grave> graves = new LinkedList<>();
     private Material material;
-    private Function<WarlordsEntity, String> graveName;
+    private Function<WarlordsEntity, Component> graveName;
     private boolean activated = true;
 
     public GraveOption() {
         this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_TEXT);
     }
 
-    public GraveOption(Function<WarlordsEntity, String> graveName) {
+    public GraveOption(Material material, Function<WarlordsEntity, Component> graveName) {
+        this.material = Objects.requireNonNull(material, "material");
+        this.graveName = Objects.requireNonNull(graveName, "graveName");
+    }
+
+    public GraveOption(Function<WarlordsEntity, Component> graveName) {
         this(DEFAULT_GRAVE_MATERIAL, graveName);
     }
 
     public GraveOption(Material material) {
         this(material, DEFAULT_GRAVE_TEXT);
-    }
-
-    public GraveOption(Material material, Function<WarlordsEntity, String> graveName) {
-        this.material = Objects.requireNonNull(material, "material");
-        this.graveName = Objects.requireNonNull(graveName, "graveName");
     }
 
     public Material getMaterial() {
@@ -63,11 +67,11 @@ public class GraveOption implements Option, Listener {
         this.material = Objects.requireNonNull(material, "material");
     }
 
-    public Function<WarlordsEntity, String> getGraveName() {
+    public Function<WarlordsEntity, Component> getGraveName() {
         return graveName;
     }
 
-    public void setGraveName(Function<WarlordsEntity, String> graveName) {
+    public void setGraveName(Function<WarlordsEntity, Component> graveName) {
         this.graveName = Objects.requireNonNull(graveName, "graveName");
     }
 
@@ -97,17 +101,6 @@ public class GraveOption implements Option, Listener {
     public void onEvent(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity().shouldSpawnGrave()) {
             addGrave(event.getWarlordsEntity());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEvent(WarlordsRespawnEvent event) {
-        for (Iterator<Grave> it = this.graves.iterator(); it.hasNext();) {
-            Grave grave = it.next();
-            if (grave.getOwner() == event.getWarlordsEntity()) {
-                grave.remove();
-                it.remove();
-            }
         }
     }
 
@@ -163,14 +156,25 @@ public class GraveOption implements Option, Listener {
             //spawn grave
             bestGraveCandidate.setType(material);
             ArmorStand deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-            String name = this.graveName.apply(player);
+            Component name = this.graveName.apply(player);
             if (name != null) {
-                deathStand.customName(Component.text(name));
+                deathStand.customName(name);
                 deathStand.setCustomNameVisible(true);
             }
             deathStand.setGravity(false);
             deathStand.setVisible(false);
             this.graves.add(new Grave(player, deathStand, bestGraveCandidate, material));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEvent(WarlordsRespawnEvent event) {
+        for (Iterator<Grave> it = this.graves.iterator(); it.hasNext(); ) {
+            Grave grave = it.next();
+            if (grave.getOwner() == event.getWarlordsEntity()) {
+                grave.remove();
+                it.remove();
+            }
         }
     }
 

@@ -174,14 +174,18 @@ public abstract class AbstractAbility {
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
 
         if (getCooldown() != 0) {
-            itemBuilder.addLore(Component.text("Cooldown: " + NumberFormat.formatOptionalTenths(getCooldown()) + " seconds", NamedTextColor.GRAY));
+            itemBuilder.addLore(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCooldown()) + " seconds", NamedTextColor.AQUA)));
         }
         if (getEnergyCost() != 0) {
-            itemBuilder.addLore(Component.text("Energy Cost: " + NumberFormat.formatOptionalTenths(getEnergyCost()), NamedTextColor.YELLOW));
+            itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCost()), NamedTextColor.YELLOW)));
         }
         if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
-            itemBuilder.addLore(Component.text("Crit Chance: " + NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED));
-            itemBuilder.addLore(Component.text("Crit Multiplier: " + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED));
+            itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
+            itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
         }
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLoreC(getDescription());

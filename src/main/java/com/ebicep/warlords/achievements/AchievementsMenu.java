@@ -9,8 +9,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -129,28 +130,29 @@ public class AchievementsMenu {
                 boolean hasAchievement = unlockedAchievements.contains(achievement);
                 boolean shouldObfuscate = !hasAchievement && achievement.isHidden();
                 ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Material.WATER_BUCKET : Material.BUCKET)
-                        .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
+                        .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate))
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (!achievement.getDescription().isEmpty()) {
-                    itemBuilder.loreLEGACY(
-                            WordWrap.wrapWithNewline(
-                                    ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
+                    itemBuilder.lore(
+                            WordWrap.wrap(
+                                    Component.text(achievement.getDescription(), NamedTextColor.GRAY).decoration(TextDecoration.OBFUSCATED, shouldObfuscate),
                                     160
                             ));
                 }
-                itemBuilder.addLore(Component.text((shouldObfuscate ?
-                                                    ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
-                                                                    :
-                                                    "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")),
-                                NamedTextColor.GREEN
-                        )
+                String spec = shouldObfuscate ? "HIDDENSPEC" : achievement.getSpec() != null ? achievement.getSpec().name : "Any";
+                itemBuilder.addLore(
+                        Component.empty(),
+                        Component.text("Spec:", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate)
+                                 .append(Component.text(spec, NamedTextColor.GOLD))
                 );
                 if (achievement.getDifficulty() != null) {
-                    itemBuilder.addLore(Component.text((shouldObfuscate ?
-                                                        ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
-                                                                        :
-                                                        "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName()), NamedTextColor.GREEN)
-                    );
+                    TextComponent difficulty = Component.text("Difficulty : ", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate);
+                    if (shouldObfuscate) {
+                        itemBuilder.addLore(difficulty.append(Component.text("DIFFICULTY", NamedTextColor.GOLD))
+                        );
+                    } else {
+                        itemBuilder.addLore(difficulty.append(achievement.getDifficulty().getColoredName()));
+                    }
                 }
                 if (hasAchievement) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -212,27 +214,29 @@ public class AchievementsMenu {
             boolean hasAchievement = unlockedAchievements.contains(achievement);
             boolean shouldObfuscate = !hasAchievement && achievement.isHidden();
             ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Material.WATER_BUCKET : Material.BUCKET)
-                    .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
+                    .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (!achievement.getDescription().isEmpty()) {
-                itemBuilder.loreLEGACY(
-                        WordWrap.wrapWithNewline(
-                                ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
+                itemBuilder.lore(
+                        WordWrap.wrap(
+                                Component.text(achievement.getDescription(), NamedTextColor.GRAY).decoration(TextDecoration.OBFUSCATED, shouldObfuscate),
                                 160
                         ));
             }
-            itemBuilder.addLore(Component.text((shouldObfuscate ?
-                                                ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
-                                                                :
-                                                "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")),
-                    NamedTextColor.GREEN
-            ));
+            String spec = shouldObfuscate ? "HIDDENSPEC" : achievement.getSpec() != null ? achievement.getSpec().name : "Any";
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text("Spec:", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate)
+                             .append(Component.text(spec, NamedTextColor.GOLD))
+            );
             if (achievement.getDifficulty() != null) {
-                itemBuilder.addLore(Component.text((shouldObfuscate ?
-                                                    ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
-                                                                    :
-                                                    "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName()), NamedTextColor.GREEN)
-                );
+                TextComponent difficulty = Component.text("Difficulty : ", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate);
+                if (shouldObfuscate) {
+                    itemBuilder.addLore(difficulty.append(Component.text("DIFFICULTY", NamedTextColor.GOLD))
+                    );
+                } else {
+                    itemBuilder.addLore(difficulty.append(achievement.getDifficulty().getColoredName()));
+                }
             }
             if (hasAchievement) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -296,7 +300,7 @@ public class AchievementsMenu {
                     i / 9,
                     new ItemBuilder(Material.BOOK)
                             .name(Component.text(achievement.getName(), NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
+                            .lore(Component.text(DATE_FORMAT.format(achievementRecord.getDate()), NamedTextColor.GRAY))
                             .get(),
                     (m, e) -> {
                     }
@@ -306,7 +310,7 @@ public class AchievementsMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page - 1);
@@ -317,7 +321,7 @@ public class AchievementsMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         openAchievementHistoryMenu(player, databasePlayer, recordClass, achievement, menuBack, page + 1);

@@ -8,12 +8,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,11 +30,13 @@ public class WeaponOption implements Option {
         }
         player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack(false))
                 .addLore(
-                        "",
-                        ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
-                                                                                                                                            .getWeapon()
-                                                                                                                                            .getName(),
-                        ChatColor.GREEN + "stats!"
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("to view ", NamedTextColor.GREEN),
+                                Component.text(wp.getSpec().getWeapon().getName(), NamedTextColor.YELLOW)
+                        ),
+                        Component.text("stats!", NamedTextColor.GREEN)
                 )
                 .get());
     }
@@ -61,28 +61,42 @@ public class WeaponOption implements Option {
                         .name(Component.text("Warlord's " + wp.getCosmeticSettings().getWeaponSkin().getName() + " of the " + spec.getName(),
                                 NamedTextColor.GOLD
                         ))
-                        .loreLEGACY(
-                                ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
-                                "",
-                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                WordWrap.wrapWithNewline(wp.getSkillBoost().selectedDescription, 150),
-                                "",
-                                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
-                                ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
-                                ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
-                                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
-                                "",
-                                ChatColor.GOLD + "Skill Boost Unlocked",
-                                ChatColor.DARK_AQUA + "Crafted",
-                                ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
-                                ChatColor.GREEN + "EQUIPPED",
-                                ChatColor.AQUA + "BOUND",
-                                "",
-                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon()
-                                                                                                                                                      .getName(),
-                                ChatColor.GREEN + "stats!"
+                        .lore(
+                                Component.text("Damage: ", NamedTextColor.GRAY)
+                                         .append(Component.text("132 ", NamedTextColor.RED))
+                                         .append(Component.text("-"))
+                                         .append(Component.text(" 179", NamedTextColor.RED)),
+                                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                                         .append(Component.text("25%", NamedTextColor.RED)),
+                                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                                         .append(Component.text("200%", NamedTextColor.RED)),
+                                Component.text(""),
+                                Component.text(spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):", NamedTextColor.GREEN)
+                        )
+                        //.addLore(WordWrap.wrap(wp.getSkillBoost().selectedDescription, 150))
+                        .addLore(
+                                Component.text(""),
+                                Component.text("Health: ", NamedTextColor.GRAY)
+                                         .append(Component.text("+800", NamedTextColor.GREEN)),
+                                Component.text("Max Energy: ", NamedTextColor.GRAY)
+                                         .append(Component.text("+35", NamedTextColor.GREEN)),
+                                Component.text("Cooldown Reduction: ", NamedTextColor.GRAY)
+                                         .append(Component.text("+13%", NamedTextColor.GREEN)),
+                                Component.text("Speed: ", NamedTextColor.GRAY)
+                                         .append(Component.text("+13%", NamedTextColor.GREEN)),
+                                Component.text(""),
+                                Component.text("Skill Boost Unlocked", NamedTextColor.GOLD),
+                                Component.text("Crafted", NamedTextColor.DARK_AQUA),
+                                Component.text("Void Forged [4/4]", NamedTextColor.LIGHT_PURPLE),
+                                Component.text("EQUIPPED", NamedTextColor.GREEN),
+                                Component.text("BOUND", NamedTextColor.AQUA),
+                                Component.text(""),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to view ", NamedTextColor.GREEN),
+                                        Component.text(wp.getSpec().getWeapon().getName(), NamedTextColor.YELLOW)
+                                ),
+                                Component.text("stats!", NamedTextColor.GREEN)
                         )
                         .unbreakable()
                         .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)

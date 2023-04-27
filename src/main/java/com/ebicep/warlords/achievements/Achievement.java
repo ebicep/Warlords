@@ -55,15 +55,15 @@ public interface Achievement {
 
     enum Difficulty {
         EASY("Easy",
-                ChatColor.GREEN,
+                NamedTextColor.GREEN,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 4.0))
         ),
         MEDIUM("Medium",
-                ChatColor.GOLD,
+                NamedTextColor.GOLD,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 3.5))
         ),
         HARD("Hard",
-                ChatColor.RED,
+                NamedTextColor.RED,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 3))
         ),
 
@@ -71,17 +71,17 @@ public interface Achievement {
 
         public static final Difficulty[] VALUES = values();
         public final String name;
-        public final ChatColor chatColor;
+        public final NamedTextColor textColor;
         public final Function<Integer, Integer> weightFunction;
 
-        Difficulty(String name, ChatColor chatColor, Function<Integer, Integer> weightFunction) {
+        Difficulty(String name, NamedTextColor textColor, Function<Integer, Integer> weightFunction) {
             this.name = name;
-            this.chatColor = chatColor;
+            this.textColor = textColor;
             this.weightFunction = weightFunction;
         }
 
-        public String getColoredName() {
-            return chatColor + name;
+        public Component getColoredName() {
+            return Component.text(name, textColor);
         }
     }
 

@@ -529,20 +529,33 @@ public class WarlordsNewHotbarMenu {
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
-            ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
-            icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));
-            icon.loreLEGACY(
-                    selectedSpec.description,
-                    "",
-                    "§6Specialization Stats:",
-                    "",
-                    "§7Health: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxHealth()),
-                    "§7Energy: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()) + " §7/ §a+" + NumberFormat.formatOptionalHundredths(
-                            apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()) + " §7per hit",
-                    "",
-                    selectedSpec == APOTHECARY ? "§7Speed: §e10%" : null,
-                    apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
+            ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
+                    .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
+                    .lore(WordWrap.wrap(selectedSpec.description, 200));
+            icon.addLore(
+                    Component.empty(),
+                    Component.text("Specialization Stats:", NamedTextColor.GOLD),
+                    Component.empty(),
+                    Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
+                    Component.empty(),
+                    Component.text("Energy: ", NamedTextColor.GRAY)
+                             .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                             .append(Component.text(" / "))
+                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                             .append(Component.text(" per sec / "))
+                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                             .append(Component.text(" per hit"))
             );
+            if (selectedSpec == APOTHECARY) {
+                icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
+            }
+            boolean noDamageResistance = apc.getDamageResistance() == 0;
+            icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
+                                  .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                                          noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                                  ))
+            );
+
 
             SkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
             if (selectedBoost != null) {
@@ -698,21 +711,17 @@ public class WarlordsNewHotbarMenu {
             for (int i = 0; i < values.size(); i++) {
                 SkillBoosts skillBoost = values.get(i);
                 ItemBuilder builder = new ItemBuilder(selectedSpec.specType.itemStack)
-                        .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedSpec.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
+                        .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED))
                         .flags(ItemFlag.HIDE_ENCHANTS);
-                List<String> lore = new ArrayList<>();
-                lore.add(WordWrap.wrapWithNewline(skillBoost == selectedBoost ? skillBoost.selectedDescription
-                        .replace("§c", ChatColor.RED.toString())
-                        .replace("§a", ChatColor.GREEN.toString()) : skillBoost.description, 130)
-                );
-                lore.add("");
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+                lore.add(Component.empty());
                 if (skillBoost == selectedBoost) {
-                    lore.add(ChatColor.GREEN + "Currently selected!");
+                    lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    lore.add(ChatColor.YELLOW + "Click to select!");
+                    lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 }
-                builder.loreLEGACY(lore);
+                builder.lore(lore);
                 menu.setItem(
                         i + 2,
                         3,

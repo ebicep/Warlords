@@ -131,12 +131,12 @@ public class WarlordsEvents implements Listener {
         joinInteraction(player, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            p.showTitle(Title.title(
+            p.sendPlayerListHeaderAndFooter(
                     Component.text("Welcome to ", NamedTextColor.AQUA)
                              .append(Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)),
                     Component.text("Players Online: ", NamedTextColor.GREEN)
                              .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.GRAY))
-            ));
+            );
         });
         Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
     }
@@ -299,12 +299,12 @@ public class WarlordsEvents implements Listener {
         StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            p.showTitle(Title.title(
+            p.sendPlayerListHeaderAndFooter(
                     Component.text("     Welcome to ", NamedTextColor.AQUA)
                              .append(Component.text("Warlords 2.0     ", NamedTextColor.YELLOW, TextDecoration.BOLD)),
                     Component.text("Players Online: ", NamedTextColor.GREEN)
                              .append(Component.text(Bukkit.getOnlinePlayers().size() - 1, NamedTextColor.GRAY))
-            ));
+            );
         });
 
         for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {

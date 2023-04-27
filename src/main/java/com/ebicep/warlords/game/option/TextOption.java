@@ -5,9 +5,10 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.ChatColor;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -101,11 +102,11 @@ public class TextOption implements Option, TimerSkipAbleMarker {
             @Override
             public void sendText(@Nonnull Game game, @Nonnull List<Component> messages) {
                 game.forEachOnlinePlayer((p, t) -> {
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                     for (Component line : messages) {
                         ChatUtils.sendMessage(p, true, line);
                     }
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                 });
             }
         },
@@ -113,11 +114,11 @@ public class TextOption implements Option, TimerSkipAbleMarker {
             @Override
             public void sendText(@Nonnull Game game, @Nonnull List<Component> messages) {
                 game.forEachOnlinePlayer((p, t) -> {
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                     for (Component line : messages) {
                         ChatUtils.sendMessage(p, false, line);
                     }
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                 });
             }
         },

@@ -8,8 +8,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
@@ -42,7 +42,7 @@ public class DummySpawnOption implements Option {
             @Override
             public void run() {
                 if (getGame().getState() instanceof EndState) {
-                    System.out.print(ChatColor.RED + "[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
+                    ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
                     return;
                 }
 

@@ -568,9 +568,10 @@ public class DebugMenuPlayerOptions {
                         1,
                         new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", NamedTextColor.RED))
-                                .loreLEGACY(WordWrap.wrapWithNewline(skillBoost.description, 150),
-                                        "",
-                                        ChatColor.YELLOW + "Click to select!"
+                                .lore(WordWrap.wrap(skillBoost.description, 150))
+                                .addLore(
+                                        Component.empty(),
+                                        Component.text("Click to select!", NamedTextColor.YELLOW)
                                 ).get(),
                         (m, e) -> {
                             target.setSpec(selectedSpec, skillBoost);
