@@ -109,9 +109,8 @@ public class HammerOfLight extends AbstractAbility implements Duration {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
-        wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
-        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
+        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
         Location location = player.getTargetBlock(null, 25).getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {

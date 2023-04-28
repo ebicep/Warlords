@@ -59,7 +59,6 @@ public class HealingRain extends AbstractAbility implements Duration {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
-        wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock(null, 25).getLocation().clone();
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
