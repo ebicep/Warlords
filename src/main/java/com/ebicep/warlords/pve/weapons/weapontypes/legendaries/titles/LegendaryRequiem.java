@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -87,26 +88,40 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 if (spawnAmount <= 0) {
                     return;
                 }
-                PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-                                   .aliveEnemiesOf(player)
-                                   .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
-                                   .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
-                                   .limit(spawnAmount)
-                                   .forEach(convertedEnemy -> {
-                                       EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
-                                       convertedEnemy.setTeam(Team.BLUE);
-                                       AbstractMob<?> mob = convertedEnemy.getMob();
-                                       updateMobEquipment(mob, player);
-                                       //removing teammate mobs that are agroed on converted target
-                                       PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-                                                          .aliveTeammatesOf(player)
-                                                          .filter(teammate -> {
-                                                              EntityLiving target = teammate.getMob().getTarget();
-                                                              return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
-                                                          })
-                                                          .forEach(teammate -> teammate.getMob().removeTarget());
-                                       mob.removeTarget();
-                                   });
+                List<WarlordsNPC> toConvert = PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                                                                 .aliveEnemiesOf(player)
+                                                                 .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
+                                                                 .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
+                                                                 .limit(spawnAmount)
+                                                                 .toList();
+                toConvert.forEach(convertedEnemy -> {
+                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                    convertedEnemy.setTeam(Team.BLUE);
+                    AbstractMob<?> mob = convertedEnemy.getMob();
+                    updateMobEquipment(mob, player);
+                    //removing teammate mobs that are agroed on converted target
+                    PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                                       .aliveTeammatesOf(player)
+                                       .filter(teammate -> {
+                                           EntityLiving target = teammate.getMob().getTarget();
+                                           return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
+                                       })
+                                       .forEach(teammate -> teammate.getMob().removeTarget());
+                    mob.removeTarget();
+                });
+                new GameRunnable(game) {
+
+                    @Override
+                    public void run() {
+                        toConvert.forEach(convertedEnemy -> {
+                            AbstractMob<?> mob = convertedEnemy.getMob();
+                            if (pveOption.getMobs().contains(mob)) {
+                                mob.getWarlordsNPC().die(mob.getWarlordsNPC());
+                            }
+                        });
+                        toConvert.clear();
+                    }
+                }.runTaskLater(20 * 60);
             }
 
         });
