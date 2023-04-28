@@ -103,13 +103,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void resetAbilityTree() {
         this.abilityTree.getUpgradeBranches().clear();
         this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
-            if (autoUpgradeProfiles == null || autoUpgradeProfiles.isEmpty()) {
-                return;
-            }
-            this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
-        });
+        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
     }
 
     public WarlordsPlayer(
