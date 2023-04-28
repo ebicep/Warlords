@@ -139,13 +139,8 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
             return null;
         }
 
-        return (nameAbbreviation.equals("WND") ||
-                nameAbbreviation.equals("CRIP") ||
-                nameAbbreviation.equals("LCH") ||
-                nameAbbreviation.equals("MIAS") ||
-                nameAbbreviation.equals("AVE MARK") ||
-                nameAbbreviation.equals("SILENCE")
-
+        return (cooldownType == CooldownTypes.DEBUFF ||
+                        nameAbbreviation.equals("MIAS")
                 ? ChatColor.RED : ChatColor.GREEN) + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1);
     }
 
