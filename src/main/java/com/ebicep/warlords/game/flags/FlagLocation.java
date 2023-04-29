@@ -5,11 +5,12 @@
  */
 package com.ebicep.warlords.game.flags;
 
-import java.util.List;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public interface FlagLocation {
 
@@ -18,8 +19,8 @@ public interface FlagLocation {
 
     @Nullable
     FlagLocation update(@Nonnull FlagInfo info);
-    
+
     @Nonnull
-    List<String> getDebugInformation();
+    List<TextComponent> getDebugInformation();
 	
 }

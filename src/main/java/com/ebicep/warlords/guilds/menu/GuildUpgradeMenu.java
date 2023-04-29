@@ -44,7 +44,7 @@ public class GuildUpgradeMenu {
         for (T value : values) {
             ItemBuilder itemBuilder = new ItemBuilder(value.getMaterial())
                     .name(Component.text(value.getName(), NamedTextColor.GREEN))
-                    .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + value.getDescription(), 160))
+                    .lore(WordWrap.wrap(Component.text(value.getDescription(), NamedTextColor.GRAY), 160))
                     .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
             AbstractGuildUpgrade<?> upgrade = null;
             for (AbstractGuildUpgrade<?> abstractGuildUpgrade : upgrades) {
@@ -59,7 +59,10 @@ public class GuildUpgradeMenu {
                     upgrade.addItemClickLore(itemBuilder);
                 }
             } else if (canPurchaseUpgrades) {
-                itemBuilder.addLore(ChatColor.YELLOW + "\nClick to Purchase");
+                itemBuilder.addLore(
+                        Component.empty(),
+                        Component.text("Click to Purchase", NamedTextColor.YELLOW)
+                );
             }
 
             AbstractGuildUpgrade<?> finalUpgrade = upgrade;
@@ -93,12 +96,15 @@ public class GuildUpgradeMenu {
             menu.setItem(i % 7 + 1, i / 7 + 1,
                     new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                             .name(Component.text("Tier " + tier, NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
-                                    ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +
-                                            " Guild Coins",
-                                    "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgrade."
+                            .lore(
+                                    Component.text("Effect Bonus: ", NamedTextColor.GRAY)
+                                             .append(Component.text(upgradesTemporary.getEffectBonusFromTier(tier), NamedTextColor.GREEN)),
+                                    Component.text("Cost: ", NamedTextColor.GRAY)
+                                             .append(Component.text(NumberFormat.addCommas(upgradeCost) + " Guild Coins", NamedTextColor.GREEN)),
+                                    Component.empty(),
+                                    Component.text("WARNING: ", NamedTextColor.RED)
+                                             .append(Component.text("This will override the current upgrade.", NamedTextColor.GRAY))
+
                             )
                             .get(),
                     (m, e) -> {
@@ -133,14 +139,14 @@ public class GuildUpgradeMenu {
 
                                         Instant now = Instant.now();
                                         Instant end = upgradesTemporary.expirationDate.apply(Instant.now());
-                                        guild.sendGuildMessageToOnlinePlayers(ChatColor.YELLOW.toString() +
-                                                        Duration.between(now, end).toHours() + " Hour Tier " +
-                                                        tier + " " + upgradesTemporary.name + ChatColor.GREEN + " blessing purchased!",
+                                        guild.sendGuildMessageToOnlinePlayers(
+                                                Component.text(Duration.between(now, end).toHours() + " Hour Tier " + tier + " " + upgradesTemporary.name, NamedTextColor.YELLOW)
+                                                         .append(Component.text(" blessing purchased!", NamedTextColor.GREEN)),
                                                 true
                                         );
                                         openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES);
                                     } else {
-                                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
+                                        player.sendMessage(Component.text("You do not have enough guild coins to purchase this upgrade.", NamedTextColor.RED));
                                     }
                                 },
                                 (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, upgradesTemporary),
@@ -164,7 +170,7 @@ public class GuildUpgradeMenu {
     ) {
         int nextTier = upgrade == null ? 1 : upgrade.getTier() + 1;
         if (nextTier > 9) {
-            player.sendMessage(ChatColor.RED + "You have reached the maximum tier for this upgrade.");
+            player.sendMessage(Component.text("You have reached the maximum tier for this upgrade.", NamedTextColor.RED));
             return;
         }
         long upgradeCost = upgradesPermanent.getCost(nextTier);
@@ -203,7 +209,7 @@ public class GuildUpgradeMenu {
                         );
                         openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesPermanent.VALUES);
                     } else {
-                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
+                        player.sendMessage(Component.text("You do not have enough guild coins to purchase this upgrade.", NamedTextColor.RED));
                     }
                 },
                 (m2, e2) -> openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesPermanent.VALUES),

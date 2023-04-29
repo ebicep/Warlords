@@ -95,7 +95,7 @@ public class CustomScoreboard {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         scoreboard = manager.getNewScoreboard();
 
-        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("§e§lWARLORDS 2.0"));
+        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("WARLORDS 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD));
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         this.uuid = uuid;
@@ -142,7 +142,7 @@ public class CustomScoreboard {
 
     private void clearSideBar() {
         sideBar.unregister();
-        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("§e§lWARLORDS 2.0"));
+        sideBar = scoreboard.registerNewObjective("WARLORDS", Criteria.DUMMY, Component.text("WARLORDS 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD));
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
@@ -181,12 +181,13 @@ public class CustomScoreboard {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
             if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
-                team.suffix(Component.text(" " + tag.getTag(false)));
+                team.suffix(Component.space().append(tag.getTag(false)));
             } else {
                 team.suffix(Component.empty());
             }
             team.prefix(Permissions.getPrefixWithColor(onlinePlayer));
             team.addEntry(name);
+            team.color(Permissions.getColor(onlinePlayer));
         }
     }
 

@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -37,7 +36,7 @@ public class GuildRoleMenu {
                         .get(),
                 (m, e) -> {
                     if (guildRoles.size() >= 8) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You can only have a maximum of 7 roles.");
+                        Guild.sendGuildMessage(player, Component.text("You can only have a maximum of 7 roles.", NamedTextColor.RED));
                         return;
                     }
                     new SignGUI()
@@ -45,20 +44,20 @@ public class GuildRoleMenu {
                             .onFinish((p, lines) -> {
                                 String roleName = lines[0].trim();
                                 if (roleName.isEmpty()) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
+                                    Guild.sendGuildMessage(player, Component.text("You must enter a role name!", NamedTextColor.RED));
                                     return null;
                                 }
                                 if (guildRoles.stream().anyMatch(role -> role.getRoleName().equalsIgnoreCase(roleName))) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
+                                    Guild.sendGuildMessage(player, Component.text("A role with that name already exists!", NamedTextColor.RED));
                                     return null;
                                 }
                                 if (roleName.length() < 3) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
+                                    Guild.sendGuildMessage(player, Component.text("Role names must be at least 3 characters long!", NamedTextColor.RED));
                                     return null;
                                 }
                                 GuildRole role = new GuildRole(roleName);
                                 guildRoles.add(1, role);
-                                Guild.sendGuildMessage(player, ChatColor.GREEN + "Role created: " + roleName);
+                                Guild.sendGuildMessage(player, Component.text("Role created: " + roleName, NamedTextColor.GREEN));
                                 guild.log(new GuildLogRoleCreate(player.getUniqueId(), roleName));
                                 guild.queueUpdate();
                                 openRoleEditorAfterTick(guild, player, role);
@@ -125,7 +124,7 @@ public class GuildRoleMenu {
             menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
                             .name(Component.text("Click to set as default role", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
+                            .lore(Component.text("Current default: ", NamedTextColor.GRAY).append(Component.text(guild.getDefaultRoleName(), NamedTextColor.GREEN)))
                             .get(),
                     (m, e) -> {
                         guild.setDefaultRole(role.getRoleName());
@@ -147,7 +146,7 @@ public class GuildRoleMenu {
         menu.setItem(3, 4,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(Component.text("Click to rename role", NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
+                        .lore(Component.text("Current name: ", NamedTextColor.GRAY).append(Component.text(role.getRoleName(), NamedTextColor.GREEN)))
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -155,21 +154,21 @@ public class GuildRoleMenu {
                             .onFinish((p, lines) -> {
                                 String newRoleName = lines[0];
                                 if (newRoleName.isEmpty()) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
+                                    Guild.sendGuildMessage(player, Component.text("You must enter a role name!", NamedTextColor.RED));
                                     return null;
                                 }
                                 if (guildRoles.stream().anyMatch(r -> r.getRoleName().equalsIgnoreCase(newRoleName))) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
+                                    Guild.sendGuildMessage(player, Component.text("A role with that name already exists!", NamedTextColor.RED));
                                     return null;
                                 }
                                 if (newRoleName.length() < 3) {
-                                    Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
+                                    Guild.sendGuildMessage(player, Component.text("Role names must be at least 3 characters long!", NamedTextColor.RED));
                                     return null;
                                 }
                                 if (guild.getDefaultRole().equals(role)) {
                                     guild.setDefaultRole(newRoleName);
                                 }
-                                Guild.sendGuildMessage(player, ChatColor.GREEN + "Role " + role.getRoleName() + " was renamed to " + newRoleName);
+                                Guild.sendGuildMessage(player, Component.text("Role " + role.getRoleName() + " was renamed to " + newRoleName, NamedTextColor.GREEN));
                                 guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
                                 role.setRoleName(newRoleName);
                                 guild.queueUpdate();
@@ -179,14 +178,14 @@ public class GuildRoleMenu {
                 }
         );
 
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
         for (int i = 1; i < guildRoles.size(); i++) {
-            lore.add("" + (guildRoles.get(i).equals(role) ? ChatColor.GREEN : ChatColor.GRAY) + i + ". " + guildRoles.get(i).getRoleName());
+            lore.add(Component.text(i + ". " + guildRoles.get(i).getRoleName(), guildRoles.get(i).equals(role) ? NamedTextColor.GREEN : NamedTextColor.GRAY));
         }
         menu.setItem(5, 4,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(Component.text("Click to change role level", NamedTextColor.GREEN))
-                        .loreLEGACY(lore)
+                        .lore(lore)
                         .get(),
                 (m, e) -> {
                     int roleIndex = guildRoles.indexOf(role);
@@ -210,11 +209,11 @@ public class GuildRoleMenu {
                         .get(),
                 (m, e) -> {
                     if (guild.getDefaultRole().equals(role)) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You cannot delete the default role. Reassign it first!");
+                        Guild.sendGuildMessage(player, Component.text("You cannot delete the default role. Reassign it first!", NamedTextColor.RED));
                         return;
                     }
                     if (!role.getPlayers().isEmpty()) {
-                        Guild.sendGuildMessage(player, ChatColor.RED + "You must remove all players from this role before deleting it!");
+                        Guild.sendGuildMessage(player, Component.text("You must remove all players from this role before deleting it!", NamedTextColor.RED));
                         return;
                     }
 
@@ -234,7 +233,7 @@ public class GuildRoleMenu {
                                     }.runTaskLater(Warlords.getInstance(), 1);
                                 } else {
                                     Guild.sendGuildMessage(player,
-                                            ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM"
+                                            Component.text("Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM", NamedTextColor.RED)
                                     );
                                 }
                                 return null;

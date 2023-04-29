@@ -10,7 +10,7 @@ public class GuildLogRoleCreate extends AbstractGuildLogRole {
 
     @Override
     public String getAction() {
-        return "created";
+        return "created role";
     }
 
 }

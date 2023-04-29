@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -41,10 +43,11 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
     @Nonnull
     @Override
-    public List<String> getDebugInformation() {
-        return Arrays.asList("Type: " + this.getClass().getSimpleName(),
-                "scorer: " + getScorer(),
-                "despawnTimer: " + getDespawnTimer()
+    public List<TextComponent> getDebugInformation() {
+        return Arrays.asList(
+                Component.text("Type: " + this.getClass().getSimpleName()),
+                Component.text("scorer: " + getScorer()),
+                Component.text("despawnTimer: " + getDespawnTimer())
         );
     }
 	

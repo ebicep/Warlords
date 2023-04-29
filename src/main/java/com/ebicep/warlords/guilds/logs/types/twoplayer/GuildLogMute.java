@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
 import com.ebicep.warlords.guilds.GuildPlayerMuteEntry;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -32,7 +33,9 @@ public class GuildLogMute extends AbstractGuildLogTwoPlayer {
     }
 
     @Override
-    public String append() {
-        return timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT ? "" : "for " + ChatColor.RED + duration + " " + timeUnit.name + (duration > 1 ? "s" : "");
+    public Component append() {
+        return timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT ?
+               Component.empty() :
+               Component.text("for ").append(Component.text(duration + " " + timeUnit.name + (duration > 1 ? "s" : ""), NamedTextColor.RED));
     }
 }

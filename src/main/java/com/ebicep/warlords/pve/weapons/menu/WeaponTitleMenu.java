@@ -108,7 +108,7 @@ public class WeaponTitleMenu {
                         itemBuilder.get(),
                         (m, e) -> {
                             if (equals) {
-                                player.sendMessage(ChatColor.RED + "You already have this title on your weapon!");
+                                player.sendMessage(Component.text("You already have this title on your weapon!", NamedTextColor.RED));
                                 return;
                             }
                             if (titleIsLocked) {
@@ -117,7 +117,10 @@ public class WeaponTitleMenu {
                                     Currencies currency = currenciesLongEntry.getKey();
                                     Long currencyCost = currenciesLongEntry.getValue();
                                     if (pveStats.getCurrencyValue(currency) < currencyCost) {
-                                        player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(currencyCost) + ChatColor.RED + " to apply this title!");
+                                        player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                    .append(currency.getCostColoredName(currencyCost))
+                                                                    .append(Component.text(" to apply this title!"))
+                                        );
                                         return;
                                     }
                                 }
@@ -162,7 +165,7 @@ public class WeaponTitleMenu {
             menu.setItem(0, 4,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
             );
@@ -171,7 +174,7 @@ public class WeaponTitleMenu {
             menu.setItem(8, 4,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page + 1)
             );
@@ -188,7 +191,7 @@ public class WeaponTitleMenu {
                                 .onFinish((p, lines) -> {
                                     String titleName = lines[0];
                                     if (titleName.isEmpty()) {
-                                        player.sendMessage(ChatColor.RED + "Query cannot be empty!");
+                                        player.sendMessage(Component.text("Query cannot be empty!", NamedTextColor.RED));
                                         openWeaponEditorAfterTick(player, databasePlayer, weapon);
                                         return null;
                                     }
@@ -198,7 +201,7 @@ public class WeaponTitleMenu {
                                                                               .filter(title -> title.name.toLowerCase().contains(finalTitleName))
                                                                               .toArray(LegendaryTitles[]::new);
                                     if (legendaryTitles.length == 0) {
-                                        player.sendMessage(ChatColor.RED + "No titles with that name found!");
+                                        player.sendMessage(Component.text("No titles with that name found!", NamedTextColor.RED));
                                         openWeaponEditorAfterTick(player, databasePlayer, weapon);
                                     } else {
                                         new BukkitRunnable() {

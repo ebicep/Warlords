@@ -82,11 +82,11 @@ public class ItemEquipMenu {
                         return;
                     }
                     if (i.isFavorite()) {
-                        player.sendMessage(ChatColor.RED + "You cannot scrap a favorited item!");
+                        player.sendMessage(Component.text("You cannot scrap a favorited item!", NamedTextColor.RED));
                         return;
                     }
                     if (equippedItems.contains(i.getUUID())) {
-                        player.sendMessage(ChatColor.RED + "You cannot scrap an equipped item!");
+                        player.sendMessage(Component.text("You cannot scrap an equipped item!", NamedTextColor.RED));
                         return;
                     }
                     Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
@@ -269,23 +269,23 @@ public class ItemEquipMenu {
         menu.setItem(1, 5,
                 new ItemBuilder(Material.WRITABLE_BOOK)
                         .name(Component.text("Create Loadout", NamedTextColor.GREEN))
-                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new loadout to customize your experience.", 150))
+                        .lore(WordWrap.wrap(Component.text("Create a new loadout to customize your experience.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
                     if (itemsManager.getLoadouts().size() >= 9) {
-                        player.sendMessage(ChatColor.RED + "You can only have up to 9 loadouts!");
+                        player.sendMessage(Component.text("You can only have up to 9 loadouts!", NamedTextColor.RED));
                     } else {
                         new SignGUI()
                                 .lines("", "Enter", "Loadout Name", "")
                                 .onFinish((p, lines) -> {
                                     String name = lines[0];
                                     if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                        player.sendMessage(ChatColor.RED + "Invalid name!");
+                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
                                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                         return null;
                                     }
                                     if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                        player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                        player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
                                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                         return null;
                                     }
@@ -301,11 +301,11 @@ public class ItemEquipMenu {
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(Component.text("Rename Loadout", NamedTextColor.GREEN))
-                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout.", 150))
+                        .lore(WordWrap.wrap(Component.text("Rename the current loadout.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot rename the default loadout!");
+                        player.sendMessage(Component.text("You cannot rename the default loadout!", NamedTextColor.RED));
                         return;
                     }
                     new SignGUI()
@@ -313,12 +313,12 @@ public class ItemEquipMenu {
                             .onFinish((p, lines) -> {
                                 String name = lines[0];
                                 if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                    player.sendMessage(ChatColor.RED + "Invalid name!");
+                                    player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
                                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                     return null;
                                 }
                                 if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                    player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
+                                    player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
                                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                     return null;
                                 }
@@ -333,11 +333,11 @@ public class ItemEquipMenu {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.LAVA_BUCKET)
                         .name(Component.text("Delete Loadout", NamedTextColor.RED))
-                        .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout.", 150))
+                        .lore(WordWrap.wrap(Component.text("Delete the current loadout.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
+                        player.sendMessage(Component.text("You cannot delete the default loadout!", NamedTextColor.RED));
                         return;
                     }
                     Menu.openConfirmationMenu0(

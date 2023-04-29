@@ -106,7 +106,7 @@ public class DebugMenuTeamOptions {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page - 1)
             );
@@ -115,7 +115,7 @@ public class DebugMenuTeamOptions {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, page + 1)
             );

@@ -255,6 +255,13 @@ public class CommandManager {
         });
         manager.getCommandContexts().registerContext(Instant.class, command -> Instant.parse(command.popFirstArg()));
         manager.getCommandContexts().registerContext(Year.class, command -> Year.parse(command.popFirstArg()));
+        manager.getCommandContexts().registerContext(NamedTextColor.class, command -> {
+            NamedTextColor namedTextColor = NamedTextColor.NAMES.value(command.popFirstArg().toLowerCase());
+            if (namedTextColor == null) {
+                throw new InvalidCommandArgument("Could not find a color with that name");
+            }
+            return namedTextColor;
+        });
     }
 
     public static void registerCompletions() {
@@ -369,6 +376,7 @@ public class CommandManager {
                                                                                .toList());
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
+        commandCompletions.registerAsyncCompletion("textcolors", command -> NamedTextColor.NAMES.keys());
 
     }
 

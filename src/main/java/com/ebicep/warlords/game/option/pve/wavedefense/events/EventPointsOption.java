@@ -19,7 +19,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -120,7 +119,7 @@ public class EventPointsOption implements Option, Listener {
 
     public void addTo(WarlordsPlayer warlordsPlayer, int amount) {
         points.merge(warlordsPlayer.getUuid(), amount, Integer::sum);
-        warlordsPlayer.sendMessage(ChatColor.YELLOW + "+" + amount + " ✪ Points");
+        warlordsPlayer.sendMessage(Component.text("+" + amount + " ✪ Points", NamedTextColor.YELLOW));
     }
 
     @EventHandler
@@ -163,7 +162,7 @@ public class EventPointsOption implements Option, Listener {
         this.points.replaceAll((uuid, integer) -> {
             WarlordsEntity player = Warlords.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(ChatColor.YELLOW + "+" + points + " ✪ Points");
+                player.sendMessage(Component.text("+" + points + " ✪ Points", NamedTextColor.YELLOW));
             }
             return integer + points;
         });

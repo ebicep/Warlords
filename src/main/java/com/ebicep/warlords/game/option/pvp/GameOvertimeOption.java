@@ -7,9 +7,11 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -82,8 +84,12 @@ public class GameOvertimeOption implements Option, Listener {
             }
             drawAfterTimeoutOption.setTimeRemaining(overTimeTime);
             event.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach " + overTimePoints + " points wins!", 0, 60, 0);
-                player.sendMessage("§dOvertime is now active!");
+                player.showTitle(Title.title(
+                        Component.text("OVERTIME!", NamedTextColor.LIGHT_PURPLE),
+                        Component.text("First team to reach " + overTimePoints + " points wins!", NamedTextColor.YELLOW),
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
+                player.sendMessage(Component.text("Overtime is now active!", NamedTextColor.LIGHT_PURPLE));
                 player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
             });
             wasActivated = true;

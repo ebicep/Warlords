@@ -27,9 +27,9 @@ public class FlagCapturePointOption extends MarkerOption {
                         Component.text("Capture zone"),
                         loc,
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(forTeams),
-                                "Shape: POINT",
-                                "Radius: " + radius
+                                Component.text("Ignoring teams: " + Arrays.toString(forTeams)),
+                                Component.text("Shape: POINT"),
+                                Component.text("Radius: " + radius)
                         )
                 )
         );
@@ -47,10 +47,10 @@ public class FlagCapturePointOption extends MarkerOption {
                                 (a.getZ() + b.getZ()) / 2
                         ),
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(forTeams),
-                                "Shape: RECTANGLE",
-                                "A: " + a.getX() + ", " + a.getY() + ", " + a.getZ(),
-                                "B: " + b.getX() + ", " + b.getY() + ", " + b.getZ()
+                                Component.text("Ignoring teams: " + Arrays.toString(forTeams)),
+                                Component.text("Shape: RECTANGLE"),
+                                Component.text("A: " + a.getX() + ", " + a.getY() + ", " + a.getZ()),
+                                Component.text("B: " + b.getX() + ", " + b.getY() + ", " + b.getZ())
                         )
                 )
         );

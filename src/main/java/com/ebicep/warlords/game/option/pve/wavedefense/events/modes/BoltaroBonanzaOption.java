@@ -14,7 +14,8 @@ import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -68,7 +69,8 @@ public class BoltaroBonanzaOption implements Option, EventGameEndOption {
     public void sendEventStatsMessage(@Nonnull Game game, @Nonnull Player player) {
         ChatUtils.sendMessage(player,
                 true,
-                ChatColor.WHITE + "Highest Split: " + ChatColor.GOLD + highestSplitValue.get()
+                Component.text("Highest Split: ", NamedTextColor.WHITE)
+                         .append(Component.text(highestSplitValue.get(), NamedTextColor.GOLD))
         );
     }
 

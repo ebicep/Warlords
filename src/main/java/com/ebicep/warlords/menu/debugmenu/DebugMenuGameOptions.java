@@ -144,15 +144,15 @@ public class DebugMenuGameOptions {
                             if (isASelectedAddon) {
                                 boolean customToggle = !player.hasPermission("warlords.game.customtoggle");
                                 if (customToggle && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                                    player.sendMessage(Component.text("Only players with the Game Starter rank or higher can modify this addon!", NamedTextColor.RED));
                                 } else if (customToggle && gameAddon.equals(GameAddon.PRIVATE_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Games started from the start menu are automatically private!");
+                                    player.sendMessage(Component.text("Games started from the start menu are automatically private!", NamedTextColor.RED));
                                 } else {
                                     addons.remove(gameAddon);
                                 }
                             } else {
                                 if (!player.hasPermission("warlords.game.freezetoggle") && gameAddon.equals(GameAddon.FREEZE_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                                    player.sendMessage(Component.text("Only players with the Game Starter rank or higher can modify this addon!", NamedTextColor.RED));
                                 } else {
                                     addons.add(gameAddon);
                                 }
@@ -335,7 +335,7 @@ public class DebugMenuGameOptions {
                                                 ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
                                                 sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time);
                                             } catch (Exception exception) {
-                                                p.sendMessage(ChatColor.RED + "Invalid time");
+                                                p.sendMessage(Component.text("Invalid time", NamedTextColor.RED));
                                             }
                                             new BukkitRunnable() {
                                                 @Override
@@ -378,7 +378,7 @@ public class DebugMenuGameOptions {
                                             game.setPoints(team, score);
                                             sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score);
                                         } catch (NumberFormatException exception) {
-                                            p.sendMessage(ChatColor.RED + "Invalid score");
+                                            p.sendMessage(Component.text("Invalid score", NamedTextColor.RED));
                                         }
                                         new BukkitRunnable() {
                                             @Override

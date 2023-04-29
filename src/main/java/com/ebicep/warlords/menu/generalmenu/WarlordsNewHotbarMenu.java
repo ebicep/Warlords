@@ -13,7 +13,6 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
@@ -286,27 +285,26 @@ public class WarlordsNewHotbarMenu {
 
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
                 LinkedHashMap<Spendable, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
-                List<String> lore = rewardForLevel.entrySet()
-                                                  .stream()
-                                                  .map(currenciesLongEntry -> {
-                                                      Spendable spendable = currenciesLongEntry.getKey();
-                                                      Long value = currenciesLongEntry.getValue();
-                                                      return spendable.getTextColor()
-                                                                      .toString() + value + " " + spendable.getName() + (spendable != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
-                                                  }).collect(Collectors.toList());
-                lore.add(0, "");
-                lore.add("");
+                List<Component> lore = rewardForLevel.entrySet()
+                                                     .stream()
+                                                     .map(currenciesLongEntry -> {
+                                                         Spendable spendable = currenciesLongEntry.getKey();
+                                                         Long value = currenciesLongEntry.getValue();
+                                                         return spendable.getCostColoredName(value);
+                                                     }).collect(Collectors.toList());
+                lore.add(0, Component.empty());
+                lore.add(Component.empty());
                 AtomicBoolean claimed = new AtomicBoolean(false);
                 boolean currentPrestigeSelected = selectedPrestige != currentPrestige;
                 if (menuLevel <= level || currentPrestigeSelected) {
                     claimed.set(databaseSpecialization.hasLevelUpReward(menuLevel, selectedPrestige));
                     if (claimed.get()) {
-                        lore.add(ChatColor.GREEN + "Claimed!");
+                        lore.add(Component.text("Claimed!", NamedTextColor.GREEN));
                     } else {
-                        lore.add(ChatColor.YELLOW + "Click to claim!");
+                        lore.add(Component.text("Click to claim!", NamedTextColor.YELLOW));
                     }
                 } else {
-                    lore.add(ChatColor.RED + "You can't claim this yet!");
+                    lore.add(Component.text("You can't claim this yet!", NamedTextColor.RED));
                 }
                 menu.setItem(
                         column,
@@ -317,12 +315,12 @@ public class WarlordsNewHotbarMenu {
                                         Material.YELLOW_STAINED_GLASS_PANE :
                                         Material.BLACK_STAINED_GLASS_PANE)
                                 .name(Component.text("Level Reward " + menuLevel, menuLevel <= level ? NamedTextColor.GREEN : NamedTextColor.RED))
-                                .loreLEGACY(lore)
+                                .lore(lore)
                                 .get(),
                         (m, e) -> {
                             if (menuLevel <= level || currentPrestigeSelected) {
                                 if (claimed.get()) {
-                                    player.sendMessage(ChatColor.RED + "You already claimed this reward!");
+                                    player.sendMessage(Component.text("You already claimed this reward!", NamedTextColor.RED));
                                 } else {
                                     rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                     databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
@@ -331,7 +329,7 @@ public class WarlordsNewHotbarMenu {
                                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "You can't claim this reward yet!");
+                                player.sendMessage(Component.text("You can't claim this reward yet!", NamedTextColor.RED));
                             }
                         }
                 );
@@ -363,7 +361,7 @@ public class WarlordsNewHotbarMenu {
                         3,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                                .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
                 );
@@ -374,7 +372,7 @@ public class WarlordsNewHotbarMenu {
                         3,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Next Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                                .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
                 );
@@ -489,7 +487,7 @@ public class WarlordsNewHotbarMenu {
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                             } else {
-                                player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
+                                player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
                             }
                         }
                 );
@@ -886,7 +884,7 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
                 .name(Component.text("Chat Settings", NamedTextColor.GREEN))
-                .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Configure which chat messages you see in-game", 150))
+                .lore(WordWrap.wrap(Component.text("Configure which chat messages you see in-game", NamedTextColor.GRAY), 150))
                 .get();
 
         @Default

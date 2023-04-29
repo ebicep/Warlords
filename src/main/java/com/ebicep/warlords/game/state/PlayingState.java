@@ -35,8 +35,9 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -44,10 +45,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,7 +79,7 @@ public class PlayingState implements State, TimerDebugAble {
                 .findAny()
                 .ifPresent(gameHolder -> {
                     ChatChannels.sendDebugMessage((CommandIssuer) null,
-                            ChatColor.LIGHT_PURPLE + "Started Game: " + game.getGameMode() + " - " + gameHolder.getName()
+                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                     );
                 });
         this.game.setAcceptsSpectators(true);
@@ -108,14 +106,14 @@ public class PlayingState implements State, TimerDebugAble {
                                 continue;
                             }
                             if (p != null) {
-                                p.sendMessage(ChatColor.RED + selectedSpec.name + " is currently disabled. Your specialization has been changed.");
+                                p.sendMessage(Component.text(selectedSpec.name + " is currently disabled. Your specialization has been changed.", NamedTextColor.RED));
                             }
                             playerSettings.setSelectedSpec(value);
                             break;
                         }
                         if (playerSettings.getSelectedSpec().isBanned()) {
                             if (p != null) {
-                                p.sendMessage(ChatColor.RED + "All specializations are currently disabled. Game closing.");
+                                p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
                             }
                             closeGame.set(true);
                         }
@@ -230,7 +228,7 @@ public class PlayingState implements State, TimerDebugAble {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         Objective health = customScoreboard.getHealth();
         if (health == null || scoreboard.getObjective("health") == null) {
-            health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text(ChatColor.RED + "❤"));
+            health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text("❤", NamedTextColor.RED));
             health.setDisplaySlot(DisplaySlot.BELOW_NAME);
             customScoreboard.setHealth(health);
         }
@@ -253,33 +251,23 @@ public class PlayingState implements State, TimerDebugAble {
             String name = warlordsEntity.getName();
             UUID uuid = warlordsEntity.getUuid();
             String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
-            if (scoreboard.getTeam(name) == null) {
-                org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(name);
-                temp.prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                                      .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor()));
-                temp.addEntry(name);
-                temp.suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]"));
-            } else {
-                scoreboard.getTeam(name).prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                                                          .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor()));
-                if (warlordsEntity.getCarriedFlag() != null) {
-                    scoreboard.getTeam(name).suffix(Component.text(
-                            ChatColor.DARK_GRAY + "[" +
-                                    ChatColor.GRAY + "Lv" +
-                                    levelString +
-                                    ChatColor.DARK_GRAY + "]" +
-                                    ChatColor.WHITE + "⚑"
-                    ));
-                } else {
-                    String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + warlordsEntity.getMinuteStats().total().getKills();
-                    scoreboard.getTeam(name).suffix(Component.text(
-                            ChatColor.DARK_GRAY + " [" +
-                                    ChatColor.GRAY + "Lv" +
-                                    levelString +
-                                    ChatColor.DARK_GRAY + "]"
-                    ));
-                }
+            Team playerTeam = scoreboard.getTeam(name);
+            if (playerTeam == null) {
+                playerTeam = scoreboard.registerNewTeam(name);
+                playerTeam.addEntry(name);
             }
+            playerTeam.color(team.teamColor());
+            playerTeam.prefix(Component.text("[", NamedTextColor.DARK_GRAY)
+                                       .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                       .append(Component.text("] ")));
+
+            TextComponent.Builder suffix = Component.text(" [", NamedTextColor.DARK_GRAY)
+                                                    .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                    .append(Component.text("]")).toBuilder();
+            if (warlordsEntity.getCarriedFlag() != null) {
+                suffix.append(Component.text("⚑", NamedTextColor.WHITE));
+            }
+            playerTeam.suffix(suffix.build());
         });
     }
 
@@ -457,12 +445,11 @@ public class PlayingState implements State, TimerDebugAble {
         this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
             Scoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player.getUniqueId()).getScoreboard();
             int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
-            //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
-            scoreboard.getTeam(we.getName())
-                      .prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-                                                                                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor()));
-            scoreboard.getTeam(we.getName())
-                      .suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]"));
+//            scoreboard.getTeam(we.getName())
+//                      .prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
+//                                                                                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor()));
+//            scoreboard.getTeam(we.getName())
+//                      .suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]"));
 
         });
     }

@@ -86,12 +86,15 @@ public class IllusionVendorTrait extends WarlordsTrait {
                             .get(),
                     (m, e) -> {
                         if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < finalRewardPrice) {
-                            player.sendMessage(ChatColor.RED + "You need " + Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice) + ChatColor.RED + " to purchase this item!");
+                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                        .append(Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice))
+                                                        .append(Component.text(" to purchase this item!"))
+                            );
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
                         }
                         if (reward.stock() != -1 && purchasedAmount >= reward.stock()) {
-                            player.sendMessage(ChatColor.RED + "This item is out of stock!");
+                            player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
                             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             return;
                         }
@@ -142,12 +145,15 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                           .get(),
                                   (m, e) -> {
                                       if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < cost) {
-                                          player.sendMessage(ChatColor.RED + "You need " + Currencies.ILLUSION_SHARD.getCostColoredName(cost) + ChatColor.RED + " to purchase this item!");
+                                          player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                      .append(Currencies.ILLUSION_SHARD.getCostColoredName(cost))
+                                                                      .append(Component.text(" to purchase this item!"))
+                                          );
                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                           return;
                                       }
                                       if (purchasedAmount >= 1) {
-                                          player.sendMessage(ChatColor.RED + "This item is out of stock!");
+                                          player.sendMessage(Component.text("This item is out of stock!", NamedTextColor.RED));
                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                           return;
                                       }

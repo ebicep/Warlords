@@ -1549,43 +1549,39 @@ public abstract class WarlordsEntity {
     }
 
     public void displayActionBar() {
-        StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
+        TextComponent.Builder actionBarMessage = Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD)
+                                                          .toBuilder();
+        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
         float healthRatio = health / maxHealth;
         if (healthRatio > 1) {
-            actionBarMessage.append(ChatColor.GREEN);
+            healthBuilder.color(NamedTextColor.GREEN);
         } else if (healthRatio >= .75) {
-            actionBarMessage.append(ChatColor.DARK_GREEN);
+            healthBuilder.color(NamedTextColor.DARK_GREEN);
         } else if (healthRatio >= .25) {
-            actionBarMessage.append(ChatColor.YELLOW);
+            healthBuilder.color(NamedTextColor.YELLOW);
         } else {
-            actionBarMessage.append(ChatColor.RED);
+            healthBuilder.color(NamedTextColor.RED);
         }
         int maxHealthRounded = Math.round(maxHealth);
         int maxBaseHealthRounded = Math.round(maxBaseHealth);
-        actionBarMessage.append("§l")
-                        .append(Math.round(health))
-                        .append(ChatColor.GOLD)
-                        .append("§l/")
-                        .append(maxHealthRounded > maxBaseHealthRounded ? ChatColor.YELLOW : ChatColor.GOLD)
-                        .append(ChatColor.BOLD)
-                        .append(maxHealthRounded)
-                        .append("    ");
-        actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
+        healthBuilder.append(Component.text(Math.round(health)))
+                     .append(Component.text("/", NamedTextColor.GOLD))
+                     .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
+        actionBarMessage.append(healthBuilder);
+        actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(" ");
+                actionBarMessage.append(Component.text(abstractCooldown.getNameAbbreviation() + " "));
             }
         }
-        if (entity instanceof Player) {
-            PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());
-        }
+        entity.sendActionBar(actionBarMessage.build());
     }
 
     public void displayFlagActionBar(@Nonnull Player player) {
         if (this.compassTarget != null) {
-            PacketUtils.sendActionBar(player, this.compassTarget.getToolbarName(this));
+            player.sendActionBar(this.compassTarget.getToolbarName(this));
         } else {
-            PacketUtils.sendActionBar(player, "");
+            player.sendActionBar(Component.empty());
         }
     }
 

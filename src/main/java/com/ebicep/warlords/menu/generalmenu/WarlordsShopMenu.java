@@ -277,7 +277,7 @@ public class WarlordsShopMenu {
 
                             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                         } else {
-                            player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
+                            player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
                         }
                     }
             );

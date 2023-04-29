@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.marker;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
 
 public interface CompassTargetMarker extends LocationMarker {
     /**
@@ -11,7 +12,7 @@ public interface CompassTargetMarker extends LocationMarker {
      */
     int getCompassTargetPriority(WarlordsEntity player);
 
-    String getToolbarName(WarlordsEntity player);
+    Component getToolbarName(WarlordsEntity player);
     
     default boolean isEnabled() {
         return true;

@@ -101,11 +101,11 @@ public class PowerupOption implements Option {
                 () -> Component.text(this.getClass().getSimpleName() + ": " + this.type.name()),
                 this::getLocation,
                 () -> Arrays.asList(
-                        "Type: " + this.getType(),
-                        "Cooldown: " + this.getCooldown(),
-                        "Duration: " + this.getDuration(),
-                        "Max cooldown: " + this.getMaxCooldown(),
-                        "Entity: " + this.getEntity()
+                        Component.text("Type: " + this.getType()),
+                        Component.text("Cooldown: " + this.getCooldown()),
+                        Component.text("Duration: " + this.getDuration()),
+                        Component.text("Max cooldown: " + this.getMaxCooldown()),
+                        Component.text("Entity: " + this.getEntity())
                 )
         ));
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {

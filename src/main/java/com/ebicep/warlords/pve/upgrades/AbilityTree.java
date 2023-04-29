@@ -116,23 +116,23 @@ public class AbilityTree {
             menu.setItem(2, 4,
                     new ItemBuilder(Material.WRITABLE_BOOK)
                             .name(Component.text("Create Profile", NamedTextColor.GREEN))
-                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
+                            .lore(WordWrap.wrap(Component.text("Create a new profile to customize your experience.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() >= 4) {
-                            warlordsPlayer.sendMessage(ChatColor.RED + "You can only have up to 4 profiles per spec!");
+                            warlordsPlayer.sendMessage(Component.text("You can only have up to 4 profiles per spec!", NamedTextColor.RED));
                         } else {
                             new SignGUI()
                                     .lines("", "Enter", "Profile Name", "")
                                     .onFinish((p, lines) -> {
                                         String name = lines[0];
                                         if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                            warlordsPlayer.sendMessage(ChatColor.RED + "Invalid name!");
+                                            warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
                                             warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                             return null;
                                         }
                                         if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                            warlordsPlayer.sendMessage(ChatColor.RED + "You already have a profile with that name!");
+                                            warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
                                             warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                             return null;
                                         }
@@ -149,7 +149,7 @@ public class AbilityTree {
             menu.setItem(3, 4,
                     new ItemBuilder(Material.NAME_TAG)
                             .name(Component.text("Rename Profile", NamedTextColor.GREEN))
-                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
+                            .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
                         new SignGUI()
@@ -157,12 +157,12 @@ public class AbilityTree {
                                 .onFinish((p, lines) -> {
                                     String name = lines[0];
                                     if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                        player.sendMessage(ChatColor.RED + "Invalid name!");
+                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
                                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                         return null;
                                     }
                                     if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                        player.sendMessage(ChatColor.RED + "You already have a profile with that name!");
+                                        player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
                                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                                         return null;
                                     }
@@ -176,11 +176,11 @@ public class AbilityTree {
             menu.setItem(5, 4,
                     new ItemBuilder(Material.LAVA_BUCKET)
                             .name(Component.text("Delete Profile", NamedTextColor.RED))
-                            .loreLEGACY(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
+                            .lore(WordWrap.wrap(Component.text("Delete the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() == 1) {
-                            player.sendMessage(ChatColor.RED + "You must have at least one profile!");
+                            player.sendMessage(Component.text("You must have at least one profile!", NamedTextColor.RED));
                             return;
                         }
                         Menu.openConfirmationMenu0(

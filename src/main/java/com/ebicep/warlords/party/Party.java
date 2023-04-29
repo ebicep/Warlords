@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -227,7 +228,7 @@ public class Party {
         if (open) {
             sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party is now open", ChatColor.BLUE, true);
         } else {
-            sendMessageToAllPartyPlayers(ChatColor.RED + "The party is now closed", ChatColor.BLUE, true);
+            sendMessageToAllPartyPlayers(Component.text("The party is now closed", NamedTextColor.RED), ChatColor.BLUE, true);
         }
     }
 
@@ -273,10 +274,16 @@ public class Party {
         });
     }
 
+    public void sendMessageToAllPartyPlayers(Component message, ChatColor borderColor, boolean centered) {
+        getAllPartyPeoplePlayerOnline().forEach(partyMember -> {
+            ChatUtils.sendMessageToPlayer(partyMember, message, borderColor, centered);
+        });
+    }
+
     public List<Player> getAllPartyPeoplePlayerOnline() {
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> getPartyPlayers().stream().anyMatch(partyPlayer -> partyPlayer.getUUID().equals(player.getUniqueId())))
-                .collect(Collectors.toList());
+                     .filter(player -> getPartyPlayers().stream().anyMatch(partyPlayer -> partyPlayer.getUUID().equals(player.getUniqueId())))
+                     .collect(Collectors.toList());
     }
 
     public List<PartyPlayer> getPartyPlayers() {

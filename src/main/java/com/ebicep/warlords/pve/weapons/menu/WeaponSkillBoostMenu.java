@@ -68,7 +68,7 @@ public class WeaponSkillBoostMenu {
                     builder.get(),
                     (m, e) -> {
                         if (selected) {
-                            player.sendMessage(ChatColor.RED + "You already have this skill boost selected!");
+                            player.sendMessage(Component.text("You already have this skill boost selected!", NamedTextColor.RED));
                             return;
                         }
                         List<Component> confirmLore = new ArrayList<>();
@@ -84,7 +84,10 @@ public class WeaponSkillBoostMenu {
                                 Currencies currency = currenciesLongEntry.getKey();
                                 long value = currenciesLongEntry.getValue();
                                 if (databasePlayer.getPveStats().getCurrencyValue(currency) < value) {
-                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) + ChatColor.RED + " to unlock this skill boost.");
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(currency.getCostColoredName(value))
+                                                                .append(Component.text(" to unlock this skill boost."))
+                                    );
                                     return;
                                 }
                             }

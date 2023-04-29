@@ -36,7 +36,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return The list of extra debug info
      */
     @Nonnull
-    List<String> getExtra();
+    List<TextComponent> getExtra();
 
     /**
      * Gets the creator of this debug marker.
@@ -89,24 +89,26 @@ public interface DebugLocationMarker extends LocationMarker {
         }
         item.name(newName);
         Location loc = getLocation();
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "XYZ: " + ChatColor.WHITE + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " Yaw/pitch: " + loc.getYaw() + "/" + loc.getPitch());
-        lore.add(ChatColor.GRAY + "Source: " + ChatColor.WHITE + getCreator().getName());
-        for(String extra : getExtra()) {
-            String newString;
-            if (extra.indexOf(ChatColor.COLOR_CHAR) >= 0) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("XYZ: ", NamedTextColor.GRAY)
+                          .append(Component.text(loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " Yaw/pitch: " + loc.getYaw() + "/" + loc.getPitch(), NamedTextColor.WHITE)));
+        lore.add(Component.text("Source: ", NamedTextColor.GRAY).append(Component.text(getCreator().getName(), NamedTextColor.WHITE)));
+        for (TextComponent extra : getExtra()) {
+            String content = extra.content();
+            TextComponent newString;
+            if (extra.color() != null) {
                 newString = extra;
             } else {
-                int index = extra.indexOf(": ");
+                int index = content.indexOf(": ");
                 if (index > 0) {
-                    newString = ChatColor.GRAY + extra.substring(0, index + 1) + ChatColor.WHITE + extra.substring(index + 1);
+                    newString = Component.text(content.substring(0, index + 1), NamedTextColor.GRAY).append(Component.text(content.substring(index + 1), NamedTextColor.WHITE));
                 } else {
-                    newString = ChatColor.WHITE + extra;
+                    newString = Component.text(content, NamedTextColor.WHITE);
                 }
             }
             lore.add(newString);
         }
-        item.loreLEGACY(lore);
+        item.lore(lore);
         return item.get();
     }
 
@@ -120,7 +122,7 @@ public interface DebugLocationMarker extends LocationMarker {
             Class<?> creator,
             TextComponent name,
             Location location,
-            Supplier<List<String>> extra
+            Supplier<List<TextComponent>> extra
     ) {
         return create(material, data, () -> creator, () -> name, () -> location, extra);
     }
@@ -131,7 +133,7 @@ public interface DebugLocationMarker extends LocationMarker {
             Class<?> creator,
             TextComponent name,
             Supplier<Location> location,
-            Supplier<List<String>> extra
+            Supplier<List<TextComponent>> extra
     ) {
         return create(material, data, () -> creator, () -> name, location, extra);
     }
@@ -146,7 +148,7 @@ public interface DebugLocationMarker extends LocationMarker {
             Class<?> creator,
             Supplier<TextComponent> name,
             Supplier<Location> location,
-            Supplier<List<String>> extra
+            Supplier<List<TextComponent>> extra
     ) {
         return create(material, data, () -> creator, name, location, extra);
     }
@@ -167,7 +169,7 @@ public interface DebugLocationMarker extends LocationMarker {
             Supplier<Class<?>> creator,
             Supplier<TextComponent> name,
             Supplier<Location> location,
-            Supplier<List<String>> extra
+            Supplier<List<TextComponent>> extra
     ) {
         Material newMaterial = material == null ? Material.BARRIER : material;
         return create(() -> newMaterial, creator, name, location, extra);
@@ -178,7 +180,7 @@ public interface DebugLocationMarker extends LocationMarker {
             Supplier<Class<?>> creator,
             Supplier<TextComponent> name,
             Supplier<Location> location,
-            Supplier<List<String>> extra
+            Supplier<List<TextComponent>> extra
     ) {
         return new DebugLocationMarker() {
             @Nonnull
@@ -201,7 +203,7 @@ public interface DebugLocationMarker extends LocationMarker {
 
             @Nonnull
             @Override
-            public List<String> getExtra() {
+            public List<TextComponent> getExtra() {
                 return extra.get();
             }
 

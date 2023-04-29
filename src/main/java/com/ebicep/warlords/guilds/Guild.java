@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -65,6 +66,10 @@ public class Guild {
 
     public long getExperience(Timing timing) {
         return experience.getOrDefault(timing, 0L);
+    }
+
+    public static void sendGuildMessage(Player player, Component message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 
     //Local cache of uuids for faster lookup
@@ -163,6 +168,12 @@ public class Guild {
         }
     }
 
+    public void sendGuildMessageToOnlinePlayers(Component message, boolean centered) {
+        for (Player onlinePlayer : getOnlinePlayers()) {
+            ChatUtils.sendMessageToPlayer(onlinePlayer, message, ChatColor.GREEN, centered);
+        }
+    }
+
     public void log(AbstractGuildLog guildLog) {
         auditLog.add(guildLog);
     }
@@ -180,6 +191,7 @@ public class Guild {
     public void setDefaultRole(String defaultRole) {
         this.defaultRole = defaultRole;
     }
+
     public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
     }
@@ -194,10 +206,6 @@ public class Guild {
     }
 
     public static void sendGuildMessage(Player player, String message) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
-    }
-
-    public static void sendGuildMessage(Player player, Component message) {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 
@@ -284,7 +292,7 @@ public class Guild {
     public void disband() {
         this.disbandDate = Instant.now();
         GuildManager.removeGuild(this);
-        sendGuildMessageToOnlinePlayers(ChatColor.RED + "The guild has been disbanded!", true);
+        sendGuildMessageToOnlinePlayers(Component.text("The guild has been disbanded!", NamedTextColor.RED), true);
         queueUpdate();
     }
 
@@ -523,18 +531,16 @@ public class Guild {
             page = maxLogPage;
 
         }
-        StringBuilder log = new StringBuilder(ChatColor.GOLD + "Guild Log (" + page + "/" + maxLogPage + ")\n");
-        auditLog.stream()
-                .skip((page - 1) * LOG_PER_PAGE)
-                .limit(LOG_PER_PAGE)
-                .forEach(guildLog -> log.append(ChatColor.GRAY).append(guildLog.getFormattedLog()).append("\n"));
-        if (log.length() > 0) {
-            log.setLength(log.length() - 1);
-        }
         ChatUtils.sendMessageToPlayer(
                 player,
-                log.toString(),
-                ChatColor.GREEN,
+                Component.text("Guild Log (" + page + "/" + maxLogPage + ")", NamedTextColor.GOLD)
+                         .append(Component.newline())
+                         .append(auditLog.stream()
+                                         .skip((page - 1) * LOG_PER_PAGE)
+                                         .limit(LOG_PER_PAGE)
+                                         .map(AbstractGuildLog::getFormattedLog)
+                                         .collect(Component.toComponent(Component.newline()))),
+                NamedTextColor.GREEN,
                 false
         );
     }

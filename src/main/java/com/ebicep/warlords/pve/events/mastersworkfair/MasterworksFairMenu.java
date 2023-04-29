@@ -25,9 +25,9 @@ public class MasterworksFairMenu {
     public static void openMasterworksFairMenu(Player player) {
         if (MasterworksFairManager.currentFair == null) {
             if (MasterworksFairTrait.startTime != null) {
-                player.sendMessage(ChatColor.RED + "The Masterworks Fair is starting soon!");
+                player.sendMessage(Component.text("The Masterworks Fair is starting soon!", NamedTextColor.RED));
             } else {
-                player.sendMessage(ChatColor.RED + "The Masterworks Fair is currently closed!");
+                player.sendMessage(Component.text("The Masterworks Fair is currently closed!", NamedTextColor.RED));
             }
             return;
         }
@@ -195,7 +195,7 @@ public class MasterworksFairMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         openSubmissionMenu(player, databasePlayer, weaponType, page - 1);
@@ -206,7 +206,7 @@ public class MasterworksFairMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         openSubmissionMenu(player, databasePlayer, weaponType, page + 1);

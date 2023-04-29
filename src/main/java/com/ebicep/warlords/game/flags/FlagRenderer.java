@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -142,7 +142,10 @@ public class FlagRenderer {
             renderedArmorStands.add(stand);
             stand.setGravity(false);
             stand.setCanPickupItems(false);
-            stand.customName(Component.text(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG"));
+            stand.customName(Component.text(info.getTeam() == Team.BLUE ? "BLU FLAG" : "RED FLAG",
+                    info.getTeam() == Team.BLUE ? NamedTextColor.BLUE : NamedTextColor.RED,
+                    TextDecoration.BOLD
+            ));
             stand.setCustomNameVisible(true);
             stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand.setVisible(false);
@@ -151,7 +154,7 @@ public class FlagRenderer {
             renderedArmorStands.add(stand1);
             stand1.setGravity(false);
             stand1.setCanPickupItems(false);
-            stand1.customName(Component.text(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT"));
+            stand1.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
             stand1.setCustomNameVisible(true);
             stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand1.setVisible(false);

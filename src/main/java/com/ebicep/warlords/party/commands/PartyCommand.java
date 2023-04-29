@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -304,7 +305,7 @@ public class PartyCommand extends BaseCommand {
         if (party.isAllInvite()) {
             party.sendMessageToAllPartyPlayers(ChatColor.GREEN + "All invite is now ON!", ChatColor.BLUE, true);
         } else {
-            party.sendMessageToAllPartyPlayers(ChatColor.RED + "All invite is now OFF!", ChatColor.BLUE, true);
+            party.sendMessageToAllPartyPlayers(Component.text("All invite is now OFF!", NamedTextColor.RED), ChatColor.BLUE, true);
         }
 
     }

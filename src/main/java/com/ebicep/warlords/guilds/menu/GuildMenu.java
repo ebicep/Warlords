@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,18 +42,20 @@ public class GuildMenu {
 
         int guildLevel = GuildExperienceUtils.getLevelFromExp(guild.getExperience(Timing.LIFETIME));
         GuildRole roleOfPlayer = guild.getRoleOfPlayer(player.getUniqueId());
+        TextComponent grayBase = Component.empty().color(NamedTextColor.GRAY);
         menu.setItem(0, 0,
                 new ItemBuilder(Material.OAK_SIGN)
                         .name(Component.text("Guild Information", NamedTextColor.GREEN))
-                        .loreLEGACY(
-                                ChatColor.GRAY + "Name: " + ChatColor.YELLOW + guild.getName(),
-                                ChatColor.GRAY + "Created: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guild.getCreationDate()),
-                                ChatColor.GRAY + "Level: " + ChatColor.YELLOW + guildLevel,
-                                ChatColor.GRAY + "Experience: " + ChatColor.YELLOW + NumberFormat.addCommas(guild.getExperience(Timing.LIFETIME)),
-                                ChatColor.GRAY + "Coins: " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(guild.getCurrentCoins()),
-                                ChatColor.GRAY + "Members: " + ChatColor.YELLOW + guild.getPlayers()
-                                                                                       .size() + ChatColor.AQUA + "/" + ChatColor.YELLOW + guild.getPlayerLimit(),
-                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + (roleOfPlayer != null ? roleOfPlayer.getRoleName() : "None")
+                        .lore(
+                                grayBase.content("Name: ").append(Component.text(guild.getName(), NamedTextColor.YELLOW)),
+                                grayBase.content("Created: ").append(Component.text(AbstractGuildLog.FORMATTER.format(guild.getCreationDate()), NamedTextColor.YELLOW)),
+                                grayBase.content("Level: ").append(Component.text(guildLevel, NamedTextColor.YELLOW)),
+                                grayBase.content("Experience: ").append(Component.text(NumberFormat.addCommas(guild.getExperience(Timing.LIFETIME)), NamedTextColor.YELLOW)),
+                                grayBase.content("Coins: ").append(Component.text(NumberFormat.addCommaAndRound(guild.getCurrentCoins()), NamedTextColor.YELLOW)),
+                                grayBase.content("Members: ").append(Component.text(guild.getPlayers().size(), NamedTextColor.YELLOW)
+                                                                              .append(Component.text("/", NamedTextColor.AQUA))
+                                                                              .append(Component.text(guild.getPlayerLimit()))),
+                                grayBase.content("Rank: ").append(Component.text((roleOfPlayer != null ? roleOfPlayer.getRoleName() : "None"), NamedTextColor.YELLOW))
                         )
                         .get(),
                 (m, e) -> {
@@ -61,31 +64,55 @@ public class GuildMenu {
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                         .name(Component.text("Temporary Blessings", NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.GRAY + "These upgrades last 24 hours and " +
-                                "\nwill only affect players in the guild.")
+                        .lore(
+                                grayBase.content("These upgrades last 24 hours and "),
+                                grayBase.content("will only affect players in the guild.")
+                        )
                         .get(),
                 (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES)
         );
         menu.setItem(3, 0,
                 new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                         .name(Component.text("Permanent Upgrades", NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.GRAY + "These upgrades last permanently and " +
-                                "\nwill only affect players in the guild."
-                        ).get(),
+                        .lore(
+                                grayBase.content("These upgrades last permanently and "),
+                                grayBase.content("will only affect players in the guild.")
+                        )
+                        .get(),
                 (m, e) -> GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Permanent Upgrades", GuildUpgradesPermanent.VALUES)
         );
         int conversionRatio = Guild.getConversionRatio(guild);
         menu.setItem(4, 0,
                 new ItemBuilder(Material.EMERALD)
                         .name(Component.text("Convert Coins", NamedTextColor.GREEN))
-                        .loreLEGACY(
-                                ChatColor.GRAY + "Convert your Player Coins to Guild Coins",
-                                "",
-                                ChatColor.GOLD + "Conversion Ratios",
-                                (conversionRatio == 100 ? ChatColor.GREEN : ChatColor.GRAY) + "Guild Level 1-5: " + ChatColor.GOLD + "100" + ChatColor.DARK_GRAY + ":" + ChatColor.GOLD + "1",
-                                (conversionRatio == 40 ? ChatColor.GREEN : ChatColor.GRAY) + "Guild Level 6-10: " + ChatColor.GOLD + "40" + ChatColor.DARK_GRAY + ":" + ChatColor.GOLD + "1",
-                                (conversionRatio == 10 ? ChatColor.GREEN : ChatColor.GRAY) + "Guild Level 11-15: " + ChatColor.GOLD + "10" + ChatColor.DARK_GRAY + ":" + ChatColor.GOLD + "1",
-                                (conversionRatio == 5 ? ChatColor.GREEN : ChatColor.GRAY) + "Guild Level 16-20: " + ChatColor.GOLD + "5" + ChatColor.DARK_GRAY + ":" + ChatColor.GOLD + "1"
+                        .lore(
+                                Component.text("Convert your Player Coins to Guild Coins", NamedTextColor.GRAY),
+                                Component.empty(),
+                                Component.text("Conversion Ratios", NamedTextColor.GOLD),
+                                Component.textOfChildren(
+                                        Component.text("Guild Level 1-5: ", conversionRatio == 100 ? NamedTextColor.GREEN : NamedTextColor.GRAY),
+                                        Component.text("100", NamedTextColor.GOLD),
+                                        Component.text(":", NamedTextColor.DARK_GRAY),
+                                        Component.text("1", NamedTextColor.GOLD)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("Guild Level 6-10: ", conversionRatio == 40 ? NamedTextColor.GREEN : NamedTextColor.GRAY),
+                                        Component.text("40", NamedTextColor.GOLD),
+                                        Component.text(":", NamedTextColor.DARK_GRAY),
+                                        Component.text("1", NamedTextColor.GOLD)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("Guild Level 11-15: ", conversionRatio == 10 ? NamedTextColor.GREEN : NamedTextColor.GRAY),
+                                        Component.text("10", NamedTextColor.GOLD),
+                                        Component.text(":", NamedTextColor.DARK_GRAY),
+                                        Component.text("1", NamedTextColor.GOLD)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("Guild Level 16-20: ", conversionRatio == 5 ? NamedTextColor.GREEN : NamedTextColor.GRAY),
+                                        Component.text("5", NamedTextColor.GOLD),
+                                        Component.text(":", NamedTextColor.DARK_GRAY),
+                                        Component.text("1", NamedTextColor.GOLD)
+                                )
                         )
                         .get(),
                 (m, e) -> onCoinConversion(guild, player)
@@ -126,20 +153,24 @@ public class GuildMenu {
                 menu.setItem(i % 9, i / 9 + 1,
                         new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID()))
                                 .name(Component.text(guildPlayer.getName(), NamedTextColor.GREEN))
-                                .loreLEGACY(
-                                        ChatColor.GRAY + "Join Date: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()),
-                                        ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName(),
-                                        ChatColor.GRAY + "Coins: ",
-                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
-                                        ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.WEEKLY)),
-                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.DAILY)),
-                                        ChatColor.GRAY + "Coins Converted: ",
-                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoinsConverted()),
-                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getDailyCoinsConverted()),
-                                        ChatColor.GRAY + "Experience: ",
-                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME)),
-                                        ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.WEEKLY)),
-                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.DAILY))
+                                .lore(
+                                        grayBase.content("Join Date: ").append(Component.text(AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()), NamedTextColor.YELLOW)),
+                                        grayBase.content("Role: ").append(Component.text(guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName(), NamedTextColor.AQUA)),
+                                        grayBase.content("Coins: "),
+                                        grayBase.content(" - Lifetime: ")
+                                                .append(Component.text(NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)), NamedTextColor.YELLOW)),
+                                        grayBase.content(" - Weekly: ").append(Component.text(NumberFormat.addCommas(guildPlayer.getCoins(Timing.WEEKLY)), NamedTextColor.YELLOW)),
+                                        grayBase.content(" - Daily: ").append(Component.text(NumberFormat.addCommas(guildPlayer.getCoins(Timing.DAILY)), NamedTextColor.YELLOW)),
+                                        grayBase.content("Coins Converted: "),
+                                        grayBase.content(" - Lifetime: ").append(Component.text(NumberFormat.addCommas(guildPlayer.getCoinsConverted()), NamedTextColor.YELLOW)),
+                                        grayBase.content(" - Daily: ").append(Component.text(NumberFormat.addCommas(guildPlayer.getDailyCoinsConverted()), NamedTextColor.YELLOW)),
+                                        grayBase.content("Experience: "),
+                                        grayBase.content(" - Lifetime: ")
+                                                .append(Component.text(NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME)), NamedTextColor.YELLOW)),
+                                        grayBase.content(" - Weekly: ")
+                                                .append(Component.text(NumberFormat.addCommas(guildPlayer.getExperience(Timing.WEEKLY)), NamedTextColor.YELLOW)),
+                                        grayBase.content(" - Daily: ")
+                                                .append(Component.text(NumberFormat.addCommas(guildPlayer.getExperience(Timing.DAILY)), NamedTextColor.YELLOW))
                                 )
                                 .get(),
                         (m, e) -> {
@@ -155,7 +186,7 @@ public class GuildMenu {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page - 1))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openGuildMenu(guild, player, page - 1)
             );
@@ -164,7 +195,7 @@ public class GuildMenu {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.YELLOW + "Page " + (page + 1))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openGuildMenu(guild, player, page + 1)
             );
@@ -181,12 +212,12 @@ public class GuildMenu {
         }
         GuildPlayer guildPlayer = guildPlayerPair.getB();
         if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
-            player.sendMessage(ChatColor.RED + "You must be in the guild for at least 2 days to convert coins.");
+            player.sendMessage(Component.text("You must be in the guild for at least 2 days to convert coins.", NamedTextColor.RED));
             return;
         }
         long dailyCoinsConverted = guildPlayer.getDailyCoinsConverted();
         if (dailyCoinsConverted >= 10000) {
-            player.sendMessage(ChatColor.RED + "You can only covert up to 10,000 guild coins per day.");
+            player.sendMessage(Component.text("You can only covert up to 10,000 guild coins per day.", NamedTextColor.RED));
             return;
         }
         int coinConversionRatio = Guild.getConversionRatio(guild);
@@ -205,28 +236,28 @@ public class GuildMenu {
                         try {
                             amountString = lines[0];
                         } catch (NumberFormatException ex) {
-                            player.sendMessage(ChatColor.RED + "Invalid Number!");
+                            player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
                         int playerCoinsToConvert = Integer.parseInt(amountString);
                         if (playerCoinsToConvert <= 0) {
-                            player.sendMessage(ChatColor.RED + "You must enter a positive number.");
+                            player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
                         if (playerCoinsToConvert > playerCoins) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough player coins to convert to guild coins.");
+                            player.sendMessage(Component.text("You do not have enough player coins to convert to guild coins.", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
                         if (playerCoinsToConvert < coinConversionRatio) {
-                            player.sendMessage(ChatColor.RED + "You must enter a number greater than or equal to " + coinConversionRatio + ".");
+                            player.sendMessage(Component.text("You must enter a number greater than or equal to " + coinConversionRatio + ".", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
                         if (playerCoinsToConvert > maxCoinsCanConvert) {
-                            player.sendMessage(ChatColor.RED + "You cannot exceed the max convertable amount.");
+                            player.sendMessage(Component.text("You cannot exceed the max convertable amount.", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }

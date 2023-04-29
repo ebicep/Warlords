@@ -27,7 +27,10 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -403,7 +406,7 @@ public class TutorialOption implements Option {
     }
 
     private static void sendTutorialMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GRAY + ">> " + ChatColor.GREEN + message);
+        player.sendMessage(Component.text(">> ", NamedTextColor.GRAY).append(Component.text(message, NamedTextColor.GREEN)));
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 

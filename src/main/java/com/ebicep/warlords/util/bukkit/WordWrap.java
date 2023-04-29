@@ -64,7 +64,7 @@ public class WordWrap {
     }
 
     /**
-     * Used for lore, as the client can display new line characters
+     * Used for lore, as the client cant display new line characters
      *
      * @param component The component to wrap
      * @param width     The width to wrap at

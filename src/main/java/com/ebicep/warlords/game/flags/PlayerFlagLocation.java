@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -55,13 +57,13 @@ public class PlayerFlagLocation implements FlagLocation {
 
     @Nonnull
     @Override
-    public List<String> getDebugInformation() {
+    public List<TextComponent> getDebugInformation() {
         return Arrays.asList(
-                "Type: " + this.getClass().getSimpleName(),
-                "Player: " + this.getPlayer().getName(),
-                "pickUpTicks: " + getPickUpTicks(),
-                "pickUpTicks / 20: " + getPickUpTicks() / 20,
-                "Multiplier: +" + getComputedHumanMultiplier() + "%"
+                Component.text("Type: " + this.getClass().getSimpleName()),
+                Component.text("Player: " + this.getPlayer().getName()),
+                Component.text("pickUpTicks: " + getPickUpTicks()),
+                Component.text("pickUpTicks / 20: " + getPickUpTicks() / 20),
+                Component.text("Multiplier: +" + getComputedHumanMultiplier() + "%")
         );
     }
 

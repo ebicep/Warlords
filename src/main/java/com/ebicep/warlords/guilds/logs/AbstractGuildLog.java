@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -17,20 +18,23 @@ public abstract class AbstractGuildLog {
     public AbstractGuildLog() {
     }
 
-    public String getFormattedLog() {
-        return ChatColor.GRAY + FORMATTER.format(time) + " |" + getLog();
+    public Component getFormattedLog() {
+        return Component.textOfChildren(
+                Component.text(FORMATTER.format(time) + " |", NamedTextColor.GRAY),
+                getLog()
+        );
     }
 
     public abstract String getAction();
 
-    public abstract String getLog();
+    public abstract Component getLog();
 
-    public String prepend() {
-        return "";
+    public Component prepend() {
+        return Component.empty();
     }
 
-    public String append() {
-        return "";
+    public Component append() {
+        return Component.empty();
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -53,12 +55,12 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
     @Nonnull
     @Override
-    public List<String> getDebugInformation() {
+    public List<TextComponent> getDebugInformation() {
         return Arrays.asList(
-                "Type: " + this.getClass().getSimpleName(),
-                "Despawn ticks: " + getDespawnTimer(),
-                "Despawn seconds: " + getDespawnTimerSeconds(),
-                "damageTimer: " + getDamageTimer()
+                Component.text("Type: " + this.getClass().getSimpleName()),
+                Component.text("Despawn ticks: " + getDespawnTimer()),
+                Component.text("Despawn seconds: " + getDespawnTimerSeconds()),
+                Component.text("damageTimer: " + getDamageTimer())
         );
     }
 

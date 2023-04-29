@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
@@ -23,11 +24,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class AbstractItem {
 
     public static void sendItemMessage(Player player, String message) {
-        player.sendMessage(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > " + message);
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(Component.text(message)));
     }
 
     public static void sendItemMessage(Player player, Component message) {
-        player.sendMessage(Component.text(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > ").append(message));
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
     }
 
     private static double getAverageValue(double min, double max, double current) {

@@ -50,7 +50,7 @@ public class SupplyDropManager {
                             .get(),
                     (m, e) -> {
                         if (databasePlayerPvE.getCurrencyValue(Currencies.COIN) < 10000) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough coins to buy a supply drop token!");
+                            player.sendMessage(Component.text("You do not have enough coins to buy a supply drop token!", NamedTextColor.RED));
                             player.closeInventory();
                             return;
                         }
@@ -76,14 +76,14 @@ public class SupplyDropManager {
                             .get(),
                     (m, e) -> {
                         if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
-                            player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
+                            player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
                             return;
                         }
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         if (tokens > 0) {
                             supplyDropRoll(player, 1, e.isShiftClick());
                         } else {
-                            player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
+                            player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
                         }
                         player.closeInventory();
                     }
@@ -104,13 +104,13 @@ public class SupplyDropManager {
                             .get(),
                     (m, e) -> {
                         if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
-                            player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
+                            player.sendMessage(Component.text("You must wait for your current roll to end to roll again!", NamedTextColor.RED));
                             return;
                         }
                         if (tokens > 0) {
                             supplyDropRoll(player, Math.min(tokens, 25), e.isShiftClick());
                         } else {
-                            player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
+                            player.sendMessage(Component.text("You do not have any supply drop tokens to call a supply drop.", NamedTextColor.RED));
                         }
                         player.closeInventory();
                     }
@@ -140,7 +140,7 @@ public class SupplyDropManager {
 
             menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
-        }, () -> player.sendMessage(ChatColor.RED + "Susan does not want to talk to you right now."));
+        }, () -> player.sendMessage(Component.text("Susan does not want to talk to you right now.", NamedTextColor.RED)));
     }
 
     public static void supplyDropRoll(Player player, long amount, boolean instant) {

@@ -14,7 +14,6 @@ import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -57,19 +56,19 @@ public class GuildDebugCommand extends BaseCommand {
 
     @Subcommand("tag")
     @Description("Gives guild tag")
+    @CommandCompletion(" @textcolors @textcolors")
     public void tag(
             @Conditions("guild:true") Player player,
             GuildPlayerWrapper guildPlayerWrapper,
             String tagName,
-            ChatColor nameColor,
-            ChatColor bracketColor
+            NamedTextColor nameColor,
+            NamedTextColor bracketColor
     ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildTag tag = new GuildTag(tagName, nameColor.toString(), bracketColor.toString());
         guild.setTag(tag);
         GuildManager.queueUpdateGuild(guild);
-        ChatChannels.sendDebugMessage(player, Component.text("Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(false), NamedTextColor.GREEN)
-        );
+        ChatChannels.sendDebugMessage(player, Component.text("Set guild " + guild.getName() + " tag to ", NamedTextColor.GREEN).append(guild.getTag().getTag(false)));
     }
 
     @Subcommand("getlog")

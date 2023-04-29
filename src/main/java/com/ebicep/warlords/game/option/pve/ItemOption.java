@@ -17,7 +17,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -85,7 +85,7 @@ public class ItemOption implements Option {
             if (loadouts.isEmpty()) {
                 if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
                     AbstractItem.sendItemMessage((Player) player.getEntity(),
-                            ChatColor.RED + "No item loadout applied. Make sure your loadout is not overweight or unbinded."
+                            Component.text("No item loadout applied. Make sure your loadout is not overweight or unbinded.", NamedTextColor.RED)
                     );
                 }
                 return;
@@ -113,8 +113,8 @@ public class ItemOption implements Option {
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer, pveOption);
             if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
-                        Component.text(ChatColor.GREEN + "Applied Item Loadout: ")
-                                 .append(Component.text(ChatColor.GOLD + loadout.getName())
+                        Component.text("Applied Item Loadout: ", NamedTextColor.GREEN)
+                                 .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
                                                   .hoverEvent(HoverEvent.showText(Component.text(String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false))))))
                 );
             }

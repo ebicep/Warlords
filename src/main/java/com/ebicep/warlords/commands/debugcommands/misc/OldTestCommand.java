@@ -8,7 +8,6 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -134,16 +133,16 @@ public class OldTestCommand implements CommandExecutor {
 //                                               .append(Component.text("  <<"));
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
 
-            Component component = Component.text("TEST", NamedTextColor.GREEN)
-                                           .append(Component.newline())
-                                           .append(Component.text("TEST2", NamedTextColor.RED))
-                                           .append(Component.text("TEST3"));
+            Component component = Component.textOfChildren(
+                    Component.text("["),
+                    Component.text("TEST", NamedTextColor.RED),
+                    Component.text("]")
+            ).color(NamedTextColor.GREEN);
             player.sendMessage(component);
-            System.out.println(component);
-            String serialize = MiniMessage.miniMessage().serialize(component);
-            System.out.println(serialize);
-            System.out.println(MiniMessage.miniMessage().deserialize(serialize));
-            player.sendMessage(MiniMessage.miniMessage().deserialize(serialize));
+            Component component2 = Component.text("[", NamedTextColor.GREEN)
+                                            .append(Component.text("TEST", NamedTextColor.RED))
+                                            .append(Component.text("]"));
+            player.sendMessage(component2);
         }
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {

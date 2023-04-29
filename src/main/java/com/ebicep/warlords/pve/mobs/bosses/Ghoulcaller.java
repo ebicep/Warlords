@@ -21,6 +21,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -85,7 +87,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
             if (skipNextAttack) {
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
                             .aliveEnemiesOf(getWarlordsNPC())
-                        .forEach(enemyPlayer -> enemyPlayer.sendMessage(ChatColor.RED + "Ghoulcaller's Fury has been silenced!"));
+                            .forEach(enemyPlayer -> enemyPlayer.sendMessage(Component.text("Ghoulcaller's Fury has been silenced!", NamedTextColor.RED)));
                 skipNextAttack = false;
             } else {
                 List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = getWarlordsNPC().getSecondStats().getEventsAsSelfFromLastSecondStream(5)

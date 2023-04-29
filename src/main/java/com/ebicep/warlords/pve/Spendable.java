@@ -26,6 +26,10 @@ public interface Spendable {
         return Component.text(NumberFormat.addCommas(cost) + " " + getName() + (cost == 1 || !pluralIncludeS() ? "" : "s"), getTextColor());
     }
 
+    default Component getCostColoredName(long cost, String prefix) {
+        return Component.text(prefix + NumberFormat.addCommas(cost) + " " + getName() + (cost == 1 || !pluralIncludeS() ? "" : "s"), getTextColor());
+    }
+
     default boolean pluralIncludeS() {
         return true;
     }

@@ -7,7 +7,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -70,8 +69,10 @@ public enum StarPieces {
                                 Currencies currency = currenciesLongEntry.getKey();
                                 long value = currenciesLongEntry.getValue();
                                 if (pveStats.getCurrencyValue(currency) < value) {
-                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) +
-                                            ChatColor.RED + " to synthesize this star piece.");
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(currency.getCostColoredName(value))
+                                                                .append(Component.text(" to synthesize this star piece."))
+                                    );
                                     return;
                                 }
                             }

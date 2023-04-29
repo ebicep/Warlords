@@ -21,6 +21,8 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 
 import java.util.Collections;
@@ -52,8 +54,8 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
         super.onSpawn(option);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                ChatColor.RED + "Torment",
-                ChatColor.WHITE + "Corrupted Soul"
+                Component.text("Torment", NamedTextColor.RED),
+                Component.text("Corrupted Soul", NamedTextColor.WHITE)
         );
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -111,8 +113,9 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
             ) {
                 ChatUtils.sendTitleToGamePlayers(
                         warlordsNPC.getGame(),
-                        "",
-                        ChatColor.GOLD + we.getName() + ChatColor.RED + " has been marked by Torment!"
+                        Component.empty(),
+                        Component.text(we.getName(), NamedTextColor.GOLD)
+                                 .append(Component.text(" has been marked by Torment!", NamedTextColor.RED))
                 );
                 Utils.addKnockback(name, warlordsNPC.getLocation(), we, 2, 0.35);
                 we.getCooldownManager().removeCooldown(DamageCheck.class, false);

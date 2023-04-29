@@ -198,7 +198,7 @@ public class OnslaughtOption implements Option, PveOption {
                                 wp.getUuid(),
                                 OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
                                 playerAspirantPouch,
-                                ChatColor.RED + "Aspirant Pouch"
+                                Component.text("Aspirant Pouch", NamedTextColor.RED)
                         );
                     });
                 } else if (ticksElapsed.get() % 6000 == 0) {
@@ -209,7 +209,7 @@ public class OnslaughtOption implements Option, PveOption {
                                 wp.getUuid(),
                                 OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL,
                                 playerSyntheticPouch,
-                                ChatColor.AQUA + "Synthetic Pouch"
+                                Component.text("Synthetic Pouch", NamedTextColor.AQUA)
                         );
                     });
                 }
@@ -370,7 +370,7 @@ public class OnslaughtOption implements Option, PveOption {
             UUID uuid,
             RandomCollection<Pair<Spendable, Long>> pouchLootPool,
             HashMap<UUID, HashMap<Spendable, Long>> playerPouch,
-            String pouchName
+            Component pouchName
     ) {
         Pair<Spendable, Long> reward = pouchLootPool.next();
         if (reward != null) {
@@ -378,13 +378,13 @@ public class OnslaughtOption implements Option, PveOption {
             Long amount = reward.getB();
             playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
                        .merge(spendable, amount, Long::sum);
-            String rewardString = spendable.getTextColor() + "+" + spendable.getCostColoredName(amount);
+            Component rewardString = Component.text("+", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
             RewardInventory.sendRewardMessage(uuid,
                     pouchName + ": " + rewardString
             );
             ChatUtils.sendTitleToGamePlayers(
                     game,
-                    pouchName + ":",
+                    pouchName.append(Component.text(":")),
                     rewardString
             );
         }

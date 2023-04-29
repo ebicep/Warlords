@@ -69,7 +69,7 @@ public class CompensateCommand extends BaseCommand {
                                         int amountInt = Integer.parseInt(amount);
                                         compensation.put(currency, (long) amountInt);
                                     } catch (Exception exception) {
-                                        p.sendMessage(ChatColor.RED + "Invalid Amount");
+                                        p.sendMessage(Component.text("Invalid Amount", NamedTextColor.RED));
                                     }
                                     new BukkitRunnable() {
                                         @Override

@@ -11,7 +11,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
@@ -30,9 +29,10 @@ public class HorseOption implements Option, Listener {
 
     public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
             .name(Component.text("Mount ", NamedTextColor.GREEN).append(Component.text("- §eRight-Click!", NamedTextColor.GRAY)))
-            .loreLEGACY(ChatColor.GRAY + "Cooldown: §b15 seconds",
-                    "",
-                    ChatColor.GRAY + "Call your steed to assists you in battle"
+            .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                           .append(Component.text("15 seconds", NamedTextColor.AQUA)),
+                    Component.empty(),
+                    Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )
             .get();
 
@@ -115,14 +115,14 @@ public class HorseOption implements Option, Listener {
                 return;
             }
             if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
-                player.sendMessage(ChatColor.RED + "You can't mount here!");
+                player.sendMessage(Component.text("You can't mount here!", NamedTextColor.RED));
                 return;
             }
             double distance = Utils.getDistance(player, .25);
             if (distance >= 2) {
-                player.sendMessage(ChatColor.RED + "You can't mount in the air!");
+                player.sendMessage(Component.text("You can't mount in the air!", NamedTextColor.RED));
             } else if (wp.getCarriedFlag() != null) {
-                player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
+                player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
                 CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(),

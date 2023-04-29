@@ -5,7 +5,6 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -16,7 +15,7 @@ public class QuestsMenu {
 
     public static void openQuestMenu(Player player) {
         if (!QuestCommand.isQuestsEnabled) {
-            player.sendMessage(ChatColor.RED + "Quests are currently disabled.");
+            player.sendMessage(Component.text("Quests are currently disabled.", NamedTextColor.RED));
             return;
         }
         Menu menu = new Menu("Quests", 9 * 6);

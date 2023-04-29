@@ -45,22 +45,21 @@ public class WinByPointsOption implements Option, Listener {
                 TextComponent.Builder component = Component.text();
                 TeamMarker.getTeams(game)
                           .forEach(team -> {
-                              component.append(team.coloredPrefix().append(Component.text(": ")))
-                                       .append(Component.text(game.getPoints(team), NamedTextColor.AQUA))
-                                       .append(Component.text("/" + pointLimit, NamedTextColor.GOLD))
-                                       .append(Component.newline());
+                              component.append(team.coloredPrefix().append(Component.text(": "))
+                                                   .append(Component.text(game.getPoints(team), NamedTextColor.AQUA))
+                                                   .append(Component.text("/" + pointLimit, NamedTextColor.GOLD)));
                           });
                 return component.build().children();
             }
         });
     }
 
-    public void setPointLimit(int pointLimit) {
-        this.pointLimit = pointLimit;
-    }
-
     public int getPointLimit() {
         return pointLimit;
+    }
+
+    public void setPointLimit(int pointLimit) {
+        this.pointLimit = pointLimit;
     }
 
     @EventHandler

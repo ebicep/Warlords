@@ -6,7 +6,8 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Comparator;
 
@@ -22,7 +23,7 @@ public class EditCurrencyCommand extends BaseCommand {
             @Optional @Conditions("requireGame:gamemode=PVE") WarlordsPlayer warlordsPlayer
     ) {
         warlordsPlayer.addCurrency(amount);
-        warlordsPlayer.sendMessage(ChatColor.AQUA + "You gained " + amount + " currency");
+        warlordsPlayer.sendMessage(Component.text("You gained " + amount + " currency", NamedTextColor.AQUA));
     }
 
     @Subcommand("addall")
@@ -30,7 +31,7 @@ public class EditCurrencyCommand extends BaseCommand {
     public void addAll(@Conditions("requireGame:gamemode=PVE") WarlordsPlayer warlordsPlayer, Integer amount) {
         warlordsPlayer.getGame().warlordsPlayers().forEach(wp -> {
             wp.addCurrency(amount);
-            wp.sendMessage(ChatColor.AQUA + "You gained " + amount + " currency");
+            wp.sendMessage(Component.text("You gained " + amount + " currency", NamedTextColor.AQUA));
         });
     }
 
@@ -42,7 +43,7 @@ public class EditCurrencyCommand extends BaseCommand {
             @Optional @Conditions("requireGame:gamemode=PVE") WarlordsPlayer warlordsPlayer
     ) {
         warlordsPlayer.subtractCurrency(amount);
-        warlordsPlayer.sendMessage(ChatColor.AQUA + "You lost " + amount + " currency");
+        warlordsPlayer.sendMessage(Component.text("You lost " + amount + " currency", NamedTextColor.AQUA));
     }
 
     @Subcommand("set")
@@ -53,7 +54,7 @@ public class EditCurrencyCommand extends BaseCommand {
             @Optional @Conditions("requireGame:gamemode=PVE") WarlordsPlayer warlordsPlayer
     ) {
         warlordsPlayer.setCurrency(amount);
-        warlordsPlayer.sendMessage(ChatColor.AQUA + "You set your currency to " + amount);
+        warlordsPlayer.sendMessage(Component.text("You set your currency to " + amount, NamedTextColor.AQUA));
     }
 
     @HelpCommand

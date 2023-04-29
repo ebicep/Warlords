@@ -84,15 +84,15 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public void purchaseMasterUpgrade(WarlordsPlayer player, boolean autoUpgraded) {
         if (player.getAbilityTree().getMaxMasterUpgrades() <= 0) {
-            player.sendMessage(ChatColor.RED + "You cannot unlock this master upgrade, maximum master upgrades reached.");
+            player.sendMessage(Component.text("You cannot unlock this master upgrade, maximum master upgrades reached.", NamedTextColor.RED));
             return;
         }
         if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
-            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
+            player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
         if (masterUpgrade.isUnlocked()) {
-            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+            player.sendMessage(Component.text("You already unlocked this upgrade.", NamedTextColor.RED));
             return;
         }
 
@@ -107,7 +107,9 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             globalAnnouncement(player.getGame(), masterUpgrade, ability, autoUpgraded);
         } else {
             String s = upgradesRequiredForMaster == 1 ? "" : "s";
-            player.sendMessage(ChatColor.RED + "You need to unlock " + upgradesRequiredForMaster + " more upgrade" + s + " before unlocking the master upgrade!");
+            player.sendMessage(Component.text("You need to unlock " + upgradesRequiredForMaster + " more upgrade" + s + " before unlocking the master upgrade!",
+                    NamedTextColor.RED
+            ));
             return;
         }
 
@@ -148,7 +150,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 openUpgradeBranchMenu();
             } else {
                 //error message
-                player.sendMessage(ChatColor.RED + "You can only remove the last upgrade in the auto upgrade queue.");
+                player.sendMessage(Component.text("You can only remove the last upgrade in the auto upgrade queue.", NamedTextColor.RED));
             }
         } else {
             //checks
@@ -170,11 +172,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         )
                         .count();
                 if (masterUpgradesInQueue >= player.getAbilityTree().getMaxMasterUpgrades()) {
-                    player.sendMessage(ChatColor.RED + "You cannot queue this master upgrade, maximum master upgrades reached.");
+                    player.sendMessage(Component.text("You cannot queue this master upgrade, maximum master upgrades reached.", NamedTextColor.RED));
                     return;
                 }
                 if (upgradesRequiredForMaster - branchUpgradesInQueue > 0) {
-                    player.sendMessage(ChatColor.RED + "You cannot queue this master upgrade, you need to unlock or queue all upgrades first.");
+                    player.sendMessage(Component.text("You cannot queue this master upgrade, you need to unlock or queue all upgrades first.", NamedTextColor.RED));
                     return;
                 }
             } else {
@@ -183,12 +185,12 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             branchEntries.stream().noneMatch(autoUpgradeEntry -> autoUpgradeEntry.getUpgradeType() == upgradeType &&
                                     autoUpgradeEntry.getUpgradeIndex() == upgradeIndex - 1)
                     ) {
-                        player.sendMessage(ChatColor.RED + "You need to unlock or queue the previous upgrade first!");
+                        player.sendMessage(Component.text("You need to unlock or queue the previous upgrade first!", NamedTextColor.RED));
                         return;
                     }
                 }
                 if (branchUpgradesInQueue >= maxUpgrades) {
-                    player.sendMessage(ChatColor.RED + "You cannot queue this upgrade, maximum upgrades for this ability reached.");
+                    player.sendMessage(Component.text("You cannot queue this upgrade, maximum upgrades for this ability reached.", NamedTextColor.RED));
                     return;
                 }
             }
@@ -230,22 +232,22 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public void purchaseUpgrade(List<Upgrade> tree, WarlordsPlayer player, Upgrade upgrade, int upgradeIndex, boolean autoUpgraded) {
         if (upgrade.isUnlocked()) {
-            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+            player.sendMessage(Component.text("You already unlocked this upgrade.", NamedTextColor.RED));
             return;
         }
         if (upgradeIndex != 0) {
             if (!tree.get(upgradeIndex - 1).isUnlocked()) {
-                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
+                player.sendMessage(Component.text("You need to unlock the previous upgrade first!", NamedTextColor.RED));
                 return;
             }
         }
 
         if (player.getCurrency() < upgrade.getCurrencyCost() && freeUpgrades <= 0) {
-            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
+            player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
         if (maxUpgrades <= 0) {
-            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
+            player.sendMessage(Component.text("You cannot unlock this upgrade, maximum upgrades reached.", NamedTextColor.RED));
             return;
         }
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.roles;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -24,7 +25,10 @@ public class GuildLogRoleChangeLevel extends AbstractGuildLogRole {
     }
 
     @Override
-    public String append() {
-        return "from " + ChatColor.GREEN + oldLevel + ChatColor.GRAY + " to " + ChatColor.GREEN + newLevel;
+    public Component append() {
+        return Component.text("from ")
+                        .append(Component.text(oldLevel, NamedTextColor.GREEN))
+                        .append(Component.text(" to "))
+                        .append(Component.text(newLevel, NamedTextColor.GREEN));
     }
 }

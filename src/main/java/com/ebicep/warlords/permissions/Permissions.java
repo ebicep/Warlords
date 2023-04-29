@@ -58,13 +58,22 @@ public enum Permissions {
         return Component.empty().color(NamedTextColor.AQUA);
     }
 
-    public static String getColor(DatabasePlayer databasePlayer) {
+    public static NamedTextColor getColor(Player player) {
         for (Permissions value : VALUES) {
-            if (databasePlayer.hasPermission(value.permission)) {
-                return value.prefixColor.toString();
+            if (player.hasPermission(value.permission)) {
+                return value.prefixColor;
             }
         }
-        return NamedTextColor.AQUA.toString();
+        return NamedTextColor.AQUA;
+    }
+
+    public static NamedTextColor getColor(DatabasePlayer databasePlayer) {
+        for (Permissions value : VALUES) {
+            if (databasePlayer.hasPermission(value.permission)) {
+                return value.prefixColor;
+            }
+        }
+        return NamedTextColor.AQUA;
     }
 
     public static boolean isAdmin(Player player) {

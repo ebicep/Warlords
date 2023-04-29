@@ -9,6 +9,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,15 +27,14 @@ public class ChatUtils {
         return message;
     }
 
-    public static void sendTitleToGamePlayers(Game game, String title, String subtitle) {
+    public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
             if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
+                we.getEntity().showTitle(Title.title(
                         title,
                         subtitle,
-                        20, 30, 20
-                );
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+                ));
             }
         }
     }
@@ -75,6 +76,12 @@ public class ChatUtils {
     }
 
     public static void sendMessageToPlayer(WarlordsPlayer player, String message, ChatColor borderColor, boolean centered) {
+        if (player.getEntity() instanceof Player) {
+            sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
+        }
+    }
+
+    public static void sendMessageToPlayer(WarlordsPlayer player, Component message, NamedTextColor borderColor, boolean centered) {
         if (player.getEntity() instanceof Player) {
             sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
         }
@@ -252,7 +259,7 @@ public class ChatUtils {
         }
 
         public void sendErrorMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[" + name + "] " + message);
+            Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, NamedTextColor.RED));
         }
 
     }

@@ -21,6 +21,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -153,7 +155,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
-                            we.sendMessage(ChatColor.RED + "Narmer cannot take damage while his ancestors are still alive!");
+                            we.sendMessage(Component.text("Narmer cannot take damage while his ancestors are still alive!", NamedTextColor.RED));
                         });
                         event.setCancelled(true);
                     }
@@ -163,7 +165,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
-                            we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
+                            we.sendMessage(Component.text("Narmer cannot take more damage while his acolytes are still alive!", NamedTextColor.RED));
                         });
                         event.setCancelled(true);
                     }
@@ -215,7 +217,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                                     100,
                                     false
                             );
-                            enemy.sendMessage(ChatColor.RED + "HINT: Killing Acolytes too quickly might result in an unfavourable outcome.");
+                            enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.", NamedTextColor.RED));
                         }
                         for (WarlordsEntity warlordsEntity : warlordsEntities) {
                             ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);

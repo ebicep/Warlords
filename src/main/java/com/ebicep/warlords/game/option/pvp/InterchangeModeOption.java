@@ -7,9 +7,12 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -71,8 +74,8 @@ public class InterchangeModeOption implements Option {
     //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
         List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
-                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
-                .collect(Collectors.toList());
+                                               .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
+                                               .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) {
             return;
         }
@@ -113,11 +116,14 @@ public class InterchangeModeOption implements Option {
             HorseOption.activateHorseForPlayer(firstPlayer);
         }
         if (firstPlayer.getEntity() instanceof Player) {
-            PacketUtils.sendTitle((Player) firstPlayer.getEntity(),
-                    ChatColor.YELLOW + "Swapped to",
-                    ChatColor.GREEN.toString() + ChatColor.MAGIC + "00" + ChatColor.GREEN + " " + firstPlayer.getSpecClass().name + "! " + ChatColor.MAGIC + "00",
-                    10, 40, 10
-            );
+            firstPlayer.getEntity().showTitle(Title.title(
+                    Component.text("Swapped to", NamedTextColor.YELLOW),
+                    Component.text("", NamedTextColor.GREEN)
+                             .append(Component.text("00").decorate(TextDecoration.OBFUSCATED))
+                             .append(Component.text(" " + firstPlayer.getSpecClass().name + "! "))
+                             .append(Component.text("00").decorate(TextDecoration.OBFUSCATED)),
+                    Title.Times.times(Ticks.duration(10), Ticks.duration(40), Ticks.duration(10))
+            ));
         }
 
         firstPlayer.updateEntity();
@@ -148,11 +154,14 @@ public class InterchangeModeOption implements Option {
             HorseOption.activateHorseForPlayer(firstPlayer);
         }
         if (firstPlayer.getEntity() instanceof Player) {
-            PacketUtils.sendTitle((Player) firstPlayer.getEntity(),
-                    ChatColor.YELLOW + "Swapped to",
-                    ChatColor.GREEN.toString() + ChatColor.MAGIC + "00" + ChatColor.GREEN + " " + firstPlayer.getSpecClass().name + "! " + ChatColor.MAGIC + "00",
-                    10, 40, 10
-            );
+            firstPlayer.getEntity().showTitle(Title.title(
+                    Component.text("Swapped to", NamedTextColor.YELLOW),
+                    Component.text("", NamedTextColor.GREEN)
+                             .append(Component.text("00").decorate(TextDecoration.OBFUSCATED))
+                             .append(Component.text(" " + firstPlayer.getSpecClass().name + "! "))
+                             .append(Component.text("00").decorate(TextDecoration.OBFUSCATED)),
+                    Title.Times.times(Ticks.duration(10), Ticks.duration(40), Ticks.duration(10))
+            ));
         }
         firstPlayer.updateEntity();
         Warlords.getPlayers().put(secondPlayer.getUuid(), firstPlayer);

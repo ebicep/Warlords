@@ -136,9 +136,9 @@ public class CustomHorse extends net.minecraft.world.entity.animal.horse.Horse {
 //    public void addHealth(float amount) {
 //        this.health += amount;
 //        if (this.health <= 0) {
-//            owner.sendMessage(ChatColor.RED + "Your horse DIED");
+//            owner.sendMessage(Component.text("Your horse DIED");
 //        } else {
-//            owner.sendMessage(ChatColor.RED + "Your horse health is " + Math.round(this.health));
+//            owner.sendMessage(Component.text("Your horse health is " + Math.round(this.health));
 //        }
 //    }
 //

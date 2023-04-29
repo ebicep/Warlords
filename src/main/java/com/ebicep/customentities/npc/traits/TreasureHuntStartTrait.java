@@ -6,6 +6,8 @@ import com.ebicep.warlords.game.GameMode;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 public class TreasureHuntStartTrait extends WarlordsTrait {
@@ -25,11 +27,11 @@ public class TreasureHuntStartTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        event.getClicker().getPlayer().sendMessage(ChatColor.RED + "Treasure Hunt is currently in development, check back later!");
+        event.getClicker().getPlayer().sendMessage(Component.text("Treasure Hunt is currently in development, check back later!", NamedTextColor.RED));
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        event.getClicker().getPlayer().sendMessage(ChatColor.RED + "Treasure Hunt is currently in development, check back later!");
+        event.getClicker().getPlayer().sendMessage(Component.text("Treasure Hunt is currently in development, check back later!", NamedTextColor.RED));
     }
 }

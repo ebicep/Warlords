@@ -13,7 +13,10 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class WeaponLegendaryCraftMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         for (Map.Entry<Currencies, Long> currenciesLongEntry : COST.entrySet()) {
             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                player.sendMessage(ChatColor.RED + "You are not worthy of crafting a legendary weapon yet, bring me enough Synthetic Shards and Coins first!");
+                player.sendMessage(Component.text("You are not worthy of crafting a legendary weapon yet, bring me enough Synthetic Shards and Coins first!", NamedTextColor.RED));
                 return;
             }
         }

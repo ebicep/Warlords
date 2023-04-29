@@ -38,11 +38,13 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -255,55 +257,64 @@ public class WaveDefenseOption implements Option, PveOption {
             if (currentWave.getMessage() != null) {
                 sendMessage(entry.getKey(),
                         false,
-                        ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        Component.text("A boss will spawn in ", NamedTextColor.YELLOW)
+                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(" seconds!"))
                 );
             } else {
                 sendMessage(entry.getKey(),
                         false,
-                        ChatColor.YELLOW + "A wave of §c§l" + spawns + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        Component.text("A wave of ", NamedTextColor.YELLOW)
+                                 .append(Component.text(spawns, NamedTextColor.RED, TextDecoration.BOLD))
+                                 .append(Component.text(" monsters will spawn in "))
+                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(" seconds!"))
                 );
             }
 
             float soundPitch = 0.8f;
-            String wavePrefix = "§eWave ";
-            if (waveCounter >= 10) {
-                soundPitch = 0.75f;
-                wavePrefix = "§eWave ";
-            }
-            if (waveCounter >= 25) {
-                soundPitch = 0.7f;
-                wavePrefix = "§6Wave ";
-            }
-            if (waveCounter >= 50) {
-                soundPitch = 0.65f;
-                wavePrefix = "§7Wave ";
-            }
-            if (waveCounter >= 60) {
-                soundPitch = 0.5f;
-                wavePrefix = "§8§lWave ";
-            }
-            if (waveCounter >= 70) {
-                soundPitch = 0.4f;
-                wavePrefix = "§d§lWave ";
-            }
-            if (waveCounter >= 80) {
-                soundPitch = 0.3f;
-                wavePrefix = "§5§lWave ";
-            }
-            if (waveCounter >= 90) {
-                soundPitch = 0.2f;
-                wavePrefix = "§5W§5§k§la§5§lve ";
-            }
-            if (waveCounter >= 100) {
-                soundPitch = 0.1f;
-                wavePrefix = "§4W§4§k§la§4§lve ";
-            }
+            Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
             if (waveCounter >= 101) {
-                wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
+                wavePrefix = Component.text("W ", NamedTextColor.BLACK)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("v").decorate(TextDecoration.BOLD))
+                                      .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED));
+            } else if (waveCounter == 100) {
+                soundPitch = 0.1f;
+                wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+            } else if (waveCounter >= 90) {
+                soundPitch = 0.2f;
+                wavePrefix = Component.text("W", NamedTextColor.DARK_PURPLE)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+            } else if (waveCounter >= 80) {
+                soundPitch = 0.3f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_PURPLE, TextDecoration.BOLD);
+            } else if (waveCounter >= 70) {
+                soundPitch = 0.4f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD);
+            } else if (waveCounter >= 60) {
+                soundPitch = 0.5f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_GRAY, TextDecoration.BOLD);
+            } else if (waveCounter >= 50) {
+                soundPitch = 0.65f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GRAY);
+            } else if (waveCounter >= 25) {
+                soundPitch = 0.7f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GOLD);
+            } else if (waveCounter >= 10) {
+                soundPitch = 0.75f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
             }
 
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, soundPitch);
-            PacketUtils.sendTitle(entry.getKey(), wavePrefix + waveCounter, "", 20, 60, 20);
+            entry.getKey().showTitle(Title.title(
+                    wavePrefix,
+                    Component.empty(),
+                    Title.Times.times(Ticks.duration(20), Ticks.duration(60), Ticks.duration(20))
+            ));
         }
         startSpawnTask();
     }
@@ -493,13 +504,13 @@ public class WaveDefenseOption implements Option, PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
-        return mobs;
+    public PveRewards<?> getRewards() {
+        return waveDefenseRewards;
     }
 
     @Override
-    public PveRewards<?> getRewards() {
-        return waveDefenseRewards;
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
     }
 
     @Override
@@ -549,7 +560,7 @@ public class WaveDefenseOption implements Option, PveOption {
                         switch (waveCounter) {
                             case 50, 100 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                                wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                                wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });
                         }
                     }

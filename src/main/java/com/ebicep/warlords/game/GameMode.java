@@ -30,12 +30,13 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -156,7 +157,7 @@ public enum GameMode {
             ));
             options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                     .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
-                    .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                    .lore(WordWrap.wrap(Component.text("Allows you to change your class, select a weapon, and edit your settings.", NamedTextColor.GRAY), 150))
                     .get(), (g, p) -> openMainMenu(p)));
 
             options.add(new WeaponOption());
@@ -548,11 +549,11 @@ public enum GameMode {
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
                 .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
-                .loreLEGACY(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                .lore(WordWrap.wrap(Component.text("Allows you to change your class, select a weapon, and edit your settings.", NamedTextColor.GRAY), 150))
                 .get(), (g, p) -> openMainMenu(p)));
         options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                 .name(Component.text("Player Spec Information", NamedTextColor.AQUA))
-                .loreLEGACY(ChatColor.GRAY + "Displays the amount of people on each specialization.")
+                .lore(Component.text("Displays the amount of people on each specialization.", NamedTextColor.GRAY))
                         .get(),
                         (g, p) -> {
                             openPlayerSpecInfoMenu(g, p);
@@ -572,7 +573,7 @@ public enum GameMode {
         );
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
                 .name(Component.text("Leave", NamedTextColor.RED))
-                .loreLEGACY(ChatColor.GRAY + "Right-Click to leave the game.")
+                .lore(Component.text("Right-Click to leave the game.", NamedTextColor.GRAY))
                         .get(),
                         (g, p) -> {
                             if (g.acceptsPeople()) {
@@ -593,12 +594,13 @@ public enum GameMode {
         for (SpecType value : SpecType.VALUES) {
             ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
                     .name(Component.text(value.name, value.textColor));
-            StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
-                    (int) game.getPlayers().keySet().stream()
-                              .map(PlayerSettings::getPlayerSettings)
-                              .map(PlayerSettings::getSelectedSpec)
-                              .filter(c -> c.specType == value)
-                              .count() + "\n\n");
+            TextComponent.Builder lore = Component.text("Total: ", NamedTextColor.GREEN)
+                                                  .append(Component.text((int) game.getPlayers().keySet().stream()
+                                                                                   .map(PlayerSettings::getPlayerSettings)
+                                                                                   .map(PlayerSettings::getSelectedSpec)
+                                                                                   .filter(c -> c.specType == value)
+                                                                                   .count(), NamedTextColor.GOLD))
+                                                  .append(Component.empty()).toBuilder();
             Arrays.stream(Specializations.VALUES)
                   .filter(classes -> classes.specType == value)
                   .forEach(classes -> {
@@ -607,14 +609,11 @@ public enum GameMode {
                                                     .map(PlayerSettings::getSelectedSpec)
                                                     .filter(c -> c == classes)
                                                     .count();
-                      lore.append(ChatColor.GREEN)
-                          .append(classes.name)
-                          .append(": ")
-                          .append(ChatColor.YELLOW)
-                          .append(playersOnSpec)
-                          .append("\n");
+                      lore.append(Component.text(classes.name + " : "))
+                          .append(Component.text(playersOnSpec, NamedTextColor.YELLOW))
+                          .append(Component.empty());
                   });
-            itemBuilder.loreLEGACY(lore.toString());
+            itemBuilder.lore(lore.build());
             menu.setItem(
                     x,
                     1,

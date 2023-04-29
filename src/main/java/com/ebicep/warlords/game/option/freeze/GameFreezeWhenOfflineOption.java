@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nonnull;
@@ -64,8 +63,9 @@ public class GameFreezeWhenOfflineOption implements Option {
 
                                 ChatChannels.sendDebugMessage(
                                         (CommandIssuer) null,
-                                        ChatColor.GREEN + "Leave Cooldown of " + ChatColor.AQUA + player.getKey().getName() +
-                                                ChatColor.GREEN + " increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds"
+                                        Component.text("Leave Cooldown of ", NamedTextColor.GREEN)
+                                                 .append(Component.text(player.getKey().getName(), NamedTextColor.AQUA))
+                                                 .append(Component.text(" increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds"))
                                 );
                                 break;
                             }
