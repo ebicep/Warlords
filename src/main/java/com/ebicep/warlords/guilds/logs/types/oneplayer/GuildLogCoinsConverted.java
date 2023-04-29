@@ -20,8 +20,8 @@ public class GuildLogCoinsConverted extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "converted";
+    public Component getAction() {
+        return Component.text("converted");
     }
 
     @Override

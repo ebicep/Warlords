@@ -28,7 +28,7 @@ public abstract class AbstractGuildLogTwoPlayer extends AbstractGuildLog {
                         .append(Component.space())
                         .append(getSenderName())
                         .append(Component.space())
-                        .append(Component.text(getAction(), NamedTextColor.YELLOW))
+                        .append(Component.empty().color(NamedTextColor.YELLOW).append(getAction()))
                         .append(Component.space())
                         .append(getReceiverName())
                         .append(Component.space())

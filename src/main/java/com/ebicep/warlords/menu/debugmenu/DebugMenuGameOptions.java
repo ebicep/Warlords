@@ -18,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -132,7 +131,7 @@ public class DebugMenuGameOptions {
                 boolean isASelectedAddon = addons.contains(gameAddon);
                 ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                         .name(Component.text(gameAddon.getName(), NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
+                        .lore(WordWrap.wrap(Component.text(gameAddon.getDescription(), NamedTextColor.GOLD), 150));
                 if (isASelectedAddon) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
@@ -166,7 +165,10 @@ public class DebugMenuGameOptions {
                         0,
                         new ItemBuilder(Material.DIAMOND_BLOCK)
                                 .name(Component.text("Comps Preset", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
+                                .lore(Component.text("Select this to use the comps preset.", NamedTextColor.GOLD),
+                                        Component.text("- Private Game", NamedTextColor.GOLD),
+                                        Component.text("- Freeze Failsafe", NamedTextColor.GOLD)
+                                )
                                 .get(),
                         (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
                             queueEntryBuilder
@@ -213,10 +215,11 @@ public class DebugMenuGameOptions {
             for (Game game : games) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
                         .name(Component.text("Game - " + game.getGameId(), NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
-                                ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
-                                ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
-                                ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                        .lore(
+                                Component.text("Map - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getMap().getMapName(), NamedTextColor.RED)),
+                                Component.text("GameMode - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getGameMode().name, NamedTextColor.RED)),
+                                Component.text("Addons - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getAddons().toString(), NamedTextColor.RED)),
+                                Component.text("Players - ", NamedTextColor.DARK_GRAY).append(Component.text(String.valueOf(game.playersCount()), NamedTextColor.RED))
                         );
                 if (game.hasPlayer(player.getUniqueId())) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -309,7 +312,7 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         timerDebugAble.skipTimer();
-                        sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId());
+                        sendDebugMessage(player, Component.text("Skip timer of game " + game.getGameId(), NamedTextColor.GREEN));
                     }
             );
             menu.setItem(5, 1,
@@ -333,7 +336,7 @@ public class DebugMenuGameOptions {
                                                     throw new Exception();
                                                 }
                                                 ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                                sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time);
+                                                sendDebugMessage(player, Component.text("Set timer of game " + game.getGameId() + " to " + time, NamedTextColor.GREEN));
                                             } catch (Exception exception) {
                                                 p.sendMessage(Component.text("Invalid time", NamedTextColor.RED));
                                             }
@@ -376,7 +379,7 @@ public class DebugMenuGameOptions {
                                                 throw new NumberFormatException();
                                             }
                                             game.setPoints(team, score);
-                                            sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score);
+                                            sendDebugMessage(player, Component.text("Set score of team " + team.getName() + " to " + score, NamedTextColor.GREEN));
                                         } catch (NumberFormatException exception) {
                                             p.sendMessage(Component.text("Invalid score", NamedTextColor.RED));
                                         }

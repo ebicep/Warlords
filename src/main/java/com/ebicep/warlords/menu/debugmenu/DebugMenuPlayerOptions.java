@@ -30,7 +30,6 @@ import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -111,7 +110,7 @@ public class DebugMenuPlayerOptions {
                         .get(),
                 (m, e) -> {
                     target.addDamageInstance(target, "God", 100000, 100000, 0, 100, false);
-                    sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName);
+                    sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
         firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().item))
@@ -608,8 +607,9 @@ public class DebugMenuPlayerOptions {
                 menu.setItem(4, 0,
                         new ItemBuilder(HeadUtils.getHead(player))
                                 .name(Component.text("Cooldown Stats", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
-                                        ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
+                                .lore(
+                                        Component.text("Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(), NamedTextColor.GREEN),
+                                        Component.text("Active Cooldowns: " + target.getCooldownManager().getCooldowns().size(), NamedTextColor.GREEN)
                                 )
                                 .get(),
                         (m, e) -> {

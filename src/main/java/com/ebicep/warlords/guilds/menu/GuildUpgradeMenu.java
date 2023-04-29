@@ -17,7 +17,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
@@ -204,7 +203,8 @@ public class GuildUpgradeMenu {
                         guild.queueUpdate();
 
                         guild.sendGuildMessageToOnlinePlayers(
-                                ChatColor.YELLOW + "Permanent Tier " + nextTier + " " + upgradesPermanent.name + ChatColor.GREEN + " upgrade purchased!",
+                                Component.text("Permanent Tier " + nextTier + " " + upgradesPermanent.name, NamedTextColor.YELLOW)
+                                         .append(Component.text(" upgrade purchased!", NamedTextColor.GREEN)),
                                 true
                         );
                         openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesPermanent.VALUES);

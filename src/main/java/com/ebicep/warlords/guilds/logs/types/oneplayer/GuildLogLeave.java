@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogLeave extends AbstractGuildLogOnePlayer {
@@ -9,8 +11,8 @@ public class GuildLogLeave extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "left";
+    public Component getAction() {
+        return Component.text("left");
     }
 
 

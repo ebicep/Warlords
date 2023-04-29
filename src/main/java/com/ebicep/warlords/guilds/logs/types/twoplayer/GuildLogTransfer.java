@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogTransfer extends AbstractGuildLogTwoPlayer {
@@ -9,8 +11,8 @@ public class GuildLogTransfer extends AbstractGuildLogTwoPlayer {
     }
 
     @Override
-    public String getAction() {
-        return "transferred the guild to";
+    public Component getAction() {
+        return Component.text("transferred the guild to");
     }
 
 }

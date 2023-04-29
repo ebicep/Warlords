@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.tag;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -20,7 +21,9 @@ public class GuildLogTagChangeName extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "changed guild tag name from " + ChatColor.GREEN + oldName + ChatColor.YELLOW + " to " + ChatColor.GREEN + newName;
+    public Component getAction() {
+        return Component.text("changed guild tag name from ").append(Component.text(oldName, NamedTextColor.GREEN))
+                        .append(Component.text(" to "))
+                        .append(Component.text(newName));
     }
 }

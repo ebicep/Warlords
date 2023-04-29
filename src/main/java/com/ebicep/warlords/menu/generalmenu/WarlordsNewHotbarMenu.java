@@ -119,13 +119,9 @@ public class WarlordsNewHotbarMenu {
                         }
                     }
 
-                    itemBuilder.addLoreC(
-                            WordWrap.wrap(Component.text(ChatColor.YELLOW + "Click here to select a " + value.name + ChatColor.YELLOW + " specialization or claim rewards"),
-                                    170
-                            )
-                    );
+                    itemBuilder.addLoreC(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
                     if (hasRewards) {
-                        itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
+                        itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                         itemBuilder.enchant(Enchantment.OXYGEN, 1);
                         itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                     }
@@ -194,7 +190,7 @@ public class WarlordsNewHotbarMenu {
                                          .append(Component.text(" to claim rewards.", NamedTextColor.GREEN))
                         );
                 if (hasRewards) {
-                    itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
+                    itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 }
@@ -205,7 +201,8 @@ public class WarlordsNewHotbarMenu {
                                 .get(),
                         (m, e) -> {
                             if (e.isLeftClick()) {
-                                player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
+                                player.sendMessage(Component.text("You have changed your specialization to: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(spec.name, NamedTextColor.AQUA)));
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                                 PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                                 playerSettings.setSelectedSpec(spec);
@@ -324,7 +321,7 @@ public class WarlordsNewHotbarMenu {
                                 } else {
                                     rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
                                     databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
-                                    player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
+                                    player.sendMessage(Component.text("You claimed the reward for level " + menuLevel + "!", NamedTextColor.GREEN));
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                                 }
@@ -338,11 +335,11 @@ public class WarlordsNewHotbarMenu {
             if (currentPrestige != 0) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.HOPPER)
                         .name(Component.text("Click to Cycle Between Prestige Rewards", NamedTextColor.GREEN));
-                List<String> lore = new ArrayList<>();
+                List<Component> lore = new ArrayList<>();
                 for (int i = 0; i <= currentPrestige; i++) {
-                    lore.add((i == selectedPrestige ? ChatColor.AQUA : ChatColor.GRAY) + "Prestige " + i);
+                    lore.add(Component.text("Prestige " + i, i == selectedPrestige ? NamedTextColor.AQUA : NamedTextColor.GRAY));
                 }
-                itemBuilder.loreLEGACY(lore);
+                itemBuilder.lore(lore);
                 menu.setItem(5, 5,
                         itemBuilder.get(),
                         (m, e) -> {
@@ -499,7 +496,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber - 1)
                 );
@@ -510,7 +507,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Next Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber + 1)
                 );
@@ -663,7 +660,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Next Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
                 );
@@ -673,7 +670,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Next Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
                 );
@@ -682,7 +679,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
                 );
@@ -692,7 +689,7 @@ public class WarlordsNewHotbarMenu {
                         5,
                         new ItemBuilder(Material.ARROW)
                                 .name(Component.text("Previous Page", NamedTextColor.GREEN))
-                                .loreLEGACY(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
                 );

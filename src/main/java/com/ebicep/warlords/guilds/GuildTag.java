@@ -70,7 +70,7 @@ public class GuildTag {
     }
 
     public NamedTextColor getNameTextColor() {
-        return NamedTextColor.NAMES.value(nameColor.toLowerCase());
+        return NamedTextColor.NAMES.value(nameColor);
     }
 
     public void setNameColor(NamedTextColor nameColor) {
@@ -83,7 +83,7 @@ public class GuildTag {
     }
 
     public NamedTextColor getBracketTextColor() {
-        return NamedTextColor.NAMES.value(bracketColor.toLowerCase());
+        return NamedTextColor.NAMES.value(bracketColor);
     }
 
     public void setBracketColor(NamedTextColor bracketColor) {

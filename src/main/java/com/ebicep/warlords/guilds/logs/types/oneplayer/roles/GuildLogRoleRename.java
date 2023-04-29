@@ -17,8 +17,8 @@ public class GuildLogRoleRename extends AbstractGuildLogRole {
     }
 
     @Override
-    public String getAction() {
-        return "renamed";
+    public Component getAction() {
+        return Component.text("renamed");
     }
 
     @Override

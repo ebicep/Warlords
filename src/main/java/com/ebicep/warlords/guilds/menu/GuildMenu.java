@@ -19,7 +19,6 @@ import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -283,9 +282,13 @@ public class GuildMenu {
                                             guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
                                             guild.queueUpdate();
                                             guild.sendGuildMessageToOnlinePlayers(
-                                                    ChatColor.AQUA + player.getName() + ChatColor.GRAY + " converted " +
-                                                            ChatColor.GREEN + playerCoinsToConvert + ChatColor.GRAY + " player coins to " +
-                                                            ChatColor.GREEN + guildCoinsGained + ChatColor.GRAY + " guild coins.",
+                                                    Component.empty().color(NamedTextColor.GRAY)
+                                                             .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                             .append(Component.text(" converted "))
+                                                             .append(Component.text(playerCoinsToConvert, NamedTextColor.GREEN))
+                                                             .append(Component.text(" player coins to "))
+                                                             .append(Component.text(guildCoinsGained, NamedTextColor.GREEN))
+                                                             .append(Component.text(" guild coins.")),
                                                     true
                                             );
                                             GuildLeaderboardManager.recalculateAllLeaderboards();

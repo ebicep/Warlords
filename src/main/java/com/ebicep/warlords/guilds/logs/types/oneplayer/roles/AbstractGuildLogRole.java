@@ -22,7 +22,7 @@ public abstract class AbstractGuildLogRole extends AbstractGuildLogOnePlayer {
                         .append(Component.space())
                         .append(getSenderName())
                         .append(Component.space())
-                        .append(Component.text(getAction(), NamedTextColor.YELLOW))
+                        .append(Component.empty().color(NamedTextColor.YELLOW).append(getAction()))
                         .append(Component.space())
                         .append(Component.text(role, NamedTextColor.GREEN))
                         .append(Component.space())

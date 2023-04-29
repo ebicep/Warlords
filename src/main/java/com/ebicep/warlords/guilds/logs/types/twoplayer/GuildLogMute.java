@@ -28,8 +28,8 @@ public class GuildLogMute extends AbstractGuildLogTwoPlayer {
     }
 
     @Override
-    public String getAction() {
-        return timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT ? "permanently muted" : "muted";
+    public Component getAction() {
+        return Component.text(timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT ? "permanently muted" : "muted");
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.tag;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -20,9 +21,24 @@ public class GuildLogTagNameColor extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        ChatColor oldChatColor = ChatColor.getByChar(oldColor.charAt(1));
-        ChatColor newChatColor = ChatColor.getByChar(newColor.charAt(1));
-        return "changed guild tag name color from " + oldChatColor + oldChatColor.name() + ChatColor.YELLOW + " to " + newChatColor + newChatColor.name();
+    public Component getAction() {
+        NamedTextColor oldTextColor = NamedTextColor.NAMES.value(oldColor);
+        NamedTextColor newTextColor = NamedTextColor.NAMES.value(newColor);
+        String oldTextColorName;
+        String newTextColorName;
+        if (oldTextColor != null) {
+            oldTextColorName = oldTextColor.toString().replace("_", " ");
+        } else {
+            oldTextColorName = "UNKNOWN";
+        }
+        if (newTextColor != null) {
+            newTextColorName = newTextColor.toString().replace("_", " ");
+        } else {
+            newTextColorName = "UNKNOWN";
+        }
+        return Component.text("changed guild tag name color from ")
+                        .append(Component.text(oldTextColorName, oldTextColor))
+                        .append(Component.text(" to "))
+                        .append(Component.text(newTextColorName, newTextColor));
     }
 }

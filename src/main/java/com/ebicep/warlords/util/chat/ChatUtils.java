@@ -6,14 +6,19 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatUtils {
 
@@ -197,7 +202,31 @@ public class ChatUtils {
         if (component == null) {
             return;
         }
-        String message = ChatColor.translateAlternateColorCodes('&', PlainTextComponentSerializer.plainText().serialize(component));
+        if (((TextComponent) component).content().equals("TEST2")) {
+            System.out.println("HJERE");
+        }
+        if (component.children().contains(Component.newline())) {
+            Style parentStyle = component.style();
+            List<Component> children = new ArrayList<>(component.children());
+            children.add(0, component.children(new ArrayList<>()));
+            Component toSend = Component.empty().style(parentStyle);
+            for (int i = 0; i < children.size(); i++) {
+                Component child = children.get(i);
+                if (child.equals(Component.newline())) {
+                    sendCenteredMessage(player, toSend);
+                    if (i == children.size() - 1) {
+                        break;
+                    }
+                    toSend = children.get(i + 1).applyFallbackStyle(parentStyle);
+                    i++;
+                } else {
+                    toSend = toSend.append(child);
+                }
+            }
+            sendCenteredMessage(player, toSend);
+            return;
+        }
+        String message = LegacyComponentSerializer.legacyAmpersand().serialize(component);
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;
@@ -222,9 +251,7 @@ public class ChatUtils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        player.sendMessage(Component.text(sb.toString())
-                                    .append(component)
-        );
+        player.sendMessage(Component.text(sb.toString()).append(component));
     }
 
     public enum MessageTypes {

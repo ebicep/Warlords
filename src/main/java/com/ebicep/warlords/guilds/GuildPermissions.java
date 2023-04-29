@@ -3,7 +3,6 @@ package com.ebicep.warlords.guilds;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,11 +37,11 @@ public enum GuildPermissions {
     public ItemStack getItemStack(boolean enabled) {
         return new ItemBuilder(material)
                 .name(Component.text(name, NamedTextColor.GREEN))
-                .loreLEGACY(
-                        ChatColor.GRAY + description,
-                        "",
-                        enabled ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled",
-                        ChatColor.YELLOW + "Click to toggle"
+                .lore(
+                        Component.text(description, NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text(enabled ? "Enabled" : "Disabled", enabled ? NamedTextColor.GREEN : NamedTextColor.RED),
+                        Component.text("Click to toggle", NamedTextColor.YELLOW)
                 )
                 .get();
     }

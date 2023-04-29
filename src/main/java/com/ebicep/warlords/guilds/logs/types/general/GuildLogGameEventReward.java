@@ -27,15 +27,15 @@ public class GuildLogGameEventReward extends AbstractGuildLog {
     }
 
     @Override
-    public String getAction() {
-        return "awarded";
+    public Component getAction() {
+        return Component.text("awarded");
     }
 
     @Override
     public Component getLog() { //Fighter's Glory #1 awarded - 50000 coins, 50000 experience
         return Component.textOfChildren(
                 Component.text(" " + event.name + " Event #" + placement + " ", NamedTextColor.RED),
-                Component.text(getAction(), NamedTextColor.YELLOW),
+                Component.empty().color(NamedTextColor.YELLOW).append(getAction()),
                 Component.text(" - ", NamedTextColor.DARK_GRAY),
                 rewards.entrySet()
                        .stream()

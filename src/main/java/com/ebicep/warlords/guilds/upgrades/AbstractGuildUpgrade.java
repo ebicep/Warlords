@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.upgrades;
 
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.enchantments.Enchantment;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -23,13 +24,13 @@ public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
 
     public void modifyItem(ItemBuilder itemBuilder) {
         itemBuilder.enchant(Enchantment.OXYGEN, 1);
-        itemBuilder.loreLEGACY(getLore());
+        itemBuilder.lore(getLore());
     }
 
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Current Tier: " + ChatColor.GREEN + tier,
-                ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getEffectBonusFromTier(tier)
+                Component.text("Current Tier: ", NamedTextColor.GRAY).append(Component.text(tier)),
+                Component.text("Effect Bonus: ", NamedTextColor.GRAY).append(Component.text(upgrade.getEffectBonusFromTier(tier)))
         );
     }
 

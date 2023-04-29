@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.roles;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogRoleSetDefault extends AbstractGuildLogRole {
@@ -9,7 +11,7 @@ public class GuildLogRoleSetDefault extends AbstractGuildLogRole {
     }
 
     @Override
-    public String getAction() {
-        return "set default role to";
+    public Component getAction() {
+        return Component.text("set default role to");
     }
 }

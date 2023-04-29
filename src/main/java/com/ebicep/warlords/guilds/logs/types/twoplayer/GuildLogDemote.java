@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogDemote extends AbstractGuildLogChangeLevel {
@@ -9,8 +11,8 @@ public class GuildLogDemote extends AbstractGuildLogChangeLevel {
     }
 
     @Override
-    public String getAction() {
-        return "demoted";
+    public Component getAction() {
+        return Component.text("demoted");
     }
 
 }

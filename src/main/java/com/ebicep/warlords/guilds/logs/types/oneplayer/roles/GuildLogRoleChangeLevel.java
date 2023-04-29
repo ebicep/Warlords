@@ -20,8 +20,8 @@ public class GuildLogRoleChangeLevel extends AbstractGuildLogRole {
     }
 
     @Override
-    public String getAction() {
-        return "changed level of";
+    public Component getAction() {
+        return Component.text("changed level of");
     }
 
     @Override

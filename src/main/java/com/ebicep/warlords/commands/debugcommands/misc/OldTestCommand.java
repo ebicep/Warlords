@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -133,16 +134,19 @@ public class OldTestCommand implements CommandExecutor {
 //                                               .append(Component.text("  <<"));
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
 
-            Component component = Component.textOfChildren(
-                    Component.text("["),
-                    Component.text("TEST", NamedTextColor.RED),
-                    Component.text("]")
-            ).color(NamedTextColor.GREEN);
-            player.sendMessage(component);
-            Component component2 = Component.text("[", NamedTextColor.GREEN)
-                                            .append(Component.text("TEST", NamedTextColor.RED))
-                                            .append(Component.text("]"));
-            player.sendMessage(component2);
+            Component component = Component.text("TEST", NamedTextColor.GREEN)
+                                           .append(Component.newline())
+                                           .append(Component.text("TEST2")
+                                                            .append(Component.newline())
+                                                            .append(Component.text("TEST3"))
+                                                            .append(Component.text("H", NamedTextColor.RED)))
+
+                                           .append(Component.text("TEST4"))
+                                           .append(Component.newline())
+                                           .append(Component.text("TEST5"));
+
+            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+            // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
         }
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {

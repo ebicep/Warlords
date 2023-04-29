@@ -5,7 +5,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -42,67 +41,6 @@ public class Menu extends AbstractMenuBase {
 
     public static final List<Component> GO_BACK = Collections.singletonList(Component.text("Go Back", NamedTextColor.GRAY));
     public static final Component DENY = Component.text("Deny", NamedTextColor.RED);
-
-    @Deprecated
-    public static void openConfirmationMenu(
-            Player player,
-            String title,
-            int rows,
-            List<String> confirmLore,
-            List<String> cancelLore,
-            BiConsumer<Menu, InventoryClickEvent> onConfirm,
-            BiConsumer<Menu, InventoryClickEvent> onCancel,
-            Consumer<Menu> editMenu
-    ) {
-        openConfirmationMenu(
-                player,
-                title,
-                rows,
-                ChatColor.GREEN + "Confirm",
-                confirmLore,
-                ChatColor.RED + "Deny",
-                cancelLore,
-                onConfirm,
-                onCancel,
-                editMenu
-        );
-    }
-
-    @Deprecated
-    public static void openConfirmationMenu(
-            Player player,
-            String title,
-            int rows,
-            String confirmName,
-            List<String> confirmLore,
-            String cancelName,
-            List<String> cancelLore,
-            BiConsumer<Menu, InventoryClickEvent> onConfirm,
-            BiConsumer<Menu, InventoryClickEvent> onCancel,
-            Consumer<Menu> editMenu
-    ) {
-        Menu menu = new Menu(title, 9 * rows);
-
-        menu.setItem(2, 1,
-                new ItemBuilder(Material.GREEN_CONCRETE)
-                        .name(confirmName)
-                        .loreLEGACY(confirmLore)
-                        .get(),
-                onConfirm
-        );
-
-        menu.setItem(6, 1,
-                new ItemBuilder(Material.RED_CONCRETE)
-                        .name(cancelName)
-                        .loreLEGACY(cancelLore)
-                        .get(),
-                onCancel
-        );
-
-        editMenu.accept(menu);
-
-        menu.openForPlayer(player);
-    }
 
     public static void openConfirmationMenu0(
             Player player,

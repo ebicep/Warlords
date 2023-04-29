@@ -45,7 +45,7 @@ public class FieldEffect implements Option {
         lines.add(Component.empty());
         fieldEffects.forEach(effect -> {
             lines.addAll(WordWrap.wrap(Component.text(effect.name + ": ", NamedTextColor.GREEN)
-                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 200));
+                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 170));
             lines.add(Component.empty());
         });
         options.add(TextOption.Type.CHAT_CENTERED.create(lines));

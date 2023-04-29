@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.entity.Player;
 
 import java.util.EnumSet;
 import java.util.OptionalInt;
@@ -47,7 +48,6 @@ public class GameListCommand extends BaseCommand {
                            .append(Component.text(toTitleHumanCase(game.getGameMode()), NamedTextColor.AQUA));
                 }
                 message.append(Component.text("]"));
-                //message.append('(').append(ChatColor.GOLD).append(game.getGameId()).append(ChatColor.GRAY).append(") ");
                 EnumSet<GameAddon> addons = game.getAddons();
                 if (!addons.isEmpty()) {
                     message.append(Component.text("("));
@@ -71,7 +71,11 @@ public class GameListCommand extends BaseCommand {
                 message.append(Component.text(time))
                        .append(Component.text(word));
             }
-            issuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(message.build()));
+            if (issuer.getIssuer() instanceof Player player) {
+                player.sendMessage(message.build());
+            } else {
+                issuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(message.build()));
+            }
         }
     }
 

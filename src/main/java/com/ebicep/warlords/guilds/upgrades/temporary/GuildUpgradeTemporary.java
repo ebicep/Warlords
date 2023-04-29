@@ -3,7 +3,8 @@ package com.ebicep.warlords.guilds.upgrades.temporary;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -32,19 +33,25 @@ public class GuildUpgradeTemporary extends AbstractGuildUpgrade<GuildUpgradesTem
 
     @Override
     public void addItemClickLore(ItemBuilder itemBuilder) {
-        itemBuilder.addLore(ChatColor.GRAY + "\nClick to Purchase");
+        itemBuilder.addLore(
+                Component.empty(),
+                Component.text("Click to Purchase", NamedTextColor.GRAY)
+        );
     }
 
     @Override
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>(super.getLore());
-        lore.add(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(expirationDate,
-                false,
-                true,
-                true,
-                true
-        ));
-        lore.add(ChatColor.YELLOW + "\n>>> ACTIVE <<<");
+    public List<Component> getLore() {
+        List<Component> lore = new ArrayList<>(super.getLore());
+        lore.add(Component.text("Time Left: ")
+                          .append(Component.text(DateUtil.getTimeTill(expirationDate,
+                                  false,
+                                  true,
+                                  true,
+                                  true
+                          ), NamedTextColor.GREEN))
+        );
+        lore.add(Component.empty());
+        lore.add(Component.text(">>> ACTIVE <<<", NamedTextColor.YELLOW));
 
         return lore;
     }

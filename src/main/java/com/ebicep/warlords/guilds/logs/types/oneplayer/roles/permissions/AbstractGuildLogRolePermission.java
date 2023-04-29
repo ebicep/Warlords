@@ -23,7 +23,7 @@ public abstract class AbstractGuildLogRolePermission extends AbstractGuildLogRol
                         .append(Component.space())
                         .append(getSenderName())
                         .append(Component.space())
-                        .append(Component.text(getAction(), NamedTextColor.YELLOW))
+                        .append(Component.empty().color(NamedTextColor.YELLOW).append(getAction()))
                         .append(Component.space())
                         .append(Component.text(permission.name(), NamedTextColor.RED))
                         .append(Component.text(" permission to ", NamedTextColor.GRAY))

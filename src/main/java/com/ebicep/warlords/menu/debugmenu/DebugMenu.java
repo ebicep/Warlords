@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -41,10 +40,11 @@ public class DebugMenu {
             Game game = warlordsPlayer.getGame();
             items.put(new ItemBuilder(Material.BOOK)
                             .name(Component.text("Game - " + game.getGameId(), NamedTextColor.GREEN))
-                            .loreLEGACY(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
-                                    ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
-                                    ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
-                                    ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                            .lore(
+                                    Component.text("Map - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getMap().getMapName(), NamedTextColor.RED)),
+                                    Component.text("GameMode - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getGameMode().name, NamedTextColor.RED)),
+                                    Component.text("Addons - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getAddons().toString(), NamedTextColor.RED)),
+                                    Component.text("Players - ", NamedTextColor.DARK_GRAY).append(Component.text(String.valueOf(game.playersCount()), NamedTextColor.RED))
                             )
                             .enchant(Enchantment.OXYGEN, 1)
                             .flags(ItemFlag.HIDE_ENCHANTS)

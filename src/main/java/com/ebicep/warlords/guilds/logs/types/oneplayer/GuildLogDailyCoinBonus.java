@@ -17,8 +17,8 @@ public class GuildLogDailyCoinBonus extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "awarded";
+    public Component getAction() {
+        return Component.text("awarded");
     }
 
     @Override

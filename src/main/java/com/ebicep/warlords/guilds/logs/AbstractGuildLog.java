@@ -25,7 +25,7 @@ public abstract class AbstractGuildLog {
         );
     }
 
-    public abstract String getAction();
+    public abstract Component getAction();
 
     public abstract Component getLog();
 

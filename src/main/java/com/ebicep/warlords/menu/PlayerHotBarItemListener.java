@@ -17,7 +17,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,18 +40,18 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND)
             .name(Component.text("PvP Menu", NamedTextColor.GREEN))
-            .loreLEGACY(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvP.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+            .lore(
+                    Component.text("View all information pertaining to PvP.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
             .name(Component.text("PvE Menu", NamedTextColor.GREEN))
-            .loreLEGACY(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvE.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+            .lore(
+                    Component.text("View all information pertaining to PvE.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
@@ -60,26 +59,26 @@ public class PlayerHotBarItemListener implements Listener {
             .get();
     public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.ENDER_EYE)
             .name(Component.text("Spectate", NamedTextColor.GREEN))
-            .loreLEGACY(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to open!"
+            .lore(
+                    Component.text("Spectate ongoing games.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to open!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR)
             .name(Component.text("Warlords Menu", NamedTextColor.GREEN))
-            .loreLEGACY(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View your specializations, settings, PvP/PvE stats, and more!", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to open!"
+            .lore(WordWrap.wrap(Component.text("View your specializations, settings, PvP/PvE stats, and more!", NamedTextColor.GRAY), 160))
+            .addLore(
+                    Component.empty(),
+                    Component.text("Click to open!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK)
             .name(Component.text("Settings Menu", NamedTextColor.GREEN))
-            .loreLEGACY(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all your in game settings.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+            .lore(
+                    Component.text("View all your in game settings.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
