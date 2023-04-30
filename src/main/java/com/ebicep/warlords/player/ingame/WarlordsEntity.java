@@ -369,6 +369,13 @@ public abstract class WarlordsEntity {
                 previousCC = critChance;
                 previousCM = critMultiplier;
             }
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
+                if (previousCC != critChance) {
+                    appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, abstractCooldown);
+                }
+                previousCC = critChance;
+            }
         }
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);

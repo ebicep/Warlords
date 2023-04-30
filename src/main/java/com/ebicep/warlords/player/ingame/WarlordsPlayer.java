@@ -19,7 +19,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -409,13 +408,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void resetAbilityTree() {
         this.abilityTree.getUpgradeBranches().clear();
         this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> {
-            List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer.getPveStats().getAutoUpgradeProfiles().get(specClass);
-            if (autoUpgradeProfiles == null || autoUpgradeProfiles.isEmpty()) {
-                return;
-            }
-            this.abilityTree.setAutoUpgradeProfile(new AutoUpgradeProfile(autoUpgradeProfiles.get(0)));
-        });
+        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
     }
 
     public AbstractWeapon getWeapon() {

@@ -37,6 +37,10 @@ public interface DamageInstance extends Instance {
         return currentCritChance;
     }
 
+    default float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+        return currentCritChance;
+    }
+
     /**
      * If attacker has abilities that increase their crit multiplier (inferno)
      */

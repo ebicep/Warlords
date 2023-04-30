@@ -89,7 +89,7 @@ public enum DifficultyMode {
     }
 
     public boolean validDifficulty(DifficultyIndex difficultyIndex) {
-        return false;
+        return true;
     }
 
 }

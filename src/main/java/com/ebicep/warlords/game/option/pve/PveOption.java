@@ -183,7 +183,7 @@ public interface PveOption {
                             .add(event.getWeapon());
             }
 
-            @EventHandler
+            @EventHandler(priority = EventPriority.MONITOR)
             public void onMobDrop(WarlordsGiveMobDropEvent event) {
                 if (!event.getStolenBy().isEmpty()) {
                     return;

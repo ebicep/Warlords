@@ -130,7 +130,7 @@ public enum BasicStatPool implements StatPool {
         put(EPH, new StatRange(1, 5));
         put(SPEED, new StatRange(2, 10));
 
-        put(DAMAGE, new StatRange(2, 12));
+        put(DAMAGE, new StatRange(2, 10));
         put(HEALING, new StatRange(5, 15));
         put(CRIT_CHANCE, new StatRange(2, 10));
         put(CRIT_MULTI, new StatRange(5, 25));

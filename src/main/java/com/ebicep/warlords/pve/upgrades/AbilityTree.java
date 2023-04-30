@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.menu.Menu;
@@ -89,35 +90,7 @@ public class AbilityTree {
                     .getPveStats()
                     .getAutoUpgradeProfiles()
                     .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
-            if (autoUpgradeProfiles.isEmpty()) {
-                autoUpgradeProfile = new AutoUpgradeProfile();
-                autoUpgradeProfiles.add(autoUpgradeProfile);
-            } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
-                Game game = warlordsPlayer.getGame();
-                if (game == null) {
-                    autoUpgradeProfile = autoUpgradeProfiles.get(0);
-                } else {
-                    PveOption pveOption = game.getOptions()
-                                              .stream()
-                                              .filter(PveOption.class::isInstance)
-                                              .map(PveOption.class::cast)
-                                              .findFirst()
-                                              .orElse(null);
-                    if (pveOption == null) {
-                        autoUpgradeProfile = autoUpgradeProfiles.get(0);
-                    } else {
-                        autoUpgradeProfile = autoUpgradeProfiles
-                                .stream()
-                                .filter(profile -> {
-                                    DifficultyMode difficultyMode = profile.getDifficultyMode();
-                                    return !(difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) &&
-                                            !difficultyMode.validDifficulty(pveOption.getDifficulty()));
-                                })
-                                .findFirst()
-                                .orElse(autoUpgradeProfiles.get(0));
-                    }
-                }
-            }
+            getAutoUpgradeProfile();
             List<String> lore = new ArrayList<>();
             for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
                 AutoUpgradeProfile l = autoUpgradeProfiles.get(i);
@@ -428,11 +401,46 @@ public class AbilityTree {
     }
 
     public AutoUpgradeProfile getAutoUpgradeProfile() {
+        if (autoUpgradeProfile == null) {
+            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), this::resetAutoUpgradeProfile);
+        }
         return autoUpgradeProfile;
     }
 
-    public void setAutoUpgradeProfile(AutoUpgradeProfile autoUpgradeProfile) {
-        this.autoUpgradeProfile = autoUpgradeProfile;
+    public void resetAutoUpgradeProfile(DatabasePlayer databasePlayer) {
+        List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
+                .getPveStats()
+                .getAutoUpgradeProfiles()
+                .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
+        if (autoUpgradeProfiles.isEmpty()) {
+            autoUpgradeProfile = new AutoUpgradeProfile();
+            autoUpgradeProfiles.add(autoUpgradeProfile);
+        } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
+            Game game = warlordsPlayer.getGame();
+            if (game == null) {
+                autoUpgradeProfile = autoUpgradeProfiles.get(0);
+            } else {
+                PveOption pveOption = game.getOptions()
+                                          .stream()
+                                          .filter(PveOption.class::isInstance)
+                                          .map(PveOption.class::cast)
+                                          .findFirst()
+                                          .orElse(null);
+                if (pveOption == null) {
+                    autoUpgradeProfile = autoUpgradeProfiles.get(0);
+                } else {
+                    autoUpgradeProfile = autoUpgradeProfiles
+                            .stream()
+                            .filter(profile -> {
+                                DifficultyMode difficultyMode = profile.getDifficultyMode();
+                                return difficultyMode == null || (difficultyMode.validGameMode(game.getGameMode()) &&
+                                        difficultyMode.validDifficulty(pveOption.getDifficulty()));
+                            })
+                            .findFirst()
+                            .orElse(autoUpgradeProfiles.get(0));
+                }
+            }
+        }
     }
 
     public static class UpgradeLog {
