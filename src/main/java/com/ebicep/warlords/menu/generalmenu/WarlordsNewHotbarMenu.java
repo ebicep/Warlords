@@ -28,7 +28,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -387,7 +386,11 @@ public class WarlordsNewHotbarMenu {
 
         public static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
                 .name(Component.text("Weapon Skin Selector", NamedTextColor.GREEN))
-                .loreLEGACY("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
+                .lore(WordWrap.wrap(Component.text("Change the cosmetic appearance of your weapon to better suit your tastes.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to change weapon skin!", NamedTextColor.GRAY)
+                )
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
                 .name(Component.text("Armor Sets ", NamedTextColor.AQUA)
@@ -395,31 +398,34 @@ public class WarlordsNewHotbarMenu {
                                .append(Component.text("Helmets "))
                                .append(Component.text("(Cosmetic)", NamedTextColor.GOLD))
                 )
-                .loreLEGACY(
-                        "§7Equip your favorite armor\n§7sets or class helmets",
-                        "",
-                        ChatColor.YELLOW + "Click to equip!"
+                .lore(
+                        Component.text("Equip your favorite armor", NamedTextColor.GRAY),
+                        Component.text("sets or class helmets", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to equip!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
                 .name(Component.text("Weapon Skill Boost", NamedTextColor.AQUA))
-                .loreLEGACY("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
-                        "",
-                        "§cWARNING: §7This does not apply to PvE.",
-                        "",
-                        "§eClick to change skill boost!"
+                .lore(
+                        Component.text("Choose which of your skills you", NamedTextColor.GRAY),
+                        Component.text("want your equipped weapon to boost.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("WARNING:", NamedTextColor.RED).append(Component.text(" This does not apply to PvE.", NamedTextColor.GRAY)),
+                        Component.empty(),
+                        Component.text("Click to change skill boost!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack MENU_BACK_PVP = new ItemBuilder(Material.ARROW)
                 .name(Component.text("Back", NamedTextColor.GREEN))
-                .loreLEGACY(ChatColor.GRAY + "To PvP Menu")
+                .lore(Component.text("To PvP Menu", NamedTextColor.GRAY))
                 .get();
         public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
                 .name(Component.text("Class Information", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        "§7Preview of your ability \ndescriptions and specialization \nstats.",
-                        "",
-                        ChatColor.YELLOW + "Click to preview!"
+                .lore(WordWrap.wrap(Component.text("Preview of your ability descriptions and specialization stats.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to preview!", NamedTextColor.YELLOW)
                 )
                 .get();
 
@@ -452,16 +458,16 @@ public class WarlordsNewHotbarMenu {
                     builder = new ItemBuilder(weapon.getItem())
                             .name(Component.text(weapon.getName(), NamedTextColor.GREEN))
                             .flags(ItemFlag.HIDE_ENCHANTS);
-                    List<String> lore = new ArrayList<>();
+                    List<Component> lore = new ArrayList<>();
 
                     if (weapon == selectedWeapon) {
-                        lore.add(ChatColor.GREEN + "Currently selected!");
+                        lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
                         builder.enchant(Enchantment.OXYGEN, 1);
                     } else {
-                        lore.add(ChatColor.YELLOW + "Click to select!");
+                        lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                     }
 
-                    builder.loreLEGACY(lore);
+                    builder.lore(lore);
                 } else {
                     builder = new ItemBuilder(Material.BARRIER).name(Component.text("Locked Weapon Skin", NamedTextColor.RED));
                 }
@@ -472,7 +478,9 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             if (weapon.isUnlocked) {
-                                player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.getName() + "!");
+                                player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
+                                                            .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
+                                                            .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create.get();
@@ -600,20 +608,21 @@ public class WarlordsNewHotbarMenu {
                 ArmorManager.Helmets helmet = helmets[i];
                 ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
                         .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                        .loreLEGACY(HELMET_DESCRIPTION, "")
+                        .lore(HELMET_DESCRIPTION)
+                        .addLore(Component.empty())
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (selectedHelmet.contains(helmet)) {
-                    builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
+                    builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
+                    builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
                 menu.setItem(
                         (i - (pageNumber - 1) * 8) + 1,
                         2,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
+                            player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(helmet.name, NamedTextColor.GREEN)));
                             playerSettings.setHelmet(helmet.classes, helmet);
                             ArmorManager.resetArmor(player);
                             openArmorMenu(player, pageNumber);
@@ -629,20 +638,21 @@ public class WarlordsNewHotbarMenu {
                 Classes classes = Classes.VALUES[i / 3];
                 ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorManager.ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
                         .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                        .loreLEGACY(ARMOR_DESCRIPTION, "")
+                        .lore(ARMOR_DESCRIPTION)
+                        .addLore(Component.empty())
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 if (playerSettings.getArmorSet(classes) == armorSet) {
-                    builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
+                    builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
+                    builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
                 menu.setItem(
                         xPosition,
                         3,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + armorSet.name);
+                            player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(armorSet.name, NamedTextColor.GREEN)));
                             playerSettings.setArmor(classes, armorSet);
                             openArmorMenu(player, pageNumber);
                         }
@@ -722,7 +732,7 @@ public class WarlordsNewHotbarMenu {
                         3,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
+                            player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN).append(Component.text(skillBoost.name + "!")));
                             PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
                             openSkillBoostMenu(player, selectedSpec);
 
@@ -787,38 +797,38 @@ public class WarlordsNewHotbarMenu {
 
         public static final ItemStack MENU_BACK_PVE = new ItemBuilder(Material.ARROW)
                 .name(Component.text("Back", NamedTextColor.GREEN))
-                .loreLEGACY(ChatColor.GRAY + "To PvE Menu")
+                .lore(Component.text("To PvE Menu", NamedTextColor.GRAY))
                 .get();
         public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
                 .name(Component.text("Weapons", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and modify all your weapons, also accessible through The Weaponsmith.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                .lore(WordWrap.wrap(Component.text("View and modify all your weapons, also accessible through The Weaponsmith.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
                 .name(Component.text("Items", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and equip all your Items.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                .lore(
+                        Component.text("View and equip all your Items.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
                 .name(Component.text("Reward Inventory", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and claim all your rewards.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                .lore(
+                        Component.text("View and claim all your rewards.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack ABILITY_TREE_MENU = new ItemBuilder(Material.GOLD_NUGGET)
                 .name(Component.text("Upgrade Talisman", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View your ability upgrades.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                .lore(
+                        Component.text("View your ability upgrades.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
 
@@ -873,7 +883,11 @@ public class WarlordsNewHotbarMenu {
 
         public static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
                 .name(Component.text("Settings", NamedTextColor.AQUA))
-                .loreLEGACY("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
+                .lore(WordWrap.wrap(Component.text("Allows you to toggle different settings options.", NamedTextColor.GRAY), 150))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to edit your settings.", NamedTextColor.GRAY)
+                )
                 .get();
         public static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
                 .name(Component.text("Particle Quality", NamedTextColor.GREEN))
@@ -940,9 +954,12 @@ public class WarlordsNewHotbarMenu {
                         i + 3,
                         1,
                         new ItemBuilder(particleQuality.item)
-                                .loreLEGACY(particleQuality.description,
-                                        "",
-                                        selectedParticleQuality == particleQuality ? ChatColor.GREEN + "SELECTED" : ChatColor.YELLOW + "Click to select!"
+                                .lore(WordWrap.wrap(particleQuality.description, 160))
+                                .addLore(
+                                        Component.empty(),
+                                        selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
+                                                NamedTextColor.YELLOW
+                                        )
                                 )
                                 .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),

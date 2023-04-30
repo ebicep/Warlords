@@ -22,9 +22,9 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
@@ -443,7 +443,18 @@ public class ExperienceManager {
         if (levelBefore != levelAfter) {
             ChatUtils.sendMessage(player,
                     true,
-                    ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   "
+                    Component.text().color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD)
+                             .append(Component.text("   ", NamedTextColor.GREEN, TextDecoration.OBFUSCATED))
+                             .append(Component.text("LEVEL UP!", NamedTextColor.AQUA))
+                             .append(Component.text("["))
+                             .append(Component.text(levelBefore, NamedTextColor.GRAY))
+                             .append(Component.text("]"))
+                             .append(Component.text(" > ", NamedTextColor.GREEN))
+                             .append(Component.text("["))
+                             .append(Component.text(levelAfter, NamedTextColor.GRAY))
+                             .append(Component.text("]"))
+                             .append(Component.text("   ", NamedTextColor.GREEN, TextDecoration.OBFUSCATED))
+                             .build()
             );
         }
     }

@@ -39,10 +39,10 @@ public class MasterworksFairCommand extends BaseCommand {
     @Description("Ends the current masterworks fair event")
     public void end(CommandIssuer issuer, Boolean awardThroughRewardsInventory, @Default("5") @Conditions("limits:min=1,max=5") Integer startMinuteDelay) {
         if (currentFair == null) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end");
+            ChatChannels.sendDebugMessage(issuer, Component.text("No current masterworks fair event to end", NamedTextColor.RED));
             return;
         }
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Ending current masterworks fair event with start delay of " + startMinuteDelay, NamedTextColor.GREEN));
         currentFair.setEnded(true);
         resetFair(currentFair, awardThroughRewardsInventory, startMinuteDelay);
     }
@@ -55,16 +55,16 @@ public class MasterworksFairCommand extends BaseCommand {
                 .syncLast(fairs -> {
                     if (fairNumber == null) {
                         fairs.get(fairs.size() - 2).sendResults(true);
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current results");
+                        ChatChannels.sendDebugMessage(issuer, Component.text("Resent Masterworks Fair before current results", NamedTextColor.GREEN));
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
                                                                                 .filter(fair -> fair.getFairNumber() == fairNumber)
                                                                                 .findFirst();
                         if (fairOptional.isPresent()) {
                             fairOptional.get().sendResults(true);
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " results");
+                            ChatChannels.sendDebugMessage(issuer, Component.text("Resent Masterworks Fair #" + fairNumber + " results", NamedTextColor.GREEN));
                         } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber);
+                            ChatChannels.sendDebugMessage(issuer, Component.text("Could not find fair #" + fairNumber, NamedTextColor.RED));
                         }
                     }
                 })
@@ -79,16 +79,16 @@ public class MasterworksFairCommand extends BaseCommand {
                 .syncLast(fairs -> {
                     if (fairNumber == null) {
                         fairs.get(fairs.size() - 2).sendRewards(true);
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current rewards");
+                        ChatChannels.sendDebugMessage(issuer, Component.text("Resent Masterworks Fair before current rewards", NamedTextColor.GREEN));
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
                                                                                 .filter(fair -> fair.getFairNumber() == fairNumber)
                                                                                 .findFirst();
                         if (fairOptional.isPresent()) {
                             fairOptional.get().sendRewards(true);
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " rewards");
+                            ChatChannels.sendDebugMessage(issuer, Component.text("Resent Masterworks Fair #" + fairNumber + " rewards", NamedTextColor.GREEN));
                         } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber);
+                            ChatChannels.sendDebugMessage(issuer, Component.text("Could not find fair #" + fairNumber, NamedTextColor.RED));
                         }
                     }
                 })
@@ -98,7 +98,7 @@ public class MasterworksFairCommand extends BaseCommand {
     @Subcommand("validate")
     @Description("Validates the masterworks fair event, making sure players got their rewards")
     public void validate(CommandIssuer issuer, Instant instant) {
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Locating fair with start date " + instant);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Locating fair with start date " + instant, NamedTextColor.GREEN));
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(fairs -> {
@@ -107,10 +107,10 @@ public class MasterworksFairCommand extends BaseCommand {
                                                            .findFirst()
                                                            .orElse(null);
                     if (masterworksFair == null) {
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair with start date " + instant);
+                        ChatChannels.sendDebugMessage(issuer, Component.text("Could not find fair with start date " + instant, NamedTextColor.RED));
                         return;
                     } else {
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Found fair with start date " + instant);
+                        ChatChannels.sendDebugMessage(issuer, Component.text("Found fair with start date " + instant, NamedTextColor.GREEN));
                     }
                     int fairNumber = masterworksFair.getFairNumber();
                     HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
@@ -162,8 +162,11 @@ public class MasterworksFairCommand extends BaseCommand {
                                                     pveStats.addReward(new MasterworksFairReward(rewards, instant, rarity));
                                                     ChatChannels.sendDebugMessage(
                                                             (CommandIssuer) null,
-                                                            ChatColor.GREEN + "Validating Fair - Gave " + ChatColor.AQUA + databasePlayer.getName() +
-                                                                    ChatColor.GREEN + " their " + rarity.getChatColorName() + ChatColor.GREEN + " reward"
+                                                            Component.text("Validating Fair - Gave ", NamedTextColor.GREEN)
+                                                                     .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
+                                                                     .append(Component.text(" their ", NamedTextColor.GREEN))
+                                                                     .append(rarity.getChatColorName())
+                                                                     .append(Component.text(" reward", NamedTextColor.GREEN))
                                                     );
                                                 }
                                                 if (resent) {
@@ -203,16 +206,16 @@ public class MasterworksFairCommand extends BaseCommand {
                             masterworksFair = fairOptional.get();
                             fairNumber.set(masterworksFair.getFairNumber());
                         } else {
-                            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Could not find fair #" + fairNum);
+                            ChatChannels.sendDebugMessage(player, Component.text("Could not find fair #" + fairNum, NamedTextColor.RED));
                             return;
                         }
                     }
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Masterworks Fair #" + fairNumber.get() + " Participants:");
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + " - Common");
+                    ChatChannels.sendDebugMessage(player, Component.text("Masterworks Fair #" + fairNumber.get() + " Participants:", NamedTextColor.GREEN));
+                    ChatChannels.sendDebugMessage(player, Component.text(" - Common", NamedTextColor.GREEN));
                     sendFairEntry(player, masterworksFair.getCommonPlayerEntries());
-                    ChatChannels.sendDebugMessage(player, ChatColor.BLUE + " - Rare");
+                    ChatChannels.sendDebugMessage(player, Component.text(" - Rare", NamedTextColor.BLUE));
                     sendFairEntry(player, masterworksFair.getRarePlayerEntries());
-                    ChatChannels.sendDebugMessage(player, ChatColor.DARK_PURPLE + " - Epic");
+                    ChatChannels.sendDebugMessage(player, Component.text(" - Epic", NamedTextColor.DARK_PURPLE));
                     sendFairEntry(player, masterworksFair.getEpicPlayerEntries());
                 })
                 .execute();

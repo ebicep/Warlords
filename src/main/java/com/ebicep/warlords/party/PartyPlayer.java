@@ -1,6 +1,7 @@
 package com.ebicep.warlords.party;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.UUID;
 
@@ -17,10 +18,16 @@ public class PartyPlayer {
         this.isOnline = true;
     }
 
-    public String getPartyListDot() {
-        if (!isOnline) return ChatColor.RED + " ● ";
-        if (isAFK) return ChatColor.GOLD + " ● ";
-        return ChatColor.GREEN + " ● ";
+    public Component getPartyListDot() {
+        if (!isOnline) {
+            return Component.text(" ● ", NamedTextColor.RED);
+        }
+        if (isAFK) {
+            return Component.text(" ● ", NamedTextColor.GOLD);
+        }
+        return Component.text(" ● ", NamedTextColor.GREEN);
+
+
     }
 
     public UUID getUUID() {

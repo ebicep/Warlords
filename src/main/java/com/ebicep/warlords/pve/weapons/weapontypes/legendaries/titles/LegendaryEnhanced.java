@@ -65,7 +65,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
                 if (regularCooldown.isEnhanced()) {
                     return;
                 }
-                if (EFFECTED_ABILITIES.contains(cooldown.getNameAbbreviation())) {
+                if (EFFECTED_ABILITIES.contains(cooldown.getActionBarName())) {
                     regularCooldown.setEnhanced(true);
                     regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel());
                 }

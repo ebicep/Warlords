@@ -6,6 +6,7 @@ import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,11 +21,19 @@ public class Settings {
 
         NEW_MODE(new ItemBuilder(Material.REDSTONE)
                 .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
-                .loreLEGACY(ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "NEW", "", ChatColor.YELLOW + "Click here to enable Classic mode.")
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("NEW", NamedTextColor.AQUA)),
+                        Component.empty(),
+                        Component.text("Click here to enable Classic mode.", NamedTextColor.YELLOW)
+                )
                 .get()),
         CLASSIC_MODE(new ItemBuilder(Material.SNOWBALL)
                 .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
-                .loreLEGACY(ChatColor.YELLOW + "Currently selected " + ChatColor.AQUA + "Classic", "", ChatColor.YELLOW + "Click here to enable NEW mode.")
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Classic", NamedTextColor.YELLOW)),
+                        Component.empty(),
+                        Component.text("Click here to enable NEW mode.", NamedTextColor.YELLOW)
+                )
                 .get()),
 
         ;
@@ -40,25 +49,25 @@ public class Settings {
     public enum ParticleQuality {
 
         LOW(new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).name(Component.text("Low Quality", NamedTextColor.GOLD)).get(),
-                ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see.",
+                Component.text("Heavily reduces the amount of particles you will see.", NamedTextColor.GRAY),
                 2
         ),
         MEDIUM(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(Component.text("Medium Quality", NamedTextColor.YELLOW)).get(),
-                ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.",
+                Component.text("Reduces the amount of particles seem.", NamedTextColor.GRAY),
                 4
         ),
         HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(Component.text("High Quality", NamedTextColor.GREEN)).get(),
-                ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience.",
+                Component.text("Shows all particles for the best experience.", NamedTextColor.GRAY),
                 100000
         ),
 
         ;
 
         public final ItemStack item;
-        public final String description;
+        public final TextComponent description;
         public final int particleReduction;
 
-        ParticleQuality(ItemStack item, String description, int particleReduction) {
+        ParticleQuality(ItemStack item, TextComponent description, int particleReduction) {
             this.item = item;
             this.description = description;
             this.particleReduction = particleReduction;
@@ -70,21 +79,21 @@ public class Settings {
 
         RELATIVE(new ItemBuilder(Material.COMPASS)
                 .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Relative",
-                        ChatColor.GRAY + "Prints out flag messages with 'YOUR/ENEMY'",
-                        "",
-                        ChatColor.YELLOW + "Click here to enable Absolute mode."
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Relative", NamedTextColor.AQUA)),
+                        Component.text("Prints out flag messages with 'YOUR/ENEMY'", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click here to enable Absolute mode.", NamedTextColor.YELLOW)
                 )
                 .get()
         ),
         ABSOLUTE(new ItemBuilder(Material.WHITE_WOOL)
                 .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
-                .loreLEGACY(
-                        ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Absolute",
-                        ChatColor.GRAY + "Prints out flag messages with team names",
-                        "",
-                        ChatColor.YELLOW + "Click here to enable Relative mode."
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Absolute", NamedTextColor.YELLOW)),
+                        Component.text("Prints out flag messages with team names", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click here to enable Relative mode.", NamedTextColor.YELLOW)
                 )
                 .get()
         ),

@@ -4,7 +4,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.TriConsumer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,11 +115,15 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
     }
 
     @Override
-    public String getNameAbbreviation() {
+    public Component getNameAbbreviation() {
         if (hidden) {
-            return "";
+            return Component.empty();
         }
-        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1);
+        return Component.textOfChildren(
+                Component.text(nameAbbreviation, NamedTextColor.GREEN),
+                Component.text(":", NamedTextColor.GRAY),
+                Component.text(ticksLeft / 20 + 1, NamedTextColor.GOLD)
+        );
     }
 
     @Override

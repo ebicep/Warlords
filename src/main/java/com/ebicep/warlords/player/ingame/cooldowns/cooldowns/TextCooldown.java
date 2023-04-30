@@ -4,7 +4,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.function.Consumer;
 
@@ -31,8 +32,12 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public String getNameAbbreviation() {
-        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + text;
+    public Component getNameAbbreviation() {
+        return Component.textOfChildren(
+                Component.text(nameAbbreviation, NamedTextColor.GREEN),
+                Component.text(":", NamedTextColor.GRAY),
+                Component.text(text, NamedTextColor.GOLD)
+        );
     }
 
     @Override

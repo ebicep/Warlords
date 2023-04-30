@@ -14,7 +14,9 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -39,7 +41,7 @@ public class MyPositionCommand extends BaseCommand {
             DatabasePlayer databasePlayer,
             PvEDatabaseStatInformation statInformation,
             String prefix,
-            StringBuilder stats
+            TextComponent.Builder stats
     ) {
         for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE)
                 .getCategories()
@@ -47,29 +49,29 @@ public class MyPositionCommand extends BaseCommand {
                 .getStatsLeaderboards()
         ) {
             if ((prefix + statLeaderboardTarget.getLeaderboardName()).equals(statsLeaderboard.getTitle())) {
-                stats.append("\n").append(ChatColor.GREEN).append(statLeaderboardTarget.getDisplayName())
-                        .append(": ").append(statLeaderboardTarget.getStatFunction().apply(statInformation));
+                stats.append(Component.newline())
+                     .append(Component.text(statLeaderboardTarget.getDisplayName() + ": " + statLeaderboardTarget.getStatFunction().apply(statInformation), NamedTextColor.GREEN));
                 int index = statsLeaderboard.getSortedPlayers(PlayersCollections.LIFETIME).indexOf(databasePlayer);
                 if (index != -1) {
-                    stats.append(ChatColor.YELLOW).append(" (#").append(index + 1).append(")");
+                    stats.append(Component.text(" (#" + (index + 1) + ")", NamedTextColor.YELLOW));
                 }
                 break;
             }
         }
     }
 
-    private static void appendStat(String title, DatabasePlayer databasePlayer, StringBuilder stats) {
+    private static void appendStat(String title, DatabasePlayer databasePlayer, TextComponent.Builder stats) {
         for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE)
-                .getCategories()
-                .get(0)
-                .getStatsLeaderboards()
+                                                                                           .getCategories()
+                                                                                           .get(0)
+                                                                                           .getStatsLeaderboards()
         ) {
             if (statsLeaderboard.getTitle().equals(title)) {
-                stats.append("\n").append(ChatColor.GREEN).append(title)
-                        .append(": ").append(statsLeaderboard.getStringFunction().apply(databasePlayer));
+                stats.append(Component.newline())
+                     .append(Component.text(title + ": " + statsLeaderboard.getStringFunction().apply(databasePlayer), NamedTextColor.GREEN));
                 int index = statsLeaderboard.getSortedPlayers(PlayersCollections.LIFETIME).indexOf(databasePlayer);
                 if (index != -1) {
-                    stats.append(ChatColor.YELLOW).append(" (#").append(index + 1).append(")");
+                    stats.append(Component.text(" (#" + (index + 1) + ")", NamedTextColor.YELLOW));
                 }
                 break;
             }
@@ -82,18 +84,18 @@ public class MyPositionCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 
-            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats");
+            TextComponent.Builder stats = Component.text().append(Component.text("Your Stats", NamedTextColor.GOLD));
             for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.ALL)
                     .getCategories()
                     .get(0)
                     .getStatsLeaderboards()
             ) {
                 if (statsLeaderboard.getTitle().equals("Experience")) {
-                    stats.append("\n").append(ChatColor.GREEN).append("Level")
-                            .append(": ").append(NumberFormat.addCommaAndRound(databasePlayer.getLevel()));
                     int index = statsLeaderboard.getSortedPlayers(PlayersCollections.LIFETIME).indexOf(databasePlayer);
+                    stats.append(Component.newline())
+                         .append(Component.text("Level: " + NumberFormat.addCommaAndRound(databasePlayer.getLevel()), NamedTextColor.GREEN));
                     if (index != -1) {
-                        stats.append(ChatColor.YELLOW).append(" (#").append(index + 1).append(")");
+                        stats.append(Component.text(" (#" + (index + 1) + ")", NamedTextColor.YELLOW));
                     }
                     break;
                 }
@@ -106,7 +108,7 @@ public class MyPositionCommand extends BaseCommand {
                 appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
             }
 
-            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.build(), NamedTextColor.GREEN, true);
         });
     }
 
@@ -121,11 +123,11 @@ public class MyPositionCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             PvEDatabaseStatInformation databasePlayerPvE = databasePlayer.getPveStats().getClass(classes);
 
-            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + classes.name + ")");
+            TextComponent.Builder stats = Component.text().append(Component.text("Your Stats (" + classes.name + ")", NamedTextColor.GOLD));
             for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
                 appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
             }
-            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.build(), NamedTextColor.GREEN, true);
         });
     }
 
@@ -140,18 +142,18 @@ public class MyPositionCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             PvEDatabaseStatInformation databasePlayerPvE = databasePlayer.getPveStats().getSpec(specializations);
 
-            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + specializations.name + ")");
+            TextComponent.Builder stats = Component.text().append(Component.text("Your Stats (" + specializations.name + ")", NamedTextColor.GOLD));
             for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
                 appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
             }
-            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.build(), NamedTextColor.GREEN, true);
         });
     }
 
     @Subcommand("masterworksfair|mwf")
     public void myStatsMasterworksFair(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (Masterworks Fair)");
+            TextComponent.Builder stats = Component.text().append(Component.text("Your Stats (Masterworks Fair)", NamedTextColor.GOLD));
 
             appendStat("Masterworks Fair Wins", databasePlayer, stats);
             for (WeaponsPvE value : WeaponsPvE.VALUES) {
@@ -160,7 +162,7 @@ public class MyPositionCommand extends BaseCommand {
                 }
                 appendStat("Masterworks Fair " + value.name + " Wins", databasePlayer, stats);
             }
-            stats.append("\n");
+            stats.append(Component.newline());
             appendStat("Average Masterworks Fair Placement", databasePlayer, stats);
             for (WeaponsPvE value : WeaponsPvE.VALUES) {
                 if (value.getPlayerEntries == null) {
@@ -169,7 +171,7 @@ public class MyPositionCommand extends BaseCommand {
                 appendStat("Average Masterworks Fair " + value.name + " Placement", databasePlayer, stats);
             }
 
-            ChatUtils.sendMessageToPlayer(player, stats.toString().replaceAll("Masterworks Fair ", ""), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.build().replaceText(builder -> builder.match("Masterworks Fair ").replacement("")), NamedTextColor.GREEN, true);
         });
     }
 

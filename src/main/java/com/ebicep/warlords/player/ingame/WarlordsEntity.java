@@ -39,6 +39,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
@@ -200,24 +202,28 @@ public abstract class WarlordsEntity {
                 '}';
     }
 
-    private void appendDebugMessageEvent(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
+    private void appendDebugMessageEvent(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
+        TextComponent grayBar = Component.text(" | ", NamedTextColor.GRAY);
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Self", this.getName(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Attacker", event.getAttacker().getName(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Ability", event.getAbility(), false);
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Min", event.getMin(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Max", event.getMax(), false);
-        debugMessage.append(ChatColor.GRAY).append("  |  ");
+        debugMessage.append(Component.text("  |  ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Crit Chance", event.getCritChance(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Crit Multiplier", event.getCritMultiplier(), false);
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Ignore Reduction", "" + event.isIgnoreReduction(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Flags", "" + event.getFlags(), false);
     }
 
@@ -225,7 +231,7 @@ public abstract class WarlordsEntity {
         if (isDead()) {
             return Optional.empty();
         }
-        StringBuilder debugMessage = new StringBuilder(ChatColor.AQUA + "Pre Event:");
+        TextComponent.Builder debugMessage = Component.text().color(NamedTextColor.GREEN).append(Component.text("Pre Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -302,7 +308,7 @@ public abstract class WarlordsEntity {
         ));
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.doBeforeVariableSetFromSelf(event);
         }
@@ -329,7 +335,7 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Post Event:");
+        debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
 
 
@@ -338,20 +344,20 @@ public abstract class WarlordsEntity {
         List<AbstractCooldown<?>> selfCooldownsDistinct = getCooldownManager().getCooldownsDistinct();
         List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Before Reduction:");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Before Reduction:", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.doBeforeReductionFromSelf(event);
             appendDebugMessage(debugMessage, 2, abstractCooldown);
         }
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.doBeforeReductionFromAttacker(event);
             appendDebugMessage(debugMessage, 2, abstractCooldown);
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Crit Modifiers:");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Crit Modifiers:", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
         if (critChance > 0) {
             float previousCC = critChance;
             float previousCM = critMultiplier;
@@ -383,13 +389,15 @@ public abstract class WarlordsEntity {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
         }
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Calculated Damage:");
+        debugMessage.append(Component.newline()).append(Component.text("Calculated Damage:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float damageHealValueBeforeAllReduction = damageValue;
         if (!flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
-            debugMessage.append("\n").append(ChatColor.AQUA).append("Spec Damage Reduction: ").append(ChatColor.BLUE).append(spec.getDamageResistance());
+            debugMessage.append(Component.newline())
+                        .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
+                        .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
             addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
@@ -454,7 +462,7 @@ public abstract class WarlordsEntity {
             // Flag carrier multiplier.
             double flagMultiplier = getFlagDamageMultiplier();
             if (flagMultiplier != 1) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Flag Damage Multiplier:");
+                debugMessage.append(Component.newline()).append(Component.text("Flag Damage Multiplier:", NamedTextColor.AQUA));
             }
             damageValue *= flagMultiplier;
             if (flagMultiplier != 1) {
@@ -462,8 +470,8 @@ public abstract class WarlordsEntity {
             }
             // Checks whether the player is standing in a Hammer of Light.
             if (HammerOfLight.notStandingInHammer(attacker, this)) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Before Intervene");
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                debugMessage.append(Component.newline()).append(Component.text("Before Intervene", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
                     if (previousDamageValue != damageValue) {
@@ -472,7 +480,7 @@ public abstract class WarlordsEntity {
                     previousDamageValue = damageValue;
                 }
 
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                     if (previousDamageValue != damageValue) {
@@ -481,7 +489,7 @@ public abstract class WarlordsEntity {
                     previousDamageValue = damageValue;
                 }
             } else {
-                debugMessage.append("\n").append(ChatColor.RED).append("In Hammer");
+                debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
             }
         }
 
@@ -496,7 +504,7 @@ public abstract class WarlordsEntity {
                 HammerOfLight.notStandingInHammer(attacker, this) &&
                 isEnemy(attacker)
         ) {
-            debugMessage.append("\n").append(ChatColor.AQUA).append("Intervene:");
+            debugMessage.append(Component.newline()).append(Component.text("Intervene:", NamedTextColor.AQUA));
 
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
@@ -565,7 +573,7 @@ public abstract class WarlordsEntity {
             removeHorse();
             intervenedBy.removeHorse();
 
-            appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Intervene From Attacker");
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Intervene From Attacker");
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 abstractCooldown.onInterveneFromAttacker(event, damageValue);
                 appendDebugMessage(debugMessage, 2, abstractCooldown);
@@ -576,8 +584,8 @@ public abstract class WarlordsEntity {
                 if (HammerOfLight.notStandingInHammer(attacker, this)) {
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
-                    debugMessage.append("\n").append(ChatColor.AQUA).append("After Intervene:");
-                    appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                    debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
+                    appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                     for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                         damageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
                         if (previousDamageValue != damageValue) {
@@ -586,7 +594,7 @@ public abstract class WarlordsEntity {
                         previousDamageValue = damageValue;
                     }
 
-                    appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+                    appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
                     for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                         damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
                         if (previousDamageValue != damageValue) {
@@ -595,7 +603,7 @@ public abstract class WarlordsEntity {
                         previousDamageValue = damageValue;
                     }
                 } else {
-                    debugMessage.append("\n").append(ChatColor.RED).append("In Hammer");
+                    debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
                 }
             }
 
@@ -609,7 +617,7 @@ public abstract class WarlordsEntity {
                     isEnemy(attacker) &&
                     HammerOfLight.notStandingInHammer(attacker, this)
             ) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Arcane Shield:");
+                debugMessage.append(Component.newline()).append(Component.text("Arcane Shield:", NamedTextColor.AQUA));
 
                 RegularCooldown cooldown = arcaneShieldCooldown.get();
                 ArcaneShield arcaneShield = (ArcaneShield) cooldown.getCooldownObject();
@@ -618,7 +626,7 @@ public abstract class WarlordsEntity {
                 //check if broken
                 if (arcaneShield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
-                    addDamageInstance(new StringBuilder(), new WarlordsDamageHealingEvent(
+                    addDamageInstance(Component.text(), new WarlordsDamageHealingEvent(
                             this,
                             attacker,
                             ability,
@@ -652,14 +660,14 @@ public abstract class WarlordsEntity {
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "On Shield");
-                appendDebugMessage(debugMessage, 2, ChatColor.DARK_GREEN, "Self Cooldowns");
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "On Shield");
+                appendDebugMessage(debugMessage, 2, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
                 }
 
-                appendDebugMessage(debugMessage, 2, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+                appendDebugMessage(debugMessage, 2, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
@@ -697,8 +705,8 @@ public abstract class WarlordsEntity {
                     checkForAchievementsDamageAttacker(attacker);
                 }
             } else {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Modify Damage After All");
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                debugMessage.append(Component.newline()).append(Component.text("Modify Damage After All:", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
                     if (previousDamageValue != damageValue) {
@@ -917,7 +925,7 @@ public abstract class WarlordsEntity {
         );
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
         WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
@@ -934,7 +942,7 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Post Event:");
+        debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
 
         float initialHealth = health;
@@ -947,15 +955,15 @@ public abstract class WarlordsEntity {
             isCrit = true;
             healValue *= critMultiplier / 100f;
         }
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Calculated Heal:");
+        debugMessage.append(Component.newline()).append(Component.text("Calculated Heal:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, "Heal Value", healValue);
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float healValueBeforeReduction = healValue;
         float previousHealValue = healValue;
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Before Heal");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Before Heal", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
             if (previousHealValue != healValue) {
@@ -964,7 +972,7 @@ public abstract class WarlordsEntity {
             previousHealValue = healValue;
         }
 
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
             if (previousHealValue != healValue) {
@@ -1055,7 +1063,7 @@ public abstract class WarlordsEntity {
      * @param isLastStandFromShield whether the message is last stand healing.
      */
     private void sendHealingMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity player,
             float healValue,
             String ability,
@@ -1093,7 +1101,7 @@ public abstract class WarlordsEntity {
             case ALL -> {
                 if (player.showDebugMessage) {
                     player.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                              .hoverEvent(HoverEvent.showText(debugMessage))
                     );
                 } else {
                     player.sendMessage(ownFeed.build());
@@ -1103,7 +1111,7 @@ public abstract class WarlordsEntity {
                 if (isCrit) {
                     if (player.showDebugMessage) {
                         player.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                  .hoverEvent(HoverEvent.showText(debugMessage))
                         );
                     } else {
                         player.sendMessage(ownFeed.build());
@@ -1123,7 +1131,7 @@ public abstract class WarlordsEntity {
      * @param isOverHeal            whether the message is overhealing.
      */
     private void sendHealingMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity sender,
             @Nonnull WarlordsEntity receiver,
             float healValue, String ability,
@@ -1165,7 +1173,7 @@ public abstract class WarlordsEntity {
             case ALL -> {
                 if (sender.showDebugMessage) {
                     sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
                     );
                 } else {
                     sender.sendMessage(ownFeed.build());
@@ -1175,7 +1183,7 @@ public abstract class WarlordsEntity {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
                         sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
                         );
                     } else {
                         sender.sendMessage(ownFeed.build());
@@ -1205,7 +1213,7 @@ public abstract class WarlordsEntity {
             case ALL -> {
                 if (receiver.showDebugMessage) {
                     receiver.sendMessage(allyFeed.build()
-                                                 .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                 .hoverEvent(HoverEvent.showText(debugMessage.build()))
                     );
                 } else {
                     receiver.sendMessage(allyFeed.build());
@@ -1215,7 +1223,7 @@ public abstract class WarlordsEntity {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
                         receiver.sendMessage(allyFeed.build()
-                                                     .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                     .hoverEvent(HoverEvent.showText(debugMessage.build()))
                         );
                     } else {
                         receiver.sendMessage(allyFeed.build());
@@ -1235,7 +1243,7 @@ public abstract class WarlordsEntity {
      * @param isMeleeHit  whether if it's a melee hit.
      */
     private void sendDamageMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity sender,
             @Nonnull WarlordsEntity receiver,
             String ability,
@@ -1277,7 +1285,7 @@ public abstract class WarlordsEntity {
             case ALL -> {
                 if (receiver.showDebugMessage) {
                     receiver.sendMessage(enemyFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
                     );
                 } else {
                     receiver.sendMessage(enemyFeed.build());
@@ -1287,7 +1295,7 @@ public abstract class WarlordsEntity {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
                         receiver.sendMessage(enemyFeed.build()
-                                                      .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                      .hoverEvent(HoverEvent.showText(debugMessage.build()))
                         );
                     } else {
                         receiver.sendMessage(enemyFeed.build());
@@ -1314,7 +1322,7 @@ public abstract class WarlordsEntity {
             case ALL -> {
                 if (sender.showDebugMessage) {
                     sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
                     );
                 } else {
                     sender.sendMessage(ownFeed.build());
@@ -1324,7 +1332,7 @@ public abstract class WarlordsEntity {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
                         sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(Component.text(debugMessage.toString())))
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
                         );
                     } else {
                         sender.sendMessage(ownFeed.build());
@@ -1335,69 +1343,60 @@ public abstract class WarlordsEntity {
 
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, String value) {
-        appendDebugMessage(stringBuilder, title, value, true);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, String value) {
+        appendDebugMessage(debugMessage, title, value, true);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, String value, boolean separator) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, String value, boolean separator) {
         if (separator) {
-            stringBuilder.append("\n").append(ChatColor.GRAY).append(" - ");
+            debugMessage.append(Component.newline()).append(Component.text(" - ", NamedTextColor.GRAY));
         }
-        stringBuilder.append(ChatColor.GREEN).append(title).append(": ").append(ChatColor.GOLD).append(value);
+        debugMessage.append(Component.text(title + ": ", NamedTextColor.GREEN)).append(Component.text(value, NamedTextColor.GOLD));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, float value) {
-        appendDebugMessage(stringBuilder, title, value, true);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, float value) {
+        appendDebugMessage(debugMessage, title, value, true);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, float value, boolean separator) {
-        appendDebugMessage(stringBuilder, title, NumberFormat.addCommaAndRoundHundredths(value), separator);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, float value, boolean separator) {
+        appendDebugMessage(debugMessage, title, NumberFormat.addCommaAndRoundHundredths(value), separator);
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
-        appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
-        debugMessage.append(": ")
-                    .append(ChatColor.GOLD)
-                    .append(value)
-                    .append(ChatColor.DARK_GRAY)
-                    .append(" (")
-                    .append(ChatColor.GRAY)
-                    .append(cooldown.getName())
-                    .append(ChatColor.DARK_GRAY)
-                    .append(")");
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
+        debugMessage.append(Component.text(": "))
+                    .append(Component.text(value, NamedTextColor.GOLD))
+                    .append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(cooldown.getName(), NamedTextColor.GRAY))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
         appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value), cooldown);
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value) {
-        appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
-        debugMessage.append(": ")
-                    .append(ChatColor.GOLD)
-                    .append(value)
-                    .append(ChatColor.DARK_GRAY);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
+        debugMessage.append(Component.text(": "))
+                    .append(Component.text(value, NamedTextColor.GOLD));
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float value) {
         appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, String title) {
-        appendDebugMessage(stringBuilder, level, ChatColor.GREEN, title);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, ChatColor chatColor, String title) {
-        stringBuilder.append("\n")
-                     .append(ChatColor.GRAY)
-                     .append(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)))
-                     .append(" - ")
-                     .append(chatColor)
-                     .append(title);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, NamedTextColor textColor, String title) {
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)) + " - ", NamedTextColor.GRAY))
+                    .append(Component.text(title, textColor));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, AbstractCooldown<?> cooldown) {
-        appendDebugMessage(stringBuilder, level, ChatColor.GREEN, cooldown.getName());
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, AbstractCooldown<?> cooldown) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, cooldown.getName());
     }
 
     /**
@@ -1571,7 +1570,7 @@ public abstract class WarlordsEntity {
         actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(Component.text(abstractCooldown.getNameAbbreviation() + " "));
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation());
             }
         }
         entity.sendActionBar(actionBarMessage.build());
@@ -2098,10 +2097,10 @@ public abstract class WarlordsEntity {
      */
     public Component getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
         if (!hoverable) {
-            return Component.text(ChatColor.WHITE + minuteStatsType.name + ": " +
-                    ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())));
+            return Component.text(minuteStatsType.name + ": ", NamedTextColor.WHITE)
+                            .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), NamedTextColor.GOLD));
         } else {
-            net.kyori.adventure.text.TextComponent component = Component.empty();
+            TextComponent.Builder component = Component.text();
             StringBuilder stringBuilder = new StringBuilder();
             String minuteStatsTypeName = minuteStatsType.name;
 
@@ -2119,46 +2118,34 @@ public abstract class WarlordsEntity {
                             break;
                         }
                         PlayerStatisticsMinute.Entry entry = entries.get(index);
-                        stringBuilder.append(ChatColor.WHITE)
-                                     .append("Minute ")
-                                     .append(index)
-                                     .append(": ")
-                                     .append(ChatColor.GOLD);
-                        stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
-                        stringBuilder.append("\n");
+                        stringBuilder.append(Component.text("Minute " + index + ": ", NamedTextColor.WHITE)
+                                                      .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD)));
+                        stringBuilder.append(Component.newline());
                     }
                     stringBuilder.setLength(stringBuilder.length() - 1);
                     stringLength += stringBuilder.length();
-                    component.append(Component.text((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i])
-                                              .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString()))));
+                    component.append(Component.text(splitString[i], (i > minuteStatsTypeName.length() + 1 ? NamedTextColor.GOLD : NamedTextColor.WHITE)))
+                             .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString())));
                     stringBuilder.setLength(0);
                 }
                 //this will never happen in reality
                 if (stringLength >= 8000) {
-                    for (Component child : component.children()) {
-                        if (child instanceof TextComponent textComponent) {
-                            textComponent.content(textComponent.content().replace("Minute", "Min."));
-                        }
-                    }
+                    return component.build().replaceText(builder -> builder.match("Minute").replacement("Min."));
                 }
             } else {
-                stringBuilder.append(ChatColor.AQUA).append("Stat Breakdown (").append(name).append("):");
+                stringBuilder.append(Component.text("Stat Breakdown (" + name + "):", NamedTextColor.AQUA));
                 for (int i = 0; i < size; i++) {
                     PlayerStatisticsMinute.Entry entry = entries.get(i);
-                    stringBuilder.append("\n");
-                    stringBuilder.append(ChatColor.WHITE)
-                                 .append("Minute ")
-                                 .append(i + 1)
-                                 .append(": ")
-                                 .append(ChatColor.GOLD);
-                    stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
+                    stringBuilder.append(Component.newline());
+                    stringBuilder.append(Component.text("Minute " + (i + 1) + ": ", NamedTextColor.WHITE))
+                                 .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD));
                 }
-                component.append(Component.text(ChatColor.WHITE + minuteStatsTypeName + ": " +
-                                                  ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())))
-                                          .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString()))));
+                component.append(Component.text(minuteStatsTypeName + ": ", NamedTextColor.WHITE)
+                                          .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), NamedTextColor.GOLD)))
+                         .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString())));
             }
 
-            return component;
+            return component.build();
         }
     }
 
@@ -2523,13 +2510,11 @@ public abstract class WarlordsEntity {
             respawnTickTimer--;
             if (respawnTickTimer <= 600) {
                 if (entity instanceof Player) {
-                    PacketUtils.sendTitle((Player) entity,
-                            "",
-                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawnTickTimer / 20),
-                            0,
-                            40,
-                            0
-                    );
+                    entity.showTitle(Title.title(
+                            Component.empty(),
+                            Component.text("Respawning in... ", team.teamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                 }
             }
         }
@@ -2637,7 +2622,7 @@ public abstract class WarlordsEntity {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currencyToAdd.get();
-        sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
+        sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }
 

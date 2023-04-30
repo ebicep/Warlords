@@ -20,7 +20,7 @@ import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -31,7 +31,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -42,7 +41,7 @@ public class CompensateCommand extends BaseCommand {
 
     public static void openCompensateMenu(Player player, LinkedHashMap<Spendable, Long> compensation, List<DatabasePlayer> compensatedPlayers) {
         if (compensatedPlayers == null || compensatedPlayers.isEmpty()) {
-            ChatChannels.sendDebugMessage(player, ChatColor.RED + "No players to compensate!");
+            ChatChannels.sendDebugMessage(player, Component.text("No players to compensate!", NamedTextColor.RED));
             return;
         }
         Menu menu = new Menu("Compensate", 9 * 6);
@@ -53,16 +52,15 @@ public class CompensateCommand extends BaseCommand {
             menu.setItem(col, row,
                     new ItemBuilder(currency.item)
                             .name(currency.getColoredName())
-                            .loreLEGACY(ChatColor.GREEN.toString() + compensation.getOrDefault(currency, 0L))
+                            .lore(Component.text(compensation.getOrDefault(currency, 0L), NamedTextColor.GREEN))
                             .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
                         String[] text = new String[]{"", "", "", ""};
                         String[] currencyNameSplit = currency.name.split(" ");
                         System.arraycopy(currencyNameSplit, 0, text, 1, currencyNameSplit.length);
-
                         new SignGUI()
-                                .lines()
+                                .lines(text)
                                 .onFinish((p, lines) -> {
                                     String amount = lines[0];
                                     try {
@@ -91,8 +89,9 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(3, 5,
                 new ItemBuilder(Material.PLAYER_HEAD)
                         .name(Component.text("Player", NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.AQUA + (compensatedPlayers.size() == 1 ? compensatedPlayers.get(0)
-                                                                                                         .getName() : "All " + compensatedPlayers.size() + " Players"))
+                        .lore(Component.text(compensatedPlayers.size() == 1 ?
+                                             compensatedPlayers.get(0).getName() :
+                                             "All " + compensatedPlayers.size() + " Players", NamedTextColor.AQUA))
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -106,7 +105,7 @@ public class CompensateCommand extends BaseCommand {
                                     }
                                 }
                                 ChatChannels.sendDebugMessage(player,
-                                        ChatColor.AQUA + playerName + ChatColor.RED + " was not found for compensation"
+                                        Component.text(playerName, NamedTextColor.AQUA).append(Component.text(" was not found for compensation", NamedTextColor.RED))
                                 );
                                 return null;
                             }).open(player);
@@ -116,9 +115,10 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(5, 5,
                 new ItemBuilder(Material.CHEST)
                         .name(Component.text("All Players", NamedTextColor.GREEN))
-                        .loreLEGACY(compensatedPlayers.stream()
-                                                      .map(databasePlayer -> ChatColor.GRAY + " - " + ChatColor.AQUA + databasePlayer.getName())
-                                                      .collect(Collectors.joining("\n")))
+                        .lore(compensatedPlayers.stream()
+                                                .map(databasePlayer -> Component.text(" - ", NamedTextColor.GRAY)
+                                                                                .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA)))
+                                                .collect(Component.toComponent(Component.empty())))
                         .get(),
                 (m, e) -> {
                     openCompensateMenu(player, compensation, new ArrayList<>(compensatedPlayers));
@@ -127,15 +127,17 @@ public class CompensateCommand extends BaseCommand {
         menu.setItem(8, 5,
                 new ItemBuilder(Colors.GREEN.wool)
                         .name(Component.text("Confirm Compensate", NamedTextColor.GREEN))
-                        .loreLEGACY(compensation.entrySet()
-                                                .stream()
-                                                .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                                                                  .getCostColoredName(currenciesValues.getValue()))
-                                                .toArray(String[]::new))
+                        .lore(compensation.entrySet()
+                                          .stream()
+                                          .map(currenciesValues -> Component.text(" - ", NamedTextColor.GRAY)
+                                                                            .append(currenciesValues.getKey().getCostColoredName(currenciesValues.getValue())))
+                                          .toArray(net.kyori.adventure.text.TextComponent[]::new))
                         .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to directly give through the Rewards Inventory",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to directly give rewards"
+                                Component.empty(),
+                                Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text("to directly give through the Rewards Inventory", NamedTextColor.GREEN)),
+                                Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text("to directly give rewards", NamedTextColor.GREEN))
                         )
                         .get(),
                 (m, e) -> {
@@ -145,7 +147,7 @@ public class CompensateCommand extends BaseCommand {
                                 .onFinish((p, lines) -> {
                                     String title = lines[0];
                                     if (title.isEmpty()) {
-                                        ChatChannels.sendDebugMessage(player, ChatColor.RED + "Blank title, compensation cancelled");
+                                        ChatChannels.sendDebugMessage(player, Component.text("Blank title, compensation cancelled", NamedTextColor.RED));
                                         return null;
                                     }
                                     new BukkitRunnable() {
@@ -179,14 +181,16 @@ public class CompensateCommand extends BaseCommand {
                         }
                         ChatChannels.playerSendMessage(player,
                                 ChatChannels.DEBUG,
-                                Component.text(ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GREEN + (title == null ? " directly" : " through the Rewards Inventory"))
+                                Component.text("Compensated ", NamedTextColor.GREEN)
+                                         .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
+                                         .append(Component.text(title == null ? " directly" : " through the Rewards Inventory"))
                                          .hoverEvent(HoverEvent.showText(
-                                                 Component.text(compensation.entrySet()
-                                                                            .stream()
-                                                                            .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                                                                                              .getCostColoredName(
-                                                                                                                                                      currenciesValues.getValue()))
-                                                                            .collect(Collectors.joining("\n")))))
+                                                 compensation.entrySet()
+                                                             .stream()
+                                                             .map(currenciesValues ->
+                                                                     Component.text(" - ", NamedTextColor.GRAY)
+                                                                              .append(currenciesValues.getKey().getCostColoredName(currenciesValues.getValue())))
+                                                             .collect(Component.toComponent(Component.newline()))))
                         );
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         player.closeInventory();
@@ -205,8 +209,9 @@ public class CompensateCommand extends BaseCommand {
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
                         ChatChannels.sendDebugMessage(player,
-                                ChatColor.GREEN + "All " + ChatColor.AQUA + compensatedPlayers.size() + " players " +
-                                        ChatColor.GREEN + "were given compensation" + (title == null ? " directly" : " through the Rewards Inventory")
+                                Component.text("All ", NamedTextColor.GREEN)
+                                         .append(Component.text(compensatedPlayers.size() + " players ", NamedTextColor.AQUA))
+                                         .append(Component.text("were given compensation" + (title == null ? " directly" : " through the Rewards Inventory")))
                         );
                         player.closeInventory();
                     })

@@ -1,7 +1,10 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,12 +19,12 @@ public class PartyListener implements Listener {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         if (partyPlayerPair == null) {
             if (!PartyManager.PARTIES.isEmpty()) {
-                StringBuilder parties = new StringBuilder(ChatColor.YELLOW + "Current parties: ");
-                for (Party partyManagerParty : PartyManager.PARTIES) {
-                    parties.append(ChatColor.AQUA).append(partyManagerParty.getLeaderName()).append(ChatColor.GRAY).append(", ");
-                }
-                parties.setLength(parties.length() - 2);
-                player.sendMessage(parties.toString());
+                TextComponent.Builder parties = Component.text().append(Component.text("Current parties: ", NamedTextColor.YELLOW));
+                player.sendMessage(PartyManager.PARTIES
+                        .stream()
+                        .map(party -> Component.text(party.getLeaderName(), NamedTextColor.AQUA)
+                                               .hoverEvent(HoverEvent.showText(party.getPartyList())))
+                        .collect(Component.toComponent(Component.text(", ", NamedTextColor.GRAY))));
             }
         } else {
             partyPlayerPair.getB().setOnline(true);

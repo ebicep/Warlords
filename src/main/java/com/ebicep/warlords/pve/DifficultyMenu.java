@@ -6,7 +6,8 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -25,8 +26,8 @@ public class DifficultyMenu {
                     9 / 2 - index.length + 1 + i * 2,
                     1,
                     new ItemBuilder(Material.REDSTONE_LAMP)
-                            .name(difficulty.getDifficultyColor() + ChatColor.BOLD.toString() + difficulty.getName())
-                            .loreLEGACY(ChatColor.GRAY + difficulty.getDescription())
+                            .name(Component.text(difficulty.getName(), difficulty.getDifficultyColor(), TextDecoration.BOLD))
+                            .lore(difficulty.getDescription())
                             .get(),
                     (m, e) -> {
                         if (switch (finalI) {

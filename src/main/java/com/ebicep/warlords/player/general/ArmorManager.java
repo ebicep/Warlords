@@ -4,19 +4,25 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.CosmeticSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import java.util.List;
+
 public class ArmorManager {
 
-    public static final String HELMET_DESCRIPTION = "§7A cosmetic item for your head.\n§7Each class has a different piece of headgear.";
-    public static final String ARMOR_DESCRIPTION = "§7Cosmetic armor to complement your hat.\n§7The armor pieces are the same for each class.";
+    public static final List<Component> HELMET_DESCRIPTION = WordWrap.wrap(Component.text("A cosmetic item for your head. Each class has a different piece of headgear.",
+            NamedTextColor.GRAY
+    ), 160);
+    public static final List<Component> ARMOR_DESCRIPTION = WordWrap.wrap(Component.text("Cosmetic armor to complement your hat. The armor pieces are the same for each class.",
+            NamedTextColor.GRAY
+    ), 160);
 
     public static void resetArmor(Player player) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player);
@@ -30,43 +36,43 @@ public class ArmorManager {
 
         armor[2] = new ItemBuilder(onBlueTeam ? armorSet.itemBlue : armorSet.itemRed)
                 .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                .loreLEGACY(ARMOR_DESCRIPTION)
+                .lore(ARMOR_DESCRIPTION)
                 .get();
         armor[3] = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                .name(Component.text(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name))
-                .loreLEGACY(HELMET_DESCRIPTION)
+                .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                .lore(HELMET_DESCRIPTION)
                 .get();
 
         if (armorSet.name.contains("Simple")) {
             armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))
                     .name(Component.text(ArmorSets.SIMPLE_CHESTPLATE.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[1] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_LEGGINGS.itemBlue, onBlueTeam))
                     .name(Component.text(ArmorSets.SIMPLE_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[0] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_BOOTS.itemBlue, onBlueTeam))
                     .name(Component.text(ArmorSets.SIMPLE_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Greater")) {
             armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_LEGGINGS.itemBlue : ArmorSets.GREATER_LEGGINGS.itemRed)
                     .name(Component.text(ArmorSets.GREATER_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_BOOTS.itemBlue : ArmorSets.GREATER_BOOTS.itemRed)
                     .name(Component.text(ArmorSets.GREATER_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Masterwork")) {
             armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_LEGGINGS.itemBlue : ArmorSets.MASTERWORK_LEGGINGS.itemRed)
                     .name(Component.text(ArmorSets.MASTERWORK_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_BOOTS.itemBlue : ArmorSets.MASTERWORK_BOOTS.itemRed)
                     .name(Component.text(ArmorSets.MASTERWORK_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
-                    .loreLEGACY(ARMOR_DESCRIPTION)
+                    .lore(ARMOR_DESCRIPTION)
                     .get();
         }
         player.getInventory().setArmorContents(armor);

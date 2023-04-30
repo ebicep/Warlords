@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.DamageInstance;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.EnergyInstance;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.HealingInstance;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.KnockbackInstance;
+import net.kyori.adventure.text.Component;
 
 import java.util.function.Consumer;
 
@@ -101,7 +102,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.removeOnDeath = removeOnDeath;
     }
 
-    public abstract String getNameAbbreviation();
+    public abstract Component getNameAbbreviation();
 
     public void setNameAbbreviation(String nameAbbreviation) {
         this.nameAbbreviation = nameAbbreviation;

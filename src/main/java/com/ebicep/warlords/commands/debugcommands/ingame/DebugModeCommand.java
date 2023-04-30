@@ -41,7 +41,7 @@ public class DebugModeCommand extends BaseCommand {
             }
         }
         ChatChannels.sendDebugMessage(warlordsPlayer,
-                Component.text("You now have infinite energy, no cooldowns, will take no damage, and have debug messages!", NamedTextColor.RED)
+                Component.text("You now have infinite energy, no cooldowns, will take no damage, and have debug messages!", NamedTextColor.GREEN)
         );
     }
 

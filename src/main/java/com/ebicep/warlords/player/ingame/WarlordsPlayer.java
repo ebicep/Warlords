@@ -238,7 +238,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 Component oldName = getEntity().customName();
                 if (oldName != null) {
-                    getEntity().customName(oldName.append(Component.text(ChatColor.RED.toString() + Math.round(getHealth()) + "❤")));
+                    getEntity().customName(oldName.append(Component.text(Math.round(getHealth()) + "❤", NamedTextColor.RED)));
                 }
             }
         }
