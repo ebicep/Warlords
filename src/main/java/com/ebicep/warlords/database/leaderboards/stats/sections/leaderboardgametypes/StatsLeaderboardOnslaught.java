@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.LEAD_5;
+import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.UPPER_CENTER_1;
 
 public class StatsLeaderboardOnslaught extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEOnslaughtDifficultyStats> implements PvELeaderboard {
 
@@ -35,6 +36,12 @@ public class StatsLeaderboardOnslaught extends AbstractStatsLeaderboardGameType<
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAverageTimeLived(),
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAverageTimeLived() / 20),
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAverageTimeLived() == 0
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Longest Time Lived",
+                UPPER_CENTER_1,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLongestTicksLived(),
+                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLongestTicksLived() / 20),
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLongestTicksLived() == 0
         ));
 
     }
