@@ -121,7 +121,10 @@ public final class WarlordsNPC extends WarlordsEntity {
         super(uuid, name, entity, game, team, specClass);
         this.mob = mob;
         if (mob != null && mob.getMobTier() != null) {
-            mobNamePrefix = Component.text(mob.getMobTier().getSymbol(), NamedTextColor.GOLD).append(Component.text(" - ", NamedTextColor.GRAY));
+            mobNamePrefix = Component.textOfChildren(
+                    mob.getMobTier().getSymbol(),
+                    Component.text(" - ", NamedTextColor.GRAY)
+            );
         }
         this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;
@@ -140,7 +143,10 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (!isDead()) {
             getEntity().customName(Component.empty()
                                             .append(mobNamePrefix)
-                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD)));
+                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                                                    NamedTextColor.RED,
+                                                    TextDecoration.BOLD
+                                            )));
         }
     }
 
