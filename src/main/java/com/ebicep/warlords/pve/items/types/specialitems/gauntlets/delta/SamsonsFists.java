@@ -49,7 +49,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         AbstractAbility weapon = warlordsPlayer.getSpec().getWeapon();
-        weapon.setEnergyCost(weapon.getEnergyCost() + 15);
+        weapon.setEnergyCost(weapon.getEnergyCost() + 5);
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
@@ -59,7 +59,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
                 }
                 WarlordsEntity strikedEntity = event.getStrikedEntity();
                 //same kb as mithra immolation
-                Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.5, 0.1f);
+                Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.7, 0.15f);
             }
         });
     }
