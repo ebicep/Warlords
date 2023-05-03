@@ -21,7 +21,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -42,7 +41,9 @@ public class MasterworksFairCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, Component.text("No current masterworks fair event to end", NamedTextColor.RED));
             return;
         }
-        ChatChannels.sendDebugMessage(issuer, Component.text("Ending current masterworks fair event with start delay of " + startMinuteDelay, NamedTextColor.GREEN));
+        ChatChannels.sendDebugMessage(issuer,
+                Component.text("Ending current masterworks fair event with start delay of " + startMinuteDelay, NamedTextColor.GREEN)
+        );
         currentFair.setEnded(true);
         resetFair(currentFair, awardThroughRewardsInventory, startMinuteDelay);
     }
@@ -172,7 +173,9 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 if (resent) {
                                                     databasePlayer.addFutureMessage(new FutureMessage(Arrays.asList(
                                                             Component.text("------------------------------------------------", NamedTextColor.GOLD),
-                                                            Component.text("Hey! We noticed you didn't get all your previous Masterworks", NamedTextColor.GREEN),
+                                                            Component.text("Hey! We noticed you didn't get all your previous Masterworks",
+                                                                    NamedTextColor.GREEN
+                                                            ),
                                                             Component.text("Fair rewards, so we've given them to you!", NamedTextColor.GREEN),
                                                             Component.text("------------------------------------------------", NamedTextColor.GOLD)
                                                     ), true));
@@ -228,8 +231,9 @@ public class MasterworksFairCommand extends BaseCommand {
             MasterworksFairPlayerEntry entry = entries.get(i);
             ChatChannels.playerSendMessage(player,
                     ChatChannels.DEBUG,
-                    Component.text(ChatColor.GRAY + "   " + (i + 1) + ". " + ChatColor.AQUA + Bukkit.getOfflinePlayer(entry.getUuid()).getName())
-                             .append(Component.text(ChatColor.GRAY + " (" + entry.getUuid() + ")")
+                    Component.text("   " + (i + 1), NamedTextColor.GRAY)
+                             .append(Component.text(". " + Bukkit.getOfflinePlayer(entry.getUuid()).getName(), NamedTextColor.AQUA))
+                             .append(Component.text(" (" + entry.getUuid() + ")")
                                               .clickEvent(net.kyori.adventure.text.event.ClickEvent.suggestCommand("" + entry.getUuid()))
                              )
             );
