@@ -48,41 +48,41 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+1s Bind duration",
+                "+0.5s Bind duration",
                 5000,
+                () -> {
+                    ability.setBindDuration(bindDuration + 0.5f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "+1s Bind duration",
+                10000,
                 () -> {
                     ability.setBindDuration(bindDuration + 1);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+2s Bind duration",
-                10000,
-                () -> {
-                    ability.setBindDuration(bindDuration + 2);
-                }
-        ));
-        treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+3s Bind duration",
+                "+1.5s Bind duration",
                 15000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 3);
+                    ability.setBindDuration(bindDuration + 1.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+4s Bind duration",
+                "+2s Bind duration",
                 20000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 4);
+                    ability.setBindDuration(bindDuration + 2);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Curse Binding",
                 "Soulbinding Weapon - Master Upgrade",
-                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 1s",
+                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 0.25s",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

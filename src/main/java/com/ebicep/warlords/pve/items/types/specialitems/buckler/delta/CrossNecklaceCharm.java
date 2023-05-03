@@ -29,7 +29,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
 
     @Override
     public String getBonus() {
-        return "Consecrate lasts 2 more seconds.";
+        return "Consecrate lasts 3 more seconds and increase your strike damage by an additional 5%.";
     }
 
     @Override
@@ -46,7 +46,8 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             if (ability instanceof Consecrate consecrate) {
-                consecrate.setTickDuration(consecrate.getTickDuration() + 40);
+                consecrate.setTickDuration(consecrate.getTickDuration() + 60);
+                consecrate.setStrikeDamageBoost(consecrate.getStrikeDamageBoost() + 5);
             }
         }
     }

@@ -55,6 +55,7 @@ public class AvengersWrath extends AbstractAbility implements Duration {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         AvengersWrath tempAvengersWrath = new AvengersWrath();
+        wp.getCooldownManager().removeCooldown(AvengersWrath.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WRATH",

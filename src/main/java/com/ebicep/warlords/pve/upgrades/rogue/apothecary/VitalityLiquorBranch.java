@@ -64,37 +64,37 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-5% Cooldown reduction\n+2 Energy per second",
+                "-5% Cooldown reduction\n+1 Energy per second",
                 5000,
                 () -> {
-                    ability.setEnergyPerSecond(energyPerSecond + 2);
+                    ability.setEnergyPerSecond(energyPerSecond + 1);
                     ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10% Cooldown reduction\n+4 Energy per second",
+                "-10% Cooldown reduction\n+2 Energy per second",
                 10000,
                 () -> {
-                    ability.setEnergyPerSecond(energyPerSecond + 4);
+                    ability.setEnergyPerSecond(energyPerSecond + 2);
                     ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-15% Cooldown reduction\n+6 Energy per second",
+                "-15% Cooldown reduction\n+3 Energy per second",
                 15000,
                 () -> {
-                    ability.setEnergyPerSecond(energyPerSecond + 6);
+                    ability.setEnergyPerSecond(energyPerSecond + 3);
                     ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20% Cooldown reduction\n+8 Energy per second",
+                "-20% Cooldown reduction\n+4 Energy per second",
                 20000,
                 () -> {
-                    ability.setEnergyPerSecond(energyPerSecond + 8);
+                    ability.setEnergyPerSecond(energyPerSecond + 4);
                     ability.setCooldown(cooldown * 0.8f);
                 }
         ));

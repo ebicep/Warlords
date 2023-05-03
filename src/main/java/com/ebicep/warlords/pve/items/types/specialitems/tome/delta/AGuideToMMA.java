@@ -30,7 +30,7 @@ public class AGuideToMMA extends SpecialDeltaTome {
 
     @Override
     public String getBonus() {
-        return "Bosses take 25% more damage.";
+        return "Bosses take 15% more damage.";
     }
 
     @Override
@@ -54,8 +54,8 @@ public class AGuideToMMA extends SpecialDeltaTome {
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                     if (warlordsNPC.getMobTier() == MobTier.BOSS) {
-                        event.setMin(event.getMin() * 1.25f);
-                        event.setMax(event.getMax() * 1.25f);
+                        event.setMin(event.getMin() * 1.15f);
+                        event.setMax(event.getMax() * 1.15f);
                     }
                 }
             }

@@ -17,7 +17,7 @@ public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEner
 
     @Override
     public String getBonus() {
-        return "+5 EPS but -20% Max NRG.";
+        return "+5 EPS but but reduces energy cap by 20%.";
     }
 
     @Override
