@@ -380,7 +380,7 @@ public class OnslaughtOption implements Option, PveOption {
                        .merge(spendable, amount, Long::sum);
             Component rewardString = Component.text("+", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
             RewardInventory.sendRewardMessage(uuid,
-                    pouchName + ": " + rewardString
+                    pouchName.append(Component.text(":")).append(rewardString)
             );
             ChatUtils.sendTitleToGamePlayers(
                     game,

@@ -10,7 +10,8 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
 
@@ -136,7 +137,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                             }
                         });
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                        player.sendMessage(ChatColor.GREEN + "Triggered Stalwart! +99% damage reduction for 5s.");
+                        player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
                         return 0;
                     }
                 }

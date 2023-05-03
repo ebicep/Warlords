@@ -19,6 +19,8 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
@@ -122,7 +124,10 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                 },
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                        receiver.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
+                                                      .append(Component.text("wounded", NamedTextColor.RED))
+                                                      .append(Component.text("."))
+                        );
                     }
                 },
                 5 * 20

@@ -66,7 +66,7 @@ public class WeaponLegendaryCraftMenu {
                                 playCraftEffects(player, loc);
                                 player.sendMessage(Component.text("Crafted Legendary Weapon: ", NamedTextColor.GRAY).append(weapon.getHoverComponent(false)));
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                                    onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player)
+                                    onlinePlayer.sendMessage(Permissions.getPrefixWithColor(player, false)
                                                                         .append(Component.text(player.getName()))
                                                                         .append(Component.text(" crafted ", NamedTextColor.GRAY))
                                                                         .append(weapon.getHoverComponent(false))

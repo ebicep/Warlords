@@ -47,15 +47,16 @@ public enum Permissions {
                 .execute();
     }
 
-    public static Component getPrefixWithColor(Player player) {
+    public static Component getPrefixWithColor(Player player, boolean includeName) {
+        String name = includeName ? player.getName() : "";
         for (Permissions value : VALUES) {
             if (player.hasPermission(value.permission)) {
                 return value == DEFAULT ?
-                       Component.empty().color(NamedTextColor.AQUA) :
-                       Component.text("[" + value.prefix + "] ").color(value.prefixColor);
+                       Component.text(name, NamedTextColor.AQUA) :
+                       Component.text("[" + value.prefix + "] " + name, value.prefixColor);
             }
         }
-        return Component.empty().color(NamedTextColor.AQUA);
+        return Component.text(name, NamedTextColor.AQUA);
     }
 
     public static NamedTextColor getColor(Player player) {

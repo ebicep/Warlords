@@ -13,7 +13,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -83,10 +82,10 @@ public class WeaponBindMenu {
                                     selectedWeapon.setBound(true);
 
                                     player.sendMessage(
-                                            Component.text(ChatColor.GRAY + "You unbounded ")
+                                            Component.text("You unbounded ", NamedTextColor.GRAY)
                                                      .append(boundWeapon.getName()
                                                                         .hoverEvent(boundWeapon.generateItemStack(false).asHoverEvent()))
-                                                     .append(Component.text(ChatColor.GRAY + " and bound "))
+                                                     .append(Component.text(" and bound "))
                                                      .append(selectedWeapon.getName()
                                                                            .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
                                                      )
@@ -131,7 +130,7 @@ public class WeaponBindMenu {
                                     openWeaponBindMenu(player, databasePlayer, selectedWeapon);
 
                                     player.sendMessage(
-                                            Component.text(ChatColor.AQUA + "You bound ")
+                                            Component.text("You bound ", NamedTextColor.AQUA)
                                                      .append(selectedWeapon.getName())
                                                      .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
                                     );

@@ -129,9 +129,12 @@ public abstract class AbstractItem {
     protected ItemBuilder getBaseItemBuilder() {
         return new ItemBuilder(getItemStack())
                 .name(getItemName())
-                .loreLEGACY(
-                        ChatColor.GRAY + "Tier: " + tier.getColoredName(),
-                        ""
+                .lore(
+                        Component.textOfChildren(
+                                Component.text("Tier: ", NamedTextColor.GRAY),
+                                tier.getColoredName()
+                        ),
+                        Component.empty()
                 );
     }
 

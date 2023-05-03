@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -62,7 +62,7 @@ public class WeaponUpgradeMenu {
             weapon.upgrade();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.sendMessage(Component.text(ChatColor.GRAY + "Upgraded Weapon: ")
+            player.sendMessage(Component.text("Upgraded Weapon: ", NamedTextColor.GRAY)
                                         .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);

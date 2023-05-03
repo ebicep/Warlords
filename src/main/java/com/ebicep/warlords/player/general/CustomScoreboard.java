@@ -185,7 +185,7 @@ public class CustomScoreboard {
             } else {
                 team.suffix(Component.empty());
             }
-            team.prefix(Permissions.getPrefixWithColor(onlinePlayer));
+            team.prefix(Permissions.getPrefixWithColor(onlinePlayer, false));
             team.addEntry(name);
             team.color(Permissions.getColor(onlinePlayer));
         }

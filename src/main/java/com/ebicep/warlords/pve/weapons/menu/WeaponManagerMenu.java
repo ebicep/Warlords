@@ -26,7 +26,6 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -206,7 +205,7 @@ public class WeaponManagerMenu {
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.DARK_AQUA + "Your Weapon Drops")
+                        .name(Component.text("Your Weapon Drops", NamedTextColor.DARK_AQUA))
                         .lore(Currencies.STAR_PIECES
                                 .stream()
                                 .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))

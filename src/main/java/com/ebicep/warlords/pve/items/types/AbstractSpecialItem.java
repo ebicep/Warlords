@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 
 import java.util.Set;
@@ -34,9 +35,9 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
                 getBonusLore()
         );
         addItemScoreAndWeight(itemBuilder);
-        itemBuilder.addLore(
-                "",
-                WordWrap.wrapWithNewline(ChatColor.DARK_GRAY.toString() + ChatColor.ITALIC + getDescription(), 160)
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLoreC(
+                WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_AQUA, TextDecoration.ITALIC), 160)
         );
         return itemBuilder;
     }

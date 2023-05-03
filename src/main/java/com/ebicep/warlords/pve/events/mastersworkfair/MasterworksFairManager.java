@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,7 +40,9 @@ public class MasterworksFairManager {
             return;
         }
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!");
+            sendMasterworksFairMessage(onlinePlayer,
+                    Component.text("Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!", NamedTextColor.GREEN)
+            );
         }
         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Resetting fair");
         masterworksFair.setEnded(true);
@@ -60,12 +63,11 @@ public class MasterworksFairManager {
         }
     }
 
-    public static void sendMasterworksFairMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > " + message);
-    }
-
     public static void sendMasterworksFairMessage(Player player, Component component) {
-        player.sendMessage(Component.text(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > ").append(component));
+        player.sendMessage(Component.text("Masterworks Fair", NamedTextColor.GOLD)
+                                    .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                    .append(component)
+        );
     }
 
     public static void createFair() {
@@ -107,8 +109,11 @@ public class MasterworksFairManager {
                     masterworksFair.setFairNumber(size);
                     DatabaseManager.masterworksFairService.update(masterworksFair);
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                        sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + size + " has just started!" +
-                                (size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""));
+                        sendMasterworksFairMessage(onlinePlayer, Component.text("Masterworks Fair #" + size + " has just started!", NamedTextColor.GREEN)
+                                                                          .append(Component.text((size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""),
+                                                                                  NamedTextColor.RED
+                                                                          ))
+                        );
                     }
                 })
                 .execute();

@@ -12,7 +12,6 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -124,9 +123,13 @@ public class WeaponSkillBoostMenu {
         }
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.sendMessage(Component.text(ChatColor.GRAY + "Changed ")
+        player.sendMessage(Component.text("Changed ", NamedTextColor.GRAY)
                                     .append(weapon.getHoverComponent(false))
-                                    .append(Component.text(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")));
+                                    .append(Component.text("'s skill boost from "))
+                                    .append(Component.text(oldSkillBoost.name, NamedTextColor.GREEN))
+                                    .append(Component.text(" to "))
+                                    .append(Component.text(skillBoost.name))
+                                    .append(Component.text("!")));
 
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }

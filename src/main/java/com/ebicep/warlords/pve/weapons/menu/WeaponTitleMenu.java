@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -238,11 +237,11 @@ public class WeaponTitleMenu {
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.sendMessage(Component.text(ChatColor.GRAY + "Titled Weapon: ")
+        player.sendMessage(Component.text("Titled Weapon: ", NamedTextColor.GRAY)
                                     .append(weapon.getHoverComponent(false))
-                                    .append(Component.text(ChatColor.GRAY + " and it became "))
+                                    .append(Component.text(" and it became "))
                                     .append(titledWeapon.getHoverComponent(false))
-                                    .append(Component.text(ChatColor.GRAY + "!"))
+                                    .append(Component.text("!"))
         );
 
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
@@ -299,7 +298,7 @@ public class WeaponTitleMenu {
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.sendMessage(Component.text(ChatColor.GRAY + "Upgraded Weapon Title: ")
+            player.sendMessage(Component.text("Upgraded Weapon Title: ")
                                         .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);

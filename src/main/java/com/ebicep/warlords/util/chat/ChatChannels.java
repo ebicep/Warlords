@@ -302,7 +302,7 @@ public enum ChatChannels {
      */
     public static void playerSendMessage(Player player, ChatChannels chatChannel, Component message) {
         try {
-            Component prefixWithColor = Permissions.getPrefixWithColor(player);
+            Component prefixWithColor = Permissions.getPrefixWithColor(player, false);
             Component component = chatChannel.getFormat(player)
                                              .append(prefixWithColor.append(Component.text(player.getName())))
                                              .append(Component.text(": ").append(message));

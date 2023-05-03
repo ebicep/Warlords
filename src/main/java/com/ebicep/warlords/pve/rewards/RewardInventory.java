@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -24,14 +23,10 @@ public class RewardInventory {
     public static void sendRewardMessage(UUID uuid, Component component) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         if (offlinePlayer.getPlayer() != null) {
-            offlinePlayer.getPlayer().sendMessage(Component.text(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ").append(component));
-        }
-    }
-
-    public static void sendRewardMessage(UUID uuid, String message) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
-            offlinePlayer.getPlayer().sendMessage(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > " + message);
+            offlinePlayer.getPlayer().sendMessage(Component.text("Reward", NamedTextColor.GOLD)
+                                                           .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                                           .append(component)
+            );
         }
     }
 
@@ -45,9 +40,9 @@ public class RewardInventory {
                             databasePlayerPvE.getGameEventRewards(),
                             databasePlayerPvE.getPouchRewards()
                     )
-                                                 .flatMap(List::stream)
-                                                 .filter(reward -> reward.getTimeClaimed() == null)
-                                                 .collect(Collectors.toList());
+                    .flatMap(List::stream)
+                    .filter(reward -> reward.getTimeClaimed() == null)
+                    .collect(Collectors.toList());
             if (rewards.isEmpty()) {
                 player.sendMessage(Component.text("You have no rewards to claim!", NamedTextColor.RED));
                 return;
@@ -66,7 +61,7 @@ public class RewardInventory {
 
                                 sendRewardMessage(
                                         player.getUniqueId(),
-                                        Component.text(ChatColor.GREEN + "Claimed: ")
+                                        Component.text("Claimed: ", NamedTextColor.GREEN)
                                                  .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
                                                                   .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
                                                  .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
@@ -95,7 +90,7 @@ public class RewardInventory {
 
                             sendRewardMessage(
                                     player.getUniqueId(),
-                                    Component.text(ChatColor.GREEN + "Claimed: ")
+                                    Component.text("Claimed: ", NamedTextColor.GREEN)
                                              .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
                                                               .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
                                              .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))

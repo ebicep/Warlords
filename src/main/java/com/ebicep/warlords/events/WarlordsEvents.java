@@ -120,7 +120,7 @@ public class WarlordsEvents implements Listener {
             e.joinMessage(wp.getColoredNameBold().append(Component.text(" rejoined the game!", NamedTextColor.YELLOW)));
         } else {
             player.setAllowFlight(true);
-            e.joinMessage(Permissions.getPrefixWithColor(player)
+            e.joinMessage(Permissions.getPrefixWithColor(player, false)
                                      .append(Component.text(player.getName()))
                                      .append(Component.text(" joined the lobby!", NamedTextColor.GOLD))
             );
@@ -219,7 +219,7 @@ public class WarlordsEvents implements Listener {
                                 Title.Times.times(Ticks.duration(20), Ticks.duration(140), Ticks.duration(20))
                         ));
                         //sumSmash is now prestige level 5 in Pyromancer!
-                        Bukkit.broadcast(Permissions.getPrefixWithColor(player)
+                        Bukkit.broadcast(Permissions.getPrefixWithColor(player, false)
                                                     .append(Component.text(player.getName()))
                                                     .append(Component.text(" is now prestige level ", NamedTextColor.GRAY))
                                                     .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige)))
@@ -287,7 +287,7 @@ public class WarlordsEvents implements Listener {
             wp.updatePlayerReference(null);
             e.quitMessage(wp.getColoredNameBold().append(Component.text(" left the game!", NamedTextColor.GOLD)));
         } else {
-            e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer())
+            e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer(), false)
                                      .append(Component.text(e.getPlayer().getName()))
                                      .append(Component.text(" left the lobby!", NamedTextColor.GOLD))
             );
@@ -736,7 +736,7 @@ public class WarlordsEvents implements Listener {
             ChatChannels.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
         }
 
-        Component prefixWithColor = Permissions.getPrefixWithColor(player);
+        Component prefixWithColor = Permissions.getPrefixWithColor(player, false);
         if (Objects.requireNonNull(prefixWithColor.color()).value() == NamedTextColor.WHITE.value()) {
             ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
         }

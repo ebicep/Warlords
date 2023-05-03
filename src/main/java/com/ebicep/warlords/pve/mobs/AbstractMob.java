@@ -25,7 +25,12 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
-import org.bukkit.*;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
@@ -184,7 +189,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode().getDropModifier());
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode()
+                                                                                                                                                  .getDropModifier());
                                    AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropMobDropEvent(warlordsPlayer,
                                            this,
                                            dropRate,
@@ -201,29 +207,31 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                            WarlordsPlayer lastStealer = stolenBy.get(stolenBy.size() - 1);
                                            Bukkit.getPluginManager().callEvent(new WarlordsGiveStolenMobDropEvent(lastStealer, drop));
 
-                                           StringBuilder stolenMessage = new StringBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                   ChatColor.GRAY + " obtained a " +
-                                                   drop.textColor + drop.name +
-                                                   ChatColor.GRAY + " but it was stolen by " +
-                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + firstStealer.getName() +
-                                                   ChatColor.GRAY + "!");
+                                           TextComponent.Builder stolenMessage = Component
+                                                   .text().color(NamedTextColor.GRAY)
+                                                   .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                   .append(Component.text(" obtained a "))
+                                                   .append(Component.text(drop.name, drop.textColor))
+                                                   .append(Component.text(" but it was stolen by "))
+                                                   .append(Permissions.getPrefixWithColor((Player) firstStealer.getEntity(), true))
+                                                   .append(Component.text("!"));
                                            for (int i = 1; i < stolenBy.size() - 1; i++) {
-                                               String previousStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity()) + stolenBy.get(i - 1).getName();
-                                               String nextStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity()) + stolenBy.get(i).getName();
-                                               stolenMessage.append(" But then ")
-                                                            .append(nextStealer)
-                                                            .append(ChatColor.GRAY).append(" stole it from ")
-                                                            .append(previousStealer)
-                                                            .append(ChatColor.GRAY).append("!");
+                                               stolenMessage.append(Component.text(" But then "))
+                                                            .append(Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity(), true))
+                                                            .append(Component.text(" stole it from "))
+                                                            .append(Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity(), true))
+                                                            .append(Component.text("!"));
                                            }
-                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.toString()));
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.build()));
                                            lastStealer.playSound(lastStealer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 1.5f);
                                        } else {
-                                           String obtainMessage = Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                   ChatColor.GRAY + " obtained a " +
-                                                   drop.textColor + drop.name +
-                                                   ChatColor.GRAY + "!";
-                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage));
+                                           TextComponent.Builder obtainMessage = Component
+                                                   .text().color(NamedTextColor.GRAY)
+                                                   .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                   .append(Component.text(" obtained a "))
+                                                   .append(Component.text(drop.name, drop.textColor))
+                                                   .append(Component.text("!"));
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage.build()));
                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                        }
                                    }
@@ -252,9 +260,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                        game.forEachOnlinePlayer((player, team) -> {
                                            AbstractItem.sendItemMessage(player,
-                                                   Component.text(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
-                                                            .hoverEvent(item.getHoverComponent())
-                                                            .append(Component.text(ChatColor.GRAY + "!"))
+                                                   Component.text().color(NamedTextColor.GRAY)
+                                                            .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                            .append(Component.text(" got lucky and found "))
+                                                            .append(item.getHoverComponent())
+                                                            .append(Component.text("!"))
+                                                            .build()
                                            );
                                        });
                                        warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
@@ -277,8 +288,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(warlordsPlayer));
                                    game.forEachOnlinePlayer((player, team) -> {
                                        AbstractItem.sendItemMessage(player,
-                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
+                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true)
+                                                          .append(Component.text(" got lucky and received an Unknown Blessing!", NamedTextColor.GRAY))
                                        );
                                    });
                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
@@ -294,10 +305,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.sendMessage(Permissions.getPrefixWithColor((Player) killer.getEntity())
-                                              .append(Component.text(killer.getName() + ChatColor.GRAY + " got lucky and found "))
-                                              .append(weapon.getHoverComponent(false))
-                                              .append(Component.text(ChatColor.GRAY + "!")));
+                player.sendMessage(Component.text().color(NamedTextColor.GRAY)
+                                            .append(Permissions.getPrefixWithColor((Player) killer.getEntity(), true))
+                                            .append(Component.text(" got lucky and found "))
+                                            .append(weapon.getHoverComponent(false))
+                                            .append(Component.text("!"))
+                );
             });
             killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }

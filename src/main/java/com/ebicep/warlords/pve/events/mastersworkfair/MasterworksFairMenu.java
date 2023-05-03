@@ -18,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class MasterworksFairMenu {
 
@@ -68,19 +67,24 @@ public class MasterworksFairMenu {
 
                 //last 10 placements
                 List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
-                List<String> placementHistory = masterworksFairEntries
-                        .stream()
-                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                        .collect(Utils.lastN(10))
-                        .stream()
-                        .map(masterworksFairEntry -> ChatColor.GRAY + MasterworksFairManager.FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
-                        .toList();
                 menu.setItem(column, 3,
                         new ItemBuilder(Material.BOOK)
                                 .name(Component.text("Your most recent placements", NamedTextColor.GREEN))
-                                .loreLEGACY(IntStream.range(0, placementHistory.size())
-                                                     .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
-                                                     .toList())
+                                .lore(masterworksFairEntries
+                                        .stream()
+                                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                                        .collect(Utils.lastN(10))
+                                        .stream()
+                                        .sorted(Comparator.comparing(MasterworksFairEntry::getTime).reversed()) //TODO CHECK
+                                        .map(masterworksFairEntry ->
+                                                Component.text(MasterworksFairManager.FORMATTER.format(masterworksFairEntry.getTime()) + ": ",
+                                                                 NamedTextColor.GRAY
+                                                         )
+                                                         .append(Component.text("#" + masterworksFairEntry.getPlacement(), value.textColor))
+                                                         .append(Component.text(" - "))
+                                                         .append(Component.text(masterworksFairEntry.getScore(), NamedTextColor.YELLOW)))
+                                        .collect(Component.toComponent(Component.empty()))
+                                )
                                 .get(), (m, e) -> {
 
                         }
@@ -135,7 +139,9 @@ public class MasterworksFairMenu {
                         (m, e) -> {
                             //check bound
                             if (weapon.isBound()) {
-                                MasterworksFairManager.sendMasterworksFairMessage(player, ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
+                                MasterworksFairManager.sendMasterworksFairMessage(player,
+                                        Component.text("You cannot submit a bound weapon. Unbind it first!", NamedTextColor.RED)
+                                );
                                 return;
                             }
                             Menu.openConfirmationMenu0(

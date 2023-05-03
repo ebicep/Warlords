@@ -7,10 +7,12 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,10 +27,14 @@ public class SupplyDropManager {
 
     private static final ConcurrentHashMap<UUID, Boolean> PLAYER_ROLL_COOLDOWN = new ConcurrentHashMap<>();
 
-    public static void sendSupplyDropMessage(UUID uuid, String message) {
+    public static void sendSupplyDropMessage(UUID uuid, Component message) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.isOnline()) {
-            offlinePlayer.getPlayer().sendMessage(ChatColor.GOLD + "Supply Drop" + ChatColor.DARK_GRAY + " > " + message);
+        Player player = offlinePlayer.getPlayer();
+        if (player != null) {
+            player.sendMessage(Component.text("Supply Drop", NamedTextColor.GOLD)
+                                        .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                        .append(message)
+            );
         }
     }
 
@@ -118,20 +124,22 @@ public class SupplyDropManager {
 
             //last 20 supply drops
             List<SupplyDropEntry> supplyDropEntries = databasePlayerPvE.getSupplyDropEntries();
-            List<String> supplyDropHistory = supplyDropEntries
+            List<TextComponent> supplyDropHistory = supplyDropEntries
                     .subList(Math.max(0, supplyDropEntries.size() - 20), supplyDropEntries.size())
                     .stream()
                     .map(SupplyDropEntry::getReward)
-                    .map(supplyDropRewards -> supplyDropRewards.getChatColor() + supplyDropRewards.name + "\n")
+                    .map(supplyDropRewards -> Component.text(supplyDropRewards.name, supplyDropRewards.getTextColor()))
                     .toList();
             menu.setItem(
                     5,
                     5,
                     new ItemBuilder(Material.BOOK)
                             .name(Component.text("Your most recent supply drops", NamedTextColor.GREEN))
-                            .loreLEGACY(IntStream.range(0, supplyDropHistory.size())
-                                                 .mapToObj(index -> ChatColor.GRAY.toString() + (index + 1) + ". " + supplyDropHistory.get(supplyDropHistory.size() - index - 1))
-                                                 .toList())
+                            .lore(IntStream.range(0, supplyDropHistory.size())
+                                           .mapToObj(index -> Component.text((index + 1) + ".", NamedTextColor.GRAY)
+                                                                       .append(supplyDropHistory.get(supplyDropHistory.size() - index - 1))
+                                           )
+                                           .collect(Component.toComponent(Component.empty())))
                             .get(),
                     (m, e) -> {
 
@@ -148,7 +156,9 @@ public class SupplyDropManager {
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             PLAYER_ROLL_COOLDOWN.put(uuid, true);
             sendSupplyDropMessage(uuid,
-                    ChatColor.GREEN + "Called " + ChatColor.YELLOW + amount + ChatColor.GREEN + " supply drop" + (amount > 1 ? "s" : "") + "!"
+                    Component.text("Called ", NamedTextColor.GREEN)
+                             .append(Component.text(amount, NamedTextColor.YELLOW))
+                             .append(Component.text(" supply drop" + (amount > 1 ? "s" : "") + "!", NamedTextColor.GREEN))
             );
             DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
             databasePlayerPvE.subtractCurrency(Currencies.SUPPLY_DROP_TOKEN, amount);
@@ -175,12 +185,11 @@ public class SupplyDropManager {
                         reward = SupplyDropRewards.getRandomReward();
                         Random random = new Random();
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, random.nextFloat());
-                        PacketUtils.sendTitle(
-                                uuid,
-                                reward.getChatColor() + reward.name,
-                                "",
-                                0, 100, 0
-                        );
+                        player.showTitle(Title.title(
+                                Component.text(reward.name, reward.getTextColor()),
+                                Component.empty(),
+                                Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(0))
+                        ));
                     }
 
                     counter++;
@@ -196,9 +205,12 @@ public class SupplyDropManager {
                             if (reward.rarity == WeaponsPvE.EPIC) {
                                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                                     sendSupplyDropMessage(onlinePlayer.getUniqueId(),
-                                            ChatColor.AQUA + player.getName() +
-                                                    ChatColor.GRAY + " got lucky and received " + reward.getChatColor() + reward.name +
-                                                    ChatColor.GRAY + " from the supply drop!"
+                                            Component.text().color(NamedTextColor.GRAY)
+                                                     .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                     .append(Component.text(" got lucky and received "))
+                                                     .append(Component.text(reward.name, reward.getTextColor()))
+                                                     .append(Component.text(" from the supply drop!"))
+                                                     .build()
                                     );
                                 }
                             }

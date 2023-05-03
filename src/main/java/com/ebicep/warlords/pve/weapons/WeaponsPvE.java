@@ -9,7 +9,6 @@ import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +19,6 @@ public enum WeaponsPvE {
 
     NONE("None",
             null,
-            ChatColor.GRAY,
             NamedTextColor.GRAY,
             null,
             null,
@@ -29,7 +27,6 @@ public enum WeaponsPvE {
     ),
     COMMON("Common",
             CommonWeapon.class,
-            ChatColor.GREEN,
             NamedTextColor.GREEN,
             new ItemStack(Material.LIME_STAINED_GLASS_PANE),
             MasterworksFair::getCommonPlayerEntries,
@@ -38,7 +35,6 @@ public enum WeaponsPvE {
     ),
     RARE("Rare",
             RareWeapon.class,
-            ChatColor.BLUE,
             NamedTextColor.BLUE,
             new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE),
             MasterworksFair::getRarePlayerEntries,
@@ -47,7 +43,6 @@ public enum WeaponsPvE {
     ),
     EPIC("Epic",
             EpicWeapon.class,
-            ChatColor.DARK_PURPLE,
             NamedTextColor.DARK_PURPLE,
             new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE),
             MasterworksFair::getEpicPlayerEntries,
@@ -56,7 +51,6 @@ public enum WeaponsPvE {
     ),
     LEGENDARY("Legendary",
             AbstractLegendaryWeapon.class,
-            ChatColor.GOLD,
             NamedTextColor.GOLD,
             new ItemStack(Material.ORANGE_STAINED_GLASS_PANE),
             null,
@@ -67,7 +61,6 @@ public enum WeaponsPvE {
     public static final WeaponsPvE[] VALUES = values();
     public final String name;
     public final Class<?> weaponClass;
-    public final ChatColor chatColor;
     public final NamedTextColor textColor;
     public final ItemStack glassItem;
     public final Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries;
@@ -77,14 +70,13 @@ public enum WeaponsPvE {
     WeaponsPvE(
             String name,
             Class<?> weaponClass,
-            ChatColor chatColor,
-            NamedTextColor textColor, ItemStack glassItem,
+            NamedTextColor textColor,
+            ItemStack glassItem,
             Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries,
             Currencies starPieceCurrency,
             int fairyEssenceCost
     ) {
         this.weaponClass = weaponClass;
-        this.chatColor = chatColor;
         this.name = name;
         this.textColor = textColor;
         this.getPlayerEntries = getPlayerEntries;
