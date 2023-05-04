@@ -3,7 +3,6 @@ package com.ebicep.warlords.util.chat;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -25,13 +24,6 @@ public class ChatUtils {
     public static final Component SPACER = Component.text(" - ", NamedTextColor.GRAY);
     private static final int CENTER_PX = 164;
 
-    public static String addStrikeThrough(String message) {
-        for (ChatColor color : ChatColor.values()) {
-            message = message.replace(color.toString(), color.toString() + ChatColor.STRIKETHROUGH);
-        }
-        return message;
-    }
-
     public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
             if (we.getEntity() instanceof Player) {
@@ -46,29 +38,20 @@ public class ChatUtils {
 
     public static void sendTitleToGamePlayers(
             Game game,
-            String title,
-            String subtitle,
+            Component title,
+            Component subtitle,
             int fadeIn,
             int stay,
             int fadeOut
     ) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
             if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
+                we.getEntity().showTitle(Title.title(
                         title,
                         subtitle,
-                        fadeIn, stay, fadeOut
-                );
+                        Title.Times.times(Ticks.duration(fadeIn), Ticks.duration(stay), Ticks.duration(fadeOut))
+                ));
             }
-        }
-    }
-
-    public static void sendMessage(Player player, boolean centered, String message) {
-        if (centered) {
-            sendCenteredMessage(player, message);
-        } else {
-            player.sendMessage(message);
         }
     }
 
@@ -80,38 +63,9 @@ public class ChatUtils {
         }
     }
 
-    public static void sendMessageToPlayer(WarlordsPlayer player, String message, ChatColor borderColor, boolean centered) {
-        if (player.getEntity() instanceof Player) {
-            sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
-        }
-    }
-
     public static void sendMessageToPlayer(WarlordsPlayer player, Component message, NamedTextColor borderColor, boolean centered) {
         if (player.getEntity() instanceof Player) {
             sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
-        }
-    }
-
-    public static void sendMessageToPlayer(Player player, String message, ChatColor borderColor, boolean centered) {
-        if (centered) {
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            String[] messages = message.split("\n");
-            for (String s : messages) {
-                sendCenteredMessage(player, s);
-            }
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        } else {
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            player.sendMessage(message);
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
         }
     }
 
@@ -131,26 +85,6 @@ public class ChatUtils {
             player.sendMessage(message);
             if (borderColor != null) {
                 player.sendMessage(Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
-            }
-        }
-    }
-
-    public static void sendMessageToPlayer(Player player, Component component, ChatColor borderColor, boolean centered) {
-        if (centered) {
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessage(player, component);
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        } else {
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessage(player, component);
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
             }
         }
     }
@@ -256,33 +190,33 @@ public class ChatUtils {
 
     public enum MessageTypes {
 
-        WARLORDS("Warlords", ChatColor.GREEN),
-        PLAYER_SERVICE("PlayerService", ChatColor.AQUA),
-        GAME_SERVICE("GameService", ChatColor.YELLOW),
-        GUILD_SERVICE("GuildService", ChatColor.GOLD),
-        LEADERBOARDS("Leaderboards", ChatColor.BLUE),
-        TIMINGS("Timings", ChatColor.DARK_GRAY),
-        MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
-        GAME_EVENTS("Events", ChatColor.DARK_RED),
-        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", ChatColor.DARK_RED),
-        ILLUSION_VENDOR("IllusionVendor", ChatColor.GOLD),
+        WARLORDS("Warlords", NamedTextColor.GREEN),
+        PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA),
+        GAME_SERVICE("GameService", NamedTextColor.YELLOW),
+        GUILD_SERVICE("GuildService", NamedTextColor.GOLD),
+        LEADERBOARDS("Leaderboards", NamedTextColor.BLUE),
+        TIMINGS("Timings", NamedTextColor.DARK_GRAY),
+        MASTERWORKS_FAIR("MasterworksFair", NamedTextColor.DARK_GREEN),
+        GAME_EVENTS("Events", NamedTextColor.DARK_RED),
+        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", NamedTextColor.DARK_RED),
+        ILLUSION_VENDOR("IllusionVendor", NamedTextColor.GOLD),
 
-        GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
+        GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE),
 
-        DISCORD_BOT("DiscordBot", ChatColor.DARK_AQUA),
+        DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA),
 
         ;
 
         public final String name;
-        public final ChatColor chatColor;
+        public final NamedTextColor textColor;
 
-        MessageTypes(String name, ChatColor chatColor) {
+        MessageTypes(String name, NamedTextColor textColor) {
             this.name = name;
-            this.chatColor = chatColor;
+            this.textColor = textColor;
         }
 
         public void sendMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(chatColor + "[" + name + "] " + message);
+            Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, textColor));
         }
 
         public void sendErrorMessage(String message) {

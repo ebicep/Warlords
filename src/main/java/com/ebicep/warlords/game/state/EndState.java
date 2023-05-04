@@ -213,7 +213,7 @@ public class EndState implements State, TimerDebugAble {
                       .append(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED, hoverable))
             );
 
-            ChatUtils.sendMessage(player, false, "");
+            ChatUtils.sendCenteredMessage(player, Component.empty());
 
             //ABILITY INFO
             GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.put(player.getUniqueId(), wp.getSpec().getFormattedData());

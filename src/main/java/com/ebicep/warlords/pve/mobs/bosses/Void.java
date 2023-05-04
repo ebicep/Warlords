@@ -21,6 +21,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -226,8 +228,8 @@ public class Void extends AbstractSkeleton implements BossMob {
 
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                ChatColor.RED + "PREPARE TO DIE",
-                ChatColor.LIGHT_PURPLE + "Augmented Immolation Spell",
+                Component.text("PREPARE TO DIE", NamedTextColor.RED),
+                Component.text("Augmented Immolation Spell", NamedTextColor.LIGHT_PURPLE),
                 20,
                 60,
                 20
@@ -324,9 +326,11 @@ public class Void extends AbstractSkeleton implements BossMob {
 
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                "",
-                ChatColor.RED + "Keep attacking Void to stop the draining!",
-                10, 35, 0
+                Component.empty(),
+                Component.text("Keep attacking Void to stop the draining!", NamedTextColor.RED),
+                10,
+                35,
+                0
         );
         for (WarlordsEntity we : PlayerFilter
                 .playingGame(warlordsNPC.getGame())
@@ -349,9 +353,9 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 if (damageToDeal.get() <= 0) {
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
                     warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
                     preventArmageddon = false;
                     this.cancel();
@@ -393,9 +397,9 @@ public class Void extends AbstractSkeleton implements BossMob {
                     }
 
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
                     EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "shaman.earthlivingweapon.impact", 500, 0.5f);
 
