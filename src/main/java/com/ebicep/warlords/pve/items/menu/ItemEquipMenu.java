@@ -23,6 +23,7 @@ import com.ebicep.warlords.util.java.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -41,7 +42,7 @@ public class ItemEquipMenu {
     public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
     private static final ItemStack ITEM_EQUIP_MENU = new ItemBuilder(Material.ARMOR_STAND)
             .name(Component.text("Item Equip Menu", NamedTextColor.GREEN))
-            .loreLEGACY(ChatColor.GRAY + "Click to customize your Item Loadouts")
+            .lore(Component.text("Click to customize your Item Loadouts", NamedTextColor.GRAY))
             .get();
 
     public static void openItemEquipMenuExternal(Player player, DatabasePlayer databasePlayer) {
@@ -75,8 +76,8 @@ public class ItemEquipMenu {
                     if (e.isRightClick()) {
                         i.setFavorite(!i.isFavorite());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        AbstractItem.sendItemMessage(player, Component.text(ChatColor.GRAY + "You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ")
-                                                                      .hoverEvent(i.getHoverComponent())
+                        AbstractItem.sendItemMessage(player, Component.text("You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
+                                                                      .append(i.getHoverComponent())
                         );
                         openItemEquipMenuExternal(player, databasePlayer);
                         return;
@@ -117,7 +118,7 @@ public class ItemEquipMenu {
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                 AbstractItem.sendItemMessage(player,
-                                        Component.text(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
+                                        Component.text("You received " + scrapAmount + " Scrap Metal from scrapping ", NamedTextColor.GRAY)
                                                  .hoverEvent(i.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
@@ -177,12 +178,16 @@ public class ItemEquipMenu {
                                        .append(Component.text(" / ", NamedTextColor.GRAY))
                                        .append(Component.text(maxWeight, NamedTextColor.GREEN))
                         )
-                        .loreLEGACY("",
-                                ChatColor.AQUA + "Breakdown (" + selectedSpec.name + "):"
+                        .lore(Component.empty(),
+                                Component.text("Breakdown (" + selectedSpec.name + "):", NamedTextColor.AQUA)
                         )
-                        .addLore(weightBreakdown.stream()
-                                                .map(pair -> ChatColor.AQUA + "- " + ChatColor.GRAY + pair.getA() + ": " + ChatColor.GREEN + pair.getB())
-                                                .collect(Collectors.toList())
+                        .addLoreC(weightBreakdown.stream()
+                                                 .map(pair -> Component.textOfChildren(
+                                                         Component.text("- ", NamedTextColor.AQUA),
+                                                         Component.text(pair.getA() + ": ", NamedTextColor.GRAY),
+                                                         Component.text(pair.getB(), NamedTextColor.GREEN)
+                                                 ))
+                                                 .collect(Collectors.toList())
                         )
                         .get(),
                 (m, e) -> {}
@@ -206,11 +211,15 @@ public class ItemEquipMenu {
                     menu.setItem(x, y + 1,
                             item.generateItemBuilder()
                                 .addLore(
-                                        "",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
-                                                ChatColor.GREEN + " to swap this item.",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
-                                                ChatColor.GREEN + " to unequip this item."
+                                        Component.empty(),
+                                        Component.textOfChildren(
+                                                Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to swap this item.", NamedTextColor.GREEN)
+                                        ),
+                                        Component.textOfChildren(
+                                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to unequip this item.", NamedTextColor.GREEN)
+                                        )
                                 )
                                 .get(),
                             (m, e) -> {
@@ -244,7 +253,7 @@ public class ItemEquipMenu {
             }
         }
 
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
         List<ItemLoadout> sortedLoadouts = loadouts.stream()
                                                    .sorted(Comparator.comparing(ItemLoadout::getCreationDate))
                                                    .toList();
@@ -252,13 +261,15 @@ public class ItemEquipMenu {
             ItemLoadout l = sortedLoadouts.get(i);
             DifficultyMode difficulty = l.getDifficultyMode();
             Specializations spec = l.getSpec();
-            lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
-                    " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")");
+            lore.add(Component.text((i + 1) + ". " + l.getName() +
+                            " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")",
+                    l.equals(itemLoadout) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
         }
         menu.setItem(0, 5,
                 new ItemBuilder(Material.BOOK)
                         .name(Component.text("Change Loadout (Weight | Difficulty | Spec)", NamedTextColor.GREEN))
-                        .loreLEGACY(lore)
+                        .lore(lore)
                         .get(),
                 (m, e) -> {
                     int index = sortedLoadouts.indexOf(itemLoadout);
@@ -370,19 +381,19 @@ public class ItemEquipMenu {
         menu.setItem(4, 5, MENU_BACK, (m, e) -> openItemEquipMenuInternal(player, databasePlayer));
         lore.clear();
         for (int i = 0; i < loadouts.size(); i++) {
-            lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
+            lore.add(Component.text((i + 1) + ". " + loadouts.get(i).getName(),
+                    (loadouts.get(i).equals(itemLoadout) ? NamedTextColor.AQUA : NamedTextColor.GRAY)
+            ));
         }
         menu.setItem(5, 5,
                 new ItemBuilder(Material.TRIPWIRE_HOOK)
                         .name(Component.text("Change Loadout Priority", NamedTextColor.GREEN))
-                        .loreLEGACY(
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current loadout, for when you have " +
-                                                "multiple loadouts with the same filters.",
-                                        170
-                                ),
-                                ""
-                        )
-                        .addLore(lore)
+                        .lore(WordWrap.wrap(Component.text("Change the priority of the current loadout, for when you have " +
+                                        "multiple loadouts with the same filters.", NamedTextColor.GRAY),
+                                170
+                        ))
+                        .addLore(Component.empty())
+                        .addLoreC(lore)
                         .get(),
                 (m, e) -> {
                     int loadoutIndex = loadouts.indexOf(itemLoadout);
@@ -401,12 +412,12 @@ public class ItemEquipMenu {
         lore.clear();
         DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
         for (DifficultyMode value : difficultyModes) {
-            lore.add((itemLoadout.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
+            lore.add(Component.text(value.name, itemLoadout.getDifficultyMode() == value ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         }
         menu.setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
                         .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
-                        .loreLEGACY(lore)
+                        .lore(lore)
                         .get(),
                 (m, e) -> {
                     itemLoadout.setDifficultyMode(itemLoadout.getDifficultyMode().next());
@@ -415,15 +426,17 @@ public class ItemEquipMenu {
                 }
         );
         lore.clear();
-        lore.add((itemLoadout.getSpec() == null ? ChatColor.AQUA : ChatColor.GRAY) + "Any");
+        lore.add(Component.text("Any", itemLoadout.getSpec() == null ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         Specializations[] specializations = Specializations.VALUES;
         for (Specializations spec : specializations) {
-            lore.add((itemLoadout.getSpec() == spec ? ChatColor.AQUA : ChatColor.GRAY) + spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec));
+            lore.add(Component.text(spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec),
+                    itemLoadout.getSpec() == spec ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
         }
         menu.setItem(7, 5,
                 new ItemBuilder(Material.SLIME_BALL)
                         .name(Component.text("Bind to Specialization", NamedTextColor.GREEN))
-                        .loreLEGACY(lore)
+                        .lore(lore)
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getSpec() == null) {

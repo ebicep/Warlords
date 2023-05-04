@@ -408,14 +408,13 @@ public abstract class WarlordsEntity {
                 sendTookDamageMessage(min, "melee damage");
                 resetRegenTimer();
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    if (entity instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage and died.",
-                                0, 40, 0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text("You took ", NamedTextColor.GRAY)
+                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                     .append(Component.text(" melee damage and died.")),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     health = 0;
                     die(attacker);
                 } else {
@@ -427,15 +426,13 @@ public abstract class WarlordsEntity {
                 sendTookDamageMessage(damageValue, "fall damage");
                 resetRegenTimer();
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    // Title card "YOU DIED!"
-                    if (entity instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.",
-                                0, 40, 0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text("You took ", NamedTextColor.GRAY)
+                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                     .append(Component.text(" fall damage and died.")),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     health = 0;
                     die(attacker);
                 } else {
@@ -653,8 +650,12 @@ public abstract class WarlordsEntity {
                         sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY)));
                         attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text("Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s " + ability + " hit.", NamedTextColor.GRAY)));
-                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".", NamedTextColor.GRAY)));
+                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s " + ability + " hit.",
+                                NamedTextColor.GRAY
+                        )));
+                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".",
+                                NamedTextColor.GRAY
+                        )));
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
@@ -817,16 +818,11 @@ public abstract class WarlordsEntity {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
                         }
                     }
-                    // Title card "YOU DIED!"
-                    if (this.entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + attacker.getName() + " killed you.",
-                                0,
-                                40,
-                                0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text(attacker.getName() + " killed you.", NamedTextColor.GRAY),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     die(attacker);
                 } else {
                     if (!isMeleeHit && this != attacker && damageValue != 0) {
@@ -2119,7 +2115,9 @@ public abstract class WarlordsEntity {
                         }
                         PlayerStatisticsMinute.Entry entry = entries.get(index);
                         stringBuilder.append(Component.text("Minute " + index + ": ", NamedTextColor.WHITE)
-                                                      .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD)));
+                                                      .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)),
+                                                              NamedTextColor.GOLD
+                                                      )));
                         stringBuilder.append(Component.newline());
                     }
                     stringBuilder.setLength(stringBuilder.length() - 1);
@@ -2141,7 +2139,9 @@ public abstract class WarlordsEntity {
                                  .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD));
                 }
                 component.append(Component.text(minuteStatsTypeName + ": ", NamedTextColor.WHITE)
-                                          .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), NamedTextColor.GOLD)))
+                                          .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())),
+                                                  NamedTextColor.GOLD
+                                          )))
                          .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString())));
             }
 
