@@ -13,7 +13,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -56,8 +56,9 @@ public class MasterworksFairMenu {
                 } else {
                     itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack(false));
                     itemBuilder.addLore(
-                            "",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to change your submission"
+                            Component.empty(),
+                            Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                     .append(Component.text(" to change your submission", NamedTextColor.GREEN))
                     );
                 }
                 menu.setItem(column, 2,
@@ -94,14 +95,17 @@ public class MasterworksFairMenu {
 
             ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK_ROCKET)
                     .name(Component.text("Current Submissions", NamedTextColor.GREEN));
-            List<String> infoLore = new ArrayList<>();
+            List<Component> infoLore = new ArrayList<>();
             for (WeaponsPvE value : values) {
                 if (value.getPlayerEntries != null) {
                     List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(MasterworksFairManager.currentFair);
-                    infoLore.add(value.getChatColorName() + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
+                    infoLore.add(value.getTextColoredName()
+                                      .append(Component.text(": "))
+                                      .append(Component.text(weaponPlayerEntries.size(), NamedTextColor.AQUA))
+                    );
                 }
             }
-            infoItemBuilder.loreLEGACY(infoLore);
+            infoItemBuilder.lore(infoLore);
             menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {
             });
 
@@ -176,9 +180,9 @@ public class MasterworksFairMenu {
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                         MasterworksFairManager.sendMasterworksFairMessage(player,
-                                                Component.text(ChatColor.GRAY + "Submitted ")
+                                                Component.text("Submitted ", NamedTextColor.GRAY)
                                                          .append(weapon.getHoverComponent(false))
-                                                         .append(Component.text(ChatColor.GRAY + " to the Masterworks Fair!"))
+                                                         .append(Component.text(" to the Masterworks Fair!"))
                                         );
 
                                         openMasterworksFairMenu(player);

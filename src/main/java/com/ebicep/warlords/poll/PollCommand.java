@@ -8,7 +8,6 @@ import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class PollCommand extends BaseCommand {
 
     public static void sendPollMessage(Player player, Component message) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GOLD, true);
+        ChatUtils.sendMessageToPlayer(player, message, NamedTextColor.GOLD, true);
     }
 
     @Subcommand("answer")

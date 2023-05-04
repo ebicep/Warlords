@@ -11,19 +11,19 @@ public enum WeaponsRarity {
     ASCENDANT("Ascendant", NamedTextColor.RED);
 
     public final String name;
-    private final NamedTextColor weaponChatColor;
+    private final NamedTextColor textColor;
 
-    WeaponsRarity(String name, NamedTextColor weaponChatColor) {
+    WeaponsRarity(String name, NamedTextColor textColor) {
         this.name = name;
-        this.weaponChatColor = weaponChatColor;
+        this.textColor = textColor;
     }
 
-    public NamedTextColor getWeaponChatColor() {
-        return weaponChatColor;
+    public NamedTextColor getTextColor() {
+        return textColor;
     }
 
     public Component coloredName() {
-        return Component.text(name, weaponChatColor);
+        return Component.text(name, textColor);
     }
 }
 

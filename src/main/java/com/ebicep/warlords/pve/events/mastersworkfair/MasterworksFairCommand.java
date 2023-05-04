@@ -166,7 +166,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                                             Component.text("Validating Fair - Gave ", NamedTextColor.GREEN)
                                                                      .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
                                                                      .append(Component.text(" their ", NamedTextColor.GREEN))
-                                                                     .append(rarity.getChatColorName())
+                                                                     .append(rarity.getTextColoredName())
                                                                      .append(Component.text(" reward", NamedTextColor.GREEN))
                                                     );
                                                 }

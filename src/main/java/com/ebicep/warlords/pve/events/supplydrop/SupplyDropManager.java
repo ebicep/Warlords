@@ -11,9 +11,13 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -49,9 +53,11 @@ public class SupplyDropManager {
                     1,
                     new ItemBuilder(Material.GOLD_NUGGET)
                             .name(Component.text("Click to buy a supply drop token", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.GREEN + "Cost: " + Currencies.COIN.getCostColoredName(10000),
-                                    ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins"
+                            .lore(
+                                    Component.text("Cost: ", NamedTextColor.GREEN).append(Currencies.COIN.getCostColoredName(10000)),
+                                    Component.text("Balance: ", NamedTextColor.GREEN).append(Component.
+                                            text(NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins", NamedTextColor.YELLOW)
+                                    )
                             )
                             .get(),
                     (m, e) -> {
@@ -73,11 +79,12 @@ public class SupplyDropManager {
                     3,
                     new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
                             .name(Component.text("Click to call a supply drop", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1),
-                                    ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
-                                    "",
-                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call a supply drop"
+                            .lore(
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1)),
+                                    Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
+                                    Component.empty(),
+                                    Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                             .append(Component.text(" to INSTANTLY call a supply drop", NamedTextColor.GRAY))
                             )
                             .get(),
                     (m, e) -> {
@@ -99,13 +106,14 @@ public class SupplyDropManager {
                     3,
                     new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                             .name(Component.text("Click to call all available supply drops (Max 25)", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
-                                    ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
-                                    "",
-                                    ChatColor.GRAY + "NOTE: Max 25 at a time",
-                                    "",
-                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call all available supply drops"
+                            .lore(
+                                    Component.text("Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens), NamedTextColor.GRAY),
+                                    Component.text("Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens), NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("NOTE: Max 25 at a time", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                             .append(Component.text(" to INSTANTLY call all available supply drops", NamedTextColor.GRAY))
                             )
                             .get(),
                     (m, e) -> {

@@ -4,11 +4,9 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -117,11 +115,12 @@ public class Settings {
             menu.setItem(1, 1,
                     new ItemBuilder(Material.NETHER_WART)
                             .name(Component.text("Damage Messages", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatDamageMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Damage received and damage dealt", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
+                            .lore(
+                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
+                                             .append(Component.text(settings.getChatDamageMode().name, NamedTextColor.YELLOW)),
+                                    Component.text("Damage received and damage dealt", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("Click to change", NamedTextColor.YELLOW)
                             )
                             .get(),
                     (m, e) -> {
@@ -133,11 +132,12 @@ public class Settings {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.CYAN_DYE)
                             .name(Component.text("Healing Messages", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatHealingMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Healing received and healing given", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
+                            .lore(
+                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
+                                             .append(Component.text(settings.getChatHealingMode().name, NamedTextColor.YELLOW)),
+                                    Component.text("Healing received and healing dealt", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("Click to change", NamedTextColor.YELLOW)
                             )
                             .get(),
                     (m, e) -> {
@@ -149,11 +149,12 @@ public class Settings {
             menu.setItem(3, 1,
                     new ItemBuilder(Material.SUGAR_CANE)
                             .name(Component.text("Energy Messages", NamedTextColor.GREEN))
-                            .loreLEGACY(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatEnergyMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Energy received and energy given", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
+                            .lore(
+                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
+                                             .append(Component.text(settings.getChatEnergyMode().name, NamedTextColor.YELLOW)),
+                                    Component.text("Energy received and energy dealt", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("Click to change", NamedTextColor.YELLOW)
                             )
                             .get(),
                     (m, e) -> {
@@ -166,8 +167,9 @@ public class Settings {
                     new ItemBuilder(Material.BONE)
                             .name(Component.text("Kill Messages", NamedTextColor.GREEN))
                             .lore(
-                                    Component.text("Currently Selected ", NamedTextColor.AQUA).append(Component.text(settings.getChatKillsMode().name, NamedTextColor.YELLOW)),
-                                    WordWrap.wrapWithNewline(Component.text("Kill messages", NamedTextColor.GRAY), 150),
+                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
+                                             .append(Component.text(settings.getChatKillsMode().name, NamedTextColor.YELLOW)),
+                                    Component.text("Kill messages", NamedTextColor.GRAY),
                                     Component.empty(),
                                     Component.text("Click to change", NamedTextColor.YELLOW)
                             )

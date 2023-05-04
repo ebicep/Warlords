@@ -136,7 +136,7 @@ public enum ItemTier {
     }
 
     public final String name;
-    public final NamedTextColor chatColor;
+    public final NamedTextColor textColor;
     public final ItemStack glassPane;
     public final ItemStack clayBlock;
     public final float statDistributionModifier;
@@ -164,7 +164,7 @@ public enum ItemTier {
             int maxThornsDamage
     ) {
         this.name = name;
-        this.chatColor = textColor;
+        this.textColor = textColor;
         this.glassPane = glassPane;
         this.clayBlock = clayBlock;
         this.statDistributionModifier = statDistributionModifier;
@@ -183,7 +183,7 @@ public enum ItemTier {
     }
 
     public Component getColoredName() {
-        return Component.text(name, chatColor);
+        return Component.text(name, textColor);
     }
 
     public ItemTier next() {

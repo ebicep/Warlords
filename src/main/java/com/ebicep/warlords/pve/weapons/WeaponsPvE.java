@@ -89,7 +89,7 @@ public enum WeaponsPvE {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public Component getChatColorName() {
+    public Component getTextColoredName() {
         return Component.text(name, textColor);
     }
 }

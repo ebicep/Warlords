@@ -194,7 +194,7 @@ public class MasterworksFair {
                                     MasterworksFairEntry fairEntry = masterworksFairEntry.get();
                                     message.add(
                                             Component.textOfChildren(
-                                                    rarity.getChatColorName(),
+                                                    rarity.getTextColoredName(),
                                                     Component.text(": ", NamedTextColor.GRAY),
                                                     Component.text(NumberFormat.formatOptionalHundredths(fairEntry.getScore()) + "% ", NamedTextColor.YELLOW),
                                                     Component.text("(", NamedTextColor.GRAY),
@@ -205,7 +205,7 @@ public class MasterworksFair {
                                 } else {
                                     message.add(
                                             Component.textOfChildren(
-                                                    rarity.getChatColorName(),
+                                                    rarity.getTextColoredName(),
                                                     Component.text(": ", NamedTextColor.GRAY),
                                                     Component.text("Not Submitted", NamedTextColor.YELLOW)
                                             )

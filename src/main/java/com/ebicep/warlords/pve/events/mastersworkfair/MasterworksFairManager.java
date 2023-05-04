@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -110,9 +109,7 @@ public class MasterworksFairManager {
                     DatabaseManager.masterworksFairService.update(masterworksFair);
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                         sendMasterworksFairMessage(onlinePlayer, Component.text("Masterworks Fair #" + size + " has just started!", NamedTextColor.GREEN)
-                                                                          .append(Component.text((size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""),
-                                                                                  NamedTextColor.RED
-                                                                          ))
+                                                                          .append(Component.text((size % 10 == 0 ? " 10x REWARDS!" : ""), NamedTextColor.RED))
                         );
                     }
                 })
