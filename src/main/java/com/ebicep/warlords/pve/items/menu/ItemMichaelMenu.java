@@ -21,7 +21,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -53,7 +52,8 @@ public class ItemMichaelMenu {
                         .name(Component.text("Buy a Blessing", NamedTextColor.GREEN))
                         .lore(WordWrap.wrap(Component.text("Buy blessings at the cost of mob drops.", NamedTextColor.GRAY), 170))
                         .addLore(Component.empty())
-                        .addLoreC(WordWrap.wrap(Component.text("There are 9 purchasable blessings per week. Higher tier blessings have a lower chance to be in stock.",
+                        .addLoreC(WordWrap.wrap(Component.text(
+                                        "There are 9 purchasable blessings per week. Higher tier blessings have a lower chance to be in stock.",
                                         NamedTextColor.GRAY
                                 ), 150)
                         )
@@ -102,7 +102,9 @@ public class ItemMichaelMenu {
         menu.setItem(7, 1,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(Component.text("Remove a Curse", NamedTextColor.GREEN))
-                        .lore(WordWrap.wrapWithNewline(Component.text("Removing a Curse on an Item will lower its curse effectiveness by a tier.", NamedTextColor.GRAY), 150))
+                        .lore(WordWrap.wrapWithNewline(Component.text("Removing a Curse on an Item will lower its curse effectiveness by a tier.",
+                                NamedTextColor.GRAY
+                        ), 150))
                         .get(),
                 (m, e) -> {
                     RemoveACurseMenu.openPurifyItemMenu(player, databasePlayer, null);
@@ -305,8 +307,11 @@ public class ItemMichaelMenu {
                             .name(Component.text("Tier " + (blessing + 1) + (blessingFound ? " Found" : " Bought") + " Blessing", NamedTextColor.GREEN))
                             .addLoreC(blessingFound ? menuData.getBlessingCurseFoundLore() : menuData.getBlessingCurseBoughtLore())
                             .addLore(
-                                    "",
-                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + Component.text(" to select a different blessing", NamedTextColor.GREEN)
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text(" to select a different blessing", NamedTextColor.GREEN)
+                                    )
                             );
                     if (!blessingFound) {
                         selectedBlessing.enchant(Enchantment.OXYGEN, 1);
@@ -314,7 +319,11 @@ public class ItemMichaelMenu {
                     }
                 } else {
                     selectedBlessing = new ItemBuilder(Material.PAPER)
-                            .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + Component.text(" to select a blessing", NamedTextColor.GREEN));
+                            .name(Component.textOfChildren(
+                                            Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text(" to select a blessing", NamedTextColor.GREEN)
+                                    )
+                            );
                 }
             } else {
                 selectedBlessing = new ItemBuilder(Material.MAP)
@@ -381,8 +390,11 @@ public class ItemMichaelMenu {
                         openApplyBlessingMenu(player, databasePlayer, menuData);
                     },
                     itemBuilder -> itemBuilder.addLore(
-                            "",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + Component.text(" to select", NamedTextColor.GREEN)
+                            Component.empty(),
+                            Component.textOfChildren(
+                                    Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                    Component.text(" to select", NamedTextColor.GREEN)
+                            )
                     ),
                     menuSettings,
                     databasePlayer,
@@ -430,15 +442,20 @@ public class ItemMichaelMenu {
                                     Component.empty(),
                                     Component.textOfChildren(
                                             Component.text("Bless Chance: ", NamedTextColor.GRAY),
-                                            Component.text(NumberFormat.formatOptionalTenths(menuData.getItem().getTier().blessedChance * 100) + "%", NamedTextColor.YELLOW)
+                                            Component.text(NumberFormat.formatOptionalTenths(menuData.getItem().getTier().blessedChance * 100) + "%",
+                                                    NamedTextColor.YELLOW
+                                            )
                                     ),
                                     Component.textOfChildren(
                                             Component.text("Curse Chance: ", NamedTextColor.GRAY),
-                                            Component.text(NumberFormat.formatOptionalTenths(menuData.getItem().getTier().cursedChance * 100) + "%", NamedTextColor.YELLOW)
+                                            Component.text(NumberFormat.formatOptionalTenths(menuData.getItem().getTier().cursedChance * 100) + "%",
+                                                    NamedTextColor.YELLOW
+                                            )
                                     ),
                                     Component.empty(),
                                     blessingsFound > 0 ?
-                                    Component.textOfChildren(Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                    Component.textOfChildren(
+                                            Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                             Component.text(" to select", NamedTextColor.GREEN)
                                     ) :
                                     Component.text("You have no unknown blessings", NamedTextColor.RED)
@@ -636,7 +653,9 @@ public class ItemMichaelMenu {
                     return Component.textOfChildren(
                             Component.text(itemModifier.getName(), isBlessing ? NamedTextColor.GREEN : NamedTextColor.RED),
                             Component.text(" - ", NamedTextColor.GRAY),
-                            Component.text((blessingFound ? NumberFormat.formatOptionalHundredths(chance) : (isBlessing ? "100" : "0")) + "%", NamedTextColor.YELLOW),
+                            Component.text((blessingFound ? NumberFormat.formatOptionalHundredths(chance) : (isBlessing ? "100" : "0")) + "%",
+                                    NamedTextColor.YELLOW
+                            ),
                             Component.newline(),
                             Component.text(" ".repeat(extraSpace + 1) + itemModifier.getDescription(), NamedTextColor.GREEN)
                     );
@@ -742,8 +761,11 @@ public class ItemMichaelMenu {
                         openPurifyItemMenu(player, databasePlayer, i);
                     },
                     itemBuilder -> itemBuilder.addLore(
-                            "",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + Component.text(" to select", NamedTextColor.GREEN)
+                            Component.empty(),
+                            Component.textOfChildren(
+                                    Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                    Component.text(" to select", NamedTextColor.GREEN)
+                            )
                     ),
                     menuSettings,
                     databasePlayer,

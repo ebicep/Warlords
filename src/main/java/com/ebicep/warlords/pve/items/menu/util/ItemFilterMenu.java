@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -38,11 +38,17 @@ public class ItemFilterMenu {
         menu.setItem(2, 1,
                 new ItemBuilder(tierFilter.clayBlock)
                         .name(Component.text("Tier", NamedTextColor.GREEN))
-                        .loreLEGACY(Arrays.stream(ItemTier.VALUES)
-                                          .map(value -> (tierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                          .collect(Collectors.joining("\n")),
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to change tier filter"
+                        .lore(
+                                Arrays.stream(ItemTier.VALUES)
+                                      .map(value -> Component.text(value.name, tierFilter == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                      .collect(Collectors.toList())
+                        )
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change tier filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -56,11 +62,17 @@ public class ItemFilterMenu {
         menu.setItem(3, 1,
                 new ItemBuilder(typeFilter.skull)
                         .name(Component.text("Type", NamedTextColor.GREEN))
-                        .loreLEGACY(Arrays.stream(ItemType.VALUES)
-                                          .map(value -> (typeFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                          .collect(Collectors.joining("\n")),
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to change type filter"
+                        .lore(
+                                Arrays.stream(ItemType.VALUES)
+                                      .map(value -> Component.text(value.name, typeFilter == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                      .collect(Collectors.toList())
+                        )
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change type filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -74,11 +86,17 @@ public class ItemFilterMenu {
         menu.setItem(4, 1,
                 new ItemBuilder(modifierFilter.itemStack)
                         .name(Component.text("Modifier", NamedTextColor.GREEN))
-                        .loreLEGACY(Arrays.stream(ItemSearchMenu.ModifierFilter.VALUES)
-                                          .map(value -> (modifierFilter == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                          .collect(Collectors.joining("\n")),
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to change modifier filter"
+                        .lore(
+                                Arrays.stream(ItemSearchMenu.ModifierFilter.VALUES)
+                                      .map(value -> Component.text(value.name, modifierFilter == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                      .collect(Collectors.toList())
+                        )
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change modifier filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -93,10 +111,15 @@ public class ItemFilterMenu {
         menu.setItem(5, 1,
                 new ItemBuilder(!addonFilter ? new ItemStack(Material.BARRIER) : Specializations.getClass(lastSpec).item)
                         .name(Component.text("Modifier", NamedTextColor.GREEN))
-                        .loreLEGACY(!addonFilter ? ChatColor.AQUA + "None\n" + ChatColor.GRAY + "Selected Spec (" + lastSpec.name + ")" :
-                                    ChatColor.GRAY + "None\n" + ChatColor.AQUA + "Selected Spec (" + lastSpec.name + ")",
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to change bonus filter"
+                        .lore(
+                                Component.text("None", !addonFilter ? NamedTextColor.AQUA : NamedTextColor.GRAY),
+                                Component.empty(),
+                                Component.text("Selected Spec (" + lastSpec.name + ")", !addonFilter ? NamedTextColor.GRAY : NamedTextColor.AQUA),
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change bonus filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -110,10 +133,15 @@ public class ItemFilterMenu {
         menu.setItem(6, 1,
                 new ItemBuilder(!favoriteFilter ? new ItemStack(Material.BARRIER) : new ItemStack(Material.DIAMOND))
                         .name(Component.text("Modifier", NamedTextColor.GREEN))
-                        .loreLEGACY(!favoriteFilter ? ChatColor.AQUA + "All\n" + ChatColor.GRAY + "Favorites" :
-                                    ChatColor.GRAY + "All\n" + ChatColor.AQUA + "Favorites",
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to change favorite filter"
+                        .lore(
+                                Component.text("None", !favoriteFilter ? NamedTextColor.AQUA : NamedTextColor.GRAY),
+                                Component.empty(),
+                                Component.text("Favorites", !favoriteFilter ? NamedTextColor.GRAY : NamedTextColor.AQUA),
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change favorite filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {

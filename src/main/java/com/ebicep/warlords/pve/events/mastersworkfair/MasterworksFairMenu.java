@@ -57,8 +57,10 @@ public class MasterworksFairMenu {
                     itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack(false));
                     itemBuilder.addLore(
                             Component.empty(),
-                            Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                     .append(Component.text(" to change your submission", NamedTextColor.GREEN))
+                            Component.textOfChildren(
+                                    Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                    Component.text(" to change your submission", NamedTextColor.GREEN)
+                            )
                     );
                 }
                 menu.setItem(column, 2,
