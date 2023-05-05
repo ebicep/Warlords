@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
@@ -47,17 +48,21 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
-                " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
-                ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
-                "\n\nIf your health is currently higher than 80% and you will die from the next source of damage, your " +
-                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
-                "Can be triggered every 30 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("For every ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(getEveryHpPercent(), "%"))
+                        .append(Component.text(" of HP under "))
+                        .append(formatTitleUpgrade(getUnderHpCheck(), "%"))
+                        .append(Component.text(", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction."))
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("If your health is currently higher than 80% and you will die from the next source of damage, your " +
+                                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
+                                "Can be triggered every 30 seconds."));
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),

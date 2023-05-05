@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -40,8 +43,10 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 200;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+        return baseCost;
     }
 
     @Override
@@ -66,10 +71,15 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "If the equipping player is connected to another player by means of Chain Heal, Heart To Heart, Intervene, Remedic Chains, both players will have their damage increased by " +
-                formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + " for " +
-                formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s") + ".";
+    public TextComponent getPassiveEffect() {
+        return Component.text(
+                                "If the equipping player is connected to another player by means of Chain Heal, Heart To Heart, Intervene, Remedic Chains, both players will have their damage increased by ",
+                                NamedTextColor.GRAY
+                        )
+                        .append(formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" for "))
+                        .append(formatTitleUpgrade(DURATION + DURATION_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
+                        .append(Component.text("."));
     }
 
     @Override
@@ -108,6 +118,11 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getMeleeDamageMaxValue() {
+        return 200;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 20;
     }
@@ -118,7 +133,7 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
@@ -159,12 +174,5 @@ public class LegendaryRevered extends AbstractLegendaryWeapon {
                 return currentDamageValue * (1 + (DAMAGE_INCREASE + DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
             }
         };
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
-        return baseCost;
     }
 }

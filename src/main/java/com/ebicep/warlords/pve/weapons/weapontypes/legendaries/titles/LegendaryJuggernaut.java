@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -98,14 +101,20 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a " + formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%") +
-                " Damage and Health boost when you hit the following kill milestones:\n\n" +
-                "100 Kills\n" +
-                "200 Kills\n" +
-                "400 Kills\n" +
-                "800 Kills\n" +
-                "1600 Kills";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Gain a ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" Damage and Health boost when you hit the following kill milestones:"))
+                        .append(Component.newline())
+                        .append(Component.text("100 Kills"))
+                        .append(Component.newline())
+                        .append(Component.text("200 Kills"))
+                        .append(Component.newline())
+                        .append(Component.text("400 Kills"))
+                        .append(Component.newline())
+                        .append(Component.text("800 Kills"))
+                        .append(Component.newline())
+                        .append(Component.text("1600 Kills"));
     }
 
     @Override
@@ -139,7 +148,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
                 formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                 formatTitleUpgrade(BOOST + BOOST_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")

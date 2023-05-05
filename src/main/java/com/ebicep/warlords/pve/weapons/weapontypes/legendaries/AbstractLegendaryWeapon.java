@@ -23,8 +23,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -449,13 +449,13 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                               .append(Component.text(format(getSkillCritMultiplierBonus()) + "%", NamedTextColor.GREEN))
                               .append(getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS)));
         }
-        String passiveEffect = getPassiveEffect();
-        if (!passiveEffect.isEmpty()) {
+        TextComponent passiveEffect = getPassiveEffect();
+        if (passiveEffect != null) {
             lore.addAll(Arrays.asList(
                     Component.empty(),
                     Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN)
             ));
-            lore.addAll(WordWrap.wrap(Component.text(passiveEffect, NamedTextColor.GRAY), 175));
+            lore.addAll(WordWrap.wrap(passiveEffect, 175));
         }
         return lore;
     }
@@ -470,7 +470,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return loreAddons;
     }
 
-    public abstract String getPassiveEffect();
+    public abstract TextComponent getPassiveEffect();
 
     public int getTitleLevel() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
@@ -622,16 +622,28 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     public ItemStack getUpgradedTitleItem() {
-        String passiveEffect = getPassiveEffect();
-        if (passiveEffect.isEmpty()) {
+        Component passiveEffect = getPassiveEffect();
+        if (passiveEffect == null) {
             return null;
         }
-        for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
-            passiveEffect = passiveEffect.replaceAll(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
+        TextComponent.Builder passiveEffectUpgraded = Component.text().style(passiveEffect.style());
+        List<Component> children = new ArrayList<>(passiveEffect.children());
+        children.add(0, passiveEffect.children(new ArrayList<>()));
+        for (Component child : children) {
+            passiveEffectUpgraded.append(child);
+            for (Pair<Component, Component> upgradedComponents : getPassiveEffectUpgrade()) {
+                Component oldComponent = upgradedComponents.getA();
+                Component newComponent = upgradedComponents.getB();
+                if (child.equals(oldComponent)) {
+                    passiveEffectUpgraded.append(Component.text(" > ", NamedTextColor.GREEN))
+                                         .append(newComponent);
+                    break;
+                }
+            }
         }
         List<Component> upgradeLore = new ArrayList<>();
         upgradeLore.add(Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN));
-        upgradeLore.addAll(WordWrap.wrap(Component.text(passiveEffect, NamedTextColor.GRAY), 175));
+        upgradeLore.addAll(WordWrap.wrap(passiveEffectUpgraded.build(), 175));
         upgradeLore.add(Component.empty());
         upgradeLore.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE)
                                  .append(Component.text(" > ", NamedTextColor.GREEN))
@@ -645,7 +657,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     }
 
-    public abstract List<Pair<String, String>> getPassiveEffectUpgrade();
+    public abstract List<Pair<Component, Component>> getPassiveEffectUpgrade();
 
     public int getTitleLevelUpgraded() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel() + 1;

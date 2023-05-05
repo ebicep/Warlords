@@ -2,6 +2,8 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,12 +23,12 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "";
+    public TextComponent getPassiveEffect() {
+        return null;
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return null;
     }
 

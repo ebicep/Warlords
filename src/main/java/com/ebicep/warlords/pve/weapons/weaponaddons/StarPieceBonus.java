@@ -23,7 +23,7 @@ public interface StarPieceBonus {
     List<WeaponStats> getRandomStatBonus();
 
     default Component getStarPieceBonusString() {
-        return Component.text("(+" + getStarPieceBonusValue() + "% ✦)", NamedTextColor.WHITE);
+        return Component.text(" (+" + getStarPieceBonusValue() + "% ✦)", NamedTextColor.WHITE);
     }
 
     int getStarPieceBonusValue();

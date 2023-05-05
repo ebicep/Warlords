@@ -13,6 +13,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -123,9 +126,13 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        String effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
-        return "Increase the duration of negative effects to enemies by " + effectDuration + " and active abilities of allies by " + effectDuration + " whenever you target an ally with a blue rune (Slot 4).";
+    public TextComponent getPassiveEffect() {
+        Component effectDuration = formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s");
+        return Component.text("Increase the duration of negative effects to enemies by ", NamedTextColor.GRAY)
+                        .append(effectDuration)
+                        .append(Component.text(" and active abilities of allies by "))
+                        .append(effectDuration)
+                        .append(Component.text(" whenever you target an ally with a blue rune (Slot 4)."));
     }
 
     @Override
@@ -164,7 +171,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
                 formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevel()) / 20f, "s"),
                 formatTitleUpgrade((TICKS_TO_ADD + TICKS_TO_ADD_PER_UPGRADE * getTitleLevelUpgraded()) / 20f, "s")

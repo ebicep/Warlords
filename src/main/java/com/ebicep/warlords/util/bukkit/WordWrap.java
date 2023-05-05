@@ -1,7 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
-import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
@@ -73,10 +72,10 @@ public class WordWrap {
     public static List<Component> wrap(TextComponent component, int width) {
         List<Component> output = new ArrayList<>();
         int currentWidth = 0;
-        List<Component> components = new ArrayList<>();
-        components.add(component);
-        components.addAll(component.children());
-        List<Pair<String, Style>> words = new ArrayList<>();
+        List<Component> components = new ArrayList<>(component.children());
+        components.add(0, component.children(new ArrayList<>()));
+
+        List<WordInfo> words = new ArrayList<>();
         for (Component child : components) {
             if (!(child instanceof TextComponent textComponent)) {
                 continue;
@@ -85,37 +84,46 @@ public class WordWrap {
             if (content.isEmpty()) {
                 continue;
             }
-            for (String s : content.split(" ")) {
+            String[] split = content.split(" ");
+            for (String s : split) {
                 if (s.isEmpty()) {
                     continue;
                 }
-                words.add(new Pair<>(s, child.style()));
+                words.add(new WordInfo(s, child.applyFallbackStyle(component.style()).style()));
             }
         }
         TextComponent.Builder toAppend = Component.text().append(Component.text());
         TextComponent.Builder lastComponent = Component.text();
         Style lastStyle = Style.empty();
         for (int i = 0; i < words.size(); i++) {
-            Pair<String, Style> wordStylePair = words.get(i);
-            String word = wordStylePair.getA();
-            Style currentStyle = wordStylePair.getB();
-
+            WordInfo wordInfo = words.get(i);
+            String word = wordInfo.word();
+            Style currentStyle = wordInfo.style();
+            if (word.equals("\n")) {
+                toAppend.append(lastComponent);
+                output.add(toAppend.build());
+                toAppend = Component.text();
+                lastComponent = Component.text().style(lastStyle);
+                currentWidth = 0;
+                continue;
+            }
             int wordLength = DefaultFontInfo.getStringLength(word);
+            String spacer = i < words.size() - 1 && words.get(i + 1).word().length() != 1 ? " " : ""; //TODO TEMP SOLUTION (fix for period/comma being spaced)
             if (currentWidth + wordLength <= width) {
                 if (lastStyle == currentStyle) {
-                    lastComponent.content(lastComponent.content() + word + " ");
+                    lastComponent.content(lastComponent.content() + word + spacer);
                 } else {
                     if (!lastComponent.content().isEmpty()) {
                         toAppend.append(lastComponent);
                     }
-                    lastComponent = Component.text(word + " ", currentStyle).toBuilder();
+                    lastComponent = Component.text(word + spacer, currentStyle).toBuilder();
                 }
                 currentWidth += wordLength;
             } else {
                 toAppend.append(lastComponent);
                 output.add(toAppend.build());
                 toAppend = Component.text();
-                lastComponent = Component.text(word + " ", currentStyle).toBuilder();
+                lastComponent = Component.text(word + spacer, currentStyle).toBuilder();
                 currentWidth = wordLength;
             }
             if (i == words.size() - 1) {
@@ -169,6 +177,9 @@ public class WordWrap {
             output.append(Component.text(toAppend.toString(), child.style()));
         }
         return output.build();
+    }
+
+    private record WordInfo(String word, Style style) {
     }
 
 }

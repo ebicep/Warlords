@@ -21,6 +21,9 @@ import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -205,10 +208,11 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s") +
-                " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
-                "Shift for 1 second to remove all summoned mobs.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Every ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
+                        .append(Component.text(" summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
+                                "Shift for 1 second to remove all summoned mobs."));
     }
 
     @Override
@@ -247,7 +251,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
                 formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"),
                 formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "s")

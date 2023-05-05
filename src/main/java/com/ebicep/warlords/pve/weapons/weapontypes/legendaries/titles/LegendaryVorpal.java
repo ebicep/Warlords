@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,31 +43,6 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     public LegendaryVorpal(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by " +
-                formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " and proc chance by " +
-                formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
-                )
-        );
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 220;
     }
 
     @Override
@@ -126,22 +104,24 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
+    public TextComponent getPassiveEffect() {
+        return Component.text(
+                                "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by ",
+                                NamedTextColor.GRAY
+                        )
+                        .append(formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" and proc chance by "))
+                        .append(formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text("."));
+    }
+
+    @Override
     public LegendaryTitles getTitle() {
         return LegendaryTitles.VORPAL;
     }
 
     @Override
     protected float getMeleeDamageMinValue() {
-        return 200;
-    }
-
-    @Override
-    protected float getCritChanceValue() {
-        return 35;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
         return 200;
     }
 
@@ -163,6 +143,34 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     @Override
     protected float getEnergyPerHitBonusValue() {
         return 4;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 220;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 35;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 200;
+    }
+
+    @Override
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                )
+        );
     }
 
     @Override

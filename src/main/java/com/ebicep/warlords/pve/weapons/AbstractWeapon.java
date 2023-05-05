@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -40,16 +39,16 @@ public abstract class AbstractWeapon {
         return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value);
     }
 
-    protected static String formatTitleUpgrade(double value, String append) {
-        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + append + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(double value, String append) {
+        return Component.text(DECIMAL_FORMAT_TITLE.format(value) + append, NamedTextColor.GREEN);
     }
 
-    protected static String formatTitleUpgrade(String prepend, double value) {
-        return ChatColor.GREEN + prepend + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(String prepend, double value) {
+        return Component.text(prepend + DECIMAL_FORMAT_TITLE.format(value), NamedTextColor.GREEN);
     }
 
-    protected static String formatTitleUpgrade(double value) {
-        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(double value) {
+        return Component.text(DECIMAL_FORMAT_TITLE.format(value), NamedTextColor.GREEN);
     }
 
     protected UUID uuid = UUID.randomUUID();

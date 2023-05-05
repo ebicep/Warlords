@@ -512,7 +512,7 @@ public class WeaponManagerMenu {
                     )
             );
             List<Component> upgradeWeaponTitleLore = new ArrayList<>(
-                    WordWrap.wrap(Component.text("Change your weapon title to modify its stat distribution.", NamedTextColor.RED), 180)
+                    WordWrap.wrap(Component.text("Change your weapon title to modify its stat distribution.", NamedTextColor.GRAY), 180)
             );
             upgradeWeaponTitleLore.add(Component.empty());
             upgradeWeaponTitleLore.add(Component.textOfChildren(

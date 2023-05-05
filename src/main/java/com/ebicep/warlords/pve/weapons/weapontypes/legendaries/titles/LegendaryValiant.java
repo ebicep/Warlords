@@ -8,6 +8,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -33,8 +36,10 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getMeleeDamageMaxValue() {
-        return 180;
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
+        return baseCost;
     }
 
     @Override
@@ -64,11 +69,13 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        String hpTitleUpgrade = formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%");
-        return "While your health is below " +
-                hpTitleUpgrade + ", your EPS is increased by " +
-                formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    public TextComponent getPassiveEffect() {
+        Component hpTitleUpgrade = formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%");
+        return Component.text("While your health is below ", NamedTextColor.GRAY)
+                        .append(hpTitleUpgrade)
+                        .append(Component.text(", your EPS is increased by "))
+                        .append(formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text("."));
     }
 
     @Override
@@ -102,6 +109,11 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getMeleeDamageMaxValue() {
+        return 180;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 25;
     }
@@ -112,7 +124,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
                         formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
@@ -122,12 +134,5 @@ public class LegendaryValiant extends AbstractLegendaryWeapon {
                         formatTitleUpgrade(EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
-    }
-
-    @Override
-    public LinkedHashMap<Currencies, Long> getCost() {
-        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
-        baseCost.put(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE, 1L);
-        return baseCost;
     }
 }

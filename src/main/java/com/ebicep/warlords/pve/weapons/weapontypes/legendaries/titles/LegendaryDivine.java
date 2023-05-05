@@ -12,6 +12,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -176,11 +179,17 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
-                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, " +
-                formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " increased damage, and " +
-                formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()) + " EPS for 6 seconds. Can be triggered every 40 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times. Maximum 3 stacks.",
+                                NamedTextColor.GRAY
+                        )
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, "))
+                        .append(formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" increased damage, and "))
+                        .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" EPS for 6 seconds. Can be triggered every 40 seconds."));
     }
 
     @Override
@@ -234,7 +243,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
