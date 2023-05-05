@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SupplyDropManager {
@@ -109,8 +110,8 @@ public class SupplyDropManager {
                     new ItemBuilder(Material.DIAMOND_HORSE_ARMOR)
                             .name(Component.text("Click to call all available supply drops (Max 25)", NamedTextColor.GREEN))
                             .lore(
-                                    Component.text("Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens), NamedTextColor.GRAY),
-                                    Component.text("Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens), NamedTextColor.GRAY),
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
+                                    Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
                                     Component.empty(),
                                     Component.text("NOTE: Max 25 at a time", NamedTextColor.GRAY),
                                     Component.empty(),
@@ -151,7 +152,7 @@ public class SupplyDropManager {
                                            .mapToObj(index -> Component.text((index + 1) + ".", NamedTextColor.GRAY)
                                                                        .append(supplyDropHistory.get(supplyDropHistory.size() - index - 1))
                                            )
-                                           .collect(Component.toComponent(Component.empty())))
+                                           .collect(Collectors.toList()))
                             .get(),
                     (m, e) -> {
 

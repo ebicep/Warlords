@@ -56,7 +56,7 @@ public class WarlordsShopMenu {
                                    .append(Component.text(" [", NamedTextColor.DARK_GRAY))
                                    .append(Component.text("Lv" + ExperienceManager.getLevelString(level), NamedTextColor.GRAY))
                                    .append(Component.text("]", NamedTextColor.DARK_GRAY)));
-            itemBuilder.addLoreC(WordWrap.wrap(Component.text(group.description, NamedTextColor.GRAY), 150));
+            itemBuilder.addLore(WordWrap.wrap(Component.text(group.description, NamedTextColor.GRAY), 150));
             itemBuilder.addLore(Component.empty());
             itemBuilder.addLore(Component.text("Specializations:"));
             for (Specializations subClass : group.subclasses) {
@@ -64,9 +64,9 @@ public class WarlordsShopMenu {
             }
             itemBuilder.addLore(Component.empty());
 
-            itemBuilder.addLoreC(ExperienceManager.getProgressString(experience, level + 1));
+            itemBuilder.addLore(ExperienceManager.getProgressString(experience, level + 1));
             itemBuilder.addLore(Component.empty());
-            itemBuilder.addLoreC(WordWrap.wrap(Component.text("Click here to select a " + group.name + "specialization", NamedTextColor.YELLOW), 150));
+            itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + group.name + "specialization", NamedTextColor.YELLOW), 150));
             menu.setItem(
                     9 / 2 - values.length / 2 + i * 2 - 2,
                     1,
@@ -103,11 +103,11 @@ public class WarlordsShopMenu {
                                    .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec)))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.addLore(spec.description);
-            itemBuilder.addLore("");
+            itemBuilder.addLore(Component.empty());
             long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), spec);
             int level = (int) ExperienceManager.calculateLevelFromExp(experience);
-            itemBuilder.addLoreC(ExperienceManager.getProgressString(experience, level + 1));
-            itemBuilder.addLore("");
+            itemBuilder.addLore(ExperienceManager.getProgressString(experience, level + 1));
+            itemBuilder.addLore(Component.empty());
             if (spec == selectedSpec) {
                 itemBuilder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);

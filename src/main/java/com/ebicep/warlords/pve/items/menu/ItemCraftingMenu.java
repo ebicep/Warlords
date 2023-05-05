@@ -197,7 +197,7 @@ public class ItemCraftingMenu {
                                 Component.empty()
                         )
                         .addLore(
-                                WordWrap.wrapWithNewline(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
                                                 "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
                                         160
                                 )
@@ -338,7 +338,6 @@ public class ItemCraftingMenu {
                                     Component.text("Amount: ", NamedTextColor.GRAY),
                                     Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
                             ))
-                            .amount(blessingBoughtAmount)
                             .enchant(Enchantment.OXYGEN, 1)
                             .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),

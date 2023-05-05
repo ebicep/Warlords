@@ -78,7 +78,7 @@ public class WeaponSkinSelectorMenu {
                             Component.text("Cost: ", NamedTextColor.AQUA).append(Component.text("Unlocked", NamedTextColor.GREEN))
                     );
                 } else {
-                    itemBuilder.addLoreC(PvEUtils.getCostLore(cost, false));
+                    itemBuilder.addLore(PvEUtils.getCostLore(cost, false));
                 }
                 if (weapon.getSelectedWeaponSkin() == weaponSkin) {
                     itemBuilder.addLore(

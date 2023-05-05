@@ -79,6 +79,7 @@ public class Settings {
                 .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .lore(
                         Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Relative", NamedTextColor.AQUA)),
+                        Component.empty(),
                         Component.text("Prints out flag messages with 'YOUR/ENEMY'", NamedTextColor.GRAY),
                         Component.empty(),
                         Component.text("Click here to enable Absolute mode.", NamedTextColor.YELLOW)
@@ -89,6 +90,7 @@ public class Settings {
                 .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .lore(
                         Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Absolute", NamedTextColor.YELLOW)),
+                        Component.empty(),
                         Component.text("Prints out flag messages with team names", NamedTextColor.GRAY),
                         Component.empty(),
                         Component.text("Click here to enable Relative mode.", NamedTextColor.YELLOW)

@@ -80,7 +80,7 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     @Override
     public List<Component> getLore() {
         return Arrays.asList(
-                Component.text("Speed :", NamedTextColor.GRAY)
+                Component.text("Speed: ", NamedTextColor.GRAY)
                          .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN)),
                 Component.empty(),
                 getWeaponScoreString()

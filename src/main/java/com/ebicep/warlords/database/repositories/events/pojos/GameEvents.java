@@ -872,7 +872,7 @@ public enum GameEvents {
                 ItemBuilder itemBuilder = new ItemBuilder(rewardSpendable.getItem())
                         .name(rewardSpendable.getCostColoredName(rewardAmount));
                 if (rewardSpendable instanceof FixedItems) {
-                    itemBuilder.addLore("");
+                    itemBuilder.addLore(Component.empty());
                 }
                 menu.setItem(x, y,
                         itemBuilder

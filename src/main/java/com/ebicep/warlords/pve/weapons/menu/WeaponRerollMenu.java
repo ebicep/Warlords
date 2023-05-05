@@ -22,7 +22,7 @@ public class WeaponRerollMenu {
                 new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(Component.text("Confirm", NamedTextColor.GREEN))
                         .lore(Component.text("Reroll this weapon and reset its stats.", NamedTextColor.GRAY))
-                        .addLoreC(weapon.getRerollCostLore())
+                        .addLore(weapon.getRerollCostLore())
                         .addLore(
                                 Component.empty(),
                                 Component.textOfChildren(

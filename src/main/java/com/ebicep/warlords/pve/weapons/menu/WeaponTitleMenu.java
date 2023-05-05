@@ -72,7 +72,7 @@ public class WeaponTitleMenu {
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 } else {
                     if (titleIsLocked) {
-                        itemBuilder.addLoreC(loreCost);
+                        itemBuilder.addLore(loreCost);
                     } else {
                         itemBuilder.addLore(
                                 Component.empty(),

@@ -32,10 +32,10 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder);
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLoreC(getBonusLore());
+        itemBuilder.addLore(getBonusLore());
         addItemScoreAndWeight(itemBuilder);
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLoreC(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_AQUA, TextDecoration.ITALIC), 160));
+        itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;
     }
 

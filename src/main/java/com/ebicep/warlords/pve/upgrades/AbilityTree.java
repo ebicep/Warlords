@@ -62,11 +62,11 @@ public class AbilityTree {
                                     Component.text("Free Upgrades Available: ", NamedTextColor.GRAY).append(Component.text(upgradeBranch.getFreeUpgrades(), NamedTextColor.GREEN)),
                                     Component.empty()
                             )
-                            .addLoreC(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeA()))
+                            .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeA()))
                             .addLore(Component.empty())
-                            .addLoreC(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeB()))
+                            .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeB()))
                             .addLore(Component.empty())
-                            .addLoreC(getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade()))
+                            .addLore(getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade()))
                             .addLore(
                                     Component.empty(),
                                     Component.text(">> Click to open ability upgrade tree. <<", NamedTextColor.GRAY)
@@ -227,7 +227,7 @@ public class AbilityTree {
                             .name(Component.text("Change Profile Priority", NamedTextColor.GREEN))
                             .lore(lore)
                             .addLore(Component.empty())
-                            .addLoreC(
+                            .addLore(
                                     WordWrap.wrap(Component.text("Change the priority of the current profile, for when you have " +
                                                     "multiple profile with the same filters.", NamedTextColor.GRAY),
                                             170

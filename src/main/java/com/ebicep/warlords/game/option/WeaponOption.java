@@ -121,7 +121,7 @@ public class WeaponOption implements Option {
         itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
                                      .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritMultiplier()) + "%", NamedTextColor.RED)));
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLoreC(weapon.getDescription());
+        itemBuilder.addLore(weapon.getDescription());
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(Component.textOfChildren(
                         Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),

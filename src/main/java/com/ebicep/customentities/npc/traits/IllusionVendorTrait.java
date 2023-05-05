@@ -78,9 +78,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
             menu.setItem(i + 1, 1,
                     new ItemBuilder(rewardSpendable.getItem())
                             .name(rewardSpendable.getCostColoredName(rewardAmount))
-                            .loreLEGACY(
-                                    ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice),
-                                    ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + stock
+                            .lore(
+                                    Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice)),
+                                    Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
                             )
                             .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
@@ -137,9 +137,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                   new ItemBuilder(item.generateItemStack())
                                           .name(itemName)
                                           .addLore(
-                                                  "",
-                                                  ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + Currencies.ILLUSION_SHARD.getCostColoredName(cost),
-                                                  ChatColor.GRAY + "Stock: " + ChatColor.YELLOW + (1 - purchasedAmount)
+                                                  Component.empty(),
+                                                  Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(cost)),
+                                                  Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(1 - purchasedAmount))
                                           )
                                           .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                           .get(),

@@ -188,7 +188,7 @@ public abstract class AbstractAbility {
                                          .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
         }
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLoreC(getDescription());
+        itemBuilder.addLore(getDescription());
 
         return itemBuilder.get();
     }

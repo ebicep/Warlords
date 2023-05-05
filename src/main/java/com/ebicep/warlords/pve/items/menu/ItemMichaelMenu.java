@@ -40,7 +40,7 @@ public class ItemMichaelMenu {
         menu.setItem(1, 1,
                 new ItemBuilder(Material.BOOK)
                         .name(Component.text("Your Blessings", NamedTextColor.GREEN))
-                        .lore(WordWrap.wrapWithNewline(Component.text("View your found and bought blessings", NamedTextColor.GRAY), 170))
+                        .lore(WordWrap.wrap(Component.text("View your found and bought blessings", NamedTextColor.GRAY), 170))
                         .get(),
                 (m, e) -> {
                     YourBlessingsMenu.openYourBlessingsMenu(player, databasePlayer);
@@ -52,7 +52,7 @@ public class ItemMichaelMenu {
                         .name(Component.text("Buy a Blessing", NamedTextColor.GREEN))
                         .lore(WordWrap.wrap(Component.text("Buy blessings at the cost of mob drops.", NamedTextColor.GRAY), 170))
                         .addLore(Component.empty())
-                        .addLoreC(WordWrap.wrap(Component.text(
+                        .addLore(WordWrap.wrap(Component.text(
                                         "There are 9 purchasable blessings per week. Higher tier blessings have a lower chance to be in stock.",
                                         NamedTextColor.GRAY
                                 ), 150)
@@ -81,13 +81,13 @@ public class ItemMichaelMenu {
                                 ),
                                 Component.empty()
                         )
-                        .addLoreC(
+                        .addLore(
                                 WordWrap.wrap(Component.text("Applying unknown blessings to an Item gives it a random blessing or curse, or does nothing. " +
                                                 "The chance of a blessing or curse is based on the tier of the blessing.", NamedTextColor.GRAY),
                                         170
                                 ))
                         .addLore(Component.empty())
-                        .addLoreC(
+                        .addLore(
                                 WordWrap.wrap(Component.text(
                                         "Applying bought blessings to an Item has a guaranteed chance of blessing it, adding its tier to the current modified value.",
                                         NamedTextColor.GRAY
@@ -102,7 +102,7 @@ public class ItemMichaelMenu {
         menu.setItem(7, 1,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(Component.text("Remove a Curse", NamedTextColor.GREEN))
-                        .lore(WordWrap.wrapWithNewline(Component.text("Removing a Curse on an Item will lower its curse effectiveness by a tier.",
+                        .lore(WordWrap.wrap(Component.text("Removing a Curse on an Item will lower its curse effectiveness by a tier.",
                                 NamedTextColor.GRAY
                         ), 150))
                         .get(),
@@ -129,7 +129,7 @@ public class ItemMichaelMenu {
                                     Component.empty(),
                                     Component.text("Bought Blessings", NamedTextColor.GREEN)
                             )
-                            .addLoreC(
+                            .addLore(
                                     WordWrap.wrap(Component.text("You can buy blessings through Michael. " +
                                             "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY), 150)
                             )
@@ -145,7 +145,6 @@ public class ItemMichaelMenu {
                                     Component.text("Amount: ", NamedTextColor.GRAY),
                                     Component.text(blessingsFound, NamedTextColor.YELLOW)
                             ))
-                            .amount(blessingsFound)
                             .get(),
                     (m, e) -> {
 
@@ -160,7 +159,7 @@ public class ItemMichaelMenu {
                                         Component.text("Amount: ", NamedTextColor.GRAY),
                                         Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
                                 ))
-                                .amount(blessingBoughtAmount)
+                                .amount(tier)
                                 .enchant(Enchantment.OXYGEN, 1)
                                 .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
@@ -229,7 +228,7 @@ public class ItemMichaelMenu {
                                         Component.text("Stock: ", NamedTextColor.GRAY)
                                                  .append(Component.text(stock, NamedTextColor.YELLOW))
                                 ))
-                                .addLoreC(lore)
+                                .addLore(lore)
                                 .amount(tier)
                                 .enchant(Enchantment.OXYGEN, 1)
                                 .flags(ItemFlag.HIDE_ENCHANTS)
@@ -305,7 +304,7 @@ public class ItemMichaelMenu {
                     boolean blessingFound = menuData.isBlessingFound();
                     selectedBlessing = new ItemBuilder(Material.PAPER)
                             .name(Component.text("Tier " + (blessing + 1) + (blessingFound ? " Found" : " Bought") + " Blessing", NamedTextColor.GREEN))
-                            .addLoreC(blessingFound ? menuData.getBlessingCurseFoundLore() : menuData.getBlessingCurseBoughtLore())
+                            .addLore(blessingFound ? menuData.getBlessingCurseFoundLore() : menuData.getBlessingCurseBoughtLore())
                             .addLore(
                                     Component.empty(),
                                     Component.textOfChildren(
@@ -424,7 +423,7 @@ public class ItemMichaelMenu {
                                     Component.empty(),
                                     Component.text("Bought Blessings", NamedTextColor.GREEN)
                             )
-                            .addLoreC(
+                            .addLore(
                                     WordWrap.wrap(Component.text("You can buy blessings through Michael. " +
                                             "Bought blessings have a guaranteed chance of applying its tier.", NamedTextColor.GRAY), 150)
                             )
@@ -460,7 +459,6 @@ public class ItemMichaelMenu {
                                     ) :
                                     Component.text("You have no unknown blessings", NamedTextColor.RED)
                             )
-                            .amount(blessingsFound)
                             .get(),
                     (m, e) -> {
                         if (blessingsFound <= 0) {

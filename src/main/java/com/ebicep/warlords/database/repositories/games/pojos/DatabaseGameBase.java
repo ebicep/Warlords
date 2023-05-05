@@ -573,15 +573,15 @@ public abstract class DatabaseGameBase {
         });
     }
 
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Map: " + ChatColor.YELLOW + getMap().getMapName());
-        lore.add(ChatColor.GRAY + "Mode: " + ChatColor.AQUA + getGameMode().getName());
-        lore.add(ChatColor.GRAY + "Addons: " + ChatColor.GOLD + getGameAddons().stream()
-                                                                               .map(GameAddon::getName)
-                                                                               .collect(Collectors.joining(", ")));
-        lore.add(ChatColor.GRAY + "Counted: " + ChatColor.GREEN + counted);
-        lore.add("");
+    public List<Component> getLore() {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Map: ", NamedTextColor.GRAY).append(Component.text(getMap().getMapName(), NamedTextColor.YELLOW)));
+        lore.add(Component.text("Mode: ", NamedTextColor.GRAY).append(Component.text(getGameMode().getName(), NamedTextColor.AQUA)));
+        lore.add(Component.text("Addons: ", NamedTextColor.GRAY).append(Component.text(getGameAddons().stream()
+                                                                                                      .map(GameAddon::getName)
+                                                                                                      .collect(Collectors.joining(", ")), NamedTextColor.GOLD)));
+        lore.add(Component.text("Counted: ", NamedTextColor.GRAY).append(Component.text(counted, NamedTextColor.GREEN)));
+        lore.add(Component.empty());
         lore.addAll(getExtraLore());
         return lore;
     }
@@ -598,7 +598,7 @@ public abstract class DatabaseGameBase {
         return gameAddons;
     }
 
-    public abstract List<String> getExtraLore();
+    public abstract List<Component> getExtraLore();
 
     public void setGameAddons(List<GameAddon> gameAddons) {
         this.gameAddons = gameAddons;

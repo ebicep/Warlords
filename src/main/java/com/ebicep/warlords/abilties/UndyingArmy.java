@@ -27,7 +27,11 @@ import java.util.List;
 public class UndyingArmy extends AbstractAbility implements Duration {
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(Component.text("Instant Kill", NamedTextColor.RED))
-            .loreLEGACY("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
+            .lore(
+                    Component.text("Right-click this item to die"),
+                    Component.text("instantly instead of waiting for"),
+                    Component.text("the decay.")
+            )
             .get();
 
     public int playersArmied = 0;

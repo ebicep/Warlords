@@ -410,6 +410,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                          .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()), NamedTextColor.RED))
                          .append(Component.text("%", NamedTextColor.RED))
                          .append(getStarPieceBonusString(WeaponStats.CRIT_MULTIPLIER)),
+                Component.empty(),
                 Component.text("Health: ", NamedTextColor.GRAY)
                          .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
                          .append(getStarPieceBonusString(WeaponStats.HEALTH_BONUS))

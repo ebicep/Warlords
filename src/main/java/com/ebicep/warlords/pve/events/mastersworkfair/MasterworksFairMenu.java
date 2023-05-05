@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MasterworksFairMenu {
 
@@ -86,7 +87,7 @@ public class MasterworksFairMenu {
                                                          .append(Component.text("#" + masterworksFairEntry.getPlacement(), value.textColor))
                                                          .append(Component.text(" - "))
                                                          .append(Component.text(masterworksFairEntry.getScore(), NamedTextColor.YELLOW)))
-                                        .collect(Component.toComponent(Component.empty()))
+                                        .collect(Collectors.toList())
                                 )
                                 .get(), (m, e) -> {
 

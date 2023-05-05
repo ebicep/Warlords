@@ -15,6 +15,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -113,10 +115,12 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
     }
 
     @Override
-    public List<String> getExtraLore() {
+    public List<Component> getExtraLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Time Elapsed: " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed),
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + getPlayers().size()
+                Component.text("Time Elapsed: ", NamedTextColor.GRAY)
+                         .append(Component.text(Utils.formatTimeLeft(timeElapsed), NamedTextColor.GREEN)),
+                Component.text("Players: ", NamedTextColor.GRAY)
+                         .append(Component.text(getPlayers().size(), NamedTextColor.YELLOW))
         );
     }
 

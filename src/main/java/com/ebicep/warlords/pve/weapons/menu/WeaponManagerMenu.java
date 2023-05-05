@@ -130,7 +130,7 @@ public class WeaponManagerMenu {
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
                                 ), 160))
                         .addLore(Component.empty())
-                        .addLoreC(WordWrap.wrap(
+                        .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
                                         Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to salvage all ", NamedTextColor.GRAY),
@@ -140,7 +140,7 @@ public class WeaponManagerMenu {
                                         Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
                                 ), 160))
                         .addLore(Component.empty())
-                        .addLoreC(WordWrap.wrap(
+                        .addLore(WordWrap.wrap(
                                 Component.textOfChildren(
                                         Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to change the weapon score filter amount.", NamedTextColor.GRAY)
@@ -243,9 +243,9 @@ public class WeaponManagerMenu {
                                 ),
                                 Component.empty()
                         )
-                        .addLoreC(Arrays.stream(BindFilterOptions.VALUES)
-                                        .map(value -> Component.text(value.name, bindFilterOption == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
-                                        .collect(Collectors.toList())
+                        .addLore(Arrays.stream(BindFilterOptions.VALUES)
+                                       .map(value -> Component.text(value.name, bindFilterOption == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                       .collect(Collectors.toList())
                         )
                         .addLore(Component.textOfChildren(
                                         Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -467,15 +467,15 @@ public class WeaponManagerMenu {
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
             weaponOptions.add(new Pair<>(
-                            new ItemBuilder(Material.NETHER_STAR)
-                                    .name(Component.text("Apply a " + selectedStarPiece.currency.name, NamedTextColor.GREEN))
-                                    .lore(WordWrap.wrap(
-                                            Component.text("This star piece provides a ", NamedTextColor.GRAY)
-                                                     .append(Component.text(selectedStarPiece.starPieceBonusValue + "% ", selectedStarPiece.currency.textColor))
-                                                     .append(Component.text("stat boost to a random stat.")),
-                                            180
-                                    ))
-                                    .addLoreC(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
+                    new ItemBuilder(Material.NETHER_STAR)
+                            .name(Component.text("Apply a " + selectedStarPiece.currency.name, NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(
+                                    Component.text("This star piece provides a ", NamedTextColor.GRAY)
+                                             .append(Component.text(selectedStarPiece.starPieceBonusValue + "% ", selectedStarPiece.currency.textColor))
+                                             .append(Component.text("stat boost to a random stat.")),
+                                    180
+                            ))
+                            .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
                                     .addLore(Component.empty(),
                                             Component.textOfChildren(
                                                     Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -566,7 +566,7 @@ public class WeaponManagerMenu {
                     new ItemBuilder(Material.BOOKSHELF)
                             .name(Component.text("Change Skill Boost", NamedTextColor.GREEN))
                             .lore(WordWrap.wrap(Component.text(
-                                            "Change the skill boost of this weapon.", NamedTextColor.RED),
+                                            "Change the skill boost of this weapon.", NamedTextColor.GRAY),
                                     180
                             ))
                             .get(),

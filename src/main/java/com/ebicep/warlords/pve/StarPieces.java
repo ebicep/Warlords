@@ -60,8 +60,8 @@ public enum StarPieces {
                 menu.setItem(col, row,
                         new ItemBuilder(Material.NETHER_STAR)
                                 .name(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GREEN), starPiece.currency.getColoredName()))
-                                .lore(WordWrap.wrapWithNewline(Component.text("Combines lower tier star pieces to create a higher one.", NamedTextColor.GRAY), 140))
-                                .addLoreC(costLore)
+                                .lore(WordWrap.wrap(Component.text("Combines lower tier star pieces to create a higher one.", NamedTextColor.GRAY), 140))
+                                .addLore(costLore)
                                 .get(),
                         (m, e) -> {
                             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();

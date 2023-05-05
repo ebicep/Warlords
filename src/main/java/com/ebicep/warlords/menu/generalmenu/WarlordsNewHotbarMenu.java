@@ -73,7 +73,7 @@ public class WarlordsNewHotbarMenu {
                                     Component.empty(),
                                     Component.text("Class Stats:", NamedTextColor.GOLD)
                             )
-                            .addLoreC(
+                            .addLore(
                                     ExperienceManager.getProgressString(classExperience, classLevel + 1))
                             .addLore(
                                     Component.empty(),
@@ -93,8 +93,8 @@ public class WarlordsNewHotbarMenu {
                                                      .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
                                                      .append(Component.text("] ", NamedTextColor.DARK_GRAY))
                                                      .append(ExperienceManager.getPrestigeLevelString(prestige)));
-                        itemBuilder.addLoreC(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
-                        itemBuilder.addLore("");
+                        itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
+                        itemBuilder.addLore(Component.empty());
 
                         for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                             if (prestigeCheck == prestige) {
@@ -118,7 +118,7 @@ public class WarlordsNewHotbarMenu {
                         }
                     }
 
-                    itemBuilder.addLoreC(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
+                    itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
                     if (hasRewards) {
                         itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                         itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -393,7 +393,7 @@ public class WarlordsNewHotbarMenu {
                 .lore(WordWrap.wrap(Component.text("Change the cosmetic appearance of your weapon to better suit your tastes.", NamedTextColor.GRAY), 160))
                 .addLore(
                         Component.empty(),
-                        Component.text("Click to change weapon skin!", NamedTextColor.GRAY)
+                        Component.text("Click to change weapon skin!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
@@ -408,6 +408,7 @@ public class WarlordsNewHotbarMenu {
                         Component.empty(),
                         Component.text("Click to equip!", NamedTextColor.YELLOW)
                 )
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
                 .name(Component.text("Weapon Skill Boost", NamedTextColor.AQUA))
@@ -895,7 +896,7 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
                 .name(Component.text("Particle Quality", NamedTextColor.GREEN))
-                .loreLEGACY("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
+                .lore(WordWrap.wrap(Component.text("Allows you to control, or disable, particles and the amount of them.", NamedTextColor.GRAY), 150))
                 .get();
         public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
                 .name(Component.text("Chat Settings", NamedTextColor.GREEN))

@@ -27,7 +27,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
         addStatPoolAndBlessing(itemBuilder);
         if (this instanceof FixedItemAppliesToPlayer bonus) {
             itemBuilder.addLore(Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN));
-            itemBuilder.addLoreC(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
+            itemBuilder.addLore(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
         }
         addItemScoreAndWeight(itemBuilder);
         return itemBuilder;

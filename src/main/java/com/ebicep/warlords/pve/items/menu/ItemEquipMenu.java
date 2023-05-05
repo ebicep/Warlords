@@ -186,13 +186,13 @@ public class ItemEquipMenu {
                         .lore(Component.empty(),
                                 Component.text("Breakdown (" + selectedSpec.name + "):", NamedTextColor.AQUA)
                         )
-                        .addLoreC(weightBreakdown.stream()
-                                                 .map(pair -> Component.textOfChildren(
-                                                         Component.text("- ", NamedTextColor.AQUA),
-                                                         Component.text(pair.getA() + ": ", NamedTextColor.GRAY),
-                                                         Component.text(pair.getB(), NamedTextColor.GREEN)
-                                                 ))
-                                                 .collect(Collectors.toList())
+                        .addLore(weightBreakdown.stream()
+                                                .map(pair -> Component.textOfChildren(
+                                                        Component.text("- ", NamedTextColor.AQUA),
+                                                        Component.text(pair.getA() + ": ", NamedTextColor.GRAY),
+                                                        Component.text(pair.getB(), NamedTextColor.GREEN)
+                                                ))
+                                                .collect(Collectors.toList())
                         )
                         .get(),
                 (m, e) -> {}
@@ -203,7 +203,7 @@ public class ItemEquipMenu {
             for (int j = 0; j < tier.maxEquipped; j++) {
                 menu.setItem(x, y,
                         new ItemBuilder(tier.clayBlock)
-                                .name(tier.getColoredName() + " Item")
+                                .name(tier.getColoredName().append(Component.text(" Item")))
                                 .get(),
                         (m, e) -> {
                         }
@@ -398,7 +398,7 @@ public class ItemEquipMenu {
                                 170
                         ))
                         .addLore(Component.empty())
-                        .addLoreC(lore)
+                        .addLore(lore)
                         .get(),
                 (m, e) -> {
                     int loadoutIndex = loadouts.indexOf(itemLoadout);

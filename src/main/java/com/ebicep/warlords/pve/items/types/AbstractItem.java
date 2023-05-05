@@ -143,10 +143,10 @@ public abstract class AbstractItem {
     }
 
     protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {
-        itemBuilder.addLoreC(getStatPoolLore());
+        itemBuilder.addLore(getStatPoolLore());
         if (modifier != 0) {
             itemBuilder.addLore(Component.empty());
-            itemBuilder.addLoreC(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
+            itemBuilder.addLore(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
         }
     }
 
