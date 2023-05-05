@@ -2,9 +2,11 @@ package com.ebicep.warlords.pve.items.menu.util;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
 import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
@@ -116,7 +118,7 @@ public class ItemMenuUtil {
         }
     }
 
-    public static List<String> getTotalBonusLore(List<AbstractItem> equippedItems, boolean skipFirstLine) {
+    public static List<Component> getTotalBonusLore(List<AbstractItem> equippedItems, boolean skipFirstLine) {
         HashMap<BasicStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
@@ -130,55 +132,124 @@ public class ItemMenuUtil {
                 case BUCKLER -> bucklerModifier += equippedItem.getModifierCalculated();
             }
         }
-        List<String> bonusLore = BasicStatPool.getStatPoolLore(statPool, ChatColor.AQUA + "- ", true);
-        List<String> blessCurseLore = new ArrayList<>();
+        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, ChatColor.AQUA + "- ", true);
+        List<Component> blessCurseLore = new ArrayList<>();
         if (gauntletModifier != 0) {
-            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
+            List<Component> lore = AbstractItem.getModifierCalculatedLore(
                     ItemGauntletModifier.Blessings.VALUES,
                     ItemGauntletModifier.Curses.VALUES,
                     gauntletModifier,
                     true
-            ));
+            );
+            addBlessCurseLore(blessCurseLore, lore);
         }
         if (tomeModifier != 0) {
-            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
+            List<Component> lore = AbstractItem.getModifierCalculatedLore(
                     ItemTomeModifier.Blessings.VALUES,
                     ItemTomeModifier.Curses.VALUES,
                     tomeModifier,
                     true
-            ));
+            );
+            addBlessCurseLore(blessCurseLore, lore);
         }
         if (bucklerModifier != 0) {
-            blessCurseLore.add(ChatColor.AQUA + "- " + AbstractItem.getModifierCalculatedLore(
+            List<Component> lore = AbstractItem.getModifierCalculatedLore(
                     ItemBucklerModifier.Blessings.VALUES,
                     ItemBucklerModifier.Curses.VALUES,
                     bucklerModifier,
                     true
-            ));
+            );
+            addBlessCurseLore(blessCurseLore, lore);
         }
         if (!blessCurseLore.isEmpty()) {
-            bonusLore.add(ChatColor.AQUA + "Blessings/Curses:");
+            bonusLore.add(Component.text("Blessings/Curses:", NamedTextColor.AQUA));
             bonusLore.addAll(blessCurseLore);
         }
-        List<String> bonusLores = equippedItems.stream()
-                                               .sorted(Comparator.comparingInt(o -> o.getTier().ordinal()))
-                                               .filter(BonusLore.class::isInstance)
-                                               .map(BonusLore.class::cast)
-                                               .map(BonusLore::getBonusLore)
-                                               .filter(Objects::nonNull)
-                                               .toList();
-        //TODO stack same bonuses
-        if (!bonusLores.isEmpty()) {
-            bonusLore.add(ChatColor.AQUA + "Special Bonuses:");
-            for (String lore : bonusLores) {
-                bonusLore.add(ChatColor.AQUA + "- " + lore.replaceAll("\n", "\n     ") + "\n\n");
+        HashMap<Classes, LinkedHashSet<List<Component>>> bonuses = new HashMap<>();
+        equippedItems.stream()
+                     .sorted(Comparator.comparingInt(o -> o.getTier().ordinal()))
+                     .filter(BonusLore.class::isInstance)
+                     .filter(item -> ((BonusLore) item).getBonusLore() != null)
+                     .forEach(item -> {
+                         BonusLore bonus = (BonusLore) item;
+                         if (item instanceof ItemAddonClassBonus classBonus) {
+                             bonuses.computeIfAbsent(classBonus.getClasses(), k -> new LinkedHashSet<>()).add(bonus.getBonusLore());
+                         } else {
+                             bonuses.computeIfAbsent(null, k -> new LinkedHashSet<>()).add(bonus.getBonusLore());
+                         }
+                     });
+        if (!bonuses.isEmpty()) {
+            bonusLore.add(Component.text("Special Bonuses:", NamedTextColor.AQUA));
+            bonuses.entrySet()
+                   .stream()
+                   .sorted((o1, o2) -> {
+                       if (o1.getKey() == null) {
+                           return -1;
+                       } else if (o2.getKey() == null) {
+                           return 1;
+                       } else {
+                           return o1.getKey().compareTo(o2.getKey());
+                       }
+                   })
+                   .forEachOrdered(entry -> {
+                       Classes classes = entry.getKey();
+                       LinkedHashSet<List<Component>> lists = entry.getValue();
+                       bonusLore.add(Component.textOfChildren(
+                               Component.text("- ", NamedTextColor.AQUA),
+                               Component.text(classes == null ? "General" : classes.name, NamedTextColor.GREEN)
+                       ));
+                       if (classes == null) {
+                           lists.forEach(bonusLores -> {
+                               for (int i = 1; i < bonusLores.size(); i++) {
+                                   Component lore = bonusLores.get(i);
+                                   if (i == 1) {
+                                       bonusLore.add(Component.textOfChildren(
+                                               Component.text("    "),
+                                               Component.text("- ", NamedTextColor.AQUA),
+                                               lore
+                                       ));
+                                   } else {
+                                       bonusLore.add(Component.text("       ").append(lore));
+                                   }
+                               }
+                           });
+                       } else {
+                           lists.forEach(bonusLores -> {
+                               for (int i = 1; i < bonusLores.size(); i++) {
+                                   Component lore = bonusLores.get(i);
+                                   if (i == 1) {
+                                       bonusLore.add(Component.textOfChildren(
+                                               Component.text("    "),
+                                               Component.text("- ", NamedTextColor.AQUA),
+                                               lore
+                                       ));
+                                   } else {
+                                       bonusLore.add(Component.text("       ").append(lore));
+                                   }
+                               }
+                           });
+                       }
+                   });
+        }
+        List<Component> lore = new ArrayList<>();
+        if (!skipFirstLine) {
+            lore.add(Component.text("Stat Bonuses:", NamedTextColor.AQUA));
+        }
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(Component.text("None", NamedTextColor.GRAY)) : bonusLore);
+        return lore;
+    }
+
+    private static void addBlessCurseLore(List<Component> blessCurseLore, List<Component> lore) {
+        for (int i = 0; i < lore.size(); i++) {
+            Component component = lore.get(i);
+            if (i == 0) {
+                blessCurseLore.add(Component.textOfChildren(
+                        Component.text("- ", NamedTextColor.AQUA),
+                        component
+                ));
+            } else {
+                blessCurseLore.add(component);
             }
         }
-        List<String> lore = new ArrayList<>();
-        if (!skipFirstLine) {
-            lore.add(ChatColor.AQUA + "Stat Bonuses:");
-        }
-        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(ChatColor.GRAY + "None") : bonusLore);
-        return lore;
     }
 }

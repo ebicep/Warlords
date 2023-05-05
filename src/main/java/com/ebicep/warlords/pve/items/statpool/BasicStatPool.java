@@ -5,7 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.*;
 
@@ -141,42 +142,48 @@ public enum BasicStatPool implements StatPool {
         put(REGEN_TIMER, new StatRange(5, 45));
     }};
 
-    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix, boolean inverted) {
-        List<String> lore = new ArrayList<>();
-        statPool.keySet()
-                .stream()
-                .sorted(Comparator.comparingInt(Enum::ordinal))
-                .forEachOrdered(stat -> lore.add(prefix + (!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat)))));
-        return lore;
-    }
-
-    public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted) {
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted) {
         return getStatPoolLore(statPool, "", inverted);
     }
 
-    public final String name;
-
-    BasicStatPool(String name) {
-        this.name = name;
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix, boolean inverted) {
+        List<Component> lore = new ArrayList<>();
+        statPool.keySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Enum::ordinal))
+                .forEachOrdered(stat -> lore.add(Component.text(prefix)
+                                                          .append((!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat))))));
+        return lore;
     }
 
-    public String getValueStatFormatted(float value) {
-        return ChatColor.GREEN + formatValue(value) + getOperation().prepend + " " + ChatColor.GRAY + getName();
+    public Component getValueStatFormatted(float value) {
+        return Component.textOfChildren(
+                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN),
+                Component.text(" " + getName(), NamedTextColor.GRAY)
+        );
     }
 
-    public String getStatValueFormatted(float value) {
-        return ChatColor.GRAY + getName() + ": " + ChatColor.GREEN + formatValue(value) + getOperation().prepend;
+    public Component getStatValueFormatted(float value) {
+        return Component.textOfChildren(
+                Component.text(getName() + ": ", NamedTextColor.GRAY),
+                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN)
+        );
     }
 
     public String formatValue(float value) {
         return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value / getDecimalPlace().value);
     }
 
-
     public String getName() {
         return name;
     }
 
+    public final String name;
+
+
+    BasicStatPool(String name) {
+        this.name = name;
+    }
 
     public record StatRange(int min, int max) {
 

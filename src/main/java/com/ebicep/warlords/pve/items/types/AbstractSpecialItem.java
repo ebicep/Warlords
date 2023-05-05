@@ -9,8 +9,9 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats, BonusLore {
@@ -30,15 +31,11 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder);
-        itemBuilder.addLore(
-                "",
-                getBonusLore()
-        );
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLoreC(getBonusLore());
         addItemScoreAndWeight(itemBuilder);
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLoreC(
-                WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_AQUA, TextDecoration.ITALIC), 160)
-        );
+        itemBuilder.addLoreC(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_AQUA, TextDecoration.ITALIC), 160));
         return itemBuilder;
     }
 
@@ -58,8 +55,10 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     public abstract String getDescription();
 
     @Override
-    public String getBonusLore() {
-        return ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":") + "\n" +
-                WordWrap.wrapWithNewline(ChatColor.GRAY + getBonus(), 160);
+    public List<Component> getBonusLore() {
+        List<Component> bonusLore = new ArrayList<>();
+        bonusLore.add(Component.text("Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":"), NamedTextColor.GREEN));
+        bonusLore.addAll(WordWrap.wrap(Component.text(getBonus(), NamedTextColor.GRAY), 160));
+        return bonusLore;
     }
 }

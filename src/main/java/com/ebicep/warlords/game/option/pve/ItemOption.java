@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -115,7 +116,7 @@ public class ItemOption implements Option {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
                         Component.text("Applied Item Loadout: ", NamedTextColor.GREEN)
                                  .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
-                                                  .hoverEvent(HoverEvent.showText(Component.text(String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false))))))
+                                                  .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(ItemMenuUtil.getTotalBonusLore(applied, false)))))
                 );
             }
         });

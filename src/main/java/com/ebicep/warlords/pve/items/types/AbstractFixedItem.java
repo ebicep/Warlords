@@ -7,9 +7,10 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class AbstractFixedItem extends AbstractItem implements BonusLore {
 
@@ -25,13 +26,8 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder);
         if (this instanceof FixedItemAppliesToPlayer bonus) {
-            itemBuilder.addLore(
-                    Component.empty(),
-                    Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN)
-            );
-            itemBuilder.addLoreC(
-                    WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160)
-            );
+            itemBuilder.addLore(Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN));
+            itemBuilder.addLoreC(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
         }
         addItemScoreAndWeight(itemBuilder);
         return itemBuilder;
@@ -45,7 +41,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     public abstract String getName();
 
     @Override
-    protected String getItemScoreString() {
+    protected Component getItemScoreString() {
         return null;
     }
 
@@ -61,10 +57,12 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     public abstract int getWeight();
 
     @Override
-    public String getBonusLore() {
+    public List<Component> getBonusLore() {
         if (this instanceof FixedItemAppliesToPlayer bonus) {
-            return ChatColor.GREEN + bonus.getEffect() + ":\n" +
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + bonus.getEffectDescription(), 160);
+            List<Component> bonusLore = new ArrayList<>();
+            bonusLore.add(Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN));
+            bonusLore.addAll(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
+            return bonusLore;
         }
         return null;
     }

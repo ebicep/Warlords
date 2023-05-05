@@ -11,7 +11,7 @@ import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
@@ -35,7 +35,7 @@ public abstract class AbstractItem {
         return (current - min) / (max - min);
     }
 
-    public static Component getModifierCalculatedLore(
+    public static List<Component> getModifierCalculatedLore(
             ItemModifier[] blessings,
             ItemModifier[] curses,
             float modifierCalculated,
@@ -43,11 +43,11 @@ public abstract class AbstractItem {
     ) {
         if (modifierCalculated > 0) {
             ItemModifier blessing = blessings[0];
-            return WordWrap.wrapWithNewline(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
+            return WordWrap.wrap(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
                     modifierCalculated), 150);
         } else {
             ItemModifier curse = curses[0];
-            return WordWrap.wrapWithNewline(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
+            return WordWrap.wrap(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
                     modifierCalculated), 150);
         }
     }
@@ -143,21 +143,25 @@ public abstract class AbstractItem {
     }
 
     protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {
-        itemBuilder.addLore(getStatPoolLore());
+        itemBuilder.addLoreC(getStatPoolLore());
         if (modifier != 0) {
-            itemBuilder.addLore(
-                    Component.empty(),
-                    getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false)
-            );
+            itemBuilder.addLore(Component.empty());
+            itemBuilder.addLoreC(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
         }
     }
 
     protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
-        String itemScoreString = getItemScoreString();
-        itemBuilder.addLore(
-                (itemScoreString != null ? "\n" + itemScoreString + "\n\n" : "\n") +
-                        getWeightString()
-        );
+        Component itemScoreString = getItemScoreString();
+        itemBuilder.addLore(Component.empty());
+        if (itemScoreString != null) {
+            itemBuilder.addLore(
+                    itemScoreString,
+                    Component.empty(),
+                    getWeightString()
+            );
+        } else {
+            itemBuilder.addLore(getWeightString());
+        }
     }
 
     public Component getItemName() {
@@ -189,7 +193,7 @@ public abstract class AbstractItem {
         }
     }
 
-    public List<String> getStatPoolLore() {
+    public List<Component> getStatPoolLore() {
         return BasicStatPool.getStatPoolLore(getStatPool(), false);
     }
 
@@ -208,12 +212,16 @@ public abstract class AbstractItem {
         return modifier * getItemModifier().getIncreasePerTier();
     }
 
-    protected String getItemScoreString() {
-        return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
+    protected Component getItemScoreString() {
+        return Component.text("Score: ", NamedTextColor.GRAY)
+                        .append(Component.text(NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
+                        .append(Component.text("/"))
+                        .append(Component.text("100"));
     }
 
-    private String getWeightString() {
-        return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
+    private Component getWeightString() {
+        return Component.text("Weight: ", NamedTextColor.GRAY)
+                        .append(Component.text(NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {

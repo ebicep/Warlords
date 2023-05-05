@@ -90,9 +90,9 @@ public class PatreonReward extends AbstractReward implements Listener {
         databasePlayer.addFutureMessage(new FutureMessage(
                 Arrays.asList(
                         Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE),
-                        Component.text("You received your ", NamedTextColor.GREEN),
-                        Component.text(month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + year.getValue(), NamedTextColor.LIGHT_PURPLE),
-                        Component.text(" Patreon reward!", NamedTextColor.GREEN),
+                        Component.text("You received your ", NamedTextColor.GREEN)
+                                 .append(Component.text(month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + year.getValue(), NamedTextColor.LIGHT_PURPLE))
+                                 .append(Component.text(" Patreon reward!", NamedTextColor.GREEN)),
                         Component.text("Claim it in your Rewards Inventory", NamedTextColor.GREEN),
                         Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE)
                 ),

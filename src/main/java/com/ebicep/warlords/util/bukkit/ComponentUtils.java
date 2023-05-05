@@ -52,4 +52,8 @@ public class ComponentUtils {
         return output;
     }
 
+    public static Component flattenComponentWithNewLine(List<Component> components) {
+        return components.stream().collect(Component.toComponent(Component.newline()));
+    }
+
 }

@@ -20,7 +20,7 @@ public class FutureMessage {
 
     public void sendToPlayer(Player player) {
         if (centered) {
-            messages.forEach(message -> ChatUtils.sendCenteredMessage(player, message));
+            messages.forEach(message -> ChatUtils.sendCenteredMessage(player, MiniMessage.miniMessage().deserialize(message)));
         } else {
             messages.forEach(player::sendMessage);
         }
