@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -32,9 +33,12 @@ public class ShadowStep extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Leap forward, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping." +
-                "\n\nShadow Step has reduced range when holding a Flag.";
+        description = Component.text("Leap forward, dealing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping."))
+                               .append(Component.newline())
+                               .append(Component.newline())
+                               .append(Component.text("Shadow Step has reduced range when holding a Flag."));
     }
 
     @Override

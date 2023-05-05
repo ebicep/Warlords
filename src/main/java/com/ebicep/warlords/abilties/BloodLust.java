@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -38,7 +40,11 @@ public class BloodLust extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "You lust for blood, healing yourself for §a" + damageConvertPercent + "% §7of all the damage you deal. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("You lust for blood, healing yourself for ")
+                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of all the damage you deal. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds.", NamedTextColor.GRAY));
     }
 
     @Override

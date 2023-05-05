@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -19,8 +21,11 @@ public abstract class AbstractTimeWarpBase extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Activate to place a time rune on the ground. After §6" + format(tickDuration / 20f) +
-                " §7seconds, you will warp back to that location and restore §a" + warpHealPercentage + "% §7of your health";
+        description = Component.text("Activate to place a time rune on the ground. After ")
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, you will warp back to that location and restore "))
+                               .append(Component.text(warpHealPercentage + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of your health.", NamedTextColor.GRAY));
     }
 
     @Override

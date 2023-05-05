@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
@@ -38,11 +40,33 @@ public class Soulbinding extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Your melee attacks §dBIND enemies for §6" + bindDuration + " §7seconds. Against §dBOUND §7targets, " +
-                "your next Spirit Link will heal you for §a400 §7health (half for §e2 §7nearby allies.) Your next Fallen Souls " +
-                "will reduce the cooldown of all abilities by §61.5 §7seconds. (§61 §7second for §e2 §7nearby allies). " +
-                "Both buffs may be activated for every melee hit. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nSuccessful soulbind procs will grant you §625% §7knockback resistance for §61.2 §7seconds. (max §63.6 §7seconds)";
+        description = Component.text("Your melee attacks ")
+                               .append(Component.text("BIND", NamedTextColor.LIGHT_PURPLE))
+                               .append(Component.text(" enemies for "))
+                               .append(Component.text(format(bindDuration), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Against "))
+                               .append(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE))
+                               .append(Component.text(" targets, your next Spirit Link will heal you for "))
+                               .append(Component.text("400", NamedTextColor.GREEN))
+                               .append(Component.text(" health (half for "))
+                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(" nearby allies). Your next Fallen Souls will reduce the cooldown of all abilities by "))
+                               .append(Component.text("1.5", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. ("))
+                               .append(Component.text("1", NamedTextColor.GOLD))
+                               .append(Component.text(" second for "))
+                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(" nearby allies). Both buffs may be activated for every melee hit. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.newline())
+                               .append(Component.text("Successful soulbind procs will grant you "))
+                               .append(Component.text("25%", NamedTextColor.GOLD))
+                               .append(Component.text(" knockback resistance for "))
+                               .append(Component.text("1.2 seconds", NamedTextColor.GOLD))
+                               .append(Component.text(" (Max "))
+                               .append(Component.text("3.6 ", NamedTextColor.GOLD))
+                               .append(Component.text("seconds)."));
     }
 
     @Override

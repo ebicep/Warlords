@@ -10,6 +10,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -41,12 +43,23 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     @Override
     public void updateDescription(Player player) {
-        description = "Discharge a bolt of lightning at the targeted enemy player that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and jumps to §e" + additionalBounces + " §7additional targets within §e" + bounceRange +
-                " §7blocks. Each time the lightning jumps the damage is decreased by §c15%§7. You gain §e" + format(damageReductionPerBounce) +
-                "% §7damage resistance for each target hit, up to §e" + format(maxDamageReduction) +
-                "% §7damage resistance. This buff lasts §64.5 §7seconds." +
-                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
+        description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and jumps to "))
+                               .append(Component.text(additionalBounces, NamedTextColor.YELLOW))
+                               .append(Component.text(" additional targets within "))
+                               .append(Component.text(bounceRange, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks. Each time the lightning jumps, the damage is decreased by "))
+                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(". You gain "))
+                               .append(Component.text(format(damageReductionPerBounce) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage resistance for each target hit, up to "))
+                               .append(Component.text(format(maxDamageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage resistance. This buff lasts "))
+                               .append(Component.text("4.5", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override

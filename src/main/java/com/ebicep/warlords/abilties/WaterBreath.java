@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -37,10 +39,16 @@ public class WaterBreath extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Breathe water in a cone in front of you, knocking back enemies, cleansing all §ede-buffs §7and restoring" +
-                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health to yourself and all allies hit." +
-                "\n\nWater Breath can overheal allies for up to §a10% §7of their max health as bonus health for §6" +
-                Overheal.OVERHEAL_DURATION + " §7seconds.";
+        description = Component.text("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
+                               .append(Component.text("de-buffs", NamedTextColor.YELLOW))
+                               .append(Component.text(" and restoring "))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health to yourself and all allies hit."))
+                               .append(Component.text("\n\nWater Breath can overheal allies for up to "))
+                               .append(Component.text("10%", NamedTextColor.GREEN))
+                               .append(Component.text(" of their max health as bonus health for "))
+                               .append(Component.text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

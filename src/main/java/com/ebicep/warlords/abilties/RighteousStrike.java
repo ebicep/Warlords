@@ -7,6 +7,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -27,11 +29,17 @@ public class RighteousStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage. Each strike reduces the duration of your struck target's active ability timers by §6" +
-                (abilityReductionInTicks / 20f) + " §7seconds." +
-                "\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by §6" +
-                ((abilityReductionInTicks * 1.6f) / 20f) + " §7seconds and reduce their active ability timers by §60.8 §7seconds instead.";
+        description = Component.text("Strike the targeted enemy for ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
+                               .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.newline())
+                               .append(Component.text("Additionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by "))
+                               .append(Component.text(format((abilityReductionInTicks * 1.6f) / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds and reduce their active ability timers by "))
+                               .append(Component.text("0.8", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds instead."));
     }
 
     @Override

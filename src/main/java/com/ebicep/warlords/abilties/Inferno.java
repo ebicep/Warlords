@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -33,9 +35,13 @@ public class Inferno extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Combust into a molten inferno, increasing your Crit Chance by §c" + critChanceIncrease +
-                "% §7and your Crit Multiplier by §c" + critMultiplierIncrease +
-                "%§7. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Combust into a molten inferno, increasing your Crit Chance by ")
+                               .append(Component.text(critChanceIncrease + "%", NamedTextColor.RED))
+                               .append(Component.text(" and your Crit Multiplier by "))
+                               .append(Component.text(critMultiplierIncrease + "%", NamedTextColor.RED))
+                               .append(Component.text(". Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

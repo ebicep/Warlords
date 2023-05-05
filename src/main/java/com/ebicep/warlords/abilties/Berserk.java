@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -32,8 +34,15 @@ public class Berserk extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "You go into a berserker rage, increasing your damage by §c" + format(damageIncrease) + "% §7and movement speed by §e" + speedBuff +
-                "%§7. While active, you also take §c" + format(damageTakenIncrease) + "% §7more damage. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("You go into a berserker rage, increasing your damage by ")
+                               .append(Component.text(format(damageIncrease) + "%", NamedTextColor.RED))
+                               .append(Component.text(" and movement speed by "))
+                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(". While active, you also take "))
+                               .append(Component.text(format(damageTakenIncrease) + "%", NamedTextColor.RED))
+                               .append(Component.text(" more damage. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

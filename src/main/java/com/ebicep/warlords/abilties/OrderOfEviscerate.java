@@ -49,12 +49,24 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Cloak yourself for §6" + format(tickDuration / 20f) + " §7seconds, granting you §e40% §7movement speed and making you §einvisible §7to the enemy for the " +
-                "duration. However, taking up to §c600 §7fall damage or any type of ability damage will end your invisibility." +
-                "\n\nAll your attacks against an enemy will mark them vulnerable. Vulnerable enemies take §c20% §7more damage. " +
-                "Additionally, enemies hit from behind take an additional §c10% §7more damage." +
-                "\n\nSuccessfully killing your mark will §ereset §7both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. " +
-                "Assisting in killing your mark will only refund half the cooldown.";
+        description = Component.text("Cloak yourself for ").
+                               append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD)).
+                               append(Component.text(" seconds, granting you ")).
+                               append(Component.text("40% ", NamedTextColor.YELLOW)).
+                               append(Component.text("movement speed and making you ")).
+                               append(Component.text("invisible ", NamedTextColor.YELLOW)).
+                               append(Component.text("to the enemy for the duration. However, taking up to ")).
+                               append(Component.text("600 ", NamedTextColor.RED)).
+                               append(Component.text("fall damage or any type of ability damage will end your invisibility.\n\n")).
+                               append(Component.text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")).
+                               append(Component.text("20% ", NamedTextColor.RED)).
+                               append(Component.text("more damage. Additionally, enemies hit from behind take an additional ")).
+                               append(Component.text("10% ", NamedTextColor.RED)).
+                               append(Component.text("more damage.\n\n")).
+                               append(Component.text("Successfully killing your mark will ")).
+                               append(Component.text("reset ", NamedTextColor.YELLOW)).
+                               append(Component.text(
+                                       "both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. Assisting in killing your mark will only refund half the cooldown."));
     }
 
     @Override

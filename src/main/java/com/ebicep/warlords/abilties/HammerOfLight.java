@@ -14,6 +14,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -84,13 +86,22 @@ public class HammerOfLight extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Throw down a Hammer of Light on the ground, dealing" + formatRangeDamage(minDamage, maxDamage) +
-                "damage every second to nearby enemies and healing nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "every second in a §e" + RADIUS + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
-                "Hammer of Light. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may SNEAK to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
-                "increasing the healing §7by §a50% §7and reducing the energy cost of your Protector's Strike by " +
-                "§e10 §7energy. You cannot put the Hammer of Light back down after you converted it.";
+        description = Component.text("Throw down a Hammer of Light on the ground, dealing ")
+                               .append(formatRangeDamage(minDamage, maxDamage))
+                               .append(Component.text(" damage every second to nearby enemies and healing nearby allies for "))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" every second in a "))
+                               .append(Component.text(RADIUS, NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.newline())
+                               .append(Component.newline())
+                               .append(Component.text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by "))
+                               .append(Component.text("50%", NamedTextColor.GREEN))
+                               .append(Component.text(" and reducing the energy cost of your Protector's Strike by "))
+                               .append(Component.text("10", NamedTextColor.YELLOW))
+                               .append(Component.text(" energy. You cannot put the Hammer of Light back down after you converted it."));
     }
 
     @Override

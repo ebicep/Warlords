@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,9 +39,17 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Throw a chain towards an ally in a §e15 §7block radius, grappling the Vindicator towards the ally. You and the targeted ally gain " +
-                "§6VIND §7for §6" + vindDuration + " §7seconds, granting immunity to de-buffs. You are healed for §a" + format(healthRestore) +
-                " §7health after reaching your ally.\nHeart To Heart's range is greatly reduced when holding a flag.";
+        description = Component.text("Throw a chain towards an ally in a ")
+                               .append(Component.text("15", NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius, grappling the Vindicator towards the ally. You and the targeted ally gain "))
+                               .append(Component.text("VIND", NamedTextColor.GOLD))
+                               .append(Component.text(" for "))
+                               .append(Component.text(vindDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
+                               .append(Component.text(healthRestore, NamedTextColor.GREEN))
+                               .append(Component.text(" health after reaching your ally."))
+                               .append(Component.text("\nHeart To Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
+
     }
 
     @Override

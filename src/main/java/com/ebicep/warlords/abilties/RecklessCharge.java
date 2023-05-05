@@ -39,9 +39,14 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Charge forward, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies you pass through. Enemies hit are §5IMMOBILIZED§7, preventing movement for §6" + (stunTimeInTicks / 20f) +
-                " §7seconds.";
+        description = Component.text("Charge forward, dealing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to all enemies you pass through. Enemies hit are "))
+                               .append(Component.text("IMMOBILIZED", NamedTextColor.DARK_PURPLE))
+                               .append(Component.text(", preventing movement for "))
+                               .append(Component.text((stunTimeInTicks / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
+
     }
 
     @Override

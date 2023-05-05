@@ -11,6 +11,8 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -35,8 +37,11 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and removing §e" + format(energySteal) + " §7energy.";
+        description = Component.text("Strike the targeted enemy player, causing")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text("damage and removing "))
+                               .append(Component.text(format(energySteal), NamedTextColor.YELLOW))
+                               .append(Component.text(" energy."));
     }
 
     @Override

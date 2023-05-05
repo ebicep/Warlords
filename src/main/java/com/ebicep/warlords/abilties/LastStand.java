@@ -51,10 +51,19 @@ public class LastStand extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Enter a defensive stance, reducing all damage you take by §c" + selfDamageReductionPercent +
-                "% §7for §6" + format(selfTickDuration / 20f) + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
-                "% §7for §6" + format(allyTickDuration / 20f) + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
-                "\n\nHas a maximum range of §e" + radius + " §7blocks.";
+        description = Component.text("Enter a defensive stance, reducing all damage you take by ")
+                               .append(Component.text(selfDamageReductionPercent + "%", NamedTextColor.RED))
+                               .append(Component.text(" for "))
+                               .append(Component.text(format(selfTickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds and also reduces all damage nearby allies take by "))
+                               .append(Component.text(teammateDamageReductionPercent + "%", NamedTextColor.RED))
+                               .append(Component.text(" for "))
+                               .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. You are healed for the amount of damage prevented on allies."))
+                               .append(Component.newline())
+                               .append(Component.text("Has a maximum range of "))
+                               .append(Component.text(radius, NamedTextColor.GOLD))
+                               .append(Component.text(" blocks."));
     }
 
     @Override

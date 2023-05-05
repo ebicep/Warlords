@@ -10,6 +10,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -32,9 +34,14 @@ public class LightningRod extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Call down an energizing bolt of lightning upon yourself, restoring §a" + healthRestore +
-                "% §7health and §e" + energyRestore + " §7energy and knock all nearby enemies in a §e" + knockbackRadius +
-                " §7block radius back.";
+        description = Component.text("Call down an energizing bolt of lightning upon yourself, restoring ")
+                               .append(Component.text(healthRestore + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" health and "))
+                               .append(Component.text(energyRestore + " ", NamedTextColor.YELLOW))
+                               .append(Component.text("energy and knock all nearby enemies in a "))
+                               .append(Component.text(knockbackRadius + " ", NamedTextColor.YELLOW))
+                               .append(Component.text("block radius back."));
+
     }
 
 

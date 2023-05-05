@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -32,9 +34,14 @@ public class Fireball extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Shoot a fireball that will explode for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage. A direct hit will cause the enemy to take an additional §c15% §7extra damage." +
-                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks.";
+        description = Component.text("Shoot a fireball that will explode for ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage. A direct hit will cause the enemy to take an additional "))
+                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(" extra damage."))
+                               .append(Component.text("\n\nHas an optimal range of "))
+                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
+                               .append(Component.text("blocks."));
     }
 
     @Override

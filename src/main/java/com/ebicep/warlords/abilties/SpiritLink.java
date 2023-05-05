@@ -10,6 +10,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,9 +31,21 @@ public class SpiritLink extends AbstractChainBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Links your spirit with up to §c3 §7enemy players, dealing " + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to the first target hit. Each additional hit deals §c20% §7reduced damage. You gain §e40% §7speed for §6" + speedDuration +
-                " §7seconds, and take §c15% §7reduced damage for §6" + damageReductionDuration + " §7seconds.";
+        description = Component.text("Links your spirit with up to ")
+                               .append(Component.text("3", NamedTextColor.RED))
+                               .append(Component.text(" enemy players, dealing "))
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to the first target hit. Each additional hit deals "))
+                               .append(Component.text("20%", NamedTextColor.RED))
+                               .append(Component.text(" reduced damage. You gain "))
+                               .append(Component.text("40%", NamedTextColor.YELLOW))
+                               .append(Component.text(" speed for "))
+                               .append(Component.text(speedDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, and take "))
+                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(" reduced damage for "))
+                               .append(Component.text(damageReductionDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

@@ -30,7 +30,7 @@ public class WonderTrap extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "PLACEHOLDER";
+        //description = "PLACEHOLDER";
     }
 
     @Override

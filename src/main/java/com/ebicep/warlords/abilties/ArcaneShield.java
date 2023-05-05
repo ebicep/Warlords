@@ -12,6 +12,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -44,8 +46,13 @@ public class ArcaneShield extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Surround yourself with arcane energy, creating a shield that will absorb up to §e" + maxShieldHealth +
-                " §7(§e" + shieldPercentage + "% §7of your maximum health) incoming damage. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
+                               .append(Component.text(maxShieldHealth, NamedTextColor.YELLOW))
+                               .append(Component.text(" ("))
+                               .append(Component.text(shieldPercentage + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" of your maximum health) incoming damage. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

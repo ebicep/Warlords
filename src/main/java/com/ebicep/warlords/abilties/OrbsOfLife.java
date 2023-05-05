@@ -59,12 +59,24 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Spawn §e2 §7initial orbs on cast." +
-                "\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts §68 " +
-                "§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that picks it up. Other nearby allies recover §a" +
-                format(minDamageHeal) + " §7health. After 1.5 seconds the healing will increase by §a40% §7over 6.5 seconds. " +
-                "Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may SNEAK to make the orbs levitate towards you or the nearest ally in a §e" + floatingOrbRadius + " §7block radius.";
+        description = Component.text("Spawn ")
+                               .append(Component.text("2 ", NamedTextColor.YELLOW))
+                               .append(Component.text("initial orbs on cast."))
+                               .append(Component.text("\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts "))
+                               .append(Component.text("8", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, restoring "))
+                               .append(Component.text(format(maxDamageHeal) + " ", NamedTextColor.GREEN))
+                               .append(Component.text("health to the ally that picks it up. Other nearby allies recover "))
+                               .append(Component.text(format(minDamageHeal) + " ", NamedTextColor.GREEN))
+                               .append(Component.text("health. After 1.5 seconds the healing will increase by "))
+                               .append(Component.text("40%", NamedTextColor.GREEN))
+                               .append(Component.text(" over 6.5 seconds. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
+                               .append(Component.text("seconds."))
+                               .append(Component.text("\n\nRecast to make the orbs levitate towards you or the nearest ally in a "))
+                               .append(Component.text(floatingOrbRadius + " ", NamedTextColor.YELLOW))
+                               .append(Component.text("block radius."));
+
     }
 
     @Override

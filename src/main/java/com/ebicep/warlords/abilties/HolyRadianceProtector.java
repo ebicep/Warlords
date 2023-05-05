@@ -34,10 +34,17 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Radiate with holy energy, healing yourself and all nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
-                "\n\nYou may look at an ally to mark them for §6" + markDuration + " §7seconds. Mark has an optimal range of §e" + markRadius +
-                " §7blocks. Your marked ally will emit a second Holy Radiance for §a" + format(markHealing) +
-                "% §7of the original healing amount after the mark ends.";
+        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health."))
+                               .append(Component.newline())
+                               .append(Component.text("You may look at an ally to mark them for "))
+                               .append(Component.text(markDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Mark has an optimal range of "))
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks. Your marked ally will emit a second Holy Radiance for "))
+                               .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the original healing amount after the mark ends."));
     }
 
     @Override

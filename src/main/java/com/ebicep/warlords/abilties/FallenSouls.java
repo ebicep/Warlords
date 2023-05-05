@@ -9,6 +9,8 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -37,8 +39,11 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Summon a wave of fallen souls, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by §62 §7seconds.";
+        description = Component.text("Summon a wave of fallen souls, dealing")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by "))
+                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

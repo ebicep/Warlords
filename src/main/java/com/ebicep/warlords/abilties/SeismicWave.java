@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.FallingBlock;
@@ -36,8 +37,9 @@ public class SeismicWave extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Send a wave of incredible force forward that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies hit and knocks them back slightly.";
+        description = Component.text("Send a wave of incredible force forward that deals ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to all enemies hit and knocks them back slightly."));
     }
 
     @Override

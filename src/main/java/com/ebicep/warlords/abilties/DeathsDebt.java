@@ -58,13 +58,33 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§2Spirits’ Respite§7: Place down a totem that delays §c100% §7of incoming damage towards yourself. Transforms into §dDeath’s Debt " +
-                "§7after §6" + format(tickDuration / 20f) + " §7- §6" + format((tickDuration / 20f + 2)) + " §7seconds (increases with higher health), or when you exit its §e" + respiteRadius + " §7block radius." +
-                "\n\n§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) +
-                "% §7of the damage delayed by §2Spirit's Respite §7over §66 §7seconds. The totem will heal nearby allies for §a15% §7of all damage " +
-                "that you take. If you survive, deal §c" + format(damagePercent) +
-                "% §7of the damage delayed to nearby enemies." +
-                "\n\nSuccessful Soulbind procs on enemies add §60.5 §7seconds to your totem duration. (Cap of §66 §7seconds)";
+        description = Component.text("Spirits’ Respite", NamedTextColor.DARK_GREEN)
+                               .append(Component.text(": Place down a totem that delays "))
+                               .append(Component.text("100%", NamedTextColor.RED))
+                               .append(Component.text(" of incoming damage towards yourself. Transforms into "))
+                               .append(Component.text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE))
+                               .append(Component.text("after "))
+                               .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds (increases with higher health), or when you exit its "))
+                               .append(Component.text(respiteRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius."))
+                               .append(Component.text("\n\nDeath’s Debt", NamedTextColor.LIGHT_PURPLE))
+                               .append(Component.text(": Take "))
+                               .append(Component.text(Math.round((selfDamageInPercentPerSecond * 6) * 100) + "%", NamedTextColor.RED))
+                               .append(Component.text(" of the damage delayed by "))
+                               .append(Component.text("Spirits’ Respite ", NamedTextColor.DARK_GREEN))
+                               .append(Component.text("over "))
+                               .append(Component.text("6", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. The totem will heal nearby allies for "))
+                               .append(Component.text("15%", NamedTextColor.GREEN))
+                               .append(Component.text(" of all damage that you take. If you survive, deal "))
+                               .append(Component.text(format(damagePercent) + "%", NamedTextColor.RED))
+                               .append(Component.text(" of the damage delayed to nearby enemies."))
+                               .append(Component.text("\n\nSuccessful Soulbind procs on enemies add "))
+                               .append(Component.text("0.5", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds to your totem duration. (Cap of "))
+                               .append(Component.text("6", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds)"));
     }
 
     @Override

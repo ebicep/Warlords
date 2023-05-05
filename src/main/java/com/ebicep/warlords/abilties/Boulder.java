@@ -42,8 +42,9 @@ public class Boulder extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Launch a giant boulder that shatters and deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies near the impact point and knocks them back slightly.";
+        description = Component.text("Launch a giant boulder that shatters and deals")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text("damage to all enemies near the impact point and knocks them back slightly."));
     }
 
     @Override

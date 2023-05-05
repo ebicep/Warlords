@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -33,9 +35,20 @@ public class CrusadersStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and restoring §e" + energyGiven + " §7energy to " + energyMaxAllies + " nearby allies within §e" + energyRadius + " §7blocks." +
-                "\n\nMARKED allies get priority in restoring energy and increases their speed by §e40% §7for §61 §7second.";
+        description = Component.text("Strike the targeted enemy player, causing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and restoring "))
+                               .append(Component.text(energyGiven, NamedTextColor.YELLOW))
+                               .append(Component.text(" energy to " + energyMaxAllies + " nearby allies within "))
+                               .append(Component.text(energyRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."))
+                               .append(Component.newline())
+                               .append(Component.newline())
+                               .append(Component.text("MARKED allies get priority in restoring energy and increases their speed by "))
+                               .append(Component.text("40%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text("1", NamedTextColor.GOLD))
+                               .append(Component.text(" second."));
     }
 
     @Override

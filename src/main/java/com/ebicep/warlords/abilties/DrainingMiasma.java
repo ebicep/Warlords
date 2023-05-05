@@ -14,6 +14,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -41,10 +43,22 @@ public class DrainingMiasma extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take §c50 §7+ §c" + maxHealthDamage +
-                "% §7of their max health as damage per second, for §6" + format(tickDuration / 20f) + " §7seconds. " +
-                "Enemies poisoned by your Draining Miasma are slowed by §e25% §7for §63 §7seconds on cast." +
-                "\n\nEach enemy hit will be afflicted with §aLEECH §7for §6" + leechDuration + " §7seconds.";
+        description = Component.text("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
+                               .append(Component.text("50%", NamedTextColor.RED))
+                               .append(Component.text(" + "))
+                               .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
+                               .append(Component.text(" of their max health as damage per second, for "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Enemies poisoned by your Draining Miasma are slowed by "))
+                               .append(Component.text("25%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text("3", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds on cast."))
+                               .append(Component.text("\n\nEach enemy hit will be afflicted with "))
+                               .append(Component.text("LEECH", NamedTextColor.GREEN))
+                               .append(Component.text(" for "))
+                               .append(Component.text(leechDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -29,9 +31,15 @@ public class JudgementStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage. Every fourth attack is a §cguaranteed §7critical strike. Critical strikes temporarily increase your movement speed by §e" +
-                speedOnCrit + "% §7for §e" + speedOnCritDuration + " §7seconds.";
+        description = Component.text("Strike the targeted enemy, dealing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text("damage. Every fourth attack is a "))
+                               .append(Component.text("guaranteed", NamedTextColor.RED))
+                               .append(Component.text(" critical strike. Critical strikes temporarily increase your movement speed by "))
+                               .append(Component.text(speedOnCrit + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text(speedOnCritDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

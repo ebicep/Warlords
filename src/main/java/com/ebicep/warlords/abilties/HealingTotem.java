@@ -51,12 +51,23 @@ public class HealingTotem extends AbstractTotemBase implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
-                " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health every second. " +
-                "The healing will gradually increase by §a35% §7 (Up to " + Math.round(healingIncrement * tickDuration / 20f) + "%) every second. Lasts §6" + format(
-                tickDuration / 20f) + " §7seconds." +
-                "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
-                crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
+        description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius for "))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health every second. The healing will gradually increase by "))
+                               .append(Component.text("35%", NamedTextColor.GREEN))
+                               .append(Component.text(" (up to "))
+                               .append(Component.text(Math.round(healingIncrement * tickDuration / 20f)))
+                               .append(Component.text("%) every second. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(
+                                       " seconds.\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for "))
+                               .append(Component.text(crippleDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Crippled enemies deal "))
+                               .append(Component.text("25%", NamedTextColor.RED))
+                               .append(Component.text(" less damage."));
+
     }
 
     @Override

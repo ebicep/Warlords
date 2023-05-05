@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Transient;
 
@@ -115,7 +114,10 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = ChatColor.YELLOW + "+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond) + ChatColor.GRAY + " energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
+            description = Component.text("+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond), NamedTextColor.YELLOW)
+                                   .append(Component.text(" energy per second for "))
+                                   .append(Component.text("10", NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
         }
 
         @Override

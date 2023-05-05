@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -29,8 +31,13 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+                               .append(Component.text("10%", NamedTextColor.RED))
+                               .append(Component.text(" + "))
+                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.RED))
+                               .append(Component.text(" of the damage you've recently took. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

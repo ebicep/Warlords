@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
@@ -36,11 +38,19 @@ public class VitalityLiquor extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Discharge a shockwave of special potions around you, healing allies in the range for" +
-                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
-                "\n\nEach enemy afflicted with your §aLEECH §7effect within the range will cause the enemy to discharge an additional shockwave of vitality " +
-                "that heals §e2 §7nearby allies for" + formatRangeHealing(minWaveHealing, maxWaveHealing) +
-                "health and increase their energy regeneration by §e" + energyPerSecond + " §7for §6" + duration + " §7seconds.";
+        description = Component.text("Discharge a shockwave of special potions around you, healing allies in the range for ")
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health.\n\nEach enemy afflicted with your "))
+                               .append(Component.text("LEECH", NamedTextColor.GREEN))
+                               .append(Component.text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals "))
+                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(" nearby allies for "))
+                               .append(formatRangeHealing(minWaveHealing, maxWaveHealing))
+                               .append(Component.text(" health and increase their energy regeneration by "))
+                               .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text(duration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

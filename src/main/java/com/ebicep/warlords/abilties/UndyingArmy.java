@@ -51,10 +51,25 @@ public class UndyingArmy extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + " §7block radius to heal them for §a" +
-                format(flatHealing) + " §7+ §a" + missingHealing + "% §7of their missing health every second. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nChained allies that take fatal damage will be revived with §a100% §7of their max health and §e100% §7max energy. Revived allies rapidly " +
-                "take §c" + maxHealthDamage + "% §7of their max health as damage every second.";
+        description = Component.text("You may chain up to ")
+                               .append(Component.text(maxArmyAllies, NamedTextColor.YELLOW))
+                               .append(Component.text(" allies in a "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius to heal them for "))
+                               .append(Component.text(format(flatHealing), NamedTextColor.GREEN))
+                               .append(Component.text(" + "))
+                               .append(Component.text(format(missingHealing), NamedTextColor.GREEN))
+                               .append(Component.text(" every second. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.newline())
+                               .append(Component.text("\nChained allies that take fatal damage will be revived with "))
+                               .append(Component.text("100%", NamedTextColor.GREEN))
+                               .append(Component.text(" of their max health and "))
+                               .append(Component.text("100%", NamedTextColor.YELLOW))
+                               .append(Component.text(" max energy. Revived allies rapidly take "))
+                               .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
+                               .append(Component.text(" of their max health as damage every second."));
     }
 
     @Override

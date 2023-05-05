@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -38,9 +40,15 @@ public class IceBarrier extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Surround yourself with a layer of of cold air, reducing damage taken by §c" + damageReductionPercent +
-                "%§7, While active, taking melee damage reduces the attacker's movement speed by §e" + slownessOnMeleeHit +
-                "% §7for §62 §7seconds. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Surround yourself with a layer of cold air, reducing damage taken by ")
+                               .append(Component.text(format(damageReductionPercent) + "%", NamedTextColor.RED))
+                               .append(Component.text(", while active, taking melee damage reduces the attacker's movement speed by "))
+                               .append(Component.text(slownessOnMeleeHit + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

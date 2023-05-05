@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -127,10 +126,13 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = "Increase movement speed by " + ChatColor.YELLOW + "40% " + ChatColor.GRAY +
-                    ", decrease energy consumption of all abilities by " +
-                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease) + ChatColor.GRAY + ", and gain " +
-                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "% " + ChatColor.GRAY + "knockback resistance.";
+            description = Component.text("Increase movement speed by ")
+                                   .append(Component.text("40%", NamedTextColor.YELLOW))
+                                   .append(Component.text(", decrease energy consumption of all abilities by "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
+                                   .append(Component.text(" and gain "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" knockback resistance.", NamedTextColor.GRAY));
         }
 
         @Override

@@ -31,9 +31,18 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Radiate with holy energy, healing yourself and all nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
-                "\n\nYou may look at an enemy to mark them for §6" + markDuration + " §7seconds. Mark has an optimal range of §e" + markRadius +
-                " §7blocks. Reducing their energy per second by §e" + energyDrainPerSecond + " §7for the duration.";
+        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health."))
+                               .append(Component.newline())
+                               .append(Component.newline())
+                               .append(Component.text("You may look at an enemy to mark them for "))
+                               .append(Component.text(markDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Mark has an optimal range of "))
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks. Reducing their energy per second by "))
+                               .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
+                               .append(Component.text(" for the duration."));
     }
 
     @Override

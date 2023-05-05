@@ -51,10 +51,20 @@ public class Intervene extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Protect the target ally, reducing the damage they take by §e100% §7and redirecting §e" + damageReduction + "% §7of the damage they would " +
-                "have taken back to you. You can protect the target for a maximum of §c" + format(maxDamagePrevented) +
-                " §7damage. You must remain within §e" + breakRadius + " §7blocks of each other. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
+        description = Component.text("Protect the target ally, reducing the damage they take by ")
+                               .append(Component.text("100%", NamedTextColor.YELLOW))
+                               .append(Component.text(" and redirecting "))
+                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" of the damage they would have taken back to you. You can protect the target for a maximum of "))
+                               .append(Component.text(format(maxDamagePrevented), NamedTextColor.RED))
+                               .append(Component.text(" damage. You must remain within "))
+                               .append(Component.text(breakRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks of each other. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
+
     }
 
     @Override

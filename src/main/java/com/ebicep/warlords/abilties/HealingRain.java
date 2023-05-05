@@ -14,6 +14,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -37,11 +39,17 @@ public class HealingRain extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Conjure rain at targeted location that will restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "health every 0.5 seconds to allies. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may move Healing Rain to your location using your SNEAK key." +
-                "\n\n§7Healing Rain can overheal allies for up to §a10% §7of their max health as bonus health §7for §6" +
-                Overheal.OVERHEAL_DURATION + " §7seconds.";
+        description = Component.text("Conjure rain at targeted location that will restore ")
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health every 0.5 seconds to allies. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.text("\n\nRecast to move Healing Rain to your location."))
+                               .append(Component.text("\n\nHealing Rain can overheal allies for up to "))
+                               .append(Component.text("10%", NamedTextColor.GREEN))
+                               .append(Component.text(" of their max health as bonus health for "))
+                               .append(Component.text(String.valueOf(Overheal.OVERHEAL_DURATION), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

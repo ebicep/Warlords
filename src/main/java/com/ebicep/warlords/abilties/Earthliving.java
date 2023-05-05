@@ -14,6 +14,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -41,10 +43,17 @@ public class Earthliving extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a §e" + format(procChance) +
-                "% §7chance to heal you and §e2 §7nearby allies for §a" + weaponDamage +
-                "% §7weapon damage. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nThe first hit is guaranteed to activate Earthliving.";
+        description = Component.text("Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a ")
+                               .append(Component.text(format(procChance) + "% ", NamedTextColor.YELLOW))
+                               .append(Component.text("chance to heal you and "))
+                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(" nearby allies for "))
+                               .append(Component.text(weaponDamage + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" weapon damage. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.text("\n\nThe first hit is guaranteed to activate Earthliving."));
+
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -28,9 +30,20 @@ public class FrostBolt extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Shoot a frostbolt that will shatter for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and slow by §e" + slowness + "% §7for §62 §7seconds. A direct hit will cause the enemy to take an additional §c15% §7extra damage." +
-                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks.";
+        description = Component.text("Shoot a frostbolt that will shatter for ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and slow by "))
+                               .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
+                               .append(Component.text("for "))
+                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. A direct hit will cause the enemy to take an additional "))
+                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(" extra damage."))
+                               .append(Component.newline())
+                               .append(Component.text("Has an optimal range of "))
+                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
+
     }
 
     @Override

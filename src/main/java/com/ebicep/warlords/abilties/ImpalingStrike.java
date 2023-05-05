@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -81,11 +83,18 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Impale an enemy, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and afflict them with the §aLEECH §7effect for §6" + leechDuration +
-                " §7seconds. Whenever an ally deals damage to a leeched enemy, they heal for §a" + format(leechAllyAmount) +
-                "% §7of the damage dealt. You heal for §a" + format(leechSelfAmount) +
-                "% §7of the damage you deal to a leeched enemy instead.";
+        description = Component.text("Impale an enemy, dealing")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text("damage and afflict them with the "))
+                               .append(Component.text("LEECH", NamedTextColor.GREEN))
+                               .append(Component.text(" effect for "))
+                               .append(Component.text(leechDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Whenever an ally deals damage to a leeched enemy, they heal for "))
+                               .append(Component.text(format(leechAllyAmount) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the damage dealt. You heal for "))
+                               .append(Component.text(format(leechSelfAmount) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the damage you deal to a leeched enemy instead."));
+
     }
 
     @Override

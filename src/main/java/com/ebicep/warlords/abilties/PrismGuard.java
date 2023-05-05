@@ -15,6 +15,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -46,11 +48,22 @@ public class PrismGuard extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Create a bubble shield around you that lasts §6" + format(tickDuration / 20f) +
-                " §7seconds. All projectiles that pass through the barrier have their damage reduced by §c" + projectileDamageReduction +
-                "%§7.\nAfter §6" + format(tickDuration / 20f) + " §7seconds the bubble will burst, healing you and all allies for §a" + bubbleHealing +
-                " §7+ §a" + bubbleMissingHealing + "% §7missing health and grant §e" + damageReduction +
-                "% §7damage reduction (max 30%) for §6" + format(tickDuration / 20f) + " §7seconds based on how many hits you took while Prism Guard was active.";
+        description = Component.text("Create a bubble shield around you that lasts ")
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. All projectiles that pass through the barrier have their damage reduced by "))
+                               .append(Component.text(projectileDamageReduction + "%", NamedTextColor.RED))
+                               .append(Component.text(".\nAfter "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds the bubble will burst, healing you and all allies for "))
+                               .append(Component.text(bubbleHealing + " ", NamedTextColor.GREEN))
+                               .append(Component.text("+ "))
+                               .append(Component.text(bubbleMissingHealing + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" missing health and grant "))
+                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage reduction (max 30%) for "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds based on how many hits you took while Prism Guard was active."));
+
     }
 
     @Override

@@ -12,6 +12,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -36,9 +38,15 @@ public class AvengersWrath extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Burst with incredible holy power, causing your Avenger's Strikes to " +
-                "hit up to §e" + maxTargets + " §7additional enemies that are within §e5 §7blocks of your target. Your energy per second is increased by §e" +
-                format(energyPerSecond) + " §7for the duration of the effect. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
+                               .append(Component.text(maxTargets, NamedTextColor.YELLOW))
+                               .append(Component.text(" additional enemies that are within "))
+                               .append(Component.text("5", NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks of your target. Your energy per second is increased by "))
+                               .append(Component.text(format(energyPerSecond), NamedTextColor.GOLD))
+                               .append(Component.text(" for the duration of the effect. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

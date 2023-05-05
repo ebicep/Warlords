@@ -8,8 +8,8 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -42,7 +42,7 @@ public abstract class AbstractAbility {
     protected float energyCost;
     protected float critChance;
     protected float critMultiplier;
-    protected String description = "";
+    protected TextComponent description = Component.empty();
     protected boolean boosted;
     //pve
     protected boolean pveUpgrade = false;
@@ -230,31 +230,27 @@ public abstract class AbstractAbility {
     }
 
     public List<Component> getDescription() {
-        return WordWrap.wrap(Component.text(description, NamedTextColor.GRAY), DESCRIPTION_WIDTH);
+        return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
     }
 
-    public String formatRangeDamage(float min, float max) {
-        return formatRange(min, max, ChatColor.RED);
+    public Component formatRangeDamage(float min, float max) {
+        return formatRange(min, max, NamedTextColor.RED);
     }
 
-    public String formatRange(float min, float max, ChatColor chatColor) {
-        return " " +
-                chatColor +
-                format(min) +
-                ChatColor.GRAY +
-                " - " +
-                chatColor +
-                format(max) +
-                ChatColor.GRAY +
-                " ";
+    public Component formatRange(float min, float max, NamedTextColor chatColor) {
+        return Component.text(" ", NamedTextColor.GRAY)
+                        .append(Component.text(format(min), chatColor))
+                        .append(Component.text(" - "))
+                        .append(Component.text(format(max), chatColor))
+                        .append(Component.text(" "));
     }
 
     public String format(double input) {
         return DECIMAL_FORMAT.format(input);
     }
 
-    public String formatRangeHealing(float min, float max) {
-        return formatRange(min, max, ChatColor.GREEN);
+    public Component formatRangeHealing(float min, float max) {
+        return formatRange(min, max, NamedTextColor.GREEN);
     }
 
     /**

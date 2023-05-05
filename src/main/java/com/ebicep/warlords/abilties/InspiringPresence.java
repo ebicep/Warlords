@@ -40,9 +40,15 @@ public class InspiringPresence extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Your presence on the battlefield inspires your allies, increasing their energy regeneration by §e" + energyPerSecond +
-                " §7per second and their movement by §e" + speedBuff + "% §7for §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nHas a maximum range of §e" + format(radius) + " §7blocks.";
+        description = Component.text("Your presence on the battlefield inspires your allies, increasing their energy regeneration by ")
+                               .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
+                               .append(Component.text(" per second and their movement by "))
+                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
+                               .append(Component.text(format(radius), NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override

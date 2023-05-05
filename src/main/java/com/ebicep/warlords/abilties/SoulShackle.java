@@ -37,11 +37,27 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Shackle up to §e" + maxShackleTargets + " §7enemy and deal" + formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage. Shackled " +
-                "enemies are silenced for" + formatRange(minSilenceDurationInTicks / 20f, maxSilenceDurationInTicks / 20f, ChatColor.GOLD) +
-                "seconds, making them unable to use their main attack for the duration. The silence duration increases by §60.5 §7second for every §c500 " +
-                "§7damage you took in the last §66 §7seconds. Gain a short burst of §e40% §7movement speed for §61.5 §7seconds after shackling an enemy." +
-                "\n\nHas an optimal range of §e" + shackleRange + " §7blocks.";
+        description = Component.text("Shackle up to ")
+                               .append(Component.text(maxShackleTargets, NamedTextColor.GOLD))
+                               .append(Component.text(" enemy and deal "))
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage. Shackled enemies are silenced for "))
+                               .append(formatRange(minSilenceDurationInTicks / 20f, maxSilenceDurationInTicks / 20f, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, making them unable to use their main attack for the duration. The silence duration increases by "))
+                               .append(Component.text("0.5", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds for every "))
+                               .append(Component.text("500", NamedTextColor.RED))
+                               .append(Component.text(" damage you took in the last "))
+                               .append(Component.text("6", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Gain a short burst of "))
+                               .append(Component.text("40%", NamedTextColor.YELLOW))
+                               .append(Component.text(" movement speed for "))
+                               .append(Component.text("1.5", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds after shackling an enemy."))
+                               .append(Component.newline())
+                               .append(Component.text("Has an optimal range of "))
+                               .append(Component.text(shackleRange, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override

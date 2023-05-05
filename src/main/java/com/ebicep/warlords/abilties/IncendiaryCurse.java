@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -41,8 +43,11 @@ public class IncendiaryCurse extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Ignite the targeted area with a cross flame, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage. Enemies hit are blinded for §6" + format(blindDurationInTicks / 20f) + " §7seconds.";
+        description = Component.text("Ignite the targeted area with a cross flame, dealing")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text("damage. Enemies hit are blinded for "))
+                               .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

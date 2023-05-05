@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -16,7 +17,7 @@ public class Temp extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Placeholder Ability";
+        description = Component.text("Placeholder Ability");
     }
 
     @Override

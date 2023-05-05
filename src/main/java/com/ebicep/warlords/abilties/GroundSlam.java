@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -38,8 +39,10 @@ public class GroundSlam extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Slam the ground, creating a shockwave around you that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and knocks enemies back slightly.";
+        description = Component.text("Slam the ground, creating a shockwave around you that deals ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and knocks enemies back slightly."));
+
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -30,9 +32,15 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Hurl a fast, piercing bolt of lightning that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by §62 §7seconds." +
-                "\n\nHas a maximum range of §e" + format(maxDistance) + " §7blocks.";
+        description = Component.text("Hurl a fast, piercing bolt of lightning that deals ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by "))
+                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."))
+                               .append(Component.text("\n\nHas a maximum range of "))
+                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
+
     }
 
     @Override

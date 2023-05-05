@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -35,9 +37,15 @@ public class Windfury extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Imbue your weapon with the power of the wind, causing each of your melee attacks to have a §e" + format(procChance) +
-                "% §7chance to hit §e" + maxHits + " §7additional times for §c" + format(weaponDamage) +
-                "% §7weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
+                               .append(Component.text(format(procChance) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" chance to hit "))
+                               .append(Component.text(maxHits, NamedTextColor.YELLOW))
+                               .append(Component.text(" additional times for "))
+                               .append(Component.text(format(weaponDamage) + "%", NamedTextColor.RED))
+                               .append(Component.text(" weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

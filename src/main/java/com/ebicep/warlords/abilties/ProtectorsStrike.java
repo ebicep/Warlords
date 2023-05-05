@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -34,9 +36,13 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and healing two nearby allies for §a" + minConvert + "-" + maxConvert +
-                "% §7of the damage done. Also heals yourself by §a50-75% §7of the damage done. Based on your current health.";
+        description = Component.text("Strike the targeted enemy player, causing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and healing two nearby allies for "))
+                               .append(Component.text(minConvert + "-" + maxConvert + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the damage done. Also heals yourself by "))
+                               .append(Component.text("50-75%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the damage done. Based on your current health."));
     }
 
     @Override

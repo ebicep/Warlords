@@ -11,6 +11,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -35,8 +37,14 @@ public class FreezingBreath extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Breathe cold air in a cone in front of you, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage to all enemies hit and slowing them by §e" + slowness + "% §7for §6" + slowDuration + " §7seconds.";
+        description = Component.text("Breathe cold air in a cone in front of you, dealing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to all enemies hit and slowing them by "))
+                               .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text(slowDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
+
     }
 
     @Override

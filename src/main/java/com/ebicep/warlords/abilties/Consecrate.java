@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -56,9 +58,13 @@ public class Consecrate extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take" +
-                formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage per second and take §c" +
-                strikeDamageBoost + "% §7increased damage from your paladin strikes. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage per second and take "))
+                               .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
+                               .append(Component.text(" increased damage from your paladin strikes. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
 
     }
 

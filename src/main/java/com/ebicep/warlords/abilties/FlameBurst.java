@@ -6,6 +6,8 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -29,8 +31,13 @@ public class FlameBurst extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Launch a flame burst that will explode for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage. The critical chance increases by §c1% §7for each travelled block. Up to 100%.";
+        description = Component.text("Launch a flame burst that will explode for ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage. The critical chance increases by "))
+                               .append(Component.text("1%", NamedTextColor.RED))
+                               .append(Component.text(" for each travelled block. Up to "))
+                               .append(Component.text("100%", NamedTextColor.RED))
+                               .append(Component.text("."));
     }
 
     @Override

@@ -39,12 +39,19 @@ public class RemedicChains extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Bind yourself to §e" + alliesAffected + " §7allies near you, increasing the damage they deal by §c" +
-                format(allyDamageIncrease) + "% §7as long as the link is active. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nWhen the link expires you and the allies are healed for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "health. Breaking the link early will only heal the allies for §a" + healingMultiplier +
-                "% §7of the original amount for each second they have been linked." +
-                "\n\nThe link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
+        description = Component.text("Bind yourself to ")
+                               .append(Component.text(alliesAffected, NamedTextColor.GOLD))
+                               .append(Component.text(" allies near you, increasing the damage they deal by "))
+                               .append(Component.text(format(allyDamageIncrease) + "%", NamedTextColor.RED))
+                               .append(Component.text(" as long as the link is active. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
+                               .append(Component.text("seconds.\n\nWhen the link expires you and the allies are healed for "))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(". Breaking the link early will only heal the allies for "))
+                               .append(Component.text(format(healingMultiplier) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the original amount for each second they have been linked.\n\nThe link will break if you are "))
+                               .append(Component.text(linkBreakRadius + " ", NamedTextColor.GOLD))
+                               .append(Component.text("blocks apart."));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -18,9 +20,13 @@ public abstract class AbstractLightInfusionBase extends AbstractAbility implemen
 
     @Override
     public void updateDescription(Player player) {
-        description = "You become infused with light, restoring §a" + energyGiven +
-                " §7energy and increasing your movement speed by §e" + speedBuff +
-                "% §7for §6" + format(tickDuration / 20f) + " §7seconds";
+        description = Component.text("You become infused with light, restoring ")
+                               .append(Component.text(energyGiven, NamedTextColor.GREEN))
+                               .append(Component.text(" energy and increasing your movement speed by "))
+                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" for "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

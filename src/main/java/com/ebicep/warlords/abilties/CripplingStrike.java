@@ -74,10 +74,19 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and §ccrippling §7them for §6" + crippleDuration + " §7seconds. A §ccrippled §7player deals §c" + cripple +
-                "% §7less damage for the duration of the effect. Adds §c" + cripplePerStrike +
-                "% §7less damage dealt per additional strike. (Max " + (cripple + (cripplePerStrike * 2)) + "%)";
+        description = Component.text("Strike the targeted enemy player, causing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and "))
+                               .append(Component.text("crippling ", NamedTextColor.RED))
+                               .append(Component.text("them for "))
+                               .append(Component.text(format(crippleDuration), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. A "))
+                               .append(Component.text("crippled ", NamedTextColor.RED))
+                               .append(Component.text("player deals "))
+                               .append(Component.text(format(cripple) + "%", NamedTextColor.RED))
+                               .append(Component.text(" less damage for the duration of the effect. Adds "))
+                               .append(Component.text(format(cripplePerStrike) + "%", NamedTextColor.RED))
+                               .append(Component.text(" less damage dealt per additional strike. (Max " + format(cripple + (cripplePerStrike * 2)) + "%" + ")"));
     }
 
     @Override

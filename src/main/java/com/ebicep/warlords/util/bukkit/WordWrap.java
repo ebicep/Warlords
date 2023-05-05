@@ -72,27 +72,10 @@ public class WordWrap {
     public static List<Component> wrap(TextComponent component, int width) {
         List<Component> output = new ArrayList<>();
         int currentWidth = 0;
-        List<Component> components = new ArrayList<>(component.children());
-        components.add(0, component.children(new ArrayList<>()));
 
         List<WordInfo> words = new ArrayList<>();
-        for (Component child : components) {
-            if (!(child instanceof TextComponent textComponent)) {
-                continue;
-            }
-            String content = textComponent.content();
-            if (content.isEmpty()) {
-                continue;
-            }
-            content = content.replaceAll("\n", " \n ");
-            String[] split = content.split(" ");
-            for (String s : split) {
-                if (s.isEmpty()) {
-                    continue;
-                }
-                words.add(new WordInfo(s, child.applyFallbackStyle(component.style()).style()));
-            }
-        }
+        addChildren(component, words);
+
         TextComponent.Builder toAppend = Component.text().append(Component.text());
         TextComponent.Builder lastComponent = Component.text();
         Style lastStyle = Style.empty();
@@ -109,7 +92,13 @@ public class WordWrap {
                 continue;
             }
             int wordLength = DefaultFontInfo.getStringLength(word);
-            String spacer = i < words.size() - 1 && words.get(i + 1).word().length() != 1 ? " " : ""; //TODO TEMP SOLUTION (fix for period/comma being spaced)
+            String spacer = word.equals("(") ||
+                                    (i < words.size() - 1 &&
+                                            !words.get(i + 1).word().equals(".") &&
+                                            !words.get(i + 1).word().equals(",") &&
+                                            !words.get(i + 1).word().equals(":"))
+                            ? " " : ""; //TODO TEMP SOLUTION (fix for period/comma being spaced)
+            wordLength += DefaultFontInfo.getStringLength(spacer);
             if (currentWidth + wordLength <= width) {
                 if (lastStyle == currentStyle) {
                     lastComponent.content(lastComponent.content() + word + spacer);
@@ -134,6 +123,36 @@ public class WordWrap {
             lastStyle = currentStyle;
         }
         return output;
+    }
+
+    private static void addChildren(Component component, List<WordInfo> words) {
+        List<Component> components = new ArrayList<>(component.children());
+        if (components.isEmpty()) {
+            components.add(0, component.children(new ArrayList<>()));
+            for (Component child : components) {
+                if (!(child instanceof TextComponent textComponent)) {
+                    continue;
+                }
+                String content = textComponent.content();
+                if (content.isEmpty()) {
+                    continue;
+                }
+                content = content.replaceAll("\n", " \n ");
+                String[] split = content.split(" ");
+                for (String s : split) {
+                    if (s.isEmpty()) {
+                        continue;
+                    }
+                    words.add(new WordInfo(s, child.applyFallbackStyle(component.style()).style()));
+                }
+            }
+            return;
+        }
+        components.add(0, component.children(new ArrayList<>()));
+
+        for (Component child : components) {
+            addChildren(child, words);
+        }
     }
 
     /**

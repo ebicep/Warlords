@@ -40,10 +40,21 @@ public class Vindicate extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "All allies within an §e" + radius + " §7block radius gain the status §6VIND§7, which clears all de-buffs. In addition, the status " +
-                "§6VIND §7prevents allies from being affected by de-buffs and grants §6" + knockbackResistance + "% §7knockback resistance for §6" +
-                format(vindTickDuration / 20f) + " §7seconds. You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" +
-                format(damageReductionTickDuration / 20f) + " §7seconds.";
+        description = Component.text("All allies within an ")
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" block radius gain the status "))
+                               .append(Component.text("VIND", NamedTextColor.GOLD))
+                               .append(Component.text(", which clears all de-buffs. In addition, the status "))
+                               .append(Component.text("VIND", NamedTextColor.GOLD))
+                               .append(Component.text(" prevents allies from being affected by de-buffs and grants "))
+                               .append(Component.text(knockbackResistance + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" knockback resistance for "))
+                               .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. You gain "))
+                               .append(Component.text(format(vindicateDamageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage reduction for "))
+                               .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

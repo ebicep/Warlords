@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,10 +27,18 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Discharge a beam of energizing lightning that heals you and a targeted friendly player for" +
-                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health and jumps to §e1 §7additional target within §e" + bounceRange + " §7blocks." +
-                "\n\nEach ally healed reduces the cooldown of Boulder by §62.5 §7seconds." + "" +
-                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
+        description =
+                Component.text("Discharge a beam of energizing lightning that heals you and a targeted friendly player for ")
+                         .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                         .append(Component.text(" health and jumps to "))
+                         .append(Component.text("1", NamedTextColor.YELLOW))
+                         .append(Component.text(" additional target within "))
+                         .append(Component.text(bounceRange, NamedTextColor.YELLOW))
+                         .append(Component.text(" blocks.\n\nEach ally healed reduces the cooldown of Boulder by "))
+                         .append(Component.text("2.5", NamedTextColor.GOLD))
+                         .append(Component.text(" seconds.\n\nHas an initial cast range of "))
+                         .append(Component.text(radius, NamedTextColor.YELLOW))
+                         .append(Component.text(" blocks."));
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -36,11 +38,21 @@ public class WaterBolt extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Shoot a bolt of water that will burst for" +
-                formatRangeDamage(minDamage, maxDamage) + "damage and restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "health to allies. A direct hit will cause §a15% §7increased damage or healing for the target hit." +
-                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks." +
-                "\n\nWater Bolt can overheal allies for up to §a10% §7of their max health as bonus health for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
+        description = Component.text("Shoot a bolt of water that will burst for")
+                               .append(formatRange(minDamage, maxDamage, NamedTextColor.RED))
+                               .append(Component.text(" damage and restore"))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health to allies. A direct hit will cause "))
+                               .append(Component.text("15%", NamedTextColor.GOLD))
+                               .append(Component.text(" increased damage or healing for the target hit."))
+                               .append(Component.text("\n\nHas an optimal range of "))
+                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."))
+                               .append(Component.text("\n\nWater Bolt can overheal allies for up to "))
+                               .append(Component.text("10%", NamedTextColor.GREEN))
+                               .append(Component.text(" of their max health as bonus health for "))
+                               .append(Component.text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

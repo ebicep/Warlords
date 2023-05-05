@@ -10,6 +10,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -49,9 +51,14 @@ public class EarthenSpike extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing" +
-                formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage to any nearby enemies and launches them up into the air." +
-                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
+        description = Component.text(
+                                       "Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage to any nearby enemies and launches them up into the air."))
+                               .append(Component.text("\n\nHas an initial cast range of "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
+
     }
 
     @Override

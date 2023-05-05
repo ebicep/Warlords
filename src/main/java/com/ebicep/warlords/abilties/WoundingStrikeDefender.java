@@ -30,9 +30,15 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
-                "damage and §cwounding §7them for §63 §7seconds. A wounded player receives §c" + wounding +
-                "% §7less healing for the duration of the effect.";
+        description = Component.text("Strike the targeted enemy player, causing")
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" damage and "))
+                               .append(Component.text("wounding", NamedTextColor.RED))
+                               .append(Component.text(" them for "))
+                               .append(Component.text("3", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. A wounded player receives "))
+                               .append(Component.text(wounding + "%", NamedTextColor.RED))
+                               .append(Component.text(" less healing for the duration of the effect."));
     }
 
     @Override

@@ -12,6 +12,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -45,10 +47,16 @@ public class SoothingElixir extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for" +
-                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health and damage nearby enemies for" +
-                formatRangeDamage(puddleMinDamage, puddleMaxDamage) + "damage. The projectile will form a small puddle that heals allies for" +
-                formatRangeHealing(puddleMinHealing, puddleMaxHealing) + "health per second. Lasts §6" + puddleDuration + " §7seconds.";
+        description = Component.text("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Component.text(" health and damaging nearby enemies for "))
+                               .append(formatRangeDamage(puddleMinDamage, puddleMaxDamage))
+                               .append(Component.text(" damage. The projectile will form a small puddle that heals allies for "))
+                               .append(formatRangeHealing(puddleMinHealing, puddleMaxHealing))
+                               .append(Component.text(" health per second. Lasts "))
+                               .append(Component.text(puddleDuration, NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
+
     }
 
     @Override
@@ -157,9 +165,9 @@ public class SoothingElixir extends AbstractAbility {
                     wp.getGame().registerGameTask(particleTask);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BURST)
-                            .build());
+                                                                            .withColor(Color.WHITE)
+                                                                            .with(FireworkEffect.Type.BURST)
+                                                                            .build());
 
                     for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
@@ -184,17 +192,17 @@ public class SoothingElixir extends AbstractAbility {
                         @Override
                         public void run() {
                             PlayerFilter.entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
-                                    .aliveTeammatesOf(wp)
-                                    .forEach((ally) -> ally.addHealingInstance(
-                                            wp,
-                                            name,
-                                            puddleMinHealing,
-                                            puddleMaxHealing,
-                                            critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
-                                    ));
+                                        .aliveTeammatesOf(wp)
+                                        .forEach((ally) -> ally.addHealingInstance(
+                                                wp,
+                                                name,
+                                                puddleMinHealing,
+                                                puddleMaxHealing,
+                                                critChance,
+                                                critMultiplier,
+                                                false,
+                                                false
+                                        ));
 
                             timeLeft--;
 
@@ -220,7 +228,7 @@ public class SoothingElixir extends AbstractAbility {
                                 critMultiplier,
                                 false
                         );
-                        
+
                         if (pveUpgrade) {
                             ImpalingStrike.giveLeechCooldown(
                                     wp,
