@@ -25,14 +25,19 @@ public class ChatUtils {
     private static final int CENTER_PX = 164;
 
     public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
+        sendTitleToGamePlayers(game, Title.title(
+                title,
+                subtitle,
+                Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+        ));
+    }
+
+    public static void sendTitleToGamePlayers(
+            Game game,
+            Title title
+    ) {
         for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-            if (we.getEntity() instanceof Player) {
-                we.getEntity().showTitle(Title.title(
-                        title,
-                        subtitle,
-                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
-                ));
-            }
+            we.getEntity().showTitle(title);
         }
     }
 
@@ -44,15 +49,13 @@ public class ChatUtils {
             int stay,
             int fadeOut
     ) {
-        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-            if (we.getEntity() instanceof Player) {
-                we.getEntity().showTitle(Title.title(
+        sendTitleToGamePlayers(game,
+                Title.title(
                         title,
                         subtitle,
                         Title.Times.times(Ticks.duration(fadeIn), Ticks.duration(stay), Ticks.duration(fadeOut))
-                ));
-            }
-        }
+                )
+        );
     }
 
     public static void sendMessage(Player player, boolean centered, Component message) {

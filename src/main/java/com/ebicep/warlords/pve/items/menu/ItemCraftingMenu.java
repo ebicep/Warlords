@@ -191,10 +191,10 @@ public class ItemCraftingMenu {
         menu.setItem(6, 2,
                 new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
                         .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
-                        .loreLEGACY(
+                        .lore(
                                 ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                                 ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
-                                ""
+                                Component.empty()
                         )
                         .addLore(
                                 WordWrap.wrapWithNewline(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
@@ -363,7 +363,7 @@ public class ItemCraftingMenu {
                                                     .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         ItemBuilder itemBuilder = new ItemBuilder(hasBoughtBlessing && enoughCost ? Material.ANVIL : Material.BARRIER)
                 .name(Component.text("Click to Smelt a Celestial Bronze", NamedTextColor.GREEN))
-                .loreLEGACY(
+                .lore(
                         ItemMenuUtil.getRequirementMetString(hasBoughtBlessing, "Blessing Selected"),
                         ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
                 );

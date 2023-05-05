@@ -84,6 +84,7 @@ public class WordWrap {
             if (content.isEmpty()) {
                 continue;
             }
+            content = content.replaceAll("\n", " \n ");
             String[] split = content.split(" ");
             for (String s : split) {
                 if (s.isEmpty()) {

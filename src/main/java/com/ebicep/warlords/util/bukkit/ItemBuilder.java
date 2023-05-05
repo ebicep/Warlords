@@ -60,7 +60,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(Component component) {
-        meta().displayName(ComponentUtils.nonItalicBase().append(component));
+        meta().displayName(ComponentUtils.componentBase().append(component));
         return this;
     }
 
@@ -174,7 +174,7 @@ public class ItemBuilder {
             components = new ArrayList<>();
         }
         for (Component component : lore) {
-            components.add(ComponentUtils.nonItalicBase().append(component));
+            components.add(ComponentUtils.componentBase().append(component));
         }
         meta().lore(components);
         return this;

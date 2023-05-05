@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -41,7 +40,7 @@ public interface Achievement {
         TextComponent component = Component.text(">> ", NamedTextColor.GREEN)
                                            .append(Component.text(warlordsEntity.getName(), NamedTextColor.AQUA))
                                            .append(Component.text(" unlocked: ", NamedTextColor.GREEN))
-                                           .append(Component.text(ChatColor.GOLD + getName())
+                                           .append(Component.text(getName(), NamedTextColor.GOLD)
                                                             .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(getDescription(), NamedTextColor.GREEN), 200))))
                                            .append(Component.text("  <<", NamedTextColor.GREEN));
         warlordsEntity.getGame().warlordsPlayers()

@@ -12,14 +12,15 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EnvoyLegionnaire;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
@@ -50,16 +51,13 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.DARK_PURPLE + getWarlordsNPC().getName(),
-                        ChatColor.LIGHT_PURPLE + "Leader of the Illusion Vanguard",
-                        20, 40, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.DARK_PURPLE),
+                Component.text("Leader of the Illusion Vanguard", NamedTextColor.LIGHT_PURPLE),
+                20, 30, 20
+        );
     }
 
     @Override

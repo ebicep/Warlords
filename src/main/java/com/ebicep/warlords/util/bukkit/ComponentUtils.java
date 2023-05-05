@@ -2,6 +2,7 @@ package com.ebicep.warlords.util.bukkit;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import javax.annotation.Nonnull;
@@ -11,8 +12,10 @@ import java.util.List;
 public class ComponentUtils {
 
     @Nonnull
-    public static TextComponent nonItalicBase() {
-        return Component.empty().decoration(TextDecoration.ITALIC, false);
+    public static TextComponent componentBase() {
+        return Component.empty()
+                        .color(NamedTextColor.GRAY)
+                        .decoration(TextDecoration.ITALIC, false);
     }
 
     public static List<Component> flattenComponents(List<Component> component) {

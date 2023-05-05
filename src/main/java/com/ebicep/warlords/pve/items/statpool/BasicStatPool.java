@@ -143,16 +143,19 @@ public enum BasicStatPool implements StatPool {
     }};
 
     public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted) {
-        return getStatPoolLore(statPool, "", inverted);
+        return getStatPoolLore(statPool, Component.empty(), inverted);
     }
 
-    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix, boolean inverted) {
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, Component prefix, boolean inverted) {
         List<Component> lore = new ArrayList<>();
         statPool.keySet()
                 .stream()
                 .sorted(Comparator.comparingInt(Enum::ordinal))
-                .forEachOrdered(stat -> lore.add(Component.text(prefix)
-                                                          .append((!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat))))));
+                .forEachOrdered(stat -> lore.add(
+                        Component.textOfChildren(
+                                prefix,
+                                (!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat)))
+                        )));
         return lore;
     }
 

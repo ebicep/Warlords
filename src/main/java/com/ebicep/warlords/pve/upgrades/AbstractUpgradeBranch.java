@@ -13,8 +13,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -70,7 +70,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         menu.setItem(4, 3,
                 new ItemBuilder(Material.DIAMOND)
-                        .name(ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + maxUpgrades)
+                        .name(Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxUpgrades, NamedTextColor.GREEN)))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -121,7 +121,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
                         RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
                         masterUpgrade.getName(),
-                        masterUpgrade.getDescription()
+                PlainTextComponentSerializer.plainText().serialize(masterUpgrade.getDescription().stream().collect(Component.toComponent(Component.newline())))
                 )
         );
     }
@@ -273,36 +273,48 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
                         RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
                         upgrade.getName(),
-                        upgrade.getDescription()
+                PlainTextComponentSerializer.plainText().serialize(upgrade.getDescription().stream().collect(Component.toComponent(Component.newline())))
                 )
         );
     }
 
     private ItemStack masterBranchItem(Upgrade upgrade) {
-        ArrayList<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
         if (upgrade.getSubName() != null) {
-            lore.add((upgrade.isUnlocked() ? ChatColor.RED : ChatColor.DARK_GRAY) + upgrade.getSubName());
-            lore.add("");
+            lore.add(Component.text(upgrade.getSubName(), upgrade.isUnlocked() ? NamedTextColor.RED : NamedTextColor.DARK_GRAY));
+            lore.add(Component.empty());
         }
-        lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
+        for (Component component : upgrade.getDescription()) {
+            lore.add(component.color(upgrade.isUnlocked() ? NamedTextColor.RED : NamedTextColor.DARK_GRAY));
+        }
+        lore.add(Component.empty());
+        lore.add(Component.empty());
+        lore.add(Component.text("Cost: ", NamedTextColor.GRAY)
+                          .append(Component.text("❂ " + upgrade.getCurrencyCost(), NamedTextColor.GOLD))
+        );
         ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
                 .name(Component.text(masterUpgrade.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
-                .loreLEGACY(lore);
+                .lore(lore);
         if (!upgrade.isUnlocked()) {
-            String position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
+            Component position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
             if (position != null) {
                 itemBuilder.addLore(
-                        ChatColor.GRAY + "Auto Upgrade Position: " + position,
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to remove from auto upgrade queue."
+                        Component.text("Auto Upgrade Position: ", NamedTextColor.GRAY).append(position),
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
+                        )
                 );
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 itemBuilder.addLore(
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to add to auto upgrade queue."
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to add to auto upgrade queue.", NamedTextColor.GRAY)
+                        )
                 );
             }
         }
@@ -310,26 +322,38 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     private ItemStack branchItem(Upgrade upgrade) {
-        ItemBuilder itemBuilder = new ItemBuilder(upgrade.isUnlocked() ?
-                                                  new ItemStack(Material.ORANGE_WOOL) :
-                                                  new ItemStack(Material.LIGHT_GRAY_WOOL))
-                .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
-                .loreLEGACY((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
+        ItemBuilder itemBuilder = new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.LIGHT_GRAY_WOOL))
+                .name(Component.text(upgrade.getName(), upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.RED));
+        List<Component> lore = new ArrayList<>();
+        for (Component component : upgrade.getDescription()) {
+            lore.add(component.color(upgrade.isUnlocked() ? NamedTextColor.RED : NamedTextColor.DARK_GRAY));
+        }
+        lore.add(Component.empty());
+        lore.add(Component.empty());
+        lore.add(Component.text("Cost: ", NamedTextColor.GRAY)
+                          .append(Component.text("❂ " + upgrade.getCurrencyCost(), NamedTextColor.GOLD))
+        );
+        itemBuilder.lore(lore);
         if (!upgrade.isUnlocked()) {
-            String position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
+            Component position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
             if (position != null) {
                 itemBuilder.addLore(
-                        ChatColor.GRAY + "Auto Upgrade Position: " + position,
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to remove from auto upgrade queue."
+                        Component.text("Auto Upgrade Position: ", NamedTextColor.GRAY).append(position),
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
+                        )
                 );
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 itemBuilder.addLore(
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to add to auto upgrade queue."
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to add to auto upgrade queue.", NamedTextColor.GRAY)
+                        )
                 );
             }
         }
@@ -337,18 +361,35 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability, boolean autoUpgraded) {
-        String prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : "";
+        Component prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : Component.empty();
         game.forEachOnlinePlayer((p, t) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
-                p.sendMessage(Component.text(prefix + ChatColor.AQUA + abilityTree.getWarlordsPlayer().getName() + " §ehas unlocked ")
-                                       .append(Component.text(ChatColor.GOLD + ability.getName() + " - §c§l" + upgrade.getName() + "§e!")
-                                                        .hoverEvent(HoverEvent.showText(Component.text("§c§l" + upgrade.getName() + "\n" + upgrade.getDescription()))))
-                );
+                p.sendMessage(Component.textOfChildren(
+                        prefix,
+                        Component.text(abilityTree.getWarlordsPlayer().getName(), NamedTextColor.AQUA),
+                        Component.text(" has unlocked ", NamedTextColor.YELLOW),
+                        Component.textOfChildren(
+                                Component.text(ability.getName() + " - ", NamedTextColor.GOLD),
+                                Component.text(upgrade.getName(), NamedTextColor.RED, TextDecoration.BOLD),
+                                Component.text("!", NamedTextColor.GOLD)
+                        ).hoverEvent(HoverEvent.showText(Component.textOfChildren(
+                                Component.text(upgrade.getName(), NamedTextColor.RED, TextDecoration.BOLD),
+                                Component.newline(),
+                                upgrade.getDescription(NamedTextColor.GREEN).stream().collect(Component.toComponent(Component.newline()))
+                        )))
+                ));
             } else {
-                p.sendMessage(Component.text(prefix + ChatColor.AQUA + abilityTree.getWarlordsPlayer().getName() + " §ehas unlocked ")
-                                       .append(Component.text(ChatColor.GOLD + ability.getName() + " - " + upgrade.getName() + "§e!")
-                                                        .hoverEvent(HoverEvent.showText(Component.text("§c§l" + upgrade.getName() + "\n" + upgrade.getDescription()))))
-                );
+                p.sendMessage(Component.textOfChildren(
+                        prefix,
+                        Component.text(abilityTree.getWarlordsPlayer().getName(), NamedTextColor.AQUA),
+                        Component.text(" has unlocked ", NamedTextColor.YELLOW),
+                        Component.text(ability.getName() + " - " + upgrade.getName() + "!", NamedTextColor.GOLD)
+                                 .hoverEvent(HoverEvent.showText(Component.textOfChildren(
+                                         Component.text(upgrade.getName(), NamedTextColor.GOLD),
+                                         Component.newline(),
+                                         upgrade.getDescription(NamedTextColor.GREEN).stream().collect(Component.toComponent(Component.newline()))
+                                 )))
+                ));
             }
         });
     }

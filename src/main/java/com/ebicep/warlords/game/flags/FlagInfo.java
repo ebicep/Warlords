@@ -6,12 +6,12 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.game.Team;
-
-import java.util.function.BiConsumer;
 import org.bukkit.Location;
 
+import java.util.function.BiConsumer;
+
 public class FlagInfo {
-	
+
     private FlagLocation flag;
     private final Location spawnLocation;
     private final Team team;

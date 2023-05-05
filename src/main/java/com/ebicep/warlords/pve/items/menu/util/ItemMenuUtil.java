@@ -17,7 +17,7 @@ import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -26,8 +26,11 @@ import java.util.function.BiConsumer;
 
 public class ItemMenuUtil {
 
-    public static String getRequirementMetString(boolean requirementMet, String requirement) {
-        return (requirementMet ? ChatColor.GREEN + "✔" : ChatColor.RED + "✖") + ChatColor.GRAY + " " + requirement;
+    public static Component getRequirementMetString(boolean requirementMet, String requirement) {
+        return Component.textOfChildren(
+                requirementMet ? Component.text("✔ ", NamedTextColor.GREEN) : Component.text("✖ ", NamedTextColor.RED),
+                Component.text(requirement, NamedTextColor.GRAY)
+        );
     }
 
     public static void addItemTierRequirement(
@@ -45,8 +48,11 @@ public class ItemMenuUtil {
         } else {
             itemBuilder = item.generateItemBuilder()
                               .addLore(
-                                      "",
-                                      ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to swap this item"
+                                      Component.empty(),
+                                      Component.textOfChildren(
+                                              Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                              Component.text(" to swap this item", NamedTextColor.GREEN)
+                                      )
                               );
         }
         menu.setItem(x, y,
@@ -132,7 +138,7 @@ public class ItemMenuUtil {
                 case BUCKLER -> bucklerModifier += equippedItem.getModifierCalculated();
             }
         }
-        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, ChatColor.AQUA + "- ", true);
+        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("- ", NamedTextColor.AQUA), true);
         List<Component> blessCurseLore = new ArrayList<>();
         if (gauntletModifier != 0) {
             List<Component> lore = AbstractItem.getModifierCalculatedLore(

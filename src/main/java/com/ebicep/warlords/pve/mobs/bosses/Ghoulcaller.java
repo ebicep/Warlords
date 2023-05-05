@@ -14,7 +14,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -24,7 +24,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,16 +61,12 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + getWarlordsNPC().getName(),
-                        ChatColor.GOLD + "Chained Agony",
-                        20, 30, 20
-                );
-            }
-        }
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.RED),
+                Component.text("Chained Agony", NamedTextColor.GOLD),
+                20, 30, 20
+        );
         spawnTormentedSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
     }
 

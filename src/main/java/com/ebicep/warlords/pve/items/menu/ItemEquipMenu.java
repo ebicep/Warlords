@@ -24,7 +24,6 @@ import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -132,9 +131,15 @@ public class ItemEquipMenu {
                 },
                 itemBuilder -> itemBuilder
                         .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to scrap",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to favorite"
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to scrap", NamedTextColor.GREEN)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to favorite", NamedTextColor.GREEN)
+                                )
                         ),
                 menuSettings,
                 databasePlayer,

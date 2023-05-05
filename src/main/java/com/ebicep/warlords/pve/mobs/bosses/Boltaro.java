@@ -14,14 +14,14 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -55,16 +55,13 @@ public class Boltaro extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + getWarlordsNPC().getName(),
-                        ChatColor.GOLD + "Right Hand of the Illusion Vanguard",
-                        20, 30, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.RED),
+                Component.text("Right Hand of the Illusion Vanguard", NamedTextColor.GOLD),
+                20, 30, 20
+        );
 
         option.getGame().registerEvents(listener = new Listener() {
             @EventHandler

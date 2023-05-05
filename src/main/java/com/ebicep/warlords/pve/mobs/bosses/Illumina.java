@@ -17,15 +17,18 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.ExiledSkeleton;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ForgottenZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,16 +64,13 @@ public class Illumina extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.BLUE + "Illumina",
-                        ChatColor.DARK_GRAY + "General of the Illusion Legion",
-                        20, 30, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.BLUE),
+                Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY),
+                20, 30, 20
+        );
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new IronGolem(spawnLocation));
@@ -134,7 +134,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 220 == 0) {
-            EffectUtils.strikeLightningInCylinder(loc, 6,false);
+            EffectUtils.strikeLightningInCylinder(loc, 6, false);
             for (WarlordsEntity we : PlayerFilterGeneric
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
@@ -207,14 +207,12 @@ public class Illumina extends AbstractZombie implements BossMob {
                 .playingGame(getWarlordsNPC().getGame())
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        "",
-                        ChatColor.RED + "Keep attacking Illumina to stop the draining!",
-                        10, 35, 0
-                );
-            }
+            we.getEntity().showTitle(Title.title(
+                    Component.empty(),
+                    Component.text("Keep attacking Illumina to stop the draining!", NamedTextColor.RED),
+                    Title.Times.times(Ticks.duration(10), Ticks.duration(35), Ticks.duration(0))
+            ));
+
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.35);
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
         }
@@ -222,6 +220,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
+
             @Override
             public void run() {
                 if (warlordsNPC.isDead()) {
@@ -231,9 +230,9 @@ public class Illumina extends AbstractZombie implements BossMob {
 
                 if (damageToDeal.get() <= 0) {
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
                     warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
                     this.cancel();
                     return;
@@ -274,9 +273,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                     }
 
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
                     EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "shaman.earthlivingweapon.impact", 500, 0.5f);
 
@@ -311,16 +310,12 @@ public class Illumina extends AbstractZombie implements BossMob {
                     this.cancel();
                 }
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.YELLOW.toString() + countdown.get(),
-                                ChatColor.RED.toString() + damageToDeal.get(),
-                                0, 4, 0
-                        );
-                    }
-                }
+                ChatUtils.sendTitleToGamePlayers(
+                        getWarlordsNPC().getGame(),
+                        Component.text(countdown.get(), NamedTextColor.YELLOW),
+                        Component.text(damageToDeal.get(), NamedTextColor.RED),
+                        0, 4, 0
+                );
             }
         }.runTaskTimer(40, 0);
     }

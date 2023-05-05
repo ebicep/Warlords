@@ -183,10 +183,14 @@ public class WarlordsNewHotbarMenu {
                         .lore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige))
                         .addLore(
                                 Component.empty(),
-                                Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                         .append(Component.text(" to select this specialization.", NamedTextColor.GREEN)),
-                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                         .append(Component.text(" to claim rewards.", NamedTextColor.GREEN))
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to select this specialization.", NamedTextColor.GREEN)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to claim rewards.", NamedTextColor.GREEN)
+                                )
                         );
                 if (hasRewards) {
                     itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));

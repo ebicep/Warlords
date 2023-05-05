@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.pve.DifficultyMode;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -12,7 +14,10 @@ import java.util.function.Function;
 
 public class AutoUpgradeProfile {
 
-    public static final String AUTO_UPGRADE_PREFIX = ChatColor.AQUA + "Auto Upgrade" + ChatColor.DARK_GRAY + " > ";
+    public static final Component AUTO_UPGRADE_PREFIX = Component.textOfChildren(
+            Component.text("Auto Upgrade", NamedTextColor.AQUA),
+            Component.text(" > ", NamedTextColor.GRAY)
+    );
 
     private String name = "Default";
     @Field("profiles")
@@ -34,32 +39,33 @@ public class AutoUpgradeProfile {
         autoUpgradeEntries.add(new AutoUpgradeEntry(branchIndex, upgradeIndex, upgradeType));
     }
 
-    public List<String> getLore(AbilityTree abilityTree) {
-        List<String> lore = new ArrayList<>();
+    public List<Component> getLore(AbilityTree abilityTree) {
+        List<Component> lore = new ArrayList<>();
         List<AbstractUpgradeBranch<?>> upgradeBranches = abilityTree.getUpgradeBranches();
         for (int i = 0, autoUpgradeEntriesSize = autoUpgradeEntries.size(); i < autoUpgradeEntriesSize; i++) {
             AutoUpgradeEntry entry = autoUpgradeEntries.get(i);
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(entry.getBranchIndex());
             Upgrade upgrade = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch).get(entry.getUpgradeIndex());
-            ChatColor chatColor = upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.GRAY;
-            String position = ChatColor.AQUA.toString() + (i + 1) + ". ";
+            NamedTextColor textColor = upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.GRAY;
+            Component position = Component.text((i + 1) + ". ", NamedTextColor.AQUA);
             if (entry.getUpgradeType() == AutoUpgradeEntry.UpgradeType.MASTER) {
-                lore.add(position + chatColor + upgradeBranch.getAbility().getName() + " - §c§l" + upgrade.getName());
+                lore.add(position.append(Component.text(upgradeBranch.getAbility().getName() + " - ", textColor))
+                                 .append(Component.text(upgrade.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
             } else {
-                lore.add(position + chatColor + upgradeBranch.getAbility().getName() + " - " + upgrade.getName());
+                lore.add(position.append(Component.text(upgradeBranch.getAbility().getName() + " - " + upgrade.getName(), textColor)));
             }
         }
         return lore;
     }
 
-    public String getPosition(AbilityTree abilityTree, Upgrade upgrade) {
+    public Component getPosition(AbilityTree abilityTree, Upgrade upgrade) {
         List<AbstractUpgradeBranch<?>> upgradeBranches = abilityTree.getUpgradeBranches();
         for (int i = 0, autoUpgradeEntriesSize = autoUpgradeEntries.size(); i < autoUpgradeEntriesSize; i++) {
             AutoUpgradeEntry entry = autoUpgradeEntries.get(i);
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(entry.getBranchIndex());
             Upgrade currentUpgrade = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch).get(entry.getUpgradeIndex());
             if (currentUpgrade == upgrade) {
-                return ChatColor.AQUA + "#" + (i + 1) + "/" + autoUpgradeEntries.size();
+                return Component.text("#" + (i + 1) + "/" + autoUpgradeEntries.size(), NamedTextColor.AQUA);
             }
         }
         return null;

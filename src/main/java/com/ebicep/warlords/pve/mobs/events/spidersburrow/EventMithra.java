@@ -15,15 +15,16 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.spider.Spider;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
@@ -64,16 +65,13 @@ public class EventMithra extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Mithra",
-                        ChatColor.WHITE + "The Envoy Queen of Illusion",
-                        20, 30, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text("Mithra", NamedTextColor.LIGHT_PURPLE),
+                Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE),
+                20, 30, 20
+        );
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new Spider(spawnLocation));
@@ -128,9 +126,9 @@ public class EventMithra extends AbstractZombie implements BossMob {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 1.5f);
             groundSlam();
             new GameRunnable(warlordsNPC.getGame()) {
-                private World world = warlordsNPC.getWorld();
                 final List<Block> webs = new ArrayList<>();
                 int ticksElapsed = 0;
+                private World world = warlordsNPC.getWorld();
 
                 @Override
                 public void run() {
@@ -143,14 +141,12 @@ public class EventMithra extends AbstractZombie implements BossMob {
 
                     if (ticksElapsed % 2 == 0) {
                         int ticksLeft = 200 - ticksElapsed;
-                        option.getGame().onlinePlayers().forEach(playerTeamEntry -> {
-                            PacketUtils.sendTitle(
-                                    playerTeamEntry.getKey(),
-                                    ChatColor.RED + "Entangled",
-                                    ChatColor.YELLOW + TIME_FORMAT.format(ticksLeft / 20f),
-                                    0, ticksLeft, 0
-                            );
-                        });
+                        ChatUtils.sendTitleToGamePlayers(
+                                getWarlordsNPC().getGame(),
+                                Component.text("Entangled", NamedTextColor.RED),
+                                Component.text(TIME_FORMAT.format(ticksLeft / 20f), NamedTextColor.YELLOW),
+                                0, ticksLeft, 0
+                        );
                     }
 
                     if (++ticksElapsed >= 200) {
@@ -263,27 +259,6 @@ public class EventMithra extends AbstractZombie implements BossMob {
         groundSlam.onActivate(warlordsNPC, null);
     }
 
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.BLACK)
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .build());
-        EffectUtils.strikeLightning(deathLocation, false, 2);
-    }
-
     private void enrage() {
         Utils.playGlobalSound(warlordsNPC.getLocation(), "warrior.berserk.activation", 2, .5f);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -328,16 +303,12 @@ public class EventMithra extends AbstractZombie implements BossMob {
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + "PREPARE TO DIE",
-                        ChatColor.LIGHT_PURPLE + "Immolation Spell",
-                        20, 60, 20
-                );
-            }
-        }
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text("PREPARE TO DIE", NamedTextColor.RED),
+                Component.text("Immolation Spell", NamedTextColor.LIGHT_PURPLE),
+                20, 60, 20
+        );
 
         float damage = switch (option.getDifficulty()) {
             case ENDLESS, HARD -> 200;
@@ -392,5 +363,26 @@ public class EventMithra extends AbstractZombie implements BossMob {
                 }
             }
         }.runTaskTimer(40, 5);
+    }
+
+    @Override
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                                                                       .withColor(Color.BLACK)
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .build());
+        EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 }

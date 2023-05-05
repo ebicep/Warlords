@@ -16,8 +16,9 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -103,13 +104,13 @@ public class ItemSearchMenu extends Menu {
                 AbstractItem item = itemInventory.get(itemNumber);
                 ItemBuilder itemBuilder = item.generateItemBuilder();
                 if (item.isFavorite()) {
-                    itemBuilder.addLore("", ChatColor.LIGHT_PURPLE + "FAVORITE");
+                    itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
                 }
                 if (equippedItems.contains(item.getUUID())) {
                     if (!item.isFavorite()) {
-                        itemBuilder.addLore("");
+                        itemBuilder.addLore(Component.empty());
                     }
-                    itemBuilder.addLore(ChatColor.AQUA + "EQUIPPED");
+                    itemBuilder.addLore(Component.text("EQUIPPED", NamedTextColor.AQUA));
                 }
                 itemBuilder = editItem.apply(itemBuilder);
                 setItem(x, y,
@@ -143,7 +144,7 @@ public class ItemSearchMenu extends Menu {
         setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(Component.text("Reset Settings", NamedTextColor.GREEN))
-                        .loreLEGACY(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .lore(Component.text("Reset the filter, sort, and order of weapons", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
@@ -155,31 +156,35 @@ public class ItemSearchMenu extends Menu {
 
     private void addFilterBySetting() {
         PlayerItemMenuSettings.PlayerItemMenuFilterSettings filterSettings = menuSettings.getFilterSettings();
-        List<String> filterLore = new ArrayList<>();
+        List<Component> filterLore = new ArrayList<>();
+        TextComponent grayDash = Component.text("- ", NamedTextColor.GRAY);
         if (filterSettings.getTypeFilter() != ItemType.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTypeFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getTypeFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getTierFilter() != ItemTier.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTierFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getTierFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getModifierFilter() != ModifierFilter.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getModifierFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getModifierFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getAddonFilter()) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Selected Class Bonus");
+            filterLore.add(grayDash.append(Component.text("Selected Class Bonus", NamedTextColor.GRAY)));
         }
         if (filterSettings.getFavoriteFilter()) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Only Favorites");
+            filterLore.add(grayDash.append(Component.text("Only Favorites", NamedTextColor.GRAY)));
         }
         if (filterLore.isEmpty()) {
-            filterLore.add(ChatColor.GRAY + "No filters selected");
+            filterLore.add(Component.text("No filters selected", NamedTextColor.GRAY));
         }
-        filterLore.add("");
-        filterLore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GRAY + " to change");
+        filterLore.add(Component.empty());
+        filterLore.add(Component.textOfChildren(
+                Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text(" to change", NamedTextColor.GRAY)
+        ));
         setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
                         .name(Component.text("Filter Settings", NamedTextColor.GREEN))
-                        .loreLEGACY(filterLore)
+                        .lore(filterLore)
                         .get(),
                 (m, e) -> {
                     ItemFilterMenu.openItemFilterMenu(player, databasePlayer, (m2, e2) -> open());
@@ -192,9 +197,9 @@ public class ItemSearchMenu extends Menu {
         setItem(6, 5,
                 new ItemBuilder(Material.COMPARATOR)
                         .name(Component.text("Sort By", NamedTextColor.GREEN))
-                        .loreLEGACY(Arrays.stream(SortOptions.VALUES)
-                                          .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                          .collect(Collectors.joining("\n"))
+                        .lore(Arrays.stream(SortOptions.VALUES)
+                                    .map(value -> Component.text(value.name, (sortedBy == value ? NamedTextColor.AQUA : NamedTextColor.GRAY)))
+                                    .collect(Collectors.toList())
                         )
                         .get(),
                 (m, e) -> {
@@ -208,9 +213,9 @@ public class ItemSearchMenu extends Menu {
         setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
                         .name(Component.text("Sort Order", NamedTextColor.GREEN))
-                        .loreLEGACY(menuSettings.isAscending() ?
-                                    ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
-                                    ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
+                        .lore(
+                                Component.text("Ascending", menuSettings.isAscending() ? NamedTextColor.AQUA : NamedTextColor.GRAY),
+                                Component.text("Descending", menuSettings.isAscending() ? NamedTextColor.GRAY : NamedTextColor.AQUA)
                         )
                         .get(),
                 (m, e) -> {

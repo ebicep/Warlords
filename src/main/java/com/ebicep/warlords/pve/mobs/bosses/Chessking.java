@@ -8,13 +8,13 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
 import com.ebicep.warlords.pve.mobs.zombie.SlimeZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 public class Chessking extends AbstractSlime implements BossMob {
 
@@ -35,16 +35,12 @@ public class Chessking extends AbstractSlime implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         this.entity.get().setSize(19, true);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.GREEN + getWarlordsNPC().getName(),
-                        ChatColor.GRAY + "Goblin from the local basement",
-                        20, 30, 20
-                );
-            }
-        }
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.GREEN),
+                Component.text("Goblin from the local basement", NamedTextColor.GRAY),
+                20, 30, 20
+        );
     }
 
     @Override

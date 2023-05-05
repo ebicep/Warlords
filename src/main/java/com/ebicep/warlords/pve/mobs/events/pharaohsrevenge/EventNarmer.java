@@ -15,7 +15,7 @@ import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -24,7 +24,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -66,16 +65,13 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.GOLD + getWarlordsNPC().getName(),
-                        ChatColor.YELLOW + "Unifier of Worlds",
-                        20, 20, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.GOLD),
+                Component.text("Unifier of Worlds", NamedTextColor.YELLOW),
+                20, 20, 20
+        );
 
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
@@ -98,16 +94,12 @@ public class EventNarmer extends AbstractZombie implements BossMob {
 
             @Override
             public void run() {
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.GOLD + getWarlordsNPC().getName() + " has called",
-                                ChatColor.YELLOW + ancestor.getName(),
-                                20, 20, 20
-                        );
-                    }
-                }
+                ChatUtils.sendTitleToGamePlayers(
+                        getWarlordsNPC().getGame(),
+                        Component.text(getWarlordsNPC().getName() + " has called", NamedTextColor.GOLD),
+                        Component.text(ancestor.getName(), NamedTextColor.YELLOW),
+                        20, 20, 20
+                );
             }
         }.runTaskLater(20);
 
@@ -272,16 +264,12 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         if (acolyteDeathTickWindow > 0) {
             acolyteDeathTickWindow--;
 
-            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                if (we.getEntity() instanceof Player) {
-                    PacketUtils.sendTitle(
-                            (Player) we.getEntity(),
-                            ChatColor.RED + "Death Wish",
-                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
-                            0, acolyteDeathTickWindow, 0
-                    );
-                }
-            }
+            ChatUtils.sendTitleToGamePlayers(
+                    getWarlordsNPC().getGame(),
+                    Component.text("Death Wish", NamedTextColor.RED),
+                    Component.text(acolyteDeathTickWindow / 10f, NamedTextColor.YELLOW),
+                    0, acolyteDeathTickWindow, 0
+            );
         }
 
         if (ticksElapsed % 15 == 0) {

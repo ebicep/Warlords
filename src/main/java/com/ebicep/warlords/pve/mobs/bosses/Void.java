@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -24,7 +23,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,16 +63,13 @@ public class Void extends AbstractSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.DARK_GRAY + getWarlordsNPC().getName(),
-                        ChatColor.BLACK + "?????",
-                        20, 30, 20
-                );
-            }
-        }
+
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text(getWarlordsNPC().getName(), NamedTextColor.DARK_GRAY),
+                Component.text("?????", NamedTextColor.BLACK),
+                20, 30, 20
+        );
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
@@ -435,16 +430,12 @@ public class Void extends AbstractSkeleton implements BossMob {
                     this.cancel();
                 }
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.YELLOW.toString() + countdown.get(),
-                                ChatColor.RED.toString() + damageToDeal.get(),
-                                0, 4, 0
-                        );
-                    }
-                }
+                ChatUtils.sendTitleToGamePlayers(
+                        getWarlordsNPC().getGame(),
+                        Component.text(countdown.get(), NamedTextColor.YELLOW),
+                        Component.text(damageToDeal.get(), NamedTextColor.RED),
+                        0, 4, 0
+                );
             }
         }.runTaskTimer(40, 0);
     }

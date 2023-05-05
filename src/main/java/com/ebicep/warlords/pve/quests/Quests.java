@@ -16,7 +16,6 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -70,13 +69,13 @@ public enum Quests {
         }
 
         @Override
-        public String getProgress(DatabasePlayer databasePlayer) {
-            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getPlays() + ChatColor.AQUA + "/" + ChatColor.GOLD + "2";
+        public Component getProgress(DatabasePlayer databasePlayer) {
+            return getProgress(databasePlayer.getPveStats().getPlays(), "2");
         }
 
         @Override
-        public String getNoProgress() {
-            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "2";
+        public Component getNoProgress() {
+            return getNoProgress("2");
         }
     },
     DAILY_WIN("Triumphant",
@@ -114,13 +113,13 @@ public enum Quests {
         }
 
         @Override
-        public String getProgress(DatabasePlayer databasePlayer) {
-            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        public Component getProgress(DatabasePlayer databasePlayer) {
+            return getProgress(databasePlayer.getPveStats().getWaveDefenseStats().getTotalWavesCleared(), "20");
         }
 
         @Override
-        public String getNoProgress() {
-            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        public Component getNoProgress() {
+            return getNoProgress("20");
         }
     },
 
@@ -139,13 +138,13 @@ public enum Quests {
         }
 
         @Override
-        public String getProgress(DatabasePlayer databasePlayer) {
-            return ChatColor.GOLD.toString() + databasePlayer.getPveStats().getPlays() + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        public Component getProgress(DatabasePlayer databasePlayer) {
+            return getProgress(databasePlayer.getPveStats().getPlays(), "20");
         }
 
         @Override
-        public String getNoProgress() {
-            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "20";
+        public Component getNoProgress() {
+            return getNoProgress("20");
         }
     },
     WEEKLY_30_ENDLESS("Conquest",
@@ -184,14 +183,15 @@ public enum Quests {
         }
 
         @Override
-        public String getProgress(DatabasePlayer databasePlayer) {
+        public Component getProgress(DatabasePlayer databasePlayer) {
             DatabasePlayerOnslaughtStats onslaughtStats = databasePlayer.getPveStats().getOnslaughtStats();
-            return ChatColor.GOLD.toString() + (onslaughtStats.getKills() + onslaughtStats.getAssists()) + ChatColor.AQUA + "/" + ChatColor.GOLD + "5,000";
+            int killAssist = onslaughtStats.getKills() + onslaughtStats.getAssists();
+            return getProgress(killAssist, "5,000");
         }
 
         @Override
-        public String getNoProgress() {
-            return ChatColor.GOLD + "0" + ChatColor.AQUA + "/" + ChatColor.GOLD + "5,000";
+        public Component getNoProgress() {
+            return getNoProgress("5,000");
         }
     },
 
@@ -255,16 +255,17 @@ public enum Quests {
     public ItemStack getItemStack(DatabasePlayer databasePlayer, boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.MAP : Material.PAPER)
                 .name(Component.text(time.name + ": " + name, NamedTextColor.GREEN))
-                //.name(Component.text(name)
-                .loreLEGACY(
-                        ChatColor.GRAY + description,
-                        "",
-                        ChatColor.GRAY + "Progress: " + (completed ? ChatColor.GREEN + "Completed" :
-                                                         databasePlayer == null ? getNoProgress() : getProgress(databasePlayer)),
-                        "",
-                        ChatColor.GRAY + "Rewards:"
+                .lore(
+                        Component.text(description, NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Progress: ", NamedTextColor.GRAY)
+                                 .append(completed ? Component.text("Completed", NamedTextColor.GREEN) :
+                                         databasePlayer == null ? getNoProgress() :
+                                         getProgress(databasePlayer)),
+                        Component.empty(),
+                        Component.text("Rewards:", NamedTextColor.GRAY)
                 );
-        rewards.forEach((currencies, aLong) -> itemBuilder.addLore(ChatColor.DARK_GRAY + " +" + currencies.getCostColoredName(aLong)));
+        rewards.forEach((currencies, aLong) -> itemBuilder.addLore(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
         if (!completed) {
             itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -273,18 +274,35 @@ public enum Quests {
 
     }
 
-    public String getNoProgress() {
-        return ChatColor.GREEN + "Started";
+    public Component getNoProgress() {
+        return Component.text("Started", NamedTextColor.GREEN);
     }
 
-    public String getProgress(DatabasePlayer databasePlayer) {
-        return ChatColor.GREEN + "Started";
+    public Component getProgress(DatabasePlayer databasePlayer) {
+        return Component.text("Started", NamedTextColor.GREEN);
     }
 
-    public String getHoverText() {
-        StringBuilder hoverText = new StringBuilder(ChatColor.GREEN + description + "\n");
-        rewards.forEach((currencies, aLong) -> hoverText.append(ChatColor.GRAY).append(" - ").append(currencies.getCostColoredName(aLong)).append("\n"));
-        return hoverText.toString();
+    protected Component getProgress(String progress, String target) {
+        return Component.textOfChildren(
+                Component.text(progress, NamedTextColor.GOLD),
+                Component.text("/", NamedTextColor.AQUA),
+                Component.text(target, NamedTextColor.GOLD)
+        );
     }
 
+    protected Component getProgress(int progress, String target) {
+        return Component.textOfChildren(
+                Component.text(progress, NamedTextColor.GOLD),
+                Component.text("/", NamedTextColor.AQUA),
+                Component.text(target, NamedTextColor.GOLD)
+        );
+    }
+
+    protected Component getNoProgress(String targetValue) {
+        return Component.textOfChildren(
+                Component.text("0", NamedTextColor.GOLD),
+                Component.text("/", NamedTextColor.AQUA),
+                Component.text(targetValue, NamedTextColor.GOLD)
+        );
+    }
 }

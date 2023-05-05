@@ -1,6 +1,10 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
+import java.util.List;
 
 public class Upgrade {
 
@@ -47,8 +51,12 @@ public class Upgrade {
         this.name = name;
     }
 
-    public String getDescription() {
-        return WordWrap.wrapWithNewline(description, 150);
+    public List<Component> getDescription() {
+        return getDescription(NamedTextColor.GRAY);
+    }
+
+    public List<Component> getDescription(NamedTextColor textColor) {
+        return WordWrap.wrap(Component.text(description, textColor), 150);
     }
 
     public String getDescriptionRaw() {

@@ -134,10 +134,14 @@ public class CompensateCommand extends BaseCommand {
                                           .toArray(net.kyori.adventure.text.TextComponent[]::new))
                         .addLore(
                                 Component.empty(),
-                                Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                         .append(Component.text("to directly give through the Rewards Inventory", NamedTextColor.GREEN)),
-                                Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                         .append(Component.text("to directly give rewards", NamedTextColor.GREEN))
+                                Component.textOfChildren(
+                                        Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to directly give through the Rewards Inventory", NamedTextColor.GREEN)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to directly give rewards", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {

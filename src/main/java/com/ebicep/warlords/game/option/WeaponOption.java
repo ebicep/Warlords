@@ -123,8 +123,11 @@ public class WeaponOption implements Option {
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLoreC(weapon.getDescription());
         itemBuilder.addLore(Component.empty());
-        itemBuilder.addLore(Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                     .append(Component.text("to view weapon stats!", NamedTextColor.GREEN)));
+        itemBuilder.addLore(Component.textOfChildren(
+                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text("to view weapon stats!", NamedTextColor.GREEN)
+                )
+        );
 
         player.getInventory().setItem(0, itemBuilder.get());
     }

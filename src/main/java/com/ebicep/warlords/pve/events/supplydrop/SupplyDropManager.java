@@ -83,8 +83,10 @@ public class SupplyDropManager {
                                     Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1)),
                                     Component.text("Balance: ", NamedTextColor.GRAY).append(Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens)),
                                     Component.empty(),
-                                    Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                             .append(Component.text(" to INSTANTLY call a supply drop", NamedTextColor.GRAY))
+                                    Component.textOfChildren(
+                                            Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text(" to INSTANTLY call a supply drop", NamedTextColor.GRAY)
+                                    )
                             )
                             .get(),
                     (m, e) -> {
@@ -112,8 +114,10 @@ public class SupplyDropManager {
                                     Component.empty(),
                                     Component.text("NOTE: Max 25 at a time", NamedTextColor.GRAY),
                                     Component.empty(),
-                                    Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                             .append(Component.text(" to INSTANTLY call all available supply drops", NamedTextColor.GRAY))
+                                    Component.textOfChildren(
+                                            Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text(" to INSTANTLY call all available supply drops", NamedTextColor.GRAY)
+                                    )
                             )
                             .get(),
                     (m, e) -> {

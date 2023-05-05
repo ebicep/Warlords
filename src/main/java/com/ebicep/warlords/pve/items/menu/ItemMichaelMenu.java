@@ -547,7 +547,7 @@ public class ItemMichaelMenu {
                                                             .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
             ItemBuilder itemBuilder = new ItemBuilder((item != null && blessing != null && (!blessingFound || enoughCost) ? Material.ANVIL : Material.BARRIER))
                     .name(Component.text("Click to Apply Blessing", NamedTextColor.GREEN))
-                    .loreLEGACY(
+                    .lore(
                             ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
                             ItemMenuUtil.getRequirementMetString(blessing != null, "Blessing Selected")
                     );
@@ -793,7 +793,7 @@ public class ItemMichaelMenu {
             menu.setItem(6, 2,
                     new ItemBuilder(item != null && enoughCost ? Material.MILK_BUCKET : Material.BARRIER)
                             .name(Component.text("Click to Purify Item", NamedTextColor.GREEN))
-                            .loreLEGACY(
+                            .lore(
                                     ItemMenuUtil.getRequirementMetString(item != null, "Item Selected"),
                                     ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
                             )
