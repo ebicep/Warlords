@@ -42,7 +42,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R2.inventory.*;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

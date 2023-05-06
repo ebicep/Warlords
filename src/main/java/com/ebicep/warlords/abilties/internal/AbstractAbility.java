@@ -237,11 +237,11 @@ public abstract class AbstractAbility {
         return formatRange(min, max, NamedTextColor.RED);
     }
 
-    public Component formatRange(float min, float max, NamedTextColor chatColor) {
+    public Component formatRange(float min, float max, NamedTextColor textColor) {
         return Component.text(" ", NamedTextColor.GRAY)
-                        .append(Component.text(format(min), chatColor))
+                        .append(Component.text(format(min), textColor))
                         .append(Component.text(" - "))
-                        .append(Component.text(format(max), chatColor))
+                        .append(Component.text(format(max), textColor))
                         .append(Component.text(" "));
     }
 
