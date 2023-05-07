@@ -190,7 +190,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
                         if (masterUpgrade) {
-                            pveCheck += 0.25f;
+                            pveCheck += 0.15f;
                         }
                         teammate.subtractRedCooldown(pveCheck);
                         teammate.subtractPurpleCooldown(pveCheck);

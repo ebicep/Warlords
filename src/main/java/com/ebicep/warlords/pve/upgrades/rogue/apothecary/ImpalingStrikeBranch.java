@@ -59,42 +59,42 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy Cost\n+1.25% Leech Heal",
+                "-2.5 Energy Cost\n+0.25% Leech Heal",
                 5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setLeechSelfAmount(selfLeech + 1.25f);
-                    ability.setLeechAllyAmount(allyLeech + 1.25f);
+                    ability.setLeechSelfAmount(selfLeech + 0.25f);
+                    ability.setLeechAllyAmount(allyLeech + 0.25f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy Cost\n+2.5% Leech Heal",
+                "-5 Energy Cost\n+0.5% Leech Heal",
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);
-                    ability.setLeechSelfAmount(selfLeech + 2.5f);
-                    ability.setLeechAllyAmount(allyLeech + 2.5f);
+                    ability.setLeechSelfAmount(selfLeech + 0.5f);
+                    ability.setLeechAllyAmount(allyLeech + 0.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy Cost\n+3.75% Leech Heal",
+                "-7.5 Energy Cost\n+0.75% Leech Heal",
                 15000,
                 () -> {
                     ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setLeechSelfAmount(selfLeech + 3.75f);
-                    ability.setLeechAllyAmount(allyLeech + 3.75f);
+                    ability.setLeechSelfAmount(selfLeech + 0.75f);
+                    ability.setLeechAllyAmount(allyLeech + 0.75f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy Cost\n+5% Leech Heal",
+                "-10 Energy Cost\n+1% Leech Heal",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
-                    ability.setLeechSelfAmount(selfLeech + 5);
-                    ability.setLeechAllyAmount(allyLeech + 5);
+                    ability.setLeechSelfAmount(selfLeech + 1);
+                    ability.setLeechAllyAmount(allyLeech + 1);
                 }
         ));
 

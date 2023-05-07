@@ -126,19 +126,19 @@ public enum BasicStatPool implements StatPool {
     public static final BasicStatPool[] VALUES = values();
     public static final HashMap<BasicStatPool, StatRange> STAT_RANGES = new HashMap<>() {{
         put(HP, new StatRange(75, 450));
-        put(MAX_ENERGY, new StatRange(10, 30));
-        put(EPH, new StatRange(1, 5));
-        put(SPEED, new StatRange(2, 10));
+        put(MAX_ENERGY, new StatRange(5, 15));
+        put(EPH, new StatRange(1, 3));
+        put(SPEED, new StatRange(1, 5));
 
-        put(DAMAGE, new StatRange(2, 10));
-        put(HEALING, new StatRange(2, 10));
-        put(CRIT_CHANCE, new StatRange(2, 8));
-        put(CRIT_MULTI, new StatRange(5, 20));
+        put(DAMAGE, new StatRange(1, 5));
+        put(HEALING, new StatRange(1, 5));
+        put(CRIT_CHANCE, new StatRange(1, 5));
+        put(CRIT_MULTI, new StatRange(2, 10));
 
         put(AGGRO_PRIO, new StatRange(3, 15));
-        put(THORNS, new StatRange(3, 15));
-        put(KB_RES, new StatRange(3, 15));
-        put(REGEN_TIMER, new StatRange(5, 45));
+        put(THORNS, new StatRange(2, 10));
+        put(KB_RES, new StatRange(2, 10));
+        put(REGEN_TIMER, new StatRange(5, 30));
     }};
 
     public static List<String> getStatPoolLore(Map<BasicStatPool, Integer> statPool, String prefix, boolean inverted) {

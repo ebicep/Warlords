@@ -15,38 +15,38 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+1.25% Leech Heal",
+                "+0.25% Leech Heal",
                 5000,
                 () -> {
-                    ability.setLeechSelfAmount(selfLeech + 1.25f);
-                    ability.setLeechAllyAmount(allyLeech + 1.25f);
+                    ability.setLeechSelfAmount(selfLeech + 0.25f);
+                    ability.setLeechAllyAmount(allyLeech + 0.25f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+2.5% Leech Heal",
+                "+0.5% Leech Heal",
                 10000,
                 () -> {
-                    ability.setLeechSelfAmount(selfLeech + 2.5f);
-                    ability.setLeechAllyAmount(allyLeech + 2.5f);
+                    ability.setLeechSelfAmount(selfLeech + 0.5f);
+                    ability.setLeechAllyAmount(allyLeech + 0.5f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+3.75% Leech Heal",
+                "+0.75% Leech Heal",
                 15000,
                 () -> {
-                    ability.setLeechSelfAmount(selfLeech + 3.75f);
-                    ability.setLeechAllyAmount(allyLeech + 3.75f);
+                    ability.setLeechSelfAmount(selfLeech + 0.75f);
+                    ability.setLeechAllyAmount(allyLeech + 0.75f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+5% Leech Heal",
+                "+1% Leech Heal",
                 20000,
                 () -> {
-                    ability.setLeechSelfAmount(selfLeech + 5);
-                    ability.setLeechAllyAmount(allyLeech + 5);
+                    ability.setLeechSelfAmount(selfLeech + 1);
+                    ability.setLeechAllyAmount(allyLeech + 1);
                 }
         ));
 
@@ -86,18 +86,18 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",
                 "Draining Miasma - Master Upgrade",
-                "Draining Miasma deals 75% less damage but range and duration have been quadrupled." +
+                "Draining Miasma deals 90% less damage but range and duration have been tripled." +
                         " Additionally, afflicted enemies will permanently have their damage reduced by 25% and" +
                         " will explode on death, dealing 1% max health damage to all nearby enemies.",
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() * 4);
-                    ability.setLeechDuration(ability.getLeechDuration() * 4);
-                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 4);
+                    ability.setTickDuration(ability.getTickDuration() * 3);
+                    ability.setLeechDuration(ability.getLeechDuration() * 3);
+                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 3);
 
-                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
+                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.1f));
+                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.1f);
+                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.1f);
 
                     ability.setPveUpgrade(true);
                 }
