@@ -86,7 +86,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",
                 "Draining Miasma - Master Upgrade",
-                "Draining Miasma deals 75% less damage but range and duration have been tripled." +
+                "Draining Miasma deals 75% less damage but range and duration have been quadrupled." +
                         " Additionally, afflicted enemies will permanently have their damage reduced by 25% and" +
                         " will explode on death, dealing 1% max health damage to all nearby enemies.",
                 50000,
