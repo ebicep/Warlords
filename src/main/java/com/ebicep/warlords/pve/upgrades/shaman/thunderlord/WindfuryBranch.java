@@ -76,11 +76,10 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+16% Proc chance\n+1 Windfury hit",
+                "+16% Proc chance",
                 20000,
                 () -> {
                     ability.setProcChance(ability.getProcChance() + 4);
-                    ability.setMaxHits(maxHits + 1);
                 }
         ));
 

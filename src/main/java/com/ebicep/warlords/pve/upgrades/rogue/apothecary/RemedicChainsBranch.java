@@ -86,11 +86,10 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
         masterUpgrade = new Upgrade(
                 "Crystallizing Chains",
                 "Remedic Chains - Master Upgrade",
-                "Raise the damage bonus of Remedic Chains to 25%, temporarily increase all linked allies' max health by 25%.",
+                "Temporarily increase all linked allies' max health by 25%.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
-                    ability.setAllyDamageIncrease(25);
                 }
         );
     }

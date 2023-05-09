@@ -213,10 +213,11 @@ public class RemedicChains extends AbstractAbility implements Duration {
                 return currentDamageValue * (1 + allyDamageIncrease / 100f);
             }
         };
+        wp.getCooldownManager().removeCooldown(RemedicChains.class, false);
         wp.getCooldownManager().addCooldown(remedicChainsCooldown);
+        teammatesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(RemedicChains.class, false));
         teammatesNear.forEach(entity -> entity.getCooldownManager().addCooldown(remedicChainsCooldown));
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, teammatesNear));
-
 
         return true;
     }
