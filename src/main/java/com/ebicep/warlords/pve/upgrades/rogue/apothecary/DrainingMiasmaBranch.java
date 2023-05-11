@@ -86,18 +86,18 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",
                 "Draining Miasma - Master Upgrade",
-                "Draining Miasma deals 90% less damage but range and duration have been tripled." +
+                "Draining Miasma deals 75% less damage but range and duration have been quadrupled." +
                         " Additionally, afflicted enemies will permanently have their damage reduced by 25% and" +
                         " will explode on death, dealing 1% max health damage to all nearby enemies.",
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() * 3);
-                    ability.setLeechDuration(ability.getLeechDuration() * 3);
-                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 3);
+                    ability.setTickDuration(ability.getTickDuration() * 4);
+                    ability.setLeechDuration(ability.getLeechDuration() * 4);
+                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 4);
 
-                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.1f));
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.1f);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.1f);
+                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
+                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
+                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
 
                     ability.setPveUpgrade(true);
                 }
