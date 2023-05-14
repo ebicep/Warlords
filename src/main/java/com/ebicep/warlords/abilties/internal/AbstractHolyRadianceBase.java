@@ -120,9 +120,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         private final float maxHeal;
 
         public FlyingArmorStand(Location location, WarlordsEntity target, WarlordsEntity owner, double speed, float minHeal, float maxHeal) {
-            this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
-            armorStand.setGravity(false);
-            armorStand.setVisible(false);
+            this.armorStand = Utils.spawnArmorStand(location);
             this.target = target;
             this.speed = speed;
             this.owner = owner;

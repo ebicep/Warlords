@@ -35,24 +35,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class WarlordsNPC extends WarlordsEntity {
 
     public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setAdult();
-        jimmy.setCustomNameVisible(true);
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+            zombie.setAdult();
+            zombie.setCustomNameVisible(true);
 
-        if (inv != null) {
-            jimmy.getEquipment().setBoots(inv.getBoots());
-            jimmy.getEquipment().setLeggings(inv.getLeggings());
-            jimmy.getEquipment().setChestplate(inv.getChestplate());
-            jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInMainHand(inv.getItemInMainHand());
-        } else {
-            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
-        jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
-        //prevents jimmy from moving
-        jimmy.setAI(false);
-        return jimmy;
+            if (inv != null) {
+                zombie.getEquipment().setBoots(inv.getBoots());
+                zombie.getEquipment().setLeggings(inv.getLeggings());
+                zombie.getEquipment().setChestplate(inv.getChestplate());
+                zombie.getEquipment().setHelmet(inv.getHelmet());
+                zombie.getEquipment().setItemInMainHand(inv.getItemInMainHand());
+            } else {
+                zombie.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+            }
+            zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
+            zombie.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
+            //prevents zombie from moving
+            zombie.setAI(false);
+        });
 
     }
 

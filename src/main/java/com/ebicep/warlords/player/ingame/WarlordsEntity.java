@@ -50,8 +50,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -1834,12 +1836,15 @@ public abstract class WarlordsEntity {
         if (!(this.entity instanceof Player player)) {
             this.entity.damage(200);
         } else {
-            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
-            zombie.getEquipment().setBoots(player.getInventory().getBoots());
-            zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
-            zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
-            zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
-            zombie.getEquipment().setItemInMainHand(player.getInventory().getItemInMainHand());
+            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class, false, z -> {
+                EntityEquipment equipment = z.getEquipment();
+                PlayerInventory playerInventory = player.getInventory();
+                equipment.setBoots(playerInventory.getBoots());
+                equipment.setLeggings(playerInventory.getLeggings());
+                equipment.setChestplate(playerInventory.getChestplate());
+                equipment.setHelmet(playerInventory.getHelmet());
+                equipment.setItemInMainHand(playerInventory.getItemInMainHand());
+            });
             zombie.damage(2000);
         }
     }

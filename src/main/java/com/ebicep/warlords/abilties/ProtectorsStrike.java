@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.ebicep.warlords.util.warlords.Utils.lerp;
+import static com.ebicep.warlords.util.bukkit.LocationUtils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
 
@@ -150,7 +151,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                         .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
                         .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                                          .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
                         .limit(maxAllies)
                 ) {
                     if (PlayerSettings.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {

@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -164,7 +165,7 @@ public class GroundSlam extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    if (Utils.getDistance(
+                    if (LocationUtils.getDistance(
                             customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 ||
                             customFallingBlock.getTicksLived() > 10
                     ) {

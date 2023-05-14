@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import java.util.EnumSet;
 import java.util.OptionalInt;
 
-import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
+import static com.ebicep.warlords.util.java.StringUtils.toTitleHumanCase;
 
 @CommandAlias("gamelist")
 @CommandPermission("warlords.game.list")
@@ -66,7 +66,7 @@ public class GameListCommand extends BaseCommand {
                        .append(Component.text(game.getMaxPlayers(), NamedTextColor.GREEN))
                        .append(Component.text("] "));
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
-                String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                String time = StringUtils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 message.append(Component.text(time))
                        .append(Component.text(word));

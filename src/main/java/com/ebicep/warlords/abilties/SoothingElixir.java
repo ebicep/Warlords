@@ -16,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -74,10 +73,10 @@ public class SoothingElixir extends AbstractAbility {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
-        stand.setGravity(false);
-        stand.setVisible(false);
+        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
+        });
+
         new GameRunnable(wp.getGame()) {
             int timer = 0;
 

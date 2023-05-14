@@ -7,7 +7,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -99,7 +99,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
     public List<Component> getExtraLore() {
         return Arrays.asList(
                 Component.text("Time Left: ", NamedTextColor.GRAY)
-                         .append(Component.text(Utils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
+                         .append(Component.text(StringUtils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
                 Component.text("Winner: ", NamedTextColor.GRAY)
                          .append(Component.text(winner.name, winner.teamColor))
         );

@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
-import static com.ebicep.warlords.util.warlords.Utils.iterable;
+import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMarker {
 

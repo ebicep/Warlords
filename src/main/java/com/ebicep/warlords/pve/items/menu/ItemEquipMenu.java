@@ -18,8 +18,8 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.java.Utils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -110,7 +110,7 @@ public class ItemEquipMenu {
                             (m2, e2) -> {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 ItemsManager itemsManager = pveStats.getItemsManager();
-                                int scrapAmount = Utils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
+                                int scrapAmount = JavaUtils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
                                 pveStats.addCurrency(Currencies.SCRAP_METAL, scrapAmount);
                                 itemsManager.removeItem(i);
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));

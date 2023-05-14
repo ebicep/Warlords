@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -146,8 +147,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
         PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
                 .filter(e ->
-                        Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
-                                Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
+                        LocationUtils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
+                                LocationUtils.hasLineOfSight(wp.getEntity(), e.getEntity())
                 ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
                 .lookingAtFirst(wp);
 

@@ -20,7 +20,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -296,15 +295,11 @@ public class HammerOfLight extends AbstractAbility implements Duration {
         }
         newLocation.add(0, -1, 0);
 
-        ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
-        //hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
-        hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
-        hammer.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
-        hammer.setGravity(false);
-        hammer.setVisible(false);
-        hammer.setMarker(true);
-
-        return hammer;
+        return Utils.spawnArmorStand(newLocation.clone().add(.25, 1.9, -.25), armorStand -> {
+            armorStand.setRightArmPose(new EulerAngle(20.25, 0, 0));
+            armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
+            armorStand.setMarker(true);
+        });
     }
 
     public boolean isCrownOfLight() {

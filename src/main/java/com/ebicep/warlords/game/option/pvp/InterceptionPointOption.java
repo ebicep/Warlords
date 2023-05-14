@@ -156,11 +156,7 @@ public class InterceptionPointOption implements Option {
         clone.add(0, -1.7, 0);
         for (int i = middle.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
-            middle[i] = location.getWorld().spawn(clone, ArmorStand.class);
-            middle[i].setGravity(false);
-            middle[i].setBasePlate(false);
-            middle[i].setArms(false);
-            middle[i].setVisible(false);
+            middle[i] = Utils.spawnArmorStand(clone, null);
         }
         updateArmorStandsAndEffect(null);
         scoreboard.registerChangeHandler(this::updateArmorStandsAndEffect);

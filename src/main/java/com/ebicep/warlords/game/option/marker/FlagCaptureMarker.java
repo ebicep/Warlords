@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.EnumSet;
 
-import static com.ebicep.warlords.util.warlords.Utils.isInCircleRadiusFast;
+import static com.ebicep.warlords.util.bukkit.LocationUtils.isInCircleRadiusFast;
 
 /**
  * Marks a flag capture zone, for the gamemodes who have captureable flags

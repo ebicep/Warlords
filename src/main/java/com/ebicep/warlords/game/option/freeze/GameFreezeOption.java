@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -37,7 +37,7 @@ public class GameFreezeOption implements Option, Listener {
         @EventHandler
         public void onEvent(PlayerMoveEvent e) {
             WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
-            if (wp != null && wp.getGame().isFrozen() && Utils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
+            if (wp != null && wp.getGame().isFrozen() && JavaUtils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
                 if (wp.isDead()) {
                     e.getPlayer().teleport(e.getPlayer().getLocation());
                 } else if (e.getPlayer().getVehicle() == null) {

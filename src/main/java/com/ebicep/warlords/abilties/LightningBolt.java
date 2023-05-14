@@ -135,27 +135,27 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand armorStand = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.7, 0), ArmorStand.class);
-        armorStand.setGravity(false);
-        armorStand.setVisible(false);
-        armorStand.setMarker(true);
-        armorStand.getEquipment().setHelmet(new ItemStack(Material.JUNGLE_SAPLING));
-        armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                projectile.getSpeed().getY(),
-                Math.sqrt(
-                        Math.pow(projectile.getSpeed().getX(), 2) +
-                                Math.pow(projectile.getSpeed().getZ(), 2)
-                )
-        ), 0, 0));
+        ArmorStand bolt = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
+            armorStand.setMarker(true);
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.JUNGLE_SAPLING));
+            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
+                    projectile.getSpeed().getY(),
+                    Math.sqrt(
+                            Math.pow(projectile.getSpeed().getX(), 2) +
+                                    Math.pow(projectile.getSpeed().getZ(), 2)
+                    )
+            ), 0, 0));
+        });
+
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                bolt.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                armorStand.remove();
+                bolt.remove();
             }
         });
     }

@@ -60,7 +60,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
-import static com.ebicep.warlords.util.warlords.Utils.iterable;
+import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements Option, PveOption {
     private static final int SCOREBOARD_PRIORITY = 5;

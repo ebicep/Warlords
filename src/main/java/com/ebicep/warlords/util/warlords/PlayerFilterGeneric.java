@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.ebicep.warlords.util.warlords.Utils.radiusAround;
-import static com.ebicep.warlords.util.warlords.Utils.sortClosestBy;
+import static com.ebicep.warlords.util.bukkit.LocationUtils.radiusAround;
+import static com.ebicep.warlords.util.bukkit.LocationUtils.sortClosestBy;
 
 // TODO run regex
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
@@ -144,8 +145,8 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
     public PlayerFilterGeneric<T> lookingAtFirst(T user) {
         return sorted((wp1, wp2) -> {
             int output;
-            double wp1Dot = -Utils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
-            double wp2Dot = -Utils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
+            double wp1Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
+            double wp2Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
             output = Double.compare(wp1Dot, wp2Dot);
             if (Math.abs(wp1Dot - wp2Dot) < .0125) {
                 Location userLocation = user.getLocation();
@@ -385,7 +386,7 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     public PlayerFilterGeneric<T> requireLineOfSight(@Nonnull LivingEntity entity) {
-        return filter(wp -> Utils.isLookingAt(entity, wp.getEntity()) && Utils.hasLineOfSight(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAt(entity, wp.getEntity()) && LocationUtils.hasLineOfSight(entity, wp.getEntity()));
     }
 
     @Nonnull
@@ -395,7 +396,7 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     public PlayerFilterGeneric<T> requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
-        return filter(wp -> Utils.isLookingAtIntervene(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAtIntervene(entity, wp.getEntity()));
     }
 
     @Nonnull
@@ -405,7 +406,7 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     public PlayerFilterGeneric<T> lookingAtWave(@Nonnull LivingEntity entity) {
-        return filter(wp -> Utils.isLookingAtWave(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAtWave(entity, wp.getEntity()));
     }
 
     public List<T> toList() {

@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -103,8 +103,8 @@ public class GameOvertimeOption implements Option, Listener {
 
     @Override
     public void checkConflicts(List<Option> options) {
-        boolean hasDrawAfterTimeoutOption = Utils.collectionHasItem(options, e -> e instanceof WinAfterTimeoutOption);
-        boolean hasWinByPointsOption = Utils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
+        boolean hasDrawAfterTimeoutOption = JavaUtils.collectionHasItem(options, e -> e instanceof WinAfterTimeoutOption);
+        boolean hasWinByPointsOption = JavaUtils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
         if (!hasDrawAfterTimeoutOption || !hasWinByPointsOption) {
             throw new IllegalArgumentException("Game requires a WinAfterTimeoutOption and a WinByPointsOption for the GameOvertimeOption to work properly");
         }

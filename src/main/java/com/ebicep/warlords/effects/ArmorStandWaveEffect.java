@@ -1,6 +1,7 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
@@ -68,12 +69,10 @@ public class ArmorStandWaveEffect {
             timer++;
             if (timer >= 0) {
                 if (stand == null) {
-                    stand = loc.getWorld().spawn(loc, ArmorStand.class);
-                    stand.setGravity(false);
-                    stand.getEquipment().setHelmet(texture);
-                    stand.setBasePlate(false);
-                    stand.setVisible(false);
-                    stand.setMarker(true);
+                    stand = Utils.spawnArmorStand(loc, armorStand -> {
+                        armorStand.getEquipment().setHelmet(texture);
+                        armorStand.setMarker(true);
+                    });
                 }
                 stand.teleport(stand.getLocation().add(0, 0.3 - timer / 20D, 0));
 

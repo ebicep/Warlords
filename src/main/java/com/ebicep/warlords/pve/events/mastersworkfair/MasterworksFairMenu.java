@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.Utils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -77,7 +77,7 @@ public class MasterworksFairMenu {
                                 .lore(masterworksFairEntries
                                         .stream()
                                         .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                        .collect(Utils.lastN(10))
+                                        .collect(JavaUtils.lastN(10))
                                         .stream()
                                         .sorted(Comparator.comparing(MasterworksFairEntry::getTime).reversed()) //TODO CHECK
                                         .map(masterworksFairEntry ->

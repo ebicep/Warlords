@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -138,26 +139,22 @@ public class FlagRenderer {
                 }
             }
 
-            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
-            renderedArmorStands.add(stand);
-            stand.setGravity(false);
-            stand.setCanPickupItems(false);
-            stand.customName(Component.text(info.getTeam() == Team.BLUE ? "BLU FLAG" : "RED FLAG",
-                    info.getTeam() == Team.BLUE ? NamedTextColor.BLUE : NamedTextColor.RED,
-                    TextDecoration.BOLD
-            ));
-            stand.setCustomNameVisible(true);
-            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            stand.setVisible(false);
+            ArmorStand flag = Utils.spawnArmorStand(block.getLocation().add(.5, 0, .5), armorStand -> {
+                armorStand.customName(Component.text(info.getTeam() == Team.BLUE ? "BLU FLAG" : "RED FLAG",
+                        info.getTeam() == Team.BLUE ? NamedTextColor.BLUE : NamedTextColor.RED,
+                        TextDecoration.BOLD
+                ));
+                armorStand.setCustomNameVisible(true);
+                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+            });
+            renderedArmorStands.add(flag);
 
-            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
-            renderedArmorStands.add(stand1);
-            stand1.setGravity(false);
-            stand1.setCanPickupItems(false);
-            stand1.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
-            stand1.setCustomNameVisible(true);
-            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            stand1.setVisible(false);
+            ArmorStand flagInteract = Utils.spawnArmorStand(block.getLocation().add(.5, -0.3, .5), armorStand -> {
+                armorStand.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
+                armorStand.setCustomNameVisible(true);
+                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+            });
+            renderedArmorStands.add(flagInteract);
 
         } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier(flag.getPlayer(), "FLAG", -20, 0, true));

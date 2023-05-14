@@ -12,7 +12,7 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -175,15 +175,15 @@ public class GameStartCommand {
                 );
                 sendDebugMessage(player, Component.empty()
                                                   .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(Utils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
+                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
                 sendDebugMessage(player, Component.empty()
                                                   .append(Component.text("- Map: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(Utils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
+                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
                 sendDebugMessage(player, Component.empty()
                                                   .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
                                                   .append(Component.text(game.getAddons()
                                                                              .stream()
-                                                                             .map(e -> Utils.toTitleHumanCase(e.name()))
+                                                                             .map(e -> StringUtils.toTitleHumanCase(e.name()))
                                                                              .collect(Collectors.joining(", ")), NamedTextColor.GOLD))
                 );
                 sendDebugMessage(player, Component.empty()

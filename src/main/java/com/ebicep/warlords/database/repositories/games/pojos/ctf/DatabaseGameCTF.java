@@ -12,8 +12,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
@@ -278,7 +278,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     public List<Component> getExtraLore() {
         return Arrays.asList(
                 Component.text("Time Left: ", NamedTextColor.GRAY)
-                         .append(Component.text(Utils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
+                         .append(Component.text(StringUtils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
                 Component.text("Winner: ", NamedTextColor.GRAY)
                          .append(Component.text(winner.name, winner.teamColor)),
                 Component.text("Blue Points: ", NamedTextColor.GRAY)

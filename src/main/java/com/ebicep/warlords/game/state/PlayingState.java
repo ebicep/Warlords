@@ -28,6 +28,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -277,7 +278,7 @@ public class PlayingState implements State, TimerDebugAble {
         ScoreboardHandler lastHandler = null;
         String lastGroup = null;
         boolean lastWasEmpty = true;
-        for (ScoreboardHandler handler : Utils.iterable(game
+        for (ScoreboardHandler handler : JavaUtils.iterable(game
                 .getScoreboardHandlers()
                 .stream()
                 .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))

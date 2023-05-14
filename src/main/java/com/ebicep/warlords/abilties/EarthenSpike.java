@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -17,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -79,7 +79,7 @@ public class EarthenSpike extends AbstractAbility {
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAt(player, spikeTarget.getEntity()) && Utils.hasLineOfSight(player, spikeTarget.getEntity())) {
+            if (LocationUtils.isLookingAt(player, spikeTarget.getEntity()) && LocationUtils.hasLineOfSight(player, spikeTarget.getEntity())) {
                 addTimesUsed();
                 AbstractPlayerClass.sendRightClickPacket(player);
 
@@ -163,7 +163,7 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                                 spikeTarget.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                 //todo tweak distance to ground where you cant get kbed up (1.82 is max jump blocks, double spike kb might be possible with this)
-                                if (Utils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
+                                if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
                                     spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
                                 }
                             }
@@ -207,11 +207,10 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                             }
 
-                            ArmorStand stand = (ArmorStand) targetLocation.getWorld().spawnEntity(targetLocation.add(0, -.6, 0), EntityType.ARMOR_STAND);
-                            stand.getEquipment().setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
-                            stand.setGravity(false);
-                            stand.setVisible(false);
-                            stand.setMarker(true);
+                            ArmorStand stand = Utils.spawnArmorStand(targetLocation.add(0, -.6, 0), armorStand -> {
+                                armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
+                                armorStand.setMarker(true);
+                            });
 
                             new BukkitRunnable() {
 

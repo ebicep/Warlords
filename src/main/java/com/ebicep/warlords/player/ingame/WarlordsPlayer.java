@@ -53,23 +53,23 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
     private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby();
-        jimmy.setCustomNameVisible(true);
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+            zombie.setAdult();
+            zombie.setCustomNameVisible(true);
 
-        EntityEquipment equipment = jimmy.getEquipment();
-        if (inv != null) {
-            equipment.setBoots(inv.getBoots());
-            equipment.setLeggings(inv.getLeggings());
-            equipment.setChestplate(inv.getChestplate());
-            equipment.setHelmet(inv.getHelmet());
-            equipment.setItemInMainHand(inv.getItemInMainHand());
-        } else {
-            equipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        //prevents jimmy from moving
-        jimmy.setAI(false);
-        return jimmy;
+            EntityEquipment zombieEquipment = zombie.getEquipment();
+            if (inv != null) {
+                zombieEquipment.setBoots(inv.getBoots());
+                zombieEquipment.setLeggings(inv.getLeggings());
+                zombieEquipment.setChestplate(inv.getChestplate());
+                zombieEquipment.setHelmet(inv.getHelmet());
+                zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
+            } else {
+                zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+            }
+            //prevents zombie from moving
+            zombie.setAI(false);
+        });
     }
 
     private final AbilityTree abilityTree = new AbilityTree(this);

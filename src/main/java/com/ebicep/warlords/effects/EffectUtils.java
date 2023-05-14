@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -273,13 +274,11 @@ public class EffectUtils {
         List<ArmorStand> chains = new ArrayList<>();
         int maxDistance = (int) Math.round(to.distance(from));
         for (int i = 0; i < maxDistance; i++) {
-            ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-            chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-            chain.setGravity(false);
-            chain.setVisible(false);
-            chain.setBasePlate(false);
-            chain.setMarker(true);
-            chain.getEquipment().setHelmet(item);
+            ArmorStand chain = Utils.spawnArmorStand(from, armorStand -> {
+                armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
+                armorStand.setMarker(true);
+                armorStand.getEquipment().setHelmet(item);
+            });
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
             if (to.distanceSquared(from) < .3) {

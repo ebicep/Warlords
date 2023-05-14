@@ -129,18 +129,18 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand fallenSoul = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.7, 0), ArmorStand.class);
-        fallenSoul.setGravity(false);
-        fallenSoul.setVisible(false);
-        fallenSoul.setMarker(true);
-        fallenSoul.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
-        fallenSoul.setHeadPose(new EulerAngle(-Math.atan2(
-                projectile.getSpeed().getY(),
-                Math.sqrt(
-                        Math.pow(projectile.getSpeed().getX(), 2) +
-                                Math.pow(projectile.getSpeed().getZ(), 2)
-                )
-        ), 0, 0));
+        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
+            armorStand.setMarker(true);
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
+                    projectile.getSpeed().getY(),
+                    Math.sqrt(
+                            Math.pow(projectile.getSpeed().getX(), 2) +
+                                    Math.pow(projectile.getSpeed().getZ(), 2)
+                    )
+            ), 0, 0));
+        });
+
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {

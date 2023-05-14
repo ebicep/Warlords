@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -116,7 +117,7 @@ public class SeismicWave extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock cfb = customFallingBlocks.get(i);
                     cfb.setTicksLived(cfb.getTicksLived() + 1);
-                    if (Utils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
+                    if (LocationUtils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
                         cfb.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
@@ -140,8 +141,8 @@ public class SeismicWave extends AbstractAbility {
         location.setPitch(0);
         locations.add(location.add(location.getDirection().multiply(distance)));
         for (int i = 1; i <= waveWidth; i++) {
-            locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(i)));
-            locations.add(location.clone().add(Utils.getRightDirection(location).multiply(i)));
+            locations.add(location.clone().add(LocationUtils.getLeftDirection(location).multiply(i)));
+            locations.add(location.clone().add(LocationUtils.getRightDirection(location).multiply(i)));
         }
         return locations;
     }

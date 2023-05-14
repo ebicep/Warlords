@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -106,7 +107,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
-                        .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation()))
+                                  .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation()))
                 )
                 .limit(energyMaxAllies)
         ) {

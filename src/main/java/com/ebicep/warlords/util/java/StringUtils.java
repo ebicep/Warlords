@@ -1,5 +1,7 @@
 package com.ebicep.warlords.util.java;
 
+import java.util.Locale;
+
 public class StringUtils {
 
     /**
@@ -26,4 +28,43 @@ public class StringUtils {
         return result;
     }
 
+    public static void formatTimeLeft(StringBuilder message, long seconds) {
+        long minute = seconds / 60;
+        long second = seconds % 60;
+        if (minute < 10) {
+            message.append('0');
+        }
+        message.append(minute);
+        message.append(':');
+        if (second < 10) {
+            message.append('0');
+        }
+        message.append(second == -1 ? 0 : second);
+    }
+
+    public static String formatTimeLeft(long seconds) {
+        StringBuilder message = new StringBuilder();
+        formatTimeLeft(message, seconds);
+        return message.toString();
+    }
+
+    public static String toTitleCase(Object input) {
+        return toTitleCase(String.valueOf(input));
+    }
+
+    public static String toTitleCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.substring(1).toLowerCase(Locale.ROOT);
+    }
+
+    public static String toTitleHumanCase(Object input) {
+        return toTitleHumanCase(String.valueOf(input));
+    }
+
+    public static String toTitleHumanCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.replace('_', ' ').substring(1).toLowerCase(Locale.ROOT);
+    }
+
+    public static boolean startsWithIgnoreCase(String str, String prefix) {
+        return str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
 }

@@ -44,12 +44,11 @@ public class EventEggSac extends AbstractZombie implements BossMob {
         super.onSpawn(option);
         if (ARMOR_STAND) {
             warlordsNPC.getEntity().remove();
-            ArmorStand armorStand = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation().clone().add(0, -1.3, 0), ArmorStand.class);
-            armorStand.setGravity(false);
-            armorStand.setVisible(false);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.DRAGON_EGG));
-            armorStand.customName(Component.text(name));
-            warlordsNPC.setEntity(armorStand);
+            ArmorStand eggSac = Utils.spawnArmorStand(warlordsNPC.getLocation().clone().add(0, -1.3, 0), armorStand -> {
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.DRAGON_EGG));
+                armorStand.customName(Component.text(name));
+            });
+            warlordsNPC.setEntity(eggSac);
             warlordsNPC.updateEntity();
         }
     }

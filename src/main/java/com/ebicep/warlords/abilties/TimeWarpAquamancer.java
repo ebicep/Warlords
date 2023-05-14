@@ -74,11 +74,10 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
                                                                                       .left(.6f * 2)
                                                                                       .forward(.6f));
                         for (Location spawnLocation : spawnLocations) {
-                            ArmorStand altar = wp.getWorld().spawn(spawnLocation, ArmorStand.class);
-                            altar.setVisible(false);
-                            altar.setGravity(false);
-                            altar.setMarker(true);
-                            altar.getEquipment().setHelmet(new ItemStack(Material.PRISMARINE_BRICKS));
+                            ArmorStand altar = Utils.spawnArmorStand(spawnLocation, armorStand -> {
+                                armorStand.setMarker(true);
+                                armorStand.getEquipment().setHelmet(new ItemStack(Material.PRISMARINE_BRICKS));
+                            });
                             altarsBlocks.add(altar);
                         }
                         altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
@@ -223,18 +222,16 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
         List<ArmorStand> pillars = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Location pillarLocation = baseLocation.add(0, .6, 0);
-            ArmorStand pillar = baseLocation.getWorld().spawn(pillarLocation, ArmorStand.class);
-            pillar.setVisible(false);
-            pillar.setGravity(false);
-            pillar.setMarker(true);
-            pillar.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
+            ArmorStand pillar = Utils.spawnArmorStand(pillarLocation, armorStand -> {
+                armorStand.setMarker(true);
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
+            });
             pillars.add(pillar);
         }
-        ArmorStand light = baseLocation.getWorld().spawn(baseLocation.add(0, .6, 0), ArmorStand.class);
-        light.setVisible(false);
-        light.setGravity(false);
-        light.setMarker(true);
-        light.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
+        ArmorStand light = Utils.spawnArmorStand(baseLocation.add(0, .6, 0), armorStand -> {
+            armorStand.setMarker(true);
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.SEA_LANTERN));
+        });
         pillars.add(light);
         return pillars;
     }

@@ -105,11 +105,11 @@ public class SoulSwitch extends AbstractAbility {
                 ));
 
                 if (swapTarget instanceof WarlordsNPC) {
-                    ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
-                    decoy.setVisible(false);
-                    decoy.setGravity(false);
-                    decoy.setCustomNameVisible(true);
-                    decoy.customName(wp.getColoredName().append(Component.text("'s Decoy")));
+                    ArmorStand decoy = Utils.spawnArmorStand(ownLocation, armorStand -> {
+                        armorStand.setCustomNameVisible(true);
+                        armorStand.customName(wp.getColoredName().append(Component.text("'s Decoy")));
+                    });
+
                     EntityEquipment equipment = decoy.getEquipment();
                     equipment.setItemInMainHand(player.getInventory().getItem(0));
                     equipment.setHelmet(HeadUtils.getHead(player.getUniqueId()));

@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -79,10 +80,9 @@ public abstract class AbstractTotemBase extends AbstractAbility {
 
         playSound(player, standLocation);
 
-        ArmorStand totemStand = player.getWorld().spawn(this instanceof DeathsDebt ? standLocation.clone().add(0, -.25, 0) : standLocation, ArmorStand.class);
-        totemStand.setVisible(false);
-        totemStand.setGravity(false);
-        totemStand.getEquipment().setHelmet(getTotemItemStack());
+        ArmorStand totemStand = Utils.spawnArmorStand(this instanceof DeathsDebt ? standLocation.clone().add(0, -.25, 0) : standLocation, armorStand -> {
+            armorStand.getEquipment().setHelmet(getTotemItemStack());
+        });
 
         onActivation(wp, player, totemStand);
 

@@ -15,7 +15,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -66,10 +65,10 @@ public class IncendiaryCurse extends AbstractAbility {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
-        stand.setGravity(false);
-        stand.setVisible(false);
+        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
+        });
+
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {

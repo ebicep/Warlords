@@ -39,9 +39,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarpBase {
 
         AtomicReference<ArmorStand> cryoPod = new AtomicReference<>(null);
         if (pveUpgrade) {
-            cryoPod.set(wp.getWorld().spawn(warpLocation, ArmorStand.class));
-            cryoPod.get().setVisible(false);
-            cryoPod.get().setGravity(false);
+            cryoPod.set(Utils.spawnArmorStand(warpLocation, null));
 
             PlayerFilter.entitiesAround(warpLocation, 15, 15, 15)
                         .aliveEnemiesOf(wp)

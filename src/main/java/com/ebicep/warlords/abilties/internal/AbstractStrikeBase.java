@@ -8,8 +8,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -46,7 +46,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
                 .first((nearPlayer) -> {
-                    if (Utils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && Utils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
+                    if (LocationUtils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
                         addTimesUsed();
                         AbstractPlayerClass.sendRightClickPacket(player);
                         playSoundAndEffect(nearPlayer.getLocation());

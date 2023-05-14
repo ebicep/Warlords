@@ -89,7 +89,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.ebicep.warlords.util.warlords.Utils.iterable;
+import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();

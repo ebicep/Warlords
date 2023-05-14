@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -11,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -155,14 +155,13 @@ public class GraveOption implements Option, Listener {
         if (bestGraveCandidate != null) {
             //spawn grave
             bestGraveCandidate.setType(material);
-            ArmorStand deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-            Component name = this.graveName.apply(player);
-            if (name != null) {
-                deathStand.customName(name);
-                deathStand.setCustomNameVisible(true);
-            }
-            deathStand.setGravity(false);
-            deathStand.setVisible(false);
+            ArmorStand deathStand = Utils.spawnArmorStand(bestGraveCandidate.getLocation().add(.5, -1.5, .5), armorStand -> {
+                Component name = this.graveName.apply(player);
+                if (name != null) {
+                    armorStand.customName(name);
+                    armorStand.setCustomNameVisible(true);
+                }
+            });
             this.graves.add(new Grave(player, deathStand, bestGraveCandidate, material));
         }
     }

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
 
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -88,12 +87,12 @@ public class LocationBuilder extends Location {
     }
 
     public LocationBuilder left(float amount) {
-        this.add(Utils.getLeftDirection(this).multiply(amount));
+        this.add(LocationUtils.getLeftDirection(this).multiply(amount));
         return this;
     }
 
     public LocationBuilder right(float amount) {
-        this.add(Utils.getRightDirection(this).multiply(amount));
+        this.add(LocationUtils.getRightDirection(this).multiply(amount));
         return this;
     }
 

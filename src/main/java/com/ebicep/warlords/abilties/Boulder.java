@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -70,12 +69,11 @@ public class Boulder extends AbstractAbility {
         } else {
             speed = player.getLocation().getDirection().multiply(boulderSpeed);
         }
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
-        stand.customName(Component.text("Boulder"));
-        stand.setCustomNameVisible(false);
-        stand.setGravity(false);
-        stand.setVisible(false);
+        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
+            armorStand.customName(Component.text("Boulder"));
+            armorStand.setCustomNameVisible(false);
+        });
 
         Location initialCastLocation = player.getLocation();
 

@@ -7,8 +7,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -114,11 +114,11 @@ public class HorseOption implements Option, Listener {
             if (heldItemSlot != 7 || player.getVehicle() != null || !(wp.getHorseCooldown() <= 0)) {
                 return;
             }
-            if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
+            if (!LocationUtils.isMountableZone(location) || LocationUtils.blocksInFrontOfLocation(location)) {
                 player.sendMessage(Component.text("You can't mount here!", NamedTextColor.RED));
                 return;
             }
-            double distance = Utils.getDistance(player, .25);
+            double distance = LocationUtils.getDistance(player, .25);
             if (distance >= 2) {
                 player.sendMessage(Component.text("You can't mount in the air!", NamedTextColor.RED));
             } else if (wp.getCarriedFlag() != null) {

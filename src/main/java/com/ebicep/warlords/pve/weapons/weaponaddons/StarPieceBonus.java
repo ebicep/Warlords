@@ -11,7 +11,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.ebicep.warlords.util.java.Utils.generateRandomIndexFromListSize;
+import static com.ebicep.warlords.util.java.JavaUtils.generateRandomIndexFromListSize;
 
 public interface StarPieceBonus {
 

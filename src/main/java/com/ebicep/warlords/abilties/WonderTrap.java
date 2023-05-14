@@ -94,12 +94,10 @@ public class WonderTrap extends AbstractAbility {
             this.timeToLive = timeToLive;
             this.trapArmTime = trapArmTime;
             this.trapRadius = trapRadius;
-            this.trapStand = location.getWorld().spawn(location, ArmorStand.class);
-
-            trapStand.getEquipment().setHelmet(new ItemStack(Material.STONE));
-            trapStand.setGravity(false);
-            trapStand.setVisible(false);
-            trapStand.getLocation().add(0, -2, 0);
+            this.trapStand = Utils.spawnArmorStand(location, armorStand -> {
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.STONE));
+                armorStand.getLocation().add(0, -2, 0);
+            });
         }
 
         @Override

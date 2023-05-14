@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -139,9 +140,9 @@ public class HeartToHeart extends AbstractAbility {
                 Location targetLoc = heartTarget.getLocation();
                 Location newLocation = new Location(
                         playerLoc.getWorld(),
-                        Utils.lerp(playerLoc.getX(), targetLoc.getX(), target),
-                        Utils.lerp(playerLoc.getY(), targetLoc.getY(), target),
-                        Utils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
+                        LocationUtils.lerp(playerLoc.getX(), targetLoc.getX(), target),
+                        LocationUtils.lerp(playerLoc.getY(), targetLoc.getY(), target),
+                        LocationUtils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
                         targetLoc.getYaw(),
                         targetLoc.getPitch()
                 );

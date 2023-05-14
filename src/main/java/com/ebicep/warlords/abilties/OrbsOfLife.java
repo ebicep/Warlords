@@ -1,7 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -26,7 +24,6 @@ import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
@@ -311,11 +308,9 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         public Orb(ServerLevel world, Location location, PersistentCooldown<OrbsOfLife> cooldown, WarlordsEntity owner, int tickMultiplier) {
             super(world, location.getX(), location.getY() + 2, location.getZ(), 2500, org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, null);
             this.cooldown = cooldown;
-            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
-            orbStand.setVisible(false);
-            orbStand.setGravity(true);
-            orbStand.addPassenger(spawn(location).getBukkitEntity());
-            ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+            ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
+                armorStand.addPassenger(spawn(location).getBukkitEntity());
+            });
             for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
                 if (warlordsEntity.getEntity() instanceof Player player) {
                     PacketUtils.removeEntityForPlayer(player, getId());

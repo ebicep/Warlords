@@ -7,9 +7,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -67,7 +67,7 @@ public class SpiritLink extends AbstractChainBase {
                 .lookingAtFirst(wp)
                 .soulBindedFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+            if (LocationUtils.isLookingAtChain(player, nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 playersHit++;
                 if (nearPlayer.onHorse()) {
                     numberOfDismounts++;

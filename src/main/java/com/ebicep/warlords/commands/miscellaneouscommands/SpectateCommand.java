@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
+import static com.ebicep.warlords.util.java.StringUtils.toTitleHumanCase;
 
 @CommandAlias("spectate")
 public class SpectateCommand extends BaseCommand {

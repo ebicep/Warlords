@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -136,7 +137,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
                         Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
-                                !Utils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
+                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (pveUpgrade ? 2 : 1.3f);

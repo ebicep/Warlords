@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -78,7 +79,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             chargeDistance = 5;
         } else {
             //travels 7 at peak jump
-            chargeDistance = Math.max(Math.min(Utils.getDistance(player, .1) * 5, 6.9), 6);
+            chargeDistance = Math.max(Math.min(LocationUtils.getDistance(player, .1) * 5, 6.9), 6);
         }
 
         boolean finalInAir = inAir;

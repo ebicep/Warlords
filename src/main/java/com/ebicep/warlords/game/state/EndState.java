@@ -36,7 +36,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -350,7 +350,7 @@ public class EndState implements State, TimerDebugAble {
             .ifPresent(recordTimeElapsedOption -> {
                 hover.append(Component.text("Time Elapsed", NamedTextColor.WHITE))
                      .append(Component.text(": ", NamedTextColor.GRAY))
-                     .append(Component.text(Utils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20), NamedTextColor.GREEN));
+                     .append(Component.text(StringUtils.formatTimeLeft(recordTimeElapsedOption.getTicksElapsed() / 20), NamedTextColor.GREEN));
             });
         sendGlobalEventMessage(game, Component.text("✚ GAME STATS ✚", NamedTextColor.BLUE, TextDecoration.BOLD)
                                               .hoverEvent(HoverEvent.showText(hover.build())));

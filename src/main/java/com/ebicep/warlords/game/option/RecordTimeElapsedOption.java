@@ -5,8 +5,8 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -53,7 +53,7 @@ public class RecordTimeElapsedOption implements Option {
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(
                         Component.text("Time: ")
-                                 .append(Component.text(Utils.formatTimeLeft(ticksElapsed / 20), NamedTextColor.GREEN)));
+                                 .append(Component.text(StringUtils.formatTimeLeft(ticksElapsed / 20), NamedTextColor.GREEN)));
             }
         });
     }

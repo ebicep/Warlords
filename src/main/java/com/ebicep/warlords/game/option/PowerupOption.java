@@ -216,13 +216,10 @@ public class PowerupOption implements Option {
         if (entity != null) {
             return;
         }
-        entity = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
-
-        type.setNameAndItem(this, entity);
-
-        entity.setGravity(false);
-        entity.setVisible(false);
-        entity.setCustomNameVisible(true);
+        entity = Utils.spawnArmorStand(location.clone().add(0, -1.5, 0), armorStand -> {
+            armorStand.setCustomNameVisible(true);
+            type.setNameAndItem(this, armorStand);
+        });
 
         Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }

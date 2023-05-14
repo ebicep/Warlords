@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -58,7 +59,7 @@ public class ChainHeal extends AbstractChainBase {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(p, chainTarget.getEntity())) {
+            if (LocationUtils.isLookingAtChain(p, chainTarget.getEntity())) {
                 wp.addHealingInstance(
                         wp,
                         name,

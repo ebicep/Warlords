@@ -10,8 +10,8 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -180,7 +180,7 @@ public class WinAfterTimeoutOption implements Option {
                 } else {
                     message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
                 }
-                message.append(Component.text(Utils.formatTimeLeft(timeRemaining), NamedTextColor.GREEN));
+                message.append(Component.text(StringUtils.formatTimeLeft(timeRemaining), NamedTextColor.GREEN));
                 return Collections.singletonList(message.build());
             }
         });

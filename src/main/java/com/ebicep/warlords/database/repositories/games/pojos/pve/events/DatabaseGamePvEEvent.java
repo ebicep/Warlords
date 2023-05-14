@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
@@ -55,7 +55,7 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
     public void appendLastGameStats(Hologram hologram) {
         HologramLines hologramLines = hologram.getLines();
         hologramLines.appendText(ChatColor.GRAY + date);
-        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
+        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + StringUtils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override
@@ -118,7 +118,7 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
     public List<Component> getExtraLore() {
         return Arrays.asList(
                 Component.text("Time Elapsed: ", NamedTextColor.GRAY)
-                         .append(Component.text(Utils.formatTimeLeft(timeElapsed), NamedTextColor.GREEN)),
+                         .append(Component.text(StringUtils.formatTimeLeft(timeElapsed), NamedTextColor.GREEN)),
                 Component.text("Players: ", NamedTextColor.GRAY)
                          .append(Component.text(getPlayers().size(), NamedTextColor.YELLOW))
         );
