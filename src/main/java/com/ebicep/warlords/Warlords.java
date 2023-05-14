@@ -10,7 +10,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.holograms.HologramManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilties.OrbsOfLife;
@@ -320,7 +319,6 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
-        getServer().getPluginManager().registerEvents(new HologramManager(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
