@@ -2,8 +2,6 @@ package com.ebicep.holograms;
 
 import com.ebicep.holograms.lines.AbstractHologramLine;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.TextDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +15,14 @@ public class Hologram {
 
 
     public void sendToPlayer() {
-        for (AbstractHologramLine line : lines) {
-            TextDisplay textDisplay = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
-            textDisplay.
-        }
+//        for (AbstractHologramLine line : lines) {
+//            TextDisplay textDisplay = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
+//            textDisplay.
+//        }
     }
 
     public void appendText(String text) {
-        lines.add(new TextHologramLineBuilder().setText(text).createTextHologramLine());
+        //lines.add(new TextHologramLineBuilder().setText(text).createTextHologramLine());
     }
 
     public String getName() {

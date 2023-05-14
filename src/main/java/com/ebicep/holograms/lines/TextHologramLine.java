@@ -3,17 +3,19 @@ package com.ebicep.holograms.lines;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.TextDisplay;
 
 public class TextHologramLine extends AbstractHologramLine {
 
     private Component text;
-    private int lineWidth = 0;
-    private byte opacity = 0;
-    private boolean isShadowed = false;
-    private boolean isSeeThrough = false;
-    private boolean defaultBackground = false;
-    private TextDisplay.TextAlignment alignment = TextDisplay.TextAlignment.CENTER;
+    private int lineWidth;
+    private byte opacity;
+    private boolean isShadowed;
+    private boolean isSeeThrough;
+    private boolean defaultBackground;
+    private TextDisplay.TextAlignment alignment;
+    private Interaction interaction;
 
     public TextHologramLine(
             Component text,
@@ -79,7 +81,7 @@ public class TextHologramLine extends AbstractHologramLine {
         private boolean isShadowed;
         private boolean isSeeThrough;
         private boolean defaultBackground;
-        private TextDisplay.TextAlignment alignment;
+        private TextDisplay.TextAlignment alignment = TextDisplay.TextAlignment.CENTER;
 
         public Builder setText(Component text) {
             this.text = text;

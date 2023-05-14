@@ -2,18 +2,17 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.Player;
 
 public class OldTestCommand implements CommandExecutor {
@@ -134,20 +133,25 @@ public class OldTestCommand implements CommandExecutor {
 //                                               .append(Component.text("  <<"));
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
 
-            Component component = Component.text("TEST", NamedTextColor.GREEN)
-                                           .append(Component.newline())
-                                           .append(Component.text("TEST2")
-                                                            .append(Component.newline())
-                                                            .append(Component.text("TEST3"))
-                                                            .append(Component.text("H", NamedTextColor.RED)))
-
-                                           .append(Component.text("TEST4"))
-                                           .append(Component.newline())
-                                           .append(Component.text("TEST5"));
-
-            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+//            Component component = Component.text("TEST", NamedTextColor.GREEN)
+//                                           .append(Component.newline())
+//                                           .append(Component.text("TEST2")
+//                                                            .append(Component.newline())
+//                                                            .append(Component.text("TEST3"))
+//                                                            .append(Component.text("H", NamedTextColor.RED)))
+//
+//                                           .append(Component.text("TEST4"))
+//                                           .append(Component.newline())
+//                                           .append(Component.text("TEST5"));
+//
+//            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
             // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
+
+            Interaction interaction = (Interaction) player.getWorld().spawnEntity(player.getLocation(), EntityType.INTERACTION);
+            interaction.setResponsive(true);
+
         }
+
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
 //            int wins = databasePlayer.getPveStats().getWins();
