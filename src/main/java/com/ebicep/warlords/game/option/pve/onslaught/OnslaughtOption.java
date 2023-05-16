@@ -187,9 +187,7 @@ public class OnslaughtOption implements Option, PveOption {
                     this.cancel();
                 }
 
-                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), OnslaughtOption.this);
-                }
+                mobTick();
 
                 if (ticksElapsed.get() % 36000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {

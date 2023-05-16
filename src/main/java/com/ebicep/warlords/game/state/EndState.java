@@ -32,7 +32,6 @@ import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
@@ -42,6 +41,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -229,13 +230,25 @@ public class EndState implements State, TimerDebugAble {
             ) {
                 if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
-                    PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
+                    player.showTitle(Title.title(
+                            Component.text("DRAW", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD),
+                            Component.empty(),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(0))
+                    ));
                 } else if (wp.getTeam() == winEvent.getDeclaredWinner()) {
                     player.playSound(player.getLocation(), "victory", 500, 1);
-                    PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
+                    player.showTitle(Title.title(
+                            Component.text("VICTORY", NamedTextColor.GOLD, TextDecoration.BOLD),
+                            Component.empty(),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(0))
+                    ));
                 } else {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
-                    PacketUtils.sendTitle(player, "§c§lDEFEAT", "", 0, 100, 0);
+                    player.showTitle(Title.title(
+                            Component.text("DEFEAT", NamedTextColor.RED, TextDecoration.BOLD),
+                            Component.empty(),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(0))
+                    ));
                 }
             }
         }

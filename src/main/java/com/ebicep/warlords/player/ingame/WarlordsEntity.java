@@ -28,7 +28,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
@@ -2554,7 +2553,7 @@ public abstract class WarlordsEntity {
         }
 
         if (entity instanceof Player) {
-            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+            entity.clearTitle();
         }
         setRespawnTickTimer(-1);
         setEnergy(getMaxEnergy() / 2);

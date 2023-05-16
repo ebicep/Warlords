@@ -39,6 +39,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public interface PveOption {
 
+    default void mobTick() {
+        for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
+            mob.whileAlive(getMobsMap().get(mob) - getTicksElapsed(), this);
+            mob.getBossBar(); // updates boss bar
+        }
+    }
+
     int playerCount();
 
     default int mobCount() {

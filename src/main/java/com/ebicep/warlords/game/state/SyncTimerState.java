@@ -2,7 +2,10 @@ package com.ebicep.warlords.game.state;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.jetbrains.annotations.Nullable;
 
 public class SyncTimerState implements State {
@@ -16,7 +19,11 @@ public class SyncTimerState implements State {
     @Override
     public void begin() {
         game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-            PacketUtils.sendTitle(player, "", "§aSyncing Timers...", 0, 20, 0);
+            player.showTitle(Title.title(
+                    Component.empty(),
+                    Component.text("Syncing Timers...", NamedTextColor.GREEN),
+                    Title.Times.times(Ticks.duration(0), Ticks.duration(20), Ticks.duration(0))
+            ));
         });
     }
 

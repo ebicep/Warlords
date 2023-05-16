@@ -1,7 +1,5 @@
 package com.ebicep.warlords.pve.mobs.mobtypes;
 
-import com.ebicep.warlords.pve.mobs.Mob;
-
 public interface BasicMob extends Mob {
 
     @Override

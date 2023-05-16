@@ -566,9 +566,7 @@ public class WaveDefenseOption implements Option, PveOption {
                     }
                 }
 
-                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
-                }
+                mobTick();
 
                 //check every 10 seconds for mobs in void
                 if (ticksElapsed.get() % 200 == 0) {
