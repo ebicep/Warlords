@@ -280,12 +280,12 @@ public class WarlordsEvents implements Listener {
         });
 
         for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
-            if (
-                    holder.getGame() != null
-                            && holder.getGame().hasPlayer(e.getPlayer().getUniqueId())
-                            && holder.getGame().getPlayerTeam(e.getPlayer().getUniqueId()) == null
+            Game game = holder.getGame();
+            if (game != null
+                    && game.hasPlayer(e.getPlayer().getUniqueId())
+                    && (game.isState(PreLobbyState.class) || game.getPlayerTeam(e.getPlayer().getUniqueId()) == null)
             ) {
-                holder.getGame().removePlayer(e.getPlayer().getUniqueId());
+                game.removePlayer(e.getPlayer().getUniqueId());
             }
         }
     }

@@ -44,7 +44,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -96,62 +95,40 @@ public class PlayingState implements State, TimerDebugAble {
         }
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
 
-        List<UUID> toRemove = new ArrayList<>();
-        AtomicBoolean closeGame = new AtomicBoolean(false);
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
-            if (team != null && (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) || player.isOnline())) {
-                if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                    Specializations selectedSpec = playerSettings.getSelectedSpec();
-                    if (selectedSpec.isBanned()) {
-                        for (Specializations value : Specializations.VALUES) {
-                            if (value.isBanned()) {
-                                continue;
-                            }
-                            if (p != null) {
-                                p.sendMessage(ChatColor.RED + selectedSpec.name + " is currently disabled. Your specialization has been changed.");
-                            }
-                            playerSettings.setSelectedSpec(value);
-                            break;
-                        }
-                        if (playerSettings.getSelectedSpec().isBanned()) {
-                            if (p != null) {
-                                p.sendMessage(ChatColor.RED + "All specializations are currently disabled. Game closing.");
-                            }
-                            closeGame.set(true);
-                        }
-                    }
-                }
-                Warlords.addPlayer(new WarlordsPlayer(
-                        player,
-                        this.getGame(),
-                        team
-                ));
-            } else {
-                toRemove.add(player.getUniqueId());
+            if (team == null || !player.isOnline()) {
                 return;
             }
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            if (selectedSpec.isBanned()) {
+                for (Specializations value : Specializations.VALUES) {
+                    if (value.isBanned()) {
+                        continue;
+                    }
+                    if (p != null) {
+                        p.sendMessage(ChatColor.RED + selectedSpec.name + " is currently disabled. Your specialization has been changed.");
+                    }
+                    playerSettings.setSelectedSpec(value);
+                    break;
+                }
+                if (playerSettings.getSelectedSpec().isBanned()) {
+                    if (p != null) {
+                        p.sendMessage(ChatColor.RED + "All specializations are currently disabled. Game closing.");
+                    }
+                }
+            }
+            Warlords.addPlayer(new WarlordsPlayer(
+                    player,
+                    this.getGame(),
+                    team
+            ));
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
                 Utils.resetPlayerMovementStatistics(p);
             }
         });
-        toRemove.forEach(this.game::removePlayer);
-
-        if (game.warlordsPlayers().findAny().isEmpty()) {
-            closeGame.set(true);
-        }
-
-        if (closeGame.get()) {
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    game.close();
-                }
-            }.runTaskLater(Warlords.getInstance(), 20);
-        }
 
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
