@@ -15,8 +15,10 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

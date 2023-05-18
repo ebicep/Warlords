@@ -8,6 +8,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -25,6 +26,7 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -389,13 +391,14 @@ public class PlayingState implements State, TimerDebugAble {
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-//                    Warlords.newChain()
-//                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
-//                            .syncLast(databasePlayers -> {
-//                                SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
-//                                SRCalculator.recalculateSR();
-//                            })
-//                            .execute();
+                    Warlords.newChain()
+                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_7))
+                            .syncLast(databasePlayers -> {
+                                SRCalculator.DATABASE_PLAYER_CACHE.clear();
+                                SRCalculator.DATABASE_PLAYER_CACHE.addAll(databasePlayers);
+                                SRCalculator.recalculateSR();
+                            })
+                            .execute();
                 }
             }
         } else {

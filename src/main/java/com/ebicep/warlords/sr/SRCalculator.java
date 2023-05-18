@@ -15,7 +15,7 @@ public class SRCalculator {
     public static final HashMap<Function<DatabasePlayer, Double>, Double> TOTAL_VALUES = new HashMap<>();
     public static final HashMap<DatabasePlayer, Integer> PLAYERS_SR = new HashMap<>();
     public static final Set<DatabasePlayer> DATABASE_PLAYER_CACHE = new HashSet<>();
-    public static int numberOfActualPlayers = 40;
+    public static int numberOfActualPlayers = 20;
 
     public static void recalculateSR() {
         TOTAL_VALUES.clear();

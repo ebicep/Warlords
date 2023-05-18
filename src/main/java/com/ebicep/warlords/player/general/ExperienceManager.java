@@ -216,9 +216,9 @@ public class ExperienceManager {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
             float multiplier = 1;
             //pubs
-            if (!isCompGame) {
-                multiplier *= .1;
-            }
+//            if (!isCompGame) {
+//                multiplier *= .1;
+//            }
             //duels
             if (game.getGameMode() == GameMode.DUEL) {
                 multiplier *= .1;
