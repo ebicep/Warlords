@@ -371,7 +371,6 @@ public class PlayingState implements State, TimerDebugAble {
                     Warlords.newChain()
                             .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_7))
                             .syncLast(databasePlayers -> {
-                                SRCalculator.DATABASE_PLAYER_CACHE.clear();
                                 SRCalculator.DATABASE_PLAYER_CACHE.addAll(databasePlayers);
                                 SRCalculator.recalculateSR();
                             })
