@@ -40,7 +40,7 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7500L);
+                put(Currencies.COIN, 7_500L);
                 put(Currencies.SYNTHETIC_SHARD, 30L);
             }}
     ) {
@@ -58,7 +58,7 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7500L);
+                put(Currencies.COIN, 7_500L);
                 put(Currencies.SYNTHETIC_SHARD, 30L);
             }}
     ) {
@@ -82,7 +82,7 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 15000L);
+                put(Currencies.COIN, 15_000L);
                 put(Currencies.SYNTHETIC_SHARD, 50L);
             }}
     ) {
@@ -100,7 +100,7 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7500L);
+                put(Currencies.COIN, 7_500L);
                 put(Currencies.SYNTHETIC_SHARD, 30L);
             }}
     ) {
@@ -129,7 +129,7 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 50000L);
+                put(Currencies.COIN, 50_000L);
                 put(Currencies.SYNTHETIC_SHARD, 300L);
             }}
     ) {
@@ -153,8 +153,8 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 25000L);
-                put(Currencies.SYNTHETIC_SHARD, 150L);
+                put(Currencies.COIN, 50_000L);
+                put(Currencies.SYNTHETIC_SHARD, 3000L);
             }}
     ) {
         @Override
