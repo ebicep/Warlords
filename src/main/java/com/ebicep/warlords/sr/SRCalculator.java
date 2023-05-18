@@ -20,7 +20,7 @@ public class SRCalculator {
     public static void recalculateSR() {
         TOTAL_VALUES.clear();
         PLAYERS_SR.clear();
-        numberOfActualPlayers = 40;
+        numberOfActualPlayers = 20;
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculating player SR PUBS");
         Warlords.newChain()
                 .async(() -> {
