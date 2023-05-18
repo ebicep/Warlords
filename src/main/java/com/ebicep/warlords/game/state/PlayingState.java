@@ -8,7 +8,6 @@ import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -368,13 +367,7 @@ public class PlayingState implements State, TimerDebugAble {
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                    Warlords.newChain()
-                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_7))
-                            .syncLast(databasePlayers -> {
-                                SRCalculator.DATABASE_PLAYER_CACHE.addAll(databasePlayers);
-                                SRCalculator.recalculateSR();
-                            })
-                            .execute();
+                    SRCalculator.recalculateSR();
                 }
             }
         } else {
