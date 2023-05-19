@@ -9,6 +9,9 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -16,6 +19,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.DateUtil;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -410,12 +414,17 @@ public class PreLobbyState implements State, TimerDebugAble {
                     bestTeam.entrySet().stream()
                             .sorted(Map.Entry.comparingByValue())
                             .forEach(playerTeamEntry -> {
-                                Specializations specializations = PlayerSettings.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
-                                ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(playerTeamEntry.getKey().getName(), playerTeamEntry.getValue().teamColor())
+                                UUID uuid = playerTeamEntry.getKey();
+                                Player player = Bukkit.getPlayer(uuid);
+                                if (player == null) {
+                                    return;
+                                }
+                                Specializations specializations = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
+                                ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(player.getName(), playerTeamEntry.getValue().teamColor())
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                                              .append(Component.text(specializations.name, specializations.specType.textColor))
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                                             .append(Component.text(playersSR.get(playerTeamEntry.getKey().getUniqueId()),
+                                                                                             .append(Component.text(playersSR.get(uuid),
                                                                                                      NamedTextColor.GOLD
                                                                                              )));
                             });
