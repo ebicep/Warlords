@@ -22,6 +22,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -148,6 +149,7 @@ public class StatsLeaderboardManager {
                             DatabaseTiming.checkLeaderboardResets();
                             NPCManager.createGameJoinNPCs();
                             DatabaseGameEvent.startGameEvent();
+                            SRCalculator.recalculateSR();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???

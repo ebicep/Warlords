@@ -137,7 +137,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     //parties first
                     int sameTeamPartyLimit = 2;
-                    HashMap<Team, List<Player>> partyMembers = new HashMap<>() {{
+                    HashMap<Team, List<UUID>> partyMembers = new HashMap<>() {{
                         put(Team.BLUE, new ArrayList<>());
                         put(Team.RED, new ArrayList<>());
                     }};
@@ -146,103 +146,109 @@ public class PreLobbyState implements State, TimerDebugAble {
                         Team team = e.getValue();
                         //check if player already is recorded
                         // TODO Test this logic if player are not online if this happens (we do not have player objects in this case)
-                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
+                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player.getUniqueId()))) {
                             return;
                         }
-                        /*PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId()).getA(party -> {
-                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).toList();
-                            //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
-                            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
-                                return;
-                            }
-                            List<Player> bluePlayers = partyMembers.get(Team.BLUE);
-                            List<Player> redPlayers = partyMembers.get(Team.RED);
-                            List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
-                            Collections.shuffle(partyPlayers);
-                            int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
-                            //check if whole party can go on the same team to get an even amount of internalPlayers on each team
-                            if (teamSizeDiff > partyPlayers.size()) {
-                                if (bluePlayers.size() > redPlayers.size())
-                                    bluePlayers.addAll(partyPlayers);
-                                else
-                                    redPlayers.addAll(partyPlayers);
-                            } else {
+                        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                        if (partyPlayerPair == null) {
+                            return;
+                        }
+                        Party party = partyPlayerPair.getA();
+                        List<UUID> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline()
+                                                             .stream()
+                                                             .map(Player::getUniqueId)
+                                                             .filter(uniqueId -> game.onlinePlayers().anyMatch(e2 -> Objects.equals(e2.getKey().getUniqueId(), uniqueId)))
+                                                             .toList();
+                        //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
+                        if (partyPlayersInGame.size() > sameTeamPartyLimit) {
+                            return;
+                        }
+                        List<UUID> bluePlayers = partyMembers.get(Team.BLUE);
+                        List<UUID> redPlayers = partyMembers.get(Team.RED);
+                        List<UUID> partyPlayers = new ArrayList<>(partyPlayersInGame);
+                        Collections.shuffle(partyPlayers);
+                        int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
+                        //check if whole party can go on the same team to get an even amount of internalPlayers on each team
+                        if (teamSizeDiff > partyPlayers.size()) {
+                            if (bluePlayers.size() > redPlayers.size()) {
                                 bluePlayers.addAll(partyPlayers);
+                            } else {
+                                redPlayers.addAll(partyPlayers);
                             }
-                        });*/
+                        } else {
+                            bluePlayers.addAll(partyPlayers);
+                        }
                     });
 
                     HashMap<UUID, Integer> playersSR = new HashMap<>();
                     SRCalculator.PLAYERS_SR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
 
-                    HashMap<Player, Team> bestTeam = new HashMap<>();
+                    HashMap<UUID, Team> bestTeam = new HashMap<>();
                     int bestBlueSR = 0;
                     int bestRedSR = 0;
                     int bestTeamSRDifference = Integer.MAX_VALUE;
 
                     int maxSRDiff = 200;
                     for (int i = 0; i < 5000; i++) {
-                        HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<UUID, Team> teams = new HashMap<>();
+                        HashMap<Specializations, List<UUID>> playerSpecs = new HashMap<>();
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
                         });
                         //specs that dont have an even amount of players to redistribute later
-                        List<Player> playersLeft = new ArrayList<>();
+                        List<UUID> playersLeft = new ArrayList<>();
                         //distributing specs evenly
                         playerSpecs.forEach((classes, playerList) -> {
                             int amountOfTargetSpecsOnBlue = (int) teams.entrySet()
                                                                        .stream()
                                                                        .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && PlayerSettings.getPlayerSettings(
-                                                                               playerTeamEntry.getKey()
-                                                                                              .getUniqueId()).getSelectedSpec() == classes)
+                                                                               playerTeamEntry.getKey()).getSelectedSpec() == classes)
                                                                        .count();
                             int amountOfTargetSpecsOnRed = (int) teams.entrySet()
                                                                       .stream()
                                                                       .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && PlayerSettings.getPlayerSettings(
-                                                                              playerTeamEntry.getKey()
-                                                                                             .getUniqueId()).getSelectedSpec() == classes)
+                                                                              playerTeamEntry.getKey()).getSelectedSpec() == classes)
                                                                       .count();
-                            for (Player player : playerList) {
+                            for (UUID uuid : playerList) {
                                 //add to red team
                                 if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
-                                    teams.put(player, Team.RED);
+                                    teams.put(uuid, Team.RED);
                                     amountOfTargetSpecsOnRed++;
                                 }
                                 //add to blue team
                                 else if (amountOfTargetSpecsOnRed > amountOfTargetSpecsOnBlue) {
-                                    teams.put(player, Team.BLUE);
+                                    teams.put(uuid, Team.BLUE);
                                     amountOfTargetSpecsOnBlue++;
                                 }
                                 //same amount on each team - add to playersleft to redistribute
                                 else {
-                                    playersLeft.add(player);
+                                    playersLeft.add(uuid);
                                 }
                             }
                         });
                         //start on team with least amount of players
                         int blueSR = teams.entrySet().stream()
                                           .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
-                                          .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
+                                          .mapToInt(value -> playersSR.getOrDefault(value.getKey(), 500))
                                           .sum();
                         int redSR = teams.entrySet().stream()
                                          .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
-                                         .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
+                                         .mapToInt(value -> playersSR.getOrDefault(value.getKey(), 500))
                                          .sum();
 
 //                        playersLeft = playersLeft.stream()
 //                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
 //                                .toList();
-                        for (Player player : playersLeft) {
+                        for (UUID uuid : playersLeft) {
                             if (redSR > blueSR) {
-                                teams.put(player, Team.BLUE);
-                                blueSR += playersSR.getOrDefault(player.getUniqueId(), 500);
+                                teams.put(uuid, Team.BLUE);
+                                blueSR += playersSR.getOrDefault(uuid, 500);
                             } else {
-                                teams.put(player, Team.RED);
-                                redSR += playersSR.getOrDefault(player.getUniqueId(), 500);
+                                teams.put(uuid, Team.RED);
+                                redSR += playersSR.getOrDefault(uuid, 500);
                             }
                         }
 
@@ -280,44 +286,42 @@ public class PreLobbyState implements State, TimerDebugAble {
                     //INCASE COULDNT BALANCE
                     if (bestTeam.isEmpty()) {
                         failSafeActive = true;
-                        HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<UUID, Team> teams = new HashMap<>();
+                        HashMap<Specializations, List<UUID>> playerSpecs = new HashMap<>();
                         //all players are online or else they wouldve been removed from queue
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
                         });
-                        List<Player> playersLeft = new ArrayList<>();
+                        List<UUID> playersLeft = new ArrayList<>();
                         //distributing specs evenly
                         playerSpecs.forEach((classes, playerList) -> {
                             int amountOfTargetSpecsOnBlue = (int) teams.entrySet()
                                                                        .stream()
                                                                        .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && PlayerSettings.getPlayerSettings(
-                                                                               playerTeamEntry.getKey()
-                                                                                              .getUniqueId()).getSelectedSpec() == classes)
+                                                                               playerTeamEntry.getKey()).getSelectedSpec() == classes)
                                                                        .count();
                             int amountOfTargetSpecsOnRed = (int) teams.entrySet()
                                                                       .stream()
                                                                       .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && PlayerSettings.getPlayerSettings(
-                                                                              playerTeamEntry.getKey()
-                                                                                             .getUniqueId()).getSelectedSpec() == classes)
+                                                                              playerTeamEntry.getKey()).getSelectedSpec() == classes)
                                                                       .count();
-                            for (Player player : playerList) {
+                            for (UUID uuid : playerList) {
                                 //add to red team
                                 if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
-                                    teams.put(player, Team.RED);
+                                    teams.put(uuid, Team.RED);
                                     amountOfTargetSpecsOnRed++;
                                 }
                                 //add to blue team
                                 else if (amountOfTargetSpecsOnRed > amountOfTargetSpecsOnBlue) {
-                                    teams.put(player, Team.BLUE);
+                                    teams.put(uuid, Team.BLUE);
                                     amountOfTargetSpecsOnBlue++;
                                 }
                                 //same amount on each team - add to playersleft to redistribute
                                 else {
-                                    playersLeft.add(player);
+                                    playersLeft.add(uuid);
                                 }
                             }
                         });
@@ -327,7 +331,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         int amountOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
                         final boolean[] toBlueTeam = {amountOnBlue <= amountOnRed};
                         playersLeft.stream()
-                                   .sorted(Comparator.comparing(o -> PlayerSettings.getPlayerSettings(o.getUniqueId()).getSelectedSpec().specType))
+                                   .sorted(Comparator.comparing(o -> PlayerSettings.getPlayerSettings(o).getSelectedSpec().specType))
                                    .forEachOrdered(player -> {
                                        if (toBlueTeam[0]) {
                                            teams.put(player, Team.BLUE);
@@ -340,35 +344,35 @@ public class PreLobbyState implements State, TimerDebugAble {
                         bestTeam = teams;
                         bestBlueSR = teams.entrySet().stream()
                                           .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
-                                          .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
+                                          .mapToInt(value -> playersSR.getOrDefault(value.getKey(), 500))
                                           .sum();
                         bestRedSR = teams.entrySet().stream()
                                          .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
-                                         .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
+                                         .mapToInt(value -> playersSR.getOrDefault(value.getKey(), 500))
                                          .sum();
                         bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
                     }
 
                     if (bestTeamSRDifference > 5000) {
                         secondFailSafeActive = true;
-                        HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<UUID, Team> teams = new HashMap<>();
+                        HashMap<Specializations, List<UUID>> playerSpecs = new HashMap<>();
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player.getUniqueId());
                         });
                         int blueSR = 0;
                         int redSR = 0;
-                        for (List<Player> value : playerSpecs.values()) {
-                            for (Player player : value) {
+                        for (List<UUID> value : playerSpecs.values()) {
+                            for (UUID uuid : value) {
                                 if (blueSR > redSR) {
-                                    teams.put(player, Team.RED);
-                                    redSR += playersSR.getOrDefault(player.getUniqueId(), 500);
+                                    teams.put(uuid, Team.RED);
+                                    redSR += playersSR.getOrDefault(uuid, 500);
                                 } else {
-                                    teams.put(player, Team.BLUE);
-                                    blueSR += playersSR.getOrDefault(player.getUniqueId(), 500);
+                                    teams.put(uuid, Team.BLUE);
+                                    blueSR += playersSR.getOrDefault(uuid, 500);
                                 }
                             }
                         }
@@ -378,13 +382,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                         bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
                     }
 
-                    bestTeam.forEach((player, team) -> {
-                        game.setPlayerTeam(player, team);
-                        //ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
-                        LobbyLocationMarker location = LobbyLocationMarker.getFirstLobbyLocation(game, team);
-                        if (location != null) {
-                            player.teleport(location.getLocation());
-                        }
+                    bestTeam.forEach((uuid, team) -> {
+                        PlayerSettings.getPlayerSettings(uuid).setWantedTeam(team);
                     });
 
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();

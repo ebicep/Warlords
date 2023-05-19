@@ -25,6 +25,7 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -45,7 +46,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
@@ -93,62 +93,40 @@ public class PlayingState implements State, TimerDebugAble {
         }
         ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
 
-        List<UUID> toRemove = new ArrayList<>();
-        AtomicBoolean closeGame = new AtomicBoolean(false);
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
-            if (team != null && (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) || player.isOnline())) {
-                if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-                    Specializations selectedSpec = playerSettings.getSelectedSpec();
-                    if (selectedSpec.isBanned()) {
-                        for (Specializations value : Specializations.VALUES) {
-                            if (value.isBanned()) {
-                                continue;
-                            }
-                            if (p != null) {
-                                p.sendMessage(Component.text(selectedSpec.name + " is currently disabled. Your specialization has been changed.", NamedTextColor.RED));
-                            }
-                            playerSettings.setSelectedSpec(value);
-                            break;
-                        }
-                        if (playerSettings.getSelectedSpec().isBanned()) {
-                            if (p != null) {
-                                p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
-                            }
-                            closeGame.set(true);
-                        }
-                    }
-                }
-                Warlords.addPlayer(new WarlordsPlayer(
-                        player,
-                        this.getGame(),
-                        team
-                ));
-            } else {
-                toRemove.add(player.getUniqueId());
+            if (team == null || !player.isOnline()) {
                 return;
             }
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            if (selectedSpec.isBanned()) {
+                for (Specializations value : Specializations.VALUES) {
+                    if (value.isBanned()) {
+                        continue;
+                    }
+                    if (p != null) {
+                        p.sendMessage(Component.text(selectedSpec.name + " is currently disabled. Your specialization has been changed.", NamedTextColor.RED));
+                    }
+                    playerSettings.setSelectedSpec(value);
+                    break;
+                }
+                if (playerSettings.getSelectedSpec().isBanned()) {
+                    if (p != null) {
+                        p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
+                    }
+                }
+            }
+            Warlords.addPlayer(new WarlordsPlayer(
+                    player,
+                    this.getGame(),
+                    team
+            ));
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
                 Utils.resetPlayerMovementStatistics(p);
             }
         });
-        toRemove.forEach(this.game::removePlayer);
-
-        if (game.warlordsPlayers().findAny().isEmpty()) {
-            closeGame.set(true);
-        }
-
-        if (closeGame.get()) {
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    game.close();
-                }
-            }.runTaskLater(Warlords.getInstance(), 20);
-        }
 
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -377,13 +355,7 @@ public class PlayingState implements State, TimerDebugAble {
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-//                    Warlords.newChain()
-//                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
-//                            .syncLast(databasePlayers -> {
-//                                SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
-//                                SRCalculator.recalculateSR();
-//                            })
-//                            .execute();
+                    SRCalculator.recalculateSR();
                 }
             }
         } else {

@@ -181,11 +181,11 @@ public class ItemMichaelMenu {
         private static final HashMap<Integer, LinkedHashMap<Spendable, Long>> COSTS = new HashMap<>() {{
             put(1, new LinkedHashMap<>() {{
 
-                put(Currencies.COIN, 500_000L);
+                put(Currencies.COIN, 300_000L);
             }});
             put(2, new LinkedHashMap<>() {{
 
-                put(Currencies.SYNTHETIC_SHARD, 15_000L);
+                put(Currencies.SYNTHETIC_SHARD, 5_000L);
             }});
             put(3, new LinkedHashMap<>() {{
 
