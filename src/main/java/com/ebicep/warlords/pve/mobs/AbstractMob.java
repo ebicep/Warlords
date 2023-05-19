@@ -20,10 +20,12 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.mobtypes.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -60,6 +62,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
 
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
@@ -314,6 +317,14 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             });
             killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
+    }
+
+    public BossBar getBossBar() {
+        return bossBar;
+    }
+
+    protected BossBar getHealthModifiedBossBar() {
+        return bossBar.progress(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth());
     }
 
     public net.minecraft.world.entity.LivingEntity getTarget() {

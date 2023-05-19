@@ -6,7 +6,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -161,7 +160,7 @@ public class GameFreezeOption implements Option, Listener {
         if (p.getVehicle() instanceof Horse horse) {
             horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.318);
         }
-        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+        p.clearTitle();
         p.removePotionEffect(PotionEffectType.BLINDNESS);
     }
 

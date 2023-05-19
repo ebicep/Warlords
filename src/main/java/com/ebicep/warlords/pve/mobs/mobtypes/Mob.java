@@ -1,7 +1,8 @@
-package com.ebicep.warlords.pve.mobs;
+package com.ebicep.warlords.pve.mobs.mobtypes;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
