@@ -27,6 +27,13 @@ public enum DifficultyIndex {
             25,
             2
     ),
+    EXTREME("Extreme",
+            "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
+                    "\n\nModifiers:\n§c+100% Mob Health\n+75% Mob Damage\n\nExtreme scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
+            ChatColor.BLACK,
+            25,
+            4
+    ),
     ENDLESS("Endless",
             "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
                     "\n\nModifiers:\n§c+25% Mob Spawns",
@@ -53,6 +60,7 @@ public enum DifficultyIndex {
             EASY,
             NORMAL,
             HARD,
+            EXTREME,
             ENDLESS
     };
     public static final DifficultyIndex[] VALUES = values();
