@@ -151,7 +151,7 @@ public class MasterworksFairMenu {
                                 );
                                 return;
                             }
-                            Menu.openConfirmationMenu0(
+                            Menu.openConfirmationMenu(
                                     player,
                                     "Submit Weapon",
                                     3,

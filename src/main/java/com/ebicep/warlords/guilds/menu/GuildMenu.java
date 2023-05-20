@@ -265,7 +265,7 @@ public class GuildMenu {
                             @Override
                             public void run() {
                                 int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
-                                Menu.openConfirmationMenu0(
+                                Menu.openConfirmationMenu(
                                         player,
                                         "Confirm Conversion",
                                         3,

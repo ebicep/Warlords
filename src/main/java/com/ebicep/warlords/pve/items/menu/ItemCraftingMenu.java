@@ -221,7 +221,7 @@ public class ItemCraftingMenu {
                         }
                     }
 
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Item Craft",
                             3,
                             Collections.singletonList(Component.textOfChildren(
@@ -374,7 +374,7 @@ public class ItemCraftingMenu {
                         return;
                     }
 
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Smelt",
                             3,
                             new ArrayList<>() {{

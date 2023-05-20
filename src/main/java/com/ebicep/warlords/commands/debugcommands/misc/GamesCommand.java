@@ -89,7 +89,7 @@ public class GamesCommand extends BaseCommand {
                         .name(Component.text("Add Game", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Add Game",
                             3,
                             Collections.singletonList(Component.text("Add Game", NamedTextColor.GRAY)),
@@ -111,7 +111,7 @@ public class GamesCommand extends BaseCommand {
                         .name(Component.text("Remove Game", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Remove Game",
                             3,
                             Collections.singletonList(Component.text("Remove Game", NamedTextColor.GRAY)),
@@ -257,7 +257,7 @@ public class GamesCommand extends BaseCommand {
                         .name(Component.text("Set", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Set Addons",
                             3,
                             addons.stream().map(gameAddon -> Component.text(gameAddon.getName(), NamedTextColor.GOLD)).collect(Collectors.toList()),

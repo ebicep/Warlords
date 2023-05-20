@@ -79,7 +79,7 @@ public enum StarPieces {
                             List<Component> confirmLore = new ArrayList<>();
                             confirmLore.add(Component.textOfChildren(Component.text("Synthesize: ", NamedTextColor.GRAY), starPiece.currency.getColoredName()));
                             confirmLore.addAll(costLore);
-                            Menu.openConfirmationMenu0(player,
+                            Menu.openConfirmationMenu(player,
                                     "Confirm Synthesis",
                                     3,
                                     confirmLore,

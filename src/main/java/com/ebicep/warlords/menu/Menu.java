@@ -42,7 +42,7 @@ public class Menu extends AbstractMenuBase {
     public static final List<Component> GO_BACK = Collections.singletonList(Component.text("Go Back", NamedTextColor.GRAY));
     public static final Component DENY = Component.text("Deny", NamedTextColor.RED);
 
-    public static void openConfirmationMenu0(
+    public static void openConfirmationMenu(
             Player player,
             String title,
             int rows,
@@ -52,7 +52,7 @@ public class Menu extends AbstractMenuBase {
             BiConsumer<Menu, InventoryClickEvent> onCancel,
             Consumer<Menu> editMenu
     ) {
-        openConfirmationMenu0(
+        openConfirmationMenu(
                 player,
                 title,
                 rows,
@@ -66,7 +66,7 @@ public class Menu extends AbstractMenuBase {
         );
     }
 
-    public static void openConfirmationMenu0(
+    public static void openConfirmationMenu(
             Player player,
             String title,
             int rows,

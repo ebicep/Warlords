@@ -107,7 +107,7 @@ public class GuildUpgradeMenu {
                             )
                             .get(),
                     (m, e) -> {
-                        Menu.openConfirmationMenu0(
+                        Menu.openConfirmationMenu(
                                 player,
                                 upgradesTemporary.name + " (T" + tier + ")",
                                 3,
@@ -173,7 +173,7 @@ public class GuildUpgradeMenu {
             return;
         }
         long upgradeCost = upgradesPermanent.getCost(nextTier);
-        Menu.openConfirmationMenu0(player,
+        Menu.openConfirmationMenu(player,
                 upgradesPermanent.name + " (T" + nextTier + ")",
                 3,
                 Component.text("Purchase Upgrade", NamedTextColor.GREEN),

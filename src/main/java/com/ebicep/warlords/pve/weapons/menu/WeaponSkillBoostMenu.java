@@ -91,7 +91,7 @@ public class WeaponSkillBoostMenu {
                                 }
                             }
                         }
-                        Menu.openConfirmationMenu0(
+                        Menu.openConfirmationMenu(
                                 player,
                                 "Change Skill Boost",
                                 3,

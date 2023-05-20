@@ -140,7 +140,7 @@ public class WeaponTitleMenu {
                             if (titleIsLocked) {
                                 confirmLore.addAll(loreCost);
                             }
-                            Menu.openConfirmationMenu0(
+                            Menu.openConfirmationMenu(
                                     player,
                                     "Apply Title",
                                     3,

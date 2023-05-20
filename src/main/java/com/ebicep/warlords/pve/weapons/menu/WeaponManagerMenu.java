@@ -186,7 +186,7 @@ public class WeaponManagerMenu {
                             break;
                         }
                     }
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Salvaging Weapons",
                             3,
                             salvageLore,

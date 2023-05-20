@@ -52,7 +52,7 @@ public class WeaponLegendaryCraftMenu {
                     List<Component> confirmLore = new ArrayList<>();
                     confirmLore.add(Component.text("Craft a Legendary Weapon", NamedTextColor.GRAY));
                     confirmLore.addAll(COST_LORE);
-                    Menu.openConfirmationMenu0(
+                    Menu.openConfirmationMenu(
                             player,
                             "Craft Legendary Weapon",
                             3,

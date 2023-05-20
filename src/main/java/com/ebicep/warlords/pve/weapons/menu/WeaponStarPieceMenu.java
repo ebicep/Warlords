@@ -23,7 +23,7 @@ public class WeaponStarPieceMenu {
         confirmLore.add(Component.text("Apply a star piece to your weapon.", NamedTextColor.GRAY));
         confirmLore.add(Component.text("This will override any previous star piece.", NamedTextColor.GRAY));
         confirmLore.addAll(weapon.getStarPieceCostLore(starPieceCurrency));
-        Menu.openConfirmationMenu0(
+        Menu.openConfirmationMenu(
                 player,
                 "Confirm Star Piece Application",
                 3,

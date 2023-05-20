@@ -189,7 +189,7 @@ public class AbilityTree {
                             player.sendMessage(Component.text("You must have at least one profile!", NamedTextColor.RED));
                             return;
                         }
-                        Menu.openConfirmationMenu0(
+                        Menu.openConfirmationMenu(
                                 player,
                                 "Delete Profile",
                                 3,

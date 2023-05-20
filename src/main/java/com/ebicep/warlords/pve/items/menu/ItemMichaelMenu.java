@@ -252,7 +252,7 @@ public class ItemMichaelMenu {
                                     return;
                                 }
                             }
-                            Menu.openConfirmationMenu0(
+                            Menu.openConfirmationMenu(
                                     player,
                                     "Buy Blessing",
                                     3,
@@ -559,7 +559,7 @@ public class ItemMichaelMenu {
                             return;
                         }
 
-                        Menu.openConfirmationMenu0(player,
+                        Menu.openConfirmationMenu(player,
                                 "Confirm Item Blessing",
                                 3,
                                 new ArrayList<>() {{
@@ -817,7 +817,7 @@ public class ItemMichaelMenu {
                         }
 
 
-                        Menu.openConfirmationMenu0(player,
+                        Menu.openConfirmationMenu(player,
                                 "Confirm Purification",
                                 3,
                                 new ArrayList<>() {{

@@ -90,7 +90,7 @@ public class ItemEquipMenu {
                         return;
                     }
                     Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
-                    Menu.openConfirmationMenu0(player,
+                    Menu.openConfirmationMenu(player,
                             "Confirm Scrap",
                             3,
                             new ArrayList<>() {{
@@ -356,7 +356,7 @@ public class ItemEquipMenu {
                         player.sendMessage(Component.text("You cannot delete the default loadout!", NamedTextColor.RED));
                         return;
                     }
-                    Menu.openConfirmationMenu0(
+                    Menu.openConfirmationMenu(
                             player,
                             "Delete Loadout",
                             3,

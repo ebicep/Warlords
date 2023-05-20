@@ -105,7 +105,7 @@ public class WeaponSkinSelectorMenu {
                                     );
                                     return;
                                 }
-                                Menu.openConfirmationMenu0(
+                                Menu.openConfirmationMenu(
                                         player,
                                         "Unlock Weapon Skin",
                                         3,
