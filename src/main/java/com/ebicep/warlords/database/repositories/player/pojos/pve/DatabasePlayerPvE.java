@@ -315,6 +315,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         return waveDefenseStats.getHardStats();
     }
 
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getExtremeStats() {
+        return waveDefenseStats.getExtremeStats();
+    }
+
     public DatabasePlayerPvEWaveDefenseDifficultyStats getEndlessStats() {
         return waveDefenseStats.getEndlessStats();
     }
