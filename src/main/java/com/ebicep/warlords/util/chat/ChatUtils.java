@@ -1,9 +1,7 @@
 package com.ebicep.warlords.util.chat;
 
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -36,9 +34,9 @@ public class ChatUtils {
             Game game,
             Title title
     ) {
-        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-            we.getEntity().showTitle(title);
-        }
+        game.onlinePlayers().forEach(playerTeamEntry -> {
+            playerTeamEntry.getKey().showTitle(title);
+        });
     }
 
     public static void sendTitleToGamePlayers(
