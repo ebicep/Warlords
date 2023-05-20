@@ -145,7 +145,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 300 == 0) {
+        if (ticksElapsed % 400 == 0) {
             for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new ExiledSkeleton(spawnLocation));
             }

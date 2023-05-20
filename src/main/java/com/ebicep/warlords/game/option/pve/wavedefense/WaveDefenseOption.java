@@ -452,27 +452,35 @@ public class WaveDefenseOption implements Option, PveOption {
         float bossMultiplier = 1 + (0.25f * playerCount);
 
         // Multiply damage/health by given difficulty.
-        float difficultyMultiplier;
+        float difficultyHealthMultiplier;
+        float difficultyDamageMultiplier;
         switch (difficulty) {
             case EASY:
-                difficultyMultiplier = 0.75f;
+                difficultyHealthMultiplier = 0.75f;
+                difficultyDamageMultiplier = 0.75f;
                 break;
             case HARD:
-                difficultyMultiplier = 1.5f;
+                difficultyHealthMultiplier = 1.5f;
+                difficultyDamageMultiplier = 1.5f;
+                break;
+            case EXTREME:
+                difficultyHealthMultiplier = 2;
+                difficultyDamageMultiplier = 1.75f;
                 break;
             default:
-                difficultyMultiplier = 1;
+                difficultyHealthMultiplier = 1;
+                difficultyDamageMultiplier = 1;
                 break;
         }
 
         // Final health value after applying all modifiers.
-        float finalHealth = (health * difficultyMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
+        float finalHealth = (health * difficultyHealthMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
         warlordsNPC.setMaxBaseHealth(finalHealth);
         warlordsNPC.setMaxHealth(finalHealth);
         warlordsNPC.setHealth(finalHealth);
 
-        int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier);
-        int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier);
+        int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyDamageMultiplier);
+        int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyDamageMultiplier);
         warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
     }

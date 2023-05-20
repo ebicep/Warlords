@@ -236,12 +236,11 @@ public class Void extends AbstractSkeleton implements BossMob {
 
         float damage;
         switch (option.getDifficulty()) {
-            case HARD:
-            case EXTREME:
-                damage = 400;
-                break;
             case EASY:
                 damage = 100;
+                break;
+            case NORMAL:
+                damage = 200;
                 break;
             default:
                 damage = 300;

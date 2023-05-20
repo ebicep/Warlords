@@ -76,6 +76,9 @@ public class Zenith extends AbstractZombie implements BossMob {
             case HARD:
                 multiplier = 1;
                 break;
+            case EXTREME:
+                multiplier = 1.25f;
+                break;
             default:
                 multiplier = 0.75f;
                 break;

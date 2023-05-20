@@ -133,6 +133,9 @@ public class Narmer extends AbstractZombie implements BossMob {
                         case HARD:
                             multiplier = 16;
                             break;
+                        case EXTREME:
+                            multiplier = 32;
+                            break;
                         default:
                             multiplier = 8;
                             break;
@@ -230,7 +233,8 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 160 == 0) {
+        int tickDelay = difficulty == DifficultyIndex.EXTREME ? 80 : 160;
+        if (ticksElapsed % tickDelay == 0) {
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
