@@ -213,6 +213,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 put(DifficultyIndex.EASY, .015);
                 put(DifficultyIndex.NORMAL, .025);
                 put(DifficultyIndex.HARD, .05);
+                put(DifficultyIndex.EXTREME, .10);
                 put(DifficultyIndex.ENDLESS, .05);
             }});
         }};

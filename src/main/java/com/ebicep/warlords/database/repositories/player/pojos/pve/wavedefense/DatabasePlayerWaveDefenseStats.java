@@ -22,6 +22,8 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
     private DatabasePlayerPvEWaveDefenseDifficultyStats normalStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
     @Field("hard_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats hardStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
+    @Field("extreme_stats")
+    private DatabasePlayerPvEWaveDefenseDifficultyStats extremeStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
 
@@ -55,6 +57,8 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
                 return getNormalStats();
             case HARD:
                 return getHardStats();
+            case EXTREME:
+                return getExtremeStats();
             case ENDLESS:
                 return getEndlessStats();
         }
@@ -74,23 +78,27 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
         return hardStats;
     }
 
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getExtremeStats() {
+        return extremeStats;
+    }
+
     public DatabasePlayerPvEWaveDefenseDifficultyStats getEndlessStats() {
         return endlessStats;
     }
 
-    public void setEasyStats(DatabasePlayerPvEWaveDefenseDifficultyStats easyStats) {
-        this.easyStats = easyStats;
-    }
-
-    public void setNormalStats(DatabasePlayerPvEWaveDefenseDifficultyStats normalStats) {
-        this.normalStats = normalStats;
+    public void setEndlessStats(DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats) {
+        this.endlessStats = endlessStats;
     }
 
     public void setHardStats(DatabasePlayerPvEWaveDefenseDifficultyStats hardStats) {
         this.hardStats = hardStats;
     }
 
-    public void setEndlessStats(DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats) {
-        this.endlessStats = endlessStats;
+    public void setNormalStats(DatabasePlayerPvEWaveDefenseDifficultyStats normalStats) {
+        this.normalStats = normalStats;
+    }
+
+    public void setEasyStats(DatabasePlayerPvEWaveDefenseDifficultyStats easyStats) {
+        this.easyStats = easyStats;
     }
 }
