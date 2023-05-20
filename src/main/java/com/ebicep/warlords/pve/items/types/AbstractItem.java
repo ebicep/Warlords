@@ -121,8 +121,8 @@ public abstract class AbstractItem {
 
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder);
-        addItemScoreAndWeight(itemBuilder);
+        addStatPoolAndBlessing(itemBuilder, null);
+        addItemScoreAndWeight(itemBuilder, false);
         return itemBuilder;
     }
 
@@ -142,25 +142,25 @@ public abstract class AbstractItem {
         return getType().skull;
     }
 
-    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {
-        itemBuilder.addLore(getStatPoolLore());
+    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
+        itemBuilder.addLore(getStatPoolLore(obfuscatedStat));
         if (modifier != 0) {
             itemBuilder.addLore(Component.empty());
             itemBuilder.addLore(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
         }
     }
 
-    protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
-        Component itemScoreString = getItemScoreString();
+    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
+        Component itemScoreString = getItemScoreString(obfuscated);
         itemBuilder.addLore(Component.empty());
         if (itemScoreString != null) {
             itemBuilder.addLore(
                     itemScoreString,
                     Component.empty(),
-                    getWeightString()
+                    getWeightString(obfuscated)
             );
         } else {
-            itemBuilder.addLore(getWeightString());
+            itemBuilder.addLore(getWeightString(obfuscated));
         }
     }
 
@@ -193,8 +193,8 @@ public abstract class AbstractItem {
         }
     }
 
-    public List<Component> getStatPoolLore() {
-        return BasicStatPool.getStatPoolLore(getStatPool(), false);
+    public List<Component> getStatPoolLore(BasicStatPool obfuscatedStat) {
+        return BasicStatPool.getStatPoolLore(getStatPool(), false, obfuscatedStat);
     }
 
     public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -212,16 +212,16 @@ public abstract class AbstractItem {
         return modifier * getItemModifier().getIncreasePerTier();
     }
 
-    protected Component getItemScoreString() {
+    protected Component getItemScoreString(boolean obfuscated) {
         return Component.text("Score: ", NamedTextColor.GRAY)
-                        .append(Component.text(NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
                         .append(Component.text("/"))
                         .append(Component.text("100"));
     }
 
-    private Component getWeightString() {
+    private Component getWeightString(boolean obfuscated) {
         return Component.text("Weight: ", NamedTextColor.GRAY)
-                        .append(Component.text(NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {

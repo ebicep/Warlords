@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -89,8 +90,8 @@ public class ItemCraftingMenu {
                         .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
-                    player.sendMessage(Component.text("The time for this has not yet come.", NamedTextColor.RED));
-                    //openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
+                    //player.sendMessage(Component.text("The time for this has not yet come.", NamedTextColor.RED));
+                    openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
                 }
         );
         menu.setItem(7, 1,
@@ -188,21 +189,64 @@ public class ItemCraftingMenu {
                                                .entrySet()
                                                .stream()
                                                .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
+        AbstractItem inheritedItem = null;
+        if (tier == ItemTier.DELTA) {
+            inheritedItem = items.get(ItemTier.GAMMA);
+        } else if (tier == ItemTier.OMEGA) {
+            inheritedItem = items.get(ItemTier.DELTA);
+        }
+        if (inheritedItem == null) {
+            return;
+        }
+
+        Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
+        BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
+                                           .filter(pool -> !statPools.contains(pool))
+                                           .toArray(BasicStatPool[]::new);
+        //add random other stat to stat pool
+        BasicStatPool otherStat = otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)];
+        statPools.add(otherStat);
+
+        AbstractItem itemToCraft;
+        if (inheritedItem instanceof CraftsInto) {
+            itemToCraft = ((CraftsInto) inheritedItem).getCraftsInto(statPools);
+        } else {
+            itemToCraft = null;
+        }
+        if (!(itemToCraft instanceof AbstractSpecialItem craftedItem)) {
+            player.sendMessage(Component.text("An error occurred while crafting the item. Please report this!", NamedTextColor.RED));
+            return;
+        }
+        itemToCraft.setModifier(inheritedItem.getModifier());
+        ItemBuilder itemBuilder;
+        if (requirementsMet && enoughMobDrops) {
+            ItemStack craftedItemObfuscated = craftedItem.generateItemStackWithObfuscatedStat(otherStat);
+            itemBuilder = new ItemBuilder(craftedItemObfuscated)
+                    .name(Component.text("Click to Craft " + craftedItem.getName(), NamedTextColor.GREEN))
+                    .addLore(Component.empty())
+                    .addLore(
+                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
+                                    160
+                            )
+                    );
+        } else {
+            itemBuilder = new ItemBuilder(Material.BARRIER)
+                    .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
+                    .lore(
+                            ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
+                            ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
+                            Component.empty()
+                    )
+                    .addLore(
+                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
+                                    160
+                            )
+                    );
+        }
         menu.setItem(6, 2,
-                new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
-                        .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
-                        .lore(
-                                ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
-                                ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
-                                Component.empty()
-                        )
-                        .addLore(
-                                WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
-                                                "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
-                                        160
-                                )
-                        )
-                        .get(),
+                itemBuilder.get(),
                 (m, e) -> {
                     if (!requirementsMet) {
                         player.sendMessage(Component.text("You do not have all the required items to craft this item!", NamedTextColor.RED));
@@ -237,35 +281,10 @@ public class ItemCraftingMenu {
                                 for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
-
-                                AbstractItem inheritedItem = null;
-                                if (tier == ItemTier.DELTA) {
-                                    inheritedItem = items.get(ItemTier.GAMMA);
-                                } else if (tier == ItemTier.OMEGA) {
-                                    inheritedItem = items.get(ItemTier.DELTA);
-                                }
-                                if (inheritedItem == null) {
-                                    return;
-                                }
-
-                                Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
-                                BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
-                                                                   .filter(pool -> !statPools.contains(pool))
-                                                                   .toArray(BasicStatPool[]::new);
-                                //add random other stat to stat pool
-                                statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
-
-                                AbstractItem craftedItem;
-                                if (inheritedItem instanceof CraftsInto) {
-                                    craftedItem = ((CraftsInto) inheritedItem).getCraftsInto(statPools);
-                                } else {
-                                    craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
-                                }
-                                craftedItem.setModifier(inheritedItem.getModifier());
-                                craftedItem.bless(null);
-                                pveStats.getItemsManager().addItem(craftedItem);
+                                itemToCraft.bless(null);
+                                pveStats.getItemsManager().addItem(itemToCraft);
                                 AbstractItem.sendItemMessage(player,
-                                        Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), craftedItem.getHoverComponent())
+                                        Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), itemToCraft.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
                                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);

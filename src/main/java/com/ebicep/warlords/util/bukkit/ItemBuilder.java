@@ -69,14 +69,26 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder lore(Component... lore) {
+        lore(Arrays.asList(lore));
+        return this;
+    }
+
     public ItemBuilder lore(Collection<Component> lore) {
         meta().lore(new ArrayList<>());
         addLore(lore);
         return this;
     }
 
-    public ItemBuilder lore(Component... lore) {
-        lore(Arrays.asList(lore));
+    public ItemBuilder addLore(Collection<Component> lore) {
+        List<Component> components = meta().lore();
+        if (components == null) {
+            components = new ArrayList<>();
+        }
+        for (Component component : lore) {
+            components.add(ComponentUtils.componentBase().append(component));
+        }
+        meta().lore(components);
         return this;
     }
 
@@ -90,15 +102,26 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addLore(Collection<Component> lore) {
-        List<Component> components = meta().lore();
-        if (components == null) {
-            components = new ArrayList<>();
-        }
+    public ItemBuilder prependLore(Component lore) {
+        prependLore(Collections.singletonList(lore));
+        return this;
+    }
+
+    public ItemBuilder prependLore(Collection<Component> lore) {
+        List<Component> components = new ArrayList<>();
         for (Component component : lore) {
             components.add(ComponentUtils.componentBase().append(component));
         }
+        List<Component> previousLore = meta().lore();
+        if (previousLore != null) {
+            components.addAll(previousLore);
+        }
         meta().lore(components);
+        return this;
+    }
+
+    public ItemBuilder prependLore(Component... lore) {
+        prependLore(Arrays.asList(lore));
         return this;
     }
 

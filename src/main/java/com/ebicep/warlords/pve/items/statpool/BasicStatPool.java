@@ -142,20 +142,40 @@ public enum BasicStatPool implements StatPool {
         put(REGEN_TIMER, new StatRange(5, 30));
     }};
 
-    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted) {
-        return getStatPoolLore(statPool, Component.empty(), inverted);
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted, BasicStatPool obfuscatedStat) {
+        return getStatPoolLore(statPool, Component.empty(), inverted, obfuscatedStat);
     }
 
-    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, Component prefix, boolean inverted) {
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, Component prefix, boolean inverted, BasicStatPool obfuscatedStat) {
         List<Component> lore = new ArrayList<>();
-        statPool.keySet()
-                .stream()
-                .sorted(Comparator.comparingInt(Enum::ordinal))
-                .forEachOrdered(stat -> lore.add(
-                        Component.textOfChildren(
+        // separate because need to shuffle because people can determine stat based on position
+        if (obfuscatedStat != null) {
+            List<BasicStatPool> basicStatPools = new ArrayList<>(statPool.keySet());
+            Collections.shuffle(basicStatPools);
+            basicStatPools.forEach(stat -> {
+                if (obfuscatedStat == stat) {
+                    lore.add(Component.textOfChildren(
+                            prefix,
+                            Component.text("????????????????", NamedTextColor.GREEN)
+                    ));
+                } else {
+                    lore.add(Component.textOfChildren(
+                            prefix,
+                            (!inverted ? stat.getValueStatFormattedObfuscated() : stat.getStatValueFormattedObfuscated())
+                    ));
+                }
+            });
+        } else {
+            statPool.keySet()
+                    .stream()
+                    .sorted(Comparator.comparingInt(Enum::ordinal))
+                    .forEachOrdered(stat -> {
+                        lore.add(Component.textOfChildren(
                                 prefix,
                                 (!inverted ? stat.getValueStatFormatted(statPool.get(stat)) : stat.getStatValueFormatted(statPool.get(stat)))
-                        )));
+                        ));
+                    });
+        }
         return lore;
     }
 
@@ -170,6 +190,20 @@ public enum BasicStatPool implements StatPool {
         return Component.textOfChildren(
                 Component.text(getName() + ": ", NamedTextColor.GRAY),
                 Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN)
+        );
+    }
+
+    public Component getValueStatFormattedObfuscated() {
+        return Component.textOfChildren(
+                Component.text("??" + getOperation().prepend, NamedTextColor.GREEN),
+                Component.text(" " + getName(), NamedTextColor.GRAY)
+        );
+    }
+
+    public Component getStatValueFormattedObfuscated() {
+        return Component.textOfChildren(
+                Component.text(getName() + ": ", NamedTextColor.GRAY),
+                Component.text("??" + getOperation().prepend, NamedTextColor.GREEN)
         );
     }
 

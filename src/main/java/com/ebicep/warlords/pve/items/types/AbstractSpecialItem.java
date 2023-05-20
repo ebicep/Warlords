@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,25 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder);
+        addStatPoolAndBlessing(itemBuilder, null);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(getBonusLore());
-        addItemScoreAndWeight(itemBuilder);
+        addItemScoreAndWeight(itemBuilder, false);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
+        return itemBuilder;
+    }
+
+    public ItemStack generateItemStackWithObfuscatedStat(BasicStatPool stat) {
+        return generateItemBuilderWithObfuscatedStat(stat).get();
+    }
+
+    public ItemBuilder generateItemBuilderWithObfuscatedStat(BasicStatPool stat) {
+        ItemBuilder itemBuilder = getBaseItemBuilder();
+        addStatPoolAndBlessing(itemBuilder, stat);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(getBonusLore());
+        addItemScoreAndWeight(itemBuilder, true);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;

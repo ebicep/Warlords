@@ -138,7 +138,7 @@ public class ItemMenuUtil {
                 case BUCKLER -> bucklerModifier += equippedItem.getModifierCalculated();
             }
         }
-        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("- ", NamedTextColor.AQUA), true);
+        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("- ", NamedTextColor.AQUA), true, null);
         List<Component> blessCurseLore = new ArrayList<>();
         if (gauntletModifier != 0) {
             List<Component> lore = AbstractItem.getModifierCalculatedLore(

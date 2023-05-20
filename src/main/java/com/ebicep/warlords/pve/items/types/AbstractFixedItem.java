@@ -24,12 +24,12 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder);
+        addStatPoolAndBlessing(itemBuilder, null);
         if (this instanceof FixedItemAppliesToPlayer bonus) {
             itemBuilder.addLore(Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN));
             itemBuilder.addLore(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
         }
-        addItemScoreAndWeight(itemBuilder);
+        addItemScoreAndWeight(itemBuilder, false);
         return itemBuilder;
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     public abstract String getName();
 
     @Override
-    protected Component getItemScoreString() {
+    protected Component getItemScoreString(boolean obfuscated) {
         return null;
     }
 
