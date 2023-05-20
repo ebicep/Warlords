@@ -29,15 +29,17 @@ import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -300,14 +302,6 @@ public class OnslaughtOption implements PveOption {
         }
     }
 
-    @Override
-    public void spawnNewMob(AbstractMob<?> mob) {
-        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
     private void addRewardToPlayerPouch(
             UUID uuid,
             RandomCollection<Pair<Spendable, Long>> pouchLootPool,
@@ -324,11 +318,15 @@ public class OnslaughtOption implements PveOption {
             RewardInventory.sendRewardMessage(uuid,
                     pouchName.append(Component.text(":")).append(rewardString)
             );
-            ChatUtils.sendTitleToGamePlayers(
-                    game,
-                    pouchName.append(Component.text(":")),
-                    rewardString
-            );
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.showTitle(Title.title(
+                        pouchName.append(Component.text(":")),
+                        rewardString,
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+
+                ));
+            }
         }
     }
 
@@ -342,44 +340,6 @@ public class OnslaughtOption implements PveOption {
             case 6 -> 30;
             default -> spawnLimit;
         };
-    }
-
-    @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
-    public Set<AbstractMob<?>> getMobs() {
-        return mobs.keySet();
-    }
-
-    @Override
-    public int getTicksElapsed() {
-        return ticksElapsed.get();
-    }
-
-    @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
-        return mobs;
-    }
-
-    @Override
-    public PveRewards<?> getRewards() {
-        return onslaughtRewards;
-    }
-
-    @Override
-    public Game getGame() {
-        return game;
     }
 
     private void modifyStats(WarlordsNPC warlordsNPC) {
@@ -427,6 +387,52 @@ public class OnslaughtOption implements PveOption {
 
         return Component.text("Soul Energy: ")
                         .append(Component.text(Math.round(integrityCounter) + "%", color));
+    }
+
+    @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs.keySet();
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
+    }
+
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return onslaughtRewards;
     }
 
     public void setSpawnLimit(int spawnLimit) {

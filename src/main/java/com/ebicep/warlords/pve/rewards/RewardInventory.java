@@ -10,7 +10,6 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -21,11 +20,11 @@ import java.util.stream.Stream;
 public class RewardInventory {
 
     public static void sendRewardMessage(UUID uuid, Component component) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.getPlayer() != null) {
-            offlinePlayer.getPlayer().sendMessage(Component.text("Reward", NamedTextColor.GOLD)
-                                                           .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
-                                                           .append(component)
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.sendMessage(Component.text("Reward", NamedTextColor.GOLD)
+                                        .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                        .append(component)
             );
         }
     }
