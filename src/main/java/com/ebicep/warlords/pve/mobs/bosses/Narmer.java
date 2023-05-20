@@ -73,7 +73,8 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
+        DifficultyIndex difficulty = option.getDifficulty();
+        float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
         for (int i = 0; i < (multiplier * option.playerCount()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
             option.spawnNewMob(acolyte);
@@ -125,7 +126,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     float multiplier;
-                    switch (option.getDifficulty()) {
+                    switch (difficulty) {
                         case EASY:
                             multiplier = 2;
                             break;
@@ -180,7 +181,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     if (acolyteDeathTickWindow <= 0) {
-                        acolyteDeathTickWindow = option.getDifficulty() == DifficultyIndex.HARD ? 60 : 20;
+                        acolyteDeathTickWindow = difficulty == DifficultyIndex.EXTREME ? 100 : difficulty == DifficultyIndex.HARD ? 60 : 20;
                     }
 
                     ticksUntilNewAcolyte = 300;
@@ -194,7 +195,8 @@ public class Narmer extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
-        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
+        DifficultyIndex difficulty = option.getDifficulty();
+        float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
         if (acolytes.size() < multiplier * playerCount && ticksUntilNewAcolyte <= 0) {
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
@@ -271,10 +273,10 @@ public class Narmer extends AbstractZombie implements BossMob {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.WHITE)
-                .with(FireworkEffect.Type.STAR)
-                .withTrail()
-                .build());
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.STAR)
+                                                                       .withTrail()
+                                                                       .build());
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);

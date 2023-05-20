@@ -68,7 +68,8 @@ public class Zenith extends AbstractZombie implements BossMob {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
         float multiplier;
-        switch (option.getDifficulty()) {
+        DifficultyIndex difficulty = option.getDifficulty();
+        switch (difficulty) {
             case EASY:
                 multiplier = 0.5f;
                 break;
@@ -97,7 +98,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     shockwave(loc, stormRadius + 5, 24, playerCount, multiplier);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
                     shockwave(loc, stormRadius + 10, 36, playerCount, multiplier);
-                    if (option.getDifficulty() == DifficultyIndex.HARD || option.getDifficulty() == DifficultyIndex.ENDLESS) {
+                    if (difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS) {
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, warlordsNPC.getGame());
                         shockwave(loc, stormRadius + 15, 48, playerCount, multiplier);
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, warlordsNPC.getGame());
@@ -144,9 +145,10 @@ public class Zenith extends AbstractZombie implements BossMob {
                     FireWorkEffectPlayer.playFirework(
                             receiver.getLocation(),
                             FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BURST)
-                            .build());
+                                          .withColor(Color.WHITE)
+                                          .with(FireworkEffect.Type.BURST)
+                                          .build()
+                    );
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
@@ -168,9 +170,9 @@ public class Zenith extends AbstractZombie implements BossMob {
         super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .with(FireworkEffect.Type.BALL_LARGE)
-                    .build());
+                                                                           .withColor(Color.WHITE)
+                                                                           .with(FireworkEffect.Type.BALL_LARGE)
+                                                                           .build());
         }
 
         EffectUtils.strikeLightning(deathLocation, false, 5);

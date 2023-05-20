@@ -343,6 +343,9 @@ public class EventMithra extends AbstractZombie implements BossMob {
             case HARD:
                 damage = 200;
                 break;
+            case EXTREME:
+                damage = 250;
+                break;
             case EASY:
                 damage = 50;
                 break;

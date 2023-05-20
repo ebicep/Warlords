@@ -143,8 +143,9 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
                         return;
                     }
 
+                    DifficultyIndex difficulty = event.getPveOption().getDifficulty();
                     event.getLegendFragments().addAndGet((int) getValueFromTier(tier) *
-                            (event.getPveOption().getDifficulty() == DifficultyIndex.HARD ? 2L : 1) *
+                            (difficulty == DifficultyIndex.EXTREME ? 3L : difficulty == DifficultyIndex.HARD ? 2L : 1) *
                             (event.getPer5() / 25)
                     );
                 }

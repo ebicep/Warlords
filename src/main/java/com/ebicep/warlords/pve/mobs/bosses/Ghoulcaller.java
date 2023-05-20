@@ -125,6 +125,9 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                     case HARD:
                         multiplier = 1.5f;
                         break;
+                    case EXTREME:
+                        multiplier = 2f;
+                        break;
                     default:
                         multiplier = 1;
                         break;

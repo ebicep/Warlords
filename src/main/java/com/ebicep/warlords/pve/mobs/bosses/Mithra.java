@@ -94,7 +94,8 @@ public class Mithra extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 200 == 0 && !preventBarrage) {
-            int multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 7 : 10;
+            DifficultyIndex difficulty = option.getDifficulty();
+            int multiplier = difficulty == DifficultyIndex.EXTREME ? 4 : difficulty == DifficultyIndex.HARD ? 7 : 10;
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 500, 0.5f);
             new GameRunnable(warlordsNPC.getGame()) {
@@ -187,6 +188,9 @@ public class Mithra extends AbstractZombie implements BossMob {
             case ENDLESS:
             case HARD:
                 damage = 200;
+                break;
+            case EXTREME:
+                damage = 250;
                 break;
             case EASY:
                 damage = 50;
