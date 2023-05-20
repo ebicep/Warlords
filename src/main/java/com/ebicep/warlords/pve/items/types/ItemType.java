@@ -108,7 +108,7 @@ public enum ItemType {
                 return SpecialItems.OMEGA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.OMEGA_ITEMS.length)].create.get();
             }
         }
-        ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
+        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);
         return null;
     }
 

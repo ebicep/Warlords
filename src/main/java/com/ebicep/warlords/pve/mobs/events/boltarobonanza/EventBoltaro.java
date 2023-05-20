@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -39,18 +38,6 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
                 20,
                 350,
                 500
-        );
-    }
-
-    @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.RED),
-                Component.text("Right Hand of the Illusion Vanguard", NamedTextColor.GOLD),
-                20, 30, 20
         );
     }
 
@@ -123,4 +110,13 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
         return 2;
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Right Hand of the Illusion Vanguard", NamedTextColor.GOLD);
+    }
 }

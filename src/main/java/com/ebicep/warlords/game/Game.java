@@ -463,6 +463,9 @@ public final class Game implements Runnable, AutoCloseable {
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
                 Warlords.getInstance().hideAndUnhidePeople(p);
+                for (Option option : options) {
+                    option.onPlayerQuit(p);
+                }
             }
             return true;
         }

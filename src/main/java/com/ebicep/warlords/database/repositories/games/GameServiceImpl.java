@@ -38,9 +38,9 @@ public class GameServiceImpl implements GameService {
     @Override
     public void create(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.insert(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + collection.collectionName);
         mongoTemplate.insert(game, GamesCollections.ALL.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
     }
 
     @Override
@@ -52,19 +52,19 @@ public class GameServiceImpl implements GameService {
     @Override
     public void save(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.save(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void delete(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.remove(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, GamesCollections collection) {
         mongoTemplate.updateMulti(query, update, clazz, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
     }
 
     @Override

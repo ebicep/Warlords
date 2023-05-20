@@ -243,6 +243,7 @@ public class WarlordsEvents implements Listener {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }
                             }).execute();
+
                     List<String> permissions = player.getEffectivePermissions()
                                                      .stream()
                                                      .map(PermissionAttachmentInfo::getPermission)
@@ -516,38 +517,6 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-//    @EventHandler(priority = EventPriority.HIGHEST)
-//    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
-//        System.out.println("PlayerInteractAtEntityEvent");
-//        System.out.println(e.isCancelled());
-//        e.setCancelled(true);
-////        if(e.getRightClicked().getType() == EntityType.WOLF) {
-////            e.setCancelled(true);
-////        }
-//        System.out.println(e.isCancelled());
-//    }
-//
-//    @EventHandler(priority = EventPriority.HIGHEST)
-//    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-//        System.out.println("PlayerInteractEntityEvent");
-//        System.out.println(e.isCancelled());
-//        e.setCancelled(true);
-////        if(e.getRightClicked().getType() == EntityType.WOLF) {
-////            e.setCancelled(true);
-////        }
-//        System.out.println(e.isCancelled());
-//    }
-//
-//    @EventHandler
-//    public void onPlayerConsumeEvent(PlayerItemConsumeEvent e) {
-//        System.out.println("PlayerItemConsumeEvent");
-//    }
-//
-//    @EventHandler
-//    public void onEntityInteractEvent(EntityInteractEvent e) {
-//        System.out.println("EntityInteractEvent");
-//    }
-
     @EventHandler
     public void onDismount(VehicleExitEvent e) {
         e.getVehicle().remove();
@@ -739,7 +708,7 @@ public class WarlordsEvents implements Listener {
 
         Component prefixWithColor = Permissions.getPrefixWithColor(player, false);
         if (Objects.requireNonNull(prefixWithColor.color()).value() == NamedTextColor.WHITE.value()) {
-            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
         }
 
         ChatChannels channel = ChatChannels.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);

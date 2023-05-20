@@ -102,9 +102,9 @@ public class MasterworksFair {
                 .execute();
         sendResults(playerFairResults, false);
         if (throughRewardsInventory) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
         } else {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
         }
     }
 

@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -43,18 +42,6 @@ public class Xoris extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.GRAY),
-                Component.text("Empress of the Envoy Legion", NamedTextColor.DARK_PURPLE),
-                20, 30, 20
-        );
-    }
-
-    @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (test) {
             Location loc = warlordsNPC.getLocation();
@@ -75,5 +62,15 @@ public class Xoris extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         test = true;
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.GRAY;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Empress of the Envoy Legion", NamedTextColor.DARK_PURPLE);
     }
 }

@@ -22,6 +22,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.mobtypes.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -62,7 +63,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
-    protected final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS);
+    protected final BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    protected boolean showBossBar;
 
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
@@ -96,7 +98,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.mob.persist = true;
 
         this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+
         updateEquipment();
+
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
+        }
     }
 
     public void updateEquipment() {
@@ -113,6 +120,14 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         } else {
             equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
+    }
+
+    public Component getDescription() {
+        return null;
+    }
+
+    public NamedTextColor getColor() {
+        return NamedTextColor.WHITE;
     }
 
     public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
@@ -144,6 +159,22 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onSpawn(PveOption option) {
         this.pveOption = option;
+        Component description = getDescription();
+        if (description != null) {
+            ChatUtils.sendTitleToGamePlayers(
+                    option.getGame(),
+                    getColoredName(),
+                    description,
+                    20, 30, 20
+            );
+        }
+        if (!bossBar.name().equals(Component.empty())) {
+            showBossBar = true;
+        }
+    }
+
+    public Component getColoredName() {
+        return Component.text(name, getColor());
     }
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
@@ -158,6 +189,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        bossBar(option.getGame(), false);
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -168,6 +200,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         dropMobDrop(killer);
         dropItem(killer);
         dropBlessing(killer);
+    }
+
+    public void bossBar(Game game, boolean show) {
+        game.onlinePlayers().forEach(playerTeamEntry -> {
+            Player player = playerTeamEntry.getKey();
+            if (show) {
+                player.showBossBar(getBossBar());
+            } else {
+                player.hideBossBar(getBossBar());
+            }
+        });
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -300,6 +343,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            });
     }
 
+    public BossBar getBossBar() {
+        return bossBar.progress(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth());
+    }
+
     private void dropWeapon(WarlordsEntity killer, int bound) {
         AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
         AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
@@ -317,10 +364,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             });
             killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
-    }
-
-    public BossBar getBossBar() {
-        return bossBar;
     }
 
     protected BossBar getHealthModifiedBossBar() {
@@ -369,5 +412,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public EntityEquipment getEe() {
         return ee;
+    }
+
+    public boolean isShowBossBar() {
+        return showBossBar;
     }
 }

@@ -21,19 +21,19 @@ public class GameEventsServiceImpl implements GameEventsService {
     @Override
     public void create(DatabaseGameEvent databaseGameEvent) {
         DatabaseGameEvent event = gameEventsRepository.insert(databaseGameEvent);
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Created: - " + event);
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Created: - " + event);
     }
 
     @Override
     public void update(DatabaseGameEvent databaseGameEvent) {
         DatabaseGameEvent event = gameEventsRepository.save(databaseGameEvent);
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Updated: - " + event);
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Updated: - " + event);
     }
 
     @Override
     public void delete(DatabaseGameEvent databaseGameEvent) {
         gameEventsRepository.delete(databaseGameEvent);
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Deleted: - " + databaseGameEvent);
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Deleted: - " + databaseGameEvent);
     }
 
     @Override

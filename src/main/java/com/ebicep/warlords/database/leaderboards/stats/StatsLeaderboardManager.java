@@ -81,7 +81,7 @@ public class StatsLeaderboardManager {
 
         if (enabled) {
             loaded = false;
-            ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Adding Holograms");
+            ChatUtils.MessageType.LEADERBOARDS.sendMessage("Adding Holograms");
 
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
@@ -96,14 +96,14 @@ public class StatsLeaderboardManager {
                             );
                             for (DatabasePlayer databasePlayer : databasePlayers) {
                                 if (databasePlayer.getUuid() == null) {
-                                    ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
+                                    ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
                                     continue;
                                 }
                                 if (databasePlayer.getName() == null) {
                                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(databasePlayer.getUuid());
                                     if (offlinePlayer.getName() != null) {
                                         databasePlayer.setName(offlinePlayer.getName());
-                                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
+                                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
                                     }
                                 }
@@ -137,13 +137,13 @@ public class StatsLeaderboardManager {
                     if (loadedBoards.get() == PlayersCollections.ACTIVE_COLLECTIONS.size()) {
                         loaded = true;
 
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
+                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                         });
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
+                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
                         if (init) {
                             DatabaseTiming.checkLeaderboardResets();
@@ -153,7 +153,7 @@ public class StatsLeaderboardManager {
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage("Holograms did not load within 5 minutes");
+                        ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage("Holograms did not load within 5 minutes");
                         this.cancel();
                     }
                 }
@@ -179,7 +179,7 @@ public class StatsLeaderboardManager {
         }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
                 "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
         if (playersCollections == PlayersCollections.LIFETIME) {
             DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;

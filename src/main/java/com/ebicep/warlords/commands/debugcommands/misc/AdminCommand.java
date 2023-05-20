@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Entity;
@@ -82,6 +83,15 @@ public class AdminCommand extends BaseCommand {
     public void disableSpectatorMessages(CommandIssuer issuer) {
         DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
         ChatChannels.sendDebugMessage(issuer, Component.text("Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, NamedTextColor.GREEN));
+    }
+
+    @Subcommand("togglemessages")
+    @Description("Toggles MessageType messages")
+    public void togglePlayerServiceMessages(CommandIssuer issuer, ChatUtils.MessageType messageType) {
+        messageType.setEnabled(!messageType.isEnabled());
+        ChatChannels.sendDebugMessage(issuer,
+                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + " PlayerService messages.", messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)
+        );
     }
 
     @HelpCommand

@@ -66,13 +66,6 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.GOLD),
-                Component.text("Unifier of Worlds", NamedTextColor.YELLOW),
-                20, 20, 20
-        );
-
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             hpDamageIncrease = 1 + .25f * (currentWave / 5f - 1);
@@ -335,4 +328,13 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         }
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
 }

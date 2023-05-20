@@ -78,7 +78,7 @@ public class DatabaseManager {
             NPCManager.createGameJoinNPCs();
         }
         if (ApplicationConfiguration.key == null) {
-            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Database key is null, disabling database");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database key is null, disabling database");
             enabled = false;
             return;
         }
@@ -111,14 +111,14 @@ public class DatabaseManager {
             }
         });
 
-        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Storing all guilds");
+        ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Storing all guilds");
         long guildStart = System.nanoTime();
         Warlords.newChain()
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> {
                     GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
-                    ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
+                    ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
@@ -139,13 +139,13 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20);
 
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> StatsLeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loading Last Games");
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
 //        Warlords.newChain()
 //                .asyncFirst(() -> gameService.getLastGames(15))
@@ -171,7 +171,7 @@ public class DatabaseManager {
                                     callback.accept(databasePlayer);
                                 }).execute();
                     }
-                    ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
+                    ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
                 },
                 () -> {
                     DatabasePlayer newDatabasePlayer = new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName());
@@ -205,7 +205,7 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
                 playersCollections
         ));
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);

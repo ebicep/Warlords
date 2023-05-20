@@ -25,7 +25,7 @@ public class IllusionVendorWeeklyShop {
     }};
 
     public static void loadWeeklyIllusionVendor() {
-        ChatUtils.MessageTypes.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Illusion Vendor - " + DatabaseTiming.RESET_WEEKLY.get());
+        ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Illusion Vendor - " + DatabaseTiming.RESET_WEEKLY.get());
         if (DatabaseTiming.RESET_WEEKLY.get()) {
             currentIllusionVendorWeeklyShop = new IllusionVendorWeeklyShop();
             onInitialize();
@@ -47,7 +47,7 @@ public class IllusionVendorWeeklyShop {
     }
 
     private static void onInitialize() {
-        ChatUtils.MessageTypes.ILLUSION_VENDOR.sendMessage("Initialized Illusion Vendor - " + currentIllusionVendorWeeklyShop);
+        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Initialized Illusion Vendor - " + currentIllusionVendorWeeklyShop);
     }
 
     private static void createNewWeeklyBlessings() {

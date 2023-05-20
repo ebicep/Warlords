@@ -76,7 +76,7 @@ public abstract class DatabaseGameBase {
                 //checking for inflated stats
                 if (highestDamage > 750000 || highestHealing > 750000) {
                     updatePlayerStats = false;
-                    ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                    ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
                 }
             } else {
                 for (Option option : game.getOptions()) {
@@ -103,14 +103,14 @@ public abstract class DatabaseGameBase {
                 }
                 switch (addon) {
                     case CUSTOM_GAME, IMPOSTER_MODE, COOLDOWN_MODE, TRIPLE_HEALTH, INTERCHANGE_MODE -> {
-                        ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
+                        ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
                         updatePlayerStats = false;
                     }
                 }
             }
 
             if (updatePlayerStats) {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
+                ChatUtils.MessageType.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
 
                 if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                     //CHALLENGE ACHIEVEMENTS
@@ -123,7 +123,7 @@ public abstract class DatabaseGameBase {
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
-                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
@@ -159,7 +159,7 @@ public abstract class DatabaseGameBase {
             );
         } catch (Exception e) {
             e.printStackTrace();
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Error adding game to database");
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
         }
         return updatePlayerStats;
     }

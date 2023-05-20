@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -61,12 +60,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.RED),
-                Component.text("Chained Agony", NamedTextColor.GOLD),
-                20, 30, 20
-        );
+
         spawnTormentedSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
     }
 
@@ -178,6 +172,16 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .withTrail()
                                                                        .build());
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Chained Agony", NamedTextColor.GOLD);
     }
 
     private void spawnTormentedSouls(PveOption option, int amount) {

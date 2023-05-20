@@ -263,7 +263,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         long epochSecond = gameEvent.getStartDateSecond();
         EventMode eventMode = eventsStats.get(epochSecond);
         if (eventMode == null) {
-            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
+            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
             return;
         }
         //event

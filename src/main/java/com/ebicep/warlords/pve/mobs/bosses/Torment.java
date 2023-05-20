@@ -173,4 +173,14 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
     }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Corrupted Soul", NamedTextColor.WHITE);
+    }
 }

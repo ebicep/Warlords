@@ -63,13 +63,6 @@ public class Narmer extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.RED),
-                Component.text("Unifier of Worlds", NamedTextColor.YELLOW),
-                20, 30, 20
-        );
-
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
         for (int i = 0; i < (multiplier * option.playerCount()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
@@ -271,4 +264,13 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
 }

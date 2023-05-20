@@ -123,7 +123,7 @@ public class StatsLeaderboard {
 
     private void createLeaderboard(PlayersCollections collection, String categoryName, String subTitle) {
         if (location.getWorld() == null) {
-            ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage("Leaderboard " + title + " has invalid location - " + location);
+            ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage("Leaderboard " + title + " has invalid location - " + location);
             return;
         }
         //skip hologram creation for hidden leaderboards

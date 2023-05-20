@@ -41,7 +41,7 @@ public class DatabaseGameEvent {
 
     public static void startGameEvent() {
         long start = System.nanoTime();
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Scanning for game events...");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Scanning for game events...");
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.gameEventsService.findAll())
                 .syncLast(gameEvents -> {
@@ -54,12 +54,12 @@ public class DatabaseGameEvent {
                         if (gameEvent.getEndDate().isBefore(now)) {
                             PREVIOUS_GAME_EVENTS.put(gameEvent.getEvent(), gameEvent);
                         } else if (gameEvent.getEndDate().isAfter(now)) {
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
                             currentGameEvent = gameEvent;
                             if (!gameEvent.getStarted()) {
-                                ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
                                 Currencies currency = gameEvent.getEvent().currency;
                                 for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
                                     Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
@@ -82,13 +82,13 @@ public class DatabaseGameEvent {
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
-                        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
-                                                                                                                .until(Instant.now(), ChronoUnit.DAYS));
+                        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
+                                                                                                               .until(Instant.now(), ChronoUnit.DAYS));
                         if (gameEvent.getEndDate().isAfter(Instant.now().minus(7, ChronoUnit.DAYS))) {
                             currentGameEvent = gameEvent;
                             currentGameEvent.start();
                         } else {
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
                         }
                     }
                     EventsLeaderboardManager.create();
@@ -127,7 +127,7 @@ public class DatabaseGameEvent {
         if (!gaveRewards) {
             getEvent().initialize();
         }
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
         getEvent().createNPC();
     }
 
@@ -158,7 +158,7 @@ public class DatabaseGameEvent {
                         event.eventsStatsFunction.apply(o1.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative()
                 ))
                 .toList();
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
         HashMap<DatabasePlayer, List<Component>> playerMessages = new HashMap<>();
         for (int i = 0; i < databasePlayers.size(); i++) {
             int position = i + 1;

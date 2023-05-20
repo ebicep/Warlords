@@ -93,4 +93,14 @@ public interface Option {
     default void onSpecChange(@Nonnull WarlordsEntity player) {
     }
 
+
+    /**
+     * Called when player stops spectating game
+     *
+     * @param player The player to act on
+     */
+    default void onPlayerQuit(Player player) {
+
+    }
+
 }

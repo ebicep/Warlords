@@ -21,19 +21,19 @@ public class IllusionVendorServiceImpl implements IllusionVendorService {
     @Override
     public void create(IllusionVendorWeeklyShop illusionVendorWeeklyShop) {
         illusionVendorRepository.insert(illusionVendorWeeklyShop);
-        ChatUtils.MessageTypes.ILLUSION_VENDOR.sendMessage("Created: - " + illusionVendorWeeklyShop);
+        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Created: - " + illusionVendorWeeklyShop);
     }
 
     @Override
     public void update(IllusionVendorWeeklyShop illusionVendorWeeklyShop) {
         illusionVendorRepository.save(illusionVendorWeeklyShop);
-        ChatUtils.MessageTypes.ILLUSION_VENDOR.sendMessage("Updated: - " + illusionVendorWeeklyShop);
+        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Updated: - " + illusionVendorWeeklyShop);
     }
 
     @Override
     public void delete(IllusionVendorWeeklyShop illusionVendorWeeklyShop) {
         illusionVendorRepository.delete(illusionVendorWeeklyShop);
-        ChatUtils.MessageTypes.ILLUSION_VENDOR.sendMessage("Deleted: - " + illusionVendorWeeklyShop);
+        ChatUtils.MessageType.ILLUSION_VENDOR.sendMessage("Deleted: - " + illusionVendorWeeklyShop);
     }
 
     @Override

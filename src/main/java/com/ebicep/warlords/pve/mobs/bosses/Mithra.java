@@ -51,13 +51,6 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.LIGHT_PURPLE),
-                Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE),
-                20, 30, 20
-        );
-
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new Spider(spawnLocation));
         }
@@ -139,6 +132,16 @@ public class Mithra extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     private void flameBurstBarrage(int delayBetweenShots, int amountOfShots) {

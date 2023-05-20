@@ -21,19 +21,19 @@ public class GuildServiceImpl implements GuildService {
     @Override
     public void create(Guild guild) {
         guildRepository.insert(guild);
-        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Created: - " + guild);
+        ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Created: - " + guild);
     }
 
     @Override
     public void update(Guild guild) {
         guildRepository.save(guild);
-        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Updated: - " + guild);
+        ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Updated: - " + guild);
     }
 
     @Override
     public void delete(Guild guild) {
         guildRepository.delete(guild);
-        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Deleted: - " + guild);
+        ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Deleted: - " + guild);
     }
 
     @Override

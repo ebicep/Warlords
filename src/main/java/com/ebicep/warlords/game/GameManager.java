@@ -303,7 +303,7 @@ public class GameManager implements AutoCloseable {
     public void addGameHolder(String name, GameMap map) {
         World world = Bukkit.getWorld(name);
         if (world == null) {
-            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Could not find game world " + name);
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Could not find game world " + name);
             return;
         }
         this.addGameHolder(name, map, world);

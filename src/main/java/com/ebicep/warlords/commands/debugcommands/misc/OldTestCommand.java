@@ -6,13 +6,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Interaction;
 import org.bukkit.entity.Player;
 
 public class OldTestCommand implements CommandExecutor {
@@ -147,8 +147,12 @@ public class OldTestCommand implements CommandExecutor {
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
             // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
 
-            Interaction interaction = (Interaction) player.getWorld().spawnEntity(player.getLocation(), EntityType.INTERACTION);
-            interaction.setResponsive(true);
+            BossBar bossBar = BossBar.bossBar(Component.text("TEST"), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+            player.showBossBar(bossBar);
+            player.showBossBar(bossBar);
+
+            BossBar bossBar2 = BossBar.bossBar(Component.text("TEST2"), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+            player.showBossBar(bossBar2);
 
         }
 

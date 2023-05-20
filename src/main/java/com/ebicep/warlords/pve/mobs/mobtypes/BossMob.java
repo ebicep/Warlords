@@ -21,5 +21,4 @@ public interface BossMob extends Mob {
     default int epicWeaponDropChance() {
         return 5;
     }
-
 }

@@ -785,7 +785,7 @@ public enum GameEvents {
     public abstract void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards);
 
     public void initialize() {
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Initializing " + name + " event...");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Initializing " + name + " event...");
     }
 
     public void createNPC() {

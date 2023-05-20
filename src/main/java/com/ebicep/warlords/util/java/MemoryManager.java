@@ -56,7 +56,7 @@ public class MemoryManager implements Listener {
                     Currencies.CACHED_PLAYER_COIN_STATS.remove(uuid);
                     WeaponManagerMenu.PLAYER_MENU_SETTINGS.remove(uuid);
                     UnstuckCommand.STUCK_COOLDOWNS.remove(uuid);
-                    ChatUtils.MessageTypes.WARLORDS.sendMessage("Removed " + uuid + " from static maps");
+                    ChatUtils.MessageType.WARLORDS.sendMessage("Removed " + uuid + " from static maps");
                 });
             }
         }.runTaskTimer(Warlords.getInstance(), 20 * 5, 20);

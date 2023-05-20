@@ -64,13 +64,6 @@ public class Void extends AbstractSkeleton implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.DARK_GRAY),
-                Component.text("?????", NamedTextColor.BLACK),
-                20, 30, 20
-        );
-
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
                 null,
@@ -213,6 +206,16 @@ public class Void extends AbstractSkeleton implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .withTrail()
                                                                        .build());
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_GRAY;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("?????", NamedTextColor.BLACK);
     }
 
     private void immolation(PveOption option, Location loc) {

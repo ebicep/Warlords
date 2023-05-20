@@ -42,7 +42,7 @@ public class DummySpawnOption implements Option {
             @Override
             public void run() {
                 if (getGame().getState() instanceof EndState) {
-                    ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
                     return;
                 }
 

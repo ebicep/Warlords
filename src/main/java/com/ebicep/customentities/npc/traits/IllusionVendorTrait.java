@@ -128,7 +128,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                           Component itemName = item.getItemName();
                           IllusionVendorWeeklyShop.PurchasableItem purchasableItem = itemCosts.get(mapName);
                           if (purchasableItem == null) {
-                              ChatUtils.MessageTypes.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop: " + mapName);
+                              ChatUtils.MessageType.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop: " + mapName);
                               return;
                           }
                           long cost = purchasableItem.getCost();

@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
 import com.ebicep.warlords.pve.mobs.zombie.SlimeZombie;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -35,12 +34,6 @@ public class Chessking extends AbstractSlime implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         this.entity.get().setSize(19, true);
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.GREEN),
-                Component.text("Goblin from the local basement", NamedTextColor.GRAY),
-                20, 30, 20
-        );
     }
 
     @Override
@@ -80,5 +73,15 @@ public class Chessking extends AbstractSlime implements BossMob {
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.GREEN;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Goblin from the local basement", NamedTextColor.GRAY);
     }
 }

@@ -74,7 +74,7 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
         Warlords.getGameManager().getGames().stream()
                 .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
                 .findAny()
@@ -87,11 +87,11 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding game options");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding game options");
         for (Option option : game.getOptions()) {
             option.start(game);
         }
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
 
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
@@ -145,7 +145,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }.runTaskTimer(0, 10);
 
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Started recording timed stats");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Started recording timed stats");
 
         new GameRunnable(game) {
 
@@ -189,7 +189,7 @@ public class PlayingState implements State, TimerDebugAble {
         Warlords.getInstance().hideAndUnhidePeople();
         Game.reopenGameReferencedMenus();
 
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game start done");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game start done");
     }
 
     @Nonnull
@@ -342,18 +342,18 @@ public class PlayingState implements State, TimerDebugAble {
                     timer >= 6000;
             //comps
             if (isCompGame) {
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding comp game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding comp game");
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames));
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding comp game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding comp game");
             }
             //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding pub game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding pub game");
                 if (DatabaseManager.playerService == null) {
                     return;
                 }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding pub game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                     SRCalculator.recalculateSR();
                 }
@@ -362,7 +362,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, null, false);
             } else {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage(
+                ChatUtils.MessageType.WARLORDS.sendMessage(
                         "This PUB/COMP game was not added to the database and player information remained the same");
             }
         }

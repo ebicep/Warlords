@@ -61,7 +61,7 @@ public class DatabasePlayerPvEEventSpidersDwellingDifficultyStats extends PvEEve
         if (countStats != null) {
             countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
 
     }

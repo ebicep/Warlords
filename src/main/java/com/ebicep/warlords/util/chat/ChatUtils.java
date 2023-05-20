@@ -191,41 +191,52 @@ public class ChatUtils {
         player.sendMessage(Component.text(sb.toString()).append(component));
     }
 
-    public enum MessageTypes {
+    public enum MessageType {
 
-        WARLORDS("Warlords", NamedTextColor.GREEN),
-        PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA),
-        GAME_SERVICE("GameService", NamedTextColor.YELLOW),
-        GUILD_SERVICE("GuildService", NamedTextColor.GOLD),
-        LEADERBOARDS("Leaderboards", NamedTextColor.BLUE),
-        TIMINGS("Timings", NamedTextColor.DARK_GRAY),
-        MASTERWORKS_FAIR("MasterworksFair", NamedTextColor.DARK_GREEN),
-        GAME_EVENTS("Events", NamedTextColor.DARK_RED),
-        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", NamedTextColor.DARK_RED),
-        ILLUSION_VENDOR("IllusionVendor", NamedTextColor.GOLD),
+        WARLORDS("Warlords", NamedTextColor.GREEN, true),
+        PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA, false),
+        GAME_SERVICE("GameService", NamedTextColor.YELLOW, true),
+        GUILD_SERVICE("GuildService", NamedTextColor.GOLD, true),
+        LEADERBOARDS("Leaderboards", NamedTextColor.BLUE, true),
+        TIMINGS("Timings", NamedTextColor.DARK_GRAY, true),
+        MASTERWORKS_FAIR("MasterworksFair", NamedTextColor.DARK_GREEN, true),
+        GAME_EVENTS("Events", NamedTextColor.DARK_RED, true),
+        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", NamedTextColor.DARK_RED, true),
+        ILLUSION_VENDOR("IllusionVendor", NamedTextColor.GOLD, true),
 
-        GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE),
+        GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE, true),
 
-        DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA),
+        DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
 
         ;
 
         public final String name;
         public final NamedTextColor textColor;
+        private boolean enabled;
 
-        MessageTypes(String name, NamedTextColor textColor) {
+        MessageType(String name, NamedTextColor textColor, boolean enabled) {
             this.name = name;
             this.textColor = textColor;
+            this.enabled = enabled;
         }
 
         public void sendMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, textColor));
+            if (enabled) {
+                Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, textColor));
+            }
         }
 
         public void sendErrorMessage(String message) {
             Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, NamedTextColor.RED));
         }
 
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 
 }

@@ -12,7 +12,6 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EnvoyLegionnaire;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -51,13 +50,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
-
-        ChatUtils.sendTitleToGamePlayers(
-                getWarlordsNPC().getGame(),
-                Component.text(getWarlordsNPC().getName(), NamedTextColor.DARK_PURPLE),
-                Component.text("Leader of the Illusion Vanguard", NamedTextColor.LIGHT_PURPLE),
-                20, 30, 20
-        );
     }
 
     @Override
@@ -206,5 +198,15 @@ public class Zenith extends AbstractZombie implements BossMob {
                 put(DifficultyIndex.ENDLESS, .05);
             }});
         }};
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Leader of the Illusion Vanguard", NamedTextColor.LIGHT_PURPLE);
     }
 }

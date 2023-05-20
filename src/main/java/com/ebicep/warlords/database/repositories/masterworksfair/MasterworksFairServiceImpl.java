@@ -21,19 +21,19 @@ public class MasterworksFairServiceImpl implements MasterworksFairService {
     @Override
     public void create(MasterworksFair masterworksFair) {
         MasterworksFair fair = masterworksFairRepository.insert(masterworksFair);
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Created: - " + fair);
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Created: - " + fair);
     }
 
     @Override
     public void update(MasterworksFair masterworksFair) {
         MasterworksFair fair = masterworksFairRepository.save(masterworksFair);
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Updated: - " + fair);
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Updated: - " + fair);
     }
 
     @Override
     public void delete(MasterworksFair masterworksFair) {
         masterworksFairRepository.delete(masterworksFair);
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Deleted: - " + masterworksFair);
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Deleted: - " + masterworksFair);
     }
 
     @Override

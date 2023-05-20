@@ -75,7 +75,7 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has ended");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has ended");
         if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
             game.warlordsPlayers().forEach(warlordsPlayer -> {
                 DatabaseManager.updatePlayer(warlordsPlayer.getUuid(), databasePlayer -> {
@@ -91,7 +91,7 @@ public class EndState implements State, TimerDebugAble {
             option.onGameEnding(game);
         }
 
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options onGameEnding done");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options onGameEnding done");
 
         boolean teamBlueWins = winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE;
         boolean teamRedWins = winEvent != null && winEvent.getDeclaredWinner() == Team.RED;

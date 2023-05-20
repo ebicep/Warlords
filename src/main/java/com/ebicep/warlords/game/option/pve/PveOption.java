@@ -1,10 +1,14 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -16,11 +20,16 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Zombie;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -31,20 +40,28 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface PveOption {
+public interface PveOption extends Option {
 
     default void mobTick() {
         for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
             mob.whileAlive(getMobsMap().get(mob) - getTicksElapsed(), this);
-            mob.getBossBar(); // updates boss bar
+            if (mob.isShowBossBar()) {
+                mob.bossBar(getGame(), true);
+            }
         }
     }
+
+    Set<AbstractMob<?>> getMobs();
+
+    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
+
+    int getTicksElapsed();
+
+    Game getGame();
 
     int playerCount();
 
@@ -54,10 +71,6 @@ public interface PveOption {
                 .filter(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
                 .count();
     }
-
-    Set<AbstractMob<?>> getMobs();
-
-    int getTicksElapsed();
 
     default int getWaveCounter() {
         return 1;
@@ -221,11 +234,68 @@ public interface PveOption {
         };
     }
 
+    @Override
+    default void onGameEnding(@Nonnull Game game) {
+        getMobs().forEach(mob -> mob.bossBar(game, false));
+    }
+
+    @Override
+    default void onPlayerQuit(Player player) {
+        getMobs().forEach(mob -> player.hideBossBar(mob.getBossBar()));
+    }
+
+    @Override
+    default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            player.setInPve(true);
+            if (player.getEntity() instanceof Player) {
+                getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                //weapons
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                Optional<AbstractWeapon> optionalWeapon = pveStats
+                        .getWeaponInventory()
+                        .stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                        .findFirst();
+                optionalWeapon.ifPresent(abstractWeapon -> {
+                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    warlordsPlayer.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
+                    player.updateEntity();
+                    player.getSpec().updateCustomStats();
+                });
+            });
+        }
+    }
+
+    @Override
+    default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+        if (weapon == null) {
+            WeaponOption.showWeaponStats(warlordsPlayer, player);
+        } else {
+            WeaponOption.showPvEWeapon(warlordsPlayer, player);
+        }
+
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
+        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        }
+    }
+
+    @Override
+    default void onSpecChange(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            ((WarlordsPlayer) player).resetAbilityTree();
+        }
+    }
+
     PveRewards<?> getRewards();
-
-    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
-
-    Game getGame();
 
     private void addMobDrop(WarlordsEntity event, MobDrops event1) {
         getRewards().getPlayerRewards(event.getUuid())

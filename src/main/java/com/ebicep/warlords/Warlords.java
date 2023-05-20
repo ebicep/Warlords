@@ -266,7 +266,7 @@ public class Warlords extends JavaPlugin {
         }
         try {
             if (holographicDisplaysEnabled) {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("Deleting holograms...");
+                ChatUtils.MessageType.WARLORDS.sendMessage("Deleting holograms...");
                 HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
             }
         } catch (Exception e) {
@@ -286,7 +286,7 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
 
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is disabled");
     }
 
     @Override
@@ -362,7 +362,7 @@ public class Warlords extends JavaPlugin {
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
-            ChatUtils.MessageTypes.WARLORDS.sendMessage("Hooked into LuckPerms");
+            ChatUtils.MessageType.WARLORDS.sendMessage("Hooked into LuckPerms");
             LuckPerms api = provider.getProvider();
             EventBus eventBus = api.getEventBus();
             eventBus.subscribe(this, UserDataRecalculateEvent.class, Permissions::listenToNewPatreons);
@@ -424,7 +424,7 @@ public class Warlords extends JavaPlugin {
 
         MemoryManager.init();
 
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is enabled");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
     }
 
     public void readKeysConfig() {
@@ -471,7 +471,7 @@ public class Warlords extends JavaPlugin {
                         config.getString(key + ".queueChannel")
                 );
                 BotManager.DISCORD_SERVERS.add(discordServer);
-                ChatUtils.MessageTypes.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
+                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
             }
             /*
             server1

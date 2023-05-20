@@ -23,7 +23,7 @@ public class HeadUtils {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             updateHead(onlinePlayer);
         }
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Heads updated");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Heads updated");
     }
 
     public static void updateHead(Player player) {

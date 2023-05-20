@@ -35,7 +35,7 @@ public class MasterworksFairManager {
 
     public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutesTillStart) {
         if (masterworksFair == null) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
             return;
         }
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -43,7 +43,7 @@ public class MasterworksFairManager {
                     Component.text("Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!", NamedTextColor.GREEN)
             );
         }
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Resetting fair");
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Resetting fair");
         masterworksFair.setEnded(true);
         //give out rewards
         currentFair = null;
@@ -76,7 +76,7 @@ public class MasterworksFairManager {
     }
 
     public static void initializeFair(MasterworksFair masterworksFair) {
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Initialize masterworks fair: " + masterworksFair.getStartDate());
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Initialize masterworks fair: " + masterworksFair.getStartDate());
         currentFair = masterworksFair;
         MasterworksFairTrait.PAUSED.set(false);
         //runnable that updates fair every 30 seconds if there has been a change
