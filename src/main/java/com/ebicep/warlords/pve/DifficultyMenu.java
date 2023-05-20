@@ -41,6 +41,9 @@ public class DifficultyMenu {
                                 map = GameMap.ILLUSION_VALLEY;
                                 break;
                             case 3:
+                                map = GameMap.ILLUSION_VALLEY2;
+                                break;
+                            case 4:
                                 map = GameMap.ILLUSION_CROSSFIRE;
                                 break;
                         }
@@ -48,7 +51,7 @@ public class DifficultyMenu {
                         if (finalMap != null) {
                             GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->
                                     queueEntryBuilder.setMap(finalMap)
-                                            .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         }
