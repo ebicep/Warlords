@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
@@ -158,23 +159,23 @@ public class GameManager implements AutoCloseable {
 
     public long getPlayerCount(GameMode gameMode) {
         return this.games.stream()
-                .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
-                .mapToInt(e -> e.getGame() == null ? 0 : (int) e.getGame().warlordsPlayers().count()).sum();
+                         .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
+                         .mapToInt(e -> e.getGame() == null ? 0 : (int) e.getGame().warlordsPlayers().count()).sum();
     }
 
     public long getPlayerCountInLobby(GameMode gameMode) {
         return this.games.stream()
-                .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
-                .mapToInt(e -> {
-                    Game game = e.getGame();
-                    if (game == null) {
-                        return 0;
-                    }
-                    if (!game.acceptsPeople()) {
-                        return 0;
-                    }
-                    return game.getPlayers().size();
-                }).sum();
+                         .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
+                         .mapToInt(e -> {
+                             Game game = e.getGame();
+                             if (game == null) {
+                                 return 0;
+                             }
+                             if (!game.isState(PreLobbyState.class)) {
+                                 return 0;
+                             }
+                             return game.getPlayers().size();
+                         }).sum();
     }
 
     public long getQueueSize() {
@@ -222,8 +223,8 @@ public class GameManager implements AutoCloseable {
         if (!valid) {
             entry.onResult(
                     invalidOversize ? QueueResult.INVALID_OVERSIZE :
-                            invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
-                                    QueueResult.INVALID_GENERIC,
+                    invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
+                    QueueResult.INVALID_GENERIC,
                     null
             );
             return false;
@@ -369,15 +370,15 @@ public class GameManager implements AutoCloseable {
             return game;
         }
 
+        public void setGame(@Nullable Game game) {
+            this.game = game;
+        }
+
         public void forceEndGame() {
             if (game != null) {
                 game.close();
                 game = null;
             }
-        }
-
-        public void setGame(@Nullable Game game) {
-            this.game = game;
         }
 
         @Nonnull
