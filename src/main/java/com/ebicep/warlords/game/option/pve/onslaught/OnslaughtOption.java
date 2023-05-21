@@ -282,7 +282,6 @@ public class OnslaughtOption implements Option, PveOption {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            player.setInPve(true);
             if (player.getEntity() instanceof Player) {
                 game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
                 player.setTeam(Team.BLUE);
