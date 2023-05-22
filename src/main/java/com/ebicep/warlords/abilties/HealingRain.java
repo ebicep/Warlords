@@ -41,7 +41,7 @@ public class HealingRain extends AbstractAbility implements Duration {
     public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted location that will restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
                 "health every 0.5 seconds to allies. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may move Healing Rain to your location using your SNEAK key." +
+                "\n\nYou can RECAST to move Healing Rain to your location." +
                 "\n\n§7Healing Rain can overheal allies for up to §a10% §7of their max health as bonus health §7for §6" +
                 Overheal.OVERHEAL_DURATION + " §7seconds.";
     }

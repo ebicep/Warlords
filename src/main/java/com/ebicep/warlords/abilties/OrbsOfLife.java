@@ -62,7 +62,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                 "§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that picks it up. Other nearby allies recover §a" +
                 format(minDamageHeal) + " §7health. After 1.5 seconds the healing will increase by §a40% §7over 6.5 seconds. " +
                 "Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may SNEAK to make the orbs levitate towards you or the nearest ally in a §e" + floatingOrbRadius + " §7block radius.";
+                "\n\nYou can RECAST to make the orbs levitate towards you or the nearest ally in a §e" + floatingOrbRadius + " §7block radius.";
     }
 
     @Override
