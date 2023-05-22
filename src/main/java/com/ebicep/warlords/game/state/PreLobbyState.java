@@ -372,6 +372,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     bestTeam.forEach((uuid, team) -> {
                         PlayerSettings.getPlayerSettings(uuid).setWantedTeam(team);
+                        game.setPlayerTeam(Bukkit.getOfflinePlayer(uuid), team);
                     });
 
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();

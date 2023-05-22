@@ -1362,7 +1362,7 @@ public enum GameMap {
                                     .add(0.08, Mobs.EXILED_VOID_LANCER)
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
-                    .add(5, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(5, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.NARMER)
                     )
                     .add(6, new SimpleWave(16, 10 * SECOND, null)

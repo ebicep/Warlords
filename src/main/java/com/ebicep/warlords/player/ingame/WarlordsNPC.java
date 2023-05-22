@@ -169,7 +169,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     ) {
         super(uuid, name, entity, game, team, specClass);
         this.mob = mob;
-        this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);

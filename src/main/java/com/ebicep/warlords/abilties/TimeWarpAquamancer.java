@@ -34,7 +34,47 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
-        int startingBlocksTravelled = wp.getBlocksTravelled();
+        List<ArmorStand> altarsBlocks = new ArrayList<>();
+        LocationBuilder baseLocation;
+        if (pveUpgrade) {
+            baseLocation = new LocationBuilder(warpLocation)
+                    .pitch(0)
+                    .yaw(0)
+                    .addY(-1.4);
+            List<Location> spawnLocations = getAltarLocations(baseLocation.clone()
+                                                                          .left(.6f * 2)
+                                                                          .forward(.6f));
+            for (Location spawnLocation : spawnLocations) {
+                ArmorStand altar = wp.getWorld().spawn(spawnLocation, ArmorStand.class);
+                altar.setVisible(false);
+                altar.setGravity(false);
+                altar.setMarker(true);
+                altar.setHelmet(new ItemStack(Material.PRISMARINE, 1, (short) 1));
+                altarsBlocks.add(altar);
+            }
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
+                    .addY(-.8)
+                    .left(2)
+                    .forward(2))
+            );
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
+                    .addY(-.8)
+                    .right(2)
+                    .forward(2))
+            );
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
+                    .addY(-.8)
+                    .left(2)
+                    .backward(2))
+            );
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
+                    .addY(-.8)
+                    .right(2)
+                    .backward(2))
+            );
+        } else {
+            baseLocation = null;
+        }
         RegularCooldown<TimeWarpAquamancer> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -63,76 +103,9 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
-
-                    if (pveUpgrade) {
-                        List<ArmorStand> altarsBlocks = new ArrayList<>();
-                        LocationBuilder baseLocation = new LocationBuilder(warpLocation)
-                                .pitch(0)
-                                .yaw(0)
-                                .addY(-1.4);
-                        List<Location> spawnLocations = getAltarLocations(baseLocation.clone()
-                                                                                      .left(.6f * 2)
-                                                                                      .forward(.6f));
-                        for (Location spawnLocation : spawnLocations) {
-                            ArmorStand altar = wp.getWorld().spawn(spawnLocation, ArmorStand.class);
-                            altar.setVisible(false);
-                            altar.setGravity(false);
-                            altar.setMarker(true);
-                            altar.setHelmet(new ItemStack(Material.PRISMARINE, 1, (short) 1));
-                            altarsBlocks.add(altar);
-                        }
-                        altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                                .addY(-.8)
-                                .left(2)
-                                .forward(2))
-                        );
-                        altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                                .addY(-.8)
-                                .right(2)
-                                .forward(2))
-                        );
-                        altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                                .addY(-.8)
-                                .left(2)
-                                .backward(2))
-                        );
-                        altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                                .addY(-.8)
-                                .right(2)
-                                .backward(2))
-                        );
-
-                        int blocksTravelled = wp.getBlocksTravelled() - startingBlocksTravelled;
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Monsoon Leap Altar",
-                                "ALTAR",
-                                TimeWarpAquamancer.class,
-                                new TimeWarpAquamancer(),
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager1 -> {
-                                },
-                                cooldownManager1 -> {
-                                    altarsBlocks.forEach(Entity::remove);
-                                },
-                                (int) Math.min(10, blocksTravelled / 5f) * 20,
-                                // 50 blocks = 10s, 40 blocks = 8s, 30 blocks = 6s, 20 blocks = 4s, 10 blocks = 2s
-                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                    if (ticksElapsed % 4 == 0) {
-                                        PlayerFilter.entitiesAround(baseLocation, 5, 4, 5)
-                                                    .aliveTeammatesOf(wp)
-                                                    .forEach(warlordsEntity -> {
-                                                        warlordsEntity.getSpeed().removeSlownessModifiers();
-                                                        warlordsEntity.getCooldownManager().removeDebuffCooldowns();
-                                                    });
-                                    }
-                                    if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
-                                        ParticleEffect.DRIP_WATER.display(1, 0, 1, 0.1F, 5, baseLocation.clone().add(0, 4, 0), 500);
-
-                                    }
-                                })
-                        ));
-                    }
+                },
+                cooldownManager -> {
+                    altarsBlocks.forEach(Entity::remove);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -150,6 +123,19 @@ public class TimeWarpAquamancer extends AbstractTimeWarpBase {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
+                        }
+                    }
+                    if (pveUpgrade && baseLocation != null) {
+                        if (ticksElapsed % 4 == 0) {
+                            PlayerFilter.entitiesAround(baseLocation, 5, 4, 5)
+                                        .aliveTeammatesOf(wp)
+                                        .forEach(warlordsEntity -> {
+                                            warlordsEntity.getSpeed().removeSlownessModifiers();
+                                            warlordsEntity.getCooldownManager().removeDebuffCooldowns();
+                                        });
+                        }
+                        if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
+                            ParticleEffect.DRIP_WATER.display(1, 0, 1, 0.1F, 5, baseLocation.clone().add(0, 4, 0), 500);
                         }
                     }
                 })

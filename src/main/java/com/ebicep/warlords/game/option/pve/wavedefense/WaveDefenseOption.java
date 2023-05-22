@@ -625,8 +625,6 @@ public class WaveDefenseOption implements Option, PveOption {
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
             WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
-
-            player.setInPve(true);
             if (player.getEntity() instanceof Player) {
                 game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
                 player.setTeam(Team.BLUE);

@@ -80,7 +80,7 @@ public class AdminCommand extends BaseCommand {
     @Description("Disables spectator messages")
     public void disableSpectatorMessages(CommandIssuer issuer) {
         DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disable Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, true);
     }
 
     @HelpCommand

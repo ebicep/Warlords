@@ -88,7 +88,7 @@ public class HammerOfLight extends AbstractAbility implements Duration {
                 "damage every second to nearby enemies and healing nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
                 "every second in a §e" + RADIUS + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
                 "Hammer of Light. Lasts §6" + format(tickDuration / 20f) + " §7seconds." +
-                "\n\nYou may SNEAK to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
+                "\n\nYou can RECAST to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
                 "increasing the healing §7by §a50% §7and reducing the energy cost of your Protector's Strike by " +
                 "§e10 §7energy. You cannot put the Hammer of Light back down after you converted it.";
     }
