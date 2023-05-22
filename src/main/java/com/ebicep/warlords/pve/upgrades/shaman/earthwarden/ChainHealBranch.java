@@ -90,7 +90,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         masterUpgrade = new Upgrade(
                 "Chain of Eradication",
                 "Chain Heal - Master Upgrade",
-                "+5 Blocks cast and bounce range.\n\nIncrease the crit chance by 10% and crit multiplier by 30% of all healed allies for 8 seconds.",
+                "+5 Blocks cast and bounce range.\n\nIncrease the crit chance by 20% and crit multiplier by 40% of all healed allies for 8 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

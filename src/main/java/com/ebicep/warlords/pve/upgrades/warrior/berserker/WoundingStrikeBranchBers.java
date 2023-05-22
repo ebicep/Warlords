@@ -7,13 +7,20 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
     int woundDuration = ability.getWoundingDuration();
 
     public WoundingStrikeBranchBers(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
+
         treeA.add(new Upgrade(
                 "Impair - Tier I",
                 "+12.5% Damage",
@@ -91,7 +98,7 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 80% more damage from Wounding " +
+                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 100% more damage from Wounding " +
                         "Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max " +
                         "health per second.",
                 50000,

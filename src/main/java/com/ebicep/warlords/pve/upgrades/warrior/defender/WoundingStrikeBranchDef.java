@@ -7,12 +7,18 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrikeDefender> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
 
     public WoundingStrikeBranchDef(AbilityTree abilityTree, WoundingStrikeDefender ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",

@@ -181,7 +181,7 @@ public class ChainHeal extends AbstractChainBase {
                     return currentCritChance;
                 }
 
-                return currentCritChance + 10;
+                return currentCritChance + 20;
             }
 
             @Override
@@ -189,7 +189,7 @@ public class ChainHeal extends AbstractChainBase {
                 if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                     return currentCritMultiplier;
                 }
-                return currentCritMultiplier + 30;
+                return currentCritMultiplier + 40;
             }
         });
     }

@@ -23,7 +23,7 @@ import java.util.UUID;
 public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveCounter {
 
     private static final int MELEE_DAMAGE_BOOST = 20;
-    private static final float MELEE_DAMAGE_BOOST_PER_UPGRADE = 7.5f;
+    private static final float MELEE_DAMAGE_BOOST_PER_UPGRADE = 5;
     private static final int PROC_CHANCE_INCREASE = 5;
     private static final float PROC_CHANCE_INCREASE_PER_UPGRADE = 2.5f;
 
@@ -60,11 +60,6 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                         formatTitleUpgrade(PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 220;
     }
 
     @Override
@@ -133,8 +128,13 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    protected float getMeleeDamageMinValue() {
+    protected float getMeleeDamageMaxValue() {
         return 200;
+    }
+
+    @Override
+    protected float getMeleeDamageMinValue() {
+        return 180;
     }
 
     @Override
