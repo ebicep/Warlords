@@ -85,21 +85,6 @@ public class Repentance extends AbstractAbility implements Duration {
         }
     }
 
-    @Override
-    public void runEveryTick() {
-        if (pool > 3000) {
-            pool = 3000;
-        }
-    }
-
-    public float getPool() {
-        return pool;
-    }
-
-    public void setPool(float pool) {
-        this.pool = pool;
-    }
-
     public int getDamageConvertPercent() {
         return damageConvertPercent;
     }
@@ -109,7 +94,7 @@ public class Repentance extends AbstractAbility implements Duration {
     }
 
     public void addToPool(float amount) {
-        this.pool += amount;
+        this.pool = Math.min(3000, pool + amount);
     }
 
     @Override
