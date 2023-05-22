@@ -41,8 +41,8 @@ public class Guild {
     public static final int CREATE_COIN_COST = 500000;
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST && (pveStats.getNormalStats().getWins() + pveStats.getHardStats()
-                                                                                                                                .getWins()) >= 10;
+        return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST &&
+                (pveStats.getNormalStats().getWins() + pveStats.getHardStats().getWins() + pveStats.getExtremeStats().getWins()) >= 10;
     };
 
     public static int getConversionRatio(Guild guild) {

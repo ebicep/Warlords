@@ -12,7 +12,9 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
-        ability.setPveUpgrade(true);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setPveUpgrade(true);
+        }
 
         treeA.add(new Upgrade(
                 "Chronos - Tier I",

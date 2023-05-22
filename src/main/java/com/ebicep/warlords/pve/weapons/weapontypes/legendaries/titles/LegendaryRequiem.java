@@ -124,7 +124,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                         });
                         toConvert.clear();
                     }
-                }.runTaskLater(20 * 60);
+                }.runTaskLater(20 * 180);
             }
 
         });

@@ -181,14 +181,11 @@ public abstract class WarlordsEntity {
         }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
+        this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
     }
 
     public boolean isInPve() {
         return isInPve;
-    }
-
-    public void setInPve(boolean inPve) {
-        isInPve = inPve;
     }
 
     public List<Location> getLocations() {

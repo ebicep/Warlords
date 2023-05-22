@@ -153,7 +153,7 @@ public enum Quests {
             null,
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 50_000L);
-                put(Currencies.SYNTHETIC_SHARD, 3000L);
+                put(Currencies.SYNTHETIC_SHARD, 1500L);
             }}
     ) {
         @Override

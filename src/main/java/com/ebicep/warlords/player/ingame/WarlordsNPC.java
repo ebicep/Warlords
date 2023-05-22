@@ -126,7 +126,6 @@ public final class WarlordsNPC extends WarlordsEntity {
                     Component.text(" - ", NamedTextColor.GRAY)
             );
         }
-        this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);

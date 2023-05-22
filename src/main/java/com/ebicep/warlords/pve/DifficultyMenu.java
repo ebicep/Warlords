@@ -30,21 +30,19 @@ public class DifficultyMenu {
                             .lore(difficulty.getDescription())
                             .get(),
                     (m, e) -> {
-                        if (switch (finalI) {
+                        GameMap map;
+                        map = switch (finalI) {
                             case 0 -> GameMap.ILLUSION_APERTURE;
                             case 1 -> GameMap.ILLUSION_RIFT;
                             case 2 -> GameMap.ILLUSION_VALLEY;
-                            case 3 -> GameMap.ILLUSION_CROSSFIRE;
+                            case 3 -> GameMap.ILLUSION_VALLEY2;
+                            case 4 -> GameMap.ILLUSION_CROSSFIRE;
                             default -> null;
-                        } != null) {
+                        };
+                        GameMap finalMap = map;
+                        if (finalMap != null) {
                             GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->
-                                    queueEntryBuilder.setMap(switch (finalI) {
-                                                         case 0 -> GameMap.ILLUSION_APERTURE;
-                                                         case 1 -> GameMap.ILLUSION_RIFT;
-                                                         case 2 -> GameMap.ILLUSION_VALLEY;
-                                                         case 3 -> GameMap.ILLUSION_CROSSFIRE;
-                                                         default -> null;
-                                                     })
+                                    queueEntryBuilder.setMap(finalMap)
                                                      .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );

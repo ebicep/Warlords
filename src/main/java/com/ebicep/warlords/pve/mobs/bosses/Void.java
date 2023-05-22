@@ -234,8 +234,8 @@ public class Void extends AbstractSkeleton implements BossMob {
         );
 
         float damage = switch (option.getDifficulty()) {
-            case HARD -> 400;
             case EASY -> 100;
+            case NORMAL -> 200;
             default -> 300;
         };
         new GameRunnable(warlordsNPC.getGame()) {

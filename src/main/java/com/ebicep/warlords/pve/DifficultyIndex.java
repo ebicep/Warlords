@@ -40,11 +40,11 @@ public enum DifficultyIndex {
                     Component.text("opponents and bosses with augmented"),
                     Component.text("abilities."),
                     Component.empty(),
-                    Component.text("Modifies:"),
+                    Component.text("Modifiers:"),
                     Component.text("+50% Mob Health", NamedTextColor.RED),
                     Component.text("+50% Mob Damage", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("Extreme scaling, Illusion, Exiled and", NamedTextColor.RED),
+                    Component.text("Hard scaling, Illusion, Exiled and", NamedTextColor.RED),
                     Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
                     Component.text("at a higher rate.", NamedTextColor.RED),
                     Component.empty(),
@@ -54,6 +54,29 @@ public enum DifficultyIndex {
             NamedTextColor.GOLD,
             25,
             2
+    ),
+    EXTREME("Extreme",
+            List.of(
+                    Component.text("Fight off 25 waves of the hardest"),
+                    Component.text("opponents and bosses with augmented"),
+                    Component.text("abilities."),
+                    Component.empty(),
+                    Component.text("Modifiers:"),
+                    Component.text("+100% Mob Health", NamedTextColor.RED),
+                    Component.text("+75% Mob Damage", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("Extreme Exiled and", NamedTextColor.RED),
+                    Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
+                    Component.text("at a higher rate.", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("No respawns, only way to respawn", NamedTextColor.RED),
+                    Component.text("is by clearing the wave.", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("Insignia gain is reduced.")
+            ),
+            NamedTextColor.DARK_RED,
+            25,
+            4
     ),
     ENDLESS("Endless",
             List.of(
@@ -87,6 +110,7 @@ public enum DifficultyIndex {
             EASY,
             NORMAL,
             HARD,
+            EXTREME,
             ENDLESS
     };
     public static final DifficultyIndex[] VALUES = values();

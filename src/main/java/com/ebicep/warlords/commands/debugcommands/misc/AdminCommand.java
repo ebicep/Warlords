@@ -82,7 +82,7 @@ public class AdminCommand extends BaseCommand {
     @Description("Disables spectator messages")
     public void disableSpectatorMessages(CommandIssuer issuer) {
         DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
-        ChatChannels.sendDebugMessage(issuer, Component.text("Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, NamedTextColor.GREEN));
+        ChatChannels.sendDebugMessage(issuer, Component.text("Disable Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, NamedTextColor.GREEN));
     }
 
     @Subcommand("togglemessages")

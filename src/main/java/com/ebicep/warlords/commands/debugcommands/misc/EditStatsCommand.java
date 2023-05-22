@@ -106,6 +106,7 @@ public class EditStatsCommand extends BaseCommand {
         }
         wipe(pveStats.getNormalStats());
         wipe(pveStats.getHardStats());
+        wipe(pveStats.getExtremeStats());
         wipe(pveStats.getEndlessStats());
         DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
     }

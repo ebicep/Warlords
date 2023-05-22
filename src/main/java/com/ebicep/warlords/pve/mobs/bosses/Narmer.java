@@ -63,7 +63,8 @@ public class Narmer extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
+        DifficultyIndex difficulty = option.getDifficulty();
+        float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
         for (int i = 0; i < (multiplier * option.playerCount()); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
             option.spawnNewMob(acolyte);
@@ -114,9 +115,10 @@ public class Narmer extends AbstractZombie implements BossMob {
                             60
                     );
 
-                    float multiplier = switch (option.getDifficulty()) {
+                    float multiplier = switch (difficulty) {
                         case EASY -> 2;
                         case HARD -> 16;
+                        case EXTREME -> 32;
                         default -> 8;
                     };
                     if (acolyteDeathTickWindow > 0) {
@@ -163,7 +165,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     if (acolyteDeathTickWindow <= 0) {
-                        acolyteDeathTickWindow = option.getDifficulty() == DifficultyIndex.HARD ? 60 : 20;
+                        acolyteDeathTickWindow = difficulty == DifficultyIndex.EXTREME ? 100 : difficulty == DifficultyIndex.HARD ? 60 : 20;
                     }
 
                     ticksUntilNewAcolyte = 300;
@@ -177,7 +179,8 @@ public class Narmer extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
-        float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
+        DifficultyIndex difficulty = option.getDifficulty();
+        float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
         if (acolytes.size() < multiplier * playerCount && ticksUntilNewAcolyte <= 0) {
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
@@ -207,7 +210,8 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 160 == 0) {
+        int tickDelay = difficulty == DifficultyIndex.EXTREME ? 80 : 160;
+        if (ticksElapsed % tickDelay == 0) {
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);

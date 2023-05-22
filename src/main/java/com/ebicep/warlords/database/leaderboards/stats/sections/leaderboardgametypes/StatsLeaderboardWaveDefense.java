@@ -19,6 +19,7 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEasyStats(), "Easy Mode", "Easy"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getNormalStats(), "Normal Mode", "Normal"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getHardStats(), "Hard Mode", "Hard"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getExtremeStats(), "Extreme Mode", "Extreme"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEndlessStats(), "Endless Mode", "Endless"));
     }};
 

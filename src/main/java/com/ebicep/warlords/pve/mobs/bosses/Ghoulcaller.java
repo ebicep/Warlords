@@ -112,6 +112,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 float multiplier = switch (option.getDifficulty()) {
                     case EASY -> 0.5f;
                     case HARD -> 1.5f;
+                    case EXTREME -> 2f;
                     default -> 1;
                 };
                 Location loc = warlordsNPC.getLocation();

@@ -305,6 +305,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
 
         float damage = switch (option.getDifficulty()) {
             case ENDLESS, HARD -> 200;
+            case EXTREME -> 250;
             case EASY -> 50;
             default -> 100;
         };

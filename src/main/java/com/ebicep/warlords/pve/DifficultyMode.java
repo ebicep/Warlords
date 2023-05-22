@@ -43,6 +43,17 @@ public enum DifficultyMode {
             return "Hard";
         }
     },
+    WAVE_DEFENSE_EXTREME(" - Extreme") {
+        @Override
+        public boolean validDifficulty(DifficultyIndex difficultyIndex) {
+            return difficultyIndex == DifficultyIndex.EXTREME;
+        }
+
+        @Override
+        public String getShortName() {
+            return "Extreme";
+        }
+    },
     WAVE_DEFENSE_ENDLESS(" - Endless") {
         @Override
         public boolean validDifficulty(DifficultyIndex difficultyIndex) {

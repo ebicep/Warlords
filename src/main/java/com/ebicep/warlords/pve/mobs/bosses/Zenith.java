@@ -59,6 +59,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         float multiplier = switch (option.getDifficulty()) {
             case EASY -> 0.5f;
             case HARD -> 1;
+            case EXTREME -> 1.25f;
             default -> 0.75f;
         };
         if (ticksElapsed % 240 == 0) {
@@ -79,7 +80,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     shockwave(loc, stormRadius + 5, 24, playerCount, multiplier);
                     EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
                     shockwave(loc, stormRadius + 10, 36, playerCount, multiplier);
-                    if (option.getDifficulty() == DifficultyIndex.HARD || option.getDifficulty() == DifficultyIndex.ENDLESS) {
+                    if (difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS) {
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, warlordsNPC.getGame());
                         shockwave(loc, stormRadius + 15, 48, playerCount, multiplier);
                         EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, warlordsNPC.getGame());
@@ -126,9 +127,10 @@ public class Zenith extends AbstractZombie implements BossMob {
                     FireWorkEffectPlayer.playFirework(
                             receiver.getLocation(),
                             FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BURST)
-                            .build());
+                                          .withColor(Color.WHITE)
+                                          .with(FireworkEffect.Type.BURST)
+                                          .build()
+                    );
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
                     receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
@@ -195,6 +197,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 put(DifficultyIndex.EASY, .015);
                 put(DifficultyIndex.NORMAL, .025);
                 put(DifficultyIndex.HARD, .05);
+                put(DifficultyIndex.EXTREME, .10);
                 put(DifficultyIndex.ENDLESS, .05);
             }});
         }};
