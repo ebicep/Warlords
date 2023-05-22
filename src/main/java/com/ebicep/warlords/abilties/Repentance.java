@@ -85,6 +85,13 @@ public class Repentance extends AbstractAbility implements Duration {
         }
     }
 
+    @Override
+    public void runEveryTick() {
+        if (pool > 3000) {
+            pool = 3000;
+        }
+    }
+
     public float getPool() {
         return pool;
     }
