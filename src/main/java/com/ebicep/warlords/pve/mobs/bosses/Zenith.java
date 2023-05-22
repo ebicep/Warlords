@@ -56,7 +56,8 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        float multiplier = switch (option.getDifficulty()) {
+        DifficultyIndex difficulty = option.getDifficulty();
+        float multiplier = switch (difficulty) {
             case EASY -> 0.5f;
             case HARD -> 1;
             case EXTREME -> 1.25f;

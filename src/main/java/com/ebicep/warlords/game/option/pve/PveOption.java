@@ -247,7 +247,6 @@ public interface PveOption extends Option {
     @Override
     default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer warlordsPlayer) {
-            player.setInPve(true);
             if (player.getEntity() instanceof Player) {
                 getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
                 player.setTeam(Team.BLUE);
