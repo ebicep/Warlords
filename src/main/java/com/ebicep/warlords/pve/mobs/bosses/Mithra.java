@@ -218,7 +218,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
+                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.2, 0.06f);
                     flameTarget.addDamageInstance(
                             warlordsNPC,
                             "Immolation",
@@ -244,7 +244,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                 if (counter == 50) {
                     preventBarrage = false;
                     this.cancel();
-                    warlordsNPC.getSpeed().addBaseModifier(70);
+                    warlordsNPC.getSpeed().addBaseModifier(20);
                 }
             }
         }.runTaskTimer(40, 5);
