@@ -145,15 +145,15 @@ public class DebugMenuGameOptions {
                             if (isASelectedAddon) {
                                 boolean customToggle = !player.hasPermission("warlords.game.customtoggle");
                                 if (customToggle && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                                    player.sendMessage(ChatColor.RED + "Insufficient Permissions!");
                                 } else if (customToggle && gameAddon.equals(GameAddon.PRIVATE_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Games started from the start menu are automatically private!");
+                                    player.sendMessage(ChatColor.RED + "Insufficient Permissions!");
                                 } else {
                                     addons.remove(gameAddon);
                                 }
                             } else {
                                 if (!player.hasPermission("warlords.game.freezetoggle") && gameAddon.equals(GameAddon.FREEZE_GAME)) {
-                                    player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                                    player.sendMessage(ChatColor.RED + "Insufficient Permissions!");
                                 } else {
                                     addons.add(gameAddon);
                                 }
@@ -193,8 +193,8 @@ public class DebugMenuGameOptions {
                             }
                     );
                 });
-                menu.openForPlayer(player);
             }
+            menu.openForPlayer(player);
         }
     }
 
