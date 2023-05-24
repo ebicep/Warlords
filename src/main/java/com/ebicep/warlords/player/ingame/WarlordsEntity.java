@@ -263,18 +263,20 @@ public abstract class WarlordsEntity {
             float critMultiplier,
             boolean ignoreReduction
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
-                attacker,
-                ability,
-                min,
-                max,
-                critChance,
-                critMultiplier,
-                ignoreReduction,
-                false,
-                true,
-                EnumSet.noneOf(InstanceFlags.class)
-        ));
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), null);
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean ignoreReduction,
+            UUID uuid
+    ) {
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), uuid);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -287,6 +289,20 @@ public abstract class WarlordsEntity {
             boolean ignoreReduction,
             EnumSet<InstanceFlags> flags
     ) {
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, flags, null);
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean ignoreReduction,
+            EnumSet<InstanceFlags> flags,
+            UUID uuid
+    ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
                 attacker,
                 ability,
@@ -297,7 +313,8 @@ public abstract class WarlordsEntity {
                 ignoreReduction,
                 false,
                 true,
-                flags
+                flags,
+                uuid
         ));
     }
 

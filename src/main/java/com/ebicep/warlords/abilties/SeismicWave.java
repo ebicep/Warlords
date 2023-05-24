@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SeismicWave extends AbstractAbility {
 
@@ -64,7 +65,7 @@ public class SeismicWave extends AbstractAbility {
             fallingBlockLocations.add(getWave(location, i));
         }
 
-
+        UUID abilityUUID = UUID.randomUUID();
         List<WarlordsEntity> playersHit = new ArrayList<>();
         for (int i = 0, fallingBlockLocationsSize = fallingBlockLocations.size(); i < fallingBlockLocationsSize; i++) {
             List<Location> fallingBlockLocation = fallingBlockLocations.get(i);
@@ -88,9 +89,9 @@ public class SeismicWave extends AbstractAbility {
                     waveTarget.setVelocity(name, v, false, false);
                     if (pveUpgrade) {
                         float multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
-                        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, false);
+                        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, false, abilityUUID);
                     } else {
-                        waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                        waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, abilityUUID);
                     }
                 }
             }
