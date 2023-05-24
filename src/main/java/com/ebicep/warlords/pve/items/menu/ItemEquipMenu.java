@@ -124,8 +124,8 @@ public class ItemEquipMenu {
                 itemBuilder -> itemBuilder
                         .addLore(
                                 "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to scrap",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to favorite"
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to scrap",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to favorite"
                         ),
                 menuSettings,
                 databasePlayer,
