@@ -176,24 +176,24 @@ public class DebugMenuGameOptions {
                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
                         })
                 );
-                menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
-                menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
-                    //safe guard
-                    if (!player.isOp()) {
-                        addons.remove(GameAddon.TOURNAMENT_MODE);
-                    }
-                    GameStartCommand.startGameFromDebugMenu(player,
-                            addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(),
-                            queueEntryBuilder -> {
-                                queueEntryBuilder
-                                        .setMap(selectedGameMap)
-                                        .setGameMode(selectedGameMode)
-                                        .setRequestedGameAddons(addons);
-                            }
-                    );
-                });
             }
+            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
+            menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
+                //safe guard
+                if (!player.isOp()) {
+                    addons.remove(GameAddon.TOURNAMENT_MODE);
+                }
+                GameStartCommand.startGameFromDebugMenu(player,
+                        addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(),
+                        queueEntryBuilder -> {
+                            queueEntryBuilder
+                                    .setMap(selectedGameMap)
+                                    .setGameMode(selectedGameMode)
+                                    .setRequestedGameAddons(addons);
+                        }
+                );
+            });
             menu.openForPlayer(player);
         }
     }
