@@ -7,7 +7,6 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
 
-    int damageConvert = ability.getDamageConvertPercent();
     int duration = ability.getTickDuration();
 
     public RepentanceBranch(AbilityTree abilityTree, Repentance ability) {
@@ -18,7 +17,6 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "+2% Damage conversion",
                 5000,
                 () -> {
-                    ability.setDamageConvertPercent(damageConvert + 2);
                 }
         ));
         treeA.add(new Upgrade(
@@ -26,7 +24,6 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "+3% Damage conversion",
                 10000,
                 () -> {
-                    ability.setDamageConvertPercent(damageConvert + 3);
                 }
         ));
         treeA.add(new Upgrade(
@@ -34,7 +31,6 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "+4% Damage conversion",
                 15000,
                 () -> {
-                    ability.setDamageConvertPercent(damageConvert + 4);
                 }
         ));
         treeA.add(new Upgrade(
@@ -42,7 +38,6 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "+5% Damage conversion",
                 20000,
                 () -> {
-                    ability.setDamageConvertPercent(damageConvert + 5);
                 }
         ));
 
@@ -85,8 +80,6 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "Repentance's pool decay per second is reduced by 80% and the energy conversion based on damage taken is increased by 25%.",
                 50000,
                 () -> {
-                    ability.setPoolDecay((int) (ability.getPoolDecay() * 0.2f));
-                    ability.setEnergyConvertPercent(ability.getEnergyConvertPercent() * 1.25f);
                 }
         );
     }

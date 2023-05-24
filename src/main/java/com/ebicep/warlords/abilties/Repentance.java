@@ -17,11 +17,9 @@ import java.util.List;
 
 public class Repentance extends AbstractAbility implements Duration {
 
-    private float pool = 0;
     private int tickDuration = 240;
-    private int poolDecay = 60;
-    private int damageConvertPercent = 10;
-    private float energyConvertPercent = 3.5f;
+    private int healthRestore = 100;
+    private int energyRestore = 3;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20);
@@ -29,8 +27,9 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+//        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
+//                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = "For every 2000 damage you deal and take, repentance will heal you for 100 health and restore 3 energy. Procs up to 10 times";
     }
 
     @Override
@@ -47,7 +46,7 @@ public class Repentance extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
 
-        pool += 2000;
+
         wp.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
                 name, "REPE",
                 Repentance.class,
@@ -58,43 +57,50 @@ public class Repentance extends AbstractAbility implements Duration {
                 },
                 tickDuration
         ) {
+            private float damageCounter = 0;
+            private int procs = 0;
+
             @Override
             public boolean distinct() {
                 return true;
             }
 
             @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getAttacker();
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                addToCounter(currentDamageValue);
+            }
 
-                int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, 0, 100, false, false);
-                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
-                pool *= .5;
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                addToCounter(currentDamageValue);
+            }
+
+            private void addToCounter(float amount) {
+                if (procs > 10) {
+                    return;
+                }
+                damageCounter += amount;
+                if (damageCounter >= 2000) {
+                    // for if you deal/take like 6000 dmg, heal/energy should be 3x
+                    int times = (int) (damageCounter / 2000);
+                    int validTimes = 0;
+                    for (int i = 0; i < times; i++) {
+                        procs++;
+                        if (procs > 10) {
+                            break;
+                        }
+                        damageCounter -= 2000;
+                        validTimes++;
+                    }
+                    int healthGain = healthRestore;
+                    int energyGain = Repentance.this.energyRestore;
+                    wp.addHealingInstance(wp, "Repentance", healthGain * validTimes, healthGain * validTimes, 0, 100, false, false);
+                    wp.addEnergy(wp, "Repentance", energyGain * validTimes);
+                }
             }
         });
 
         return true;
-    }
-
-    @Override
-    public void runEverySecond() {
-        if (pool > 0) {
-            float newPool = pool * .8f - poolDecay;
-            pool = Math.max(newPool, 0);
-        }
-    }
-
-    public int getDamageConvertPercent() {
-        return damageConvertPercent;
-    }
-
-    public void setDamageConvertPercent(int damageConvertPercent) {
-        this.damageConvertPercent = damageConvertPercent;
-    }
-
-    public void addToPool(float amount) {
-        this.pool = Math.min(3000, pool + amount);
     }
 
     @Override
@@ -107,19 +113,19 @@ public class Repentance extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getPoolDecay() {
-        return poolDecay;
+    public int getHealthRestore() {
+        return healthRestore;
     }
 
-    public void setPoolDecay(int poolDecay) {
-        this.poolDecay = poolDecay;
+    public void setHealthRestore(int healthRestore) {
+        this.healthRestore = healthRestore;
     }
 
-    public float getEnergyConvertPercent() {
-        return energyConvertPercent;
+    public int getEnergyRestore() {
+        return energyRestore;
     }
 
-    public void setEnergyConvertPercent(float energyConvertPercent) {
-        this.energyConvertPercent = energyConvertPercent;
+    public void setEnergyRestore(int energyRestore) {
+        this.energyRestore = energyRestore;
     }
 }
