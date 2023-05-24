@@ -10,9 +10,10 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -40,6 +41,11 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(2, 3)
             .add(1, 4)
             .add(1, 5);
+    public static final HashMap<DifficultyIndex, Mobs> DIFFICULTY_SPAWNS = new HashMap<>() {{
+        put(DifficultyIndex.EASY, Mobs.BASIC_ZOMBIE);
+        put(DifficultyIndex.HARD, Mobs.BASIC_BERSERK_ZOMBIE);
+        put(DifficultyIndex.EXTREME, Mobs.ELITE_ZOMBIE);
+    }};
     public static final ItemStack CHESTPLATE = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);
     public static final ItemStack LEGGINGS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 200, 0);
     public static final ItemStack BOOTS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 200, 0);
@@ -65,6 +71,8 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
         this.counter = 0;
+
+        DifficultyIndex difficulty = pveOption.getDifficulty();
 
         Game game = player.getGame();
         game.registerEvents(new Listener() {
@@ -172,7 +180,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    BasicZombie mob = new BasicZombie(player.getLocation());
+                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mobs.BASIC_PIG_ZOMBIE).createMob.apply(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
