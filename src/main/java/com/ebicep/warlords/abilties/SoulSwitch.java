@@ -4,10 +4,13 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -16,8 +19,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -91,25 +94,65 @@ public class SoulSwitch extends AbstractAbility {
                 ));
 
                 if (swapTarget instanceof WarlordsNPC) {
-                    ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
-                    decoy.setVisible(false);
-                    decoy.setGravity(false);
-                    decoy.setCustomNameVisible(true);
-                    decoy.setCustomName(wp.getColoredName() + "'s Decoy");
-                    decoy.setItemInHand(player.getInventory().getItem(0));
-                    decoy.setHelmet(HeadUtils.getHead(player.getUniqueId()));
-                    decoy.setChestplate(player.getInventory().getChestplate());
-                    decoy.setLeggings(player.getInventory().getLeggings());
-                    decoy.setBoots(player.getInventory().getBoots());
+                    PveOption pveOption = wp.getGame()
+                                            .getOptions()
+                                            .stream()
+                                            .filter(PveOption.class::isInstance)
+                                            .map(PveOption.class::cast)
+                                            .findFirst()
+                                            .orElse(null);
+                    Decoy decoy;
+                    if (pveOption != null) {
+                        PlayerInventory inventory = player.getInventory();
+                        decoy = new Decoy(ownLocation,
+                                wp.getName(),
+                                HeadUtils.getHead(player.getUniqueId()),
+                                inventory.getChestplate(),
+                                inventory.getLeggings(),
+                                inventory.getBoots(),
+                                inventory.getItem(0)
+                        ) {
+                            @Override
+                            public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+                                PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
+                                            .aliveEnemiesOf(wp)
+                                            .forEach(hit -> {
+                                                hit.addDamageInstance(
+                                                        wp,
+                                                        "Decoy",
+                                                        782 * (pveUpgrade ? 2 : 1),
+                                                        1034 * (pveUpgrade ? 2 : 1),
+                                                        0,
+                                                        100,
+                                                        false
+                                                );
+                                                if (pveUpgrade) {
+                                                    hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
+                                                            "Switch Crippling",
+                                                            "CRIP",
+                                                            SoulSwitch.class,
+                                                            new SoulSwitch(),
+                                                            wp,
+                                                            CooldownTypes.DEBUFF,
+                                                            cooldownManager -> {
+                                                            },
+                                                            20 * 5
+                                                    ) {
+                                                        @Override
+                                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                            return currentDamageValue * .5f;
+                                                        }
+                                                    });
+                                                }
+                                            });
 
-                    PlayerFilter.entitiesAround(ownLocation, 15, 15, 15)
-                            .aliveEnemiesOf(wp)
-                            .forEach(warlordsEntity -> {
-                                if (warlordsEntity instanceof WarlordsNPC) {
-                                    ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
-                                }
-                            });
-
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
+                            }
+                        };
+                        pveOption.spawnNewMob(decoy, Team.BLUE);
+                    } else {
+                        decoy = null;
+                    }
                     if (pveUpgrade) {
                         float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
                         wp.addHealingInstance(
@@ -126,40 +169,9 @@ public class SoulSwitch extends AbstractAbility {
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            decoy.remove();
-                            PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(hit -> {
-                                        hit.addDamageInstance(
-                                                wp,
-                                                name,
-                                                782 * (pveUpgrade ? 2 : 1),
-                                                1034 * (pveUpgrade ? 2 : 1),
-                                                0,
-                                                100,
-                                                false
-                                        );
-                                        if (pveUpgrade) {
-                                            hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
-                                                    "Switch Crippling",
-                                                    "CRIP",
-                                                    SoulSwitch.class,
-                                                    new SoulSwitch(),
-                                                    wp,
-                                                    CooldownTypes.DEBUFF,
-                                                    cooldownManager -> {
-                                                    },
-                                                    20 * 5
-                                            ) {
-                                                @Override
-                                                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * .5f;
-                                                }
-                                            });
-                                        }
-                                    });
-
-                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
+                            if (pveOption != null && pveOption.getMobs().contains(decoy)) {
+                                decoy.getWarlordsNPC().die(decoy.getWarlordsNPC());
+                            }
                         }
                     }.runTaskLater(60);
                 }
