@@ -18,8 +18,9 @@ import java.util.List;
 public class Repentance extends AbstractAbility implements Duration {
 
     private int tickDuration = 240;
-    private int healthRestore = 100;
-    private int energyRestore = 3;
+    private int healthRestore = 150;
+    private int energyRestore = 4;
+    private int maxProcs = 15;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20);
@@ -29,7 +30,8 @@ public class Repentance extends AbstractAbility implements Duration {
     public void updateDescription(Player player) {
 //        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
 //                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
-        description = "For every 2000 damage you deal and take, repentance will heal you for 100 health and restore 3 energy. Procs up to 10 times";
+        description = "During the duration of Repentance every §c2000 §7damage you deal and take will heal you" +
+                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -127,5 +129,13 @@ public class Repentance extends AbstractAbility implements Duration {
 
     public void setEnergyRestore(int energyRestore) {
         this.energyRestore = energyRestore;
+    }
+
+    public int getMaxProcs() {
+        return maxProcs;
+    }
+
+    public void setMaxProcs(int maxProcs) {
+        this.maxProcs = maxProcs;
     }
 }

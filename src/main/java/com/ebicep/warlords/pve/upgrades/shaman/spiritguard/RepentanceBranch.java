@@ -8,78 +8,89 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
 
     int duration = ability.getTickDuration();
+    int healthRestore = ability.getHealthRestore();
+    int energyRestore = ability.getEnergyRestore();
 
     public RepentanceBranch(AbilityTree abilityTree, Repentance ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+2% Damage conversion",
+                "Alleviate - Tier I",
+                "+25 Healing",
                 5000,
                 () -> {
+                    ability.setHealthRestore(healthRestore + 25);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+3% Damage conversion",
+                "Alleviate - Tier II",
+                "+50 Healing",
                 10000,
                 () -> {
+                    ability.setHealthRestore(healthRestore + 50);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+4% Damage conversion",
+                "Alleviate - Tier III",
+                "+75 Healing",
                 15000,
                 () -> {
+                    ability.setHealthRestore(healthRestore + 75);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+5% Damage conversion",
+                "Alleviate - Tier IV",
+                "+100 Healing",
                 20000,
                 () -> {
+                    ability.setHealthRestore(healthRestore + 100);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+1s Duration",
+                "+1s Duration\n+1 Energy given",
                 5000,
                 () -> {
                     ability.setTickDuration(duration + 20);
+                    ability.setEnergyRestore(energyRestore + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+2s Duration",
+                "+2s Duration\n+2 Energy given",
                 10000,
                 () -> {
                     ability.setTickDuration(duration + 40);
+                    ability.setEnergyRestore(energyRestore + 2);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+3s Duration",
+                "+3s Duration\n+3 Energy given",
                 15000,
                 () -> {
                     ability.setTickDuration(duration + 60);
+                    ability.setEnergyRestore(energyRestore + 3);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+4s Duration",
+                "+4s Duration\n+4 Energy given",
                 20000,
                 () -> {
                     ability.setTickDuration(duration + 80);
+                    ability.setEnergyRestore(energyRestore + 4);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Revengeance",
                 "Repentance - Master Upgrade",
-                "Repentance's pool decay per second is reduced by 80% and the energy conversion based on damage taken is increased by 25%.",
+                "Increase the max procs possible of Repentance by 5.",
                 50000,
                 () -> {
+                    ability.setMaxProcs(ability.getMaxProcs() + 54);
                 }
         );
     }
