@@ -16,6 +16,7 @@ import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
@@ -314,6 +315,7 @@ public class WarlordsEvents implements Listener {
             if (game != null
                     && game.hasPlayer(e.getPlayer().getUniqueId())
                     && (game.isState(PreLobbyState.class) || game.getPlayerTeam(e.getPlayer().getUniqueId()) == null)
+                    && !game.getAddons().contains(GameAddon.PRIVATE_GAME)
             ) {
                 game.removePlayer(e.getPlayer().getUniqueId());
             }

@@ -743,7 +743,7 @@ public enum SkillBoosts {
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
-                    ((Repentance) abstractAbility).setDamageConvertPercent(15);
+                    //TODO
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }

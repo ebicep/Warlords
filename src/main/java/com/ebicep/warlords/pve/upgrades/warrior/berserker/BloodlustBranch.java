@@ -17,8 +17,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "+10% Max converted health",
                 5000,
                 () -> {
-                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 10);
-                    ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+
                 }
         ));
         treeA.add(new Upgrade(
@@ -26,8 +25,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "+20% Max converted health",
                 10000,
                 () -> {
-                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 20);
-                    ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+
                 }
         ));
         treeA.add(new Upgrade(
@@ -35,8 +33,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "+30% Max converted health",
                 15000,
                 () -> {
-                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 30);
-                    ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+
                 }
         ));
         treeA.add(new Upgrade(
@@ -44,8 +41,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "+40% Max converted health",
                 20000,
                 () -> {
-                    ability.setMaxConversionPercent(ability.getMaxConversionPercent() + 40);
-                    ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+
                 }
         ));
 

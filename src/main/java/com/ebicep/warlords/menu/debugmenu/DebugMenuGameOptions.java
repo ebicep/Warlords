@@ -143,15 +143,15 @@ public class DebugMenuGameOptions {
                             if (isASelectedAddon) {
                                 boolean customToggle = !player.hasPermission("warlords.game.customtoggle");
                                 if (customToggle && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
-                                    player.sendMessage(Component.text("Only players with the Game Starter rank or higher can modify this addon!", NamedTextColor.RED));
+                                    player.sendMessage(Component.text("Insufficient Permissions!", NamedTextColor.RED));
                                 } else if (customToggle && gameAddon.equals(GameAddon.PRIVATE_GAME)) {
-                                    player.sendMessage(Component.text("Games started from the start menu are automatically private!", NamedTextColor.RED));
+                                    player.sendMessage(Component.text("Insufficient Permissions!", NamedTextColor.RED));
                                 } else {
                                     addons.remove(gameAddon);
                                 }
                             } else {
                                 if (!player.hasPermission("warlords.game.freezetoggle") && gameAddon.equals(GameAddon.FREEZE_GAME)) {
-                                    player.sendMessage(Component.text("Only players with the Game Starter rank or higher can modify this addon!", NamedTextColor.RED));
+                                    player.sendMessage(Component.text("Insufficient Permissions!", NamedTextColor.RED));
                                 } else {
                                     addons.add(gameAddon);
                                 }
@@ -177,25 +177,25 @@ public class DebugMenuGameOptions {
                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
                         })
                 );
-                menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
-                menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.LIME_WOOL).name(Component.text("Start", NamedTextColor.GREEN)).get(), (m, e) -> {
-                    //safe guard
-                    if (!player.isOp()) {
-                        addons.remove(GameAddon.TOURNAMENT_MODE);
-                    }
-                    GameStartCommand.startGameFromDebugMenu(player,
-                            addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(),
-                            queueEntryBuilder -> {
-                                queueEntryBuilder
-                                        .setMap(selectedGameMap)
-                                        .setGameMode(selectedGameMode)
-                                        .setRequestedGameAddons(addons);
-                            }
-                    );
-                });
-                menu.openForPlayer(player);
             }
+            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
+            menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.LIME_WOOL).name(Component.text("Start", NamedTextColor.GREEN)).get(), (m, e) -> {
+                //safe guard
+                if (!player.isOp()) {
+                    addons.remove(GameAddon.TOURNAMENT_MODE);
+                }
+                GameStartCommand.startGameFromDebugMenu(player,
+                        addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(),
+                        queueEntryBuilder -> {
+                            queueEntryBuilder
+                                    .setMap(selectedGameMap)
+                                    .setGameMode(selectedGameMode)
+                                    .setRequestedGameAddons(addons);
+                        }
+                );
+            });
+            menu.openForPlayer(player);
         }
     }
 

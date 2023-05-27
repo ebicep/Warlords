@@ -7,7 +7,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.UUID;
 
 /**
  *
@@ -26,7 +28,37 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private boolean isDamageInstance;
 
     private final EnumSet<InstanceFlags> flags;
+    @Nullable
+    private final UUID uuid;
     private boolean cancelled;
+
+    public WarlordsDamageHealingEvent(
+            WarlordsEntity player,
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean ignoreReduction,
+            boolean isLastStandFromShield,
+            boolean isDamageInstance,
+            EnumSet<InstanceFlags> flags,
+            @Nullable UUID uuid
+    ) {
+        super(player);
+        this.attacker = attacker;
+        this.ability = ability;
+        this.min = min;
+        this.max = max;
+        this.critChance = critChance;
+        this.critMultiplier = critMultiplier;
+        this.ignoreReduction = ignoreReduction;
+        this.isLastStandFromShield = isLastStandFromShield;
+        this.isDamageInstance = isDamageInstance;
+        this.flags = flags;
+        this.uuid = uuid;
+    }
 
     public WarlordsDamageHealingEvent(
             WarlordsEntity player,
@@ -41,17 +73,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             boolean isDamageInstance,
             EnumSet<InstanceFlags> flags
     ) {
-        super(player);
-        this.attacker = attacker;
-        this.ability = ability;
-        this.min = min;
-        this.max = max;
-        this.critChance = critChance;
-        this.critMultiplier = critMultiplier;
-        this.ignoreReduction = ignoreReduction;
-        this.isLastStandFromShield = isLastStandFromShield;
-        this.isDamageInstance = isDamageInstance;
-        this.flags = flags;
+        this(player, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, isDamageInstance, flags, null);
     }
 
     public WarlordsEntity getAttacker() {
@@ -136,6 +158,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public EnumSet<InstanceFlags> getFlags() {
         return flags;
+    }
+
+    @Nullable
+    public UUID getUUID() {
+        return uuid;
     }
 
     @Override

@@ -60,8 +60,8 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * (lustDamageBoost ? 1.8f : 1),
-                maxDamageHeal * (lustDamageBoost ? 1.8f : 1),
+                minDamageHeal * (lustDamageBoost ? 2 : 1),
+                maxDamageHeal * (lustDamageBoost ? 2 : 1),
                 critChance,
                 critMultiplier,
                 false

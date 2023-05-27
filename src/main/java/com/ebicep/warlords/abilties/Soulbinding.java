@@ -93,7 +93,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
             List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
                     .filterCooldownClass(Soulbinding.class)
                     .stream().toList();
-            if (currentSoulBindings.size() >= 3) {
+            if (currentSoulBindings.size() >= 2) {
                 wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
             }
         }

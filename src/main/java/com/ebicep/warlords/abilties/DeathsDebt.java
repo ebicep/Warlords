@@ -321,11 +321,6 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
                     false
             );
         }
-        // Adding damage to Repentance Pool
-        // @see Repentance.class
-        if (wp.getBlueAbility() instanceof Repentance) {
-            ((Repentance) wp.getBlueAbility()).addToPool(debtTrueDamage);
-        }
     }
 
     public boolean isInDebt() {

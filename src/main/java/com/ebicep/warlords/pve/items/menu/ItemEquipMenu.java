@@ -133,11 +133,11 @@ public class ItemEquipMenu {
                         .addLore(
                                 Component.empty(),
                                 Component.textOfChildren(
-                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to scrap", NamedTextColor.GREEN)
                                 ),
                                 Component.textOfChildren(
-                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to favorite", NamedTextColor.GREEN)
                                 )
                         ),

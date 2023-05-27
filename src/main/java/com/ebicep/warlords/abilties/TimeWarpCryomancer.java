@@ -3,11 +3,14 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -20,7 +23,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TimeWarpCryomancer extends AbstractTimeWarpBase {
 
@@ -37,17 +39,50 @@ public class TimeWarpCryomancer extends AbstractTimeWarpBase {
         List<Location> warpTrail = new ArrayList<>();
 
 
-        AtomicReference<ArmorStand> cryoPod = new AtomicReference<>(null);
-        if (pveUpgrade) {
-            cryoPod.set(Utils.spawnArmorStand(warpLocation, null));
-
-            PlayerFilter.entitiesAround(warpLocation, 15, 15, 15)
-                        .aliveEnemiesOf(wp)
-                        .forEach(warlordsEntity -> {
-                            if (warlordsEntity instanceof WarlordsNPC) {
-                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(cryoPod.get());
-                            }
-                        });
+        PveOption pveOption = wp.getGame()
+                                .getOptions()
+                                .stream()
+                                .filter(PveOption.class::isInstance)
+                                .map(PveOption.class::cast)
+                                .findFirst()
+                                .orElse(null);
+        CryoPod cryoPod;
+        if (pveUpgrade && pveOption != null) {
+            cryoPod = new CryoPod(warpLocation, wp.getName()) {
+                @Override
+                public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarpCryomancer>(
+                            "Frostbite Leap",
+                            "WARP RES",
+                            TimeWarpCryomancer.class,
+                            null,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager2 -> {
+                            },
+                            cooldownManager2 -> {
+                            },
+                            5 * 20,
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            })
+                    ) {
+                        @Override
+                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * .2f;
+                        }
+                    });
+                    PlayerFilter.entitiesAround(warpLocation, 5, 5, 5)
+                                .aliveEnemiesOf(wp)
+                                .forEach(warlordsEntity -> {
+                                    if (warlordsEntity instanceof WarlordsNPC) {
+                                        warlordsEntity.addSpeedModifier(wp, "Frostbite Leap", -80, 60);
+                                    }
+                                });
+                }
+            };
+            pveOption.spawnNewMob(cryoPod, Team.BLUE);
+        } else {
+            cryoPod = null;
         }
 
         RegularCooldown<TimeWarpCryomancer> timeWarpCooldown = new RegularCooldown<>(
@@ -78,40 +113,10 @@ public class TimeWarpCryomancer extends AbstractTimeWarpBase {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
-
-                    if (pveUpgrade && cryoPod.get() != null) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Frostbite Leap",
-                                "WARP RES",
-                                TimeWarpCryomancer.class,
-                                null,
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager2 -> {
-                                },
-                                cooldownManager2 -> {
-                                },
-                                5 * 20,
-                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                })
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * .2f;
-                            }
-                        });
-                        PlayerFilter.entitiesAround(warpLocation, 5, 5, 5)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(warlordsEntity -> {
-                                        if (warlordsEntity instanceof WarlordsNPC) {
-                                            warlordsEntity.addSpeedModifier(wp, "Frostbite Leap", -80, 60);
-                                        }
-                                    });
-                    }
                 },
                 cooldownManager -> {
-                    if (pveUpgrade && cryoPod.get() != null) {
-                        cryoPod.get().remove();
+                    if (pveOption != null && cryoPod != null && pveOption.getMobs().contains(cryoPod)) {
+                        cryoPod.getWarlordsNPC().die(cryoPod.getWarlordsNPC());
                     }
                 },
                 tickDuration,
@@ -163,7 +168,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarpBase {
 
                         }
 
-                        if (pveUpgrade && cryoPod.get() != null) {
+                        if (pveUpgrade && cryoPod != null && cryoPod.getWarlordsNPC().isAlive()) {
                             EffectUtils.playCylinderAnimation(warpLocation, .7, Particle.CLOUD, 1);
                             points = 24;
                             radius = .85;
@@ -182,13 +187,6 @@ public class TimeWarpCryomancer extends AbstractTimeWarpBase {
                                         true
                                 );
                             }
-//                            PlayerFilter.entitiesAround(warpLocation, 10, 10, 10)
-//                                        .aliveEnemiesOf(wp)
-//                                        .forEach(warlordsEntity -> {
-//                                            if (warlordsEntity instanceof WarlordsNPC) {
-//                                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(cryoPod.get());
-//                                            }
-//                                        });
                         }
                     }
                 })

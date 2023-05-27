@@ -23,6 +23,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class GroundSlam extends AbstractAbility {
 
@@ -58,7 +59,9 @@ public class GroundSlam extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
-        activateAbility(wp, 1);
+
+        UUID abilityUUID = UUID.randomUUID();
+        activateAbility(wp, 1, abilityUUID);
 
         if (pveUpgrade) {
             wp.setVelocity(name, new Vector(0, 1.2, 0), true);
@@ -85,7 +88,7 @@ public class GroundSlam extends AbstractAbility {
 
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_IRON_GOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
-                        activateAbility(wp, 1.5f);
+                        activateAbility(wp, 1.5f, abilityUUID);
                         this.cancel();
                     }
                 }
@@ -94,7 +97,7 @@ public class GroundSlam extends AbstractAbility {
         return true;
     }
 
-    private void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier) {
+    private void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
@@ -143,7 +146,8 @@ public class GroundSlam extends AbstractAbility {
                                     maxDamageHeal * damageMultiplier,
                                     critChance,
                                     critMultiplier,
-                                    trueDamage
+                                    trueDamage,
+                                    abilityUUID
                             );
                         }
                     }
