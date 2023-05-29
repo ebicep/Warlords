@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.*;
@@ -125,6 +126,8 @@ public abstract class DatabaseGameBase {
                         .forEachOrdered(warlordsPlayer -> DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
                                 databasePlayer -> databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked())
                         ));
+
+                    System.out.println(DatabaseGameCTF.getWarlordsPlusEndGameStats(game));
                 }
             }
 
