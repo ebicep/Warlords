@@ -539,13 +539,13 @@ public enum SkillBoosts {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you §7deal with Windfury Weapon §7by 40% and increase the proc §7chance by 20%",
-            "§aIncrease the damage you §adeal with Windfury Weapon §aby §c40% §aand increase the proc §achance by §c20%",
+            "§7Increase the damage you §7deal with Windfury Weapon §7by 30% and increase the proc §7chance by 10%",
+            "§aIncrease the damage you §adeal with Windfury Weapon §aby §c30% §aand increase the proc §achance by §c10%",
             Windfury.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
-                    ((Windfury) abstractAbility).setProcChance(55);
-                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 40);
+                    ((Windfury) abstractAbility).setProcChance(45);
+                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 30);
                 }
             }
     ),

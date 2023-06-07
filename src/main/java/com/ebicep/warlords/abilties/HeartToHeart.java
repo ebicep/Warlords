@@ -53,13 +53,13 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        int radius = getRadius();
+        int verticalRadius = getVerticalRadius();
         if (wp.hasFlag()) {
             radius = 10;
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
-            radius = getRadius();
-            verticalRadius = getVerticalRadius();
         }
 
         if (wp.isInPve()) {

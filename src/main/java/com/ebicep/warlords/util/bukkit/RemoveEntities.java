@@ -23,7 +23,7 @@ public class RemoveEntities {
      * Checks any world for orphan horses, and kill them
      */
     public static void removeHorsesInGame() {
-        Bukkit.getWorlds().stream().skip(1).forEachOrdered(world -> {
+        Bukkit.getWorlds().forEach(world -> {
             new ArrayList<>(world.getEntities()).stream().filter(entity -> (entity instanceof Horse && entity.getPassenger() == null)).forEach(Entity::remove);
         });
     }

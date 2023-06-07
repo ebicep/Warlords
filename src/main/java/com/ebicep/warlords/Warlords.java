@@ -1,5 +1,6 @@
 package com.ebicep.warlords;
 
+import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
@@ -9,6 +10,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
@@ -53,6 +55,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
@@ -135,6 +138,14 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
+    public static WarlordsEntity getPlayer(@Nullable net.minecraft.server.v1_8_R3.Entity entity) {
+        if (entity != null) {
+            return getPlayer(entity.getBukkitEntity());
+        }
+        return null;
+    }
+
+    @Nullable
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
             Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
@@ -144,14 +155,6 @@ public class Warlords extends JavaPlugin {
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static WarlordsEntity getPlayer(@Nullable net.minecraft.server.v1_8_R3.Entity entity) {
-        if (entity != null) {
-            return getPlayer(entity.getBukkitEntity());
         }
         return null;
     }
@@ -434,8 +437,13 @@ public class Warlords extends JavaPlugin {
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
                                 }
-                                if (dismount && e.getPlayer().getVehicle() != null) {
-                                    e.getPlayer().getVehicle().remove();
+                                Player player = e.getPlayer();
+                                if (dismount && CustomHorse.record.contains(player.getUniqueId())) {
+                                    ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - dismount - " + player.getVehicle(), false);
+                                }
+                                if (dismount && player.getVehicle() != null) {
+                                    e.setCancelled(true);
+                                    player.getVehicle().remove();
                                 }
                             }
                         }

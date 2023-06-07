@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
@@ -7,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -45,6 +47,7 @@ public class HorseOption implements Option, Listener {
                         k -> new CustomHorse(((CraftWorld) warlordsEntity.getWorld()).getHandle(), warlordsEntity)
                 );
                 customHorse.spawn();
+                break;
             }
         }
     }
@@ -123,9 +126,15 @@ public class HorseOption implements Option, Listener {
                 player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
+                if (CustomHorse.record.contains(player.getUniqueId())) {
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + playerHorses.get(player.getUniqueId()), false);
+                }
                 CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(),
                         k -> new CustomHorse(((CraftWorld) player.getWorld()).getHandle(), wp)
                 );
+                if (CustomHorse.record.contains(player.getUniqueId())) {
+                    ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + customHorse, false);
+                }
                 customHorse.spawn();
                 if (!wp.isDisableCooldowns()) {
                     wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
