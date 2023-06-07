@@ -1,7 +1,8 @@
 package com.ebicep.customentities.nms;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import net.minecraft.server.v1_8_R3.EntityHorse;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.World;
@@ -12,8 +13,13 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CustomHorse extends EntityHorse {
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
+public class CustomHorse {
+
+    public static Set<UUID> record = new HashSet<>();
     private WarlordsEntity owner;
     private Horse horse;
     private int cooldown = 15;
@@ -34,7 +40,7 @@ public class CustomHorse extends EntityHorse {
 //    private float shield = 0;
 
     public CustomHorse(World world, WarlordsEntity owner) {
-        super(world);
+        // super(world);
         this.owner = owner;
     }
 
@@ -44,6 +50,11 @@ public class CustomHorse extends EntityHorse {
         }
         Player player = (Player) owner.getEntity();
         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+        UUID uniqueId = player.getUniqueId();
+        if (record.contains(uniqueId)) {
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - spawn", false);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - " + player.getVehicle(), false);
+        }
         horse.setTamed(true);
         horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
         horse.setOwner(player);
@@ -53,7 +64,15 @@ public class CustomHorse extends EntityHorse {
         horse.setStyle(Horse.Style.NONE);
         horse.setAdult();
         ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(speed);
+        if (record.contains(uniqueId)) {
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - pre passenger", false);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - " + player.getVehicle(), false);
+        }
         horse.setPassenger(player);
+        if (record.contains(uniqueId)) {
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - post passenger", false);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, player.getName() + " - " + player.getVehicle(), false);
+        }
         this.horse = horse;
 //        this.health = this.maxHealth;
 //        owner.setTimeAfterDismount(0);

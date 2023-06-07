@@ -27,7 +27,7 @@ public class TournamentStats {
     }
 }
 
-class DatabasePlayerTournamentStats extends DatabasePlayerGeneral {
+    public static class DatabasePlayerTournamentStats extends DatabasePlayerGeneral {
 
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();

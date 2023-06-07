@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameManager;
@@ -38,6 +39,18 @@ public class AdminCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Enabled Bypassing Currencies", true);
             }
         });
+    }
+
+    @Subcommand("horsedebug")
+    public void horse(Player player, @Flags("other") Player target) {
+        if (CustomHorse.record.contains(target.getUniqueId())) {
+            CustomHorse.record.remove(target.getUniqueId());
+            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Removed " + target.getName(), true);
+        } else {
+            CustomHorse.record.add(target.getUniqueId());
+            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + target.getName(), true);
+        }
+
     }
 
     @Subcommand("disablegames")
