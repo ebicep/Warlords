@@ -29,7 +29,7 @@ public enum DifficultyIndex {
     ),
     EXTREME("Extreme",
             "Fight off 25 waves of the hardest\nopponents and bosses with augmented\nabilities." +
-                    "\n\nModifiers:\n§c+100% Mob Health\n+75% Mob Damage\n\nExtreme Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.\n\nInsignia gain is reduced.",
+                    "\n\nModifiers:\n§c+100% Mob Health\n+75% Mob Damage\n\nExtreme Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
             ChatColor.DARK_RED,
             25,
             4
