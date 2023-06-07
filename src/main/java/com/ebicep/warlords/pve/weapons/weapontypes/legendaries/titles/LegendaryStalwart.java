@@ -25,7 +25,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
 
     public static final int UNDER_HP_CHECK = 80;
     public static final int UNDER_HP_CHECK_INCREASE_PER_UPGRADE = 5;
-    public static final int EVERY_HP_PERCENT = 10;
+    public static final int EVERY_HP_PERCENT = 15;
     public static final float EVERY_HP_PERCENT_DECREASE_PER_UPGRADE = .5f;
 
     public static final int REDUCTION_DURATION = 5;
