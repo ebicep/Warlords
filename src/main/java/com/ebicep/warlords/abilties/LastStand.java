@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,7 +32,7 @@ public class LastStand extends AbstractAbility implements Duration {
 
     protected float amountPrevented = 0;
 
-    private final int radius = 7;
+    private int radius = 7;
     private int selfTickDuration = 240;
     private int allyTickDuration = 120;
     private int selfDamageReductionPercent = 50;
@@ -212,16 +213,18 @@ public class LastStand extends AbstractAbility implements Duration {
         if (pveUpgrade) {
             addSecondaryAbility(
                     () -> {
-                        for (WarlordsEntity we : PlayerFilter
-                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
+                        float kbRadius = radius / 2f + 1;
+                        for (WarlordsNPC warlordsNPC : PlayerFilterGeneric
+                                .entitiesAround(wp, kbRadius, kbRadius, kbRadius)
+                                .warlordsNPCs()
                                 .aliveEnemiesOf(wp)
-                                .closestFirst(wp)
+                                .closestFirst(wp.getLocation())
                         ) {
-                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
-                            Utils.addKnockback(name, wp.getLocation(), we, -2, 0.25f);
+                            EffectUtils.playSphereAnimation(wp.getLocation(), kbRadius, ParticleEffect.FLAME, 1);
+                            warlordsNPC.getMob().setTarget(wp);
                         }
                     },
-                    true,
+                    false,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(tempLastStand)
             );
         }
@@ -267,6 +270,13 @@ public class LastStand extends AbstractAbility implements Duration {
     public void multiplyTickDuration(float multiplier) {
         this.selfTickDuration *= multiplier;
         this.allyTickDuration *= multiplier;
+    }
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

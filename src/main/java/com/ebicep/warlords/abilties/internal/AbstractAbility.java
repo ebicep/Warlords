@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilties.internal;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.math.RoundingMode;
@@ -146,7 +148,13 @@ public abstract class AbstractAbility {
     }
 
     public void addSecondaryAbility(Runnable runnable, boolean infiniteUses, Predicate<SecondaryAbility> shouldRemove) {
-        secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove));
+        // delay to prevent insta cast
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove));
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     public void runSecondAbilities() {
