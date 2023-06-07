@@ -25,78 +25,78 @@ public class TournamentStats {
     public DatabasePlayerTournamentStats getCurrentTournamentStats() {
         return this.tournament2Stats;
     }
-}
 
     public static class DatabasePlayerTournamentStats extends DatabasePlayerGeneral {
 
-    @Field("ctf_stats")
-    private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
-    @Field("tdm_stats")
-    private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
-    @Field("interception_stats")
-    private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
-    @Field("duel_stats")
-    private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
+        @Field("ctf_stats")
+        private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
+        @Field("tdm_stats")
+        private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
+        @Field("interception_stats")
+        private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
+        @Field("duel_stats")
+        private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
 
-    @Override
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
-            GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
-            DatabaseGamePlayerResult result,
-            int multiplier,
-            PlayersCollections playersCollection
-    ) {
-        //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
-        //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        switch (gameMode) {
-            case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case INTERCEPTION:
-                this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case DUEL:
-                this.duelStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
+        @Override
+        public void updateCustomStats(
+                com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+                GameMode gameMode,
+                DatabaseGamePlayerBase gamePlayer,
+                DatabaseGamePlayerResult result,
+                int multiplier,
+                PlayersCollections playersCollection
+        ) {
+            //UPDATE UNIVERSAL EXPERIENCE
+            this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
+            //UPDATE CLASS, SPEC
+            this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            switch (gameMode) {
+                case CAPTURE_THE_FLAG:
+                    this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                    break;
+                case TEAM_DEATHMATCH:
+                    this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                    break;
+                case INTERCEPTION:
+                    this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                    break;
+                case DUEL:
+                    this.duelStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                    break;
+            }
         }
-    }
 
-    public DatabasePlayerCTF getCtfStats() {
-        return ctfStats;
-    }
+        public DatabasePlayerCTF getCtfStats() {
+            return ctfStats;
+        }
 
-    public void setCtfStats(DatabasePlayerCTF ctfStats) {
-        this.ctfStats = ctfStats;
-    }
+        public void setCtfStats(DatabasePlayerCTF ctfStats) {
+            this.ctfStats = ctfStats;
+        }
 
-    public DatabasePlayerTDM getTdmStats() {
-        return tdmStats;
-    }
+        public DatabasePlayerTDM getTdmStats() {
+            return tdmStats;
+        }
 
-    public void setTdmStats(DatabasePlayerTDM tdmStats) {
-        this.tdmStats = tdmStats;
-    }
+        public void setTdmStats(DatabasePlayerTDM tdmStats) {
+            this.tdmStats = tdmStats;
+        }
 
-    public DatabasePlayerInterception getInterceptionStats() {
-        return interceptionStats;
-    }
+        public DatabasePlayerInterception getInterceptionStats() {
+            return interceptionStats;
+        }
 
-    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
-        this.interceptionStats = interceptionStats;
-    }
+        public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
+            this.interceptionStats = interceptionStats;
+        }
 
-    public DatabasePlayerDuel getDuelStats() {
-        return duelStats;
-    }
+        public DatabasePlayerDuel getDuelStats() {
+            return duelStats;
+        }
 
-    public void setDuelStats(DatabasePlayerDuel duelStats) {
-        this.duelStats = duelStats;
+        public void setDuelStats(DatabasePlayerDuel duelStats) {
+            this.duelStats = duelStats;
+        }
     }
 }
