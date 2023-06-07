@@ -71,7 +71,7 @@ public class RighteousStrike extends AbstractStrikeBase {
         }
 
         if (pveUpgrade) {
-            SoulShackle.shacklePlayer(wp, nearPlayer, 200);
+            SoulShackle.shacklePlayer(wp, nearPlayer, 120);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(nearPlayer, 4, 4, 4)
                     .aliveEnemiesOf(wp)
