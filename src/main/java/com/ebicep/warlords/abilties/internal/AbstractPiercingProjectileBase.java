@@ -4,22 +4,28 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
@@ -103,103 +109,95 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
-        return null;
-//        Vec3 before = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
-//        currentLocation.add(speed);
-//        Vec3 after = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
-//        int radius = 3;/* TODO */
-//        PlayerFilter.entitiesInRectangle(
-//                currentLocation.getWorld(),
-//                Math.min(before.x - radius, after.x - radius), Math.min(before.y - radius, after.y - radius), Math.min(before.z - radius, after.z - radius),
-//                Math.max(before.x + radius, after.x + radius), Math.max(before.y + radius, after.y + radius), Math.max(before.z + radius, after.z + radius)
-//        ).enemiesOf(shooter).filter(e -> true /* TODO */);
-//
-//        @Nullable
-//        HitResult hit = null;
-//        double hitDistance = 0;
-//        for (Entity entity : currentLocation.getWorld().getEntities()) {
-//            WarlordsEntity wp = getFromEntity(entity);
-//            if (wp != null && (hitTeammates || shooter.isEnemyAlive(wp)) && wp.isAlive() && wp != shooter) {
-//                // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
-//                assert entity instanceof CraftEntity;
-//                net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-//                AABB aabb = nmsEntity.getBoundingBox();
-//                // Increase the size of the boundingbox so entities are easier
-//                // to hit. This is needed because people see their projectiles
-//                // as something big, instead of a tiny point
-//                aabb = new AABB(
-//                        aabb.minX - playerHitbox,
-//                        aabb.minY - playerHitbox,
-//                        aabb.minZ - playerHitbox,
-//                        aabb.maxX + playerHitbox,
-//                        aabb.maxY + playerHitbox,
-//                        aabb.maxZ + playerHitbox
-//                );
-//                HitResult mop = aabb.clip(after, before);
-//                if (mop != null) {
-//                    mop.entity = nmsEntity;
-//                    double distance = before.distanceSquared(mop.pos);
-//                    if (shouldEndProjectileOnHit(projectile, wp)) {
-//                        if (hit == null || distance < hitDistance) {
-//                            hitDistance = distance;
-//                            hit = mop;
-//                        }
-//                    } else {
-//                        PENDING_HITS.add(new PendingHit(
-//                                new Location(
-//                                        currentLocation.getWorld(),
-//                                        mop.pos.a,
-//                                        mop.pos.b,
-//                                        mop.pos.c
-//                                ), distance, wp)
-//                        );
-//                    }
-//                }
-//            }
-//        }
-//        BlockIterator itr = new BlockIterator(currentLocation.getWorld(), new Vector(before.a, before.b, before.c), speed, 0, (int) (projectileSpeed + 1));
-//        while (itr.hasNext()) {
-//            Block block = itr.next();
-//            if (block.getType().isSolid() && block.getType() != Material.BARRIER && block.getType() != Material.STANDING_BANNER) {
-//                BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
-//                ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
-//                BlockState type = world.getBlockState(pos);
-//                AABB box = type.getBlock().a(world, pos, type);
-//                HitResult mop = box.a(after, before);
-//                // Flags have no hitbox while they are considered solid??
-//                if (mop != null) {
-//                    double distance = before.distanceSquared(mop.pos);
-//                    if (shouldEndProjectileOnHit(projectile, block)) {
-//                        if ((hit == null || distance < hitDistance)) {
-//                            hitDistance = distance;
-//                            hit = mop;
-//                        }
-//                        // If we hit this point, we either have collided with a
-//                        // player closer by, or we hit a block. Blocks are
-//                        // checked in order so we can bail out early
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        if (hit != null) {
-//            currentLocation.setX(hit.pos.a);
-//            currentLocation.setY(hit.pos.b);
-//            currentLocation.setZ(hit.pos.c);
-//        }
-//        if (!PENDING_HITS.isEmpty()) {
-//            Collections.sort(PENDING_HITS);
-//            for (PendingHit p : PENDING_HITS) {
-//                if (hit == null || hitDistance < p.distance) {
-//                    this.onNonCancellingHit(projectile, p.hit, p.loc);
-//                } else {
-//                    break;
-//                }
-//            }
-//            PENDING_HITS.clear();
-//        }
-//        return hit;
+        Vec3 currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
+        currentLocation.add(speed);
+        Vec3 nextPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
 
+        @Nullable
+        HitResult hit = null;
+        double hitDistance = 0;
+        for (Entity entity : currentLocation.getWorld().getEntities()) {
+            WarlordsEntity wp = getFromEntity(entity);
+            if (wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter) {
+                continue;
+            }
+            // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
+            assert entity instanceof CraftEntity;
+            net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+            AABB aabb = nmsEntity.getBoundingBox().inflate(playerHitbox);
+            Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
+            if (vec3.isEmpty()) {
+                continue;
+            }
+            Vec3 vec = vec3.get();
+            double distance = currentPosition.distanceToSqr(vec);
+            if (shouldEndProjectileOnHit(projectile, wp)) {
+                if (hit == null || distance < hitDistance) {
+                    hitDistance = distance;
+                    hit = new EntityHitResult(nmsEntity);
+                    currentLocation.set(vec.x, vec.y, vec.z);
+                }
+            } else {
+                PENDING_HITS.add(new PendingHit(
+                        new Location(
+                                currentLocation.getWorld(),
+                                vec.x,
+                                vec.y,
+                                vec.z
+                        ), distance, wp)
+                );
+            }
+        }
+        BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
+                new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
+                speed,
+                0,
+                (int) (projectileSpeed + 1)
+        );
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            if (!block.getType().isSolid() || block.getType() == Material.BARRIER || block.getBlockData() instanceof Banner) {
+                continue;
+            }
+            BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
+            ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
+            BlockState blockData = world.getBlockState(pos);
+            VoxelShape collisionShape = blockData.getCollisionShape(world, pos);
+            if (collisionShape.isEmpty()) {
+                continue;
+            }
+            BlockHitResult blockHitResult = collisionShape.clip(currentPosition, nextPosition, pos);
+            // Flags have no hitbox while they are considered solid??
+            if (blockHitResult == null) {
+                continue;
+            }
+            if (!shouldEndProjectileOnHit(projectile, block)) {
+                continue;
+            }
+            Vec3 location = blockHitResult.getLocation();
+            double distance = currentPosition.distanceToSqr(location);
+            if ((hit == null || distance < hitDistance)) {
+                hitDistance = distance;
+                hit = blockHitResult;
+                currentLocation.set(location.x, location.y, location.z);
+            }
+            // If we hit this point, we either have collided with a
+            // player closer by, or we hit a block. Blocks are
+            // checked in order so we can bail out early
+            break;
+        }
+        if (!PENDING_HITS.isEmpty()) {
+            Collections.sort(PENDING_HITS);
+            for (PendingHit p : PENDING_HITS) {
+                if (hit == null || hitDistance < p.distance) {
+                    this.onNonCancellingHit(projectile, p.hit, p.loc);
+                } else {
+                    break;
+                }
+            }
+            PENDING_HITS.clear();
+        }
+        return hit;
     }
 
     @Nullable
@@ -268,10 +266,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.subtractEnergy(energyCost, false);
 
-
         List<Location> projectileLocations = getLocationsToFireShots(shooter.getEntity());
-        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Shot projectile (" + projectileLocations.size() + ")" + shooter.getName() + " -
-        // " + shooter.getSpecClass());
         List<InternalProjectile> internalProjectiles = new ArrayList<>();
         for (Location projectileLocation : projectileLocations) {
             InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
@@ -414,13 +409,13 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         public void run() {
             if (!shooter.getGame().isFrozen()) {
                 updateSpeed(this);
-                HitResult hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
-                if (hasCollided != null) {
-                    int hitBySplash = onHit(this, hasCollided instanceof EntityHitResult entityHitResult ?
+                HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
+                if (hitResult != null) {
+                    int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
                                                   getFromEntity(entityHitResult.getEntity().getBukkitEntity()) :
                                                   null
                     );
-                    if (hasCollided instanceof EntityHitResult) {
+                    if (hitResult.getType() == HitResult.Type.ENTITY) {
                         directHits++;
                     }
                     if (hitBySplash > 0) {

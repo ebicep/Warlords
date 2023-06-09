@@ -344,7 +344,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public BossBar getBossBar() {
-        return bossBar.progress(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth());
+        return bossBar.progress(Math.max(0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1)));
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
