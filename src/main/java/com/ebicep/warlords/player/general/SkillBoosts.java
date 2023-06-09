@@ -654,17 +654,17 @@ public enum SkillBoosts {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            Component.text("Increase the damage you deal with Windfury Weapon by 40% and increase the proc chance by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Windfury Weapon by 30% and increase the proc chance by 10%", NamedTextColor.GRAY),
             Component.text("Increase the damage you deal with Windfury Weapon by ", NamedTextColor.GREEN)
-                     .append(Component.text("40% ", NamedTextColor.RED))
+                     .append(Component.text("30% ", NamedTextColor.RED))
                      .append(Component.text("and increase the proc ", NamedTextColor.RED))
                      .append(Component.text("chance by ", NamedTextColor.GREEN))
-                     .append(Component.text("20%", NamedTextColor.RED)),
+                     .append(Component.text("10%", NamedTextColor.RED)),
             Windfury.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
-                    ((Windfury) abstractAbility).setProcChance(55);
-                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 40);
+                    ((Windfury) abstractAbility).setProcChance(45);
+                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 30);
                 }
             }
     ),

@@ -29,9 +29,7 @@ public class RemoveEntities {
      */
     public static void removeHorsesInGame() {
         Bukkit.getWorlds()
-              .stream()
-              .skip(1)
-              .forEachOrdered(world -> new ArrayList<>(world.getEntities())
+              .forEach(world -> new ArrayList<>(world.getEntities())
                       .stream()
                       .filter(entity -> (entity instanceof Horse && entity.getPassengers().isEmpty()))
                       .forEach(Entity::remove)

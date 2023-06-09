@@ -58,6 +58,7 @@ public class GameFreezeWhenOfflineOption implements Option {
                         for (Map.Entry<OfflinePlayer, Team> player : players) {
                             offlineDuration.merge(player.getKey().getUniqueId(), 1, Integer::sum);
                             if (offlineDuration.get(player.getKey().getUniqueId()) > leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4)) {
+                                offlineDuration.put(player.getKey().getUniqueId(), 0);
                                 leaveCheckDuration.put(player.getKey().getUniqueId(), leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4) + 4);
                                 game.addFrozenCause(FROZEN_MESSAGE);
 

@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -97,7 +98,7 @@ public class IceBarrier extends AbstractAbility implements Duration {
                                     .closestFirst(wp)
                             ) {
                                 we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
-                                we.addSpeedModifier(wp, "Ice Barrier Slowness", -80, 20);
+                                we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
                             }
                         }
 
@@ -118,6 +119,13 @@ public class IceBarrier extends AbstractAbility implements Duration {
                 float newDamageValue = currentDamageValue * getDamageReduction();
                 event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveUpgrade) {
+                    currentVector.multiply(0.7);
+                }
             }
         });
 

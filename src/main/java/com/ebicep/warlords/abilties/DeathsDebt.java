@@ -272,7 +272,7 @@ public class DeathsDebt extends AbstractTotemBase implements Duration {
             @Override
             public void multiplyKB(Vector currentVector) {
                 if (pveUpgrade) {
-                    currentVector.multiply(0.2);
+                    currentVector.multiply(0.5);
                 }
             }
         });

@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
@@ -137,8 +138,10 @@ public class Illumina extends AbstractZombie implements BossMob {
             }
         }
 
+        DifficultyIndex difficulty = option.getDifficulty();
+
         if (ticksElapsed % 400 == 0) {
-            for (int i = 0; i < playerCount; i++) {
+            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(spawnLocation));
             }
         }
@@ -151,7 +154,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, 12500, 11);
-            for (int i = 0; i < (3 * playerCount); i++) {
+            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? 2 : 3) * playerCount; i++) {
                 option.spawnNewMob(new ExiledSkeleton(loc));
             }
         }
@@ -159,7 +162,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
             timedDamage(option, playerCount, 15000, 11);
-            for (int i = 0; i < playerCount; i++) {
+            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
                 option.spawnNewMob(new ForgottenZombie(loc));
             }
         }
@@ -167,7 +170,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, 5000, 6);
-            for (int i = 0; i < (2 * playerCount); i++) {
+            for (int i = 0; i < ((difficulty == DifficultyIndex.EXTREME ? 1 : 2) * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
         }

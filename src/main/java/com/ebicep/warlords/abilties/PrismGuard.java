@@ -248,18 +248,18 @@ public class PrismGuard extends AbstractAbility implements Duration {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterReduction;
+                int totalReduction = 0;
                 hits.getAndIncrement();
                 if (Utils.isProjectile(event.getAbility())) {
-                    if (isInsideBubble.contains(event.getAttacker())) {
-                        afterReduction = currentDamageValue;
-                    } else {
+                    if (!isInsideBubble.contains(event.getAttacker())) {
                         timesProjectilesReduced++;
-                        afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
+                        totalReduction += projectileDamageReduction;
                     }
-                } else {
-                    afterReduction = currentDamageValue;
                 }
+                if (pveUpgrade) {
+                    totalReduction += 10;
+                }
+                float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;
                 tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
                 return afterReduction;
             }

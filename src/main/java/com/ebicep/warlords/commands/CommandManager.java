@@ -552,6 +552,7 @@ public class CommandManager {
         manager.registerCommand(new ServerStatusCommand());
         manager.registerCommand(new SudoCommand());
         manager.registerCommand(new TestCommand());
+        manager.registerCommand(new TournamentCommand());
         manager.registerCommand(new WarlordsPlusCommand());
 
         manager.registerCommand(new AchievementsCommand(), true);

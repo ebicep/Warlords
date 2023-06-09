@@ -124,7 +124,7 @@ public class DebugMenuGameOptions {
             for (int i = 0; i < GameAddon.VALUES.length; i++) {
                 GameAddon gameAddon = GameAddon.VALUES[i];
 
-                if (!player.isOp() && gameAddon == GameAddon.TOURNAMENT_MODE) {
+                if (!player.isOp() && gameAddon == GameAddon.TOURNAMENT_MODE && !player.hasPermission("warlords.game.tournament")) {
                     continue;
                 }
 
@@ -161,7 +161,7 @@ public class DebugMenuGameOptions {
                 );
             }
             if (player.hasPermission("warlords.game.customtoggle")) {
-                menu.setItem(4,
+                menu.setItem(3,
                         0,
                         new ItemBuilder(Material.DIAMOND_BLOCK)
                                 .name(Component.text("Comps Preset", NamedTextColor.GREEN))
@@ -177,6 +177,20 @@ public class DebugMenuGameOptions {
                                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
                         })
                 );
+                menu.setItem(5,
+                        0,
+                        new ItemBuilder(Material.GOLD_BLOCK)
+                                .name(ChatColor.GREEN + "Tournament Preset")
+                                .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe\n- Tournament Mode")
+                                .get(),
+                        (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
+                            queueEntryBuilder
+                                    .setMap(selectedGameMap)
+                                    .setGameMode(selectedGameMode)
+                                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME, GameAddon.TOURNAMENT_MODE);
+                        })
+                );
+
             }
             menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
             menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);

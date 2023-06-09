@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -47,6 +48,7 @@ public class HorseOption implements Option, Listener {
                         k -> new CustomHorse(((CraftWorld) warlordsEntity.getWorld()).getHandle(), warlordsEntity)
                 );
                 customHorse.spawn();
+                break;
             }
         }
     }

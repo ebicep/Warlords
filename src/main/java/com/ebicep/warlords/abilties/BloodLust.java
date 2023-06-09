@@ -24,7 +24,7 @@ public class BloodLust extends AbstractAbility implements Duration {
 
     private int tickDuration = 300;
     private int damageConvertPercent = 65;
-    private int healReductionPercent = 10;
+    private float healReductionPercent = 10;
 
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20);
@@ -155,11 +155,11 @@ public class BloodLust extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getHealReductionPercent() {
+    public float getHealReductionPercent() {
         return healReductionPercent;
     }
 
-    public void setHealReductionPercent(int healReductionPercent) {
+    public void setHealReductionPercent(float healReductionPercent) {
         this.healReductionPercent = healReductionPercent;
     }
 }

@@ -128,14 +128,14 @@ public class Vindicate extends AbstractAbility implements Duration {
                     event.getAttacker().addDamageInstance(
                             event.getWarlordsEntity(),
                             name,
-                            currentDamageValue,
-                            currentDamageValue,
+                            currentDamageValue * .75f,
+                            currentDamageValue * .75f,
                             0,
                             100,
                             true,
                             EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
                     );
-                    return currentDamageValue * 0;
+                    return currentDamageValue * .25f;
                 } else {
                     return currentDamageValue * getCalculatedVindicateDamageReduction();
                 }

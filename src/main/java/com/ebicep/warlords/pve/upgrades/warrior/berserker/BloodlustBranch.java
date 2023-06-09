@@ -8,40 +8,41 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
     float cooldown = ability.getCooldown();
+    float healReductionPercent = ability.getHealReductionPercent();
 
     public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+10% Max converted health",
+                "-3.75% Multi hit health reduction",
                 5000,
                 () -> {
-
+                    ability.setHealReductionPercent(healReductionPercent + 3.75f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+20% Max converted health",
+                "-7.5% Multi hit health reduction",
                 10000,
                 () -> {
-
+                    ability.setHealReductionPercent(healReductionPercent + 7.5f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+30% Max converted health",
+                "-11.25% Multi hit health reduction",
                 15000,
                 () -> {
-
+                    ability.setHealReductionPercent(healReductionPercent + 11.25f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+40% Max converted health",
+                "-15% Multi hit health reduction",
                 20000,
                 () -> {
-
+                    ability.setHealReductionPercent(healReductionPercent + 15);
                 }
         ));
 

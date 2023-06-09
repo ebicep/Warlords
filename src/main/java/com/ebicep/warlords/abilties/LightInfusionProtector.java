@@ -78,7 +78,7 @@ public class LightInfusionProtector extends AbstractLightInfusionBase {
             ) {
                 @Override
                 public void multiplyKB(Vector currentVector) {
-                    currentVector.multiply(0.1);
+                    currentVector.multiply(0.5);
                 }
 
                 @Override

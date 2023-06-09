@@ -1,5 +1,6 @@
 package com.ebicep.warlords;
 
+import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
@@ -9,6 +10,8 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.ebicep.customentities.nms.CustomHorse;
+import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;

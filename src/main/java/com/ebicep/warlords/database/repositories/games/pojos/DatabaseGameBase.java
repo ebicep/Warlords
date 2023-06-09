@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.*;
@@ -118,6 +119,11 @@ public abstract class DatabaseGameBase {
                         .forEachOrdered(warlordsPlayer -> DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
                                 databasePlayer -> databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked())
                         ));
+                    if (!GameMode.isPvE(game.getGameMode())) {
+                        Warlords.newChain()
+                                .async(() -> System.out.println(DatabaseGameCTF.getWarlordsPlusEndGameStats(game)))
+                                .execute();
+                    }
                 }
             }
 
@@ -160,6 +166,16 @@ public abstract class DatabaseGameBase {
         } catch (Exception e) {
             e.printStackTrace();
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
+
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
+            if (createDatabaseGame == null) {
+                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
+                return false;
+            }
+            DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
+            Warlords.newChain()
+                    .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
+                    .execute();
         }
         return updatePlayerStats;
     }

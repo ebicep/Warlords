@@ -1147,7 +1147,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 14, 14.5), Team.RED));
 
             options.add(new GraveOption());
-
+            options.add(new RespawnWaveOption(1, 20, 45));
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
@@ -1340,12 +1340,12 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 14, 14.5), Team.RED));
 
             options.add(new GraveOption());
-
+            options.add(new RespawnWaveOption(1, 20, 60));
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new CurrencyOnEventOption()
-                    .onKill(400)
+                    .onKill(500)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(12, 10 * SECOND, null)

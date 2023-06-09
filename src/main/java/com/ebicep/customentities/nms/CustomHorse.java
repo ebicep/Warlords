@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Material;
@@ -10,14 +11,15 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CustomHorse extends net.minecraft.world.entity.animal.horse.Horse {
 
+public class CustomHorse {
+
+    public static Set<UUID> record = new HashSet<>();
     private final WarlordsEntity warlordsEntityOwner;
     private final int cooldown = 15;
     private final float speed = .318f;
 
-    public CustomHorse(ServerLevel serverLevel, WarlordsEntity warlordsEntityOwner) {
-        super(net.minecraft.world.entity.EntityType.HORSE, serverLevel);
+    public CustomHorse(WarlordsEntity warlordsEntityOwner) {
         this.warlordsEntityOwner = warlordsEntityOwner;
     }
 
