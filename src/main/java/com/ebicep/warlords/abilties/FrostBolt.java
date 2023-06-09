@@ -143,7 +143,6 @@ public class FrostBolt extends AbstractProjectileBase {
                 for (WarlordsEntity freezeTarget : PlayerFilter
                         .entitiesAround(hit, 3, 3, 3)
                         .aliveEnemiesOf(giver)
-                        .limit(1)
                 ) {
                     new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE, (byte) 0).play();
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
