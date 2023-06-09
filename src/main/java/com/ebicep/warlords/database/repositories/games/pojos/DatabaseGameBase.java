@@ -169,7 +169,7 @@ public abstract class DatabaseGameBase {
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
-                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);

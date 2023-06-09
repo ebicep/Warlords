@@ -9,8 +9,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -30,13 +28,13 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
-                               .append(Component.text("10%", NamedTextColor.RED))
-                               .append(Component.text(" + "))
-                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.RED))
-                               .append(Component.text(" of the damage you've recently took. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+//        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+//                               .append(Component.text("10%", NamedTextColor.RED))
+//                               .append(Component.text(" + "))
+//                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.RED))
+//                               .append(Component.text(" of the damage you've recently took. Lasts "))
+//                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+//                               .append(Component.text(" seconds."));
         //"During the duration of Repentance every §c2000 §7damage you deal and take will heal you" +
         //                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
         //    TODO

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.pvp;
 
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -8,13 +7,15 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,9 +45,7 @@ public class HorseOption implements Option, Listener {
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption) {
                 HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
-                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(),
-                        k -> new CustomHorse(((CraftWorld) warlordsEntity.getWorld()).getHandle(), warlordsEntity)
-                );
+                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
                 customHorse.spawn();
                 break;
             }
@@ -83,7 +82,7 @@ public class HorseOption implements Option, Listener {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            playerHorses.put(player.getUuid(), new CustomHorse(((CraftWorld) player.getWorld()).getHandle(), player));
+            playerHorses.put(player.getUuid(), new CustomHorse(player));
         }
     }
 
@@ -127,14 +126,52 @@ public class HorseOption implements Option, Listener {
                 player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
-                CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(),
-                        k -> new CustomHorse(((CraftWorld) player.getWorld()).getHandle(), wp)
-                );
+                CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(), k -> new CustomHorse(wp));
                 customHorse.spawn();
                 if (!wp.isDisableCooldowns()) {
                     wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
                 }
             }
+        }
+    }
+
+    public static class CustomHorse {
+
+        private final WarlordsEntity warlordsEntityOwner;
+        private final int cooldown = 15;
+        private final float speed = .318f;
+
+        public CustomHorse(WarlordsEntity warlordsEntityOwner) {
+            this.warlordsEntityOwner = warlordsEntityOwner;
+        }
+
+        public void spawn() {
+            if (!(warlordsEntityOwner.getEntity() instanceof Player player)) {
+                return;
+            }
+            Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+            horse.setTamed(true);
+            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+            horse.setOwner(player);
+            horse.setJumpStrength(0);
+            horse.setColor(Horse.Color.BROWN);
+            horse.setStyle(Horse.Style.NONE);
+            horse.setAdult();
+            AttributeInstance attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+            if (attribute == null) {
+                horse.registerAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+            }
+            attribute.setBaseValue(speed);
+            horse.addPassenger(player);
+        }
+
+        public WarlordsEntity getWarlordsOwner() {
+            return warlordsEntityOwner;
+        }
+
+        public int getCooldown() {
+            return cooldown;
         }
     }
 }

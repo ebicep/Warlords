@@ -180,8 +180,12 @@ public class DebugMenuGameOptions {
                 menu.setItem(5,
                         0,
                         new ItemBuilder(Material.GOLD_BLOCK)
-                                .name(ChatColor.GREEN + "Tournament Preset")
-                                .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe\n- Tournament Mode")
+                                .name(Component.text("Tournament Preset", NamedTextColor.GREEN))
+                                .lore(Component.text("Select this to use the comps preset.", NamedTextColor.GOLD),
+                                        Component.text("- Private Game", NamedTextColor.GOLD),
+                                        Component.text("- Freeze Failsafe", NamedTextColor.GOLD),
+                                        Component.text("- Tournament Mode", NamedTextColor.GOLD)
+                                )
                                 .get(),
                         (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
                             queueEntryBuilder
