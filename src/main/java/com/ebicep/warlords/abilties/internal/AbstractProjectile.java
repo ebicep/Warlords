@@ -6,9 +6,9 @@ import org.bukkit.block.Block;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractProjectileBase extends AbstractPiercingProjectileBase {
+public abstract class AbstractProjectile extends AbstractPiercingProjectile {
 
-    public AbstractProjectileBase(
+    public AbstractProjectile(
             String name,
             float minDamageHeal,
             float maxDamageHeal,

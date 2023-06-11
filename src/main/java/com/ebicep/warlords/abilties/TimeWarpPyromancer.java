@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TimeWarpPyromancer extends AbstractTimeWarpBase {
+public class TimeWarpPyromancer extends AbstractTimeWarp {
 
     public TimeWarpPyromancer() {
         super();

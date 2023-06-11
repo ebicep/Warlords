@@ -8,14 +8,14 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractTimeWarpBase extends AbstractAbility {
+public abstract class AbstractTimeWarp extends AbstractAbility {
 
     protected int timesSuccessful = 0;
 
     protected int tickDuration = 100;
     protected int warpHealPercentage = 30;
 
-    public AbstractTimeWarpBase() {
+    public AbstractTimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30);
     }
 

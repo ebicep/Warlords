@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 
-public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
+public abstract class AbstractPiercingProjectile extends AbstractAbility {
 
     public int playersHit = 0;
     public int playersHitBySplash = 0;
@@ -47,7 +47,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected double projectileSpeed;
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
-    public AbstractPiercingProjectileBase(
+    public AbstractPiercingProjectile(
             String name,
             float minDamageHeal,
             float maxDamageHeal,

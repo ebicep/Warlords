@@ -17,12 +17,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractTotemBase extends AbstractAbility {
+public abstract class AbstractTotem extends AbstractAbility {
 
-    public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
+    public static Optional<AbstractTotem> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(AbstractTotemBase.class)
+                .filterCooldownClassAndMapToObjectsOfClass(AbstractTotem.class)
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
                 .findFirst();
     }
@@ -31,7 +31,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         return totem;
     }
 
-    public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends AbstractTotem> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
@@ -39,7 +39,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
                 .findFirst();
     }
 
-    public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends AbstractTotem> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
@@ -50,11 +50,11 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     protected WarlordsEntity owner;
     protected ArmorStand totem;
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+    public AbstractTotem(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    public AbstractTotemBase(
+    public AbstractTotem(
             String name,
             float minDamageHeal,
             float maxDamageHeal,

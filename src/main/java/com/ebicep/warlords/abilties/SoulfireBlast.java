@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.abilties.internal.AbstractChain;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -54,7 +54,7 @@ public class SoulfireBlast extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Location location = player.getTargetBlock(null, maxRange).getLocation().clone().add(.5, 1, .5).clone();
-        List<ArmorStand> beam = AbstractChainBase.spawnChain(location, wp.getLocation(), new ItemStack(Material.GRAY_STAINED_GLASS));
+        List<ArmorStand> beam = AbstractChain.spawnChain(location, wp.getLocation(), new ItemStack(Material.GRAY_STAINED_GLASS));
         Set<WarlordsEntity> enemies = new HashSet<>();
         for (ArmorStand armorStand : beam) {
             PlayerFilter.entitiesAround(armorStand.getLocation().add(0, .5, 0), 1.1, 1.2, 1.1)

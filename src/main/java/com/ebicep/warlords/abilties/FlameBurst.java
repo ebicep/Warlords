@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
+import com.ebicep.warlords.abilties.internal.AbstractProjectile;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlameBurst extends AbstractProjectileBase {
+public class FlameBurst extends AbstractProjectile {
 
     private float hitbox = 5;
     private double acceleration = 1.0275;

@@ -8,13 +8,13 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLightInfusionBase extends AbstractAbility implements Duration {
+public abstract class AbstractLightInfusion extends AbstractAbility implements Duration {
 
     protected int tickDuration = 60;
     protected int speedBuff = 40;
     protected int energyGiven = 120;
 
-    public AbstractLightInfusionBase(float cooldown) {
+    public AbstractLightInfusion(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, 0);
     }
 

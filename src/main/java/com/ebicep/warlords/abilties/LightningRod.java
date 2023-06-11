@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.AbstractTotem;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -82,7 +82,7 @@ public class LightningRod extends AbstractAbility {
         }
 
         // pulsedamage
-        List<CapacitorTotem> totemDownAndClose = AbstractTotemBase.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
+        List<CapacitorTotem> totemDownAndClose = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
         totemDownAndClose.forEach(capacitorTotem -> {
             ArmorStand totem = capacitorTotem.getTotem();
 

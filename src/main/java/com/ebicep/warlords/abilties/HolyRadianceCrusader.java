@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
+import com.ebicep.warlords.abilties.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
+public class HolyRadianceCrusader extends AbstractHolyRadiance {
 
     private final int markRadius = 15;
     private int markDuration = 8;

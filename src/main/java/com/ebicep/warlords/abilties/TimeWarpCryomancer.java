@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TimeWarpCryomancer extends AbstractTimeWarpBase {
+public class TimeWarpCryomancer extends AbstractTimeWarp {
 
     public TimeWarpCryomancer() {
         super();

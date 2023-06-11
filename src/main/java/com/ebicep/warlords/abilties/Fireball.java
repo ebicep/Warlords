@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
+import com.ebicep.warlords.abilties.internal.AbstractProjectile;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Fireball extends AbstractProjectileBase {
+public class Fireball extends AbstractProjectile {
 
     private int maxFullDistance = 50;
     private double directHitMultiplier = 1.15;

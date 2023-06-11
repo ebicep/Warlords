@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.abilties.internal.AbstractChain;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChainBase {
+public class ChainHeal extends AbstractChain {
 
     public ChainHeal() {
         super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);

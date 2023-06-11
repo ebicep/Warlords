@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.AbstractStrike;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.util.bukkit.LocationUtils.lerp;
 
-public class ProtectorsStrike extends AbstractStrikeBase {
+public class ProtectorsStrike extends AbstractStrike {
 
     private int minConvert = 75; // %
     private int maxConvert = 100; // %

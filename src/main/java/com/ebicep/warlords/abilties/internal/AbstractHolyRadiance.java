@@ -20,14 +20,14 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractHolyRadianceBase extends AbstractAbility {
+public abstract class AbstractHolyRadiance extends AbstractAbility {
 
     public int playersHealed = 0;
     public int playersMarked = 0;
 
     private int radius;
 
-    public AbstractHolyRadianceBase(
+    public AbstractHolyRadiance(
             String name,
             float minDamageHeal,
             float maxDamageHeal,

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.AbstractTotem;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class CapacitorTotem extends AbstractTotemBase implements Duration {
+public class CapacitorTotem extends AbstractTotem implements Duration {
 
     public int numberOfProcs = 0;
 

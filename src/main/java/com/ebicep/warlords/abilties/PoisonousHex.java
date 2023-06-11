@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
+import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class PoisonousHex extends AbstractPiercingProjectileBase implements Duration {
+public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
 
     private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
         List<RegularCooldown> currentPoisonousHexes = new CooldownFilter<>(to, RegularCooldown.class)

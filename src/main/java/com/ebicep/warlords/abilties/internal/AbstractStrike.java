@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class AbstractStrikeBase extends AbstractAbility {
+public abstract class AbstractStrike extends AbstractAbility {
 
     public static Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
@@ -33,7 +33,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
     private double hitbox = 4.8;
 
-    public AbstractStrikeBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+    public AbstractStrike(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 

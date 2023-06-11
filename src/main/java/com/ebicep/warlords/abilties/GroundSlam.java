@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -130,7 +130,7 @@ public class GroundSlam extends AbstractAbility {
                                 carrierHit++;
                             }
 
-                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class) && FlagHolder.playerTryingToPick(slamTarget)) {
+                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(slamTarget)) {
                                 warpsKnockbacked++;
                             }
 

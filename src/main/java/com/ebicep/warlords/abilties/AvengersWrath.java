@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.AbstractStrike;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
@@ -104,7 +104,7 @@ public class AvengersWrath extends AbstractAbility implements Duration {
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
                         tempAvengersWrath.addPlayersStruckDuringWrath();
 
-                        Optional<Consecrate> standingOnConsecrate = AbstractStrikeBase.getStandingOnConsecrate(wp, wrathTarget);
+                        Optional<Consecrate> standingOnConsecrate = AbstractStrike.getStandingOnConsecrate(wp, wrathTarget);
                         if (standingOnConsecrate.isPresent() && !event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                             wrathTarget.addDamageInstance(

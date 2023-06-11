@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.abilties.internal.AbstractChain;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class SpiritLink extends AbstractChainBase {
+public class SpiritLink extends AbstractChain {
 
     public int numberOfDismounts = 0;
     private double speedDuration = 1.5;

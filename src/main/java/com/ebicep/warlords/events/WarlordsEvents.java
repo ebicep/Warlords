@@ -3,7 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarpBase;
+import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
 import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -439,7 +439,7 @@ public class WarlordsEvents implements Listener {
                 if (itemHeld.getType().name().endsWith("_BANNER")) {
                     if (wp.getFlagDropCooldown() > 0) {
                         player.sendMessage(Component.text("You cannot drop the flag yet, please wait 3 seconds!", NamedTextColor.RED));
-                    } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarpBase.class)) {
+                    } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class)) {
                         player.sendMessage(Component.text("You cannot drop the flag with a Time Warp active!", NamedTextColor.RED));
                     } else {
                         FlagHolder.dropFlagForPlayer(wp);

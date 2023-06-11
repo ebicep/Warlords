@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractLightInfusionBase;
+import com.ebicep.warlords.abilties.internal.AbstractLightInfusion;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public class LightInfusionProtector extends AbstractLightInfusionBase {
+public class LightInfusionProtector extends AbstractLightInfusion {
 
     public LightInfusionProtector(float cooldown) {
         super(cooldown);

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractChainBase;
-import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.AbstractChain;
+import com.ebicep.warlords.abilties.internal.AbstractTotem;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
+public class ChainLightning extends AbstractChain implements Comparable<ChainLightning> {
 
     public int numberOfDismounts = 0;
 
@@ -135,7 +135,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             } else {
-                Optional<CapacitorTotem> capacitorTotem = AbstractTotemBase.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.class);
+                Optional<CapacitorTotem> capacitorTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.class);
                 if (capacitorTotem.isPresent()) {
                     ArmorStand totem = capacitorTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());

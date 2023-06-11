@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractLightInfusionBase;
+import com.ebicep.warlords.abilties.internal.AbstractLightInfusion;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public class LightInfusionAvenger extends AbstractLightInfusionBase {
+public class LightInfusionAvenger extends AbstractLightInfusion {
 
     private int strikesUsed = 0;
 

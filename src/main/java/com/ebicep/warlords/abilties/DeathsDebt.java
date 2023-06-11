@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.abilties.internal.AbstractTotem;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DeathsDebt extends AbstractTotemBase implements Duration {
+public class DeathsDebt extends AbstractTotem implements Duration {
 
     public int playersDamaged = 0;
     public int playersHealed = 0;

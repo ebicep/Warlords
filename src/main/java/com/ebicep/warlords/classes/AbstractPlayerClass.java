@@ -3,7 +3,7 @@ package com.ebicep.warlords.classes;
 import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.internal.AbstractStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -147,7 +147,7 @@ public abstract class AbstractPlayerClass {
                             return;
                         }
                         weapon.onActivate(wp, player);
-                        if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                        if (!(weapon instanceof AbstractStrike) && !(weapon instanceof EarthenSpike)) {
                             weapon.addTimesUsed();
                             sendRightClickPacket(player);
                         }

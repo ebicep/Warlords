@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractChainBase extends AbstractAbility {
+public abstract class AbstractChain extends AbstractAbility {
 
     public int playersHit = 0;
     protected int radius;
@@ -26,7 +26,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
     protected int additionalBounces;
 
 
-    public AbstractChainBase(
+    public AbstractChain(
             String name,
             float minDamageHeal,
             float maxDamageHeal,

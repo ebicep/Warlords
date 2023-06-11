@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractLightInfusionBase;
+import com.ebicep.warlords.abilties.internal.AbstractLightInfusion;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public class LightInfusionCrusader extends AbstractLightInfusionBase {
+public class LightInfusionCrusader extends AbstractLightInfusion {
 
     private int speedBuff = 40;
     private int energyGiven = 120;

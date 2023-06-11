@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
+import com.ebicep.warlords.abilties.internal.AbstractProjectile;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractProjectileBase {
+public class FrostBolt extends AbstractProjectile {
 
     private int maxFullDistance = 30;
     private double directHitMultiplier = 1.15;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
+import com.ebicep.warlords.abilties.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
+public class HolyRadianceAvenger extends AbstractHolyRadiance {
 
     private final int markDuration = 8;
     private int markRadius = 15;
