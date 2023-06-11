@@ -236,10 +236,13 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             if (isDead()) {
                 getEntity().customName(Component.text(""));
             } else {
-                Component oldName = getEntity().customName();
-                if (oldName != null) {
-                    getEntity().customName(oldName.append(Component.text(Math.round(getHealth()) + "❤", NamedTextColor.RED)));
-                }
+                getEntity().customName(Component.textOfChildren(
+                        Component.text("[", NamedTextColor.DARK_GRAY)
+                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                 .append(Component.text("] ")),
+                        getColoredName(),
+                        Component.text(" " + Math.round(getHealth()) + "❤", NamedTextColor.RED)
+                ));
             }
         }
     }
