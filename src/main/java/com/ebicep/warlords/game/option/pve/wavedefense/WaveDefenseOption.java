@@ -219,7 +219,7 @@ public class WaveDefenseOption implements PveOption {
         waveScoreboard.append(Component.text("Wave: "))
                       .append(Component.text(waveCounter, NamedTextColor.GREEN));
         if (maxWave != Integer.MAX_VALUE) {
-            waveScoreboard.append(Component.text(" / "))
+            waveScoreboard.append(Component.text("/"))
                           .append(Component.text(maxWave, NamedTextColor.GREEN));
         }
         if (currentWave != null && currentWave.getMessage() != null) {

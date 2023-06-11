@@ -316,7 +316,7 @@ public interface PveOption extends Option {
             }
 
             list.add(Component.text(we.getName() + ": ")
-                              .append(Component.text(we.isDead() ? "DEAD" : "❤ ", we.isDead() ? NamedTextColor.DARK_RED : healthColor))
+                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + we.getHealth() , we.isDead() ? NamedTextColor.DARK_RED : healthColor))
                               .append(Component.text(" / "))
                               .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
         }
