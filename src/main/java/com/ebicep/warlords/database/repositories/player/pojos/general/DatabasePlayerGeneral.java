@@ -13,6 +13,7 @@ public abstract class DatabasePlayerGeneral extends AbstractDatabaseStatInformat
     private DatabasePaladin paladin = new DatabasePaladin();
     private DatabaseShaman shaman = new DatabaseShaman();
     private DatabaseRogue rogue = new DatabaseRogue();
+    private DatabaseDruid druid = new DatabaseDruid();
 
     @Override
     public DatabaseSpecialization getSpec(Specializations specializations) {
@@ -32,6 +33,9 @@ public abstract class DatabasePlayerGeneral extends AbstractDatabaseStatInformat
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -43,6 +47,7 @@ public abstract class DatabasePlayerGeneral extends AbstractDatabaseStatInformat
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

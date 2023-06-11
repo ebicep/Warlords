@@ -68,7 +68,7 @@ public class WarlordsShopMenu {
             itemBuilder.addLore(Component.empty());
             itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + group.name + "specialization", NamedTextColor.YELLOW), 150));
             menu.setItem(
-                    9 / 2 - values.length / 2 + i * 2 - 2,
+                    i + 1 + (i >= 3 ? 1 : 0),
                     1,
                     itemBuilder.get(),
                     (m, e) -> {

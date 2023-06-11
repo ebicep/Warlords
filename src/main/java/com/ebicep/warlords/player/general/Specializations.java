@@ -1,6 +1,9 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.classes.druid.specs.Conjurer;
+import com.ebicep.warlords.classes.druid.specs.Guardian;
+import com.ebicep.warlords.classes.druid.specs.Priest;
 import com.ebicep.warlords.classes.mage.specs.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.Pyromancer;
@@ -141,6 +144,27 @@ public enum Specializations {
             SpecType.HEALER,
             IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_LIQUOR, REMEDIC_CHAINS, DRAINING_MIASMA
     ),
+    CONJURER("Conjurer",
+            List.of("con"),
+            Conjurer::new,
+            Component.text("SOMEHTING", NamedTextColor.GRAY),
+            SpecType.DAMAGE,
+            IMPALING_STRIKE
+    ),
+    GUARDIAN("Guardian",
+            List.of("guar"),
+            Guardian::new,
+            Component.text("SOMEHTING", NamedTextColor.GRAY),
+            SpecType.TANK,
+            IMPALING_STRIKE
+    ),
+    PRIEST("Priest",
+            List.of("pri"),
+            Priest::new,
+            Component.text("SOMEHTING", NamedTextColor.GRAY),
+            SpecType.HEALER,
+            IMPALING_STRIKE
+    ),
 
     ;
 
@@ -186,9 +210,9 @@ public enum Specializations {
             case BERSERKER, DEFENDER, REVENANT -> Classes.WARRIOR;
             case AVENGER, CRUSADER, PROTECTOR -> Classes.PALADIN;
             case THUNDERLORD, SPIRITGUARD, EARTHWARDEN -> Classes.SHAMAN;
-            default -> Classes.ROGUE;
+            case ASSASSIN, VINDICATOR, APOTHECARY -> Classes.ROGUE;
+            case CONJURER, GUARDIAN, PRIEST -> Classes.DRUID;
         };
-        //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).toList().get(0);
     }
 
     public static Specializations generateSpec(Specializations selectedSpec) {

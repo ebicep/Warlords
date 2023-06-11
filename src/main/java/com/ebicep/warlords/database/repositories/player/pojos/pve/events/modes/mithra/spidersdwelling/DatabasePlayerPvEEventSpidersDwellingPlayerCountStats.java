@@ -19,6 +19,7 @@ public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEv
     private DatabasePaladinPvEEventSpidersDwelling paladin = new DatabasePaladinPvEEventSpidersDwelling();
     private DatabaseShamanPvEEventSpidersDwelling shaman = new DatabaseShamanPvEEventSpidersDwelling();
     private DatabaseRoguePvEEventSpidersDwelling rogue = new DatabaseRoguePvEEventSpidersDwelling();
+    private DatabaseDruidPvEEventSpidersDwelling druid = new DatabaseDruidPvEEventSpidersDwelling();
 
     public DatabasePlayerPvEEventSpidersDwellingPlayerCountStats() {
     }
@@ -64,6 +65,9 @@ public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEv
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -75,6 +79,7 @@ public class DatabasePlayerPvEEventSpidersDwellingPlayerCountStats extends PvEEv
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

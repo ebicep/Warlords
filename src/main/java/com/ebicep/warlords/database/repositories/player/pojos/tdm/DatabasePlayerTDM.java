@@ -18,6 +18,7 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
     private DatabasePaladinTDM paladin = new DatabasePaladinTDM();
     private DatabaseShamanTDM shaman = new DatabaseShamanTDM();
     private DatabaseRogueTDM rogue = new DatabaseRogueTDM();
+    private DatabaseDruidTDM druid = new DatabaseDruidTDM();
 
     @Override
     public void updateCustomStats(
@@ -56,6 +57,9 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -67,6 +71,7 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

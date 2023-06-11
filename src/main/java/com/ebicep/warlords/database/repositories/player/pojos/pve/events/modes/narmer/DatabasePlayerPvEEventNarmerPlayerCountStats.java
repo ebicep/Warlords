@@ -19,6 +19,7 @@ public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmer
     private DatabasePaladinPvEEventNarmer paladin = new DatabasePaladinPvEEventNarmer();
     private DatabaseShamanPvEEventNarmer shaman = new DatabaseShamanPvEEventNarmer();
     private DatabaseRoguePvEEventNarmer rogue = new DatabaseRoguePvEEventNarmer();
+    private DatabaseDruidPvEEventNarmer druid = new DatabaseDruidPvEEventNarmer();
 
     public DatabasePlayerPvEEventNarmerPlayerCountStats() {
     }
@@ -64,6 +65,9 @@ public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmer
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -75,6 +79,7 @@ public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmer
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

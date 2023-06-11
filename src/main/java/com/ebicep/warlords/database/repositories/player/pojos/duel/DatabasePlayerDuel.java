@@ -18,6 +18,7 @@ public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements D
     private DatabasePaladinDuel paladin = new DatabasePaladinDuel();
     private DatabaseShamanDuel shaman = new DatabaseShamanDuel();
     private DatabaseRogueDuel rogue = new DatabaseRogueDuel();
+    private DatabaseDruidDuel druid = new DatabaseDruidDuel();
 
     @Override
     public void updateCustomStats(
@@ -56,6 +57,9 @@ public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements D
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -67,6 +71,7 @@ public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements D
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

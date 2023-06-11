@@ -43,6 +43,13 @@ public enum Classes {
             new ItemStack(Material.PINK_DYE),
             "The Rogue is a master of deception. Always looking to gain the upper hand in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
+    ),
+    DRUID(
+            "Druid",
+            List.of("dru"),
+            new ItemStack(Material.BEDROCK),
+            "SOEMTHING",
+            CONJURER, GUARDIAN, PRIEST
     );
 
     public static final Classes[] VALUES = values();

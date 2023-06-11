@@ -19,6 +19,7 @@ public class DatabasePlayerPvEEventMithraPlayerCountStats extends PvEEventMithra
     private DatabasePaladinPvEEventMithra paladin = new DatabasePaladinPvEEventMithra();
     private DatabaseShamanPvEEventMithra shaman = new DatabaseShamanPvEEventMithra();
     private DatabaseRoguePvEEventMithra rogue = new DatabaseRoguePvEEventMithra();
+    private DatabaseDruidPvEEventMithra druid = new DatabaseDruidPvEEventMithra();
 
     public DatabasePlayerPvEEventMithraPlayerCountStats() {
     }
@@ -64,6 +65,9 @@ public class DatabasePlayerPvEEventMithraPlayerCountStats extends PvEEventMithra
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -75,6 +79,7 @@ public class DatabasePlayerPvEEventMithraPlayerCountStats extends PvEEventMithra
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

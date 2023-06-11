@@ -19,6 +19,7 @@ public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabas
     private DatabasePaladinPvEOnslaught paladin = new DatabasePaladinPvEOnslaught();
     private DatabaseShamanPvEOnslaught shaman = new DatabaseShamanPvEOnslaught();
     private DatabaseRoguePvEOnslaught rogue = new DatabaseRoguePvEOnslaught();
+    private DatabaseDruidPvEOnslaught druid = new DatabaseDruidPvEOnslaught();
 
     public DatabasePlayerPvEOnslaughtPlayerCountStats() {
     }
@@ -63,6 +64,9 @@ public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabas
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -74,6 +78,7 @@ public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabas
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

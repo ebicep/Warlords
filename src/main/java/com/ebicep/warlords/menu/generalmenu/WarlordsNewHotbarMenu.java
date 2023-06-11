@@ -125,7 +125,7 @@ public class WarlordsNewHotbarMenu {
                         itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                     }
                     menu.setItem(
-                            9 / 2 - classes.length / 2 + i * 2 - 2,
+                            i + 1 + (i >= 3 ? 1 : 0),
                             1,
                             itemBuilder.get(),
                             (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)

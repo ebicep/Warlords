@@ -73,10 +73,10 @@ public abstract class AbstractChainBase extends AbstractAbility {
     protected void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);
         location.setDirection(location.toVector().subtract(to.subtract(0, .5, 0).toVector()).multiply(-1));
-        spawnChain(to, location);
+        spawnChain(to, location, getChainItem());
     }
 
-    protected void spawnChain(Location to, Location from) {
+    public static List<ArmorStand> spawnChain(Location to, Location from, ItemStack chainItem) {
 
         List<ArmorStand> chains = new ArrayList<>();
         int maxDistance = (int) Math.round(to.distance(from));
@@ -84,7 +84,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
             ArmorStand chain = Utils.spawnArmorStand(from, armorStand -> {
                 armorStand.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
                 armorStand.setMarker(true);
-                armorStand.getEquipment().setHelmet(getChainItem());
+                armorStand.getEquipment().setHelmet(chainItem);
             });
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
@@ -113,6 +113,8 @@ public abstract class AbstractChainBase extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
+        return chains;
     }
 
     protected abstract ItemStack getChainItem();

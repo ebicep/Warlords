@@ -23,6 +23,7 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseData
     private DatabasePaladinPvEWaveDefense paladin = new DatabasePaladinPvEWaveDefense();
     private DatabaseShamanPvEWaveDefense shaman = new DatabaseShamanPvEWaveDefense();
     private DatabaseRoguePvEWaveDefense rogue = new DatabaseRoguePvEWaveDefense();
+    private DatabaseDruidPvEWaveDefense druid = new DatabaseDruidPvEWaveDefense();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEWaveDefensePlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEWaveDefensePlayerCountStats());
@@ -82,6 +83,9 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseData
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -93,6 +97,7 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseData
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

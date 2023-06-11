@@ -23,6 +23,7 @@ public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabase
     private DatabasePaladinPvEOnslaught paladin = new DatabasePaladinPvEOnslaught();
     private DatabaseShamanPvEOnslaught shaman = new DatabaseShamanPvEOnslaught();
     private DatabaseRoguePvEOnslaught rogue = new DatabaseRoguePvEOnslaught();
+    private DatabaseDruidPvEOnslaught druid = new DatabaseDruidPvEOnslaught();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEOnslaughtPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEOnslaughtPlayerCountStats());
@@ -82,6 +83,9 @@ public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabase
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -93,6 +97,7 @@ public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabase
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

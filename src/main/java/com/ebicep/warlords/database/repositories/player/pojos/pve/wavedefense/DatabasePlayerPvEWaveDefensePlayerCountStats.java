@@ -19,6 +19,7 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDat
     private DatabasePaladinPvEWaveDefense paladin = new DatabasePaladinPvEWaveDefense();
     private DatabaseShamanPvEWaveDefense shaman = new DatabaseShamanPvEWaveDefense();
     private DatabaseRoguePvEWaveDefense rogue = new DatabaseRoguePvEWaveDefense();
+    private DatabaseDruidPvEWaveDefense druid = new DatabaseDruidPvEWaveDefense();
 
     public DatabasePlayerPvEWaveDefensePlayerCountStats() {
     }
@@ -63,6 +64,9 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDat
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -74,6 +78,7 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDat
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 

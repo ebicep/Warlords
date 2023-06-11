@@ -662,10 +662,12 @@ public abstract class WarlordsEntity {
                     }
 
                     if (isMeleeHit) {
-                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY)));
-                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text("Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
+                        sendMessage(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.",
+                                NamedTextColor.GRAY
+                        )));
+                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        sendMessage(RECEIVE_ARROW_RED.append(Component.text("You absorbed " + attacker.getName() + "'s " + ability + " hit.",
+                        sendMessage(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.",
                                 NamedTextColor.GRAY
                         )));
                         attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".",

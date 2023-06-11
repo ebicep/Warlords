@@ -26,6 +26,7 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
     private DatabasePaladinPvEEventMithra paladin = new DatabasePaladinPvEEventMithra();
     private DatabaseShamanPvEEventMithra shaman = new DatabaseShamanPvEEventMithra();
     private DatabaseRoguePvEEventMithra rogue = new DatabaseRoguePvEEventMithra();
+    private DatabaseDruidPvEEventMithra druid = new DatabaseDruidPvEEventMithra();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventMithraPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEEventMithraPlayerCountStats());
@@ -97,6 +98,9 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> druid.getConjurer();
+            case GUARDIAN -> druid.getGuardian();
+            case PRIEST -> druid.getPriest();
         };
     }
 
@@ -108,6 +112,7 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
+            case DRUID -> druid;
         };
     }
 
