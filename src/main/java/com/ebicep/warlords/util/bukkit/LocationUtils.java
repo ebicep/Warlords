@@ -7,8 +7,10 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -206,5 +208,20 @@ public class LocationUtils {
             return false;
         }
         return diffX * diffX + diffY * diffY + diffZ * diffZ < radius * radius;
+    }
+
+    @Nonnull
+    public static Location getGroundLocation(Player player) {
+        //get location of block below player that isnt air using loop
+        Location location = player.getLocation();
+        location.setY(location.getY() - 1);
+        while (location.getBlock().getType() == Material.AIR && location.getY() > 0) {
+            location.setY(location.getY() - 1);
+        }
+        if (location.getY() <= 0) {
+            return player.getLocation();
+        }
+        location.setY(player.getWorld().getBlockAt(location).getLocation().getY() + 1);
+        return location;
     }
 }

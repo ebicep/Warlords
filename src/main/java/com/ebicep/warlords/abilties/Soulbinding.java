@@ -90,12 +90,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
         Soulbinding tempSoulBinding = new Soulbinding();
         tempSoulBinding.setPveUpgrade(pveUpgrade);
         if (wp.isInPve()) {
-            List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
-                    .filterCooldownClass(Soulbinding.class)
-                    .stream().toList();
-            if (currentSoulBindings.size() >= 2) {
-                wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
-            }
+            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
         }
         wp.getCooldownManager().addPersistentCooldown(
                 name,

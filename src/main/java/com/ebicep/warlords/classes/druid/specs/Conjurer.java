@@ -1,10 +1,6 @@
 package com.ebicep.warlords.classes.druid.specs;
 
-import com.ebicep.warlords.ContagiousFacade;
-import com.ebicep.warlords.EnergySeer;
-import com.ebicep.warlords.abilties.PoisonousHex;
-import com.ebicep.warlords.abilties.SoulfireBlast;
-import com.ebicep.warlords.abilties.Temp;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.druid.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

@@ -153,6 +153,16 @@ public class CooldownManager {
         });
     }
 
+    public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, Class<?> filterCooldownClass, int limit) {
+        List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
+                .filterCooldownClass(filterCooldownClass)
+                .stream()
+                .toList();
+        if (matchingCooldowns.size() >= limit) {
+            removeCooldown(matchingCooldowns.get(0));
+        }
+    }
+
     public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
@@ -357,7 +367,7 @@ public class CooldownManager {
 
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
-            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownClass(), cooldownClass)) {
+            if (abstractCooldowns.contains(cd) && (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()))) {
                 if (!noForce) {
                     cd.getOnRemoveForce().accept(this);
                 }

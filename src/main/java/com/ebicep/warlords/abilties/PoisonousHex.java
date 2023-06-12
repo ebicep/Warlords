@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -28,14 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
-
     private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
-        List<RegularCooldown> currentPoisonousHexes = new CooldownFilter<>(to, RegularCooldown.class)
-                .filterCooldownClass(PoisonousHex.class)
-                .stream().toList();
-        if (currentPoisonousHexes.size() >= 3) {
-            to.getCooldownManager().removeCooldown(currentPoisonousHexes.get(0));
-        }
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
                 "PHEX",

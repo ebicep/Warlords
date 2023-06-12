@@ -300,7 +300,7 @@ public class PowerupOption implements Option {
                         option.getDuration() * 20
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("HEALING", NamedTextColor.AQUA, TextDecoration.BOLD))
+                                        .append(Component.text("HEALING", NamedTextColor.GREEN, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+8% ", NamedTextColor.GREEN))
                                         .append(Component.text("Health per second for "))
@@ -339,7 +339,7 @@ public class PowerupOption implements Option {
                     }
                 });
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("ENERGY", NamedTextColor.AQUA, TextDecoration.BOLD))
+                                        .append(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+50% ", NamedTextColor.GREEN))
                                         .append(Component.text("Energy gain for "))
@@ -349,7 +349,7 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("§6§lENERGY"));
+                armorStand.customName(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD));
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.ORANGE_WOOL));
             }
         },
@@ -378,7 +378,7 @@ public class PowerupOption implements Option {
                     }
                 });
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("DAMAGE", NamedTextColor.AQUA, TextDecoration.BOLD))
+                                        .append(Component.text("DAMAGE", NamedTextColor.RED, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+20% ", NamedTextColor.GREEN))
                                         .append(Component.text("Damage for "))

@@ -1,4 +1,4 @@
-package com.ebicep.warlords;
+package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;

@@ -44,7 +44,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public <R> CooldownFilter<T> filterCooldownClass(Class<R> clazz) {
-        return new CooldownFilter<>(stream.filter(cd -> Objects.equals(clazz, cd.getCooldownClass())));
+        return new CooldownFilter<>(stream.filter(cd -> Objects.equals(clazz, cd.getCooldownClass()) || clazz.isAssignableFrom(cd.getCooldownClass())));
     }
 
     public CooldownFilter<T> filterCooldownObject(Object object) {
