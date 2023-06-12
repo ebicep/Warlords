@@ -209,8 +209,8 @@ public class DatabaseTiming {
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
             DatabaseManager.clearQueue(PlayersCollections.MONTHLY);
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.kickPlayer("Monthly Stats have been reset, please rejoin!");
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
                     .delay(10 * 20)
@@ -247,11 +247,11 @@ public class DatabaseTiming {
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
             DatabaseManager.clearQueue(PlayersCollections.WEEKLY);
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.kickPlayer("Weekly Stats have been reset, please rejoin!");
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
-                    .delay(10 * 20)
+                    .delay(20)
                     .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false)).execute();
         }
         if (RESET_DAILY.get()) {
@@ -276,11 +276,11 @@ public class DatabaseTiming {
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
             DatabaseManager.clearQueue(PlayersCollections.DAILY);
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.kickPlayer("Daily Stats have been reset, please rejoin!");
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).put(player.getUniqueId(), new DatabasePlayer(player.getUniqueId(), player.getName()));
             }
             Warlords.newChain()
-                    .delay(10 * 20)
+                    .delay(20)
                     .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, false)).execute();
         }
     }
