@@ -58,7 +58,7 @@ public class WarlordsShopMenu {
                                    .append(Component.text("]", NamedTextColor.DARK_GRAY)));
             itemBuilder.addLore(WordWrap.wrap(Component.text(group.description, NamedTextColor.GRAY), 150));
             itemBuilder.addLore(Component.empty());
-            itemBuilder.addLore(Component.text("Specializations:"));
+            itemBuilder.addLore(Component.text("Specializations:", NamedTextColor.GOLD));
             for (Specializations subClass : group.subclasses) {
                 itemBuilder.addLore(Component.text(subClass.name, subClass == selectedSpec ? NamedTextColor.GREEN : NamedTextColor.GRAY));
             }
@@ -66,7 +66,7 @@ public class WarlordsShopMenu {
 
             itemBuilder.addLore(ExperienceManager.getProgressString(experience, level + 1));
             itemBuilder.addLore(Component.empty());
-            itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + group.name + "specialization", NamedTextColor.YELLOW), 150));
+            itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + group.name + " specialization", NamedTextColor.YELLOW), 150));
             menu.setItem(
                     i + 1 + (i >= 3 ? 1 : 0),
                     1,
