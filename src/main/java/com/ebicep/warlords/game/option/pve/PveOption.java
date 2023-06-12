@@ -148,10 +148,10 @@ public interface PveOption extends Option {
                     if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
                         return;
                     }
-                    if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
-                        upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, true);
-                    } else {
-                        upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                    switch (upgradeType) {
+                        case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                        case MASTER -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade(), true);
+                        case MASTER2 -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade2(), true);
                     }
                 }
             }

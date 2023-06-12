@@ -36,7 +36,24 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     protected List<Upgrade> treeA = new ArrayList<>();
     protected List<Upgrade> treeB = new ArrayList<>();
-    protected Upgrade masterUpgrade;
+    protected Upgrade masterUpgrade = new Upgrade(
+            "Name Placeholder",
+            "Subname Placeholder",
+            "Description Placeholder",
+            999999999,
+            () -> {
+
+            }
+    );
+    protected Upgrade masterUpgrade2 = new Upgrade(
+            "Name Placeholder",
+            "Subname Placeholder",
+            "Description Placeholder",
+            999999999,
+            () -> {
+
+            }
+    );
 
     private int maxUpgrades = 6;
     private int upgradesRequiredForMaster = 6;
@@ -56,14 +73,26 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         addBranchToMenu(menu, treeA, 2, 4);
         addBranchToMenu(menu, treeB, 6, 4);
         menu.setItem(
-                4,
+                2,
                 0,
                 masterBranchItem(masterUpgrade),
                 (m, e) -> {
                     if (e.isLeftClick()) {
-                        purchaseMasterUpgrade(player, false);
+                        purchaseMasterUpgrade(player, masterUpgrade, false);
                     } else if (!masterUpgrade.isUnlocked()) {
                         onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER, 0);
+                    }
+                }
+        );
+        menu.setItem(
+                6,
+                0,
+                masterBranchItem(masterUpgrade2),
+                (m, e) -> {
+                    if (e.isLeftClick()) {
+                        purchaseMasterUpgrade(player, masterUpgrade2, false);
+                    } else if (!masterUpgrade2.isUnlocked()) {
+                        onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
                     }
                 }
         );
@@ -82,29 +111,35 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         }
     }
 
-    public void purchaseMasterUpgrade(WarlordsPlayer player, boolean autoUpgraded) {
+    public void purchaseMasterUpgrade(WarlordsPlayer player, Upgrade upgrade, boolean autoUpgraded) {
+        if (masterUpgrade.equals(upgrade) && masterUpgrade2.isUnlocked() ||
+                masterUpgrade2.equals(upgrade) && masterUpgrade.isUnlocked()
+        ) {
+            player.sendMessage(Component.text("You already unlocked a master upgrade for this ability.", NamedTextColor.RED));
+            return;
+        }
         if (player.getAbilityTree().getMaxMasterUpgrades() <= 0) {
             player.sendMessage(Component.text("You cannot unlock this master upgrade, maximum master upgrades reached.", NamedTextColor.RED));
             return;
         }
-        if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
+        if (player.getCurrency() < upgrade.getCurrencyCost()) {
             player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
-        if (masterUpgrade.isUnlocked()) {
+        if (upgrade.isUnlocked()) {
             player.sendMessage(Component.text("You already unlocked this upgrade.", NamedTextColor.RED));
             return;
         }
 
         if (upgradesRequiredForMaster <= 0) {
-            masterUpgrade.getOnUpgrade().run();
-            masterUpgrade.setUnlocked(true);
+            upgrade.getOnUpgrade().run();
+            upgrade.setUnlocked(true);
 
             player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
-            player.subtractCurrency(masterUpgrade.getCurrencyCost());
+            player.subtractCurrency(upgrade.getCurrencyCost());
             Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 500f, 0.8f);
 
-            globalAnnouncement(player.getGame(), masterUpgrade, ability, autoUpgraded);
+            globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
         } else {
             String s = upgradesRequiredForMaster == 1 ? "" : "s";
             player.sendMessage(Component.text("You need to unlock " + upgradesRequiredForMaster + " more upgrade" + s + " before unlocking the master upgrade!",
@@ -120,8 +155,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
                         RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
-                        masterUpgrade.getName(),
-                PlainTextComponentSerializer.plainText().serialize(masterUpgrade.getDescription().stream().collect(Component.toComponent(Component.newline())))
+                        upgrade.getName(),
+                        PlainTextComponentSerializer.plainText().serialize(upgrade.getDescription().stream().collect(Component.toComponent(Component.newline())))
                 )
         );
     }
@@ -158,17 +193,33 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     .getAutoUpgradeEntries()
                     .stream()
                     .filter(autoUpgradeEntry -> autoUpgradeEntry.getUpgradeType() != AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER &&
+                            autoUpgradeEntry.getUpgradeType() != AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2 &&
                             autoUpgradeEntry.getBranchIndex() == branchIndex &&
                             !autoUpgradeEntry.getUpgradeType().getUpgradeFunction.apply(this).get(autoUpgradeEntry.getUpgradeIndex()).isUnlocked()
                     )
                     .toList();
             int branchUpgradesInQueue = branchEntries.size();
-            if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
+            if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER || upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2) {
+                if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER && autoUpgradeProfile.getAutoUpgradeEntries()
+                                                                                                               .stream()
+                                                                                                               .filter(entry -> entry.getBranchIndex() == branchIndex)
+                                                                                                               .anyMatch(entry -> entry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2) ||
+                        upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2 && autoUpgradeProfile.getAutoUpgradeEntries()
+                                                                                                                    .stream()
+                                                                                                                    .filter(entry -> entry.getBranchIndex() == branchIndex)
+                                                                                                                    .anyMatch(entry -> entry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER)
+                ) {
+                    player.sendMessage(Component.text("You cannot queue this master upgrade, you already unlocked a master upgrade for this ability.", NamedTextColor.RED));
+                    return;
+                }
                 int masterUpgradesInQueue = (int) autoUpgradeProfile
                         .getAutoUpgradeEntries()
                         .stream()
                         .filter(autoUpgradeEntry -> autoUpgradeEntry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER &&
                                 !abilityTree.getUpgradeBranches().get(autoUpgradeEntry.getBranchIndex()).getMasterUpgrade().isUnlocked()
+                        )
+                        .filter(autoUpgradeEntry -> autoUpgradeEntry.getUpgradeType() == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2 &&
+                                !abilityTree.getUpgradeBranches().get(autoUpgradeEntry.getBranchIndex()).getMasterUpgrade2().isUnlocked()
                         )
                         .count();
                 if (masterUpgradesInQueue >= player.getAbilityTree().getMaxMasterUpgrades()) {
@@ -292,8 +343,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         lore.add(Component.text("Cost: ", NamedTextColor.GRAY)
                           .append(Component.text("❂ " + upgrade.getCurrencyCost(), NamedTextColor.GOLD))
         );
-        ItemBuilder itemBuilder = new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
-                .name(Component.text(masterUpgrade.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
+        ItemBuilder itemBuilder = new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.WHITE_WOOL))
+                .name(Component.text(upgrade.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                 .lore(lore);
         if (!upgrade.isUnlocked()) {
             Component position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
@@ -363,7 +414,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability, boolean autoUpgraded) {
         Component prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : Component.empty();
         game.forEachOnlinePlayer((p, t) -> {
-            if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
+            if (upgrade.equals(masterUpgrade) || upgrade.equals(masterUpgrade2)) {
                 p.sendMessage(Component.textOfChildren(
                         prefix,
                         Component.text(abilityTree.getWarlordsPlayer().getName(), NamedTextColor.AQUA),
@@ -437,5 +488,9 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public Upgrade getMasterUpgrade() {
         return masterUpgrade;
+    }
+
+    public Upgrade getMasterUpgrade2() {
+        return masterUpgrade2;
     }
 }

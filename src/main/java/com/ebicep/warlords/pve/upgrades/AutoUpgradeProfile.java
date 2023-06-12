@@ -172,7 +172,10 @@ public class AutoUpgradeProfile {
         public enum UpgradeType {
             A(AbstractUpgradeBranch::getTreeA),
             B(AbstractUpgradeBranch::getTreeB),
-            MASTER(upgradeBranch -> Collections.singletonList(upgradeBranch.getMasterUpgrade()));
+            MASTER(upgradeBranch -> Collections.singletonList(upgradeBranch.getMasterUpgrade())),
+            MASTER2(upgradeBranch -> Collections.singletonList(upgradeBranch.getMasterUpgrade2())),
+
+            ;
 
             public final Function<AbstractUpgradeBranch<?>, List<Upgrade>> getUpgradeFunction;
 
