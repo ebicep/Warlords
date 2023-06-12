@@ -750,14 +750,12 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle by 15% and increase the silence duration by 0.5 seconds",
-            "§aReduce the cooldown of Soul Shackle by §c15% §aand increase the silence duration by §c0.5 §aseconds",
+            "§7Reduce the cooldown of Soul Shackle by 20%",
+            "§aReduce the cooldown of Soul Shackle by §c20%",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
-                    ((SoulShackle) abstractAbility).setMinSilenceDurationInTicks(50);
-                    ((SoulShackle) abstractAbility).setMaxSilenceDurationInTicks(80);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
