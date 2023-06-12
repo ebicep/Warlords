@@ -208,8 +208,9 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
+            DatabaseManager.clearQueue(PlayersCollections.MONTHLY);
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.MONTHLY, databasePlayer -> {});
+                onlinePlayer.kickPlayer("Monthly Stats have been reset, please rejoin!");
             }
             Warlords.newChain()
                     .delay(10 * 20)
@@ -245,8 +246,9 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+            DatabaseManager.clearQueue(PlayersCollections.WEEKLY);
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.WEEKLY, databasePlayer -> {});
+                onlinePlayer.kickPlayer("Weekly Stats have been reset, please rejoin!");
             }
             Warlords.newChain()
                     .delay(10 * 20)
@@ -273,8 +275,9 @@ public class DatabaseTiming {
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+            DatabaseManager.clearQueue(PlayersCollections.DAILY);
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                DatabaseManager.loadPlayer(onlinePlayer.getUniqueId(), PlayersCollections.DAILY, databasePlayer -> {});
+                onlinePlayer.kickPlayer("Daily Stats have been reset, please rejoin!");
             }
             Warlords.newChain()
                     .delay(10 * 20)

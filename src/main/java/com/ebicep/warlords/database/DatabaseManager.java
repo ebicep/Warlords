@@ -273,6 +273,15 @@ public class DatabaseManager {
         }
     }
 
+    public static void clearQueue(PlayersCollections collection) {
+        synchronized (PLAYERS_TO_UPDATE) {
+            PLAYERS_TO_UPDATE.get(collection).clear();
+        }
+        synchronized (PLAYERS_TO_UPDATE_2) {
+            PLAYERS_TO_UPDATE_2.get(collection).clear();
+        }
+    }
+
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, onNotFound);
     }
