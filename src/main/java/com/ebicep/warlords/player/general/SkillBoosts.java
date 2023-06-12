@@ -695,12 +695,12 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 1.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse by §c35% §aand increase the blind duration by §c1.5 §aseconds.",
+            "§7Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 0.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse by §c35% §aand increase the blind duration by §c0.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(70);
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
