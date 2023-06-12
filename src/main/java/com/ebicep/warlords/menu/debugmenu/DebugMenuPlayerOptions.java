@@ -560,8 +560,8 @@ public class DebugMenuPlayerOptions {
                     );
                 }
             }
-            menu.setItem(3, 5, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(8, 4, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
+            menu.setItem(8, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
