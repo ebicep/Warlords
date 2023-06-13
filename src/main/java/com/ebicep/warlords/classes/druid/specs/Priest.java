@@ -1,9 +1,6 @@
 package com.ebicep.warlords.classes.druid.specs;
 
-import com.ebicep.warlords.abilties.BeaconOfImpair;
-import com.ebicep.warlords.abilties.BeaconOfLight;
-import com.ebicep.warlords.abilties.MercifulHex;
-import com.ebicep.warlords.abilties.Temp;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.druid.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -23,9 +20,9 @@ public class Priest extends AbstractDruid {
                 0,
                 new MercifulHex(),
                 new BeaconOfLight(),
-                new Temp(),
+                new EnergySeerPriest(),
                 new BeaconOfImpair(),
-                new Temp()
+                new DivineBlessing()
         );
     }
 

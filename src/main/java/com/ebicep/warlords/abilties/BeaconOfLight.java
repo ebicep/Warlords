@@ -24,7 +24,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     public BeaconOfLight(Location location) {
-        super("Beacon of Light", 150, 150, 20, 60, 25, 175, location, 5, 30);
+        super("Beacon of Light", 170, 230, 20, 60, 25, 175, location, 4, 20);
     }
 
     @Override
@@ -38,8 +38,12 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+    public Component getBonusDescription() {
+        return Component.text("All allies within a ")
+                        .append(Component.text(radius, NamedTextColor.YELLOW))
+                        .append(Component.text(" block radius restore "))
+                        .append(Component.text(minDamageHeal, NamedTextColor.GREEN))
+                        .append(Component.text("  health every 2 seconds."));
     }
 
     @Override
@@ -63,12 +67,6 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
-    public Material getGlassMaterial() {
-        return Material.GREEN_STAINED_GLASS;
-    }
-
-
-    @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfLight> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 40 == 0) {
             BeaconOfLight beacon = cooldown.getCooldownObject();
@@ -76,12 +74,11 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                     .entitiesAround(beacon.getGroundLocation(), radius, radius, radius)
                     .aliveTeammatesOf(wp)
             ) {
-                boolean isSelf = wp == allyTarget;
                 allyTarget.addHealingInstance(
                         wp,
                         name,
-                        minDamageHeal * (isSelf ? 2 : 1),
-                        maxDamageHeal * (isSelf ? 2 : 1),
+                        minDamageHeal,
+                        maxDamageHeal,
                         critChance,
                         critMultiplier,
                         false,
@@ -89,6 +86,16 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                 );
             }
         }
+    }
+
+    @Override
+    public Material getGlassMaterial() {
+        return Material.GREEN_STAINED_GLASS;
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        return null;
     }
 
 

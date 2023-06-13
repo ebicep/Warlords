@@ -48,6 +48,10 @@ public interface DamageInstance extends Instance {
         return currentCritMultiplier;
     }
 
+    default float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+        return currentCritMultiplier;
+    }
+
     /**
      * If self has abilities that increase/decrease their damage taken (berserk) - before intervene
      */

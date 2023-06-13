@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public abstract class AbstractPiercingProjectile extends AbstractAbility {
@@ -346,6 +347,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
 
     public List<InternalProjectile> getProjectiles(InternalProjectile internalProjectile) {
         return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
+    }
+
+    public Set<WarlordsEntity> getHit(InternalProjectile internalProjectile) {
+        return internalProjectileGroup.get(internalProjectile)
+                                      .stream()
+                                      .flatMap(projectile -> projectile.getHit().stream())
+                                      .collect(Collectors.toSet());
     }
 
     public double getProjectileSpeed() {

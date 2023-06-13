@@ -23,8 +23,10 @@ public class AstralPlague extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Grant yourself Astral Energy, increasing Poisonous Hex duration to 6 seconds and causing Soulfire Beam to not consume Poisonous Hex stacks." +
-                                       " Your attacks pierces shields and defenses of enemies with ")
+        description = Component.text("Grant yourself Astral Energy, increasing Poisonous Hex duration to ")
+                               .append(Component.text("6", NamedTextColor.GOLD))
+                               .append(Component.text(
+                                       " seconds and causing Soulfire Beam to not consume Poisonous Hex stacks. Your attacks pierces shields and defenses of enemies with "))
                                .append(Component.text("3", NamedTextColor.RED))
                                .append(Component.text(" stacks of Poisonous Hex. Lasts"))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))

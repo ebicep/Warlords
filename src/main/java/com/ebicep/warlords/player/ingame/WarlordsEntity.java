@@ -390,10 +390,15 @@ public abstract class WarlordsEntity {
             }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
+                critMultiplier = abstractCooldown.setCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
                     appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, abstractCooldown);
                 }
+                if (previousCM != critMultiplier) {
+                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", critMultiplier, abstractCooldown);
+                }
                 previousCC = critChance;
+                previousCM = critMultiplier;
             }
         }
         //crit

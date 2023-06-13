@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -41,6 +43,16 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         this.radius = radius;
         this.tickDuration = secondDuration * 20;
     }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = Component.text("Place a stationary beacon on the ground that lasts ")
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. "))
+                               .append(getBonusDescription());
+    }
+
+    public abstract Component getBonusDescription();
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
@@ -87,9 +99,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract T getObject(Location groundLocation);
 
-    public abstract Material getGlassMaterial();
-
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
+
+    public abstract Material getGlassMaterial();
 
     public Location getGroundLocation() {
         return groundLocation;

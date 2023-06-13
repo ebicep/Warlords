@@ -29,7 +29,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Heal for " + healingMultiplier + " times the energy expended for the next ")
+        description = Component.text("Heal for ")
+                               .append(Component.text((healingMultiplier * 100) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If you healed for 5 instances, restore energy "))
                                .append(Component.text(energyRestore, NamedTextColor.YELLOW))

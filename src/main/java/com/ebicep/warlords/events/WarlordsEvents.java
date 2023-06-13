@@ -145,7 +145,7 @@ public class WarlordsEvents implements Listener {
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
-        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1); // remove attack charge up / recoil
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024); // remove attack charge up / recoil
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
