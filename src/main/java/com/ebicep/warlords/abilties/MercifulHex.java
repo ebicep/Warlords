@@ -163,9 +163,9 @@ public class MercifulHex extends AbstractPiercingProjectile {
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
+                        Particle.SPELL,
                         projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        1,
+                        2,
                         0,
                         0,
                         0,

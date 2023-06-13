@@ -63,7 +63,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
         Utils.playGlobalSound(groundLocation, "paladin.hammeroflight.impact", 2, 1.5f);
         String soundString = getBeaconClass() == BeaconOfImpair.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
-        Utils.playGlobalSound(groundLocation, soundString, 0.2f, 0.4f);
+        Utils.playGlobalSound(groundLocation, soundString, 0.1f, 0.4f);
 
         CircleEffect teamCircleEffect = new CircleEffect(
                 wp.getGame(),

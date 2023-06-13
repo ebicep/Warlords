@@ -35,7 +35,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                                .append(Component.text(radius, NamedTextColor.YELLOW))
                                .append(Component.text(" block radius restore "))
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text("  health every 2 seconds. You heal for double the amount. " +
+                               .append(Component.text("  health every 2 seconds." +
                                        "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair)."));
     }
 
@@ -55,7 +55,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
 
     @Override
     public String getAbbreviation() {
-        return "LBEACON";
+        return "LIGHT BEACON";
     }
 
     @Override
