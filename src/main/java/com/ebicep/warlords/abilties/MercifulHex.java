@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Set;
 
 public class MercifulHex extends AbstractPiercingProjectile {
 
@@ -85,13 +84,14 @@ public class MercifulHex extends AbstractPiercingProjectile {
 
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
+                .excluding(wp)
                 .excluding(projectile.getHit())
         ) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(warlordsEntity));
             if (warlordsEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            Set<WarlordsEntity> hits = getHit(projectile);
+            List<WarlordsEntity> hits = projectile.getHit();
             boolean isTeammate = warlordsEntity.isTeammate(wp);
             if (isTeammate) {
                 int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
