@@ -32,7 +32,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
         description = Component.text("Place a stationary beacon on the ground that lasts ")
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. All allies within a " + radius + " block radius restore "))
-                               .append(Component.text(minDamageHeal, NamedTextColor.GREEN))
+                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text("  health every 2 seconds. You heal for double the amount. " +
                                        "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair)."));
     }

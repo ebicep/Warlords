@@ -58,7 +58,7 @@ public class SoulfireBeam extends AbstractAbility {
         List<ArmorStand> beam = AbstractChain.spawnChain(location, wp.getLocation(), new ItemStack(Material.GRAY_STAINED_GLASS));
         Set<WarlordsEntity> enemies = new HashSet<>();
         for (ArmorStand armorStand : beam) {
-            PlayerFilter.entitiesAround(armorStand.getLocation().add(0, .5, 0), 1.1, 1.2, 1.1)
+            PlayerFilter.entitiesAround(armorStand.getLocation().add(0, .5, 0), 1.25, 1.5, 1.25)
                         .enemiesOf(wp)
                         .forEach(enemies::add);
         }
