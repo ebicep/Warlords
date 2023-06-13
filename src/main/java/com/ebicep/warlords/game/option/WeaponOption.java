@@ -115,7 +115,7 @@ public class WeaponOption implements Option {
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
 
         itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCost()), NamedTextColor.GRAY)));
+                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCost()), NamedTextColor.YELLOW)));
         itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
                                      .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritChance()) + "%", NamedTextColor.RED)));
         itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
