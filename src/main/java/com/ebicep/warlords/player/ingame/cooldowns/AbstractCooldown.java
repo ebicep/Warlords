@@ -6,6 +6,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.EnergyInstance;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.HealingInstance;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.KnockbackInstance;
 import net.kyori.adventure.text.Component;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import java.util.function.Consumer;
 
@@ -18,9 +20,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected WarlordsEntity from;
     protected CooldownTypes cooldownType;
     protected Consumer<CooldownManager> onRemove;
-    protected Consumer<CooldownManager> onRemoveForce = cooldownManager -> {
-    };
-    protected boolean removeOnDeath = true;
+    protected Consumer<CooldownManager> onRemoveForce;
+    protected boolean removeOnDeath;
 
     public AbstractCooldown(
             String name,
@@ -31,33 +32,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             CooldownTypes cooldownType,
             Consumer<CooldownManager> onRemove
     ) {
-        this.name = name;
-        this.nameAbbreviation = nameAbbreviation;
-        this.cooldownClass = cooldownClass;
-        this.cooldownObject = cooldownObject;
-        this.from = from;
-        this.cooldownType = cooldownType;
-        this.onRemove = onRemove;
-    }
-
-    public AbstractCooldown(
-            String name,
-            String nameAbbreviation,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
-            Consumer<CooldownManager> onRemoveForce
-    ) {
-        this.name = name;
-        this.nameAbbreviation = nameAbbreviation;
-        this.cooldownClass = cooldownClass;
-        this.cooldownObject = cooldownObject;
-        this.from = from;
-        this.cooldownType = cooldownType;
-        this.onRemove = onRemove;
-        this.onRemoveForce = onRemoveForce;
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, true);
     }
 
     public AbstractCooldown(
@@ -70,14 +45,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             Consumer<CooldownManager> onRemove,
             boolean removeOnDeath
     ) {
-        this.name = name;
-        this.nameAbbreviation = nameAbbreviation;
-        this.cooldownClass = cooldownClass;
-        this.cooldownObject = cooldownObject;
-        this.from = from;
-        this.cooldownType = cooldownType;
-        this.onRemove = onRemove;
-        this.removeOnDeath = removeOnDeath;
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, cooldownManager -> {}, removeOnDeath);
     }
 
     public AbstractCooldown(
@@ -98,8 +66,34 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.from = from;
         this.cooldownType = cooldownType;
         this.onRemove = onRemove;
-        this.onRemoveForce = onRemoveForce;
         this.removeOnDeath = removeOnDeath;
+        Listener listener = getListener();
+        if (listener != null) {
+            from.getGame().registerEvents(listener);
+            this.onRemoveForce = cooldownManager -> {
+                HandlerList.unregisterAll(listener);
+                onRemoveForce.accept(cooldownManager);
+            };
+        } else {
+            this.onRemoveForce = onRemoveForce;
+        }
+    }
+
+    protected Listener getListener() {
+        return null;
+    }
+
+    public AbstractCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            Consumer<CooldownManager> onRemoveForce
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true);
     }
 
     public abstract Component getNameAbbreviation();

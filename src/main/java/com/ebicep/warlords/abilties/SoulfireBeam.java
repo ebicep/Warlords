@@ -20,14 +20,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SoulfireBlast extends AbstractAbility {
+public class SoulfireBeam extends AbstractAbility {
 
     private int maxRange = 30;
     private int speedBuff = 40;
     private int speedTickDuration = 60;
 
-    public SoulfireBlast() {
-        super("Soulfire Blast", 506, 685, 10, 60, 20, 175);
+    public SoulfireBeam() {
+        super("Soulfire Beam", 376, 508, 10, 60, 20, 175);
     }
 
     @Override
@@ -35,13 +35,14 @@ public class SoulfireBlast extends AbstractAbility {
         description = Component.text("Unleash a concentrated beam of demonic power, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage to all enemies hit. Enemies hit are slightly pushed back. " +
-                                       "If the target is affected by 3 stacks of Poisonous Hex, remove all stacks, " +
-                                       "increase the damage dealt of Soulfire Blast by 100% and reduce the cooldown of Energy Seer by 1 second. Gain "))
+                                       " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
+                               .append(Component.text("100%", NamedTextColor.RED))
+                               .append(Component.text(". Gain"))
                                .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" speed for "))
                                .append(Component.text(format(speedTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds.\n\nHas a maximum range of "))
-                               .append(Component.text(format(30), NamedTextColor.YELLOW))
+                               .append(Component.text(maxRange, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
 
@@ -61,7 +62,6 @@ public class SoulfireBlast extends AbstractAbility {
                         .enemiesOf(wp)
                         .forEach(enemies::add);
         }
-
         for (WarlordsEntity enemy : enemies) {
             float minDamage = minDamageHeal;
             float maxDamage = maxDamageHeal;
@@ -76,8 +76,9 @@ public class SoulfireBlast extends AbstractAbility {
                 maxDamage *= 2;
                 wp.subtractPurpleCooldown(1);
             }
-            enemy.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, false);
+            enemy.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, wp.getCooldownManager().hasCooldown(AstralPlague.class));
         }
+        wp.addSpeedModifier(wp, name, speedBuff, 60);
         return true;
     }
 }

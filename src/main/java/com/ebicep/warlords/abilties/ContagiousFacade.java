@@ -43,11 +43,9 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                                .append(Component.text(" of all incoming damage for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. "))
-                               .append(Component.text(
-                                       "\n\nReactivate the ability to grant yourself a shield equal to all the damage you have absorbed during Contagious Facade. Lasts "))
+                               .append(Component.text("\nReactivate the ability to grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
                                .append(Component.text(format(shieldTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Not reactivating the ability will instead make all enemies around you in a " +
-                                       vulnerableRange + " block range around you vulnerable to Poisonous Hex. Increasing the damage it deals by "))
+                               .append(Component.text(" seconds. Not reactivating the ability will instead increase your speed by "))
                                .append(Component.text(damageIncrease + "%", NamedTextColor.RED))
                                .append(Component.text(" for "))
                                .append(Component.text(format(damageIncreaseDuration / 20f), NamedTextColor.GOLD))

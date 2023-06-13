@@ -19,10 +19,10 @@ public class Conjurer extends AbstractDruid {
                 14,
                 0,
                 new PoisonousHex(),
-                new SoulfireBlast(),
-                new EnergySeer(),
+                new SoulfireBeam(),
+                new EnergySeerConjurer(),
                 new ContagiousFacade(),
-                new Temp()
+                new AstralPlague()
         );
     }
 

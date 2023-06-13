@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.druid.specs;
 
 import com.ebicep.warlords.abilties.BeaconOfImpair;
 import com.ebicep.warlords.abilties.BeaconOfLight;
+import com.ebicep.warlords.abilties.MercifulHex;
 import com.ebicep.warlords.abilties.Temp;
 import com.ebicep.warlords.classes.druid.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -20,7 +21,7 @@ public class Priest extends AbstractDruid {
                 20,
                 14,
                 0,
-                new Temp(),
+                new MercifulHex(),
                 new BeaconOfLight(),
                 new Temp(),
                 new BeaconOfImpair(),

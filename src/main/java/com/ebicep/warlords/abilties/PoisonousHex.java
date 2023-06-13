@@ -27,47 +27,34 @@ import java.util.Collections;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
-    private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Poisonous Hex",
-                "PHEX",
-                PoisonousHex.class,
-                new PoisonousHex(),
-                from,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-
-                },
-                tickDuration + 20,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
-                        to.addDamageInstance(from, name, dotMinDamage, dotMaxDamage, 0, 100, false);
-                    }
-                })
-        ));
-    }
-
-    private int dotMinDamage = 42;
-    private int dotMaxDamage = 57;
+    private int hexStacksPerHit = 1;
+    private int dotMinDamage = 31;
+    private int dotMaxDamage = 42;
     private double hitBox = 3.5;
     private int tickDuration = 80;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 359, 485, 0, 80, 25, 175, 2, 30, false);
+        super("Poisonous Hex", 319, 431, 0, 80, 25, 175, 2, 30, false);
         this.shotsFiredAtATime = 2;
+        this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw 2 Hex Fangs in front of you, dealing ")
+        description = Component.text("Throw Hex Fangs in front of you, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage to up to 2 enemies. Additionally, hit targets receive 1 stack of Poisonous Hex. Dealing "))
+                               .append(Component.text(" damage to up to 2 enemies. Additionally, hit targets receive "))
+                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex. Dealing "))
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
-                               .append(Component.text(" damage every second for "))
+                               .append(Component.text(" damage every "))
+                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. for "))
                                .append(Component.text("4", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Stacks up to 3 times."))
+                               .append(Component.text(" seconds. Stacks up to "))
+                               .append(Component.text("3", NamedTextColor.RED))
+                               .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
@@ -104,13 +91,33 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
-            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, wp.getCooldownManager().hasCooldown(AstralPlague.class));
             givePoisonousHex(wp, enemy);
         }
 
         return playersHit;
     }
 
+    private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Poisonous Hex",
+                "PHEX",
+                PoisonousHex.class,
+                new PoisonousHex(),
+                from,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+
+                },
+                tickDuration + (from.getCooldownManager().hasCooldown(AstralPlague.class) ? 80 : 40), // base add 20 to delay damage by a second
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
+                        to.addDamageInstance(from, name, dotMinDamage, dotMaxDamage, 0, 100, from.getCooldownManager().hasCooldown(AstralPlague.class));
+                    }
+                })
+        ));
+    }
 
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {

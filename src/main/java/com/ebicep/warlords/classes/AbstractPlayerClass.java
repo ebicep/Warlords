@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -93,11 +94,14 @@ public abstract class AbstractPlayerClass {
         for (int i = 0; i < getAbilities().length; i++) {
             AbstractAbility ability = getAbilities()[i];
             TextComponent.Builder abilityInfo = Component.text();
-            ability.getAbilityInfo().forEach(stringStringPair -> {
-                abilityInfo.append(Component.text(stringStringPair.getA() + ": ", NamedTextColor.WHITE))
-                           .append(Component.text(stringStringPair.getB(), NamedTextColor.GOLD));
-                abilityInfo.append(Component.newline());
-            });
+            List<Pair<String, String>> info = ability.getAbilityInfo();
+            if (info != null) {
+                info.forEach(stringStringPair -> {
+                    abilityInfo.append(Component.text(stringStringPair.getA() + ": ", NamedTextColor.WHITE))
+                               .append(Component.text(stringStringPair.getB(), NamedTextColor.GOLD));
+                    abilityInfo.append(Component.newline());
+                });
+            }
             components.add(Component.text(textColors[i] + ability.getName())
                                     .hoverEvent(HoverEvent.showText(abilityInfo))
             );

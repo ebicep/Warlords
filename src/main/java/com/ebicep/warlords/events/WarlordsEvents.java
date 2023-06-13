@@ -44,6 +44,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -144,6 +145,7 @@ public class WarlordsEvents implements Listener {
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1); // remove attack charge up / recoil
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
