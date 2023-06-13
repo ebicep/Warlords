@@ -43,8 +43,9 @@ public class MercifulHex extends AbstractPiercingProjectile {
                                .append(formatRangeDamage(minDamage, maxDamage))
                                .append(Component.text(" damage, respectively. All other allies and enemies the wind passes through will only receive "))
                                .append(Component.text(subsequentReduction, NamedTextColor.YELLOW))
-                               .append(Component.text(" of the effect. Also heal yourself by "))
+                               .append(Component.text(" of the effect. Also heal yourself for "))
                                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
+                                .append(Component.text(" health."))
                                .append(Component.text(".\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
@@ -80,7 +81,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
-        Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
+        Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 1.2f);
 
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
@@ -195,16 +196,16 @@ public class MercifulHex extends AbstractPiercingProjectile {
     @Nullable
     @Override
     protected String getActivationSound() {
-        return null;
+        return "arcanist.mercifulhex.activation";
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0;
+        return 2;
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0;
+        return 1.6f;
     }
 }
