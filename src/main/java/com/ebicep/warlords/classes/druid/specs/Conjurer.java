@@ -13,7 +13,7 @@ public class Conjurer extends AbstractDruid {
     public Conjurer() {
         super(
                 "Conjurer",
-                5400,
+                5200,
                 305,
                 20,
                 14,

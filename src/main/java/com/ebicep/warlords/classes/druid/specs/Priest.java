@@ -13,7 +13,7 @@ public class Priest extends AbstractDruid {
     public Priest() {
         super(
                 "Priest",
-                5400,
+                5750,
                 355,
                 20,
                 14,

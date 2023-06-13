@@ -15,7 +15,7 @@ public class Guardian extends AbstractDruid {
     public Guardian() {
         super(
                 "Guardian",
-                5400,
+                6000,
                 305,
                 20,
                 14,
