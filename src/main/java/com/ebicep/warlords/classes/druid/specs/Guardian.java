@@ -1,9 +1,6 @@
 package com.ebicep.warlords.classes.druid.specs;
 
-import com.ebicep.warlords.abilties.EnergySeerGuardian;
-import com.ebicep.warlords.abilties.FortifyingHex;
-import com.ebicep.warlords.abilties.SpiritualShield;
-import com.ebicep.warlords.abilties.Temp;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.druid.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -20,12 +17,12 @@ public class Guardian extends AbstractDruid {
                 305,
                 20,
                 14,
-                0,
+                10,
                 new FortifyingHex(),
                 new Temp(),
                 new EnergySeerGuardian(),
                 new SpiritualShield(),
-                new Temp()
+                new Sanctuary()
         );
     }
 

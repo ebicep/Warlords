@@ -1,8 +1,11 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -11,9 +14,12 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DivineBlessing extends AbstractAbility {
 
@@ -53,14 +59,54 @@ public class DivineBlessing extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.35f);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
 
-        for (WarlordsEntity teammate : PlayerFilter.playingGame(wp.getGame())
-                                                   .aliveTeammatesOf(wp)
+        wp.getCooldownManager().removeCooldown(DivineBlessing.class, false);
+        List<BeaconOfImpair> effectedBeacons = new CooldownFilter<>(wp, RegularCooldown.class)
+                .filterCooldownFrom(wp)
+                .filterCooldownClassAndMapToObjectsOfClass(BeaconOfImpair.class)
+                .collect(Collectors.toList());
+        effectedBeacons.forEach(beaconAbility -> beaconAbility.setRadius(beaconAbility.getRadius() + beaconImpairRangeIncrease));
+
+        DivineBlessing tempDivineBlessing = new DivineBlessing();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "BLESS",
+                DivineBlessing.class,
+                tempDivineBlessing,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    effectedBeacons.forEach(beaconAbility -> beaconAbility.setRadius(beaconAbility.getRadius() - beaconImpairRangeIncrease));
+                },
+                tickDuration
         ) {
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * (1 + healingReceivedIncrease / 100f);
+            }
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                        AbstractCooldown<?> cd = event.getAbstractCooldown();
+                        if (event.getWarlordsEntity().equals(wp) && cd.getCooldownObject() instanceof BeaconOfImpair beacon) {
+                            beacon.setRadius(beacon.getRadius() + beaconImpairRangeIncrease);
+                            effectedBeacons.add(beacon);
+                        }
+                    }
+                };
+            }
+        });
+
+        for (WarlordsEntity teammate : PlayerFilter.playingGame(wp.getGame()).teammatesOfExcludingSelf(wp)) {
             teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "BLESS",
                     DivineBlessing.class,
-                    new DivineBlessing(),
+                    tempDivineBlessing,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -73,7 +119,7 @@ public class DivineBlessing extends AbstractAbility {
                 }
             });
         }
-        //TODO BEACON
+
         return true;
     }
 }

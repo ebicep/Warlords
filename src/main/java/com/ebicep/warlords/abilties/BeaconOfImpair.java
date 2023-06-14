@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -23,11 +24,11 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
     private int critMultiplierReducedTo = 100;
 
     public BeaconOfImpair() {
-        this(null);
+        this(null, null);
     }
 
-    public BeaconOfImpair(Location location) {
-        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 6, 20);
+    public BeaconOfImpair(Location location, CircleEffect effect) {
+        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 6, 20, effect);
     }
 
     @Override
@@ -55,16 +56,17 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
     }
 
     @Override
-    public BeaconOfImpair getObject(Location groundLocation) {
-        return new BeaconOfImpair(groundLocation);
+    public BeaconOfImpair getObject(Location groundLocation, CircleEffect effect) {
+        return new BeaconOfImpair(groundLocation, effect);
     }
 
     @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfImpair> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 5 == 0) {
             BeaconOfImpair beacon = cooldown.getCooldownObject();
+            int rad = beacon.getRadius();
             for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(beacon.getGroundLocation(), radius, radius, radius)
+                    .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveEnemiesOf(wp)
             ) {
                 enemy.getCooldownManager().removeCooldownByObject(this);

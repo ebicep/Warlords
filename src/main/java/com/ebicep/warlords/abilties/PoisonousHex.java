@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
+
+    private int maxFullDistance = 30;
     private int hexStacksPerHit = 1;
     private int dotMinDamage = 34;
     private int dotMaxDamage = 46;
@@ -77,9 +79,16 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
+        Location startingLocation = projectile.getStartingLocation();
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
+        double distanceSquared = startingLocation.distanceSquared(currentLocation);
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
         int playersHit = 0;
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
@@ -91,7 +100,15 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
-            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, wp.getCooldownManager().hasCooldown(AstralPlague.class));
+            enemy.addDamageInstance(
+                    wp,
+                    name,
+                    (float) (minDamageHeal * toReduceBy),
+                    (float) (maxDamageHeal * toReduceBy),
+                    critChance,
+                    critMultiplier,
+                    wp.getCooldownManager().hasCooldown(AstralPlague.class)
+            );
             givePoisonousHex(wp, enemy);
         }
 
@@ -136,9 +153,16 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
+        Location startingLocation = projectile.getStartingLocation();
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
+        double distanceSquared = startingLocation.distanceSquared(currentLocation);
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
                 .aliveEnemiesOf(wp)
@@ -148,7 +172,15 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
-            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            enemy.addDamageInstance(
+                    wp,
+                    name,
+                    (float) (minDamageHeal * toReduceBy),
+                    (float) (maxDamageHeal * toReduceBy),
+                    critChance,
+                    critMultiplier,
+                    wp.getCooldownManager().hasCooldown(AstralPlague.class)
+            );
             givePoisonousHex(wp, enemy);
         }
     }

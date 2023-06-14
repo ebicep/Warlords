@@ -91,7 +91,7 @@ public class HammerOfLight extends AbstractAbility implements Duration {
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" every second in a "))
                                .append(Component.text(RADIUS, NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))
+                               .append(Component.text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
                                .append(Component.newline())

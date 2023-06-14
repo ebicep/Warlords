@@ -120,7 +120,11 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.joinMessage(wp.getColoredNameBold().append(Component.text(" rejoined the game!", NamedTextColor.YELLOW)));
+            e.joinMessage(Component.textOfChildren(
+                            wp.getColoredNameBold(),
+                            Component.text(" rejoined the game!", NamedTextColor.GOLD)
+                    )
+            );
         } else {
             player.setAllowFlight(true);
             e.joinMessage(Permissions.getPrefixWithColor(player, false)
@@ -290,7 +294,11 @@ public class WarlordsEvents implements Listener {
         WarlordsPlayer wp = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (wp != null) {
             wp.updatePlayerReference(null);
-            e.quitMessage(wp.getColoredNameBold().append(Component.text(" left the game!", NamedTextColor.GOLD)));
+            e.quitMessage(Component.textOfChildren(
+                            wp.getColoredNameBold(),
+                            Component.text(" left the game!", NamedTextColor.GOLD)
+                    )
+            );
         } else {
             e.quitMessage(Permissions.getPrefixWithColor(e.getPlayer(), false)
                                      .append(Component.text(e.getPlayer().getName()))

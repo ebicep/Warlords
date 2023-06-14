@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ContagiousFacade extends AbstractAbility implements Duration {
 
-    private int damageAbsorption = 35;
+    private int damageAbsorption = 30;
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
     private int speedIncrease = 40;

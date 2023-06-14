@@ -24,7 +24,8 @@ import java.util.Collections;
 public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility {
 
     protected Location groundLocation; // not static
-    protected int radius;
+    protected CircleEffect effect; // not static
+    protected int radius; // not static
     protected int tickDuration;
 
     public AbstractBeaconAbility(
@@ -37,12 +38,14 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
             float critMultiplier,
             Location groundLocation,
             int radius,
-            int secondDuration
+            int secondDuration,
+            CircleEffect effect
     ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.groundLocation = groundLocation;
         this.radius = radius;
         this.tickDuration = secondDuration * 20;
+        this.effect = effect;
     }
 
     @Override
@@ -58,7 +61,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 2);
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 3);
         Location groundLocation = LocationUtils.getGroundLocation(player);
 
         Utils.playGlobalSound(groundLocation, "paladin.hammeroflight.impact", 2, 1.5f);
@@ -78,7 +81,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 name,
                 getAbbreviation(),
                 getBeaconClass(),
-                getObject(groundLocation),
+                getObject(groundLocation, teamCircleEffect),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -103,7 +106,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract Class<T> getBeaconClass();
 
-    public abstract T getObject(Location groundLocation);
+    public abstract T getObject(Location groundLocation, CircleEffect effect);
 
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
@@ -113,4 +116,14 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return groundLocation;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+        if (effect != null) {
+            effect.setRadius(radius);
+        }
+    }
 }

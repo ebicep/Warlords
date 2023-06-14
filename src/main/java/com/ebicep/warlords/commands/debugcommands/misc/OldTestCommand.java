@@ -145,7 +145,6 @@ public class OldTestCommand implements CommandExecutor {
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
             // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
 
-
         }
 
 //

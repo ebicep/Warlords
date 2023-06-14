@@ -34,7 +34,7 @@ public class SoulfireBeam extends AbstractAbility {
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of demonic power, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage to all enemies hit. Enemies hit are slightly pushed back. " +
+                               .append(Component.text(" damage to all enemies hit. " +
                                        " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
                                .append(Component.text("100%", NamedTextColor.RED))
                                .append(Component.text(". Gain"))
@@ -70,13 +70,16 @@ public class SoulfireBeam extends AbstractAbility {
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
                     .count();
+            boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
             if (hexStacks >= 3) {
-                enemy.getCooldownManager().removeCooldown(PoisonousHex.class, false);
+                if (!hasAstral) {
+                    enemy.getCooldownManager().removeCooldown(PoisonousHex.class, false);
+                }
                 minDamage *= 2;
                 maxDamage *= 2;
                 wp.subtractPurpleCooldown(1);
             }
-            enemy.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, wp.getCooldownManager().hasCooldown(AstralPlague.class));
+            enemy.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, hasAstral);
         }
         wp.addSpeedModifier(wp, name, speedBuff, 60);
         return true;

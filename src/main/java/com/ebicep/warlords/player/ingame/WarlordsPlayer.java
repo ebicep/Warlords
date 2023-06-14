@@ -1,10 +1,10 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -311,16 +311,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 playerInventory.remove(UndyingArmy.BONE);
             }
 
-            //Arcane shield absorption hearts
-            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
-                    .toList();
-            if (!arcaneShields.isEmpty()) {
-                ArcaneShield arcaneShield = arcaneShields.get(0);
-                ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
-            } else {
-                ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
-            }
+            double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                    .mapToDouble(Shield::getShieldHealth)
+                    .sum();
+            ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
         }
     }
 
@@ -332,6 +327,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                    .stream()
                                    .map(WarlordsNPC::getMob)
+                                   .filter(Objects::nonNull)
                                    .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
                                    .forEach(AbstractMob::removeTarget);
             }

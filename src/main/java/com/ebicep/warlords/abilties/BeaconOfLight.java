@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -20,11 +21,11 @@ import java.util.List;
 public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
 
     public BeaconOfLight() {
-        this(null);
+        this(null, null);
     }
 
-    public BeaconOfLight(Location location) {
-        super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20);
+    public BeaconOfLight(Location location, CircleEffect effect) {
+        super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20, effect);
     }
 
     @Override
@@ -64,8 +65,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
-    public BeaconOfLight getObject(Location groundLocation) {
-        return new BeaconOfLight(groundLocation);
+    public BeaconOfLight getObject(Location groundLocation, CircleEffect effect) {
+        return new BeaconOfLight(groundLocation, effect);
     }
 
     @Override
@@ -79,8 +80,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                 allyTarget.addHealingInstance(
                         wp,
                         name,
-                        minDamageHeal,
-                        maxDamageHeal,
+                        minDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
+                        maxDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
                         critChance,
                         critMultiplier,
                         false,

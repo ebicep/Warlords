@@ -42,10 +42,10 @@ public class MercifulHex extends AbstractPiercingProjectile {
                                .append(Component.text(" health and take "))
                                .append(formatRangeDamage(minDamage, maxDamage))
                                .append(Component.text(" damage, respectively. All other allies and enemies the wind passes through will only receive "))
-                               .append(Component.text(subsequentReduction, NamedTextColor.YELLOW))
+                               .append(Component.text(subsequentReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of the effect. Also heal yourself for "))
                                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
-                                .append(Component.text(" health."))
+                               .append(Component.text(" health."))
                                .append(Component.text(".\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
@@ -93,7 +93,6 @@ public class MercifulHex extends AbstractPiercingProjectile {
                 false,
                 false
         );
-
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
                 .excluding(wp)
@@ -107,7 +106,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
             boolean isTeammate = warlordsEntity.isTeammate(wp);
             if (isTeammate) {
                 int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-                float reduction = teammatesHit == 1 ? 1 : 1 - subsequentReduction / 100f;
+                float reduction = teammatesHit == 1 ? 1 : subsequentReduction / 100f;
                 warlordsEntity.addHealingInstance(
                         wp,
                         name,
@@ -121,7 +120,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
 
             } else {
                 int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
-                float reduction = enemiesHit == 1 ? 1 : (1 - subsequentReduction / 100f);
+                float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
                 warlordsEntity.addDamageInstance(
                         wp,
                         name,

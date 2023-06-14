@@ -26,6 +26,7 @@ import java.util.List;
 
 public class FortifyingHex extends AbstractProjectile implements Duration {
 
+    private int maxFullDistance = 20;
     private float runeTickIncrease = 0.5f;
     private int tickDuration = 60;
     private int hexStacksPerHit = 1;
@@ -33,7 +34,7 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
     private int hexMaxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 20, false);
+        super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 30, false);
     }
 
     @Override
@@ -45,7 +46,8 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
                                .append(Component.text(", and granting you "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex.  Fortifying Hex lasts  "))
-                               .append(Component.text(" and absorbs"))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds and absorbs"))
                                .append(Component.text("1", NamedTextColor.YELLOW))
                                .append(Component.text(" instance of incoming damage, up to "))
                                .append(Component.text(hexShieldAmount, NamedTextColor.YELLOW))
@@ -70,31 +72,31 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
         if (hit != null) {
             WarlordsEntity wp = projectile.getShooter();
+            Location currentLocation = projectile.getCurrentLocation();
+            Location startingLocation = projectile.getStartingLocation();
+
+            double distanceSquared = startingLocation.distanceSquared(currentLocation);
+            double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+            if (toReduceBy < .2) {
+                toReduceBy = .2;
+            }
             hit.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal,
-                    maxDamageHeal,
+                    (float) (minDamageHeal * toReduceBy),
+                    (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
                     false
             );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
-            wp.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, hexMaxStacks);
+            wp.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexShield.class, hexMaxStacks);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
-                    "ASTRAL",
-                    Shield.class,
-                    new Shield(name, hexShieldAmount) {
-                        @Override
-                        public void addShieldHealth(float damage) {
-                            if (damage < getShieldHealth()) {
-                                setShieldHealth(0);
-                            } else {
-                                setShieldHealth(getShieldHealth() - damage);
-                            }
-                        }
-                    },
+                    "FHEX",
+                    FortifyingHexShield.class,
+                    new FortifyingHexShield(name, hexShieldAmount, hexMaxStacks),
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -184,5 +186,28 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    static class FortifyingHexShield extends Shield {
+
+        private int maxStacks;
+
+        public FortifyingHexShield(String name, float hexShieldAmount, int maxStacks) {
+            super(name, hexShieldAmount);
+            this.maxStacks = maxStacks;
+        }
+
+        @Override
+        public void addShieldHealth(float damage) {
+            if (-damage < getShieldHealth()) {
+                setShieldHealth(0);
+            } else {
+                setShieldHealth(getShieldHealth() + damage);
+            }
+        }
+
+        public int getMaxStacks() {
+            return maxStacks;
+        }
     }
 }

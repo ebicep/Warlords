@@ -102,7 +102,7 @@ public abstract class AbstractPlayerClass {
                     abilityInfo.append(Component.newline());
                 });
             }
-            components.add(Component.text(textColors[i] + ability.getName())
+            components.add(Component.text(ability.getName(), textColors[i])
                                     .hoverEvent(HoverEvent.showText(abilityInfo))
             );
         }

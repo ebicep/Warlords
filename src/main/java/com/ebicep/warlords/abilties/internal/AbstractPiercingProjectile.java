@@ -125,7 +125,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             assert entity instanceof CraftEntity;
             net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
             AABB aabb = nmsEntity.getBoundingBox().inflate(playerHitbox);
-            Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
+            Optional<Vec3> vec3 = aabb.clip(nextPosition, currentPosition);
             if (vec3.isEmpty()) {
                 continue;
             }
@@ -166,7 +166,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             if (collisionShape.isEmpty()) {
                 continue;
             }
-            BlockHitResult blockHitResult = collisionShape.clip(currentPosition, nextPosition, pos);
+            BlockHitResult blockHitResult = collisionShape.clip(nextPosition, currentPosition, pos);
             // Flags have no hitbox while they are considered solid??
             if (blockHitResult == null) {
                 continue;

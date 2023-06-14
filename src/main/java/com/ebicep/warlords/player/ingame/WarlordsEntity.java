@@ -45,6 +45,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -335,7 +336,7 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean ignoreReduction = event.isIgnoreReduction();
+        boolean trueDamage = event.isIgnoreReduction();
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
@@ -473,7 +474,7 @@ public abstract class WarlordsEntity {
         }
         float previousDamageValue = damageValue;
         // Reduction before Intervene.
-        if (!ignoreReduction) {
+        if (!trueDamage) {
             // Flag carrier multiplier.
             double flagMultiplier = getFlagDamageMultiplier();
             if (flagMultiplier != 1) {
@@ -514,7 +515,8 @@ public abstract class WarlordsEntity {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), this))
                 .findFirst();
-        if (optionalInterveneCooldown.isPresent() &&
+        if (!trueDamage &&
+                optionalInterveneCooldown.isPresent() &&
                 optionalInterveneCooldown.get().getTicksLeft() > 0 &&
                 HammerOfLight.notStandingInHammer(attacker, this) &&
                 isEnemy(attacker)
@@ -595,7 +597,7 @@ public abstract class WarlordsEntity {
             }
         } else {
             // Damage reduction after Intervene
-            if (!ignoreReduction) {
+            if (!trueDamage) {
                 if (HammerOfLight.notStandingInHammer(attacker, this)) {
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
@@ -628,7 +630,8 @@ public abstract class WarlordsEntity {
                     .filterCooldownClass(Shield.class)
                     .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
-            if (shieldCooldown.isPresent() &&
+            if (!trueDamage &&
+                    shieldCooldown.isPresent() &&
                     isEnemy(attacker) &&
                     HammerOfLight.notStandingInHammer(attacker, this)
             ) {
@@ -645,12 +648,15 @@ public abstract class WarlordsEntity {
                 TextComponent.Builder attackerMessage = Component.text();
                 if (shield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
+                }
+                if (shield.getShieldHealth() < 0) {
+                    float newDamage = -shield.getShieldHealth();
                     addDamageInstance(Component.text(), new WarlordsDamageHealingEvent(
                             this,
                             attacker,
                             ability,
-                            -shield.getShieldHealth(),
-                            -shield.getShieldHealth(),
+                            newDamage,
+                            newDamage,
                             isCrit ? 100 : 0,
                             1,
                             false,
@@ -664,8 +670,12 @@ public abstract class WarlordsEntity {
                     doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
-                    if (entity instanceof Player) {
-                        entity.setAbsorptionAmount((float) (shield.getShieldHealth() / (maxHealth * .5) * 20));
+                    if (entity instanceof Player player) {
+                        double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                                .mapToDouble(Shield::getShieldHealth)
+                                .sum();
+                        ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
                     }
 
                     if (isMeleeHit) {
@@ -692,7 +702,7 @@ public abstract class WarlordsEntity {
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
                 }
 
-                if (shield.getShieldHealth() > 0) {
+                if (shield.getShieldHealth() >= 0) {
                     PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid(), getEntity() instanceof Player);
                     switch (playerSettings.getChatHealingMode()) {
                         case ALL -> {
@@ -1611,8 +1621,8 @@ public abstract class WarlordsEntity {
     }
 
     public void displayActionBar() {
-        TextComponent.Builder actionBarMessage = Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD)
-                                                          .toBuilder();
+        TextComponent.Builder actionBarMessage = Component.text()
+                                                          .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
         TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
         float healthRatio = health / maxHealth;
         if (healthRatio > 1) {
@@ -1633,7 +1643,7 @@ public abstract class WarlordsEntity {
         actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation());
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
             }
         }
         entity.sendActionBar(actionBarMessage.build());
