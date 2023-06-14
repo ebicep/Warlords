@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -49,6 +50,9 @@ public class DivineBlessing extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
+        Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.35f);
+        Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
+
         for (WarlordsEntity teammate : PlayerFilter.playingGame(wp.getGame())
                                                    .aliveTeammatesOf(wp)
         ) {

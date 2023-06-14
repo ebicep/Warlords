@@ -41,12 +41,12 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
 
     @Override
     public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 165, 0), 1));
+        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 75, 0), 1));
     }
 
     @Override
     public String getAbbreviation() {
-        return "IBEACON";
+        return "IMPAIR BEACON";
     }
 
     @Override
