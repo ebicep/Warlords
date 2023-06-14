@@ -83,16 +83,6 @@ public class MercifulHex extends AbstractPiercingProjectile {
 
         Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 1.2f);
 
-        wp.addHealingInstance(
-                wp,
-                name,
-                minSelfHeal,
-                maxSelfHeal,
-                critChance,
-                critMultiplier,
-                false,
-                false
-        );
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
                 .excluding(wp)
@@ -137,6 +127,22 @@ public class MercifulHex extends AbstractPiercingProjectile {
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        boolean activate = super.onActivate(shooter, player);
+        shooter.addHealingInstance(
+                shooter,
+                name,
+                minSelfHeal,
+                maxSelfHeal,
+                critChance,
+                critMultiplier,
+                false,
+                false
+        );
+        return activate;
     }
 
     @Override
