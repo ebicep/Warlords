@@ -310,7 +310,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 @Override
                 public void run() {
                     if (ability.getCurrentCooldown() > 0) {
-                        ability.subtractCooldown(.05f);
+                        ability.subtractCurrentCooldown(.05f);
                         if (player.getEntity() instanceof Player) {
                             updateAbilityItem(player, (Player) player.getEntity());
                         }

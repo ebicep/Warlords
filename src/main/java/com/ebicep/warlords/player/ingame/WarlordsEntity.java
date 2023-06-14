@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
+import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -623,29 +624,33 @@ public abstract class WarlordsEntity {
 
             final float damageHealValueBeforeShieldReduction = damageValue;
             // Arcane Shield
-            Optional<RegularCooldown> arcaneShieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClass(ArcaneShield.class)
+            Optional<RegularCooldown> shieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClass(Shield.class)
                     .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
-            if (arcaneShieldCooldown.isPresent() &&
+            if (shieldCooldown.isPresent() &&
                     isEnemy(attacker) &&
                     HammerOfLight.notStandingInHammer(attacker, this)
             ) {
-                debugMessage.append(Component.newline()).append(Component.text("Arcane Shield:", NamedTextColor.AQUA));
-
-                RegularCooldown cooldown = arcaneShieldCooldown.get();
-                ArcaneShield arcaneShield = (ArcaneShield) cooldown.getCooldownObject();
+                RegularCooldown cooldown = shieldCooldown.get();
+                Shield shield = (Shield) cooldown.getCooldownObject();
+                debugMessage.append(Component.newline()).append(Component.text("Shield (" + shield.getName() + "): ", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.GREEN, "Pre Health: " + shield.getShieldHealth());
                 //adding dmg to shield
-                arcaneShield.addShieldHealth(-damageValue);
+                shield.addShieldHealth(-damageValue);
+                appendDebugMessage(debugMessage, 1, NamedTextColor.GREEN, "Post Health: " + shield.getShieldHealth());
+
                 //check if broken
-                if (arcaneShield.getShieldHealth() <= 0) {
+                TextComponent.Builder ownMessage = Component.text();
+                TextComponent.Builder attackerMessage = Component.text();
+                if (shield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
                     addDamageInstance(Component.text(), new WarlordsDamageHealingEvent(
                             this,
                             attacker,
                             ability,
-                            -arcaneShield.getShieldHealth(),
-                            -arcaneShield.getShieldHealth(),
+                            -shield.getShieldHealth(),
+                            -shield.getShieldHealth(),
                             isCrit ? 100 : 0,
                             1,
                             false,
@@ -654,27 +659,21 @@ public abstract class WarlordsEntity {
                             EnumSet.noneOf(InstanceFlags.class)
                     ));
 
-                    addAbsorbed(-(arcaneShield.getShieldHealth()));
+                    addAbsorbed(-(shield.getShieldHealth()));
 
                     doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
                     if (entity instanceof Player) {
-                        entity.setAbsorptionAmount((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
+                        entity.setAbsorptionAmount((float) (shield.getShieldHealth() / (maxHealth * .5) * 20));
                     }
 
                     if (isMeleeHit) {
-                        sendMessage(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.",
-                                NamedTextColor.GRAY
-                        )));
-                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY)));
+                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        sendMessage(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.",
-                                NamedTextColor.GRAY
-                        )));
-                        attacker.sendMessage(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".",
-                                NamedTextColor.GRAY
-                        )));
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.", NamedTextColor.GRAY)));
+                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
@@ -691,6 +690,47 @@ public abstract class WarlordsEntity {
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
+                }
+
+                if (shield.getShieldHealth() > 0) {
+                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid(), getEntity() instanceof Player);
+                    switch (playerSettings.getChatHealingMode()) {
+                        case ALL -> {
+                            if (showDebugMessage) {
+                                sendMessage(ownMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                            } else {
+                                sendMessage(ownMessage.build());
+                            }
+                        }
+                        case CRITS_ONLY -> {
+                            if (isCrit) {
+                                if (showDebugMessage) {
+                                    sendMessage(ownMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                                } else {
+                                    sendMessage(ownMessage.build());
+                                }
+                            }
+                        }
+                    }
+                    PlayerSettings attackerPlayerSettings = PlayerSettings.getPlayerSettings(attacker.getUuid(), attacker.getEntity() instanceof Player);
+                    switch (attackerPlayerSettings.getChatHealingMode()) {
+                        case ALL -> {
+                            if (attacker.showDebugMessage) {
+                                attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                            } else {
+                                attacker.sendMessage(attackerMessage.build());
+                            }
+                        }
+                        case CRITS_ONLY -> {
+                            if (isCrit) {
+                                if (attacker.showDebugMessage) {
+                                    attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                                } else {
+                                    attacker.sendMessage(attackerMessage.build());
+                                }
+                            }
+                        }
+                    }
                 }
 
                 playHurtAnimation(this.entity, attacker);
@@ -997,7 +1037,6 @@ public abstract class WarlordsEntity {
 
         // Self Healing
         if (this == attacker) {
-
             if (this.health + healValue > this.maxHealth) {
                 healValue = this.maxHealth - this.health;
             }
@@ -1427,7 +1466,17 @@ public abstract class WarlordsEntity {
      * @param hurtPlayer what warlords player should play the hurt animation?
      */
     private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
-        entity.playEffect(EntityEffect.HURT);
+        if (entity instanceof Player p) {
+//            ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+//            PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.ANIMATION);
+//            packet.getIntegers().write(0, p.getEntityId());
+//            packet.getIntegers().write(1, 1);
+//            try {
+//                protocolManager.sendServerPacket(p, packet);
+//            } catch (InvocationTargetException e) {
+//                throw new RuntimeException(e);
+//            }
+        }
         for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
             player1.playSound(entity.getLocation(), Sound.ENTITY_PLAYER_HURT, 2, 1);
         }
@@ -1708,7 +1757,7 @@ public abstract class WarlordsEntity {
 
     public void subtractRedCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getRedAbility().subtractCooldown(cooldown);
+            this.getRedAbility().subtractCurrentCooldown(cooldown);
             updateRedItem();
         }
     }
@@ -1732,7 +1781,7 @@ public abstract class WarlordsEntity {
 
     public void subtractPurpleCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getPurpleAbility().subtractCooldown(cooldown);
+            this.getPurpleAbility().subtractCurrentCooldown(cooldown);
             updatePurpleItem();
         }
     }
@@ -1756,7 +1805,7 @@ public abstract class WarlordsEntity {
 
     public void subtractBlueCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getBlueAbility().subtractCooldown(cooldown);
+            this.getBlueAbility().subtractCurrentCooldown(cooldown);
             updateBlueItem();
         }
     }
@@ -1780,7 +1829,7 @@ public abstract class WarlordsEntity {
 
     public void subtractOrangeCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
-            this.getOrangeAbility().subtractCooldown(cooldown);
+            this.getOrangeAbility().subtractCurrentCooldown(cooldown);
             updateOrangeItem();
         }
     }

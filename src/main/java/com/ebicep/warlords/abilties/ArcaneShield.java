@@ -2,23 +2,20 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -37,11 +34,6 @@ public class ArcaneShield extends AbstractAbility implements Duration {
 
     public ArcaneShield() {
         super("Arcane Shield", 0, 0, 31.32f, 40);
-    }
-
-    public ArcaneShield(int shieldHealth) {
-        this();
-        this.shieldHealth = shieldHealth;
     }
 
     @Override
@@ -68,13 +60,12 @@ public class ArcaneShield extends AbstractAbility implements Duration {
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
-        ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
 
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "ARCA",
-                ArcaneShield.class,
-                tempArcaneShield,
+                Shield.class,
+                new Shield(name, maxShieldHealth),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -92,11 +83,6 @@ public class ArcaneShield extends AbstractAbility implements Duration {
                     }
                 },
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
-                        if (wp.getEntity() instanceof Player) {
-                            ((LivingEntity) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionAmount(0);
-                        }
-                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -110,10 +96,6 @@ public class ArcaneShield extends AbstractAbility implements Duration {
                     }
                 })
         );
-
-        if (player != null) {
-            ((LivingEntity) ((CraftPlayer) player).getHandle()).setAbsorptionAmount(20);
-        }
 
         return true;
     }

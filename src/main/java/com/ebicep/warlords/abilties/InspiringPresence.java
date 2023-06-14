@@ -153,11 +153,11 @@ public class InspiringPresence extends AbstractAbility implements Duration {
     }
 
     private void resetCooldowns(WarlordsEntity we) {
-        we.getRedAbility().subtractCooldown(10);
-        we.getPurpleAbility().subtractCooldown(10);
-        we.getBlueAbility().subtractCooldown(10);
+        we.getRedAbility().subtractCurrentCooldown(10);
+        we.getPurpleAbility().subtractCurrentCooldown(10);
+        we.getBlueAbility().subtractCurrentCooldown(10);
         if (!we.getOrangeAbility().getName().equals("Inspiring Presence")) {
-            we.getOrangeAbility().subtractCooldown(10);
+            we.getOrangeAbility().subtractCurrentCooldown(10);
         }
         we.updateItems();
     }

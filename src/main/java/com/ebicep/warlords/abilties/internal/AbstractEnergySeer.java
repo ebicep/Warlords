@@ -24,13 +24,13 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
     protected int bonusDuration = 100;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 0, 0, 30, 20, 0, 0);
+        super("Energy Seer", 0, 0, 30, 0, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Heal for ")
-                               .append(Component.text((healingMultiplier * 100) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text((healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If you healed for 5 instances, restore energy "))
@@ -77,8 +77,21 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
                         if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
-                        float healAmount = event.getEnergyUsed() * healingMultiplier;
-                        wp.addHealingInstance(wp, name, healAmount, healAmount, 0, 100, false, false);
+                        float energyUsed = event.getEnergyUsed();
+                        if (energyUsed <= 0) {
+                            return;
+                        }
+                        float healAmount = energyUsed * healingMultiplier;
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                healAmount,
+                                healAmount,
+                                0,
+                                100,
+                                false,
+                                false
+                        );
                         timesHealed.getAndIncrement();
                     }
                 };

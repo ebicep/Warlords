@@ -24,15 +24,15 @@ import java.util.List;
 
 public class MercifulHex extends AbstractPiercingProjectile {
 
-    private int minDamage = 310;
-    private int maxDamage = 418;
+    private int minDamage = 248;
+    private int maxDamage = 334;
     private int subsequentReduction = 30;
-    private int minSelfHeal = 329;
-    private int maxSelfHeal = 443;
+    private int minSelfHeal = 263;
+    private int maxSelfHeal = 354;
     private double hitBox = 3.5;
 
     public MercifulHex() {
-        super("Merciful Hex", 438, 591, 0, 100, 20, 180, 2.5, 20, true);
+        super("Merciful Hex", 350, 473, 0, 80, 20, 180, 2.5, 20, true);
     }
 
     @Override
@@ -82,6 +82,17 @@ public class MercifulHex extends AbstractPiercingProjectile {
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
+        wp.addHealingInstance(
+                wp,
+                name,
+                minSelfHeal,
+                maxSelfHeal,
+                critChance,
+                critMultiplier,
+                false,
+                false
+        );
+
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
                 .excluding(wp)
@@ -95,21 +106,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
             boolean isTeammate = warlordsEntity.isTeammate(wp);
             if (isTeammate) {
                 int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-                float reduction = 1 - subsequentReduction / 100f;
-                boolean firstHit = teammatesHit == 1;
-                if (firstHit) {
-                    reduction = 1;
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            minSelfHeal,
-                            maxSelfHeal,
-                            critChance,
-                            critMultiplier,
-                            false,
-                            false
-                    );
-                }
+                float reduction = teammatesHit == 1 ? 1 : 1 - subsequentReduction / 100f;
                 warlordsEntity.addHealingInstance(
                         wp,
                         name,

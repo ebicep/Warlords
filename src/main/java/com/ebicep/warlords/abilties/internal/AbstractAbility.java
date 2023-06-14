@@ -129,7 +129,7 @@ public abstract class AbstractAbility {
         }
     }
 
-    public void subtractCooldown(float cooldown) {
+    public void subtractCurrentCooldown(float cooldown) {
         if (currentCooldown != 0) {
             if (currentCooldown - cooldown < 0) {
                 currentCooldown = 0;
@@ -139,7 +139,7 @@ public abstract class AbstractAbility {
         }
     }
 
-    public void addCooldown(float cooldown) {
+    public void addCurrentCooldown(float cooldown) {
         if (currentCooldown != 0) {
             currentCooldown += cooldown;
         }

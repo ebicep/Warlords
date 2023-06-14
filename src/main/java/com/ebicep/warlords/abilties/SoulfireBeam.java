@@ -27,7 +27,7 @@ public class SoulfireBeam extends AbstractAbility {
     private int speedTickDuration = 60;
 
     public SoulfireBeam() {
-        super("Soulfire Beam", 376, 508, 10, 60, 20, 175);
+        super("Soulfire Beam", 376, 508, 10, 10, 20, 175);
     }
 
     @Override

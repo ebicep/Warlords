@@ -28,13 +28,13 @@ import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
     private int hexStacksPerHit = 1;
-    private int dotMinDamage = 31;
-    private int dotMaxDamage = 42;
+    private int dotMinDamage = 34;
+    private int dotMaxDamage = 46;
     private double hitBox = 3.5;
     private int tickDuration = 80;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 319, 431, 0, 80, 20, 175, 2, 30, false);
+        super("Poisonous Hex", 351, 474, 0, 80, 20, 175, 2, 30, false);
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;

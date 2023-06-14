@@ -24,7 +24,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     public BeaconOfLight(Location location) {
-        super("Beacon of Light", 170, 230, 20, 60, 25, 175, location, 4, 20);
+        super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20);
     }
 
     @Override

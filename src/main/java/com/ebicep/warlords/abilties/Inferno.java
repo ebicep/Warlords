@@ -109,7 +109,7 @@ public class Inferno extends AbstractAbility implements Duration {
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (pveUpgrade) {
                     if (isCrit && !(finalMaxHits <= 0)) {
-                        subtractCooldown(0.5f);
+                        subtractCurrentCooldown(0.5f);
                         setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
                     }

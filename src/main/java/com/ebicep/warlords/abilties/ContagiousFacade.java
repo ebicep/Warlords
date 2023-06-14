@@ -2,9 +2,9 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -12,11 +12,9 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -26,14 +24,13 @@ import java.util.List;
 public class ContagiousFacade extends AbstractAbility implements Duration {
 
     private int damageAbsorption = 35;
-    private int tickDuration = 120;
-    private int shieldTickDuration = 120;
-    private int vulnerableRange = 6;
-    private int damageIncrease = 25;
-    private int damageIncreaseDuration = 120;
+    private int tickDuration = 100;
+    private int shieldTickDuration = 100;
+    private int speedIncrease = 40;
+    private int speedIncreaseDuration = 100;
 
     public ContagiousFacade() {
-        super("Contagious Facade", 0, 0, 30, 40, 0, 0);
+        super("Contagious Facade", 0, 0, 30, 20, 0, 0);
     }
 
     @Override
@@ -46,9 +43,9 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                                .append(Component.text("\nReactivate the ability to grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
                                .append(Component.text(format(shieldTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Not reactivating the ability will instead increase your speed by "))
-                               .append(Component.text(damageIncrease + "%", NamedTextColor.RED))
+                               .append(Component.text(speedIncrease + "%", NamedTextColor.RED))
                                .append(Component.text(" for "))
-                               .append(Component.text(format(damageIncreaseDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(format(speedIncreaseDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }
 
@@ -69,26 +66,7 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            name + " Vulnerability",
-                            "VUL",
-                            ContagiousFacade.class,
-                            new ContagiousFacade(),
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager2 -> {
-
-                            },
-                            damageIncreaseDuration
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            if (event.getWarlordsEntity().getLocation().distanceSquared(wp.getLocation()) < vulnerableRange * vulnerableRange) {
-                                return currentDamageValue * (1 + damageIncrease / 100f);
-                            }
-                            return currentDamageValue;
-                        }
-                    });
+                    wp.getSpeed().addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                 },
                 tickDuration
         ) {
@@ -110,19 +88,14 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
                     wp.getCooldownManager().addRegularCooldown(
                             name,
-                            "ARCA",
-                            ArcaneShield.class,
-                            new ArcaneShield((int) totalAbsorbed.get()),
+                            "SHIELD",
+                            Shield.class,
+                            new Shield(name, (int) totalAbsorbed.get()),
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
                             },
                             cooldownManager -> {
-                                if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
-                                    if (wp.getEntity() instanceof Player) {
-                                        ((LivingEntity) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionAmount(0);
-                                    }
-                                }
                             },
                             shieldTickDuration,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -136,9 +109,6 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                                 }
                             })
                     );
-                    if (player != null) {
-                        ((LivingEntity) ((CraftPlayer) player).getHandle()).setAbsorptionAmount(20);
-                    }
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)

@@ -347,16 +347,16 @@ public abstract class AbstractPlayerClass {
     }
 
     public void increaseAllCooldownTimersBy(float amount) {
-        this.red.addCooldown(amount);
-        this.purple.addCooldown(amount);
-        this.blue.addCooldown(amount);
-        this.orange.addCooldown(amount);
+        this.red.addCurrentCooldown(amount);
+        this.purple.addCurrentCooldown(amount);
+        this.blue.addCurrentCooldown(amount);
+        this.orange.addCurrentCooldown(amount);
     }
 
     public void decreaseAllCooldownTimersBy(float amount) {
-        this.red.subtractCooldown(amount);
-        this.purple.subtractCooldown(amount);
-        this.blue.subtractCooldown(amount);
-        this.orange.subtractCooldown(amount);
+        this.red.subtractCurrentCooldown(amount);
+        this.purple.subtractCurrentCooldown(amount);
+        this.blue.subtractCurrentCooldown(amount);
+        this.orange.subtractCurrentCooldown(amount);
     }
 }

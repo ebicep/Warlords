@@ -15,10 +15,7 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilties.OrbsOfLife;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.DamageCheck;
-import com.ebicep.warlords.abilties.internal.HealingPowerup;
-import com.ebicep.warlords.abilties.internal.Overheal;
+import com.ebicep.warlords.abilties.internal.*;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -319,6 +316,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
+        getServer().getPluginManager().registerEvents(new Shield(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
@@ -532,7 +530,7 @@ public class Warlords extends JavaPlugin {
 
                     // Decrementing red skill's cooldown.
                     if (wp.getRedAbility().getCurrentCooldown() > 0) {
-                        wp.getRedAbility().subtractCooldown(.05f);
+                        wp.getRedAbility().subtractCurrentCooldown(.05f);
                         if (player != null) {
                             wp.updateRedItem(player);
                         }
@@ -540,7 +538,7 @@ public class Warlords extends JavaPlugin {
 
                     // Decrementing purple skill's cooldown.
                     if (wp.getPurpleAbility().getCurrentCooldown() > 0) {
-                        wp.getPurpleAbility().subtractCooldown(.05f);
+                        wp.getPurpleAbility().subtractCurrentCooldown(.05f);
                         if (player != null) {
                             wp.updatePurpleItem(player);
                         }
@@ -548,7 +546,7 @@ public class Warlords extends JavaPlugin {
 
                     // Decrementing blue skill's cooldown.
                     if (wp.getBlueAbility().getCurrentCooldown() > 0) {
-                        wp.getBlueAbility().subtractCooldown(.05f);
+                        wp.getBlueAbility().subtractCurrentCooldown(.05f);
                         if (player != null) {
                             wp.updateBlueItem(player);
                         }
@@ -556,7 +554,7 @@ public class Warlords extends JavaPlugin {
 
                     // Decrementing orange skill's cooldown.
                     if (wp.getOrangeAbility().getCurrentCooldown() > 0) {
-                        wp.getOrangeAbility().subtractCooldown(.05f);
+                        wp.getOrangeAbility().subtractCurrentCooldown(.05f);
                         if (player != null) {
                             wp.updateOrangeItem(player);
                         }

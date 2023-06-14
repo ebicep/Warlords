@@ -151,7 +151,7 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
-        if (modifier != -99) {
+        if (modifier != -99 && getMobTier() != null) {
             if (getMobTier() == MobTier.BOSS) {
                 if (modifier < 0) {
                     modifier *= .4;
@@ -203,7 +203,11 @@ public final class WarlordsNPC extends WarlordsEntity {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
     }
 
+    @Nullable
     public MobTier getMobTier() {
+        if (mob == null) {
+            return null;
+        }
         return mob.getMobTier();
     }
 

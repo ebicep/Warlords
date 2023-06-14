@@ -27,7 +27,7 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
     }
 
     public BeaconOfImpair(Location location) {
-        super("Beacon of Impair", 0, 0, 20, 60, 0, 0, location, 6, 20);
+        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 6, 20);
     }
 
     @Override
