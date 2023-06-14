@@ -92,8 +92,10 @@ public class Sanctuary extends AbstractAbility implements Duration {
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (cooldown.getFrom()
-                                    .equals(wp) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof FortifyingHex.FortifyingHexShield shield) {
+                        if (cooldown.getFrom().equals(wp) &&
+                                cooldown instanceof RegularCooldown<?> regularCooldown &&
+                                cooldown.getCooldownObject() instanceof FortifyingHex.FortifyingHexShield shield
+                        ) {
                             shield.setMaxShieldHealth(shield.getMaxShieldHealth() + hexShieldIncrease);
                             shield.setShieldHealth(shield.getShieldHealth() + hexShieldIncrease);
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);

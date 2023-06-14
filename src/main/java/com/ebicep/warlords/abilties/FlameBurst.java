@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -123,8 +122,8 @@ public class FlameBurst extends AbstractProjectile {
     }
 
     @Override
-    protected void updateSpeed(Vector speedVector, int ticksLived) {
-        speedVector.multiply(acceleration);
+    protected void updateSpeed(InternalProjectile projectile) {
+        projectile.getSpeed().multiply(acceleration);
     }
 
     @Override

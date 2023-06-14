@@ -96,15 +96,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
      * @param projectile
      */
     protected void updateSpeed(InternalProjectile projectile) {
-        updateSpeed(projectile.getSpeed(), projectile.getTicksLived());
-    }
-
-    @Deprecated
-    protected void updateSpeed(Vector speedVector, int ticksLived) {
-    }
-
-    double lerp(double a, double b, double target) {
-        return a + target * (b - a);
     }
 
     @Nullable

@@ -74,7 +74,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        if (projectile.getHit().size() > 2) {
+        if (projectile.getHit().size() >= 2) {
             return 0;
         }
         WarlordsEntity wp = projectile.getShooter();
@@ -110,6 +110,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     wp.getCooldownManager().hasCooldown(AstralPlague.class)
             );
             givePoisonousHex(wp, enemy);
+            if (projectile.getHit().size() >= 2) {
+                getProjectiles(projectile).forEach(InternalProjectile::cancel);
+                break;
+            }
         }
 
         return playersHit;
@@ -148,7 +152,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        if (projectile.getHit().size() > 2) {
+        if (projectile.getHit().size() >= 2) {
             return;
         }
         WarlordsEntity wp = projectile.getShooter();
@@ -182,6 +186,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     wp.getCooldownManager().hasCooldown(AstralPlague.class)
             );
             givePoisonousHex(wp, enemy);
+            givePoisonousHex(wp, enemy);
+            if (projectile.getHit().size() >= 2) {
+                getProjectiles(projectile).forEach(InternalProjectile::cancel);
+                break;
+            }
         }
     }
 

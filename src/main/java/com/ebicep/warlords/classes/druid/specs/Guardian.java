@@ -19,7 +19,7 @@ public class Guardian extends AbstractDruid {
                 14,
                 10,
                 new FortifyingHex(),
-                new Temp(),
+                new NotAShield(),
                 new EnergySeerGuardian(),
                 new SpiritualShield(),
                 new Sanctuary()

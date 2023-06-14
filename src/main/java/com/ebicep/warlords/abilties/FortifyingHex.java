@@ -22,9 +22,34 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 
 public class FortifyingHex extends AbstractProjectile implements Duration {
+
+    public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
+        FortifyingHex fromHex = Arrays.stream(from.getSpec().getAbilities()).filter(FortifyingHex.class::isInstance)
+                                      .map(FortifyingHex.class::cast)
+                                      .findFirst()
+                                      .orElse(new FortifyingHex());
+        String hexName = fromHex.getName();
+        int shieldAmount = fromHex.getHexShieldAmount();
+        int maxStacks = fromHex.getHexMaxStacks();
+        int duration = fromHex.getTickDuration();
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexShield.class, maxStacks);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                hexName,
+                "FHEX",
+                FortifyingHexShield.class,
+                new FortifyingHexShield(hexName, shieldAmount, maxStacks),
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration
+        ));
+
+    }
 
     private int maxFullDistance = 20;
     private float runeTickIncrease = 0.5f;
@@ -91,18 +116,7 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
                     false
             );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
-            wp.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexShield.class, hexMaxStacks);
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "FHEX",
-                    FortifyingHexShield.class,
-                    new FortifyingHexShield(name, hexShieldAmount, hexMaxStacks),
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    tickDuration
-            ));
+            giveFortifyingHex(wp, hit);
         }
         return hit == null ? 0 : 1;
     }
@@ -186,6 +200,14 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getHexShieldAmount() {
+        return hexShieldAmount;
+    }
+
+    public int getHexMaxStacks() {
+        return hexMaxStacks;
     }
 
     static class FortifyingHexShield extends Shield {
