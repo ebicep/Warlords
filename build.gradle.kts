@@ -70,12 +70,11 @@ repositories {
 
 dependencies {
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
-    implementation("com.flowpowered:flow-nbt:2.0.2") // for aswm
     implementation("co.aikar:taskchain-bukkit:3.7.2")
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.github.Rapha149.SignGUI:signgui:a820d1829f")
+    implementation("com.github.Rapha149.SignGUI:signgui:7d7633b4d6")
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.1-SNAPSHOT")

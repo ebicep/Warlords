@@ -231,15 +231,14 @@ public class GuildMenu {
                             "Ratio: " + coinConversionRatio + ":1"
                     )
                     .onFinish((p, lines) -> {
-                        String amountString;
+                        int playerCoinsToConvert;
                         try {
-                            amountString = lines[0];
+                            playerCoinsToConvert = Integer.parseInt(lines[0]);
                         } catch (NumberFormatException ex) {
                             player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
-                        int playerCoinsToConvert = Integer.parseInt(amountString);
                         if (playerCoinsToConvert <= 0) {
                             player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
@@ -308,7 +307,12 @@ public class GuildMenu {
     }
 
     private static void openGuildMenuAfterTick(Guild guild, Player player) {
-        openGuildMenu(guild, player, 1);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openGuildMenu(guild, player, 1);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
 }
