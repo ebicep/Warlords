@@ -41,8 +41,8 @@ public enum SkillBoosts {
                      .append(Component.text("50%.", NamedTextColor.RED)),
             TimeWarpPyromancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarpPyromancer) {
-                    ((TimeWarpPyromancer) abstractAbility).setWarpHealPercentage(40);
+                if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
+                    timeWarp.setWarpHealPercentage(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
@@ -64,8 +64,8 @@ public enum SkillBoosts {
             Component.text("Increase the Crit Multiplier bonus of Inferno by ", NamedTextColor.GREEN).append(Component.text("60%", NamedTextColor.RED)),
             Inferno.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Inferno) {
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(((Inferno) abstractAbility).getCritMultiplierIncrease() + 60);
+                if (abstractAbility instanceof Inferno inferno) {
+                    inferno.setCritMultiplierIncrease(inferno.getCritMultiplierIncrease() + 60);
                 }
             }
     ),
@@ -77,9 +77,9 @@ public enum SkillBoosts {
                      .append(Component.text("5%", NamedTextColor.RED)),
             FrostBolt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof FrostBolt) {
+                if (abstractAbility instanceof FrostBolt frostBolt) {
                     abstractAbility.multiplyMinMax(1.2f);
-                    ((FrostBolt) abstractAbility).setSlowness(((FrostBolt) abstractAbility).getSlowness() + 5);
+                    frostBolt.setSlowness(frostBolt.getSlowness() + 5);
                 }
             }
     ),
@@ -128,9 +128,9 @@ public enum SkillBoosts {
                      .append(Component.text("seconds", NamedTextColor.GREEN)),
             IceBarrier.class,
             abstractAbility -> {
-                if (abstractAbility instanceof IceBarrier) {
-                    ((IceBarrier) abstractAbility).setDamageReductionPercent(55);
-                    ((IceBarrier) abstractAbility).setTickDuration(((IceBarrier) abstractAbility).getTickDuration() + 40);
+                if (abstractAbility instanceof IceBarrier iceBarrier) {
+                    iceBarrier.setDamageReductionPercent(55);
+                    iceBarrier.setTickDuration(iceBarrier.getTickDuration() + 40);
                 }
             }
     ),
@@ -189,8 +189,8 @@ public enum SkillBoosts {
                      .append(Component.text("20%", NamedTextColor.RED)),
             HealingRain.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HealingRain) {
-                    ((HealingRain) abstractAbility).setTickDuration(((HealingRain) abstractAbility).getTickDuration() + 80);
+                if (abstractAbility instanceof HealingRain healingRain) {
+                    healingRain.setTickDuration(healingRain.getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
@@ -245,8 +245,8 @@ public enum SkillBoosts {
                      .append(Component.text("5%", NamedTextColor.RED)),
             BloodLust.class,
             abstractAbility -> {
-                if (abstractAbility instanceof BloodLust) {
-                    ((BloodLust) abstractAbility).setDamageConvertPercent(70);
+                if (abstractAbility instanceof BloodLust bloodLust) {
+                    bloodLust.setDamageConvertPercent(70);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -259,9 +259,9 @@ public enum SkillBoosts {
                      .append(Component.text("10%", NamedTextColor.RED)),
             Berserk.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Berserk) {
-                    ((Berserk) abstractAbility).setDamageIncrease(((Berserk) abstractAbility).getDamageIncrease() + 15);
-                    ((Berserk) abstractAbility).setSpeedBuff(((Berserk) abstractAbility).getSpeedBuff() + 10);
+                if (abstractAbility instanceof Berserk berserk) {
+                    berserk.setDamageIncrease(berserk.getDamageIncrease() + 15);
+                    berserk.setSpeedBuff(berserk.getSpeedBuff() + 10);
                 }
             }
     ),
@@ -273,9 +273,9 @@ public enum SkillBoosts {
                      .append(Component.text("25%", NamedTextColor.RED)),
             WoundingStrikeDefender.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WoundingStrikeDefender) {
+                if (abstractAbility instanceof WoundingStrikeDefender strike) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    ((WoundingStrikeDefender) abstractAbility).setWounding(((WoundingStrikeDefender) abstractAbility).getWounding() + 25);
+                    strike.setWounding(strike.getWounding() + 25);
                 }
             }
     ),
@@ -288,8 +288,8 @@ public enum SkillBoosts {
                      .append(Component.text("25%", NamedTextColor.RED)),
             SeismicWave.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SeismicWave) {
-                    ((SeismicWave) abstractAbility).setVelocity(1.8f);
+                if (abstractAbility instanceof SeismicWave seismicWave) {
+                    seismicWave.setVelocity(1.8f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
@@ -302,8 +302,8 @@ public enum SkillBoosts {
                      .append(Component.text("20%", NamedTextColor.RED)),
             GroundSlam.class,
             abstractAbility -> {
-                if (abstractAbility instanceof GroundSlam) {
-                    ((GroundSlam) abstractAbility).setVelocity(1.35f);
+                if (abstractAbility instanceof GroundSlam groundSlam) {
+                    groundSlam.setVelocity(1.35f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
@@ -316,10 +316,10 @@ public enum SkillBoosts {
                      .append(Component.text("400", NamedTextColor.RED)),
             Intervene.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Intervene) {
-                    ((Intervene) abstractAbility).setMaxDamagePrevented(4000);
-                    ((Intervene) abstractAbility).setRadius(15);
-                    ((Intervene) abstractAbility).setBreakRadius(20);
+                if (abstractAbility instanceof Intervene intervene) {
+                    intervene.setMaxDamagePrevented(4000);
+                    intervene.setRadius(15);
+                    intervene.setBreakRadius(20);
                 }
             }
     ),
@@ -331,9 +331,9 @@ public enum SkillBoosts {
                      .append(Component.text("10%", NamedTextColor.RED)),
             LastStand.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LastStand) {
-                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(55);
-                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(45);
+                if (abstractAbility instanceof LastStand lastStand) {
+                    lastStand.setSelfDamageReductionPercent(55);
+                    lastStand.setTeammateDamageReductionPercent(45);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
@@ -346,9 +346,9 @@ public enum SkillBoosts {
                      .append(Component.text("5%", NamedTextColor.RED)),
             CripplingStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CripplingStrike) {
-                    ((CripplingStrike) abstractAbility).setCripple(((CripplingStrike) abstractAbility).getCripple() + 10);
-                    ((CripplingStrike) abstractAbility).setCripplePerStrike(((CripplingStrike) abstractAbility).getCripplePerStrike() + 5);
+                if (abstractAbility instanceof CripplingStrike cripplingStrike) {
+                    cripplingStrike.setCripple(cripplingStrike.getCripple() + 10);
+                    cripplingStrike.setCripplePerStrike(cripplingStrike.getCripplePerStrike() + 5);
                 }
             }
     ),
@@ -360,8 +360,8 @@ public enum SkillBoosts {
                      .append(Component.text("30%", NamedTextColor.RED)),
             RecklessCharge.class,
             abstractAbility -> {
-                if (abstractAbility instanceof RecklessCharge) {
-                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(16);
+                if (abstractAbility instanceof RecklessCharge recklessCharge) {
+                    recklessCharge.setStunTimeInTicks(16);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -411,9 +411,9 @@ public enum SkillBoosts {
                      .append(Component.text("5", NamedTextColor.RED)),
             AvengersStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AvengersStrike) {
+                if (abstractAbility instanceof AvengersStrike avengersStrike) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    ((AvengersStrike) abstractAbility).setEnergySteal(((AvengersStrike) abstractAbility).getEnergySteal() + 5);
+                    avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
             }
     ),
@@ -436,9 +436,9 @@ public enum SkillBoosts {
                      .append(Component.text("40", NamedTextColor.RED)),
             LightInfusionAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionAvenger) {
+                if (abstractAbility instanceof LightInfusionAvenger lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((LightInfusionAvenger) abstractAbility).setEnergyGiven(((LightInfusionAvenger) abstractAbility).getEnergyGiven() + 40);
+                    lightInfusion.setEnergyGiven(lightInfusion.getEnergyGiven() + 40);
                 }
             }
     ),
@@ -449,9 +449,9 @@ public enum SkillBoosts {
                      .append(Component.text("and double the energy drain of Avenger's Mark", NamedTextColor.GREEN)),
             HolyRadianceAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HolyRadianceAvenger) {
+                if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
-                    ((HolyRadianceAvenger) abstractAbility).setEnergyDrainPerSecond(((HolyRadianceAvenger) abstractAbility).getEnergyDrainPerSecond() * 2);
+                    holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 2);
                 }
             }
     ),
@@ -464,9 +464,9 @@ public enum SkillBoosts {
                      .append(Component.text("seconds", NamedTextColor.GREEN)),
             AvengersWrath.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AvengersWrath) {
-                    ((AvengersWrath) abstractAbility).setTickDuration(((AvengersWrath) abstractAbility).getTickDuration() + 100);
-                    ((AvengersWrath) abstractAbility).setEnergyPerSecond(((AvengersWrath) abstractAbility).getEnergyPerSecond() + 10);
+                if (abstractAbility instanceof AvengersWrath avengersWrath) {
+                    avengersWrath.setTickDuration(avengersWrath.getTickDuration() + 100);
+                    avengersWrath.setEnergyPerSecond(avengersWrath.getEnergyPerSecond() + 10);
                 }
             }
     ),
@@ -518,10 +518,10 @@ public enum SkillBoosts {
                      .append(Component.text("15%", NamedTextColor.RED)),
             HolyRadianceCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HolyRadianceCrusader) {
+                if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
-                    ((HolyRadianceCrusader) abstractAbility).setMarkSpeed(((HolyRadianceCrusader) abstractAbility).getMarkSpeed() + 15);
+                    holyRadiance.setMarkDuration(12);
+                    holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
             }
     ),
@@ -533,9 +533,9 @@ public enum SkillBoosts {
                      .append(Component.text("10%", NamedTextColor.RED)),
             InspiringPresence.class,
             abstractAbility -> {
-                if (abstractAbility instanceof InspiringPresence) {
+                if (abstractAbility instanceof InspiringPresence inspiringPresence) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((InspiringPresence) abstractAbility).setSpeedBuff(((InspiringPresence) abstractAbility).getSpeedBuff() + 10);
+                    inspiringPresence.setSpeedBuff(inspiringPresence.getSpeedBuff() + 10);
                 }
             }
     ),
@@ -548,10 +548,10 @@ public enum SkillBoosts {
                      .append(Component.text("more ally.", NamedTextColor.GREEN)),
             ProtectorsStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ProtectorsStrike) {
-                    ((ProtectorsStrike) abstractAbility).setMinConvert(((ProtectorsStrike) abstractAbility).getMinConvert() + 10);
-                    ((ProtectorsStrike) abstractAbility).setMaxConvert(((ProtectorsStrike) abstractAbility).getMaxConvert() + 10);
-                    ((ProtectorsStrike) abstractAbility).setMaxAllies(((ProtectorsStrike) abstractAbility).getMaxAllies() + 1);
+                if (abstractAbility instanceof ProtectorsStrike protectorsStrike) {
+                    protectorsStrike.setMinConvert(protectorsStrike.getMinConvert() + 10);
+                    protectorsStrike.setMaxConvert(protectorsStrike.getMaxConvert() + 10);
+                    protectorsStrike.setMaxAllies(protectorsStrike.getMaxAllies() + 1);
                 }
             }
     ),
@@ -563,8 +563,8 @@ public enum SkillBoosts {
                      .append(Component.text("30%", NamedTextColor.RED)),
             Consecrate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(((Consecrate) abstractAbility).getRadius() + 2);
+                if (abstractAbility instanceof Consecrate consecrate) {
+                    consecrate.setRadius(consecrate.getRadius() + 2);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -643,9 +643,9 @@ public enum SkillBoosts {
                      .append(Component.text("10%", NamedTextColor.RED)),
             Windfury.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Windfury) {
-                    ((Windfury) abstractAbility).setProcChance(45);
-                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 30);
+                if (abstractAbility instanceof Windfury windfury) {
+                    windfury.setProcChance(45);
+                    windfury.setWeaponDamage(windfury.getWeaponDamage() + 30);
                 }
             }
     ),
@@ -694,9 +694,9 @@ public enum SkillBoosts {
                      .append(Component.text("seconds", NamedTextColor.GREEN)),
             SpiritLink.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SpiritLink) {
+                if (abstractAbility instanceof SpiritLink spiritLink) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    ((SpiritLink) abstractAbility).setSpeedDuration(((SpiritLink) abstractAbility).getSpeedDuration() + 0.5);
+                    spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5);
                 }
             }
     ),
@@ -707,8 +707,8 @@ public enum SkillBoosts {
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
             Soulbinding.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Soulbinding) {
-                    ((Soulbinding) abstractAbility).setBindDuration(4);
+                if (abstractAbility instanceof Soulbinding soulbinding) {
+                    soulbinding.setBindDuration(4);
                 }
             }
     ),
@@ -721,8 +721,8 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             Repentance.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Repentance) {
-                    ((Repentance) abstractAbility).setDamageDealtTaken(1500);
+                if (abstractAbility instanceof Repentance repentance) {
+                    repentance.setDamageDealtTaken(1500);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
@@ -735,10 +735,10 @@ public enum SkillBoosts {
                      .append(Component.text("40%", NamedTextColor.RED)),
             DeathsDebt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof DeathsDebt) {
-                    ((DeathsDebt) abstractAbility).setRespiteRadius(15);
-                    ((DeathsDebt) abstractAbility).setDebtRadius(13);
-                    ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.1f);
+                if (abstractAbility instanceof DeathsDebt deathsDebt) {
+                    deathsDebt.setRespiteRadius(15);
+                    deathsDebt.setDebtRadius(13);
+                    deathsDebt.setSelfDamageInPercentPerSecond(.1f);
                 }
             }
     ),
@@ -750,9 +750,9 @@ public enum SkillBoosts {
                      .append(Component.text("30%", NamedTextColor.RED)),
             EarthenSpike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EarthenSpike) {
+                if (abstractAbility instanceof EarthenSpike earthenSpike) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    ((EarthenSpike) abstractAbility).setSpeed(((EarthenSpike) abstractAbility).getSpeed() * 1.3f);
+                    earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.3f);
                 }
             }
     ),
@@ -773,8 +773,8 @@ public enum SkillBoosts {
             Component.text("Increase the proc chance by of Earthliving Weapon by ", NamedTextColor.GREEN).append(Component.text("20%", NamedTextColor.RED)),
             Earthliving.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Earthliving) {
-                    ((Earthliving) abstractAbility).setProcChance(60);
+                if (abstractAbility instanceof Earthliving earthliving) {
+                    earthliving.setProcChance(60);
                 }
             }
     ),
@@ -822,8 +822,8 @@ public enum SkillBoosts {
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
             IncendiaryCurse.class,
             abstractAbility -> {
-                if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
+                if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
+                    incendiaryCurse.setBlindDurationInTicks(50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
@@ -835,8 +835,8 @@ public enum SkillBoosts {
                      .append(Component.text("and become temporarily immune to fall damage after leaping.", NamedTextColor.GREEN)),
             ShadowStep.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ShadowStep) {
-                    ((ShadowStep) abstractAbility).setFallDamageNegation(1000);
+                if (abstractAbility instanceof ShadowStep shadowStep) {
+                    shadowStep.setFallDamageNegation(1000);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
@@ -850,8 +850,8 @@ public enum SkillBoosts {
                      .append(Component.text("blocks", NamedTextColor.GREEN)),
             SoulSwitch.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SoulSwitch) {
-                    ((SoulSwitch) abstractAbility).setRadius(15);
+                if (abstractAbility instanceof SoulSwitch soulSwitch) {
+                    soulSwitch.setRadius(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
@@ -864,8 +864,8 @@ public enum SkillBoosts {
                      .append(Component.text("30%.", NamedTextColor.RED)),
             OrderOfEviscerate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof OrderOfEviscerate) {
-                    ((OrderOfEviscerate) abstractAbility).setTickDuration(((OrderOfEviscerate) abstractAbility).getTickDuration() + 80);
+                if (abstractAbility instanceof OrderOfEviscerate orderOfEviscerate) {
+                    orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -901,8 +901,8 @@ public enum SkillBoosts {
                      .append(Component.text("300", NamedTextColor.RED)),
             HeartToHeart.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(((HeartToHeart) abstractAbility).getHealthRestore() + 300);
+                if (abstractAbility instanceof HeartToHeart heartToHeart) {
+                    heartToHeart.setHealthRestore(heartToHeart.getHealthRestore() + 300);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -915,9 +915,9 @@ public enum SkillBoosts {
                      .append(Component.text("300", NamedTextColor.RED)),
             PrismGuard.class,
             abstractAbility -> {
-                if (abstractAbility instanceof PrismGuard) {
-                    ((PrismGuard) abstractAbility).setProjectileDamageReduction(75);
-                    ((PrismGuard) abstractAbility).setBubbleHealing(((PrismGuard) abstractAbility).getBubbleHealing() + 300);
+                if (abstractAbility instanceof PrismGuard prismGuard) {
+                    prismGuard.setProjectileDamageReduction(75);
+                    prismGuard.setBubbleHealing(prismGuard.getBubbleHealing() + 300);
                 }
             }
     ),
@@ -929,8 +929,8 @@ public enum SkillBoosts {
                      .append(Component.text("25%", NamedTextColor.RED)),
             Vindicate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Vindicate) {
-                    ((Vindicate) abstractAbility).setVindicateDamageReduction(40);
+                if (abstractAbility instanceof Vindicate vindicate) {
+                    vindicate.setVindicateDamageReduction(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
@@ -944,8 +944,8 @@ public enum SkillBoosts {
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
             ImpalingStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ImpalingStrike) {
-                    ((ImpalingStrike) abstractAbility).setLeechDuration(10);
+                if (abstractAbility instanceof ImpalingStrike impalingStrike) {
+                    impalingStrike.setLeechDuration(10);
                     abstractAbility.multiplyMinMax(1.1f);
                 }
             }
@@ -971,10 +971,10 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             VitalityLiquor.class,
             abstractAbility -> {
-                if (abstractAbility instanceof VitalityLiquor) {
+                if (abstractAbility instanceof VitalityLiquor vitalityLiquor) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    ((VitalityLiquor) abstractAbility).setMinWaveHealing(((VitalityLiquor) abstractAbility).getMinWaveHealing() * 1.15f);
-                    ((VitalityLiquor) abstractAbility).setMaxWaveHealing(((VitalityLiquor) abstractAbility).getMaxWaveHealing() * 1.15f);
+                    vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
+                    vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -988,9 +988,9 @@ public enum SkillBoosts {
                      .append(Component.text("blocks.", NamedTextColor.GREEN)),
             RemedicChains.class,
             abstractAbility -> {
-                if (abstractAbility instanceof RemedicChains) {
+                if (abstractAbility instanceof RemedicChains remedicChains) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    ((RemedicChains) abstractAbility).setLinkBreakRadius(25);
+                    remedicChains.setLinkBreakRadius(25);
                 }
             }
     ),
@@ -1003,8 +1003,8 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             DrainingMiasma.class,
             abstractAbility -> {
-                if (abstractAbility instanceof DrainingMiasma) {
-                    ((DrainingMiasma) abstractAbility).setLeechDuration(10);
+                if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
+                    drainingMiasma.setLeechDuration(10);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
