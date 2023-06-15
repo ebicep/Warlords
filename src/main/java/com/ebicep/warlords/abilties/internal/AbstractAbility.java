@@ -17,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -26,12 +24,6 @@ import java.util.function.Predicate;
 public abstract class AbstractAbility {
 
     protected static final int DESCRIPTION_WIDTH = 165;
-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
-
-    static {
-        DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
-        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-    }
 
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
@@ -259,7 +251,11 @@ public abstract class AbstractAbility {
     }
 
     public String format(double input) {
-        return DECIMAL_FORMAT.format(input);
+        return NumberFormat.formatOptionalTenths(input);
+    }
+
+    public String formatHundredths(double input) {
+        return NumberFormat.formatOptionalHundredths(input);
     }
 
     public Component formatRangeHealing(float min, float max) {

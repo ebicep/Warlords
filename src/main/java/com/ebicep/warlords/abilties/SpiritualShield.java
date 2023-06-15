@@ -28,7 +28,7 @@ public class SpiritualShield extends AbstractAbility implements Duration {
         description = Component.text("Surround yourself with spirits for ")
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. While active, increase the attacker’s rune timers by "))
-                               .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
+                               .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you."));
     }
 
