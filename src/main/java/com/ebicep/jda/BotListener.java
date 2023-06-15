@@ -136,7 +136,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                      Component.text("BLUE", NamedTextColor.BLUE) :
                                                      Component.text("RED", NamedTextColor.RED);
                             player.showTitle(Title.title(
-                                    Component.text(Utils.specsOrdered[random.nextInt(Utils.specsOrdered.length)], NamedTextColor.GREEN),
+                                    Component.text(Utils.SPECS_ORDERED[random.nextInt(Utils.SPECS_ORDERED.length)], NamedTextColor.GREEN),
                                     subtitle,
                                     Title.Times.times(Ticks.duration(0), Ticks.duration(5), Ticks.duration(0))
                             ));

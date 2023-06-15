@@ -19,6 +19,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -115,14 +116,15 @@ public class HammerOfLight extends AbstractAbility implements Duration {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock(null, 25).getType() == Material.AIR) {
+        Block targetBlock = Utils.getTargetBlock(player, 25);
+        if (targetBlock.getType() == Material.AIR) {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
 
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
-        Location location = player.getTargetBlock(null, 25).getLocation().clone().add(.6, 0, .6).clone();
+        Location location = targetBlock.getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
             if (location.clone().add(1, 0, 0).getBlock().getType() == Material.AIR) {
                 location.add(.6, 0, 0);

@@ -2,7 +2,11 @@ package com.ebicep.warlords.util.warlords;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -10,18 +14,22 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 public class Utils {
 
-    public static final String[] specsOrdered = {
+    public static final String[] SPECS_ORDERED = {
             "Pyromancer",
             "Cryomancer",
             "Aquamancer",
@@ -40,7 +48,7 @@ public class Utils {
     };
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
-    private static final ItemStack[] woolSortedByColor = {
+    private static final ItemStack[] WOOL_SORTED_BY_COLOR = {
             new ItemStack(Material.WHITE_WOOL),
             new ItemStack(Material.LIGHT_GRAY_WOOL),
             new ItemStack(Material.GRAY_WOOL),
@@ -74,6 +82,43 @@ public class Utils {
             new ItemStack(Material.MAGENTA_WOOL),
             new ItemStack(Material.PINK_WOOL),
     };
+
+    private static final Set<Material> TRANSPARENT = Sets.newHashSet(Material.AIR, Material.CAVE_AIR, Material.VOID_AIR);
+
+    /**
+     * see org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
+     * this accounts for banners
+     *
+     * @param player
+     * @param maxDistance
+     * @return
+     */
+    public static Block getTargetBlock(Player player, int maxDistance) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        Preconditions.checkState(!craftPlayer.getHandle().generation, "Cannot get line of sight during world generation");
+
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+        ArrayList<Block> blocks = new ArrayList<>();
+        Iterator<Block> itr = new BlockIterator(craftPlayer, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            if (blocks.size() > 1) {
+                blocks.remove(0);
+            }
+            Material material = block.getType();
+            if (!TRANSPARENT.contains(material) && !Tag.BANNERS.isTagged(material)) {
+                break;
+            }
+        }
+        return blocks.get(0);
+    }
+
+    public static Location getTargetLocation(Player player, int maxDistance) {
+        return getTargetBlock(player, maxDistance).getLocation();
+    }
 
     public static boolean isProjectile(String ability) {
         return ability.equals("Fireball") ||
@@ -94,7 +139,7 @@ public class Utils {
     }
 
     public static ItemStack getWoolFromIndex(int index) {
-        return woolSortedByColor[index % woolSortedByColor.length];
+        return WOOL_SORTED_BY_COLOR[index % WOOL_SORTED_BY_COLOR.length];
     }
 
     public static void resetPlayerMovementStatistics(Player player) {

@@ -137,7 +137,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
                 continue;
             }
             Vec3 vec = vec3.get();
-            double distance = currentPosition.distanceToSqr(vec); //
+            double distance = currentPosition.distanceToSqr(vec);
             if (shouldEndProjectileOnHit(projectile, wp)) {
                 if (hit == null || distance < hitDistance) {
                     hitDistance = distance;
@@ -156,6 +156,11 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             }
         }
 
+        if (projectile.getTicksLived() == 0) {
+            // for initially shooting entities directly in front of player - revert for blocks
+            Location startingLocation = projectile.getStartingLocation();
+            currentPosition = new Vec3(startingLocation.getX(), startingLocation.getY(), startingLocation.getZ());
+        }
         BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
                 new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
                 speed,
@@ -196,9 +201,10 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         }
 
         if (!PENDING_HITS.isEmpty()) {
+            System.out.println(PENDING_HITS);
             Collections.sort(PENDING_HITS);
             for (PendingHit p : PENDING_HITS) {
-                if (hit == null || hitDistance < p.distance) {
+                if (hit == null || p.distance < hitDistance) {
                     this.onNonCancellingHit(projectile, p.hit, p.loc);
                 } else {
                     break;

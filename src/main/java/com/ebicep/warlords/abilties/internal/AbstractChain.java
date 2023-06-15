@@ -73,11 +73,10 @@ public abstract class AbstractChain extends AbstractAbility {
     protected void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);
         location.setDirection(location.toVector().subtract(to.subtract(0, .5, 0).toVector()).multiply(-1));
-        spawnChain(to, location, getChainItem());
+        spawnChain(location, to, getChainItem());
     }
 
-    public static List<ArmorStand> spawnChain(Location to, Location from, ItemStack chainItem) {
-
+    public static List<ArmorStand> spawnChain(Location from, Location to, ItemStack chainItem) {
         List<ArmorStand> chains = new ArrayList<>();
         int maxDistance = (int) Math.round(to.distance(from));
         for (int i = 0; i < maxDistance; i++) {

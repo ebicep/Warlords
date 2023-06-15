@@ -517,6 +517,7 @@ public class CommandManager {
     }
 
     public static void registerCommands() {
+        manager.registerCommand(new GameDebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
         manager.registerCommand(new GameListCommand());

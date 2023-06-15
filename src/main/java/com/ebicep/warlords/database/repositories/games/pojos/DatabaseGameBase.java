@@ -501,7 +501,7 @@ public abstract class DatabaseGameBase {
 
         List<String> players = new ArrayList<>();
 
-        for (String s : Utils.specsOrdered) {
+        for (String s : Utils.SPECS_ORDERED) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
             allPlayers.stream()

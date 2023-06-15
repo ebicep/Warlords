@@ -2,6 +2,7 @@ package com.ebicep.warlords.util.bukkit;
 
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -10,6 +11,10 @@ public class LocationBuilder extends Location {
 
     public LocationBuilder(Location location) {
         super(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
+    public LocationBuilder(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     public LocationBuilder x(double x) {

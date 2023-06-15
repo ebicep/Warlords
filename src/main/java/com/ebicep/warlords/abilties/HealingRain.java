@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -63,12 +64,13 @@ public class HealingRain extends AbstractAbility implements Duration {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock(null, 25).getType() == Material.AIR) {
+        Block targetBlock = Utils.getTargetBlock(player, 25);
+        if (targetBlock.getType() == Material.AIR) {
             return false;
         }
         wp.subtractEnergy(energyCost, false);
 
-        Location location = player.getTargetBlock(null, 25).getLocation().clone();
+        Location location = targetBlock.getLocation().clone();
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
         CircleEffect circleEffect = new CircleEffect(
