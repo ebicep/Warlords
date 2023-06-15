@@ -35,7 +35,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
     public int directHits = 0;
     public int numberOfDismounts = 0;
 
-    protected final int maxTicks;
+    protected int maxTicks;
     protected final boolean hitTeammates;
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
@@ -345,10 +345,12 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
 
     public void setProjectileSpeed(double projectileSpeed) {
         this.projectileSpeed = projectileSpeed;
+        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
+        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
     public double getMaxDistance() {
