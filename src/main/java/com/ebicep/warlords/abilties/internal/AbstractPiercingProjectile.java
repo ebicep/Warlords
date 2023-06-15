@@ -34,11 +34,10 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
     public int playersHitBySplash = 0;
     public int directHits = 0;
     public int numberOfDismounts = 0;
-
-    protected int maxTicks;
     protected final boolean hitTeammates;
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
+    protected int maxTicks;
     protected double maxDistance;
     protected float forwardTeleportAmount = 0;
     protected int maxAngleOfShots = 45;
@@ -98,15 +97,32 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
     protected void updateSpeed(InternalProjectile projectile) {
     }
 
+    /**
+     * see {@link net.minecraft.world.entity.projectile.ProjectileUtil}
+     * see {@link net.minecraft.world.phys.AABB}
+     *
+     * @param projectile      The projectile
+     * @param currentLocation The current location of the projectile
+     * @param speed           The speed of the projectile
+     * @param shooter         The shooter of the projectile
+     * @return The hit result = block or entity hit or null
+     */
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
-        Vec3 currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
+        Vec3 currentPosition;
+        if (projectile.getTicksLived() == 0) {
+            // for initially shooting entities directly in front of player
+            Location behindCurrent = new LocationBuilder(currentLocation).backward(1);
+            currentPosition = new Vec3(behindCurrent.getX(), behindCurrent.getY(), behindCurrent.getZ());
+        } else {
+            currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
+        }
         currentLocation.add(speed);
         Vec3 nextPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
 
         @Nullable
         HitResult hit = null;
-        double hitDistance = 0;
+        double hitDistance = Double.MAX_VALUE;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
             WarlordsEntity wp = getFromEntity(entity);
             if (wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter) {
@@ -116,12 +132,12 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             assert entity instanceof CraftEntity;
             net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
             AABB aabb = nmsEntity.getBoundingBox().inflate(playerHitbox);
-            Optional<Vec3> vec3 = aabb.clip(nextPosition, currentPosition);
+            Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
             if (vec3.isEmpty()) {
                 continue;
             }
             Vec3 vec = vec3.get();
-            double distance = currentPosition.distanceToSqr(vec);
+            double distance = currentPosition.distanceToSqr(vec); //
             if (shouldEndProjectileOnHit(projectile, wp)) {
                 if (hit == null || distance < hitDistance) {
                     hitDistance = distance;
@@ -139,6 +155,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
                 );
             }
         }
+
         BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
                 new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
                 speed,
@@ -157,7 +174,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             if (collisionShape.isEmpty()) {
                 continue;
             }
-            BlockHitResult blockHitResult = collisionShape.clip(nextPosition, currentPosition, pos);
+            BlockHitResult blockHitResult = collisionShape.clip(currentPosition, nextPosition, pos);
             // Flags have no hitbox while they are considered solid??
             if (blockHitResult == null) {
                 continue;
@@ -177,6 +194,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             // checked in order so we can bail out early
             break;
         }
+
         if (!PENDING_HITS.isEmpty()) {
             Collections.sort(PENDING_HITS);
             for (PendingHit p : PENDING_HITS) {
@@ -239,6 +257,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
      * @return
      */
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        //return new LocationBuilder(startingLocation).backward(.5f);
         return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
     }
 
@@ -348,13 +367,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-    }
-
-    public double getMaxDistance() {
-        return maxDistance;
     }
 
     public interface InternalProjectileTask {
@@ -371,6 +390,14 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             return Double.compare(distance, o.distance);
         }
 
+        @Override
+        public String toString() {
+            return "PendingHit{" +
+                    "loc=" + loc +
+                    ", distance=" + distance +
+                    ", hit=" + hit +
+                    '}';
+        }
     }
 
     public class InternalProjectile extends BukkitRunnable {
