@@ -21,6 +21,7 @@ public class Repentance extends AbstractAbility implements Duration {
     private int healthRestore = 150;
     private int energyRestore = 4;
     private int maxProcs = 15;
+    private int damageDealtTaken = 2000;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20);
@@ -28,16 +29,10 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-//        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
-//                               .append(Component.text("10%", NamedTextColor.RED))
-//                               .append(Component.text(" + "))
-//                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.RED))
-//                               .append(Component.text(" of the damage you've recently took. Lasts "))
-//                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-//                               .append(Component.text(" seconds."));
-        //"During the duration of Repentance every §c2000 §7damage you deal and take will heal you" +
-        //                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
-        //    TODO
+//        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
+//                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = "During the duration of Repentance every §c" + damageDealtTaken + " §7damage you deal and take will heal you" +
+                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -88,16 +83,16 @@ public class Repentance extends AbstractAbility implements Duration {
                     return;
                 }
                 damageCounter += amount;
-                if (damageCounter >= 2000) {
+                if (damageCounter >= damageDealtTaken) {
                     // for if you deal/take like 6000 dmg, heal/energy should be 3x
-                    int times = (int) (damageCounter / 2000);
+                    int times = (int) (damageCounter / damageDealtTaken);
                     int validTimes = 0;
                     for (int i = 0; i < times; i++) {
                         procs++;
                         if (procs > 10) {
                             break;
                         }
-                        damageCounter -= 2000;
+                        damageCounter -= damageDealtTaken;
                         validTimes++;
                     }
                     int healthGain = healthRestore;
@@ -143,5 +138,13 @@ public class Repentance extends AbstractAbility implements Duration {
 
     public void setMaxProcs(int maxProcs) {
         this.maxProcs = maxProcs;
+    }
+
+    public int getDamageDealtTaken() {
+        return damageDealtTaken;
+    }
+
+    public void setDamageDealtTaken(int damageDealtTaken) {
+        this.damageDealtTaken = damageDealtTaken;
     }
 }

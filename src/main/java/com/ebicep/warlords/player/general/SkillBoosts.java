@@ -721,7 +721,7 @@ public enum SkillBoosts {
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
-                    //TODO
+                    ((Repentance) abstractAbility).setDamageDealtTaken(1500);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
@@ -813,16 +813,16 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            Component.text("Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 1.5 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 0.5 seconds.", NamedTextColor.GRAY),
             Component.text("Reduce the cooldown of Incendiary Curse by ", NamedTextColor.GREEN)
                      .append(Component.text("35% ", NamedTextColor.RED))
                      .append(Component.text("and increase the blind duration by ", NamedTextColor.GREEN))
-                     .append(Component.text("1.5 ", NamedTextColor.RED))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(70);
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
@@ -881,18 +881,14 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            Component.text("Reduce the cooldown of Soul Shackle by 15% and increase the silence duration by 0.5 seconds", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Soul Shackle by 20%", NamedTextColor.GRAY),
             Component.text("Reduce the cooldown of Soul Shackle by ", NamedTextColor.GREEN)
-                     .append(Component.text("15% ", NamedTextColor.RED))
-                     .append(Component.text("and increase the silence duration by ", NamedTextColor.GREEN))
-                     .append(Component.text("0.5 ", NamedTextColor.RED))
-                     .append(Component.text("seconds", NamedTextColor.GREEN)),
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
-                    ((SoulShackle) abstractAbility).setMinSilenceDurationInTicks(50);
-                    ((SoulShackle) abstractAbility).setMaxSilenceDurationInTicks(80);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
