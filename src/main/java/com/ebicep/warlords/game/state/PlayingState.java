@@ -46,6 +46,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
@@ -372,13 +373,19 @@ public class PlayingState implements State, TimerDebugAble {
     public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
-            // Spectator
-            player.setGameMode(GameMode.SPECTATOR);
-            Location spawn = Stream.concat(
-                    getGame().getMarkers(SpawnLocationMarker.class).stream(),
-                    getGame().getMarkers(LobbyLocationMarker.class).stream()
-            ).map(LocationMarker::getLocation).collect(Utils.randomElement());
-            player.teleport(spawn);
+            // Spectator - delay because multiverse is dumb
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    player.setGameMode(GameMode.SPECTATOR);
+                    Location spawn = Stream.concat(
+                            getGame().getMarkers(SpawnLocationMarker.class).stream(),
+                            getGame().getMarkers(LobbyLocationMarker.class).stream()
+                    ).map(LocationMarker::getLocation).collect(Utils.randomElement());
+                    player.teleport(spawn);
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
         }
         if (wp instanceof WarlordsPlayer) {
             CustomScoreboard sb = CustomScoreboard.getPlayerScoreboard(player);
