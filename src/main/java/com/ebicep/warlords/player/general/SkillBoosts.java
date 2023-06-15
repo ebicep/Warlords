@@ -1154,14 +1154,14 @@ public enum SkillBoosts {
             }
     ),
     BEACON_OF_LIGHT("Beacon of Light",
-            Component.text("Increase the duration of Beacon of Light by 8 seconds.", NamedTextColor.GRAY),
-            Component.text("Increase the duration of Beacon of Light by ", NamedTextColor.GREEN)
-                     .append(Component.text("8 ", NamedTextColor.RED))
-                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            Component.text("Reduce the cooldown of Beacon of Light by 30%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Beacon of Light by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             BeaconOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BeaconOfLight beaconOfLight) {
-                    beaconOfLight.setTickDuration(beaconOfLight.getTickDuration() + 160);
+                    beaconOfLight.setCooldown(beaconOfLight.getCooldown() * .7f);
                 }
             }
     ),
