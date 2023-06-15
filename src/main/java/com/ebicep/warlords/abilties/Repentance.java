@@ -9,6 +9,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -29,10 +31,17 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-//        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-//                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
-        description = "During the duration of Repentance every §c" + damageDealtTaken + " §7damage you deal and take will heal you" +
-                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("During the duration of Repentance every ")
+                               .append(Component.text(damageDealtTaken, NamedTextColor.RED))
+                               .append(Component.text(" damage you deal and take will heal you for "))
+                               .append(Component.text(healthRestore, NamedTextColor.GREEN))
+                               .append(Component.text(" health and restore "))
+                               .append(Component.text(energyRestore, NamedTextColor.YELLOW))
+                               .append(Component.text(" energy. Can proc up to "))
+                               .append(Component.text(maxProcs, NamedTextColor.GOLD))
+                               .append(Component.text(" times. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override

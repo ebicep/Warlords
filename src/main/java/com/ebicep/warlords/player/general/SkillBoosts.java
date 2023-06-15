@@ -713,11 +713,12 @@ public enum SkillBoosts {
             }
     ),
     REPENTANCE("Repentance",
-            Component.text("Increase the damage you convert by 5% and reduce the cooldown by 10%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you convert by ", NamedTextColor.GREEN)
-                     .append(Component.text("5% ", NamedTextColor.RED))
+            Component.text("Lower damage taken/dealt requirement by 500 and reduce the cooldown by 10%", NamedTextColor.GRAY),
+            Component.text("Lower damage taken/dealt requirement by ", NamedTextColor.GREEN)
+                     .append(Component.text("500 ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
-                     .append(Component.text("10%", NamedTextColor.RED)),
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
