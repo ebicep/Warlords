@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;

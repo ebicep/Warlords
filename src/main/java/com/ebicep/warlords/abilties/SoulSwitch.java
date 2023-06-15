@@ -140,7 +140,7 @@ public class SoulSwitch extends AbstractAbility {
                                                         false
                                                 );
                                                 if (pveUpgrade) {
-                                                    hit.getCooldownManager().addCooldown(new RegularCooldown<SoulSwitch>(
+                                                    hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                             "Switch Crippling",
                                                             "CRIP",
                                                             SoulSwitch.class,

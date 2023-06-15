@@ -50,7 +50,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
                 @Override
                 public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarpCryomancer>(
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Frostbite Leap",
                             "WARP RES",
                             TimeWarpCryomancer.class,

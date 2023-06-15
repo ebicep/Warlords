@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
@@ -17,7 +18,7 @@ import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardMa
 public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> implements PvELeaderboard {
 
     private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats(), "All Modes", "All"));
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Modes", "All"));
     }};
 
     public StatsLeaderboardPvE() {

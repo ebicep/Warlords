@@ -685,11 +685,10 @@ public class CommandManager {
             Player player = ACFUtil.getFirstElement(confirmList);
             if (player == null) {
                 issuer.sendError(MinecraftMessageKeys.NO_PLAYER_FOUND_SERVER, "{search}", name);
-                return null;
             } else {
                 issuer.sendInfo(MinecraftMessageKeys.PLAYER_IS_VANISHED_CONFIRM, "{vanished}", player.getName());
-                return null;
             }
+            return null;
         }
 
         return matches.get(0);
