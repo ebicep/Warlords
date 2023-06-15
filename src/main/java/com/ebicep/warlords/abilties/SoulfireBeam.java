@@ -55,7 +55,7 @@ public class SoulfireBeam extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Location location = player.getTargetBlock(null, maxRange).getLocation().clone().add(.5, 1, .5).clone();
-        List<ArmorStand> beam = AbstractChain.spawnChain(location, wp.getLocation(), new ItemStack(Material.GRAY_STAINED_GLASS));
+        List<ArmorStand> beam = AbstractChain.spawnChain(location, wp.getLocation(), new ItemStack(Material.CRIMSON_FENCE_GATE));
         Set<WarlordsEntity> enemies = new HashSet<>();
         for (ArmorStand armorStand : beam) {
             PlayerFilter.entitiesAround(armorStand.getLocation().add(0, .5, 0), 1.25, 1.5, 1.25)

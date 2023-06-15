@@ -203,7 +203,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         super.onSpawn(projectile);
         ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.CRIMSON_FENCE));
             armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                     projectile.getSpeed().getY(),
                     Math.sqrt(
