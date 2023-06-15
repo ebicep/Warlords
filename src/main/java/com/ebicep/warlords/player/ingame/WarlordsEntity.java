@@ -41,10 +41,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -1472,22 +1475,13 @@ public abstract class WarlordsEntity {
     }
 
     /**
-     * @param entity     which entity is assigned to the hurt animation?
-     * @param hurtPlayer what warlords player should play the hurt animation?
+     * @param entity   which entity is assigned to the hurt animation?
+     * @param attacker what warlords player should play the hurt animation?
      */
-    private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
-        if (entity instanceof Player p) {
-//            ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-//            PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.ANIMATION);
-//            packet.getIntegers().write(0, p.getEntityId());
-//            packet.getIntegers().write(1, 1);
-//            try {
-//                protocolManager.sendServerPacket(p, packet);
-//            } catch (InvocationTargetException e) {
-//                throw new RuntimeException(e);
-//            }
-        }
-        for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
+    private void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
+        ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
+        serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
+        for (Player player1 : attacker.getWorld().getPlayers()) {
             player1.playSound(entity.getLocation(), Sound.ENTITY_PLAYER_HURT, 2, 1);
         }
     }
