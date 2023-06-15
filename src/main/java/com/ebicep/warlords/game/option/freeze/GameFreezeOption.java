@@ -151,6 +151,7 @@ public class GameFreezeOption implements Option, Listener {
 
     private void freezePlayer(Player p, Component message) {
         if (p.getVehicle() instanceof Horse) {
+            p.getVehicle().remove();
             playersWithHorsePreFreeze.add(p.getUniqueId());
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
