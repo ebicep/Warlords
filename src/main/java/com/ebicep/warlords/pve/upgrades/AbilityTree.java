@@ -267,6 +267,9 @@ public class AbilityTree {
         }, () -> {
             autoUpgradeProfile = new AutoUpgradeProfile();
         });
+        if (autoUpgradeProfile == null) {
+            autoUpgradeProfile = new AutoUpgradeProfile();
+        }
         menu.setItem(
                 0,
                 4,
