@@ -149,21 +149,21 @@ public enum Specializations {
             Conjurer::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.DAMAGE,
-            IMPALING_STRIKE
+            POISONOUS_HEX, SOULFIRE_BEAM, ENERGY_SEER_CONJURER, CONTAGIOUS_FACADE, ASTRAL_PLAGUE
     ),
     GUARDIAN("Guardian",
             List.of("guar"),
             Guardian::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.TANK,
-            IMPALING_STRIKE
+            FORTIFYING_HEX, NOT_A_SHIELD, ENERGY_SEER_GUARDIAN, SPIRITUAL_SHIELD, SANCTUARY
     ),
     PRIEST("Priest",
             List.of("pri"),
             Priest::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.HEALER,
-            IMPALING_STRIKE
+            MERCIFUL_HEX, BEACON_OF_LIGHT, ENERGY_SEER_PRIEST, BEACON_OF_IMPAIR, DIVINE_BLESSING
     ),
 
     ;

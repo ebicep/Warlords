@@ -1181,14 +1181,14 @@ public enum SkillBoosts {
             }
     ),
     BEACON_OF_IMPAIR("Beacon of Impair",
-            Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by 40%.", NamedTextColor.GRAY),
             Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by ", NamedTextColor.GREEN)
-                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BeaconOfImpair beaconOfImpair) {
-                    beaconOfImpair.setCritMultiplierReducedTo(beaconOfImpair.getCritMultiplierReducedTo() - 20);
+                    beaconOfImpair.setCritMultiplierReducedTo(beaconOfImpair.getCritMultiplierReducedTo() - 40);
                 }
             }
     ),

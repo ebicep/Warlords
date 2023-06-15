@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 
 public class EnergySeerPriest extends AbstractEnergySeer<EnergySeerPriest> {
 
-    private int critChanceIncrease = 40;
+    private int critChanceIncrease = 20;
 
     @Override
     public Component getBonus() {

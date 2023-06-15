@@ -21,7 +21,7 @@ import java.util.List;
 
 public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
 
-    private int critMultiplierReducedTo = 100;
+    private int critMultiplierReducedTo = 120;
 
     public BeaconOfImpair() {
         this(null, null);
