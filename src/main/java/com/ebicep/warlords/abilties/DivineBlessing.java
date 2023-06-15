@@ -28,7 +28,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
     private int healingReceivedIncrease = 50; // %
     private int beaconLightHealingIncrease = 50; // %
     private int beaconImpairRangeIncrease = 2;
-    private int beaconTickDurationIncrease = 80;
+    private int beaconTickDurationIncrease = 160;
 
     public DivineBlessing() {
         super("Divine Blessing", 0, 0, 38, 50, 0, 0);
@@ -57,7 +57,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.35f);
+        Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.25f);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
 
         wp.getCooldownManager().removeCooldown(DivineBlessing.class, false);
