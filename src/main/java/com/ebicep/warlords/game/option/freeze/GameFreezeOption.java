@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
@@ -12,7 +13,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +24,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Supports actually freezing the internalPlayers in the game
@@ -95,6 +98,7 @@ public class GameFreezeOption implements Option, Listener {
     }
 
     private Game game;
+    private Set<UUID> playersWithHorsePreFreeze = new HashSet<>();
 
     @Override
     public void register(@Nonnull Game game) {
@@ -137,6 +141,7 @@ public class GameFreezeOption implements Option, Listener {
             }
         }
         Component message = game.getFrozenCauses().get(0);
+        playersWithHorsePreFreeze.clear();
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
     }
 
@@ -145,8 +150,8 @@ public class GameFreezeOption implements Option, Listener {
     }
 
     private void freezePlayer(Player p, Component message) {
-        if (p.getVehicle() instanceof Horse horse) {
-            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
+        if (p.getVehicle() instanceof Horse) {
+            playersWithHorsePreFreeze.add(p.getUniqueId());
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
         p.showTitle(Title.title(
@@ -157,8 +162,9 @@ public class GameFreezeOption implements Option, Listener {
     }
 
     private void unfreezePlayer(Player p) {
-        if (p.getVehicle() instanceof Horse horse) {
-            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.318);
+        WarlordsEntity wp = Warlords.getPlayer(p);
+        if (wp != null && playersWithHorsePreFreeze.contains(p.getUniqueId())) {
+            HorseOption.activateHorseForPlayer(wp);
         }
         p.clearTitle();
         p.removePotionEffect(PotionEffectType.BLINDNESS);
