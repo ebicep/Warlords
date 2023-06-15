@@ -21,14 +21,14 @@ import java.util.List;
 
 public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
 
-    private int critMultiplierReducedTo = 120;
+    private int critMultiplierReducedTo = 100;
 
     public BeaconOfImpair() {
         this(null, null);
     }
 
     public BeaconOfImpair(Location location, CircleEffect effect) {
-        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 6, 20, effect);
+        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 8, 20, effect);
     }
 
     @Override

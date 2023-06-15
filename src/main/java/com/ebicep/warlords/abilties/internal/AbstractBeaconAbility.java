@@ -64,7 +64,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 3);
         Location groundLocation = LocationUtils.getGroundLocation(player);
 
-        Utils.playGlobalSound(groundLocation, "paladin.hammeroflight.impact", 2, 1.5f);
+        Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 2, 1.1f);
         String soundString = getBeaconClass() == BeaconOfImpair.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
         Utils.playGlobalSound(groundLocation, soundString, 0.1f, 0.4f);
 
