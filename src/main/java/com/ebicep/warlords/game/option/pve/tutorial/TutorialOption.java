@@ -159,6 +159,7 @@ public class TutorialOption implements Option {
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
                 if (event.getWarlordsEntity().equals(warlordsPlayer)) {
+                    warlordsPlayer.respawn();
                     if (stage.get() == 3 && stageSection.get() == 4) {
                         warlordsPlayer.respawn();
                         warlordsPlayer.resetAbilities(true);
