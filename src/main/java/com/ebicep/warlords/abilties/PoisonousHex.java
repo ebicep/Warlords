@@ -36,7 +36,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
     private int tickDuration = 80;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 351, 474, 0, 80, 20, 175, 2, 30, false);
+        super("Poisonous Hex", 351, 474, 0, 80, 20, 175, 2, 300, false);
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;

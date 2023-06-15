@@ -59,7 +59,7 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
     private int hexMaxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 30, false);
+        super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 300, false);
     }
 
     @Override
