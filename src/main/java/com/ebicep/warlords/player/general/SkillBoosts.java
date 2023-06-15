@@ -1014,7 +1014,7 @@ public enum SkillBoosts {
             Component.text("Increase the duration of Poisonous Hex by", NamedTextColor.GREEN)
                      .append(Component.text("2 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            PoisonousHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
                     poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 40);
@@ -1026,7 +1026,7 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Soulfire Beam by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            SoulfireBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
                     soulfireBeam.setCooldown(soulfireBeam.getCooldown() * .8f);
@@ -1040,7 +1040,7 @@ public enum SkillBoosts {
                      .append(Component.text("and ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(", respectively.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            EnergySeerConjurer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerConjurer energySeerConjurer) {
                     energySeerConjurer.setEnergyRestore(energySeerConjurer.getEnergyRestore() + 40);
@@ -1053,7 +1053,7 @@ public enum SkillBoosts {
             Component.text("Increased the amount of damage you reduce with Contagious Facade by ", NamedTextColor.GREEN)
                      .append(Component.text("5%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
                     contagiousFacade.setDamageAbsorption(contagiousFacade.getDamageAbsorption() + 5);
@@ -1065,7 +1065,7 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Astral Plague by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            AstralPlague.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AstralPlague astralPlague) {
                     astralPlague.setCooldown(astralPlague.getCooldown() * .8f);
@@ -1077,7 +1077,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage you deal with Fortifying Hex by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            FortifyingHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FortifyingHex fortifyingHex) {
                     fortifyingHex.multiplyMinMax(1.2f);
@@ -1091,7 +1091,7 @@ public enum SkillBoosts {
                      .append(Component.text("and increase range by ", NamedTextColor.GREEN))
                      .append(Component.text("5 ", NamedTextColor.RED))
                      .append(Component.text("blocks.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            NotAShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof NotAShield notAShield) {
                     notAShield.setCooldown(notAShield.getCooldown() * .8f);
@@ -1106,7 +1106,7 @@ public enum SkillBoosts {
                      .append(Component.text("and ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(", respectively.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            EnergySeerGuardian.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerGuardian energySeerGuardian) {
                     energySeerGuardian.setEnergyRestore(energySeerGuardian.getEnergyRestore() + 40);
@@ -1119,7 +1119,7 @@ public enum SkillBoosts {
             Component.text("Increase the amount of time Spiritual Shield increases the rune timers by ", NamedTextColor.GREEN)
                      .append(Component.text("0.25s", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            SpiritualShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SpiritualShield spiritualShield) {
                     spiritualShield.setRuneTimerIncrease(spiritualShield.getRuneTimerIncrease() + 0.25f);
@@ -1133,7 +1133,7 @@ public enum SkillBoosts {
                      .append(Component.text("and the duration by ", NamedTextColor.GREEN))
                      .append(Component.text("2 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            Sanctuary.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Sanctuary sanctuary) {
                     sanctuary.setDamageReflected(sanctuary.getDamageReflected() + 10);
@@ -1146,7 +1146,7 @@ public enum SkillBoosts {
             Component.text("Increase the amount of health you restore to the first ally with Merciful Hex by ", NamedTextColor.GREEN)
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            MercifulHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof MercifulHex mercifulHex) {
                     mercifulHex.multiplyMinMax(1.25f);
@@ -1158,7 +1158,7 @@ public enum SkillBoosts {
             Component.text("Increase the duration of Beacon of Light by ", NamedTextColor.GREEN)
                      .append(Component.text("8 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            BeaconOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BeaconOfLight beaconOfLight) {
                     beaconOfLight.setTickDuration(beaconOfLight.getTickDuration() + 160);
@@ -1172,7 +1172,7 @@ public enum SkillBoosts {
                      .append(Component.text("and ", NamedTextColor.GREEN))
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(", respectively.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            EnergySeerPriest.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerPriest energySeerPriest) {
                     energySeerPriest.setEnergyRestore(energySeerPriest.getEnergyRestore() + 40);
@@ -1185,7 +1185,7 @@ public enum SkillBoosts {
             Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            BeaconOfImpair.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BeaconOfImpair beaconOfImpair) {
                     beaconOfImpair.setCritMultiplierReducedTo(beaconOfImpair.getCritMultiplierReducedTo() - 40);
@@ -1197,7 +1197,7 @@ public enum SkillBoosts {
             Component.text("Increase the duration of Divine Blessing by ", NamedTextColor.GREEN)
                      .append(Component.text("2 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
-            DrainingMiasma.class,
+            DivineBlessing.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DivineBlessing divineBlessing) {
                     divineBlessing.setTickDuration(divineBlessing.getTickDuration() + 40);
