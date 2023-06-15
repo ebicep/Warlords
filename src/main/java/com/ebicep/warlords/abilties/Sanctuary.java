@@ -139,4 +139,12 @@ public class Sanctuary extends AbstractAbility implements Duration {
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    public int getDamageReflected() {
+        return damageReflected;
+    }
+
+    public void setDamageReflected(int damageReflected) {
+        this.damageReflected = damageReflected;
+    }
 }

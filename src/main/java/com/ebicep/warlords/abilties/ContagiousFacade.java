@@ -125,4 +125,12 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    public int getDamageAbsorption() {
+        return damageAbsorption;
+    }
+
+    public void setDamageAbsorption(int damageAbsorption) {
+        this.damageAbsorption = damageAbsorption;
+    }
 }

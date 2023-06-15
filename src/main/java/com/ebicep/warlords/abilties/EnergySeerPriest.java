@@ -50,4 +50,12 @@ public class EnergySeerPriest extends AbstractEnergySeer<EnergySeerPriest> {
             }
         };
     }
+
+    public int getCritChanceIncrease() {
+        return critChanceIncrease;
+    }
+
+    public void setCritChanceIncrease(int critChanceIncrease) {
+        this.critChanceIncrease = critChanceIncrease;
+    }
 }

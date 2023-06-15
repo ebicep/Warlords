@@ -351,6 +351,10 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         this.maxDistance = maxDistance;
     }
 
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
     public interface InternalProjectileTask {
         void run(InternalProjectile projectile);
 

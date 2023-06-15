@@ -113,6 +113,11 @@ public abstract class AbstractAbility {
         this.maxDamageHeal = maxDamageHeal;
     }
 
+    public void multiplyMinMax(float amount) {
+        this.minDamageHeal *= amount;
+        this.maxDamageHeal *= amount;
+    }
+
     public int getCurrentCooldownItem() {
         return (int) Math.round(currentCooldown + .5);
     }

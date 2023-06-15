@@ -115,4 +115,12 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    public int getEnergyRestore() {
+        return energyRestore;
+    }
+
+    public void setEnergyRestore(int energyRestore) {
+        this.energyRestore = energyRestore;
+    }
 }

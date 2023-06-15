@@ -17,7 +17,7 @@ import java.util.List;
 public class SpiritualShield extends AbstractAbility implements Duration {
 
     private int tickDuration = 120;
-    private float runeTickIncrease = 0.5f;
+    private float runeTimerIncrease = 0.5f;
 
     public SpiritualShield() {
         super("Spiritual Shield", 0, 0, 30, 20, 0, 0);
@@ -28,7 +28,7 @@ public class SpiritualShield extends AbstractAbility implements Duration {
         description = Component.text("Surround yourself with spirits for ")
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. While active, increase the attacker’s rune timers by "))
-                               .append(Component.text(format(runeTickIncrease), NamedTextColor.GOLD))
+                               .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you."));
     }
 
@@ -52,7 +52,7 @@ public class SpiritualShield extends AbstractAbility implements Duration {
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                event.getAttacker().getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
+                event.getAttacker().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
             }
         });
         return true;
@@ -66,5 +66,13 @@ public class SpiritualShield extends AbstractAbility implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getRuneTimerIncrease() {
+        return runeTimerIncrease;
+    }
+
+    public void setRuneTimerIncrease(float runeTimerIncrease) {
+        this.runeTimerIncrease = runeTimerIncrease;
     }
 }

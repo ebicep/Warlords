@@ -983,9 +983,10 @@ public enum SkillBoosts {
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            Component.text("Increase the amount of health you restore with Soothing Elixir by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore with Soothing Elixir by 25%.", NamedTextColor.GRAY),
             Component.text("Increase the amount of health you restore with Soothing Elixir by ", NamedTextColor.GREEN)
-                     .append(Component.text("25%", NamedTextColor.RED)),
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
@@ -999,7 +1000,8 @@ public enum SkillBoosts {
             Component.text("Increase the amount of health you restore with Vitality Liquor by ", NamedTextColor.GREEN)
                      .append(Component.text("15% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
-                     .append(Component.text("30%", NamedTextColor.RED)),
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             VitalityLiquor.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityLiquor) {
@@ -1032,12 +1034,208 @@ public enum SkillBoosts {
             Component.text("Increase the leech duration of Draining Miasma by ", NamedTextColor.GREEN)
                      .append(Component.text("5 ", NamedTextColor.RED))
                      .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
-                     .append(Component.text("30%", NamedTextColor.RED)),
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
                     ((DrainingMiasma) abstractAbility).setLeechDuration(10);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                }
+            }
+    ),
+    POISONOUS_HEX("Poisonous Hex",
+            Component.text("Increase the duration of Poisonous Hex by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Poisonous Hex by", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof PoisonousHex poisonousHex) {
+                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 40);
+                }
+            }
+    ),
+    SOULFIRE_BEAM("Soulfire Beam",
+            Component.text("Reduce the cooldown of Soulfire Beam by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Soulfire Beam by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
+                    soulfireBeam.setCooldown(soulfireBeam.getCooldown() * .8f);
+                }
+            }
+    ),
+    ENERGY_SEER_CONJURER("Energy Seer",
+            Component.text("Increase the energy restored and damage bonus granted after Energy Seer ends by 40 and 10%, respectively.", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored and damage bonus granted after Energy Seer ends by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(", respectively.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerConjurer energySeerConjurer) {
+                    energySeerConjurer.setEnergyRestore(energySeerConjurer.getEnergyRestore() + 40);
+                    energySeerConjurer.setDamageIncrease(energySeerConjurer.getDamageIncrease() + 10);
+                }
+            }
+    ),
+    CONTAGIOUS_FACADE("Contagious Facade",
+            Component.text("Increased the amount of damage you reduce with Contagious Facade by 5%.", NamedTextColor.GRAY),
+            Component.text("Increased the amount of damage you reduce with Contagious Facade by ", NamedTextColor.GREEN)
+                     .append(Component.text("5%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
+                    contagiousFacade.setDamageAbsorption(contagiousFacade.getDamageAbsorption() + 5);
+                }
+            }
+    ),
+    ASTRAL_PLAGUE("Astral Plague",
+            Component.text("Reduce the cooldown of Astral Plague by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Astral Plague by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof AstralPlague astralPlague) {
+                    astralPlague.setCooldown(astralPlague.getCooldown() * .8f);
+                }
+            }
+    ),
+    FORTIFYING_HEX("Fortifying Hex",
+            Component.text("Increase the damage you deal with Fortifying Hex by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Fortifying Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof FortifyingHex fortifyingHex) {
+                    fortifyingHex.multiplyMinMax(1.2f);
+                }
+            }
+    ),
+    NOT_A_SHIELD("Not a Shield",
+            Component.text("Reduce the cooldown of [] by 20% and increase range by 5 blocks.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of [] by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text("and increase range by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("blocks.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof NotAShield notAShield) {
+                    notAShield.setCooldown(notAShield.getCooldown() * .8f);
+                    notAShield.setMaxDistance(notAShield.getMaxDistance() + 5);
+                }
+            }
+    ),
+    ENERGY_SEER_GUARDIAN("Energy Seer",
+            Component.text("Increase the energy restored and damage reduction granted after Energy Seer ends by 40 and 10%, respectively.", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored and damage reduction granted after Energy Seer ends by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(", respectively.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerGuardian energySeerGuardian) {
+                    energySeerGuardian.setEnergyRestore(energySeerGuardian.getEnergyRestore() + 40);
+                    energySeerGuardian.setDamageResistance(energySeerGuardian.getDamageResistance() + 10);
+                }
+            }
+    ),
+    SPIRITUAL_SHIELD("Spiritual Shield",
+            Component.text("Increase the amount of time Spiritual Shield increases the rune timers by 0.25s.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of time Spiritual Shield increases the rune timers by ", NamedTextColor.GREEN)
+                     .append(Component.text("0.25s", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof SpiritualShield spiritualShield) {
+                    spiritualShield.setRuneTimerIncrease(spiritualShield.getRuneTimerIncrease() + 0.25f);
+                }
+            }
+    ),
+    SANCTUARY("Sanctuary",
+            Component.text("Increase the amount of damage reflected by Sanctuary by 10% and the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage reflected by Sanctuary by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof Sanctuary sanctuary) {
+                    sanctuary.setDamageReflected(sanctuary.getDamageReflected() + 10);
+                    sanctuary.setTickDuration(sanctuary.getTickDuration() + 40);
+                }
+            }
+    ),
+    MERCIFUL_HEX("Merciful Hex",
+            Component.text("Increase the amount of health you restore to the first ally with Merciful Hex by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of health you restore to the first ally with Merciful Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof MercifulHex mercifulHex) {
+                    mercifulHex.multiplyMinMax(1.25f);
+                }
+            }
+    ),
+    BEACON_OF_LIGHT("Beacon of Light",
+            Component.text("Increase the duration of Beacon of Light by 8 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Beacon of Light by ", NamedTextColor.GREEN)
+                     .append(Component.text("8 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof BeaconOfLight beaconOfLight) {
+                    beaconOfLight.setTickDuration(beaconOfLight.getTickDuration() + 160);
+                }
+            }
+    ),
+    ENERGY_SEER_PRIEST("Energy Seer",
+            Component.text("Increase the energy restored and critical chance granted after Energy Seer ends by 40 and 40%, respectively.", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored and critical chance granted after Energy Seer ends by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and ", NamedTextColor.GREEN))
+                     .append(Component.text("40%", NamedTextColor.RED))
+                     .append(Component.text(", respectively.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerPriest energySeerPriest) {
+                    energySeerPriest.setEnergyRestore(energySeerPriest.getEnergyRestore() + 40);
+                    energySeerPriest.setCritChanceIncrease(energySeerPriest.getCritChanceIncrease() + 40);
+                }
+            }
+    ),
+    BEACON_OF_IMPAIR("Beacon of Impair",
+            Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof BeaconOfImpair beaconOfImpair) {
+                    beaconOfImpair.setCritMultiplierReducedTo(beaconOfImpair.getCritMultiplierReducedTo() - 20);
+                }
+            }
+    ),
+    DIVINE_BLESSING("Divine Blessing",
+            Component.text("Increase the duration of Divine Blessing by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Divine Blessing by ", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof DivineBlessing divineBlessing) {
+                    divineBlessing.setTickDuration(divineBlessing.getTickDuration() + 40);
                 }
             }
     ),

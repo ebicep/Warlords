@@ -100,5 +100,11 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
         return null;
     }
 
+    public int getCritMultiplierReducedTo() {
+        return critMultiplierReducedTo;
+    }
 
+    public void setCritMultiplierReducedTo(int critMultiplierReducedTo) {
+        this.critMultiplierReducedTo = critMultiplierReducedTo;
+    }
 }

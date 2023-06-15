@@ -50,4 +50,12 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
             }
         };
     }
+
+    public int getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(int damageIncrease) {
+        this.damageIncrease = damageIncrease;
+    }
 }

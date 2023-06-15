@@ -51,4 +51,12 @@ public class EnergySeerGuardian extends AbstractEnergySeer<EnergySeerGuardian> {
             }
         };
     }
+
+    public int getDamageResistance() {
+        return damageResistance;
+    }
+
+    public void setDamageResistance(int damageResistance) {
+        this.damageResistance = damageResistance;
+    }
 }

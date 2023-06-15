@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility {
+public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility implements Duration {
 
     protected Location groundLocation; // not static
     protected CircleEffect effect; // not static
@@ -111,6 +111,16 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
     public abstract Material getGlassMaterial();
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
 
     public Location getGroundLocation() {
         return groundLocation;
