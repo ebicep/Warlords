@@ -617,17 +617,8 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onHorseJump(HorseJumpEvent e) {
-        List<Entity> passengers = e.getEntity().getPassengers();
-        if (passengers.isEmpty()) {
-            return;
-        }
-        WarlordsEntity warlordsEntity = Warlords.getPlayer(passengers.get(0).getUniqueId());
-        if (warlordsEntity != null) {
-            if (warlordsEntity.getGame().isFrozen()) {
-                e.setCancelled(true); //TODO
-            }
-        }
+    public void onSwapHandItems(PlayerSwapHandItemsEvent e) {
+        e.setCancelled(true);
     }
 
     @EventHandler
