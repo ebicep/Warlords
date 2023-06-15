@@ -169,7 +169,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public boolean addPotionEffect(PotionEffect potionEffect) {
         boolean applied = super.addPotionEffect(potionEffect);
         if (applied) {
-            if (potionEffect.getType() == PotionEffectType.BLINDNESS) {
+            if (potionEffect.getType() == PotionEffectType.BLINDNESS && mob != null) {
                 mob.removeTarget();
             }
         }

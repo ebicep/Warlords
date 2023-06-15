@@ -186,7 +186,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     wp.getCooldownManager().hasCooldown(AstralPlague.class)
             );
             givePoisonousHex(wp, enemy);
-            givePoisonousHex(wp, enemy);
             if (projectile.getHit().size() >= 2) {
                 getProjectiles(projectile).forEach(InternalProjectile::cancel);
                 break;

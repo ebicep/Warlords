@@ -116,7 +116,7 @@ public class FortifyingHex extends AbstractProjectile implements Duration {
                     false
             );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
-            giveFortifyingHex(wp, hit);
+            giveFortifyingHex(wp, wp);
         }
         return hit == null ? 0 : 1;
     }
