@@ -38,14 +38,14 @@ public class Sanctuary extends AbstractAbility implements Duration {
                                .append(Component.text(damageReflected + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of their damage back to the dealer. All Fortifying Hexes are improved, gaining "))
                                .append(Component.text(hexShieldIncrease, NamedTextColor.YELLOW))
-                               .append(Component.text(" health and "))
+                               .append(Component.text(" shield health and "))
                                .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" second duration. Additionally, the nearest ally receives "))
                                .append(Component.text(allyHexStackGain, NamedTextColor.BLUE))
                                .append(Component.text(" stack of Fortifying Hex whenever you obtain "))
                                .append(Component.text("1", NamedTextColor.BLUE))
                                .append(Component.text(" stack. Lasts "))
-                               .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }
 
