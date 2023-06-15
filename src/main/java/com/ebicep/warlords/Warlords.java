@@ -409,6 +409,21 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
+        List<Sound> blockedSounds = List.of(
+                Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
+                Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
+        );
+        protocolManager.addPacketListener(
+
+                new PacketAdapter(this, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        Sound sound = event.getPacket().getSoundEffects().getValues().get(0);
+                        if (sound != null && blockedSounds.contains(sound)) {
+                            event.setCancelled(true);
+                        }
+                    }
+                });
 
         Warlords.newChain()
                 .sync(NPCManager::createSupplyDropFairNPC)
