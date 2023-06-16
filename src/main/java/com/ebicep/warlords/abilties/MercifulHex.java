@@ -84,7 +84,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
         Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 1.2f);
 
         for (WarlordsEntity warlordsEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
+                .entitiesAround(currentLocation, hitBox, hitBox - 0.25, hitBox)
                 .excluding(wp)
                 .excluding(projectile.getHit())
         ) {
@@ -150,14 +150,14 @@ public class MercifulHex extends AbstractPiercingProjectile {
         super.onSpawn(projectile);
         ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.WARPED_FENCE));
             armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                     projectile.getSpeed().getY(),
                     Math.sqrt(
                             Math.pow(projectile.getSpeed().getX(), 2) +
                                     Math.pow(projectile.getSpeed().getZ(), 2)
                     )
-            ), 0, Math.toRadians(90))); //TODO shift hitbox if no new model is created
+            ), 0, 0));
         });
 
         projectile.addTask(new InternalProjectileTask() {
