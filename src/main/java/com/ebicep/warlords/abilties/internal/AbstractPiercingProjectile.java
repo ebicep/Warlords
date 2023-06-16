@@ -201,7 +201,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         }
 
         if (!PENDING_HITS.isEmpty()) {
-            System.out.println(PENDING_HITS);
             Collections.sort(PENDING_HITS);
             for (PendingHit p : PENDING_HITS) {
                 if (hit == null || p.distance < hitDistance) {
