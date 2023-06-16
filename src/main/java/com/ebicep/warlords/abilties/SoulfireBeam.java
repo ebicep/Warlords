@@ -88,7 +88,6 @@ public class SoulfireBeam extends AbstractPiercingProjectile {
             }
             minDamage *= 2;
             maxDamage *= 2;
-            wp.subtractPurpleCooldown(1);
         }
         hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, hasAstral && hexStacks >= 3);
     }
