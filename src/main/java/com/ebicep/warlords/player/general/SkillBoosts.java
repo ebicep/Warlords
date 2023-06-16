@@ -1010,25 +1010,32 @@ public enum SkillBoosts {
             }
     ),
     POISONOUS_HEX("Poisonous Hex",
-            Component.text("Increase the duration of Poisonous Hex by 2 seconds.", NamedTextColor.GRAY),
-            Component.text("Increase the duration of Poisonous Hex by", NamedTextColor.GREEN)
+            Component.text("Increase the damage over time inflicted by Poisonous Hex by 35% and the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage over time inflicted by Poisonous Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and the duration by ", NamedTextColor.GREEN))
                      .append(Component.text("2 ", NamedTextColor.RED))
                      .append(Component.text("seconds.", NamedTextColor.GREEN)),
             PoisonousHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
+                    poisonousHex.setDotMinDamage(poisonousHex.getDotMinDamage() * 1.35f);
+                    poisonousHex.setDotMaxDamage(poisonousHex.getDotMaxDamage() * 1.35f);
                     poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 40);
                 }
             }
     ),
     SOULFIRE_BEAM("Soulfire Beam",
-            Component.text("Reduce the cooldown of Soulfire Beam by 20%.", NamedTextColor.GRAY),
-            Component.text("Reduce the cooldown of Soulfire Beam by ", NamedTextColor.GREEN)
+            Component.text("Increase the damage of Soulfire Beam by 20% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Soulfire Beam by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SoulfireBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
+                    soulfireBeam.multiplyMinMax(1.2f);
                     soulfireBeam.setCooldown(soulfireBeam.getCooldown() * .8f);
                 }
             }

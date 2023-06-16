@@ -31,8 +31,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     private int maxFullDistance = 30;
     private int hexStacksPerHit = 1;
-    private int dotMinDamage = 34;
-    private int dotMaxDamage = 46;
+    private float dotMinDamage = 34;
+    private float dotMaxDamage = 46;
     private double hitBox = 3.5;
     private int tickDuration = 80;
 
@@ -293,5 +293,21 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getDotMinDamage() {
+        return dotMinDamage;
+    }
+
+    public void setDotMinDamage(float dotMinDamage) {
+        this.dotMinDamage = dotMinDamage;
+    }
+
+    public float getDotMaxDamage() {
+        return dotMaxDamage;
+    }
+
+    public void setDotMaxDamage(float dotMaxDamage) {
+        this.dotMaxDamage = dotMaxDamage;
     }
 }

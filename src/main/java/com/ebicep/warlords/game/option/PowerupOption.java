@@ -474,7 +474,7 @@ public class PowerupOption implements Option {
 
         public Component getWornOffMessage() {
             return Component.text("Your ", NamedTextColor.GOLD)
-                            .append(Component.text(name(), textColor))
+                            .append(Component.text(name(), textColor, TextDecoration.BOLD))
                             .append(Component.text(" powerup has worn off."));
         }
 

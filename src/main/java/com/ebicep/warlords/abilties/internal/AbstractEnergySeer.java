@@ -63,8 +63,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    //TODO maybe add tick delay
-                    if (timesHealed.get() >= 5) {
+                    if (timesHealed.get() >= 5 && wp.isAlive()) {
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
                     }

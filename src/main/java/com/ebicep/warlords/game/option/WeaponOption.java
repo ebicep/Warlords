@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -73,7 +74,7 @@ public class WeaponOption implements Option {
                                 Component.text(""),
                                 Component.text(spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):", NamedTextColor.GREEN)
                         )
-                        //.addLore(WordWrap.wrap(wp.getSkillBoost().selectedDescription, 150))
+                        .addLore(WordWrap.wrap(wp.getSkillBoost().selectedDescription, 150))
                         .addLore(
                                 Component.text(""),
                                 Component.text("Health: ", NamedTextColor.GRAY)
