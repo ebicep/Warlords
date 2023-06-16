@@ -39,6 +39,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import net.minecraft.server.level.ServerLevel;
@@ -2173,7 +2174,7 @@ public abstract class WarlordsEntity {
                             .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), NamedTextColor.GOLD));
         } else {
             TextComponent.Builder component = Component.text();
-            StringBuilder stringBuilder = new StringBuilder();
+            TextComponent.Builder hover = Component.text();
             String minuteStatsTypeName = minuteStatsType.name;
 
             List<PlayerStatisticsMinute.Entry> entries = minuteStats.getEntries();
@@ -2190,35 +2191,34 @@ public abstract class WarlordsEntity {
                             break;
                         }
                         PlayerStatisticsMinute.Entry entry = entries.get(index);
-                        stringBuilder.append(Component.text("Minute " + index + ": ", NamedTextColor.WHITE)
-                                                      .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)),
-                                                              NamedTextColor.GOLD
-                                                      )));
-                        stringBuilder.append(Component.newline());
+                        hover.append(Component.text("Minute " + index + ": ", NamedTextColor.WHITE)
+                                              .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)),
+                                                      NamedTextColor.GOLD
+                                              )));
+                        hover.append(Component.newline());
                     }
-                    stringBuilder.setLength(stringBuilder.length() - 1);
-                    stringLength += stringBuilder.length();
+                    stringLength += LegacyComponentSerializer.legacySection().serialize(hover.build()).length();
                     component.append(Component.text(splitString[i], (i > minuteStatsTypeName.length() + 1 ? NamedTextColor.GOLD : NamedTextColor.WHITE)))
-                             .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString())));
-                    stringBuilder.setLength(0);
+                             .hoverEvent(HoverEvent.showText(hover));
+                    hover = Component.text();
                 }
                 //this will never happen in reality
                 if (stringLength >= 8000) {
                     return component.build().replaceText(builder -> builder.match("Minute").replacement("Min."));
                 }
             } else {
-                stringBuilder.append(Component.text("Stat Breakdown (" + name + "):", NamedTextColor.AQUA));
+                hover.append(Component.text("Stat Breakdown (" + name + "):", NamedTextColor.AQUA));
                 for (int i = 0; i < size; i++) {
                     PlayerStatisticsMinute.Entry entry = entries.get(i);
-                    stringBuilder.append(Component.newline());
-                    stringBuilder.append(Component.text("Minute " + (i + 1) + ": ", NamedTextColor.WHITE))
-                                 .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD));
+                    hover.append(Component.newline());
+                    hover.append(Component.text("Minute " + (i + 1) + ": ", NamedTextColor.WHITE))
+                         .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD));
                 }
                 component.append(Component.text(minuteStatsTypeName + ": ", NamedTextColor.WHITE)
                                           .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())),
                                                   NamedTextColor.GOLD
                                           )))
-                         .hoverEvent(HoverEvent.showText(Component.text(stringBuilder.toString())));
+                         .hoverEvent(HoverEvent.showText(hover));
             }
 
             return component.build();
