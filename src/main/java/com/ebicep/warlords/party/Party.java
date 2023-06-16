@@ -117,7 +117,9 @@ public class Party {
                 );
             }
         } else {
-            sendMessageToAllPartyPlayers(Component.text(player.getName()).append(Component.text(" left the party", NamedTextColor.RED)));
+            sendMessageToAllPartyPlayers(Component.text(player.getName(), NamedTextColor.AQUA).append(Component.text(" left the party",
+                    NamedTextColor.RED
+            )));
         }
     }
 
