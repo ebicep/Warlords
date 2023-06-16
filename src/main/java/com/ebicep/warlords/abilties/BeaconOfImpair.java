@@ -15,6 +15,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -86,6 +88,10 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
                         return critMultiplierReducedTo;
                     }
                 });
+                PotionEffect potionEffect = enemy.getEntity().getPotionEffect(PotionEffectType.DARKNESS);
+                if (potionEffect == null) {
+                    enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 160, 0, true, false));
+                }
             }
         }
     }

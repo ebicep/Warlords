@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -53,8 +54,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                                .append(Component.text(" damage every "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds. for "))
-                               .append(Component.text("4", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Stacks up to "))
+                               .append(Component.text("2", NamedTextColor.RED))
+                               .append(Component.text(" times. Stacks up to "))
                                .append(Component.text("3", NamedTextColor.RED))
                                .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
@@ -100,6 +101,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
+            boolean trueDamage = wp.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(enemy, RegularCooldown.class)
+                    .filterCooldownClass(PoisonousHex.class)
+                    .stream()
+                    .count() == 3;
             enemy.addDamageInstance(
                     wp,
                     name,
@@ -107,7 +112,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
-                    wp.getCooldownManager().hasCooldown(AstralPlague.class)
+                    trueDamage
             );
             givePoisonousHex(wp, enemy);
             if (projectile.getHit().size() >= 2) {
@@ -120,6 +125,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
     }
 
     private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        boolean trueDamage = from.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(to, RegularCooldown.class)
+                .filterCooldownClass(AstralPlague.class)
+                .stream()
+                .count() == 3;
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
@@ -134,7 +143,15 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                 tickDuration + (from.getCooldownManager().hasCooldown(AstralPlague.class) ? 80 : 40), // base add 20 to delay damage by a second
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
-                        to.addDamageInstance(from, name, dotMinDamage, dotMaxDamage, 0, 100, from.getCooldownManager().hasCooldown(AstralPlague.class));
+                        to.addDamageInstance(
+                                from,
+                                name,
+                                dotMinDamage,
+                                dotMaxDamage,
+                                0,
+                                100,
+                                trueDamage
+                        );
                     }
                 })
         ));
@@ -176,6 +193,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
+
             enemy.addDamageInstance(
                     wp,
                     name,
@@ -183,7 +201,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
-                    wp.getCooldownManager().hasCooldown(AstralPlague.class)
+                    wp.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(enemy, RegularCooldown.class)
+                            .filterCooldownClass(AstralPlague.class)
+                            .stream()
+                            .count() == 3
             );
             givePoisonousHex(wp, enemy);
             if (projectile.getHit().size() >= 2) {

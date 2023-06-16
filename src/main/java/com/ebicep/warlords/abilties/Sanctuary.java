@@ -102,7 +102,7 @@ public class Sanctuary extends AbstractAbility implements Duration {
                             if (event.getWarlordsEntity().equals(wp)) {
                                 PlayerFilter.playingGame(wp.getGame()).teammatesOfExcludingSelf(wp)
                                             .closestFirst(wp)
-                                            .limit(1)
+                                            .limit(2)
                                             .forEach(warlordsEntity -> {
                                                 warlordsEntity.getCooldownManager().limitCooldowns(
                                                         RegularCooldown.class,

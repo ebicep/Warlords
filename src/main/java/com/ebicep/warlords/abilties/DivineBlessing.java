@@ -65,7 +65,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 .filterCooldownFrom(wp)
                 .filterCooldownClassAndMapToObjectsOfClass(BeaconOfImpair.class)
                 .collect(Collectors.toList());
-        effectedBeacons.forEach(beaconAbility -> beaconAbility.setRadius(beaconAbility.getRadius() + beaconImpairRangeIncrease));
+        effectedBeacons.forEach(beaconAbility -> beaconAbility.setCritMultiplierReducedTo(beaconAbility.getCritMultiplierReducedTo() - 20));
 
         DivineBlessing tempDivineBlessing = new DivineBlessing();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -94,7 +94,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cd = event.getAbstractCooldown();
                         if (event.getWarlordsEntity().equals(wp) && cd.getCooldownObject() instanceof BeaconOfImpair beacon) {
-                            beacon.setRadius(beacon.getRadius() + beaconImpairRangeIncrease);
+                            beacon.setCritMultiplierReducedTo(beacon.getCritMultiplierReducedTo() - 20);
                             effectedBeacons.add(beacon);
                         }
                     }
