@@ -6,10 +6,10 @@ public enum RoomFace {
     NORTH_EVEN_PARITY(-1, -1),
     WEST_ODD_PARITY(-1, 0),
     WEST_EVEN_PARITY(-1, 1),
-    EAST_OOD_PARITY(1, 0),
+    EAST_ODD_PARITY(1, 0),
     EAST_EVEN_PARITY(1, -1),
     SOUTH_ODD_PARITY(0, 1),
-    SOUTH_EVEN_PARTY(1, 1)
+    SOUTH_EVEN_PARITY(1, 1)
 
     ;
 
