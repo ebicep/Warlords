@@ -36,7 +36,7 @@ public class Floor {
 
         placedRooms.add(lastPlacedRoom);
 
-        int pathLength = 20;
+        int pathLength = 30;
         for (int i = 0; i < pathLength; i++) {
             PlacedRoom finalLastPlacedRoom = lastPlacedRoom;
             var newRoom = lastPlacedRoom.getRoom().getRoomConnections().stream().flatMap(selectedConnection -> rooms.stream()
@@ -66,6 +66,28 @@ public class Floor {
                             p.getZ() < m.getZ() + m.getRoom().getLength() &&
                             m.getZ() < p.getZ() + p.getRoom().getLength())
                     )
+                    .filter(candidate -> placedRooms.stream().noneMatch(
+
+                            existingRoom -> existingRoom.getRoom().getRoomConnections().stream().anyMatch(existingRoomCon ->
+
+                                    isBetween(
+                                        candidate.getX(),
+                                        candidate.getRoom().getWidth(),
+                                        existingRoomCon.getX() + existingRoomCon.getRotation().getX() + existingRoom.getX()) &&
+
+                                    isBetween(
+                                        candidate.getZ(),
+                                        candidate.getRoom().getLength(),
+                                        existingRoomCon.getZ() + existingRoomCon.getRotation().getZ() + existingRoom.getZ()) &&
+
+                                    candidate.getRoom().getRoomConnections().stream().noneMatch(candidateRoomCon ->
+                                            candidateRoomCon.getX() + candidate.getX() ==
+                                                    existingRoomCon.getX() + existingRoomCon.getRotation().getX() + existingRoom.getX() &&
+                                            candidateRoomCon.getZ() + candidate.getZ() ==
+                                                    existingRoomCon.getZ() + existingRoomCon.getRotation().getZ() + existingRoom.getZ()
+                                    )
+                            )
+                    ))
                     .collect(randomElement(random));
 
             if (newRoom == null) {
@@ -87,14 +109,16 @@ public class Floor {
 
     public static void main(String[] args) {
         var rooms = new ArrayList<Room>();
-        int roomSize = 5;
-        rooms.add(makeDemoRoom(11, 11, RoomType.START, true, true, true, false));
-        rooms.add(makeDemoRoom(11, 11, RoomType.NORMAL, true, true, true, false));
-        rooms.add(makeDemoRoom(11, 11, RoomType.NORMAL, false, true, true, true));
-        rooms.add(makeDemoRoom(11, 11, RoomType.NORMAL, true, false, true, false));
-        rooms.add(makeDemoRoom(11, 11, RoomType.END, true, true, true, true));
+        int roomSize = 7;
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.START, true, false, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, true, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, false, true, true, true));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, true, true));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, false, false, true, true));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.END, true, true, true, true));
 
-        var random = new Random(300);
+        var random = new Random(180);
         Floor floor;
         do {
             floor = generate(160, 160, rooms, random);
@@ -181,5 +205,9 @@ public class Floor {
                 Collector.Characteristics.CONCURRENT,
                 Collector.Characteristics.UNORDERED
         );
+    }
+
+    private static boolean isBetween(int rangeStart, int rangeLength, int point) {
+        return point >= rangeStart && point < rangeStart + rangeLength;
     }
 }
