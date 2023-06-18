@@ -7,7 +7,6 @@ public class Room {
     private int width;
     private int length;
     private RoomType roomType;
-    //private EnumSet<RoomSymmetry> roomSymmetries = EnumSet.noneOf(RoomSymmetry.class);
     private List<RoomConnection> roomConnections;
 
     public Room(int width, int length, RoomType roomType, List<RoomConnection> roomConnections) {

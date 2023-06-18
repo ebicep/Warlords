@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,68 +39,57 @@ public class Floor {
 
         int pathLength = 30;
         for (int i = 0; i < pathLength; i++) {
-            PlacedRoom finalLastPlacedRoom = lastPlacedRoom;
-            var newRoom = lastPlacedRoom.getRoom().getRoomConnections().stream().flatMap(selectedConnection -> rooms.stream()
-                    .filter(
-                            r -> r.getRoomType() == RoomType.NORMAL
-                    )
-                    .flatMap(
-                            r -> r.getRoomConnections().stream().map(s -> new Pair<>(r, s))
-                    )
-                    .filter(
-                            p -> p.getB().getRotation().isOpposite(selectedConnection.getRotation())
-                    )
-                    .map(p -> new PlacedRoom(
-                            finalLastPlacedRoom.getX() + selectedConnection.getX() - p.getB().getX() + selectedConnection.getRotation().getX(),
-                            finalLastPlacedRoom.getZ() + selectedConnection.getZ() - p.getB().getZ() + selectedConnection.getRotation().getZ(),
-                            p.getA()
-                    )))
-                    .filter(
-                            p -> p.getX() >= 0 &&
-                            p.getZ() >= 0 &&
-                            p.getX() + p.getRoom().getWidth() < maxWidth &&
-                            p.getZ() + p.getRoom().getLength() < maxLength
-                    )
-                    .filter(p -> placedRooms.stream().noneMatch(
-                            m -> p.getX() < m.getX() + m.getRoom().getWidth() &&
-                            m.getX() < p.getX() + p.getRoom().getWidth() &&
-                            p.getZ() < m.getZ() + m.getRoom().getLength() &&
-                            m.getZ() < p.getZ() + p.getRoom().getLength())
-                    )
-                    .filter(candidate -> placedRooms.stream().noneMatch(
+            lastPlacedRoom = generateRoom(maxWidth, maxLength, () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL), random, placedRooms, lastPlacedRoom);
 
-                            existingRoom -> existingRoom.getRoom().getRoomConnections().stream().anyMatch(existingRoomCon ->
-
-                                    isBetween(
-                                        candidate.getX(),
-                                        candidate.getRoom().getWidth(),
-                                        existingRoomCon.getX() + existingRoomCon.getRotation().getX() + existingRoom.getX()) &&
-
-                                    isBetween(
-                                        candidate.getZ(),
-                                        candidate.getRoom().getLength(),
-                                        existingRoomCon.getZ() + existingRoomCon.getRotation().getZ() + existingRoom.getZ()) &&
-
-                                    candidate.getRoom().getRoomConnections().stream().noneMatch(candidateRoomCon ->
-                                            candidateRoomCon.getX() + candidate.getX() ==
-                                                    existingRoomCon.getX() + existingRoomCon.getRotation().getX() + existingRoom.getX() &&
-                                            candidateRoomCon.getZ() + candidate.getZ() ==
-                                                    existingRoomCon.getZ() + existingRoomCon.getRotation().getZ() + existingRoom.getZ()
-                                    )
-                            )
-                    ))
-                    .collect(randomElement(random));
-
-            if (newRoom == null) {
+            if (lastPlacedRoom == null) {
                 return new Floor(placedRooms, maxWidth, maxLength, false);
             }
-
-            lastPlacedRoom = newRoom;
 
             placedRooms.add(lastPlacedRoom);
         }
 
+        lastPlacedRoom = generateRoom(maxWidth, maxLength, () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.END), random, placedRooms, lastPlacedRoom);
+
+        if (lastPlacedRoom == null) {
+            return new Floor(placedRooms, maxWidth, maxLength, false);
+        }
+
+        placedRooms.add(lastPlacedRoom);
+
         return new Floor(placedRooms, maxWidth, maxLength, true);
+    }
+
+    private static PlacedRoom generateRoom(
+            int maxWidth,
+            int maxLength,
+            Supplier<Stream<Room>> rooms,
+            Random random,
+            ArrayList<PlacedRoom> placedRooms,
+            PlacedRoom lastPlacedRoom
+    ) {
+        return lastPlacedRoom.getRoomConnections().stream().flatMap(selectedConnection -> rooms.get()
+                .flatMap(
+                        r -> r.getRoomConnections().stream().map(s -> new Pair<>(r, s))
+                )
+                .filter(
+                        p -> p.getB().getRotation().isOpposite(selectedConnection.getRotation())
+                )
+                .map(p -> new PlacedRoom(
+                        lastPlacedRoom.getX() + selectedConnection.getX() - p.getB().getX() + selectedConnection.getRotation().getX(),
+                        lastPlacedRoom.getZ() + selectedConnection.getZ() - p.getB().getZ() + selectedConnection.getRotation().getZ(),
+                        p.getA()
+                )))
+                .filter(
+                        p -> p.getX() >= 0 &&
+                                p.getZ() >= 0 &&
+                                p.getX() + p.getWidth() < maxWidth &&
+                                p.getZ() + p.getLength() < maxLength
+                )
+                .filter(p -> placedRooms.stream().noneMatch(p::overlaps))
+                .filter(candidate -> placedRooms.stream().noneMatch(
+                        candidate::checkHasValidConnections
+                ))
+                .collect(randomElement(random));
     }
 
     // SOUTH = +Z
@@ -138,16 +128,17 @@ public class Floor {
 
         for (int i = 0; i < placedRooms.size(); i++) {
             var room = placedRooms.get(i);
-            for (int x = 0; x < room.getRoom().getWidth(); x++) {
-                for (int z = 0; z < room.getRoom().getLength(); z++) {
-                    if (x == 0 || z == 0 || x == room.getRoom().getWidth() - 1 || z == room.getRoom().getLength() - 1) {
+            grid[room.getZ() + room.getLength() / 2][room.getX() + room.getWidth() / 2] = room.getRoomType().name().charAt(0);
+            for (int x = 0; x < room.getWidth(); x++) {
+                for (int z = 0; z < room.getLength(); z++) {
+                    if (x == 0 || z == 0 || x == room.getWidth() - 1 || z == room.getLength() - 1) {
                         grid[room.getZ() + z][room.getX() + x] = (char) ((i < 10 ? '0' : 'A' - 10) + i);
                     }
                 }
             }
 
-            for (var connection : room.getRoom().getRoomConnections()) {
-                grid[room.getZ() + connection.getZ()][room.getX() + connection.getX()] = '!';
+            for (var connection : room.getRoomConnections()) {
+                grid[room.getZ() + connection.getZ()][room.getX() + connection.getX()] = ' ';
             }
         }
 
@@ -165,10 +156,12 @@ public class Floor {
 
     private static Room makeDemoRoom(int x, int z, RoomType type, boolean north, boolean east, boolean south, boolean west) {
         var connections = new ArrayList<RoomConnection>();
+
         if (north) connections.add(new RoomConnection(x / 2, 0, x % 2 == 1 ? RoomFace.NORTH_ODD_PARITY : RoomFace.NORTH_EVEN_PARITY));
         if (east) connections.add(new RoomConnection(x - 1, z / 2, z % 2 == 1 ? RoomFace.EAST_ODD_PARITY : RoomFace.EAST_EVEN_PARITY));
         if (south) connections.add(new RoomConnection(x / 2, z - 1, x % 2 == 1 ? RoomFace.SOUTH_ODD_PARITY : RoomFace.SOUTH_EVEN_PARITY));
         if (west) connections.add(new RoomConnection(0, z / 2, z % 2 == 1 ? RoomFace.WEST_ODD_PARITY : RoomFace.WEST_EVEN_PARITY));
+
         return new Room(x, z, type, connections);
     }
 
@@ -205,9 +198,5 @@ public class Floor {
                 Collector.Characteristics.CONCURRENT,
                 Collector.Characteristics.UNORDERED
         );
-    }
-
-    private static boolean isBetween(int rangeStart, int rangeLength, int point) {
-        return point >= rangeStart && point < rangeStart + rangeLength;
     }
 }
