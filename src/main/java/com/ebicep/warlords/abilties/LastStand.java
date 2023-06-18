@@ -213,7 +213,7 @@ public class LastStand extends AbstractAbility implements Duration {
         if (pveUpgrade) {
             addSecondaryAbility(
                     () -> {
-                        float kbRadius = radius / 2f + 1;
+                        float kbRadius = radius * 2;
                         for (WarlordsNPC warlordsNPC : PlayerFilterGeneric
                                 .entitiesAround(wp, kbRadius, kbRadius, kbRadius)
                                 .warlordsNPCs()
@@ -224,7 +224,7 @@ public class LastStand extends AbstractAbility implements Duration {
                             warlordsNPC.getMob().setTarget(wp);
                         }
                     },
-                    false,
+                    true,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(tempLastStand)
             );
         }
