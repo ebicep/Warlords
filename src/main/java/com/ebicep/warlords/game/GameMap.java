@@ -2219,7 +2219,7 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.02, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.01, Mobs.RANGE_ONLY_SKELETON)
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
@@ -2254,7 +2254,7 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.02, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.05, Mobs.FORGOTTEN_LANCER)
                             .add(0.01, Mobs.RANGE_ONLY_SKELETON)
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
@@ -2294,7 +2294,7 @@ public enum GameMap {
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.03, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.07, Mobs.FORGOTTEN_LANCER)
                             .add(0.01, Mobs.RANGE_ONLY_SKELETON)
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
@@ -2331,7 +2331,7 @@ public enum GameMap {
                             .add(0.12, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.12, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.07, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.03, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.1, Mobs.FORGOTTEN_LANCER)
                             .add(0.01, Mobs.RANGE_ONLY_SKELETON)
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
@@ -2371,7 +2371,7 @@ public enum GameMap {
                             .add(0.2, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.2, Mobs.EXILED_ZOMBIE_RIFT)
                             // forgotten
-                            .add(0.1, Mobs.FORGOTTEN_ZOMBIE)
+                            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
                             .add(0.4, Mobs.FORGOTTEN_LANCER)
                             .add(0.01, Mobs.RANGE_ONLY_SKELETON)
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
