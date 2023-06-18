@@ -2189,7 +2189,7 @@ public enum GameMap {
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     )
-                    .add(51, new SimpleWave(45, 5 * SECOND, null)
+                    .add(51, new SimpleWave(35, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2224,7 +2224,7 @@ public enum GameMap {
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
                     )
-                    .add(55, new SimpleWave(45, 5 * SECOND, null)
+                    .add(55, new SimpleWave(35, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2263,7 +2263,7 @@ public enum GameMap {
                     .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.CHESSKING)
                     )
-                    .add(61, new SimpleWave(50, 5 * SECOND, null)
+                    .add(61, new SimpleWave(40, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2289,7 +2289,7 @@ public enum GameMap {
                             .add(0.06, Mobs.VOID_PIG_ZOMBIE)
                             // exiled
                             .add(0.2, Mobs.EXILED_VOID_LANCER)
-                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_ZOMBIE)
                             .add(0.1, Mobs.EXILED_SKELETON)
                             .add(0.08, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.08, Mobs.EXILED_ZOMBIE_RIFT)
@@ -2300,7 +2300,7 @@ public enum GameMap {
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
                     )
-                    .add(65, new SimpleWave(50, 5 * SECOND, null)
+                    .add(65, new SimpleWave(40, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2326,7 +2326,7 @@ public enum GameMap {
                             .add(0.06, Mobs.VOID_PIG_ZOMBIE)
                             // exiled
                             .add(0.15, Mobs.EXILED_VOID_LANCER)
-                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_ZOMBIE)
                             .add(0.12, Mobs.EXILED_SKELETON)
                             .add(0.12, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.12, Mobs.EXILED_ZOMBIE_RIFT)
@@ -2340,7 +2340,7 @@ public enum GameMap {
                     .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ILLUMINA)
                     )
-                    .add(71, new SimpleWave(55, 5 * SECOND, null)
+                    .add(71, new SimpleWave(45, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2366,7 +2366,7 @@ public enum GameMap {
                             .add(0.01, Mobs.VOID_SLIME)
                             // exiled
                             .add(0.1, Mobs.EXILED_VOID_LANCER)
-                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_ZOMBIE)
                             .add(0.1, Mobs.EXILED_SKELETON)
                             .add(0.2, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.2, Mobs.EXILED_ZOMBIE_RIFT)
@@ -2377,7 +2377,7 @@ public enum GameMap {
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
                     )
-                    .add(75, new SimpleWave(55, 5 * SECOND, null)
+                    .add(75, new SimpleWave(45, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2404,7 +2404,7 @@ public enum GameMap {
                             .add(0.02, Mobs.VOID_SLIME)
                             // exiled
                             .add(0.1, Mobs.EXILED_VOID_LANCER)
-                            .add(0.2, Mobs.EXILED_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_ZOMBIE)
                             .add(0.3, Mobs.EXILED_SKELETON)
                             //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.25, Mobs.EXILED_ZOMBIE_RIFT)
@@ -2418,7 +2418,7 @@ public enum GameMap {
                     .add(80, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
                     )
-                    .add(81, new SimpleWave(60, 5 * SECOND, null)
+                    .add(81, new SimpleWave(50, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2456,7 +2456,7 @@ public enum GameMap {
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
                     )
-                    .add(85, new SimpleWave(60, 5 * SECOND, null)
+                    .add(85, new SimpleWave(50, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2497,7 +2497,7 @@ public enum GameMap {
                     .add(90, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     )
-                    .add(91, new SimpleWave(65, 5 * SECOND, null)
+                    .add(91, new SimpleWave(50, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)
@@ -2535,7 +2535,7 @@ public enum GameMap {
                             .add(0.01, Mobs.MELEE_ONLY_ZOMBIE)
                             .add(0.01, Mobs.WITHER_SKELETON)
                     )
-                    .add(95, new SimpleWave(65, 5 * SECOND, null)
+                    .add(95, new SimpleWave(50, 5 * SECOND, null)
                             //basic
                             //.add(0, Mobs.BASIC_ZOMBIE)
                             //.add(0, Mobs.GHOST_ZOMBIE)

@@ -335,9 +335,11 @@ public class WaveDefenseOption implements Option, PveOption {
             case 4:
                 return 1.5f;
             case 5:
+                return 1.75f;
             case 6:
                 return 2;
             case 7:
+                return 2.25f;
             case 8:
                 return 2.5f;
         }

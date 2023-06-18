@@ -17,11 +17,11 @@ import java.util.List;
 
 public class Repentance extends AbstractAbility implements Duration {
 
+    private float pool = 0;
     private int tickDuration = 240;
-    private int healthRestore = 150;
-    private int energyRestore = 4;
-    private int maxProcs = 15;
-    private int damageDealtTaken = 2000;
+    private int poolDecay = 60;
+    private float damageConvertPercent = 10;
+    private float energyConvertPercent = 3.5f;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20);
@@ -29,10 +29,8 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-//        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-//                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
-        description = "During the duration of Repentance every §c" + damageDealtTaken + " §7damage you deal and take will heal you" +
-                " for §a100 §7health and restore §e3 §7energy. Can proc up to " + maxProcs + " §7times. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
+                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
     }
 
     @Override
@@ -49,7 +47,7 @@ public class Repentance extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
 
-
+        pool += 2000;
         wp.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
                 name, "REPE",
                 Repentance.class,
@@ -60,50 +58,52 @@ public class Repentance extends AbstractAbility implements Duration {
                 },
                 tickDuration
         ) {
-            private float damageCounter = 0;
-            private int procs = 0;
-
             @Override
             public boolean distinct() {
                 return true;
             }
 
             @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                addToCounter(currentDamageValue);
-            }
-
-            @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                addToCounter(currentDamageValue);
-            }
+                WarlordsEntity attacker = event.getAttacker();
 
-            private void addToCounter(float amount) {
-                if (procs > 10) {
-                    return;
-                }
-                damageCounter += amount;
-                if (damageCounter >= damageDealtTaken) {
-                    // for if you deal/take like 6000 dmg, heal/energy should be 3x
-                    int times = (int) (damageCounter / damageDealtTaken);
-                    int validTimes = 0;
-                    for (int i = 0; i < times; i++) {
-                        procs++;
-                        if (procs > 10) {
-                            break;
-                        }
-                        damageCounter -= damageDealtTaken;
-                        validTimes++;
-                    }
-                    int healthGain = healthRestore;
-                    int energyGain = Repentance.this.energyRestore;
-                    wp.addHealingInstance(wp, "Repentance", healthGain * validTimes, healthGain * validTimes, 0, 100, false, false);
-                    wp.addEnergy(wp, "Repentance", energyGain * validTimes);
-                }
+                int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
+                attacker.addHealingInstance(
+                        attacker,
+                        "Repentance",
+                        Math.min(500, healthToAdd),
+                        Math.min(500, healthToAdd),
+                        0,
+                        100,
+                        false,
+                        false
+                );
+                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
+                pool *= .5;
             }
         });
 
         return true;
+    }
+
+    @Override
+    public void runEverySecond() {
+        if (pool > 0) {
+            float newPool = pool * .8f - poolDecay;
+            pool = Math.max(newPool, 0);
+        }
+    }
+
+    public float getDamageConvertPercent() {
+        return damageConvertPercent;
+    }
+
+    public void setDamageConvertPercent(float damageConvertPercent) {
+        this.damageConvertPercent = damageConvertPercent;
+    }
+
+    public void addToPool(float amount) {
+        this.pool = Math.min(3000, pool + amount);
     }
 
     @Override
@@ -116,35 +116,19 @@ public class Repentance extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getHealthRestore() {
-        return healthRestore;
+    public int getPoolDecay() {
+        return poolDecay;
     }
 
-    public void setHealthRestore(int healthRestore) {
-        this.healthRestore = healthRestore;
+    public void setPoolDecay(int poolDecay) {
+        this.poolDecay = poolDecay;
     }
 
-    public int getEnergyRestore() {
-        return energyRestore;
+    public float getEnergyConvertPercent() {
+        return energyConvertPercent;
     }
 
-    public void setEnergyRestore(int energyRestore) {
-        this.energyRestore = energyRestore;
-    }
-
-    public int getMaxProcs() {
-        return maxProcs;
-    }
-
-    public void setMaxProcs(int maxProcs) {
-        this.maxProcs = maxProcs;
-    }
-
-    public int getDamageDealtTaken() {
-        return damageDealtTaken;
-    }
-
-    public void setDamageDealtTaken(int damageDealtTaken) {
-        this.damageDealtTaken = damageDealtTaken;
+    public void setEnergyConvertPercent(float energyConvertPercent) {
+        this.energyConvertPercent = energyConvertPercent;
     }
 }

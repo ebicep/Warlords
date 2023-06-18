@@ -89,7 +89,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 "Ghoul’s Gamble",
                 "Death's Debt - Master Upgrade",
                 "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, " +
-                        "gain 50% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 40%",
+                        "gain 80% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 40%",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

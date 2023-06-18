@@ -44,6 +44,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
+        warlordsNPC.getCooldownManager().removeCooldown(LastStand.class, false);
         if (ticksElapsed % 60 == 0) {
             EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
             Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
