@@ -328,7 +328,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                         .stream()
                         .map(WarlordsNPC::getMob)
-                        .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueID().equals(uuid))
+                        .filter(abstractMob -> abstractMob != null && abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueID().equals(uuid))
                         .forEach(AbstractMob::removeTarget);
             }
         }
