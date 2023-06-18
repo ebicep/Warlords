@@ -605,12 +605,12 @@ public enum SkillBoosts {
             }
     ),
     REPENTANCE("Repentance",
-            "§7Lower damage taken/dealt requirement by 500 and reduce the cooldown by 10%",
-            "§aILower damage taken/dealt requirement by §c500 §aand reduce the §acooldown by §c10%",
+            "§7Increase the damage you convert by 5% and reduce the cooldown by 10%",
+            "§aIncrease the damage you §aconvert by §c5% §aand reduce the §acooldown by §c10%",
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
-                    ((Repentance) abstractAbility).setDamageDealtTaken(1500);
+                    ((Repentance) abstractAbility).setDamageConvertPercent(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
