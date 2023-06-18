@@ -38,25 +38,120 @@ public class Floor {
         placedRooms.add(lastPlacedRoom);
 
         int pathLength = 30;
-        for (int i = 0; i < pathLength; i++) {
-            lastPlacedRoom = generateRoom(maxWidth, maxLength, () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL), random, placedRooms, lastPlacedRoom);
+        var newRooms = generateHallwayWithRoom(
+                maxWidth,
+                maxLength,
+                () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL),
+                () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.END),
+                random,
+                placedRooms::stream,
+                placedRooms.stream(),
+                pathLength
+        );
 
-            if (lastPlacedRoom == null) {
-                return new Floor(placedRooms, maxWidth, maxLength, false);
-            }
-
-            placedRooms.add(lastPlacedRoom);
-        }
-
-        lastPlacedRoom = generateRoom(maxWidth, maxLength, () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.END), random, placedRooms, lastPlacedRoom);
-
-        if (lastPlacedRoom == null) {
+        if (newRooms == null) {
             return new Floor(placedRooms, maxWidth, maxLength, false);
         }
 
-        placedRooms.add(lastPlacedRoom);
+        placedRooms.addAll(newRooms);
+
+        int attempts = 0;
+        int generatedTreasureRooms = 0;
+
+        while (generatedTreasureRooms < 3) {
+            attempts++;
+
+            if (attempts > 10) {
+                return new Floor(placedRooms, maxWidth, maxLength, false);
+            }
+
+            pathLength = 10;
+            var newGeneratedHallway = generateHallwayWithRoom(
+                    maxWidth,
+                    maxLength,
+                    () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.NORMAL),
+                    () -> rooms.stream().filter(r -> r.getRoomType() == RoomType.TREASURE),
+                    random,
+                    placedRooms::stream,
+                    placedRooms.stream(),
+                    pathLength
+            );
+
+            if (newGeneratedHallway == null) {
+                continue;
+            }
+
+            placedRooms.addAll(newGeneratedHallway);
+
+            generatedTreasureRooms++;
+        }
 
         return new Floor(placedRooms, maxWidth, maxLength, true);
+    }
+
+    private static List<PlacedRoom> generateHallwayWithRoom(
+            int maxWidth,
+            int maxLength,
+            Supplier<Stream<Room>> rooms,
+            Supplier<Stream<Room>> endingRoom,
+            Random random,
+            Supplier<Stream<PlacedRoom>> placedRooms,
+            Stream<PlacedRoom> startingPoint,
+            int hallwayLength
+    ) {
+        var generatedHallway = generateHallway(
+                maxWidth,
+                maxLength,
+                rooms,
+                random,
+                placedRooms,
+                startingPoint,
+                hallwayLength
+        );
+
+        if (generatedHallway == null) {
+            return null;
+        }
+
+        var generatedTreasureRoom = generateRoom(
+                maxWidth,
+                maxLength,
+                endingRoom,
+                random,
+                () -> Stream.concat(placedRooms.get(), generatedHallway.stream()),
+                Stream.of(generatedHallway.get(generatedHallway.size() - 1))
+        );
+
+        if (generatedTreasureRoom == null) {
+            return null;
+        }
+
+        generatedHallway.add(generatedTreasureRoom);
+
+        return generatedHallway;
+    }
+
+    private static List<PlacedRoom> generateHallway(
+            int maxWidth,
+            int maxLength,
+            Supplier<Stream<Room>> rooms,
+            Random random,
+            Supplier<Stream<PlacedRoom>> placedRooms,
+            Stream<PlacedRoom> startingPoint,
+            int hallwayLength
+    ) {
+        List<PlacedRoom> lastPlacedRooms = new ArrayList<>();
+        for (int i = 0; i < hallwayLength; i++) {
+            var newRoom =  generateRoom(maxWidth, maxLength, rooms, random, () -> Stream.concat(lastPlacedRooms.stream(), placedRooms.get()), startingPoint);
+
+            if (newRoom == null) {
+                return null;
+            }
+
+            lastPlacedRooms.add(newRoom);
+            startingPoint = Stream.of(newRoom);
+        }
+        return lastPlacedRooms;
     }
 
     private static PlacedRoom generateRoom(
@@ -64,10 +159,10 @@ public class Floor {
             int maxLength,
             Supplier<Stream<Room>> rooms,
             Random random,
-            ArrayList<PlacedRoom> placedRooms,
-            PlacedRoom lastPlacedRoom
+            Supplier<Stream<PlacedRoom>> placedRooms,
+            Stream<PlacedRoom> startingPoint
     ) {
-        return lastPlacedRoom.getRoomConnections().stream().flatMap(selectedConnection -> rooms.get()
+        return startingPoint.flatMap(lastPlacedRoom -> lastPlacedRoom.getRoomConnections().stream().flatMap(selectedConnection -> rooms.get()
                 .flatMap(
                         r -> r.getRoomConnections().stream().map(s -> new Pair<>(r, s))
                 )
@@ -78,17 +173,23 @@ public class Floor {
                         lastPlacedRoom.getX() + selectedConnection.getX() - p.getB().getX() + selectedConnection.getRotation().getX(),
                         lastPlacedRoom.getZ() + selectedConnection.getZ() - p.getB().getZ() + selectedConnection.getRotation().getZ(),
                         p.getA()
-                )))
-                .filter(
-                        p -> p.getX() >= 0 &&
-                                p.getZ() >= 0 &&
-                                p.getX() + p.getWidth() < maxWidth &&
-                                p.getZ() + p.getLength() < maxLength
+                ))))
+                .filter(p ->
+                        p.getX() >= 0 &&
+                        p.getZ() >= 0 &&
+                        p.getX() + p.getWidth() < maxWidth &&
+                        p.getZ() + p.getLength() < maxLength
                 )
-                .filter(p -> placedRooms.stream().noneMatch(p::overlaps))
-                .filter(candidate -> placedRooms.stream().noneMatch(
+                .filter(p -> placedRooms.get().noneMatch(p::overlaps))
+                .filter(candidate -> placedRooms.get().noneMatch(
                         candidate::checkHasValidConnections
                 ))
+                .filter(candidate -> placedRooms.get().flatMap(other -> other.getRoomConnections().stream().filter(
+                        con -> candidate.contains(
+                                other.getX() + con.getX() + con.getRotation().getX(),
+                                other.getZ() + con.getZ() + con.getRotation().getZ())
+                        )).count() < 2
+                )
                 .collect(randomElement(random));
     }
 
@@ -106,6 +207,10 @@ public class Floor {
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, true, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, false, false, true, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.TREASURE, true, false, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.TREASURE, false, true, false, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.TREASURE, false, false, true, false));
+        rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.TREASURE, false, false, false, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.END, true, true, true, true));
 
         var random = new Random(140);
