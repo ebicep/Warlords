@@ -36,9 +36,9 @@ public class HorseOption implements Option, Listener {
             )
             .get();
 
-    public static void activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
-            return;
+            return null;
         }
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption) {
@@ -47,9 +47,10 @@ public class HorseOption implements Option, Listener {
                         k -> new CustomHorse(((CraftWorld) warlordsEntity.getWorld()).getHandle(), warlordsEntity)
                 );
                 customHorse.spawn();
-                break;
+                return customHorse;
             }
         }
+        return null;
     }
 
     public HashMap<UUID, CustomHorse> getPlayerHorses() {
@@ -60,7 +61,6 @@ public class HorseOption implements Option, Listener {
 
     @Override
     public void register(@Nonnull Game game) {
-        game.registerEvents(this);
         new GameRunnable(game) {
 
             @Override
@@ -129,13 +129,10 @@ public class HorseOption implements Option, Listener {
                 if (CustomHorse.record.contains(player.getUniqueId())) {
                     ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + playerHorses.get(player.getUniqueId()), false);
                 }
-                CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(),
-                        k -> new CustomHorse(((CraftWorld) player.getWorld()).getHandle(), wp)
-                );
+                CustomHorse customHorse = activateHorseForPlayer(wp);
                 if (CustomHorse.record.contains(player.getUniqueId())) {
                     ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + customHorse, false);
                 }
-                customHorse.spawn();
                 if (!wp.isDisableCooldowns()) {
                     wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
                 }

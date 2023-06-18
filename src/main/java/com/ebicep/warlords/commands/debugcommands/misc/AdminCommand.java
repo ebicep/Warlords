@@ -96,6 +96,13 @@ public class AdminCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disable Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, true);
     }
 
+    @Subcommand("removehorse")
+    public void removeHorse(Player player, @Flags("other") Player target) {
+        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
+        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Leave Mount = " + target.leaveVehicle(), true);
+        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
