@@ -35,10 +35,10 @@ public class PrismGuard extends AbstractAbility implements Duration {
 
     private final int damageReduction = 3;
     private int bubbleRadius = 4;
-    private int tickDuration = 120;
+    private int tickDuration = 100;
     private int bubbleHealing = 200;
     private float bubbleMissingHealing = 1.5f;
-    private int projectileDamageReduction = 75;
+    private int projectileDamageReduction = 60;
 
     public PrismGuard() {
         super("Prism Guard", 0, 0, 26, 40, 0, 100);
