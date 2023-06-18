@@ -108,7 +108,7 @@ public class Floor {
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.NORMAL, true, true, false, false));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.END, true, true, true, true));
 
-        var random = new Random(180);
+        var random = new Random(140);
         Floor floor;
         do {
             floor = generate(160, 160, rooms, random);
@@ -157,10 +157,10 @@ public class Floor {
     private static Room makeDemoRoom(int x, int z, RoomType type, boolean north, boolean east, boolean south, boolean west) {
         var connections = new ArrayList<RoomConnection>();
 
-        if (north) connections.add(new RoomConnection(x / 2, 0, x % 2 == 1 ? RoomFace.NORTH_ODD_PARITY : RoomFace.NORTH_EVEN_PARITY));
+        if (north) connections.add(new RoomConnection((x - 1) / 2, 0, x % 2 == 1 ? RoomFace.NORTH_ODD_PARITY : RoomFace.NORTH_EVEN_PARITY));
         if (east) connections.add(new RoomConnection(x - 1, z / 2, z % 2 == 1 ? RoomFace.EAST_ODD_PARITY : RoomFace.EAST_EVEN_PARITY));
         if (south) connections.add(new RoomConnection(x / 2, z - 1, x % 2 == 1 ? RoomFace.SOUTH_ODD_PARITY : RoomFace.SOUTH_EVEN_PARITY));
-        if (west) connections.add(new RoomConnection(0, z / 2, z % 2 == 1 ? RoomFace.WEST_ODD_PARITY : RoomFace.WEST_EVEN_PARITY));
+        if (west) connections.add(new RoomConnection(0, (z - 1) / 2, z % 2 == 1 ? RoomFace.WEST_ODD_PARITY : RoomFace.WEST_EVEN_PARITY));
 
         return new Room(x, z, type, connections);
     }

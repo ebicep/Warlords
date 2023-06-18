@@ -34,10 +34,18 @@ public class PlacedRoom {
         );
     }
 
+    /**
+     * @param other Checks the overlap between doors and walls, makes sure a door cannot be connected to a wall.
+     * @return true if the other room has valid connections.
+     */
     boolean checkHasValidConnections(PlacedRoom other) {
         return this.hasValidConnections(other) && other.hasValidConnections(this);
     }
 
+    /**
+     * @param other The placed room to check the overlap with.
+     * @return true if the other room of this room overlaps.
+     */
     boolean overlaps(PlacedRoom other) {
         return this.getX() < other.getX() + other.getWidth() &&
                 other.getX() < this.getX() + this.getWidth() &&
