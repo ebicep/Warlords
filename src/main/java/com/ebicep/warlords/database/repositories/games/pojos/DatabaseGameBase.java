@@ -83,7 +83,7 @@ public abstract class DatabaseGameBase {
                 for (Option option : game.getOptions()) {
                     if (option instanceof WaveDefenseOption waveDefenseOption) {
                         if (waveDefenseOption.getDifficulty() != DifficultyIndex.EVENT && waveDefenseOption.getWavesCleared() == 0) {
-                            System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
+                            ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
                             break;
                         }
@@ -121,7 +121,7 @@ public abstract class DatabaseGameBase {
                         ));
                     if (!GameMode.isPvE(game.getGameMode())) {
                         Warlords.newChain()
-                                .async(() -> System.out.println(DatabaseGameCTF.getWarlordsPlusEndGameStats(game)))
+                                .async(() -> ChatUtils.MessageType.WARLORDS.sendMessage(DatabaseGameCTF.getWarlordsPlusEndGameStats(game)))
                                 .execute();
                     }
                 }
@@ -164,8 +164,8 @@ public abstract class DatabaseGameBase {
                                     "This game was added to the database but player information remained the same"), NamedTextColor.GREEN)
             );
         } catch (Exception e) {
-            e.printStackTrace();
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
@@ -233,7 +233,7 @@ public abstract class DatabaseGameBase {
             Warlords.newChain()
                     .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
-            e.printStackTrace();
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
         }
     }
 

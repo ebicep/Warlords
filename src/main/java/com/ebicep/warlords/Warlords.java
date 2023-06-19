@@ -211,32 +211,32 @@ public class Warlords extends JavaPlugin {
                 BotManager.task.cancel();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         if (DatabaseManager.enabled) {
             //updates all queues, locks main thread to ensure update is complete before disabling
             try {
                 DatabaseManager.updateQueue();
             } catch (Exception e) {
-                e.printStackTrace();
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
             }
             try {
                 if (MasterworksFairManager.currentFair != null) {
                     DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
             }
             try {
                 GuildManager.updateGuilds();
             } catch (Exception e) {
-                e.printStackTrace();
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
             }
         }
         try {
             taskChainFactory.shutdown(10, TimeUnit.SECONDS);
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             // Pre-caution
@@ -247,7 +247,7 @@ public class Warlords extends JavaPlugin {
                 player.clearTitle();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             CraftServer server = (CraftServer) Bukkit.getServer();
@@ -255,12 +255,12 @@ public class Warlords extends JavaPlugin {
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             gameManager.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             if (holographicDisplaysEnabled) {
@@ -268,12 +268,12 @@ public class Warlords extends JavaPlugin {
                 HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             NPCManager.destroyNPCs();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
         try {
             BotManager.deleteStatusMessage();
@@ -281,7 +281,7 @@ public class Warlords extends JavaPlugin {
                 BotManager.jda.shutdownNow();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is disabled");
@@ -387,7 +387,7 @@ public class Warlords extends JavaPlugin {
             try {
                 BotManager.connect();
             } catch (LoginException e) {
-                e.printStackTrace();
+                ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
             }
         }
 
@@ -448,7 +448,7 @@ public class Warlords extends JavaPlugin {
             ApplicationConfiguration.key = config.getString("database_key");
             BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -459,7 +459,7 @@ public class Warlords extends JavaPlugin {
                 Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -471,7 +471,7 @@ public class Warlords extends JavaPlugin {
             }
             config.save(new File(this.getDataFolder(), "weapons.yml"));
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -499,7 +499,7 @@ public class Warlords extends JavaPlugin {
                 waitingChannel
              */
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
         }
     }
 

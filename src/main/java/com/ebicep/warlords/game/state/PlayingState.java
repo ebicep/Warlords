@@ -319,17 +319,17 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void end() {
         this.getGame().forEachOfflineWarlordsEntity(e -> e.setActive(false));
-        System.out.println(" ----- GAME END ----- ");
-        System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
-        System.out.println("Force End = " + (winEvent == null));
-        System.out.println("Player Count = " + game.warlordsPlayers().count());
-        System.out.println("Players = " + game.warlordsPlayers().toList());
-        System.out.println("Timer = " + timer);
-        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
-        System.out.println("GameMode = " + game.getGameMode());
-        System.out.println("Map = " + game.getMap());
-        System.out.println("Game Addons = " + game.getAddons());
-        System.out.println(" ----- GAME END ----- ");
+        ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
+        ChatUtils.MessageType.WARLORDS.sendMessage("RecordGames = " + RecordGamesCommand.recordGames);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Force End = " + (winEvent == null));
+        ChatUtils.MessageType.WARLORDS.sendMessage("Player Count = " + game.warlordsPlayers().count());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Players = " + game.warlordsPlayers().toList());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Timer = " + timer);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
+        ChatUtils.MessageType.WARLORDS.sendMessage("GameMode = " + game.getGameMode());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Map = " + game.getMap());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Game Addons = " + game.getAddons());
+        ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();
         if (players.isEmpty()) {

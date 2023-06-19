@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.Wa
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -75,7 +76,7 @@ public class EditStatsCommand extends BaseCommand {
                             player.sendMessage(Component.text("Returned: " + object, NamedTextColor.YELLOW));
                         } catch (Exception e) {
                             player.sendMessage("Error: " + e.getMessage());
-                            e.printStackTrace();
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
                         }
                         break;
                     }

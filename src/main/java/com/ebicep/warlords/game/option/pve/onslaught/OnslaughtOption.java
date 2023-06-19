@@ -161,10 +161,8 @@ public class OnslaughtOption implements PveOption {
                     }
                 }
             }
-            System.out.println(guilds);
             guilds.forEach((guild, validUUIDs) -> {
                 for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
-                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
                     upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
                 }
             });

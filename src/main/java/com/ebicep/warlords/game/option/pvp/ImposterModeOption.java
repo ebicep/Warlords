@@ -235,12 +235,12 @@ public class ImposterModeOption implements Option, EventGameEndOption {
                 imposters.get(team).add(teamPlayers.get(i).getUuid());
             }
         }
-        System.out.println(" --- Assigned Imposters --- ");
+        ChatUtils.MessageType.WARLORDS.sendMessage(" --- Assigned Imposters --- ");
         for (Team team : TeamMarker.getTeams(game)) {
-            System.out.println(team.name + " - " + imposters.get(team)
-                                                            .stream()
-                                                            .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
-                                                            .collect(Collectors.joining(", ")));
+            ChatUtils.MessageType.WARLORDS.sendMessage(team.name + " - " + imposters.get(team)
+                                                                                    .stream()
+                                                                                    .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                                                                    .collect(Collectors.joining(", ")));
         }
     }
 

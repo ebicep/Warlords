@@ -9,8 +9,7 @@ import java.util.Arrays;
 /**
  * Class for automatically converting a Vector to a Location based on another Location
  */
-public final class
-Matrix4d {
+public final class Matrix4d {
     private final double[] matrix;
 
     public Matrix4d() {

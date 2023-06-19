@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -171,8 +172,8 @@ public class CompensateCommand extends BaseCommand {
     }
 
     public static void compensate(Player player, LinkedHashMap<Spendable, Long> compensation, List<DatabasePlayer> compensatedPlayers, String title) {
-        System.out.println(compensation);
-        System.out.println(compensatedPlayers);
+        ChatUtils.MessageType.WARLORDS.sendMessage(compensation.toString());
+        ChatUtils.MessageType.WARLORDS.sendMessage(compensatedPlayers.toString());
         if (compensatedPlayers.size() == 1) {
             Warlords.newChain()
                     .sync(() -> {

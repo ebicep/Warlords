@@ -18,6 +18,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -560,7 +561,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             player.teleport(location.getLocation());
             Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
         } else {
-            System.out.println("Unable to warp player to lobby!, no lobby marker found");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Unable to warp player to lobby!, no lobby marker found");
         }
     }
 

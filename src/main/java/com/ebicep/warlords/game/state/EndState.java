@@ -256,7 +256,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
 
         //EXPERIENCE
-        System.out.println("Game Added = " + gameAdded);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Game Added = " + gameAdded);
         if (gameAdded.get() && DatabaseManager.playerService != null) {
             sendGlobalMessage(game,
                     Component.text(" ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),

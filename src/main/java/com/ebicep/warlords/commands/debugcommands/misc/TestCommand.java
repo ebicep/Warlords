@@ -11,6 +11,7 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -22,12 +23,12 @@ import java.util.Comparator;
 public class TestCommand extends BaseCommand {
 
     public static void doTest(CommandIssuer issuer) {
-        System.out.println("--------------");
+        ChatUtils.MessageType.WARLORDS.sendMessage("--------------");
         long start = System.nanoTime();
-        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        ChatUtils.MessageType.WARLORDS.sendMessage(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()).toString());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
         printCache();
-        System.out.println("--------------");
+        ChatUtils.MessageType.WARLORDS.sendMessage("--------------");
     }
 
     public static void printCache() {

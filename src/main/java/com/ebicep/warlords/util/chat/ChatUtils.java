@@ -1,16 +1,15 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -137,9 +136,6 @@ public class ChatUtils {
         if (component == null) {
             return;
         }
-        if (((TextComponent) component).content().equals("TEST2")) {
-            System.out.println("HJERE");
-        }
         if (component.children().contains(Component.newline())) {
             Style parentStyle = component.style();
             List<Component> children = new ArrayList<>(component.children());
@@ -191,7 +187,7 @@ public class ChatUtils {
 
     public enum MessageType {
 
-        WARLORDS("Warlords", NamedTextColor.GREEN, true),
+        WARLORDS("", NamedTextColor.GREEN, true),
         PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA, false),
         GAME_SERVICE("GameService", NamedTextColor.YELLOW, true),
         GUILD_SERVICE("GuildService", NamedTextColor.GOLD, true),
@@ -220,12 +216,12 @@ public class ChatUtils {
 
         public void sendMessage(String message) {
             if (enabled) {
-                Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, textColor));
+                Warlords.getInstance().getComponentLogger().info(Component.text("[" + name + "] " + message, textColor));
             }
         }
 
         public void sendErrorMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(Component.text("[" + name + "] " + message, NamedTextColor.RED));
+            Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] " + message, NamedTextColor.RED));
         }
 
         public boolean isEnabled() {

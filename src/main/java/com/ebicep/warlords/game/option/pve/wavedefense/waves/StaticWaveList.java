@@ -24,13 +24,6 @@ public class StaticWaveList implements WaveList {
         return this;
     }
 
-    public StaticWaveList print() {
-        waves.keySet().stream().sorted(Integer::compareTo).forEachOrdered(integer -> {
-            System.out.println(integer + ": " + waves.get(integer).getMonsterCount());
-        });
-        return this;
-    }
-
     @Override
     public Wave getWave(int wave, Random random) {
         lastWave = waves.getOrDefault(wave, lastWave);
