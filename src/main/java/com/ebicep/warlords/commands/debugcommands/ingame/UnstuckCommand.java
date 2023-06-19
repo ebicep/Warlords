@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.UUID;
 
-@CommandAlias("unstuck")
+@CommandAlias("unstuck|stuck")
 public class UnstuckCommand extends BaseCommand {
 
     private static int UNSTUCK_COOLDOWN = 20;

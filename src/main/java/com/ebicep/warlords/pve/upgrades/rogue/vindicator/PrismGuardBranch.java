@@ -7,12 +7,18 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
-    int duration = ability.getTickDuration();
+    int duration;
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
     public PrismGuardBranch(AbilityTree abilityTree, PrismGuard ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setTickDuration(120);
+            ability.setProjectileDamageReduction(75);
+        }
+        duration = ability.getTickDuration();
+
         treeA.add(new Upgrade(
                 "Impair - Tier I",
                 "+100 Base healing\n+1% Missing health healing.",

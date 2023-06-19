@@ -324,7 +324,6 @@ public class WaveDefenseOption implements PveOption {
             case 7, 8 -> 2.5f;
             default -> 1;
         };
-
     }
 
     public void startSpawnTask() {

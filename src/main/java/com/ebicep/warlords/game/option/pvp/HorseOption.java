@@ -38,18 +38,19 @@ public class HorseOption implements Option, Listener {
             )
             .get();
 
-    public static void activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
-            return;
+            return null;
         }
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption) {
                 HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
                 CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
                 customHorse.spawn();
-                break;
+                return customHorse;
             }
         }
+        return null;
     }
 
     public HashMap<UUID, CustomHorse> getPlayerHorses() {
@@ -60,7 +61,6 @@ public class HorseOption implements Option, Listener {
 
     @Override
     public void register(@Nonnull Game game) {
-        game.registerEvents(this);
         new GameRunnable(game) {
 
             @Override
@@ -126,8 +126,7 @@ public class HorseOption implements Option, Listener {
                 player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
-                CustomHorse customHorse = playerHorses.computeIfAbsent(player.getUniqueId(), k -> new CustomHorse(wp));
-                customHorse.spawn();
+                CustomHorse customHorse = activateHorseForPlayer(wp);
                 if (!wp.isDisableCooldowns()) {
                     wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
                 }
