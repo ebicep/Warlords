@@ -27,7 +27,7 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
                         Weapons.AMARANTH.getItem()
                 ),
-                10000,
+                8000,
                 0.28f,
                 0,
                 1600,

@@ -94,6 +94,19 @@ public class AdminCommand extends BaseCommand {
         );
     }
 
+    @Subcommand("removehorse")
+    public void removeHorse(Player player, @Flags("other") Player target) {
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Leave Mount = " + target.leaveVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
