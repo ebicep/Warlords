@@ -3,12 +3,6 @@ package com.ebicep.warlords;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
@@ -19,7 +13,6 @@ import com.ebicep.warlords.abilties.internal.*;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
@@ -34,8 +27,6 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -47,10 +38,12 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
+import com.ebicep.warlords.util.warlords.ConfigUtil;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -64,7 +57,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.GameMode;
 import org.bukkit.*;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -78,7 +70,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
-import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -351,10 +342,7 @@ public class Warlords extends JavaPlugin {
 
         HeadUtils.updateHeads();
 
-        readKeysConfig();
-        readWeaponConfig();
-        saveWeaponConfig();
-        readBotConfig();
+        ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
 
@@ -391,41 +379,7 @@ public class Warlords extends JavaPlugin {
             }
         }
 
-        ProtocolManager protocolManager;
-        protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.removePacketListeners(this);
-        protocolManager.addPacketListener(
-                new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
-                    int counter = 0;
-
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        // Item packets (id: 0x29)
-                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
-                            Player player = event.getPlayer();
-                            if (Warlords.hasPlayer(player)) {
-                                if (counter++ % PlayerSettings.PLAYER_SETTINGS.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
-                                    event.setCancelled(true);
-                                }
-                            }
-                        }
-                    }
-                });
-        List<Sound> blockedSounds = List.of(
-                Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
-                Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
-        );
-        protocolManager.addPacketListener(
-
-                new PacketAdapter(this, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
-                    @Override
-                    public void onPacketSending(PacketEvent event) {
-                        Sound sound = event.getPacket().getSoundEffects().getValues().get(0);
-                        if (sound != null && blockedSounds.contains(sound)) {
-                            event.setCancelled(true);
-                        }
-                    }
-                });
+        PacketUtils.init(this);
 
         Warlords.newChain()
                 .sync(NPCManager::createSupplyDropFairNPC)
@@ -440,67 +394,6 @@ public class Warlords extends JavaPlugin {
         MemoryManager.init();
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
-    }
-
-    public void readKeysConfig() {
-        try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
-            ApplicationConfiguration.key = config.getString("database_key");
-            BotManager.botToken = config.getString("botToken");
-        } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
-        }
-    }
-
-    public void readWeaponConfig() {
-        try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "weapons.yml"));
-            for (String key : config.getKeys(false)) {
-                Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
-            }
-        } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
-        }
-    }
-
-    public void saveWeaponConfig() {
-        try {
-            YamlConfiguration config = new YamlConfiguration();
-            for (Weapons weapons : Weapons.VALUES) {
-                config.set(weapons.getName(), weapons.isUnlocked);
-            }
-            config.save(new File(this.getDataFolder(), "weapons.yml"));
-        } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
-        }
-    }
-
-    public void readBotConfig() {
-        try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "bot.yml"));
-            for (String key : config.getKeys(false)) {
-                BotManager.DiscordServer discordServer = new BotManager.DiscordServer(
-                        key,
-                        config.getString(key + ".id"),
-                        config.getString(key + ".statusChannel"),
-                        config.getString(key + ".queueChannel")
-                );
-                BotManager.DISCORD_SERVERS.add(discordServer);
-                ChatUtils.MessageType.DISCORD_BOT.sendMessage("Added server " + key + " = " + discordServer.getId() + ", " + discordServer.getStatusChannel() + ", " + discordServer.getQueueChannel());
-            }
-            /*
-            server1
-                id
-                statusChannel
-                waitingChannel
-            server2
-                id
-                statusChannel
-                waitingChannel
-             */
-        } catch (Exception e) {
-            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
-        }
     }
 
     public static <T> TaskChain<T> newChain() {
@@ -608,7 +501,6 @@ public class Warlords extends JavaPlugin {
 
                     // Checks whether the player has any remaining active Undying Army instances active.
                     if (wp.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
-
                         for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownClass(UndyingArmy.class)
                                 .stream()
