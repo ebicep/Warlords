@@ -32,17 +32,16 @@ public class SpectateCommand extends BaseCommand {
                                    .toList();
         //1-7 = 3
         //8-14 = 4
-        if (games.isEmpty()) {
-            player.closeInventory();
-            player.sendMessage(Component.text("There are no active games right now!", NamedTextColor.GREEN));
-            return;
-        }
         int rows = (games.size() - 1) / 7 + 3;
         Menu menu = new Menu("Current Games", 9 * rows);
 
         int column = 1;
         int row = 1;
+        int numberOfGames = 0;
         for (Game game : games) {
+            if (game.getGameMode() == GameMode.LOBBY && !player.isOp()) {
+                continue;
+            }
             ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
                     .name(Component.text("Game - ID: " + game.getGameId(), NamedTextColor.GREEN))
                     .lore(
@@ -89,8 +88,13 @@ public class SpectateCommand extends BaseCommand {
                 column = 1;
                 row++;
             }
+            numberOfGames++;
         }
-
+        if (numberOfGames == 0) {
+            player.closeInventory();
+            player.sendMessage(Component.text("There are no active games right now!", NamedTextColor.GREEN));
+            return;
+        }
 
         Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
         if (currentGame.isPresent()) {
