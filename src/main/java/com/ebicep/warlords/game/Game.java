@@ -478,7 +478,11 @@ public final class Game implements Runnable, AutoCloseable {
             OfflinePlayer op = Bukkit.getOfflinePlayer(player);
             this.state.onPlayerQuitGame(op);
             this.players.remove(player);
-            Warlords.removePlayer(player);
+            if (gameMode == GameMode.LOBBY) {
+                Warlords.removePlayer2(player);
+            } else {
+                Warlords.removePlayer(player);
+            }
             Player p = op.getPlayer();
             if (p != null) {
                 WarlordsEvents.joinInteraction(p, true);

@@ -96,7 +96,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
-            if (team == null || !player.isOnline()) {
+            if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
                 return;
             }
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
@@ -125,8 +125,8 @@ public class PlayingState implements State, TimerDebugAble {
             ));
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
-                Utils.resetPlayerMovementStatistics(p);
             }
+            Utils.resetPlayerMovementStatistics(player);
         });
 
         game.registerEvents(new Listener() {
@@ -388,6 +388,8 @@ public class PlayingState implements State, TimerDebugAble {
             }.runTaskLater(Warlords.getInstance(), 1);
         }
         if (wp instanceof WarlordsPlayer) {
+            player.setFlying(false);
+            player.setAllowFlight(false);
             CustomScoreboard sb = CustomScoreboard.getPlayerScoreboard(player);
             updateBasedOnGameState(sb, (WarlordsPlayer) wp);
         }

@@ -187,7 +187,19 @@ public class ChatUtils {
 
     public enum MessageType {
 
-        WARLORDS("", NamedTextColor.GREEN, true),
+        WARLORDS("Warlords", NamedTextColor.GREEN, true) {
+            @Override
+            public void sendMessage(String message) {
+                if (isEnabled()) {
+                    Warlords.getInstance().getComponentLogger().info(Component.text(message, textColor));
+                }
+            }
+
+            @Override
+            public void sendErrorMessage(String message) {
+                Warlords.getInstance().getComponentLogger().error(Component.text(message, NamedTextColor.RED));
+            }
+        },
         PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA, false),
         GAME_SERVICE("GameService", NamedTextColor.YELLOW, true),
         GUILD_SERVICE("GuildService", NamedTextColor.GOLD, true),

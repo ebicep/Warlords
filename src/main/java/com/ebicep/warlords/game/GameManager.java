@@ -186,9 +186,9 @@ public class GameManager implements AutoCloseable {
     }
 
     private boolean queue(QueueEntry entry) {
-        if (entry.getPlayers().isEmpty()) {
-            throw new IllegalArgumentException("Cannot queue an entry with 0 players");
-        }
+//        if (entry.getPlayers().isEmpty()) {
+//            throw new IllegalArgumentException("Cannot queue an entry with 0 players");
+//        }
         if (queue.contains(entry)) {
             throw new IllegalArgumentException("Queue entry already exists");
         }

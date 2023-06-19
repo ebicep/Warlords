@@ -17,6 +17,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.*;
+import com.ebicep.warlords.game.option.LobbyGameOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
@@ -172,6 +173,22 @@ public class Warlords extends JavaPlugin {
         }
     }
 
+    /**
+     * Used for removing players from main lobby game
+     *
+     * @param player
+     */
+    public static void removePlayer2(@Nonnull UUID player) {
+        WarlordsEntity wp = PLAYERS.remove(player);
+        if (wp != null) {
+            wp.onRemove();
+        }
+        Player p = Bukkit.getPlayer(player);
+        if (p != null) {
+            p.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
+        }
+    }
+
     public static Warlords getInstance() {
         return instance;
     }
@@ -287,6 +304,8 @@ public class Warlords extends JavaPlugin {
 
         gameManager = new GameManager();
         GameMap.addGameHolders(gameManager);
+
+        LobbyGameOption.start();
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

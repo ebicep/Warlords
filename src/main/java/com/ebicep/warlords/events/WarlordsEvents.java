@@ -131,46 +131,6 @@ public class WarlordsEvents implements Listener {
                                      .append(Component.text(player.getName()))
                                      .append(Component.text(" joined the lobby!", NamedTextColor.GOLD))
             );
-        }
-
-        CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
-        player.setScoreboard(customScoreboard.getScoreboard());
-        joinInteraction(player, false);
-
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            p.sendPlayerListHeaderAndFooter(
-                    Component.text("Welcome to ", NamedTextColor.AQUA)
-                             .append(Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)),
-                    Component.text("Players Online: ", NamedTextColor.GREEN)
-                             .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.GRAY))
-            );
-        });
-        Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
-    }
-
-    public static void joinInteraction(Player player, boolean fromGame) {
-        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024); // remove attack charge up / recoil
-        UUID uuid = player.getUniqueId();
-        Location rejoinPoint = Warlords.getRejoinPoint(uuid);
-        boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
-        boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
-        if (isSpawnWorld || playerIsInWrongWorld) {
-            player.teleport(rejoinPoint);
-        }
-        if (playerIsInWrongWorld && isSpawnWorld) {
-            player.sendMessage(Component.text("The game you were previously playing is no longer running!", NamedTextColor.RED));
-        }
-        if (playerIsInWrongWorld && !isSpawnWorld) {
-            player.sendMessage(Component.text("The game started without you, but we still love you enough and you were warped into the game", NamedTextColor.RED));
-        }
-        if (isSpawnWorld) {
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.removePotionEffect(PotionEffectType.SLOW);
-            player.removePotionEffect(PotionEffectType.ABSORPTION);
-            player.setGameMode(GameMode.ADVENTURE);
-            player.setMaxHealth(20);
-            player.setHealth(20);
-
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
             ChatUtils.sendCenteredMessage(player, Component.textOfChildren(
                     Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
@@ -197,7 +157,45 @@ public class WarlordsEvents implements Listener {
                     Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD))
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
+        }
 
+        CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
+        player.setScoreboard(customScoreboard.getScoreboard());
+        joinInteraction(player, false);
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            p.sendPlayerListHeaderAndFooter(
+                    Component.text("Welcome to ", NamedTextColor.AQUA)
+                             .append(Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)),
+                    Component.text("Players Online: ", NamedTextColor.GREEN)
+                             .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.GRAY))
+            );
+        });
+        Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
+    }
+
+    public static void joinInteraction(Player player, boolean fromGame) {
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024); // remove attack charge up / recoil
+        UUID uuid = player.getUniqueId();
+        Location rejoinPoint = Warlords.getRejoinPoint(uuid);
+        boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
+        boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
+        if ((!fromGame && isSpawnWorld) || playerIsInWrongWorld) {
+            player.teleport(rejoinPoint);
+        }
+        if (playerIsInWrongWorld && isSpawnWorld) {
+            player.sendMessage(Component.text("The game you were previously playing is no longer running!", NamedTextColor.RED));
+        }
+        if (playerIsInWrongWorld && !isSpawnWorld) {
+            player.sendMessage(Component.text("The game started without you, but we still love you enough and you were warped into the game", NamedTextColor.RED));
+        }
+        if (isSpawnWorld) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.ABSORPTION);
+            player.setGameMode(GameMode.ADVENTURE);
+            player.setMaxHealth(20);
+            player.setHealth(20);
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
@@ -324,8 +322,8 @@ public class WarlordsEvents implements Listener {
             Game game = holder.getGame();
             if (game != null
                     && game.hasPlayer(e.getPlayer().getUniqueId())
-                    && (game.isState(PreLobbyState.class) || game.getPlayerTeam(e.getPlayer().getUniqueId()) == null)
-                    && !game.getAddons().contains(GameAddon.PRIVATE_GAME)
+                    && ((game.isState(PreLobbyState.class) && !game.getAddons().contains(GameAddon.PRIVATE_GAME))
+                    || game.getPlayerTeam(e.getPlayer().getUniqueId()) == null)
             ) {
                 game.removePlayer(e.getPlayer().getUniqueId());
             }
