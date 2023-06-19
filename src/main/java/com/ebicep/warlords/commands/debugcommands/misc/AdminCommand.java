@@ -96,9 +96,15 @@ public class AdminCommand extends BaseCommand {
 
     @Subcommand("removehorse")
     public void removeHorse(Player player, @Flags("other") Player target) {
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Leave Mount = " + target.leaveVehicle(), true);
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Leave Mount = " + target.leaveVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
     }
 
     @HelpCommand

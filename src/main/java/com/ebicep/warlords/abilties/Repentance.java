@@ -31,8 +31,13 @@ public class Repentance extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
-                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + format(tickDuration / 20f) + " §7seconds.";
+        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+                               .append(Component.text("10%", NamedTextColor.RED))
+                               .append(Component.text(" + "))
+                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.RED))
+                               .append(Component.text(" of the damage you've recently took. Lasts "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override
