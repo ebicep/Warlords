@@ -106,7 +106,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "-20 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setEnergyCost(ability.getEnergyCost() - 20);
                 }
         );

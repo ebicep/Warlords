@@ -574,7 +574,7 @@ public class Warlords extends JavaPlugin {
                                 wp.setEnergy(wp.getMaxEnergy() / 2);
                             }
 
-                            if (undyingArmy.isPveUpgrade()) {
+                            if (undyingArmy.isPveMasterUpgrade()) {
                                 wp.addSpeedModifier(wp, "ARMY", 40, 16 * 20, "BASE");
                             }
 
@@ -599,7 +599,7 @@ public class Warlords extends JavaPlugin {
                                             false
                                     );
 
-                                    if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
+                                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
                                         PlayerFilter.entitiesAround(wp, 6, 6, 6)
                                                     .aliveEnemiesOf(wp)
                                                     .forEach(enemy -> {

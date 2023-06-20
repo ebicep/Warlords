@@ -120,7 +120,7 @@ public class ShadowStep extends AbstractAbility {
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
 
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         buffOnLanding(wp);
                     }
 

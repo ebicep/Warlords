@@ -71,7 +71,7 @@ public class SoulShackle extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         boolean hasShackled = false;
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             Location playerLoc = new LocationBuilder(wp.getLocation())
                     .pitch(0)
                     .add(0, 1.7, 0);

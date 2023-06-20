@@ -92,7 +92,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                         "gain 80% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 40%",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setDamagePercent(ability.getDamagePercent() * 2);
                     ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.2f);
                 }

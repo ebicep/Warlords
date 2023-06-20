@@ -106,7 +106,7 @@ public class FrostBolt extends AbstractProjectile {
                     critMultiplier,
                     false
             );
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 freezeExplodeOnHit(shooter, hit);
             }
         }

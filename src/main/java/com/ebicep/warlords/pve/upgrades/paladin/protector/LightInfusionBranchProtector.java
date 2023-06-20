@@ -85,7 +85,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
                 "Gain 90% damage reduction and 50% knockback resistance and immunity to de-buffs for 4 seconds and reset Holy Radiance's cooldown on cast.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

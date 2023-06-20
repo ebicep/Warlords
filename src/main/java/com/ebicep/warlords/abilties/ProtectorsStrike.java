@@ -121,7 +121,7 @@ public class ProtectorsStrike extends AbstractStrike {
                         .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
             });
             // Ally Heal
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 for (WarlordsEntity ally : PlayerFilter
                         .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
                         .aliveTeammatesOfExcludingSelf(wp)

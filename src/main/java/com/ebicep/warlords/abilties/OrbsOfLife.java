@@ -136,7 +136,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
 
         spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
         spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
         }
 

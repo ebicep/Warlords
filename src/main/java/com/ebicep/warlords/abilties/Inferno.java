@@ -58,7 +58,7 @@ public class Inferno extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "mage.inferno.activation", 2, 1);
 
         Inferno tempInferno = new Inferno();
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -107,7 +107,7 @@ public class Inferno extends AbstractAbility implements Duration {
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     if (isCrit && !(finalMaxHits <= 0)) {
                         subtractCurrentCooldown(0.5f);
                         setTicksLeft(getTicksLeft() + 5);

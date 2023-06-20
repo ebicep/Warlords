@@ -95,7 +95,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 () -> {
                     ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.5f);
                     ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.5f);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setStunTimeInTicks(60);
                 }
         );

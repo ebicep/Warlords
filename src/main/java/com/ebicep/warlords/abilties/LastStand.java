@@ -96,7 +96,7 @@ public class LastStand extends AbstractAbility implements Duration {
                 },
                 selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (pveUpgrade && ticksLeft % 15 == 0) {
+                    if (pveMasterUpgrade && ticksLeft % 15 == 0) {
                         for (WarlordsEntity we : PlayerFilter
                                 .entitiesAround(wp, 15, 15, 15)
                                 .aliveEnemiesOf(wp)
@@ -118,7 +118,7 @@ public class LastStand extends AbstractAbility implements Duration {
 
             @Override
             public void multiplyKB(Vector currentVector) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     currentVector.multiply(0.5);
                 }
             }
@@ -239,7 +239,7 @@ public class LastStand extends AbstractAbility implements Duration {
             }
         }
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             addSecondaryAbility(
                     () -> {
                         float kbRadius = radius * 2;

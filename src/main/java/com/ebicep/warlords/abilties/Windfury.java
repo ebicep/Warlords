@@ -125,14 +125,14 @@ public class Windfury extends AbstractAbility implements Duration {
                                 victim.addDamageInstance(
                                         attacker,
                                         name,
-                                        minDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
-                                        maxDamage * (weaponDamage / 100f) + (pveUpgrade ? healthDamage : 0),
+                                        minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
+                                        maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
                                         critChance,
                                         critMultiplier,
                                         false
                                 );
 
-                                if (pveUpgrade) {
+                                if (pveMasterUpgrade) {
                                     victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
                                 }
 

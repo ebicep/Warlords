@@ -112,7 +112,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         ) {
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     return currentCritChance + (wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
                 return currentCritChance;
@@ -120,7 +120,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     return currentCritMultiplier + (wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
                 return currentCritMultiplier;
@@ -128,7 +128,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             addSecondaryAbility(
                     () -> timeWarpCooldown.setTicksLeft(1),
                     false,

@@ -133,13 +133,13 @@ public class SoulSwitch extends AbstractAbility {
                                                 hit.addDamageInstance(
                                                         wp,
                                                         "Decoy",
-                                                        782 * (pveUpgrade ? 2 : 1),
-                                                        1034 * (pveUpgrade ? 2 : 1),
+                                                        782 * (pveMasterUpgrade ? 2 : 1),
+                                                        1034 * (pveMasterUpgrade ? 2 : 1),
                                                         0,
                                                         100,
                                                         false
                                                 );
-                                                if (pveUpgrade) {
+                                                if (pveMasterUpgrade) {
                                                     hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                             "Switch Crippling",
                                                             "CRIP",
@@ -176,7 +176,7 @@ public class SoulSwitch extends AbstractAbility {
                     } else {
                         decoy = null;
                     }
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
                         wp.addHealingInstance(
                                 wp,

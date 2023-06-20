@@ -93,7 +93,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                         Up to 8 enemies in Healing Rain will be struck with lightning for 224 - 377 (+1% of their max health) damage every 2 seconds.""",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setTickDuration(ability.getTickDuration() + 80);
                 }
         );

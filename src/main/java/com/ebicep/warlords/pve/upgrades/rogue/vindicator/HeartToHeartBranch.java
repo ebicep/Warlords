@@ -90,7 +90,7 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
                 "Heart To Heart now deals 1635 - 2096 damage to all enemies you pass through. Enemies hit are stunned for 1 second.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

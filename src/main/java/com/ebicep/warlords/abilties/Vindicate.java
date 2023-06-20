@@ -123,7 +123,7 @@ public class Vindicate extends AbstractAbility implements Duration {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     Utils.addKnockback(name, wp.getLocation(), event.getAttacker(), -1, 0.15);
                     event.getAttacker().addDamageInstance(
                             event.getWarlordsEntity(),

@@ -161,12 +161,12 @@ public class IncendiaryCurse extends AbstractAbility {
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
 
-                        if (pveUpgrade && nearEntity instanceof WarlordsNPC) {
+                        if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
                             FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
-                                    .withColor(Color.RED)
-                                    .withColor(Color.BLACK)
-                                    .with(FireworkEffect.Type.BALL_LARGE)
-                                    .build());
+                                                                                    .withColor(Color.RED)
+                                                                                    .withColor(Color.BLACK)
+                                                                                    .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                    .build());
 
                             nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(

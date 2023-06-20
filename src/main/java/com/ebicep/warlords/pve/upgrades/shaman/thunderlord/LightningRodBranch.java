@@ -90,7 +90,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Lightning Rod increases speed and damage dealt by 40% for 12 seconds after initial cast.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

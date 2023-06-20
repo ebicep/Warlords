@@ -84,7 +84,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "Inferno's cooldown gets reduced by 0.5 seconds and duration gets increased by 0.25 seconds for each critical hit (max 40 hits)",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

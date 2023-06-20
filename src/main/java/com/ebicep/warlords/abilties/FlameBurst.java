@@ -95,7 +95,7 @@ public class FlameBurst extends AbstractProjectile {
                 numberOfDismounts++;
             }
 
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 nearEntity.addDamageInstance(
                         shooter,
                         name,

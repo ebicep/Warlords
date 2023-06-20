@@ -36,7 +36,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
         List<Location> warpTrail = new ArrayList<>();
         List<ArmorStand> altarsBlocks = new ArrayList<>();
         LocationBuilder baseLocation;
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             baseLocation = new LocationBuilder(warpLocation)
                     .pitch(0)
                     .yaw(0)
@@ -155,7 +155,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
                         }
                     }
-                    if (pveUpgrade && baseLocation != null) {
+                    if (pveMasterUpgrade && baseLocation != null) {
                         if (ticksElapsed % 4 == 0) {
                             PlayerFilter.entitiesAround(baseLocation, 5, 4, 5)
                                         .aliveTeammatesOf(wp)
@@ -182,7 +182,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
         );
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             addSecondaryAbility(
                     () -> timeWarpCooldown.setTicksLeft(1),
                     false,

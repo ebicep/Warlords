@@ -118,7 +118,7 @@ public class CripplingStrike extends AbstractStrike {
                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
                 .findAny();
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             tripleHit(wp, nearPlayer);
         }
 

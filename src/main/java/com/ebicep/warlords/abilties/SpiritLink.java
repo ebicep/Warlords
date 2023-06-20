@@ -183,7 +183,7 @@ public class SpiritLink extends AbstractChain {
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(hitPlayer))
                 .forEach(soulbinding -> {
-                    if (soulbinding.isPveUpgrade()) {
+                    if (soulbinding.isPveMasterUpgrade()) {
                         warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
                     }
                 });

@@ -111,7 +111,7 @@ public class Earthliving extends AbstractAbility implements Duration {
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < procChance) {
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             energyPulseOnHit(attacker, victim);
                         }
 

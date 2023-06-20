@@ -90,7 +90,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 "Gain 80% speed and knockback resistance upon landing for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

@@ -75,7 +75,7 @@ public class AvengersStrike extends AbstractStrike {
         float multiplier = 1;
         float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC) {
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.BASE) {
                     multiplier = 1.4f;
                 }
@@ -102,15 +102,15 @@ public class AvengersStrike extends AbstractStrike {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                (minDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
-                (maxDamage.get() * multiplier) + (pveUpgrade ? healthDamage : 0),
+                (minDamage.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
+                (maxDamage.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
                 critChance,
                 critMultiplier,
                 false,
                 consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
         );
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(nearPlayer, 4, 4, 4)
                     .aliveEnemiesOf(wp)
@@ -129,8 +129,8 @@ public class AvengersStrike extends AbstractStrike {
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        ((minDamageSlash.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
-                        ((maxDamageSlash.get() * multiplier) + (pveUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((minDamageSlash.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((maxDamageSlash.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
                         critChance,
                         critMultiplier,
                         false,

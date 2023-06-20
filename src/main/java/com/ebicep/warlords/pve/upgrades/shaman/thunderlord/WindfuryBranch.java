@@ -92,7 +92,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

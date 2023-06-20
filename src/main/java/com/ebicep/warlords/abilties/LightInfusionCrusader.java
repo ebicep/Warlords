@@ -58,7 +58,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
                 })
         );
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             for (WarlordsEntity infusionTarget : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)

@@ -82,7 +82,7 @@ public class ChainHeal extends AbstractChain {
                         false
                 );
 
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     critStatsOnHit(wp);
                     critStatsOnHit(chainTarget);
                 }
@@ -141,7 +141,7 @@ public class ChainHeal extends AbstractChain {
                     false
             );
 
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 critStatsOnHit(bounceTarget);
             }
 

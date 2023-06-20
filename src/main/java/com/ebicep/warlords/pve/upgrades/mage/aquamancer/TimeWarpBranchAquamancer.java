@@ -87,7 +87,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

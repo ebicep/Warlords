@@ -86,7 +86,7 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

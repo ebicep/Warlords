@@ -91,7 +91,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 "Soul Shackle now hits up to 8 enemies in a cone and increase silence duration by 4s.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 80);
                     ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 80);
                 }

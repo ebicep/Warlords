@@ -85,7 +85,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 0.15s",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

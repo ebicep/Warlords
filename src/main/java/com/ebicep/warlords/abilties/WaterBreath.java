@@ -170,7 +170,7 @@ public class WaterBreath extends AbstractAbility {
                             },
                             Overheal.OVERHEAL_DURATION * 20
                     );
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         regenOnHit(wp, breathTarget);
                     }
                 } else {

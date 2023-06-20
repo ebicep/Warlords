@@ -169,7 +169,7 @@ public class HeartToHeart extends AbstractAbility {
                     );
                 }
 
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     for (WarlordsNPC we : PlayerFilterGeneric
                             .entitiesAround(wp, 3, 3, 3)
                             .aliveEnemiesOf(wp)

@@ -92,7 +92,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher energy cost, cooldown and reduced knockback.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.setCooldown(ability.getCooldown() * 2);
                     ability.setEnergyCost(ability.getEnergyCost() * 1.5f);

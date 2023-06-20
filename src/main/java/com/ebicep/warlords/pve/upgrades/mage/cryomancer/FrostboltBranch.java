@@ -96,7 +96,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                 "Directly-hit enemies shatter after 1.5 seconds, dealing 409 - 554 damage to all nearby enemies and slow them by 50% for 2 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

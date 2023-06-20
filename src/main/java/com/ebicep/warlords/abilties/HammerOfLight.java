@@ -273,7 +273,7 @@ public class HammerOfLight extends AbstractAbility implements Duration {
                         tempHammerOfLight.setCrownOfLight(true);
                         hammerOfLightCooldown.setNameAbbreviation("CROWN");
 
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             pulseHeal(wp, 20, 1.5, tempHammerOfLight);
                             pulseHeal(wp, 40, 2.5, tempHammerOfLight);
                             pulseHeal(wp, 60, 3.5, tempHammerOfLight);

@@ -101,7 +101,7 @@ public class VitalityLiquor extends AbstractAbility {
                 .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveEnemiesOf(wp)
         ) {
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 enemyTarget.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
             }
             new CooldownFilter<>(enemyTarget, RegularCooldown.class)

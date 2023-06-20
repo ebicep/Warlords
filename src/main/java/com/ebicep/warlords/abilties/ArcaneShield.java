@@ -69,7 +69,7 @@ public class ArcaneShield extends AbstractAbility implements Duration {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
                         EffectUtils.strikeLightning(wp.getLocation(), false);
                         for (WarlordsNPC we : PlayerFilterGeneric

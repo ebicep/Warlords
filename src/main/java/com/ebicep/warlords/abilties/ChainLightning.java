@@ -99,7 +99,7 @@ public class ChainLightning extends AbstractChain implements Comparable<ChainLig
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue;
                 float multiplier = (((10 - hitCounter) / damageReductionPerBounce));
-                if (multiplier > (100 - maxDamageReduction / 100f) && pveUpgrade) {
+                if (multiplier > (100 - maxDamageReduction / 100f) && pveMasterUpgrade) {
                     multiplier = (100 - maxDamageReduction / 100f);
                 }
                 newDamageValue = currentDamageValue * multiplier;
@@ -159,11 +159,11 @@ public class ChainLightning extends AbstractChain implements Comparable<ChainLig
             float damageMultiplier = switch (playersSize) {
                 case 0 ->
                     // We hit the first player
-                        pveUpgrade ? 1.1f : 1f;
+                        pveMasterUpgrade ? 1.1f : 1f;
                 case 1 ->
                     // We hit the second player
-                        pveUpgrade ? 1.2f : .85f;
-                default -> pveUpgrade ? 1.3f : .7f;
+                        pveMasterUpgrade ? 1.2f : .85f;
+                default -> pveMasterUpgrade ? 1.3f : .7f;
             };
 
             playersHit.add(hit);
@@ -190,7 +190,7 @@ public class ChainLightning extends AbstractChain implements Comparable<ChainLig
     private void partOfChainLightningPulseDamage(WarlordsEntity wp, CapacitorTotem capacitorTotem) {
         ArmorStand totem = capacitorTotem.getTotem();
         capacitorTotem.pulseDamage();
-        if (capacitorTotem.isPveUpgrade()) {
+        if (capacitorTotem.isPveMasterUpgrade()) {
             capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
         }
 

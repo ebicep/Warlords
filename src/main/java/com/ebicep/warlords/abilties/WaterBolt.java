@@ -121,7 +121,7 @@ public class WaterBolt extends AbstractProjectile {
                             Overheal.OVERHEAL_DURATION * 20
                     );
                 }
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     increaseDamageOnHit(shooter, hit);
                 }
             } else {
@@ -173,7 +173,7 @@ public class WaterBolt extends AbstractProjectile {
                             Overheal.OVERHEAL_DURATION * 20
                     );
                 }
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     increaseDamageOnHit(shooter, nearEntity);
                 }
             } else {

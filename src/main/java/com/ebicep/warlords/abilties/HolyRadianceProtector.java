@@ -60,7 +60,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     @Override
     public boolean chain(WarlordsEntity wp, Player player) {
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             for (WarlordsEntity circleTarget : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)
@@ -77,7 +77,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 return true;
             }
             if (LocationUtils.isLookingAtMark(player, markTarget.getEntity()) && LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {

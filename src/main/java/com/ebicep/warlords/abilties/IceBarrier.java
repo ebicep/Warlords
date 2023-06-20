@@ -82,7 +82,7 @@ public class IceBarrier extends AbstractAbility implements Duration {
                         particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
                         particleLoc.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
 
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
                             EffectUtils.playHelixAnimation(
                                     particleLoc.add(0, -1.25, 0),
@@ -123,7 +123,7 @@ public class IceBarrier extends AbstractAbility implements Duration {
 
             @Override
             public void multiplyKB(Vector currentVector) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     currentVector.multiply(0.7);
                 }
             }

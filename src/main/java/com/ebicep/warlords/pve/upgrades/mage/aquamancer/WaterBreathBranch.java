@@ -103,7 +103,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                     ability.setHitbox(ability.getHitbox() * 2);
                     ability.setMaxAnimationEffects(8);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

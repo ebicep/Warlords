@@ -94,7 +94,7 @@ public class HealingRain extends AbstractAbility implements Duration {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     particleTask.cancel();
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         for (WarlordsEntity enemyInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
                                 .aliveEnemiesOf(wp)
@@ -147,7 +147,7 @@ public class HealingRain extends AbstractAbility implements Duration {
                     }
 
                     if (ticksElapsed % 40 == 0) {
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             for (WarlordsEntity enemyInRain : PlayerFilter
                                     .entitiesAround(location, radius, radius, radius)
                                     .aliveEnemiesOf(wp)

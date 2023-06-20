@@ -91,13 +91,13 @@ public class LightningRod extends AbstractAbility {
 
             capacitorTotem.pulseDamage();
             capacitorTotem.pulseDamage();
-            if (capacitorTotem.isPveUpgrade()) {
+            if (capacitorTotem.isPveMasterUpgrade()) {
                 capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
             }
             capacitorTotem.addProc();
         });
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             damageIncreaseOnUse(wp);
         }
 
