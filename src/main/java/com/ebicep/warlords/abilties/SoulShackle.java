@@ -55,7 +55,7 @@ public class SoulShackle extends AbstractAbility {
                                .append(Component.text("1.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds after shackling an enemy."))
                                .append(Component.newline())
-                               .append(Component.text("Has an optimal range of "))
+                               .append(Component.text("Has a range of "))
                                .append(Component.text(shackleRange, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }

@@ -84,8 +84,8 @@ public enum SkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            Component.text("Increase the damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Freezing Breath by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Freezing Breath by ", NamedTextColor.GREEN)
                      .append(Component.text("20% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED)),
@@ -196,8 +196,8 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_BERSERKER("Wounding Strike",
-            Component.text("Increase the damage you deal with Wounding Strike by 10% and reduce the energy cost by 10", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Wounding Strike by 10% and reduce the energy cost by 10", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
                      .append(Component.text("10% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
                      .append(Component.text("10", NamedTextColor.RED)),
@@ -210,8 +210,8 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            Component.text("Increase the damage you deal with Seismic Wave by 15% and reduce the cooldown by 25%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Seismic Wave by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Seismic Wave by 15% and reduce the cooldown by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Seismic Wave by ", NamedTextColor.GREEN)
                      .append(Component.text("15% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED)),
@@ -224,8 +224,8 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            Component.text("Increase the damage you deal with Ground Slam by 35% and reduce the cooldown by 10%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Ground Slam by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Ground Slam by 35% and reduce the cooldown by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Ground Slam by ", NamedTextColor.GREEN)
                      .append(Component.text("35% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED)),
@@ -266,8 +266,8 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
-            Component.text("Increase the damage you deal with Wounding Strike by 10% and increase wounding by 25%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Wounding Strike by 10% and increase wounding by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Wounding Strike by ", NamedTextColor.GREEN)
                      .append(Component.text("10% ", NamedTextColor.RED))
                      .append(Component.text("and increase wounding by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED)),
@@ -339,8 +339,8 @@ public enum SkillBoosts {
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
-            Component.text("Increase the damage you reduce with Crippling Strike by 10% and increase the additional reduction per strike by 5%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you reduce with Crippling Strike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you reduce with Crippling Strike by 10% and increase the additional reduction per strike by 5%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you reduce with Crippling Strike by ", NamedTextColor.GREEN)
                      .append(Component.text("10% ", NamedTextColor.RED))
                      .append(Component.text("and increase the additional reduction per strike by ", NamedTextColor.GREEN))
                      .append(Component.text("5%", NamedTextColor.RED)),
@@ -404,8 +404,8 @@ public enum SkillBoosts {
             }
     ),
     AVENGER_STRIKE("Avenger's Strike",
-            Component.text("Increase the damage you deal with Avenger's Strike by 15% and increase the energy you steal by 5", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Avenger's Strike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Avenger's Strike by 15% and increase the energy you steal by 5", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Avenger's Strike by ", NamedTextColor.GREEN)
                      .append(Component.text("15% ", NamedTextColor.RED))
                      .append(Component.text("and increase the energy you steal by ", NamedTextColor.GREEN))
                      .append(Component.text("5", NamedTextColor.RED)),
@@ -471,8 +471,8 @@ public enum SkillBoosts {
             }
     ),
     CRUSADER_STRIKE("Crusader's Strike",
-            Component.text("Increase the damage you deal with Crusader's Strike by 20%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Crusader's Strike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Crusader's Strike by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Crusader's Strike by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED)),
             CrusadersStrike.class,
             abstractAbility -> {
@@ -610,8 +610,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHTNING_BOLT("Lightning Bolt",
-            Component.text("Increase the damage you deal with Lightning Bolt by 20%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Lightning Bolt by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Lightning Bolt by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Lightning Bolt by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED)),
             LightningBolt.class,
             abstractAbility -> {
@@ -621,8 +621,8 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            Component.text("Increase the damage you deal with Chain Lightning by 20% and reduce the cooldown by 15%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Chain Lightning by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Chain Lightning by 20% and reduce the cooldown by 15%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Chain Lightning by ", NamedTextColor.GREEN)
                      .append(Component.text("20% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("15%", NamedTextColor.RED)),
@@ -635,8 +635,8 @@ public enum SkillBoosts {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            Component.text("Increase the damage you deal with Windfury Weapon by 30% and increase the proc chance by 10%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Windfury Weapon by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Windfury Weapon by 30% and increase the proc chance by 10%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Windfury Weapon by ", NamedTextColor.GREEN)
                      .append(Component.text("30% ", NamedTextColor.RED))
                      .append(Component.text("and increase the proc ", NamedTextColor.RED))
                      .append(Component.text("chance by ", NamedTextColor.GREEN))
@@ -661,8 +661,8 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            Component.text("Increase the damage you deal with Capacitor Totem by 30% and reduce the cooldown by 15%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Capacitor Totem by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Capacitor Totem by 30% and reduce the cooldown by 15%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Capacitor Totem by ", NamedTextColor.GREEN)
                      .append(Component.text("30% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("15%", NamedTextColor.RED)),
@@ -675,8 +675,8 @@ public enum SkillBoosts {
             }
     ),
     FALLEN_SOULS("Fallen Souls",
-            Component.text("Increase the damage you deal with Fallen Souls by 20%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Fallen Souls by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Fallen Souls by 20%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Fallen Souls by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED)),
             FallenSouls.class,
             abstractAbility -> {
@@ -686,8 +686,8 @@ public enum SkillBoosts {
             }
     ),
     SPIRIT_LINK("Spirit Link",
-            Component.text("Increase the damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Spirit Link by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Spirit Link by ", NamedTextColor.GREEN)
                      .append(Component.text("25% ", NamedTextColor.RED))
                      .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
                      .append(Component.text("0.5 ", NamedTextColor.RED))
@@ -743,8 +743,8 @@ public enum SkillBoosts {
             }
     ),
     EARTHEN_SPIKE("Earthen Spike",
-            Component.text("Increase the damage you deal with Earthen Spike by 15% and increase the speed by 30%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Earthen Spike by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Earthen Spike by 15% and increase the speed by 30%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Earthen Spike by ", NamedTextColor.GREEN)
                      .append(Component.text("15% ", NamedTextColor.RED))
                      .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
                      .append(Component.text("30%", NamedTextColor.RED)),
@@ -757,8 +757,8 @@ public enum SkillBoosts {
             }
     ),
     BOULDER("Boulder",
-            Component.text("Increase the damage you deal with Boulder by 25%", NamedTextColor.GRAY),
-            Component.text("Increase the damage you ", NamedTextColor.RED)
+            Component.text("Increase the amount of damage you deal with Boulder by 25%", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you ", NamedTextColor.RED)
                      .append(Component.text("deal with Boulder by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED)),
             Boulder.class,
@@ -829,8 +829,8 @@ public enum SkillBoosts {
             }
     ),
     BLINDING_ASSAULT("Shadow Step",
-            Component.text("Reduce the cooldown by Shadow Step by 40% and become temporarily immune to fall damage after leaping.", NamedTextColor.GRAY),
-            Component.text("Reduce the cooldown by Shadow Step by ", NamedTextColor.GREEN)
+            Component.text("Reduce the cooldown of Shadow Step by 40% and become temporarily immune to fall damage after leaping.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Shadow Step by ", NamedTextColor.GREEN)
                      .append(Component.text("40% ", NamedTextColor.RED))
                      .append(Component.text("and become temporarily immune to fall damage after leaping.", NamedTextColor.GREEN)),
             ShadowStep.class,
@@ -856,9 +856,9 @@ public enum SkillBoosts {
                 }
             }
     ),
-    ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            Component.text("Increase the duration of Order Of Eviscerate by 4 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
-            Component.text("Increase the duration of Order Of Eviscerate by ", NamedTextColor.GREEN)
+    ORDER_OF_EVISCERATE("Order of Eviscerate",
+            Component.text("Increase the duration of Order of Eviscerate by 4 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Order of Eviscerate by ", NamedTextColor.GREEN)
                      .append(Component.text("4 ", NamedTextColor.RED))
                      .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("30%.", NamedTextColor.RED)),
@@ -893,9 +893,9 @@ public enum SkillBoosts {
                 }
             }
     ),
-    HEART_TO_HEART("Heart To Heart",
-            Component.text("Reduce the cooldown of Heart ot Heart by 30% and increase the amount of health you restore by 300", NamedTextColor.GRAY),
-            Component.text("Reduce the cooldown of Heart ot Heart by ", NamedTextColor.GREEN)
+    HEART_TO_HEART("Heart to Heart",
+            Component.text("Reduce the cooldown of Heart to Heart by 30% and increase the amount of health you restore by 300", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Heart to Heart by ", NamedTextColor.GREEN)
                      .append(Component.text("30% ", NamedTextColor.RED))
                      .append(Component.text("and increase the amount of health you restore by ", NamedTextColor.GREEN))
                      .append(Component.text("300", NamedTextColor.RED)),
@@ -1080,8 +1080,8 @@ public enum SkillBoosts {
             }
     ),
     FORTIFYING_HEX("Fortifying Hex",
-            Component.text("Increase the damage you deal with Fortifying Hex by 20%.", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Fortifying Hex by ", NamedTextColor.GREEN)
+            Component.text("Increase the amount of damage you deal with Fortifying Hex by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the amount of damage you deal with Fortifying Hex by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             FortifyingHex.class,

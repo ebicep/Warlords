@@ -35,12 +35,12 @@ public class HeartToHeart extends AbstractAbility {
     private float healthRestore = 600;
 
     public HeartToHeart() {
-        super("Heart To Heart", 0, 0, 12, 20);
+        super("Heart to Heart", 0, 0, 12, 20);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw a chain towards an ally in a ")
+        description = Component.text("Throw a chain towards an ally within a ")
                                .append(Component.text("15", NamedTextColor.YELLOW))
                                .append(Component.text(" block radius, grappling the Vindicator towards the ally. You and the targeted ally gain "))
                                .append(Component.text("VIND", NamedTextColor.GOLD))
@@ -49,7 +49,7 @@ public class HeartToHeart extends AbstractAbility {
                                .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
                                .append(Component.text(healthRestore, NamedTextColor.GREEN))
                                .append(Component.text(" health after reaching your ally."))
-                               .append(Component.text("\nHeart To Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
+                               .append(Component.text("\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
 
     }
 
