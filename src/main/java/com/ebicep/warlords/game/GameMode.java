@@ -53,6 +53,25 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public enum GameMode {
+    LOBBY(
+            "MainLobby",
+            "MainLobby",
+            null,
+            null,
+            null,
+            Integer.MAX_VALUE,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            options.add(new WeaponOption());
+            options.add(new ApplySkillBoostOption());
+
+            return options;
+        }
+    },
     CAPTURE_THE_FLAG(
             "Capture The Flag",
             "CTF",

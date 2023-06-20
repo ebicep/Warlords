@@ -203,7 +203,7 @@ public class FallenSouls extends AbstractPiercingProjectile {
                     wp.subtractBlueCooldown(1.5F);
                     wp.subtractOrangeCooldown(1.5F);
 
-                    boolean masterUpgrade = soulbinding.isPveUpgrade();
+                    boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
 
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)

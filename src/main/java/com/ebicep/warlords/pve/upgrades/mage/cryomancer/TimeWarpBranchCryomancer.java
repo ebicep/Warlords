@@ -87,7 +87,7 @@ public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryo
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

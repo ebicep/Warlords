@@ -93,7 +93,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                 "+5 Blocks cast and bounce range.\n\nIncrease the crit chance by 20% and crit multiplier by 40% of all healed allies for 8 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setBounceRange(ability.getBounceRange() + 5);
                     ability.setRadius(ability.getRadius() + 5);
                 }

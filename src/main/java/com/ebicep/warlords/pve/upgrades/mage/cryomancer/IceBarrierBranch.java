@@ -87,7 +87,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                         " Additionally, reduce their damage reduction by 1% for every 0.25 seconds in your glacial shield.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

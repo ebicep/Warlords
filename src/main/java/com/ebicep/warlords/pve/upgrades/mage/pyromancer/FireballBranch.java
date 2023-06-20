@@ -99,7 +99,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                         BURN: Enemies take 20% more damage from all sources and burn for 0.5% of their max health every second.""",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

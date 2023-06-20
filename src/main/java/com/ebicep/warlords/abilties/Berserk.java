@@ -110,7 +110,7 @@ public class Berserk extends AbstractAbility implements Duration {
 
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                         return currentCritChance;
                     }
@@ -125,7 +125,7 @@ public class Berserk extends AbstractAbility implements Duration {
 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                         return currentCritMultiplier;
                     }

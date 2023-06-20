@@ -168,7 +168,7 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                             }
 
-                            if (pveUpgrade) {
+                            if (pveMasterUpgrade) {
                                 new GameRunnable(wp.getGame()) {
                                     @Override
                                     public void run() {

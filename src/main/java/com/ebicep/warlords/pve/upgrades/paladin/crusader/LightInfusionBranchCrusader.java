@@ -90,7 +90,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 60);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

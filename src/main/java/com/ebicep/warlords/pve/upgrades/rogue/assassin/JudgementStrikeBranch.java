@@ -96,7 +96,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "If the enemy hit by Judgement Strike drops below 30% max health they get executed. (Excluding boss mobs.)",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

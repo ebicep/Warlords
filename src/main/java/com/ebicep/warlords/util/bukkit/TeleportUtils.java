@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -72,7 +73,7 @@ public class TeleportUtils {
             //AField = getField(connectionClass, "A");
             //eField = getField(connectionClass, "e");
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -104,7 +105,7 @@ public class TeleportUtils {
             Object packet = packetConstructor.newInstance(x, y, z, 0, 0, teleportFlags);
             sendPacket(packet, player);
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 

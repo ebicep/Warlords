@@ -78,7 +78,7 @@ public class RighteousStrike extends AbstractStrike {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             SoulShackle.shacklePlayer(wp, nearPlayer, 120);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(nearPlayer, 4, 4, 4)

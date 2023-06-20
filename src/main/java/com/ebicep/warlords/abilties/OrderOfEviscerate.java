@@ -39,7 +39,6 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
     protected float damageDoneWithOrder = 0;
     protected int mobsKilledWithOrder = 0;
 
-    private boolean masterUpgrade = false;
     private int tickDuration = 160;
     private float damageThreshold = 0;
     private WarlordsEntity markedPlayer;
@@ -101,7 +100,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                 cooldownManager -> {
                     cancelSpeed.run();
                     removeCloak(wp, true);
-                    if (pveUpgrade) {
+                    if (inPve) {
                         if (tempOrderOfEviscerate.damageDoneWithOrder >= 15000 && tempOrderOfEviscerate.mobsKilledWithOrder >= 6) {
                             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
                         }
@@ -140,7 +139,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                                 !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * (pveUpgrade ? 2 : 1.3f);
+                    return currentDamageValue * (inPve ? 2 : 1.3f);
                 } else {
                     return currentDamageValue * 1.2f;
                 }
@@ -161,7 +160,7 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                 if (!Objects.equals(event.getWarlordsEntity(), tempOrderOfEviscerate.getMarkedPlayer())) {
                     return;
                 }
-                if (!pveUpgrade) {
+                if (!inPve) {
                     this.setTicksLeft(0);
                 } else {
                     removeCloak(wp, false);
@@ -169,15 +168,15 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                 if (isKiller) {
                     numberOfFullResets++;
 
-                    if (pveUpgrade) {
+                    if (inPve) {
                         tempOrderOfEviscerate.mobsKilledWithOrder++;
                     }
 
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            if (pveUpgrade) {
-                                int reduction = masterUpgrade ? 12 : 8;
+                            if (inPve) {
+                                int reduction = pveMasterUpgrade ? 12 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
                                         .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
@@ -203,8 +202,8 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            if (pveUpgrade) {
-                                int reduction = masterUpgrade ? 6 : 4;
+                            if (inPve) {
+                                int reduction = pveMasterUpgrade ? 6 : 4;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
                                         .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
@@ -324,11 +323,4 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public boolean isMasterUpgrade() {
-        return masterUpgrade;
-    }
-
-    public void setMasterUpgrade(boolean masterUpgrade) {
-        this.masterUpgrade = masterUpgrade;
-    }
 }

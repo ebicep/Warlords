@@ -63,7 +63,7 @@ public class GroundSlam extends AbstractAbility {
         UUID abilityUUID = UUID.randomUUID();
         activateAbility(wp, 1, abilityUUID);
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             wp.setVelocity(name, new Vector(0, 1.2, 0), true);
             new GameRunnable(wp.getGame()) {
                 boolean wasOnGround = true;

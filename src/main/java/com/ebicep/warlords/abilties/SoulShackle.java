@@ -55,7 +55,7 @@ public class SoulShackle extends AbstractAbility {
                                .append(Component.text("1.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds after shackling an enemy."))
                                .append(Component.newline())
-                               .append(Component.text("Has an optimal range of "))
+                               .append(Component.text("Has a range of "))
                                .append(Component.text(shackleRange, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -71,7 +71,7 @@ public class SoulShackle extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         boolean hasShackled = false;
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             Location playerLoc = new LocationBuilder(wp.getLocation())
                     .pitch(0)
                     .add(0, 1.7, 0);

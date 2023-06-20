@@ -211,7 +211,7 @@ public class SoothingElixir extends AbstractAbility {
                             }
                         }
 
-                    }.runTaskTimer(20, pveUpgrade ? 10 : 20);
+                    }.runTaskTimer(20, pveMasterUpgrade ? 10 : 20);
 
                     for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
@@ -228,7 +228,7 @@ public class SoothingElixir extends AbstractAbility {
                                 false
                         );
 
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             ImpalingStrike.giveLeechCooldown(
                                     wp,
                                     nearEntity,

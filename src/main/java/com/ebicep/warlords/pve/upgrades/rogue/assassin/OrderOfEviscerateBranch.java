@@ -13,7 +13,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setPveUpgrade(true);
+            ability.setInPve(true);
         }
 
         treeA.add(new Upgrade(
@@ -88,7 +88,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Kills while Order of Eviscerate is active reduce the cooldown by an additional 4 seconds. Additionally, attacks from behind deal 70% more damage.",
                 50000,
                 () -> {
-                    ability.setMasterUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

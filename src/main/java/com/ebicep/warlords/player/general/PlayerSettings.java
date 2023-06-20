@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -122,7 +123,7 @@ public class PlayerSettings {
     @Nonnull
     public Specializations getSelectedSpec() {
         if (selectedSpec == null) {
-            System.out.println("ERROR: SELECTED SPEC IS NULL");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("ERROR: SELECTED SPEC IS NULL");
             return Specializations.PYROMANCER;
         }
         return selectedSpec;

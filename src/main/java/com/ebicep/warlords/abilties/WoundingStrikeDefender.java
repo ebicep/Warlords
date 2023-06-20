@@ -68,7 +68,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
         );
 
         finalEvent.ifPresent(event -> {
-            if (event.isCrit() && pveUpgrade) {
+            if (event.isCrit() && pveMasterUpgrade) {
                 damageReductionOnCrit(wp, nearPlayer);
             }
         });

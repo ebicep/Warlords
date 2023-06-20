@@ -30,6 +30,7 @@ import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
+import com.ebicep.warlords.game.state.SyncTimerState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -47,6 +48,33 @@ import java.util.*;
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
 public enum GameMap {
+
+    MAIN_LOBBY("MainLobby",
+            32,
+            1,
+            0,
+            "MainLobby",
+            1,
+            GameMode.LOBBY
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.RED).asOption());
+
+            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 759), Team.RED));
+            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 752.5), Team.BLUE));
+
+            return options;
+        }
+
+        @Override
+        public State initialState(Game game) {
+            return new SyncTimerState(game);
+        }
+    },
     RIFT(
             "The Rift",
             32,
@@ -2613,18 +2641,18 @@ public enum GameMap {
                             //.add(0, Mobs.FORGOTTEN_LANCER)
                     )
                     .add(102, new SimpleWave(80, 2 * SECOND, null)
-                                    .add(0.1, Mobs.MAGMA_CUBE)
-                                    .add(1, Mobs.IRON_GOLEM)
-                                    .add(0.1, Mobs.WITCH)
+                            .add(0.1, Mobs.MAGMA_CUBE)
+                            .add(1, Mobs.IRON_GOLEM)
+                            .add(0.1, Mobs.WITCH)
                     )
                     .add(103, new SimpleWave(80, 2 * SECOND, null)
-                                    .add(0.2, Mobs.SPIDER)
-                                    .add(1, Mobs.VOID_SKELETON)
+                            .add(0.2, Mobs.SPIDER)
+                            .add(1, Mobs.VOID_SKELETON)
                     )
                     .add(104, new SimpleWave(80, 2 * SECOND, null)
-                                    .add(0.5, Mobs.BASIC_SLIME)
-                                    .add(0.2, Mobs.MAGMA_CUBE)
-                                    .add(0.2, Mobs.VOID_SLIME)
+                            .add(0.5, Mobs.BASIC_SLIME)
+                            .add(0.2, Mobs.MAGMA_CUBE)
+                            .add(0.2, Mobs.VOID_SLIME)
                     )
                     .add(105, new SimpleWave(80, 2 * SECOND, null)
                             .add(0.5, Mobs.SPIDER)
@@ -3799,6 +3827,10 @@ public enum GameMap {
     public static void addGameHolders(GameManager gameManager) {
         Set<String> addedMaps = new HashSet<>();
         for (GameMap map : VALUES) {
+            if (map == MAIN_LOBBY) {
+                gameManager.addGameHolder(map.fileName, map);
+                continue;
+            }
             for (int i = 0; i < map.numberOfMaps; i++) {
                 String mapName = map.fileName + "-" + i;
                 if (addedMaps.contains(mapName)) {

@@ -39,7 +39,8 @@ public abstract class AbstractAbility {
     protected TextComponent description = Component.empty();
     protected boolean boosted;
     //pve
-    protected boolean pveUpgrade = false;
+    protected boolean inPve = false;
+    protected boolean pveMasterUpgrade = false;
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
@@ -275,12 +276,20 @@ public abstract class AbstractAbility {
     public void runEveryTick() {
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
+    public boolean isInPve() {
+        return inPve;
     }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
+    public void setInPve(boolean inPve) {
+        this.inPve = inPve;
+    }
+
+    public boolean isPveMasterUpgrade() {
+        return pveMasterUpgrade;
+    }
+
+    public void setPveMasterUpgrade(boolean pveMasterUpgrade) {
+        this.pveMasterUpgrade = pveMasterUpgrade;
     }
 
     public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {

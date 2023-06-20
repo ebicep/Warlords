@@ -57,7 +57,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                 })
         );
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             wp.setBlueCurrentCooldown(0);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,

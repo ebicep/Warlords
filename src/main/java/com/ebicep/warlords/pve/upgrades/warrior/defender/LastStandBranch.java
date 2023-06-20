@@ -90,7 +90,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Doubles the radius of Last Stand and enemies within half the radius will target you on cast, can be re-casted once. Reduce cooldown by 20%.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setCooldown(ability.getCooldown() * 0.8f);
                     ability.setRadius(ability.getRadius() * 2);
                 }

@@ -105,7 +105,7 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
                 "Double the impact range and the duration of the bonus energy per second of Vitality Liquor. Additionally, all enemies hit are slowed by 30% for 3 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setVitalityRange(vitalityRange * 2);
                     ability.setDuration(ability.getDuration() * 2);
                 }

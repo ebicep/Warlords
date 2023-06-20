@@ -97,7 +97,7 @@ public class CrusadersStrike extends AbstractStrike {
                 false
         );
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             tripleHit(wp, nearPlayer);
         }
 

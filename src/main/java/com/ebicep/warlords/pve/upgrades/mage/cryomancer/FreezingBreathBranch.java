@@ -96,7 +96,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 () -> {
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

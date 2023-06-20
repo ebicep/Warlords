@@ -88,7 +88,8 @@ public class Soulbinding extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();
-        tempSoulBinding.setPveUpgrade(pveUpgrade);
+        tempSoulBinding.setInPve(inPve);
+        tempSoulBinding.setPveMasterUpgrade(pveMasterUpgrade);
         if (wp.isInPve()) {
             wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
         }

@@ -232,7 +232,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
                     }
 
                     if (ticksElapsed % 10 == 0) {
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             for (WarlordsEntity we : PlayerFilter
                                     .entitiesAround(wp, 15, 15, 15)
                                     .aliveEnemiesOf(wp)
@@ -256,7 +256,7 @@ public class PrismGuard extends AbstractAbility implements Duration {
                         totalReduction += projectileDamageReduction;
                     }
                 }
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     totalReduction += 10;
                 }
                 float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;

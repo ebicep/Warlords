@@ -56,7 +56,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        boolean lustDamageBoost = pveUpgrade && wp.getCooldownManager().hasCooldown(BloodLust.class);
+        boolean lustDamageBoost = pveMasterUpgrade && wp.getCooldownManager().hasCooldown(BloodLust.class);
         nearPlayer.addDamageInstance(
                 wp,
                 name,
@@ -67,7 +67,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 false
         );
 //        if(finalEvent.isPresent()) {
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             bleedOnHit(wp, nearPlayer);
         } else {
             if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()

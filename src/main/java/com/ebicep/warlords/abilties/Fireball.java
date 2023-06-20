@@ -97,7 +97,7 @@ public class Fireball extends AbstractProjectile {
                     false
             );
 
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 hit.getCooldownManager().removeCooldown(Fireball.class, false);
                 hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,

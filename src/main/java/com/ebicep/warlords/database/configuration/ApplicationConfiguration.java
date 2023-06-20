@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.configuration;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -39,7 +40,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Bean
     @Override
     public MongoClient mongoClient() {
-        System.out.println("Getting mongoClient");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Getting mongoClient");
         MongoClientSettings mongoClientSettings = MongoClientSettings
                 .builder()
                 .applyConnectionString(new ConnectionString(key))

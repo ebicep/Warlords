@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -58,7 +59,7 @@ public class InterchangeModeOption implements Option {
 
     private void generateNextSwapTime() {
         this.secondsUntilNextSwap = new Random().nextInt(MAX_SWAP_TIME - MIN_SWAP_TIME) + MIN_SWAP_TIME;
-        System.out.println("Swapping in " + secondsUntilNextSwap + " seconds");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Swapping in " + secondsUntilNextSwap + " seconds");
     }
 
     private void swap(Game game) {
@@ -105,7 +106,7 @@ public class InterchangeModeOption implements Option {
 
         //give last player first players old stats
         WarlordsEntity firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
-        System.out.println("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
+        ChatUtils.MessageType.WARLORDS.sendMessage("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
 
         UUID firstPlayerUuid = firstPlayer.getUuid();
         firstPlayer.setName(secondPlayerName);
@@ -143,7 +144,7 @@ public class InterchangeModeOption implements Option {
             HashMap<UUID, Location> playerLocations,
             HashMap<UUID, Boolean> playerOnHorse
     ) {
-        System.out.println("SWAP - " + firstPlayer.getName() + " <<< " + secondPlayer.getName());
+        ChatUtils.MessageType.WARLORDS.sendMessage("SWAP - " + firstPlayer.getName() + " <<< " + secondPlayer.getName());
 
         UUID firstPlayerUuid = firstPlayer.getUuid();
         firstPlayer.setName(secondPlayer.getName());

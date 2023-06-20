@@ -85,9 +85,13 @@ public class DebugMenuTeamOptions {
                 ItemStack itemStack;
                 if (warlordsEntity instanceof WarlordsNPC) {
                     AbstractMob<?> mob = ((WarlordsNPC) warlordsEntity).getMob();
-                    EntityEquipment ee = mob.getEe();
-                    if (ee != null && ee.getHelmet() != null) {
-                        itemStack = ee.getHelmet();
+                    if (mob != null) {
+                        EntityEquipment ee = mob.getEe();
+                        if (ee != null && ee.getHelmet() != null) {
+                            itemStack = ee.getHelmet();
+                        } else {
+                            itemStack = new ItemStack(Material.PLAYER_HEAD);
+                        }
                     } else {
                         itemStack = new ItemStack(Material.PLAYER_HEAD);
                     }

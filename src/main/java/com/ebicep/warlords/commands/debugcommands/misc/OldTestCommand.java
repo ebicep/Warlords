@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -82,7 +83,7 @@ public class OldTestCommand implements CommandExecutor {
 
         UpdateResult result = usersCollection.updateMany(filter, update);
         long modifiedCount = result.getModifiedCount();
-        System.out.println("Modified " + modifiedCount + " documents in " + collection);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Modified " + modifiedCount + " documents in " + collection);
     }
 
     @Override
@@ -197,7 +198,7 @@ public class OldTestCommand implements CommandExecutor {
 
 //        extracted("Games_Information");
 //        extracted("Games_Information_PvE");
-        System.out.println("DONE");
+        ChatUtils.MessageType.WARLORDS.sendMessage("DONE");
 
 
 //        for (Mobs value : Mobs.values()) {

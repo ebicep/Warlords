@@ -99,7 +99,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
                     ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
 
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

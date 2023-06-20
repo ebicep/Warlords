@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -219,7 +220,7 @@ public class RegularGamesMenu {
                     classes == Classes.SHAMAN ? 4 :
                     -1;
             if (x == -1 || y == -1) {
-                System.out.println("ERROR trying to get players spec position for regular game menu");
+                ChatUtils.MessageType.WARLORDS.sendMessage("ERROR trying to get players spec position for regular game menu");
                 continue;
             }
 

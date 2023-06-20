@@ -11,6 +11,7 @@ import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -87,9 +88,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 });
             }
         } catch (Exception e) {
-            System.out.println(message);
-            System.out.println("Could not parseLong from direct message");
-            e.printStackTrace();
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -311,7 +310,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                             return null;
                         }).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                        ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
                     }
                 }
             }

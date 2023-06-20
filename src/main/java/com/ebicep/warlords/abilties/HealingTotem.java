@@ -135,13 +135,13 @@ public class HealingTotem extends AbstractTotem implements Duration {
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (pveUpgrade && ticksElapsed % 10 == 0) {
+                    if (pveMasterUpgrade && ticksElapsed % 10 == 0) {
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, Particle.VILLAGER_HAPPY, 2);
                     }
 
                     if (ticksElapsed % 20 == 0) {
                         cooldownCounter.set(ticksElapsed);
-                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveUpgrade ? 0.4f : 0.9f);
+                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
 
                         totemStand.getLocation().getWorld().spawnParticle(
                                 Particle.VILLAGER_HAPPY,
@@ -208,7 +208,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                         });
                                     });
 
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                         .aliveEnemiesOf(wp)
                                         .forEach(enemy -> {

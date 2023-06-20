@@ -52,7 +52,7 @@ public class SafeZoneOption implements Option {
                                                           .findFirst()
                                                           .orElse(null);
         if (winAfterTimeoutOption == null) {
-            System.out.println("WinAfterTimeoutOption not found");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("WinAfterTimeoutOption not found");
             return;
         }
 

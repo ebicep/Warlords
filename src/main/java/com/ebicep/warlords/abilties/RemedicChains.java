@@ -100,13 +100,13 @@ public class RemedicChains extends AbstractAbility implements Duration {
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             healthBoosts.put(warlordsEntity, healthIncrease);
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() + healthIncrease);
             }
 
         });
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             float healthIncrease = wp.getMaxHealth() * .25f;
             healthBoosts.put(wp, healthIncrease);
             wp.setMaxHealth(wp.getMaxHealth() + healthIncrease);
@@ -154,7 +154,7 @@ public class RemedicChains extends AbstractAbility implements Duration {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                         return;
                     }
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
                     }
                 },
@@ -199,7 +199,7 @@ public class RemedicChains extends AbstractAbility implements Duration {
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
                         if (outOfRange || linked.isDead()) {
                             toRemove.add(linked);
-                            if (pveUpgrade) {
+                            if (pveMasterUpgrade) {
                                 linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
                             }
                         }

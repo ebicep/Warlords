@@ -38,7 +38,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (pveUpgrade) {
+                    if (pveMasterUpgrade) {
                         wp.addEnergy(wp, name, 30 * strikesUsed);
                         wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
                     }
@@ -65,7 +65,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     if (event.getAbility().equals("Avenger's Strike")) {
                         strikesUsed++;
                     }

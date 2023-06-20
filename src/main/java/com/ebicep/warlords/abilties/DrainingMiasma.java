@@ -84,7 +84,7 @@ public class DrainingMiasma extends AbstractAbility implements Duration {
                                                                           .with(FireworkEffect.Type.BALL_LARGE)
                                                                           .build());
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
             EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, Particle.SLIME, 1);
             FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
@@ -163,7 +163,7 @@ public class DrainingMiasma extends AbstractAbility implements Duration {
             );
             playersHit += hitCounter;
 
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 miasmaTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
                         "Liquidizing Miasma",
                         "LIQ",

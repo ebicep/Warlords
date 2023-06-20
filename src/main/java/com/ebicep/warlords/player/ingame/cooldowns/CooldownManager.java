@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
@@ -405,7 +406,7 @@ public class CooldownManager {
 
             abstractCooldowns.clear();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 

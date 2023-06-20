@@ -100,7 +100,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "+100% Projectile speed\n\nWater Bolt increases the damage dealt of all allies it hits by 10% for 10 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setPveMasterUpgrade(true);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
                 }
         );

@@ -131,8 +131,8 @@ public class FreezingBreath extends AbstractAbility {
                 breathTarget.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal * (pveUpgrade ? 1.5f : 1),
-                        maxDamageHeal * (pveUpgrade ? 1.5f : 1),
+                        minDamageHeal * (pveMasterUpgrade ? 1.5f : 1),
+                        maxDamageHeal * (pveMasterUpgrade ? 1.5f : 1),
                         critChance,
                         critMultiplier,
                         false
@@ -141,7 +141,7 @@ public class FreezingBreath extends AbstractAbility {
             }
         }
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             if (counter > 6) {
                 counter = 6;
             }

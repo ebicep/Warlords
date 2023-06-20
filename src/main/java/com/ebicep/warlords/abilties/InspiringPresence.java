@@ -98,7 +98,7 @@ public class InspiringPresence extends AbstractAbility implements Duration {
             }
         });
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             resetCooldowns(wp);
         }
 
@@ -108,7 +108,7 @@ public class InspiringPresence extends AbstractAbility implements Duration {
         ) {
             playersHit++;
             tempPresence.getPlayersAffected().add(presenceTarget);
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 resetCooldowns(presenceTarget);
                 presenceTarget.setCooldownModifier(0.9);
             }

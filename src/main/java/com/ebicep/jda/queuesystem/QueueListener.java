@@ -2,6 +2,7 @@ package com.ebicep.jda.queuesystem;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -137,7 +138,7 @@ public class QueueListener extends ListenerAdapter {
             }
             QueueManager.sendQueue();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
         }
     }
 }

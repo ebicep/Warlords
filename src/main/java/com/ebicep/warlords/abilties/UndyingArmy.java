@@ -143,7 +143,8 @@ public class UndyingArmy extends AbstractAbility implements Duration {
         ).playEffects();
 
         UndyingArmy tempUndyingArmy = new UndyingArmy(maxHealthDamage);
-        tempUndyingArmy.setPveUpgrade(pveUpgrade);
+        tempUndyingArmy.setInPve(inPve);
+        tempUndyingArmy.setPveMasterUpgrade(pveMasterUpgrade);
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                    .aliveTeammatesOf(wp)

@@ -92,7 +92,7 @@ public class WordWrap {
                 continue;
             }
             int wordLength = DefaultFontInfo.getStringLength(word);
-            String spacer = word.equals("(") ||
+            String spacer = !word.equals("(") &&
                                     (i < words.size() - 1 &&
                                             !words.get(i + 1).word().equals(".") &&
                                             !words.get(i + 1).word().equals(",") &&

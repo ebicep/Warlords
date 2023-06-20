@@ -77,11 +77,11 @@ public class JudgementStrike extends AbstractStrike {
             if (finalEvent.isCrit()) {
                 wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 if (
-                    nearPlayer instanceof WarlordsNPC &&
-                    finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
-                    ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
+                        nearPlayer instanceof WarlordsNPC &&
+                                finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
+                                ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
                 ) {
                     nearPlayer.addDamageInstance(
                             wp,

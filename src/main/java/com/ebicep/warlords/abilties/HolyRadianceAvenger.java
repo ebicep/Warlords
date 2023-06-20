@@ -58,7 +58,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
 
     @Override
     public boolean chain(WarlordsEntity wp, Player player) {
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             for (WarlordsEntity circleTarget : PlayerFilter
                     .entitiesAround(wp, 8, 8, 8)
                     .aliveEnemiesOf(wp)
@@ -75,7 +75,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveUpgrade) {
+            if (pveMasterUpgrade) {
                 return true;
             }
             if (LocationUtils.isLookingAtMark(player, markTarget.getEntity()) && LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
@@ -113,7 +113,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (pveUpgrade) {
+                        if (pveMasterUpgrade) {
                             if (event.getAbility().equals("Avenger's Strike")) {
                                 return currentDamageValue * 1.4f;
                             }
@@ -176,7 +176,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveUpgrade) {
+                if (pveMasterUpgrade) {
                     if (event.getAbility().equals("Avenger's Strike")) {
                         return currentDamageValue * 1.4f;
                     }

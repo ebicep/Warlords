@@ -146,7 +146,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                         ));
 
                                     }
-                                } else if (pveUpgrade && otherPlayer.isTeammateAlive(wp)) {
+                                } else if (pveMasterUpgrade && otherPlayer.isTeammateAlive(wp)) {
                                     otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             "Probiotic",
                                             "PROBIO",

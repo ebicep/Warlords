@@ -109,7 +109,7 @@ public class ExperienceManager {
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
         if (DatabaseManager.playerService == null) {
-            System.out.println("WARNING - Could not give weekly experience bonus - playerService is null");
+            ChatUtils.MessageType.PLAYER_SERVICE.sendErrorMessage("WARNING - Could not give weekly experience bonus - playerService is null");
             return;
         }
 
@@ -139,9 +139,9 @@ public class ExperienceManager {
             }
         });
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Giving players weekly experience bonuses");
-        System.out.println("---------------------------------------------------");
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("---------------------------------------------------");
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Giving players weekly experience bonuses");
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("---------------------------------------------------");
         playerAwardSummary.forEach((s, awardSummary) -> {
             long totalExperienceGain = awardSummary.getTotalExperienceGain();
 
@@ -297,7 +297,7 @@ public class ExperienceManager {
                         }
                     },
                     () -> {
-                        System.out.println("ERROR: Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage("ERROR: Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
                     }
             );
         }

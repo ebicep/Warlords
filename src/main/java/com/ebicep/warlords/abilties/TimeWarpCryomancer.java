@@ -46,7 +46,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                 .findFirst()
                                 .orElse(null);
         CryoPod cryoPod;
-        if (pveUpgrade && pveOption != null) {
+        if (pveMasterUpgrade && pveOption != null) {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
                 @Override
                 public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
@@ -167,7 +167,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
                         }
 
-                        if (pveUpgrade && cryoPod != null && cryoPod.getWarlordsNPC().isAlive()) {
+                        if (pveMasterUpgrade && cryoPod != null && cryoPod.getWarlordsNPC().isAlive()) {
                             EffectUtils.playCylinderAnimation(warpLocation, .7, Particle.CLOUD, 1);
                             points = 24;
                             radius = .85;
@@ -194,7 +194,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
         };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
-        if (pveUpgrade) {
+        if (pveMasterUpgrade) {
             addSecondaryAbility(
                     () -> timeWarpCooldown.setTicksLeft(1),
                     false,
