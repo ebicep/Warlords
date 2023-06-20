@@ -1,45 +1,36 @@
 package com.ebicep.warlords.util.pve;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import com.ebicep.warlords.Warlords;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.UUID;
 
 public class SkullUtils {
 
     public static ItemStack getSkullFrom(SkullID skullID) {
-        return getSkullFrom(skullID.getId(), skullID.getTextureId());
+        return getSkullFrom(skullID.getTextureId());
     }
 
-    public static ItemStack getSkullFrom(String id, String textureId) {
-        net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(new ItemStack(Material.PLAYER_HEAD));
-//
-//        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-//        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-//        PlayerProfile playerProfile = skullMeta.getPlayerProfile();
-//        playerProfile.setTextures(skullID.getTextureId());
-//        CompoundTag compound = nmsStack.getTag();
-//        if (compound == null) {
-//            compound = new CompoundTag();
-//            nmsStack.setTag(compound);
-//            compound = nmsStack.getTag();
-//        }
-//
-//
-//
-//        CompoundTag skullOwner = new CompoundTag();
-//        skullOwner.set("Id", new StringTag(id));
-//        CompoundTag properties = new CompoundTag();
-//        ListTag textures = new ListTag();
-//        CompoundTag value = new CompoundTag();
-//        value.set("Value", new StringTag(textureId));
-//        textures.add(value);
-//        properties.set("textures", textures);
-//        skullOwner.set("Properties", properties);
-//
-//        compound.set("SkullOwner", skullOwner);
-//        nmsStack.setTag(compound);
+    public static ItemStack getSkullFrom(String base64) {
+        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
-        return CraftItemStack.asBukkitCopy(nmsStack);
+        PlayerProfile playerProfile = Warlords.getInstance().getServer().createProfile(new UUID(
+                base64.substring(base64.length() - 20).hashCode(),
+                base64.substring(base64.length() - 10).hashCode()
+        ));
+        playerProfile.setProperty(new ProfileProperty(
+                "textures",
+                base64
+        ));
+
+        skullMeta.setPlayerProfile(playerProfile);
+        skull.setItemMeta(skullMeta);
+        return skull;
     }
 
 
