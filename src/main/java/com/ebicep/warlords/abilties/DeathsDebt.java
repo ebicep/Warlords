@@ -272,7 +272,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
             @Override
             public void multiplyKB(Vector currentVector) {
                 if (pveUpgrade) {
-                    currentVector.multiply(0.5);
+                    currentVector.multiply(0.2);
                 }
             }
         });
@@ -320,6 +320,12 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     false,
                     false
             );
+        }
+
+        // Adding damage to Repentance Pool
+        // @see Repentance.class
+        if (wp.getBlueAbility() instanceof Repentance) {
+            ((Repentance) wp.getBlueAbility()).addToPool(debtTrueDamage);
         }
     }
 

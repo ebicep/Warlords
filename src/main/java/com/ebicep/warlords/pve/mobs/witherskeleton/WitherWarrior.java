@@ -26,7 +26,7 @@ public class WitherWarrior extends AbstractWitherSkeleton implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 40, 40),
                         Weapons.SILVER_PHANTASM_SAWBLADE.getItem()
                 ),
-                10000,
+                9000,
                 0.4f,
                 10,
                 800,

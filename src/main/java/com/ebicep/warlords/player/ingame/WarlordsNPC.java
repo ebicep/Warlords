@@ -208,7 +208,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (mob == null) {
             return null;
         }
-        return mob.getMobTier();
+        return mob.getMobTier() == null ? MobTier.BASE : mob.getMobTier();
     }
 
     public float getMinMeleeDamage() {

@@ -7,90 +7,86 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
 
+    float damageConvert = ability.getDamageConvertPercent();
     int duration = ability.getTickDuration();
-    int healthRestore = ability.getHealthRestore();
-    int energyRestore = ability.getEnergyRestore();
 
     public RepentanceBranch(AbilityTree abilityTree, Repentance ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+25 Healing",
+                "Impair - Tier I",
+                "+0.5% Damage conversion",
                 5000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 25);
+                    ability.setDamageConvertPercent(damageConvert + 0.5f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+50 Healing",
+                "Impair - Tier II",
+                "+1% Damage conversion",
                 10000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 50);
+                    ability.setDamageConvertPercent(damageConvert + 1);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+75 Healing",
+                "Impair - Tier III",
+                "+1.5% Damage conversion",
                 15000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 75);
+                    ability.setDamageConvertPercent(damageConvert + 1.5f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+100 Healing",
+                "Impair - Tier IV",
+                "+2% Damage conversion",
                 20000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 100);
+                    ability.setDamageConvertPercent(damageConvert + 2);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+1s Duration\n+1 Energy given",
+                "+1s Duration",
                 5000,
                 () -> {
                     ability.setTickDuration(duration + 20);
-                    ability.setEnergyRestore(energyRestore + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+2s Duration\n+2 Energy given",
+                "+2s Duration",
                 10000,
                 () -> {
                     ability.setTickDuration(duration + 40);
-                    ability.setEnergyRestore(energyRestore + 2);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+3s Duration\n+3 Energy given",
+                "+3s Duration",
                 15000,
                 () -> {
                     ability.setTickDuration(duration + 60);
-                    ability.setEnergyRestore(energyRestore + 3);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+4s Duration\n+4 Energy given",
+                "+4s Duration",
                 20000,
                 () -> {
                     ability.setTickDuration(duration + 80);
-                    ability.setEnergyRestore(energyRestore + 4);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Revengeance",
                 "Repentance - Master Upgrade",
-                "Increase the max procs possible of Repentance by 5.",
+                "Repentance's pool decay per second is reduced by 50% and the energy conversion based on damage taken is increased by 25%.",
                 50000,
                 () -> {
-                    ability.setMaxProcs(ability.getMaxProcs() + 54);
+                    ability.setPoolDecay((int) (ability.getPoolDecay() * 0.5f));
+                    ability.setEnergyConvertPercent(ability.getEnergyConvertPercent() * 1.25f);
                 }
         );
     }

@@ -797,6 +797,7 @@ public abstract class WarlordsEntity {
 
                 float finalDamageValue = damageValue;
                 doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
+                doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
                 sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
