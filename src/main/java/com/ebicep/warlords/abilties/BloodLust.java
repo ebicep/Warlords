@@ -32,11 +32,21 @@ public class BloodLust extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("You lust for blood, healing yourself for ")
-                               .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of all the damage you deal. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.", NamedTextColor.GRAY));
+        if (inPve) {
+            description = Component.text("You lust for blood, healing yourself for ")
+                                   .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to "))
+                                   .append(Component.text(healReductionPercent + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(". Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds.", NamedTextColor.GRAY));
+        } else {
+            description = Component.text("You lust for blood, healing yourself for ")
+                                   .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(" of all the damage you deal. Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds.", NamedTextColor.GRAY));
+        }
     }
 
     @Override

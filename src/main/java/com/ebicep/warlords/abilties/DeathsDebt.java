@@ -61,7 +61,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         description = Component.text("Spirits’ Respite", NamedTextColor.DARK_GREEN)
                                .append(Component.text(": Place down a totem that delays "))
                                .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(" of incoming damage towards yourself. Transforms into "))
+                               .append(Component.text(" of incoming damage towards yourself " + (inPve ? " and takes agro of nearby mobs." : ".") + "Transforms into "))
                                .append(Component.text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text("after "))
                                .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))
