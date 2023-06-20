@@ -390,7 +390,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     }
 
     public boolean isPatreon() {
-        return hasPermission("group.patreon");
+        return hasPermission("group.patreon") || hasPermission("group.contentcreator");
     }
 
 }
