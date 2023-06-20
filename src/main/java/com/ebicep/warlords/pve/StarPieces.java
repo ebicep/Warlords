@@ -25,22 +25,22 @@ public enum StarPieces {
     RARE(Currencies.RARE_STAR_PIECE,
             30,
             new LinkedHashMap<>() {{
-                put(Currencies.COMMON_STAR_PIECE, 5L);
+                put(Currencies.COMMON_STAR_PIECE, 2L);
                 put(Currencies.COIN, 50_000L);
             }}
     ),
     EPIC(Currencies.EPIC_STAR_PIECE,
             40,
             new LinkedHashMap<>() {{
-                put(Currencies.RARE_STAR_PIECE, 5L);
+                put(Currencies.RARE_STAR_PIECE, 2L);
                 put(Currencies.COIN, 250_000L);
             }}
     ),
     LEGENDARY(Currencies.LEGENDARY_STAR_PIECE,
             50,
             new LinkedHashMap<>() {{
-                put(Currencies.EPIC_STAR_PIECE, 5L);
-                put(Currencies.COIN, 1_000_000L);
+                put(Currencies.EPIC_STAR_PIECE, 2L);
+                put(Currencies.COIN, 500_000L);
             }}
     );
 

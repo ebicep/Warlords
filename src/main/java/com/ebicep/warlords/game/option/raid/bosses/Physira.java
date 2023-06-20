@@ -28,7 +28,7 @@ public class Physira extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
                         Weapons.SILVER_PHANTASM_STAFF_2.getItem()
                 ),
-                200000,
+                3000000,
                 0.15f,
                 30,
                 3000,

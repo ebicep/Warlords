@@ -21,7 +21,7 @@ public class TreasureHuntStartTrait extends WarlordsTrait {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.TREASURE_HUNT) + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.TREASURE_HUNT) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.DARK_RED + ChatColor.BOLD.toString() + "Treasure Hunt");
+        hologramTrait.setLine(2, ChatColor.DARK_RED + ChatColor.BOLD.toString() + "Cryptic Conquest");
         hologramTrait.setLine(3, ChatColor.RED + ChatColor.BOLD.toString() + "IN DEVELOPMENT");
     }
 

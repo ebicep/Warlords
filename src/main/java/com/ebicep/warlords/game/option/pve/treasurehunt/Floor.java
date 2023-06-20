@@ -213,7 +213,7 @@ public class Floor {
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.TREASURE, false, false, false, true));
         rooms.add(makeDemoRoom(roomSize, roomSize, RoomType.END, true, true, true, true));
 
-        var random = new Random(140);
+        var random = new Random();
         Floor floor;
         do {
             floor = generate(160, 160, rooms, random);
