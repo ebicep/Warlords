@@ -2361,7 +2361,7 @@ public enum GameMap {
                             //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             //void
                             .add(0.2, Mobs.VOID_ZOMBIE)
-                            .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.2, Mobs.VOID_SKELETON)
                             .add(0.06, Mobs.VOID_PIG_ZOMBIE)
                             .add(0.01, Mobs.VOID_SLIME)
                             // exiled
@@ -2399,7 +2399,7 @@ public enum GameMap {
                             .add(0.3, Mobs.SLIME_ZOMBIE)
                             //void
                             .add(0.2, Mobs.VOID_ZOMBIE)
-                            .add(0.5, Mobs.VOID_SKELETON)
+                            .add(0.2, Mobs.VOID_SKELETON)
                             .add(0.06, Mobs.VOID_PIG_ZOMBIE)
                             .add(0.02, Mobs.VOID_SLIME)
                             // exiled

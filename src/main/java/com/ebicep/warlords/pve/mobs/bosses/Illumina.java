@@ -79,7 +79,6 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         PrismGuard prismGuard = new PrismGuard();
-        prismGuard.setTickDuration(200);
         warlordsNPC.getSpec().setBlue(prismGuard);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
@@ -148,7 +147,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         DifficultyIndex difficulty = option.getDifficulty();
 
-        if (ticksElapsed % 600 == 0) {
+        if (ticksElapsed % 800 == 0) {
             for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(spawnLocation));
             }
@@ -156,12 +155,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 10000, 11);
+            timedDamage(option, playerCount, 9000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 12000, 11);
+            timedDamage(option, playerCount, 11000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(loc));
             }
@@ -169,7 +168,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 14000, 11);
+            timedDamage(option, playerCount, 13000, 11);
             for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
                 option.spawnNewMob(new ForgottenZombie(loc));
             }
