@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,6 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Soulbinding extends AbstractAbility implements Duration {
 
@@ -93,7 +95,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
         if (wp.isInPve()) {
             wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
         }
-        wp.getCooldownManager().addPersistentCooldown(
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
                 name,
                 "SOUL",
                 Soulbinding.class,
@@ -128,7 +130,51 @@ public class Soulbinding extends AbstractAbility implements Duration {
                         );
                     }
                 })
-        );
+        ) {
+            @Override
+            public void doBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+                WarlordsEntity wpAttacker = event.getAttacker();
+                WarlordsEntity wpVictim = event.getWarlordsEntity();
+                if (!event.getAbility().isEmpty() || wpAttacker == wpVictim) {
+                    return;
+                }
+                addPlayersBinded();
+                if (tempSoulBinding.hasBoundPlayer(wpVictim)) {
+                    tempSoulBinding.getSoulBindedPlayers()
+                                   .stream()
+                                   .filter(p -> p.getBoundPlayer() == wpVictim)
+                                   .forEach(boundPlayer -> {
+                                       boundPlayer.setHitWithSoul(false);
+                                       boundPlayer.setHitWithLink(false);
+                                       boundPlayer.setTimeLeft(bindDuration);
+                                   });
+                } else {
+                    wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                            .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                            .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                            .append(Component.text("!", NamedTextColor.GRAY))
+                    );
+                    wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your ", NamedTextColor.GRAY))
+                            .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                            .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
+                    );
+                    tempSoulBinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, bindDuration));
+                    Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+                }
+            }
+
+            @Override
+            public PlayerNameData addSuffixFromSelf() {
+                return new PlayerNameData(
+                        Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
+                        tempSoulBinding.getSoulBindedPlayers()
+                                       .stream()
+                                       .map(SoulBoundPlayer::getBoundPlayer)
+                                       .collect(Collectors.toList())
+                );
+            }
+        });
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
@@ -145,6 +191,15 @@ public class Soulbinding extends AbstractAbility implements Duration {
         playersBinded++;
     }
 
+    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
+        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addSoulProcs() {
         soulProcs++;
     }
@@ -159,15 +214,6 @@ public class Soulbinding extends AbstractAbility implements Duration {
 
     public void addLinkTeammatesHealed() {
         linkTeammatesHealed++;
-    }
-
-    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {

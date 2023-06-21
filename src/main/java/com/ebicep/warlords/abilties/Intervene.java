@@ -149,13 +149,11 @@ public class Intervene extends AbstractAbility implements Duration {
                         }
 
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                                .append(Component.text(" "))
                                 .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
                                 .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                 .append(Component.text(" has expired!", NamedTextColor.GRAY))
                         );
                         veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                                .append(Component.text(" "))
                                 .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
                                 .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                 .append(Component.text(" has expired!", NamedTextColor.GRAY))

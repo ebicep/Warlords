@@ -1,17 +1,14 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.DamageInstance;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.EnergyInstance;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.HealingInstance;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.KnockbackInstance;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance {
 
     protected String name;
     protected String nameAbbreviation;

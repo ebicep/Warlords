@@ -152,10 +152,14 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     tempDeathsDebt.setInDebt(true);
 
                     if (!tempDeathsDebt.isPlayerInRadius()) {
-                        wp.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
+                        wp.sendMessage(Component.text("You walked outside your ", NamedTextColor.GRAY)
+                                                .append(Component.text("Death's Debt ", NamedTextColor.LIGHT_PURPLE))
+                                                .append(Component.text("radius.", NamedTextColor.GRAY)));
                     } else {
-                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " §2Spirit's Respite §7delayed §c" +
-                                Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid."
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" Spirit's Respite ", NamedTextColor.DARK_GREEN))
+                                                                       .append(Component.text("delayed "))
+                                                                       .append(Component.text(Math.round(tempDeathsDebt.getDelayedDamage()), NamedTextColor.RED))
+                                                                       .append(Component.text(" damage. Your debt must now be paid."))
                         );
                     }
 
@@ -242,7 +246,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     if (ticksElapsed % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text("Spirit's Respite", NamedTextColor.DARK_GREEN)
+                                .append(Component.text(" Spirit's Respite", NamedTextColor.DARK_GREEN)
                                                  .append(Component.text(" delayed ", NamedTextColor.GRAY))
                                                  .append(Component.text(Math.round(tempDeathsDebt.getDelayedDamage()), NamedTextColor.RED))
                                                  .append(Component.text(" damage. ", NamedTextColor.GRAY))

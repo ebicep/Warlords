@@ -146,9 +146,11 @@ public class PrismGuard extends AbstractAbility implements Duration {
 
                         if (hits.get() != 0) {
                             String s = wp == entity ? "Your " : wp.getName() + "'s ";
-                            entity.sendMessage(
-                                    WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
-                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + format(tickDuration / 20f) + " §7seconds!"
+                            entity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + s + " Prism Guard granted you ", NamedTextColor.GRAY))
+                                                                              .append(Component.text(hits.get() * damageReduction + "%", NamedTextColor.YELLOW))
+                                                                              .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
+                                                                              .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                                                              .append(Component.text(" seconds!", NamedTextColor.GRAY))
                             );
                             entity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Prism Guard",

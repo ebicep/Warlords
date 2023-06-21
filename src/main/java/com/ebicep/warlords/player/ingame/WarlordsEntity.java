@@ -921,7 +921,7 @@ public abstract class WarlordsEntity {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid());
             if (playerSettings.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
                 sendMessage(RECEIVE_ARROW_RED
-                        .append(Component.text("You took ", NamedTextColor.GRAY))
+                        .append(Component.text(" You took ", NamedTextColor.GRAY))
                         .append(Component.text(Math.round(damage), NamedTextColor.RED))
                         .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
                 );
