@@ -57,9 +57,9 @@ public class RayOfLight extends AbstractBeam {
                     .filterCooldownClass(MercifulHex.class)
                     .stream()
                     .count();
-            boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
+            boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
             if (hexStacks >= 3) {
-                if (!hasSanctuary) {
+                if (!hasDivineBlessing) {
                     hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
                 }
                 minHeal *= 1 + (healingIncrease / 100f);

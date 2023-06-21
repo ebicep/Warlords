@@ -151,15 +151,15 @@ public enum Specializations {
             SpecType.DAMAGE,
             POISONOUS_HEX, SOULFIRE_BEAM, ENERGY_SEER_CONJURER, CONTAGIOUS_FACADE, ASTRAL_PLAGUE
     ),
-    GUARDIAN("Guardian",
-            List.of("guar"),
+    SENTINEL("Sentinel",
+            List.of("sen"),
             Sentinel::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.TANK,
             FORTIFYING_HEX, NOT_A_SHIELD, ENERGY_SEER_GUARDIAN, SPIRITUAL_SHIELD, SANCTUARY
     ),
-    PRIEST("Priest",
-            List.of("pri"),
+    CLERIC("Cleric",
+            List.of("cle"),
             Cleric::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.HEALER,
@@ -211,7 +211,7 @@ public enum Specializations {
             case AVENGER, CRUSADER, PROTECTOR -> Classes.PALADIN;
             case THUNDERLORD, SPIRITGUARD, EARTHWARDEN -> Classes.SHAMAN;
             case ASSASSIN, VINDICATOR, APOTHECARY -> Classes.ROGUE;
-            case CONJURER, GUARDIAN, PRIEST -> Classes.DRUID;
+            case CONJURER, SENTINEL, CLERIC -> Classes.ARCANIST;
         };
     }
 

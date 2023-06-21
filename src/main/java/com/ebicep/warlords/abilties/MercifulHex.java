@@ -164,11 +164,20 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
                 MercifulHex.class,
                 new MercifulHex(),
                 from,
-                CooldownTypes.DEBUFF,
+                CooldownTypes.BUFF,
                 cooldownManager -> {
-
+                    to.addHealingInstance(
+                            from,
+                            name,
+                            dotMinHeal,
+                            dotMaxHeal,
+                            0,
+                            100,
+                            false,
+                            false
+                    );
                 },
-                tickDuration + (from.getCooldownManager().hasCooldown(Sanctuary.class) ? 80 : 40), // base add 20 to delay damage by a second
+                tickDuration * 2, // base add 20 to delay damage by a second
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
                         to.addHealingInstance(
@@ -183,7 +192,12 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
                         );
                     }
                 })
-        ));
+        ) {
+            @Override
+            public PlayerNameData addSuffixFromEnemy() {
+                return new PlayerNameData(Component.text("MHEX", NamedTextColor.GREEN), from);
+            }
+        });
     }
 
 

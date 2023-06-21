@@ -29,7 +29,7 @@ public class Sanctuary extends AbstractAbility implements Duration {
     private int tickDuration = 240;
 
     public Sanctuary() {
-        super("Sanctuary", 0, 0, 52, 40, 0, 0);
+        super("Sanctuary", 0, 0, 50, 10, 0, 0);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Sanctuary extends AbstractAbility implements Duration {
             }
         });
         PlayerFilter.playingGame(wp.getGame())
-                    .enemiesOf(wp)
+                    .teammatesOf(wp)
                     .forEach(enemy -> {
                         new CooldownFilter<>(enemy, RegularCooldown.class)
                                 .filterCooldownClass(FortifyingHex.class)

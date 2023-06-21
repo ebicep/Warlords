@@ -24,6 +24,7 @@ import java.util.List;
 public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
 
     private int critMultiplierReducedTo = 100;
+    private int darknessTickDuration = 160;
 
     public BeaconOfShadow() {
         this(null, null);
@@ -39,7 +40,9 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         .append(Component.text(radius, NamedTextColor.YELLOW))
                         .append(Component.text(" block radius have their critical multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
-                        .append(Component.text("."));
+                        .append(Component.text(" and receive the Darkness effect for "))
+                        .append(Component.text(darknessTickDuration, NamedTextColor.GOLD))
+                        .append(Component.text(" seconds. Only one beacon can be present on the field at once."));
     }
 
     @Override
@@ -90,7 +93,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                 });
                 PotionEffect potionEffect = enemy.getEntity().getPotionEffect(PotionEffectType.DARKNESS);
                 if (potionEffect == null) {
-                    enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 160, 0, true, false));
+                    enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, darknessTickDuration, 0, true, false));
                 }
             }
         }

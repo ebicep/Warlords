@@ -1,14 +1,14 @@
 package com.ebicep.warlords.classes.arcanist.specs;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.arcanist.AbstractDruid;
+import com.ebicep.warlords.classes.arcanist.AbstractArcanist;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 
 import java.util.List;
 
-public class Sentinel extends AbstractDruid {
+public class Sentinel extends AbstractArcanist {
 
     public Sentinel() {
         super(
@@ -19,7 +19,7 @@ public class Sentinel extends AbstractDruid {
                 14,
                 15,
                 new FortifyingHex(),
-                new NotAShield(),
+                new GuardianBeam(),
                 new EnergySeerSentinel(),
                 new MysticalBarrier(),
                 new Sanctuary()

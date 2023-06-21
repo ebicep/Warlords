@@ -211,25 +211,25 @@ public class ArmorManager {
         ),
         SIMPLE_DRUID_HELMET(
                 "Simple Druid Helmet",
-                Classes.DRUID,
+                Classes.ARCANIST,
                 new ItemStack(Material.OAK_LOG),
                 new ItemStack(Material.OAK_WOOD)
         ),
         GREATER_DRUID_HELMET(
                 "Greater Druid Helmet",
-                Classes.DRUID,
+                Classes.ARCANIST,
                 new ItemStack(Material.SPRUCE_LOG),
                 new ItemStack(Material.SPRUCE_WOOD)
         ),
         MASTERWORK_DRUID_HELMET(
                 "Masterwork Druid Helmet",
-                Classes.DRUID,
+                Classes.ARCANIST,
                 new ItemStack(Material.BIRCH_LOG),
                 new ItemStack(Material.BIRCH_WOOD)
         ),
         LEGENDARY_DRUID_HELMET(
                 "Legendary Druid Helmet",
-                Classes.DRUID,
+                Classes.ARCANIST,
                 new ItemStack(Material.JUNGLE_LOG),
                 new ItemStack(Material.JUNGLE_WOOD)
         ),

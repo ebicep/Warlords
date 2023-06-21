@@ -3,9 +3,9 @@ package com.ebicep.warlords.classes.arcanist;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 
-public abstract class AbstractDruid extends AbstractPlayerClass {
+public abstract class AbstractArcanist extends AbstractPlayerClass {
 
-    public AbstractDruid(
+    public AbstractArcanist(
             String name,
             int maxHealth,
             int maxEnergy,
@@ -19,8 +19,8 @@ public abstract class AbstractDruid extends AbstractPlayerClass {
             AbstractAbility orange
     ) {
         super(name, maxHealth, maxEnergy, energyPerSec, energyOnHit, damageResistance, weapon, red, purple, blue, orange);
-        this.className = "Druid";
-        this.classNameShort = "DRU";
+        this.className = "Arcanist";
+        this.classNameShort = "ARC";
     }
 
 }

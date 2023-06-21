@@ -44,12 +44,12 @@ public enum Classes {
             "The Rogue is a master of deception. Always looking to gain the upper hand in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
     ),
-    DRUID(
-            "Druid",
-            List.of("dru"),
+    ARCANIST(
+            "Arcanist",
+            List.of("arc"),
             new ItemStack(Material.BEDROCK),
             "SOEMTHING",
-            CONJURER, GUARDIAN, PRIEST
+            CONJURER, SENTINEL, CLERIC
     );
 
     public static final Classes[] VALUES = values();

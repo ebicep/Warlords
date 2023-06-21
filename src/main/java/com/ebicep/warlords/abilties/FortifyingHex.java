@@ -32,7 +32,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 20;
-    private int tickDuration = 120;
+    private int tickDuration = 80;
     private int damageReduction = 5;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
@@ -211,7 +211,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
                 FortifyingHex.class,
                 new FortifyingHex(),
                 from,
-                CooldownTypes.ABILITY,
+                CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
                 duration
@@ -219,6 +219,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * (1 - damageReduction / 100f);
+            }
+
+            @Override
+            public PlayerNameData addSuffixFromEnemy() {
+                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), from);
             }
         });
     }

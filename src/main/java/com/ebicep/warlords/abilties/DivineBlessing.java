@@ -35,7 +35,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
 
 
     public DivineBlessing() {
-        super("Divine Blessing", 0, 0, 38, 50, 0, 0);
+        super("Divine Blessing", 0, 0, 50, 10, 0, 0);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
                         PlayerFilter.playingGame(wp.getGame())
-                                    .teammatesOfExcludingSelf(wp)
+                                    .teammatesOf(wp)
                                     .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
                                             .filterCooldownFrom(wp)
                                             .filterCooldownClass(MercifulHex.class)
@@ -143,7 +143,7 @@ public class DivineBlessing extends AbstractAbility implements Duration {
             }
         });
         PlayerFilter.playingGame(wp.getGame())
-                    .enemiesOf(wp)
+                    .teammatesOf(wp)
                     .forEach(enemy -> {
                         new CooldownFilter<>(enemy, RegularCooldown.class)
                                 .filterCooldownClass(MercifulHex.class)

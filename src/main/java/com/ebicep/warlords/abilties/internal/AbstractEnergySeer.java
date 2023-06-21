@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractEnergySeer<T> extends AbstractAbility implements Duration {
 
+    protected int speedBuff = 30;
     protected int healingMultiplier = 4;
     protected int tickDuration = 100;
     protected int energyRestore = 80;
@@ -30,7 +31,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Heal for ")
+        description = Component.text("Gain ")
+                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" speed and heal for "))
                                .append(Component.text((healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))

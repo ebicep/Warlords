@@ -1021,7 +1021,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
                     poisonousHex.setDotMinDamage(poisonousHex.getDotMinDamage() * 1.35f);
                     poisonousHex.setDotMaxDamage(poisonousHex.getDotMaxDamage() * 1.35f);
-                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 40);
+                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 20);
                 }
             }
     ),

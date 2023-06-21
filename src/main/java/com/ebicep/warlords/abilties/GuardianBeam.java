@@ -40,7 +40,8 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                                .append(Component.text(allyShieldPercent + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of the ally’s maximum health and lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
+                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, also receive the shield." +
+                                       "\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -59,37 +60,41 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
 
+        boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
         if (hit.isEnemy(wp)) {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         } else {
-            int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                    .filterCooldownFrom(wp)
-                    .filterCooldownClass(FortifyingHex.class)
-                    .stream()
-                    .count();
-            boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
-            if (hexStacks >= 3) {
-                if (!hasSanctuary) {
-                    hit.getCooldownManager().removeCooldown(FortifyingHex.class, false);
-                }
-                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "SHIELD",
-                        Shield.class,
-                        new Shield(name, hit.getMaxHealth() * (allyShieldPercent / 100f)),
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        cooldownManager -> {
-                        },
-                        tickDuration,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        })
-                ));
-            }
+            giveShield(hit, hasSanctuary);
         }
+        giveShield(wp, hasSanctuary);
+    }
 
+    private void giveShield(WarlordsEntity wp, boolean hasSanctuary) {
+        int selfHexStacks = (int) new CooldownFilter<>(wp, RegularCooldown.class)
+                .filterCooldownFrom(wp)
+                .filterCooldownClass(FortifyingHex.class)
+                .stream()
+                .count();
+        if (selfHexStacks >= 3) {
+            if (!hasSanctuary) {
+                wp.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+            }
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "SHIELD",
+                    Shield.class,
+                    new Shield(name, wp.getMaxHealth() * (allyShieldPercent / 100f)),
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                    },
+                    tickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    })
+            ));
+        }
     }
 
     @Override

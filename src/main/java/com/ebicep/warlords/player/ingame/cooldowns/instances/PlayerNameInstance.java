@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>FromSelf - used on self cooldowns to others</p>
@@ -28,6 +29,9 @@ public interface PlayerNameInstance {
     }
 
     record PlayerNameData(TextComponent text, Collection<WarlordsEntity> targets) {
+        public PlayerNameData(TextComponent text, WarlordsEntity target) {
+            this(text, List.of(target));
+        }
     }
 
 }
