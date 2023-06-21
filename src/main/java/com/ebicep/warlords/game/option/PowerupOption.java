@@ -24,6 +24,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -137,13 +138,13 @@ public class PowerupOption implements Option {
                 if (cooldown == 0) {
                     PlayerFilter.entitiesAround(location, 1.4, 1.4, 1.4)
                                 .isAlive()
-                            .first((nearPlayer) -> {
-                                if (nearPlayer instanceof WarlordsPlayer) {
-                                    type.onPickUp(PowerupOption.this, nearPlayer);
-                                    remove();
-                                    cooldown = maxCooldown * 4;
-                                }
-                            });
+                                .first((nearPlayer) -> {
+                                    if (nearPlayer instanceof WarlordsPlayer) {
+                                        type.onPickUp(PowerupOption.this, nearPlayer);
+                                        remove();
+                                        cooldown = maxCooldown * 4;
+                                    }
+                                });
                 } else {
                     cooldown--;
                     if (cooldown == 0) {
@@ -297,7 +298,21 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20
+                        option.getDuration() * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 == 0) {
+                                float heal = we.getMaxHealth() * .08f;
+                                if (we.getHealth() + heal > we.getMaxHealth()) {
+                                    heal = we.getMaxHealth() - we.getHealth();
+                                }
+                                if (heal > 0) {
+                                    we.setHealth(we.getHealth() + heal);
+                                    we.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Healed ", NamedTextColor.GRAY))
+                                                                                  .append(Component.text(Math.round(heal), NamedTextColor.GREEN))
+                                                                                  .append(Component.text(" health.", NamedTextColor.GRAY)));
+                                }
+                            }
+                        })
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("HEALING", NamedTextColor.GREEN, TextDecoration.BOLD))
@@ -458,6 +473,11 @@ public class PowerupOption implements Option {
 
         public static final PowerupType[] VALUES = values();
         public static final PowerupType[] DEFAULT_POWERUPS = {ENERGY, HEALING};
+
+        public static PowerupType getRandomPowerupType() {
+            return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
+        }
+
         private final NamedTextColor textColor;
         private final int duration;
         private final Material debugMaterial;
@@ -466,10 +486,6 @@ public class PowerupOption implements Option {
             this.textColor = textColor;
             this.duration = duration;
             this.debugMaterial = debugMaterial;
-        }
-
-        public static PowerupType getRandomPowerupType() {
-            return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
         }
 
         public Component getWornOffMessage() {

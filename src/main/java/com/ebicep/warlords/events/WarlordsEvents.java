@@ -69,10 +69,10 @@ import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
 
-    public static Set<Entity> entityList = new HashSet<>();
+    public static final Set<Entity> FALLING_BLOCK_ENTITIES = new HashSet<>();
 
     public static void addEntityUUID(Entity entity) {
-        entityList.add(entity);
+        FALLING_BLOCK_ENTITIES.add(entity);
     }
 
     @EventHandler
@@ -333,7 +333,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof FallingBlock) {
-            if (entityList.remove(event.getEntity())) {
+            if (FALLING_BLOCK_ENTITIES.remove(event.getEntity())) {
                 event.setCancelled(true);
             }
         }

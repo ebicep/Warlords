@@ -29,9 +29,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class OrbsOfLife extends AbstractAbility implements Duration {
 
@@ -106,31 +104,65 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                 },
                 false,
                 tickDuration,
-                orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
+                orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(),
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
+                    Iterator<Orb> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
+                    while (itr.hasNext()) {
+                        OrbsOfLife.Orb orb = itr.next();
+                        Location orbPosition = orb.getArmorStand().getLocation();
+                        WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null ?
+                                                        orb.getPlayerToMoveTowards() :
+                                                        PlayerFilter.entitiesAround(orbPosition, 1.35, 1.35, 1.35)
+                                                                    .aliveTeammatesOf(wp)
+                                                                    .closestFirst(orbPosition)
+                                                                    .findFirst()
+                                                                    .orElse(null);
+                        if (teammateToHeal != null) {
+                            orb.remove();
+                            itr.remove();
+
+                            WarlordsEntity owner = orb.getOwner();
+                            float orbHeal = tempOrbsOfLight.getMinDamageHeal();
+                            // Increasing heal for low long orb lived for (up to +25%)
+                            // 6.5 seconds = 130 ticks
+                            // 6.5 seconds = 1 + (130/325) = 1.4
+                            // 225 *= 1.4 = 315
+                            if (orb.getPlayerToMoveTowards() == null) {
+                                orbHeal *= 1 + orb.getTicksLived() / 325f;
+                            }
+
+                            teammateToHeal.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                            Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+
+                            for (WarlordsEntity nearPlayer : PlayerFilter
+                                    .entitiesAround(teammateToHeal, 6, 6, 6)
+                                    .aliveTeammatesOfExcludingSelf(teammateToHeal)
+                                    .leastAliveFirst()
+                                    .limit(2)
+                            ) {
+                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                                Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
+                            }
+                        } else {
+                            // Checks whether the Orb of Life has lived for 8 seconds.
+                            if (orb.getTicksLived() > orb.getTicksToLive() || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
+                                orb.remove();
+                                itr.remove();
+                            }
+                        }
+                    }
+                })
         ) {
+
             @Override
-            public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
                     spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
                 }
             }
 
-            @Override
-            public void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
-                if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
-                }
-            }
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
-                if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
-                }
-            }
         };
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
 
@@ -141,77 +173,78 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         }
 
         addSecondaryAbility(() -> {
-                    if (wp.isAlive()) {
-                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
-                        wp.getWorld().spawnParticle(
-                                Particle.ENCHANTMENT_TABLE,
-                                wp.getLocation().add(0, 1.5, 0),
-                                10,
-                                0.8,
-                                0,
-                                0.8,
-                                0.2,
-                                null,
-                                true
-                        );
-
-                        //setting target player to move towards (includes self)
-                        if (wp.isInPve()) {
-                            tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                    .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                    .aliveTeammatesOf(wp)
-                                    .leastAliveFirst()
-                                    .findFirstOrNull()
-                            ));
-                        } else {
-                            tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                    .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                    .aliveTeammatesOf(wp)
-                                    .closestFirst(orb.getArmorStand().getLocation())
-                                    .findFirstOrNull()
-                            ));
-                        }
-                        //moving orb
-                        new GameRunnable(wp.getGame()) {
-                            @Override
-                            public void run() {
-                                tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
-                                    WarlordsEntity target = targetOrb.getPlayerToMoveTowards();
-                                    ArmorStand orbArmorStand = targetOrb.getArmorStand();
-                                    Location orbLocation = orbArmorStand.getLocation();
-                                    @NotNull List<Entity> orb = orbArmorStand.getPassengers();
-                                    //must eject passenger then reassign it before teleporting bc ???
-                                    orbArmorStand.eject();
-                                    orbArmorStand.teleport(
-                                            new LocationBuilder(orbLocation.clone())
-                                                    .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
-                                    );
-                                    orb.forEach(orbArmorStand::addPassenger);
-                                    orbArmorStand.getWorld().spawnParticle(
-                                            Particle.SPELL_WITCH,
-                                            orbArmorStand.getLocation().add(0, 1.65, 0),
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            null,
-                                            true
-                                    );
-                                });
-
-                                if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(0, 1);
-
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" Your current ", NamedTextColor.GRAY))
-                                .append(Component.text(name, NamedTextColor.GREEN))
-                                .append(Component.text(" will now levitate towards you or a teammate!", NamedTextColor.GRAY))
-                        );
+                    if (!wp.isAlive()) {
+                        return;
                     }
+                    Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
+                    wp.getWorld().spawnParticle(
+                            Particle.VILLAGER_HAPPY,
+                            wp.getLocation().add(0, 1.5, 0),
+                            10,
+                            0.8,
+                            0,
+                            0.8,
+                            0.2,
+                            null,
+                            true
+                    );
+
+                    //setting target player to move towards (includes self)
+                    if (wp.isInPve()) {
+                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                .aliveTeammatesOf(wp)
+                                .leastAliveFirst()
+                                .findFirstOrNull()
+                        ));
+                    } else {
+                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                .aliveTeammatesOf(wp)
+                                .closestFirst(orb.getArmorStand().getLocation())
+                                .findFirstOrNull()
+                        ));
+                    }
+                    //moving orb
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
+                                WarlordsEntity target = targetOrb.getPlayerToMoveTowards();
+                                ArmorStand orbArmorStand = targetOrb.getArmorStand();
+                                Location orbLocation = orbArmorStand.getLocation();
+                                @NotNull List<Entity> orb = orbArmorStand.getPassengers();
+                                //must eject passenger then reassign it before teleporting bc ???
+                                orbArmorStand.eject();
+                                orbArmorStand.teleport(
+                                        new LocationBuilder(orbLocation.clone())
+                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
+                                );
+                                orb.forEach(orbArmorStand::addPassenger);
+                                orbArmorStand.getWorld().spawnParticle(
+                                        Particle.SPELL_WITCH,
+                                        orbArmorStand.getLocation().add(0, 1.65, 0),
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        null,
+                                        true
+                                );
+                            });
+
+                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(0, 1);
+
+                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your current ", NamedTextColor.GRAY))
+                            .append(Component.text(name, NamedTextColor.GREEN))
+                            .append(Component.text(" will now levitate towards you or a teammate!", NamedTextColor.GRAY))
+                    );
                 },
                 true,
                 secondaryAbility -> wp.isDead() || !wp.getCooldownManager().hasCooldown(orbsOfLifeCooldown) || orbsOfLifeCooldown.isHidden()
@@ -309,6 +342,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
             super(world, location.getX(), location.getY() + 2, location.getZ(), 2500, org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, null);
             this.cooldown = cooldown;
             ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
+                armorStand.setGravity(true);
                 armorStand.addPassenger(spawn(location).getBukkitEntity());
             });
             for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
@@ -333,15 +367,18 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
 
         public Orb spawn(Location loc) {
             ServerLevel w = ((CraftWorld) loc.getWorld()).getHandle();
-            moveTo(loc.getX(), loc.getY(), loc.getZ());
+            //moveTo(loc.getX(), loc.getY(), loc.getZ());
             w.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
             return this;
+        }
+
+        @Override
+        public void tick() {
         }
 
         // Makes it so they cannot be picked up
         @Override
         public void playerTouch(@Nonnull net.minecraft.world.entity.player.Player player) {
-            super.playerTouch(player);
         }
 
         public void remove() {

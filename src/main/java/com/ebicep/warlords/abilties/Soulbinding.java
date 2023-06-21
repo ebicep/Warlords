@@ -34,7 +34,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
     private int tickDuration = 240;
-    private float bindDuration = 2;
+    private int bindDuration = 40;
 
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, 0, 100);
@@ -45,7 +45,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
         description = Component.text("Your melee attacks ")
                                .append(Component.text("BIND", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(" enemies for "))
-                               .append(Component.text(format(bindDuration), NamedTextColor.GOLD))
+                               .append(Component.text(format(bindDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Against "))
                                .append(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(" targets, your next Spirit Link will heal you for "))
@@ -129,6 +129,10 @@ public class Soulbinding extends AbstractAbility implements Duration {
                                 true
                         );
                     }
+                    tempSoulBinding.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
+                    tempSoulBinding.getSoulBindedPlayers().removeIf(soulBoundPlayer ->
+                            soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink())
+                    );
                 })
         ) {
             @Override
@@ -146,7 +150,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
                                    .forEach(boundPlayer -> {
                                        boundPlayer.setHitWithSoul(false);
                                        boundPlayer.setHitWithLink(false);
-                                       boundPlayer.setTimeLeft(bindDuration);
+                                       boundPlayer.setTicksLeft(bindDuration);
                                    });
                 } else {
                     wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
@@ -244,11 +248,11 @@ public class Soulbinding extends AbstractAbility implements Duration {
         return false;
     }
 
-    public float getBindDuration() {
+    public int getBindDuration() {
         return bindDuration;
     }
 
-    public void setBindDuration(float bindDuration) {
+    public void setBindDuration(int bindDuration) {
         this.bindDuration = bindDuration;
     }
 
@@ -257,7 +261,6 @@ public class Soulbinding extends AbstractAbility implements Duration {
         procedPlayers.addAll(playersProcedBySouls);
         procedPlayers.addAll(playersProcedByLink);
         return procedPlayers;
-
     }
 
     @Override
@@ -272,15 +275,13 @@ public class Soulbinding extends AbstractAbility implements Duration {
 
     public static class SoulBoundPlayer {
         private WarlordsEntity boundPlayer;
-        private float timeLeft;
+        private int ticksLeft;
         private boolean hitWithLink;
         private boolean hitWithSoul;
 
-        public SoulBoundPlayer(WarlordsEntity boundPlayer, float timeLeft) {
+        public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft) {
             this.boundPlayer = boundPlayer;
-            this.timeLeft = timeLeft;
-            hitWithLink = false;
-            hitWithSoul = false;
+            this.ticksLeft = timeLeft;
         }
 
         public WarlordsEntity getBoundPlayer() {
@@ -292,15 +293,15 @@ public class Soulbinding extends AbstractAbility implements Duration {
         }
 
         public float getTimeLeft() {
-            return timeLeft;
+            return ticksLeft;
         }
 
-        public void setTimeLeft(float timeLeft) {
-            this.timeLeft = timeLeft;
+        public void setTicksLeft(int timeLeft) {
+            this.ticksLeft = timeLeft;
         }
 
         public void decrementTimeLeft() {
-            this.timeLeft -= .5;
+            this.ticksLeft--;
         }
 
         public boolean isHitWithLink() {

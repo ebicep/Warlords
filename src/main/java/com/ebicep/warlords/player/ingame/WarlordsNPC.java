@@ -138,18 +138,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void updateHealth() {
-        if (!isDead()) {
-            getEntity().customName(Component.empty()
-                                            .append(mobNamePrefix)
-                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                                                    NamedTextColor.RED,
-                                                    TextDecoration.BOLD
-                                            )));
-        }
-    }
-
-    @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
         if (modifier != -99 && getMobTier() != null) {
             if (getMobTier() == MobTier.BOSS) {
@@ -182,6 +170,26 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
+    public void runEveryTick() {
+        super.runEveryTick();
+        if (getStunTicks() > 0) {
+            setStunTicks(getStunTicks() - 1, true);
+        }
+    }
+
+    @Override
+    public void updateHealth() {
+        if (!isDead()) {
+            getEntity().customName(Component.empty()
+                                            .append(mobNamePrefix)
+                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                                                    NamedTextColor.RED,
+                                                    TextDecoration.BOLD
+                                            )));
+        }
+    }
+
+    @Override
     public void updateEntity() {
         getEntity().customName(Component.empty()
                                         .append(mobNamePrefix)
@@ -201,34 +209,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void setDamageResistance(int damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
-    }
-
-    @Nullable
-    public MobTier getMobTier() {
-        if (mob == null) {
-            return null;
-        }
-        return mob.getMobTier() == null ? MobTier.BASE : mob.getMobTier();
-    }
-
-    public float getMinMeleeDamage() {
-        return minMeleeDamage;
-    }
-
-    public void setMinMeleeDamage(int minMeleeDamage) {
-        this.minMeleeDamage = minMeleeDamage;
-    }
-
-    public float getMaxMeleeDamage() {
-        return maxMeleeDamage;
-    }
-
-    public void setMaxMeleeDamage(int maxMeleeDamage) {
-        this.maxMeleeDamage = maxMeleeDamage;
-    }
-
-    public AbstractMob<?> getMob() {
-        return mob;
     }
 
     public int getStunTicks() {
@@ -267,5 +247,33 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (decrement || this.stunTicks < stunTicks) {
             this.stunTicks = stunTicks;
         }
+    }
+
+    @Nullable
+    public MobTier getMobTier() {
+        if (mob == null) {
+            return null;
+        }
+        return mob.getMobTier() == null ? MobTier.BASE : mob.getMobTier();
+    }
+
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public void setMinMeleeDamage(int minMeleeDamage) {
+        this.minMeleeDamage = minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
+    public void setMaxMeleeDamage(int maxMeleeDamage) {
+        this.maxMeleeDamage = maxMeleeDamage;
+    }
+
+    public AbstractMob<?> getMob() {
+        return mob;
     }
 }

@@ -2,15 +2,14 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.HealingPowerup;
-import com.ebicep.warlords.abilties.internal.Shield;
+import com.ebicep.warlords.abilties.internal.*;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
@@ -1597,8 +1596,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public abstract void updateHealth();
-
     /**
      * Performs consumer action on WarlordsPlayers static (not the temp ones made on onActivate()) spec abilities that matches the given class.
      * Player specs and their abilities are unknown at this point.
@@ -1613,43 +1610,6 @@ public abstract class WarlordsEntity {
                 consumer.accept(abilityClass.cast(ability));
                 break;
             }
-        }
-    }
-
-    public void displayActionBar() {
-        TextComponent.Builder actionBarMessage = Component.text()
-                                                          .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
-        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
-        float healthRatio = health / maxHealth;
-        if (healthRatio > 1) {
-            healthBuilder.color(NamedTextColor.GREEN);
-        } else if (healthRatio >= .75) {
-            healthBuilder.color(NamedTextColor.DARK_GREEN);
-        } else if (healthRatio >= .25) {
-            healthBuilder.color(NamedTextColor.YELLOW);
-        } else {
-            healthBuilder.color(NamedTextColor.RED);
-        }
-        int maxHealthRounded = Math.round(maxHealth);
-        int maxBaseHealthRounded = Math.round(maxBaseHealth);
-        healthBuilder.append(Component.text(Math.round(health)))
-                     .append(Component.text("/", NamedTextColor.GOLD))
-                     .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
-        actionBarMessage.append(healthBuilder);
-        actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
-        for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
-            if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
-            }
-        }
-        entity.sendActionBar(actionBarMessage.build());
-    }
-
-    public void displayFlagActionBar(@Nonnull Player player) {
-        if (this.compassTarget != null) {
-            player.sendActionBar(this.compassTarget.getToolbarName(this));
-        } else {
-            player.sendActionBar(Component.empty());
         }
     }
 
@@ -1695,47 +1655,6 @@ public abstract class WarlordsEntity {
         return specClass;
     }
 
-    public void updateItems() {
-        if (entity instanceof Player player) {
-            updateRedItem(player);
-            updatePurpleItem(player);
-            updateBlueItem(player);
-            updateOrangeItem(player);
-        }
-    }
-
-    public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), RED_ABILITY);
-    }
-
-    public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
-    }
-
-    public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
-    }
-
-    public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
-    }
-
-    public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
-        if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
-                    .flags(ItemFlag.HIDE_ENCHANTS);
-            if (!ability.getSecondaryAbilities().isEmpty()) {
-                cooldown.enchant(Enchantment.OXYGEN, 1);
-            }
-            player.getInventory().setItem(slot, cooldown.get());
-        } else {
-            player.getInventory().setItem(
-                    slot,
-                    ability.getItem(item)
-            );
-        }
-    }
-
     public void setRedCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getRedAbility().setCurrentCooldown(currentCooldown);
@@ -1754,6 +1673,26 @@ public abstract class WarlordsEntity {
     public void updateRedItem() {
         if (entity instanceof Player) {
             updateRedItem((Player) entity);
+        }
+    }
+
+    public void updateRedItem(Player player) {
+        updateItem(player, 1, spec.getRed(), RED_ABILITY);
+    }
+
+    public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
+        if (ability.getCurrentCooldown() > 0) {
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            if (!ability.getSecondaryAbilities().isEmpty()) {
+                cooldown.enchant(Enchantment.OXYGEN, 1);
+            }
+            player.getInventory().setItem(slot, cooldown.get());
+        } else {
+            player.getInventory().setItem(
+                    slot,
+                    ability.getItem(item)
+            );
         }
     }
 
@@ -1785,6 +1724,10 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void updatePurpleItem(Player player) {
+        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
+    }
+
     public void subtractPurpleCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
             this.getPurpleAbility().subtractCurrentCooldown(cooldown);
@@ -1807,6 +1750,10 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player) {
             updateBlueItem((Player) entity);
         }
+    }
+
+    public void updateBlueItem(Player player) {
+        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
     }
 
     public void subtractBlueCooldown(float cooldown) {
@@ -1833,6 +1780,10 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void updateOrangeItem(Player player) {
+        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
+    }
+
     public void subtractOrangeCooldown(float cooldown) {
         if (!isDisableCooldowns()) {
             this.getOrangeAbility().subtractCurrentCooldown(cooldown);
@@ -1846,10 +1797,6 @@ public abstract class WarlordsEntity {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public AbstractPlayerClass getSpec() {
-        return spec;
     }
 
     public void resetAbilities(boolean closeInventory) {
@@ -2267,14 +2214,6 @@ public abstract class WarlordsEntity {
         return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
     }
 
-    public CalculateSpeed getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(CalculateSpeed speed) {
-        this.speed = speed;
-    }
-
     public Location getDeathLocation() {
         return deathLocation;
     }
@@ -2320,10 +2259,6 @@ public abstract class WarlordsEntity {
     @Nonnull
     public Location getEyeLocation() {
         return this.entity.getEyeLocation();
-    }
-
-    public boolean isSneaking() {
-        return this.entity instanceof Player && this.entity.isSneaking();
     }
 
     public boolean isWasSneaking() {
@@ -2567,15 +2502,209 @@ public abstract class WarlordsEntity {
 
     public abstract boolean isOnline();
 
-    @Nullable
-    public CompassTargetMarker getCompassTarget() {
-        return this.compassTarget;
-    }
-
     public void runEveryTick() {
         this.spec.runEveryTick();
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
+
+        if (getEntity() instanceof Player player) {
+            if (getCompassTarget() != null) {
+                player.setCompassTarget(getCompassTarget().getLocation());
+            }
+        }
+
+        updateHealth();
+        getSpeed().updateSpeed();
+        for (AbstractAbility ability : getSpec().getAbilities()) {
+            if (ability.getCooldown() > 0) {
+                ability.subtractCurrentCooldown(.05f);
+            }
+            ability.checkSecondaryAbilities();
+        }
+        updateItems();
+        getCooldownManager().reduceCooldowns();
+
+        setWasSneaking(isSneaking());
+
+        // Checks whether the player has overheal active and is full health or not.
+        boolean hasOverhealCooldown = getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
+        boolean hasTooMuchHealth = getHealth() > getMaxHealth();
+
+        if (hasOverhealCooldown && !hasTooMuchHealth) {
+            getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+        }
+
+        if (!hasOverhealCooldown && hasTooMuchHealth) {
+            setHealth(getMaxHealth());
+        }
+
+        // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
+        float newHealth = getHealth() / getMaxHealth() * 40;
+        if (newHealth < 0) {
+            newHealth = 0;
+        } else if (newHealth > 40) {
+            newHealth = 40;
+        }
+        if (checkUndyingArmy(newHealth)) {
+            newHealth = 40;
+        }
+
+        // Energy
+        if (getEnergy() < getMaxEnergy()) {
+            // Standard energy value per second.
+            float energyGainPerTick = getSpec().getEnergyPerSec() / 20;
+
+            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
+            }
+            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
+            }
+
+            // Setting energy gain to the value after all ability instance multipliers have been applied.
+            float newEnergy = getEnergy() + energyGainPerTick;
+            if (newEnergy > getMaxEnergy()) {
+                newEnergy = getMaxEnergy();
+            }
+            setEnergy(newEnergy);
+        }
+
+        // setting health/energy to player
+        if (getEntity() instanceof Player player) {
+            //precaution
+            player.setHealth(newHealth);
+            // Respawn fix for when a player is stuck or leaves the game.
+            if (getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+                heal();
+            }
+            // Checks whether the player has under 0 energy to avoid infinite energy bugs.
+            if (getEnergy() < 0) {
+                setEnergy(1);
+            }
+            player.setLevel((int) getEnergy());
+            player.setExp(getEnergy() / getMaxEnergy());
+            // Saves the amount of blocks travelled per player.
+            setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+        }
+
+        // Melee Cooldown
+        if (getHitCooldown() > 0) {
+            setHitCooldown(getHitCooldown() - 1);
+        }
+    }
+
+    private boolean checkUndyingArmy(float newHealth) {
+        // Checks whether the player has any remaining active Undying Army instances active.
+        if (!getCooldownManager().checkUndyingArmy(false) || newHealth > 0) {
+            return false;
+        }
+        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClass(UndyingArmy.class)
+                .stream()
+                .toList()
+        ) {
+            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
+            if (undyingArmy.isArmyDead(this)) {
+                continue;
+            }
+            undyingArmy.pop(this);
+
+            // Drops the flag when popped.
+            FlagHolder.dropFlagForPlayer(this);
+
+            // Sending the message + check if getFrom is self
+            int armyDamage = Math.round(getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
+            if (undyingArmyCooldown.getFrom() == this) {
+                sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                     .append(Component.text(
+                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                             NamedTextColor.LIGHT_PURPLE
+                                     ))
+                                     .append(Component.text(armyDamage, NamedTextColor.RED))
+                                     .append(Component.text(" every second.", NamedTextColor.GRAY))
+                );
+            } else {
+                sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                     .append(Component.text(undyingArmyCooldown.getFrom()
+                                                                               .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                             NamedTextColor.LIGHT_PURPLE
+                                     ))
+                                     .append(Component.text(armyDamage, NamedTextColor.RED))
+                                     .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
+                );
+            }
+
+            FireWorkEffectPlayer.playFirework(getLocation(), FireworkEffect.builder()
+                                                                           .withColor(Color.LIME)
+                                                                           .with(FireworkEffect.Type.BALL)
+                                                                           .build());
+
+            heal();
+
+            if (getEntity() instanceof Player player) {
+                player.getWorld().spigot().strikeLightningEffect(getLocation(), false);
+                player.getInventory().setItem(5, UndyingArmy.BONE);
+            }
+
+            //gives 50% of max energy if player is less than half
+            if (getEnergy() < getMaxEnergy() / 2) {
+                setEnergy(getMaxEnergy() / 2);
+            }
+
+            if (undyingArmy.isPveMasterUpgrade()) {
+                addSpeedModifier(this, "ARMY", 40, 16 * 20, "BASE");
+            }
+
+            undyingArmyCooldown.setNameAbbreviation("POPPED");
+            undyingArmyCooldown.setTicksLeft(16 * 20);
+            undyingArmyCooldown.setOnRemove(cooldownManager -> {
+                if (getEntity() instanceof Player) {
+                    if (cooldownManager.checkUndyingArmy(true)) {
+                        ((Player) getEntity()).getInventory().remove(UndyingArmy.BONE);
+                    }
+                }
+            });
+            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                if (ticksElapsed % 20 == 0) {
+                    addDamageInstance(
+                            this,
+                            "",
+                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                            0,
+                            100,
+                            false
+                    );
+
+                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
+                        PlayerFilter.entitiesAround(this, 6, 6, 6)
+                                    .aliveEnemiesOf(this)
+                                    .forEach(enemy -> {
+                                        float healthDamage = enemy.getMaxHealth() * .02f;
+                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                        }
+                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                        }
+                                        enemy.addDamageInstance(
+                                                this,
+                                                "Undying Army",
+                                                458 + healthDamage,
+                                                612 + healthDamage,
+                                                0,
+                                                100,
+                                                false
+                                        );
+                                    });
+
+                    }
+                }
+            });
+            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(this, undyingArmy));
+            return true;
+        }
+        return false;
     }
 
     private void decrementRespawnTimer() {
@@ -2595,6 +2724,75 @@ public abstract class WarlordsEntity {
                 }
             }
         }
+    }
+
+    public void displayFlagActionBar(@Nonnull Player player) {
+        if (this.compassTarget != null) {
+            player.sendActionBar(this.compassTarget.getToolbarName(this));
+        } else {
+            player.sendActionBar(Component.empty());
+        }
+    }
+
+    public void displayActionBar() {
+        TextComponent.Builder actionBarMessage = Component.text()
+                                                          .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
+        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
+        float healthRatio = health / maxHealth;
+        if (healthRatio > 1) {
+            healthBuilder.color(NamedTextColor.GREEN);
+        } else if (healthRatio >= .75) {
+            healthBuilder.color(NamedTextColor.DARK_GREEN);
+        } else if (healthRatio >= .25) {
+            healthBuilder.color(NamedTextColor.YELLOW);
+        } else {
+            healthBuilder.color(NamedTextColor.RED);
+        }
+        int maxHealthRounded = Math.round(maxHealth);
+        int maxBaseHealthRounded = Math.round(maxBaseHealth);
+        healthBuilder.append(Component.text(Math.round(health)))
+                     .append(Component.text("/", NamedTextColor.GOLD))
+                     .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
+        actionBarMessage.append(healthBuilder);
+        actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
+        for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
+            if (abstractCooldown.getNameAbbreviation() != null) {
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
+            }
+        }
+        entity.sendActionBar(actionBarMessage.build());
+    }
+
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public abstract void updateHealth();
+
+    public CalculateSpeed getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(CalculateSpeed speed) {
+        this.speed = speed;
+    }
+
+    public AbstractPlayerClass getSpec() {
+        return spec;
+    }
+
+    public void updateItems() {
+        if (entity instanceof Player player) {
+            updateRedItem(player);
+            updatePurpleItem(player);
+            updateBlueItem(player);
+            updateOrangeItem(player);
+        }
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && this.entity.isSneaking();
     }
 
     public void respawn() {
@@ -2645,6 +2843,22 @@ public abstract class WarlordsEntity {
 
     public void runEverySecond() {
         this.spec.runEverySecond();
+        // Checks whether the player has a flag cooldown.
+        if (getFlagDropCooldown() > 0) {
+            setFlagDropCooldown(getFlagDropCooldown() - 1);
+        }
+        if (getFlagPickCooldown() > 0) {
+            setFlagPickCooldown(getFlagPickCooldown() - 1);
+        }
+        // Combat Timer - Logs combat time after 4 seconds.
+        if (getRegenTickTimer() > 6 * 20) {
+            getMinuteStats().addTimeInCombat();
+        }
+        // Assists - 10 seconds timer.
+        getHitBy().replaceAll((wp, integer) -> integer - 1);
+        getHealedBy().replaceAll((wp, integer) -> integer - 1);
+        getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
+        getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
     }
 
     public void onRemove() {

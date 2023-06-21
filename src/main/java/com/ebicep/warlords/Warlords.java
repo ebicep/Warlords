@@ -6,20 +6,14 @@ import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
-import com.ebicep.warlords.abilties.OrbsOfLife;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.*;
+import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.events.player.ingame.WarlordsUndyingArmyPopEvent;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.guilds.GuildListener;
@@ -29,12 +23,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -45,8 +34,6 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
@@ -56,8 +43,10 @@ import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.bukkit.GameMode;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -173,6 +162,15 @@ public class Warlords extends JavaPlugin {
         }
     }
 
+    public static Warlords getInstance() {
+        return instance;
+    }
+
+    @Nonnull
+    public static Location getRejoinPoint(@Nonnull UUID key) {
+        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90));
+    }
+
     /**
      * Used for removing players from main lobby game
      *
@@ -189,15 +187,6 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-    public static Warlords getInstance() {
-        return instance;
-    }
-
-    @Nonnull
-    public static Location getRejoinPoint(@Nonnull UUID key) {
-        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90));
-    }
-
     public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
         SPAWN_POINTS.put(key, value);
         Player player = Bukkit.getPlayer(key);
@@ -208,6 +197,14 @@ public class Warlords extends JavaPlugin {
 
     public static GameManager getGameManager() {
         return getInstance().gameManager;
+    }
+
+    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
+        return hasPlayer(player.getUniqueId());
+    }
+
+    public static boolean hasPlayer(@Nonnull UUID player) {
+        return PLAYERS.containsKey(player);
     }
 
     private GameManager gameManager;
@@ -419,432 +416,61 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newChain();
     }
 
-    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
-        return hasPlayer(player.getUniqueId());
-    }
-
     private void startWarlordsEntitiesLoop() {
         new BukkitRunnable() {
 
             @Override
             public void run() {
                 // Every 1 tick - 0.05 seconds.
-                for (WarlordsEntity wp : PLAYERS.values()) {
-                    Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
+                for (WarlordsEntity we : PLAYERS.values()) {
+                    Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
                     if (player != null) {
                         //ACTION BAR
-                        if (!player.getInventory().getItemInMainHand().equals(FlagSpawnPointOption.COMPASS)) {
-                            wp.displayActionBar();
+                        if (player.getInventory().getItemInMainHand().equals(FlagSpawnPointOption.COMPASS)) {
+                            we.displayFlagActionBar(player);
                         } else {
-                            wp.displayFlagActionBar(player);
+                            we.displayActionBar();
                         }
                     }
-
                     // Checks whether the game is paused.
-                    if (wp.getGame().isFrozen()) {
+                    if (we.getGame().isFrozen()) {
                         continue;
                     }
-
-                    wp.updateHealth();
-                    // Updating all player speed.
-                    wp.getSpeed().updateSpeed();
-                    wp.runEveryTick();
-
-                    // Setting the flag tracking compass.
-                    if (player != null && wp.getCompassTarget() != null) {
-                        player.setCompassTarget(wp.getCompassTarget().getLocation());
-                    }
-
-                    // Ability Cooldowns
-
-                    // Decrementing red skill's cooldown.
-                    if (wp.getRedAbility().getCurrentCooldown() > 0) {
-                        wp.getRedAbility().subtractCurrentCooldown(.05f);
-                        if (player != null) {
-                            wp.updateRedItem(player);
-                        }
-                    }
-
-                    // Decrementing purple skill's cooldown.
-                    if (wp.getPurpleAbility().getCurrentCooldown() > 0) {
-                        wp.getPurpleAbility().subtractCurrentCooldown(.05f);
-                        if (player != null) {
-                            wp.updatePurpleItem(player);
-                        }
-                    }
-
-                    // Decrementing blue skill's cooldown.
-                    if (wp.getBlueAbility().getCurrentCooldown() > 0) {
-                        wp.getBlueAbility().subtractCurrentCooldown(.05f);
-                        if (player != null) {
-                            wp.updateBlueItem(player);
-                        }
-                    }
-
-                    // Decrementing orange skill's cooldown.
-                    if (wp.getOrangeAbility().getCurrentCooldown() > 0) {
-                        wp.getOrangeAbility().subtractCurrentCooldown(.05f);
-                        if (player != null) {
-                            wp.updateOrangeItem(player);
-                        }
-                    }
-
-                    wp.getCooldownManager().reduceCooldowns();
-
-                    for (AbstractAbility ability : wp.getSpec().getAbilities()) {
-                        ability.checkSecondaryAbilities();
-                    }
-
-                    wp.setWasSneaking(wp.isSneaking());
-
-                    // Checks whether the player has overheal active and is full health or not.
-                    boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
-                    boolean hasTooMuchHealth = wp.getHealth() > wp.getMaxHealth();
-
-                    if (hasOverhealCooldown && !hasTooMuchHealth) {
-                        wp.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                    }
-
-                    if (!hasOverhealCooldown && hasTooMuchHealth) {
-                        wp.setHealth(wp.getMaxHealth());
-                    }
-
-                    // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-                    float newHealth = wp.getHealth() / wp.getMaxHealth() * 40;
-
-                    if (newHealth < 0) {
-                        newHealth = 0;
-                    } else if (newHealth > 40) {
-                        newHealth = 40;
-                    }
-
-                    // Checks whether the player has any remaining active Undying Army instances active.
-                    if (wp.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
-                        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
-                                .filterCooldownClass(UndyingArmy.class)
-                                .stream()
-                                .toList()
-                        ) {
-                            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-                            if (undyingArmy.isArmyDead(wp)) {
-                                continue;
-                            }
-                            undyingArmy.pop(wp);
-
-                            // Drops the flag when popped.
-                            FlagHolder.dropFlagForPlayer(wp);
-
-                            // Sending the message + check if getFrom is self
-                            int armyDamage = Math.round(wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
-                            if (undyingArmyCooldown.getFrom() == wp) {
-                                wp.sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                                        .append(Component.text(
-                                                                "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                                                NamedTextColor.LIGHT_PURPLE
-                                                        ))
-                                                        .append(Component.text(armyDamage, NamedTextColor.RED))
-                                                        .append(Component.text(" every second.", NamedTextColor.GRAY))
-                                );
-                            } else {
-                                wp.sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                                        .append(Component.text(undyingArmyCooldown.getFrom()
-                                                                                                  .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                                                NamedTextColor.LIGHT_PURPLE
-                                                        ))
-                                                        .append(Component.text(armyDamage, NamedTextColor.RED))
-                                                        .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
-                                );
-                            }
-
-                            FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                                              .withColor(Color.LIME)
-                                                                                              .with(FireworkEffect.Type.BALL)
-                                                                                              .build());
-
-                            wp.heal();
-
-                            if (player != null) {
-                                player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), false);
-                                player.getInventory().setItem(5, UndyingArmy.BONE);
-                            }
-                            newHealth = 40;
-
-                            //gives 50% of max energy if player is less than half
-                            if (wp.getEnergy() < wp.getMaxEnergy() / 2) {
-                                wp.setEnergy(wp.getMaxEnergy() / 2);
-                            }
-
-                            if (undyingArmy.isPveMasterUpgrade()) {
-                                wp.addSpeedModifier(wp, "ARMY", 40, 16 * 20, "BASE");
-                            }
-
-                            undyingArmyCooldown.setNameAbbreviation("POPPED");
-                            undyingArmyCooldown.setTicksLeft(16 * 20);
-                            undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                                if (wp.getEntity() instanceof Player) {
-                                    if (cooldownManager.checkUndyingArmy(true)) {
-                                        ((Player) wp.getEntity()).getInventory().remove(UndyingArmy.BONE);
-                                    }
-                                }
-                            });
-                            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
-                                if (ticksElapsed % 20 == 0) {
-                                    wp.addDamageInstance(
-                                            wp,
-                                            "",
-                                            wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                            wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                            0,
-                                            100,
-                                            false
-                                    );
-
-                                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
-                                        PlayerFilter.entitiesAround(wp, 6, 6, 6)
-                                                    .aliveEnemiesOf(wp)
-                                                    .forEach(enemy -> {
-                                                        float healthDamage = enemy.getMaxHealth() * .02f;
-                                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                                        }
-                                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                                        }
-                                                        enemy.addDamageInstance(
-                                                                wp,
-                                                                "Undying Army",
-                                                                458 + healthDamage,
-                                                                612 + healthDamage,
-                                                                0,
-                                                                100,
-                                                                false
-                                                        );
-                                                    });
-
-                                    }
-                                }
-                            });
-                            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(wp, undyingArmy));
-                            break;
-                        }
-                    }
-
-                    // Energy
-                    if (wp.getEnergy() < wp.getMaxEnergy()) {
-                        // Standard energy value per second.
-                        float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20;
-
-                        for (AbstractCooldown<?> abstractCooldown : wp.getCooldownManager().getCooldownsDistinct()) {
-                            energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
-                        }
-                        for (AbstractCooldown<?> abstractCooldown : wp.getCooldownManager().getCooldownsDistinct()) {
-                            energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
-                        }
-
-                        // Setting energy gain to the value after all ability instance multipliers have been applied.
-                        float newEnergy = wp.getEnergy() + energyGainPerTick;
-                        if (newEnergy > wp.getMaxEnergy()) {
-                            newEnergy = wp.getMaxEnergy();
-                        }
-
-                        wp.setEnergy(newEnergy);
-                    }
-
-                    if (player != null) {
-                        //precaution
-                        if (newHealth > 0) {
-                            player.setHealth(newHealth);
-                        }
-
-                        // Respawn fix for when a player is stuck or leaves the game.
-                        if (wp.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
-                            wp.heal();
-                        }
-
-                        // Checks whether the player has under 0 energy to avoid infinite energy bugs.
-                        if (wp.getEnergy() < 0) {
-                            wp.setEnergy(1);
-                        }
-                        player.setLevel((int) wp.getEnergy());
-                        player.setExp(wp.getEnergy() / wp.getMaxEnergy());
-
-                        // Saves the amount of blocks travelled per player.
-                        wp.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
-                    }
-
-                    // Melee Cooldown
-                    if (wp.getHitCooldown() > 0) {
-                        wp.setHitCooldown(wp.getHitCooldown() - 1);
-                    }
-
-                    // Natural Regen
-                    if (wp instanceof WarlordsPlayer) {
-                        int regenTickTimer = wp.getRegenTickTimer();
-                        wp.setRegenTickTimer(regenTickTimer - 1);
-                        if (regenTickTimer == 0) {
-                            wp.getHitBy().clear();
-                        }
-                        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
-                        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
-                            int healthToAdd = (int) (wp.getMaxHealth() / 55.3);
-                            wp.setHealth(Math.max(wp.getHealth(), Math.min(wp.getHealth() + healthToAdd, wp.getMaxHealth())));
-                        }
-                    }
-
-                    //NPC STUN
-                    if (wp instanceof WarlordsNPC npc) {
-                        if (npc.getStunTicks() > 0) {
-                            npc.setStunTicks(npc.getStunTicks() - 1, true);
-                        }
-                    }
-
-                    // Orbs of Life
-                    Location playerPosition = wp.getLocation();
-                    List<OrbsOfLife.Orb> orbs = new ArrayList<>();
-                    PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(p -> {
-                        new CooldownFilter<>(p, PersistentCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(OrbsOfLife.class)
-                                .forEachOrdered(orbsOfLife -> orbs.addAll(orbsOfLife.getSpawnedOrbs()));
-                    });
-
-                    Iterator<OrbsOfLife.Orb> itr = orbs.iterator();
-
-                    while (itr.hasNext()) {
-                        OrbsOfLife.Orb orb = itr.next();
-                        Location orbPosition = orb.getArmorStand().getLocation();
-                        if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == wp)) &&
-                                orbPosition.distanceSquared(playerPosition) < 1.35 * 1.35 && !wp.isDead()) {
-
-                            orb.remove();
-                            itr.remove();
-
-                            float orbHeal = orb.getCooldown().getCooldownObject().getMinDamageHeal();
-                            WarlordsEntity owner = orb.getOwner();
-
-                            // Increasing heal for low long orb lived for (up to +25%)
-                            // 6.5 seconds = 130 ticks
-                            // 6.5 seconds = 1 + (130/325) = 1.4
-                            // 225 *= 1.4 = 315
-                            if (orb.getPlayerToMoveTowards() == null) {
-                                orbHeal *= 1 + orb.getTicksLived() / 325f;
-                            }
-
-                            wp.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
-                            if (player != null) {
-                                Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
-                            }
-
-                            for (WarlordsEntity nearPlayer : PlayerFilter
-                                    .entitiesAround(wp, 6, 6, 6)
-                                    .aliveTeammatesOfExcludingSelf(wp)
-                                    .leastAliveFirst()
-                                    .limit(2)
-                            ) {
-                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
-                                if (player != null) {
-                                    Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
-                                }
-                            }
-                        } else {
-
-                            // Checks whether the Orb of Life has lived for 8 seconds.
-                            if (orb.getTicksLived() > orb.getTicksToLive() || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
-                                orb.remove();
-                                itr.remove();
-                            }
-                        }
-                    }
+                    we.runEveryTick();
                 }
-
-                // Loops every 10 ticks - .5 second.
-                if (LOOP_TICK_COUNTER.get() % 10 == 0) {
-                    for (WarlordsEntity wps : PLAYERS.values()) {
-                        // Soulbinding Weapon - decrementing time left on the ability.
-                        new CooldownFilter<>(wps, PersistentCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                                .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
-                        // Soulbinding Weapon - Removing bound players.
-                        new CooldownFilter<>(wps, PersistentCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                                .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers()
-                                                                          .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
-                    }
-                }
-
-                // Loops every 20 ticks - 1 second.
+                // Every 20 ticks - 1 second.
                 if (LOOP_TICK_COUNTER.get() % 20 == 0) {
-
                     // Removes leftover horses if there are any.
                     RemoveEntities.removeHorsesInGame();
 
-                    for (WarlordsEntity wps : PLAYERS.values()) {
+                    for (WarlordsEntity we : PLAYERS.values()) {
                         // Checks whether the game is paused.
-                        if (wps.getGame().isFrozen()) {
+                        if (we.getGame().isFrozen()) {
                             continue;
                         }
-                        wps.runEverySecond();
-                        // Cooldowns
-
-                        // Checks whether the player has a flag cooldown.
-                        if (wps.getFlagDropCooldown() > 0) {
-                            wps.setFlagDropCooldown(wps.getFlagDropCooldown() - 1);
-                        }
-                        if (wps.getFlagPickCooldown() > 0) {
-                            wps.setFlagPickCooldown(wps.getFlagPickCooldown() - 1);
-                        }
-
-                        // Checks whether the player has the healing powerup active.
-                        if (wps.getCooldownManager().hasCooldown(HealingPowerup.class)) {
-                            float heal = wps.getMaxHealth() * .08f;
-                            if (wps.getHealth() + heal > wps.getMaxHealth()) {
-                                heal = wps.getMaxHealth() - wps.getHealth();
-                            }
-
-                            if (heal > 0) {
-                                wps.setHealth(wps.getHealth() + heal);
-                                wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Healed ", NamedTextColor.GRAY))
-                                                                               .append(Component.text(Math.round(heal), NamedTextColor.GREEN))
-                                                                               .append(Component.text(" health.", NamedTextColor.GRAY)));
-                            }
-                        }
-
-                        // Combat Timer - Logs combat time after 4 seconds.
-                        if (wps.getRegenTickTimer() > 6 * 20) {
-                            wps.getMinuteStats().addTimeInCombat();
-                        }
-
-                        // Assists - 10 seconds timer.
-                        wps.getHitBy().replaceAll((wp, integer) -> integer - 1);
-                        wps.getHealedBy().replaceAll((wp, integer) -> integer - 1);
-                        wps.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
-                        wps.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
+                        we.runEverySecond();
                     }
 
-                    WarlordsEvents.entityList.removeIf(e -> !e.isValid());
+                    // for removing falling blocks that didnt get removed prior
+                    WarlordsEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
                 }
-
                 // Loops every 50 ticks - 2.5 seconds.
                 if (LOOP_TICK_COUNTER.get() % 50 == 0) {
-                    for (WarlordsEntity warlordsPlayer : PLAYERS.values()) {
-
-                        if (warlordsPlayer.getGame().isFrozen()) {
+                    for (WarlordsEntity we : PLAYERS.values()) {
+                        if (we.getGame().isFrozen()) {
                             continue;
                         }
-
-                        LivingEntity player = warlordsPlayer.getEntity();
-                        List<Location> locations = warlordsPlayer.getLocations();
-
-                        if (warlordsPlayer.isDead() && !locations.isEmpty()) {
+                        LivingEntity player = we.getEntity();
+                        List<Location> locations = we.getLocations();
+                        if (we.isDead() && !locations.isEmpty()) {
                             locations.add(locations.get(locations.size() - 1));
                         } else {
                             locations.add(player.getLocation());
                         }
                     }
                 }
-
                 LOOP_TICK_COUNTER.getAndIncrement();
             }
-
         }.runTaskTimer(this, 0, 0);
     }
 
@@ -878,10 +504,6 @@ public class Warlords extends JavaPlugin {
 
             }
         }.runTaskTimer(this, 20, 1000);
-    }
-
-    public static boolean hasPlayer(@Nonnull UUID player) {
-        return PLAYERS.containsKey(player);
     }
 
     public void hideAndUnhidePeople(@Nonnull Player player) {

@@ -708,7 +708,7 @@ public enum SkillBoosts {
             Soulbinding.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding soulbinding) {
-                    soulbinding.setBindDuration(4);
+                    soulbinding.setBindDuration(soulbinding.getBindDuration() + 40);
                 }
             }
     ),
