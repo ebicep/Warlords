@@ -1,10 +1,12 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.IceBarrier;
+import com.ebicep.warlords.abilties.OrderOfEviscerate;
+import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
-import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -28,15 +30,12 @@ import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -281,6 +280,7 @@ public class WarlordsEvents implements Listener {
             p.updatePlayerReference(player);
         } else {
             player.setAllowFlight(true);
+            player.playerListName(null);
         }
 
         Warlords.getInstance().hideAndUnhidePeople(player);
@@ -355,38 +355,6 @@ public class WarlordsEvents implements Listener {
         wpAttacker.setHitCooldown(12);
         wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyPerHit(), false);
         wpAttacker.getMinuteStats().addMeleeHits();
-
-        if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
-            Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getPurpleAbility();
-            new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
-                    .filter(PersistentCooldown::isShown)
-                    .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                    .forEachOrdered(soulbinding -> {
-                        wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
-                        if (soulbinding.hasBoundPlayer(wpVictim)) {
-                            soulbinding.getSoulBindedPlayers().stream()
-                                       .filter(p -> p.getBoundPlayer() == wpVictim)
-                                       .forEach(boundPlayer -> {
-                                           boundPlayer.setHitWithSoul(false);
-                                           boundPlayer.setHitWithLink(false);
-                                           boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
-                                       });
-                        } else {
-                            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                                    .append(Component.text("You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
-                                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                                    .append(Component.text("!", NamedTextColor.GRAY))
-                            );
-                            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                    .append(Component.text("Your ", NamedTextColor.GRAY))
-                                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
-                            );
-                            soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
-                            Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                        }
-                    });
-        }
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
             if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class)) {

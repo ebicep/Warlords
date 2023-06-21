@@ -3,6 +3,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
@@ -29,7 +30,7 @@ import java.util.List;
  * Random target is chosen from weighted list
  */
 public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
-    protected Mob targetEntity;
+    protected LivingEntity targetEntity;
 
     public PathfinderGoalTargetAgroWarlordsEntity(Mob entitycreature) {
         this(entitycreature, false, true);
@@ -47,7 +48,7 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
             return false;
         }
         double followRange = this.getFollowDistance();
-        List<Mob> list = this.mob.level.getEntitiesOfClass(Mob.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
+        List<LivingEntity> list = this.mob.level.getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
             return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
@@ -56,10 +57,10 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         if (list.isEmpty()) {
             return false;
         }
-        Mob closestEntity = list.get(0);
+        LivingEntity closestEntity = list.get(0);
         double distanceToClosest = this.mob.distanceToSqr(closestEntity); // getDistanceSqToEntity
-        RandomCollection<Mob> randomCollection = new RandomCollection<>();
-        for (Mob entity : list) {
+        RandomCollection<LivingEntity> randomCollection = new RandomCollection<>();
+        for (LivingEntity entity : list) {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
             if (warlordsEntity != null) {
                 randomCollection.add(entity == closestEntity ?

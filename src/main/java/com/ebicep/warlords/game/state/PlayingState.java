@@ -25,6 +25,8 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -200,7 +202,27 @@ public class PlayingState implements State, TimerDebugAble {
 
     private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         this.updateHealth(customScoreboard);
-        this.updateNames(customScoreboard);
+        if (warlordsPlayer != null) {
+            this.updateNames(customScoreboard, warlordsPlayer);
+            this.getGame().forEachOnlineWarlordsPlayer(warlordsEntity -> {
+                UUID uuid = warlordsEntity.getUuid();
+                String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
+                TextComponent.Builder playerTabName = Component.text()
+                                                               .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                               .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                               .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                                               .append(Component.text(warlordsEntity.getName(), warlordsEntity.getTeam().teamColor))
+                                                               .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                                               .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                               .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                if (warlordsEntity.getCarriedFlag() != null) {
+                    playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
+                }
+                if (warlordsEntity.getEntity() instanceof Player player) {
+                    player.playerListName(playerTabName.build());
+                }
+            });
+        }
         this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
     }
 
@@ -221,32 +243,67 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
+    private void updateNames(@Nonnull CustomScoreboard customScoreboard, WarlordsEntity warlordsPlayer) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
+        List<AbstractCooldown<?>> cooldowns = warlordsPlayer.getCooldownManager().getCooldowns();
         this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity == null) {
+            WarlordsEntity otherPlayer = Warlords.getPlayer(player);
+            if (otherPlayer == null) {
                 return;
             }
-            String name = warlordsEntity.getName();
-            UUID uuid = warlordsEntity.getUuid();
-            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
+            String name = otherPlayer.getName();
+            UUID uuid = otherPlayer.getUuid();
+            List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
+            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));
             Team playerTeam = scoreboard.getTeam(name);
             if (playerTeam == null) {
                 playerTeam = scoreboard.registerNewTeam(name);
                 playerTeam.addEntry(name);
             }
             playerTeam.color(team.teamColor());
-            playerTeam.prefix(Component.text("[", NamedTextColor.DARK_GRAY)
-                                       .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
-                                       .append(Component.text("] ")));
-
-            TextComponent.Builder suffix = Component.text(" [", NamedTextColor.DARK_GRAY)
-                                                    .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
-                                                    .append(Component.text("]")).toBuilder();
-            if (warlordsEntity.getCarriedFlag() != null) {
-                suffix.append(Component.text("⚑", NamedTextColor.WHITE));
+            //tab name
+            //prefix
+            TextComponent.Builder prefix = Component.text();
+            cooldowns.forEach(cd -> {
+                PlayerNameInstance.PlayerNameData prefixFromSelf = cd.addPrefixFromSelf();
+                if (prefixFromSelf != null && prefixFromSelf.targets().contains(otherPlayer)) {
+                    prefix.append(Component.space().append(prefixFromSelf.text()));
+                }
+            });
+            otherPlayerCooldowns.forEach(cd -> {
+                PlayerNameInstance.PlayerNameData prefixFromEnemy = cd.addPrefixFromEnemy();
+                if (prefixFromEnemy != null && prefixFromEnemy.targets().contains(warlordsPlayer)) {
+                    prefix.append(Component.space().append(prefixFromEnemy.text()));
+                }
+            });
+            TextComponent.Builder basePrefix = Component.text()
+                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                        .append(Component.text(otherPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+            prefix.append(basePrefix);
+            playerTeam.prefix(prefix.build());
+            //suffix
+            TextComponent.Builder baseSuffix = Component.text()
+                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                        .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+            if (otherPlayer.getCarriedFlag() != null) {
+                baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
             }
+            TextComponent.Builder suffix = Component.text();
+            suffix.append(baseSuffix);
+            cooldowns.forEach(cd -> {
+                PlayerNameInstance.PlayerNameData suffixFromSelf = cd.addSuffixFromSelf();
+                if (suffixFromSelf != null && suffixFromSelf.targets().contains(otherPlayer)) {
+                    suffix.append(Component.space().append(suffixFromSelf.text()));
+                }
+            });
+            otherPlayerCooldowns.forEach(cd -> {
+                PlayerNameInstance.PlayerNameData suffixFromEnemy = cd.addSuffixFromEnemy();
+                if (suffixFromEnemy != null && suffixFromEnemy.targets().contains(warlordsPlayer)) {
+                    suffix.append(Component.space().append(suffixFromEnemy.text()));
+                }
+            });
             playerTeam.suffix(suffix.build());
         });
     }

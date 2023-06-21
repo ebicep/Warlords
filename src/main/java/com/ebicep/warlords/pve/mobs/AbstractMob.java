@@ -35,7 +35,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -375,7 +374,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
+        this.entity.setTarget((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {

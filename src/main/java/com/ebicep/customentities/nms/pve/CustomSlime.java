@@ -14,6 +14,7 @@ public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
     public CustomSlime(ServerLevel serverLevel) {
         super(EntityType.SLIME, serverLevel);
         setSize(5, true);
+        giveBaseAI();
     }
 
     public CustomSlime(org.bukkit.World world) {

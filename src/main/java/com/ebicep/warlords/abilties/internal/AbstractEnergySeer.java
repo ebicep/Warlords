@@ -19,8 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractEnergySeer<T> extends AbstractAbility implements Duration {
 
+    protected int speedBuff = 30;
     protected int healingMultiplier = 4;
-    protected int tickDuration = 120;
+    protected int tickDuration = 100;
     protected int energyRestore = 80;
     protected int bonusDuration = 100;
 
@@ -30,7 +31,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Heal for ")
+        description = Component.text("Gain ")
+                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" speed and heal for "))
                                .append(Component.text((healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -54,6 +57,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
+        wp.addSpeedModifier(wp, name, 30, tickDuration);
         AtomicInteger timesHealed = new AtomicInteger();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,

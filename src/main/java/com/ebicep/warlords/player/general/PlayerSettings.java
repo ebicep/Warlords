@@ -213,7 +213,7 @@ public class PlayerSettings {
             case PALADIN -> this.paladinHelmet = helmet;
             case SHAMAN -> this.shamanHelmet = helmet;
             case ROGUE -> this.rogueHelmet = helmet;
-            case DRUID -> this.druidHelmet = helmet;
+            case ARCANIST -> this.druidHelmet = helmet;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
     }
@@ -225,7 +225,7 @@ public class PlayerSettings {
             case PALADIN -> this.paladinArmor = armor;
             case SHAMAN -> this.shamanArmor = armor;
             case ROGUE -> this.rogueArmor = armor;
-            case DRUID -> this.druidArmor = armor;
+            case ARCANIST -> this.druidArmor = armor;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }

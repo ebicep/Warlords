@@ -1021,7 +1021,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
                     poisonousHex.setDotMinDamage(poisonousHex.getDotMinDamage() * 1.35f);
                     poisonousHex.setDotMaxDamage(poisonousHex.getDotMaxDamage() * 1.35f);
-                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 40);
+                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 20);
                 }
             }
     ),
@@ -1113,11 +1113,11 @@ public enum SkillBoosts {
                      .append(Component.text("and ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(", respectively.", NamedTextColor.GREEN)),
-            EnergySeerGuardian.class,
+            EnergySeerSentinel.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeerGuardian energySeerGuardian) {
-                    energySeerGuardian.setEnergyRestore(energySeerGuardian.getEnergyRestore() + 40);
-                    energySeerGuardian.setDamageResistance(energySeerGuardian.getDamageResistance() + 10);
+                if (abstractAbility instanceof EnergySeerSentinel energySeerSentinel) {
+                    energySeerSentinel.setEnergyRestore(energySeerSentinel.getEnergyRestore() + 40);
+                    energySeerSentinel.setDamageResistance(energySeerSentinel.getDamageResistance() + 10);
                 }
             }
     ),
@@ -1126,10 +1126,10 @@ public enum SkillBoosts {
             Component.text("Increase the amount of time Spiritual Shield increases the rune timers by ", NamedTextColor.GREEN)
                      .append(Component.text("0.25s", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            SpiritualShield.class,
+            MysticalBarrier.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SpiritualShield spiritualShield) {
-                    spiritualShield.setRuneTimerIncrease(spiritualShield.getRuneTimerIncrease() + 0.25f);
+                if (abstractAbility instanceof MysticalBarrier mysticalBarrier) {
+                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.25f);
                 }
             }
     ),
@@ -1179,11 +1179,11 @@ public enum SkillBoosts {
                      .append(Component.text("and ", NamedTextColor.GREEN))
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(", respectively.", NamedTextColor.GREEN)),
-            EnergySeerPriest.class,
+            EnergySeerCleric.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeerPriest energySeerPriest) {
-                    energySeerPriest.setEnergyRestore(energySeerPriest.getEnergyRestore() + 40);
-                    energySeerPriest.setCritChanceIncrease(energySeerPriest.getCritChanceIncrease() + 40);
+                if (abstractAbility instanceof EnergySeerCleric energySeerCleric) {
+                    energySeerCleric.setEnergyRestore(energySeerCleric.getEnergyRestore() + 40);
+                    energySeerCleric.setCritChanceIncrease(energySeerCleric.getCritChanceIncrease() + 40);
                 }
             }
     ),
@@ -1192,10 +1192,10 @@ public enum SkillBoosts {
             Component.text("Increase the Crit Multiplier reduction of Beacon of Impair by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            BeaconOfImpair.class,
+            BeaconOfShadow.class,
             abstractAbility -> {
-                if (abstractAbility instanceof BeaconOfImpair beaconOfImpair) {
-                    beaconOfImpair.setCritMultiplierReducedTo(beaconOfImpair.getCritMultiplierReducedTo() - 40);
+                if (abstractAbility instanceof BeaconOfShadow beaconOfShadow) {
+                    beaconOfShadow.setCritMultiplierReducedTo(beaconOfShadow.getCritMultiplierReducedTo() - 40);
                 }
             }
     ),

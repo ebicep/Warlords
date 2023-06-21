@@ -46,7 +46,7 @@ public class IncendiaryCurse extends AbstractAbility {
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text("damage. Enemies hit are blinded for "))
                                .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+                               .append(Component.text(" seconds. " + (inPve ? "Mobs that are blinded become stunned and lose agro on their current target." : ".")));
     }
 
     @Override

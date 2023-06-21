@@ -89,8 +89,8 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> druid.getConjurer();
-            case GUARDIAN -> druid.getGuardian();
-            case PRIEST -> druid.getPriest();
+            case SENTINEL -> druid.getGuardian();
+            case CLERIC -> druid.getPriest();
         };
     }
 
@@ -102,7 +102,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case DRUID -> druid;
+            case ARCANIST -> druid;
         };
     }
 

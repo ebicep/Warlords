@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
 
-import com.ebicep.warlords.abilties.SpiritualShield;
+import com.ebicep.warlords.abilties.MysticalBarrier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class SpiritualShieldBranch extends AbstractUpgradeBranch<SpiritualShield> {
+public class SpiritualShieldBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
-    public SpiritualShieldBranch(AbilityTree abilityTree, SpiritualShield ability) {
+    public SpiritualShieldBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

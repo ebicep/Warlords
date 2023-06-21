@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -23,28 +24,22 @@ import java.util.List;
 public class Sanctuary extends AbstractAbility implements Duration {
 
     private int damageReflected = 25;
-    private int hexShieldIncrease = 200;
-    private int hexTickDurationIncrease = 20;
-    private int allyHexStackGain = 1;
-    private int tickDuration = 160;
+    private int hexTickDurationIncrease = 40;
+    private int additionalDamageReduction = 10;
+    private int tickDuration = 240;
 
     public Sanctuary() {
-        super("Sanctuary", 0, 0, 52, 40, 0, 0);
+        super("Sanctuary", 0, 0, 50, 10, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Summon your full protective power, infusing your soul with innate resilience. All incoming attacks reflect ")
-                               .append(Component.text(damageReflected + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of their damage back to the dealer. All Fortifying Hexes are improved, gaining "))
-                               .append(Component.text(hexShieldIncrease, NamedTextColor.YELLOW))
-                               .append(Component.text(" shield health and "))
+        description = Component.text("Summon your full protective power, increasing Fortifying Hex duration by ")
                                .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" second duration. Additionally, the nearest ally receives "))
-                               .append(Component.text(allyHexStackGain, NamedTextColor.BLUE))
-                               .append(Component.text(" stack of Fortifying Hex whenever you obtain "))
-                               .append(Component.text("1", NamedTextColor.BLUE))
-                               .append(Component.text(" stack. Lasts "))
+                               .append(Component.text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. " +
+                                       "All allies with max stacks of Fortifying Hex gain an additional "))
+                               .append(Component.text(additionalDamageReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage reduction and reflect all reduced damage from Fortifying Hexes back to the dealer. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }
@@ -69,64 +64,61 @@ public class Sanctuary extends AbstractAbility implements Duration {
                 tickDuration
         ) {
 
-            private final float damageTakenMultiplier = 1 - damageReflected / 100f;
-            private final float damageReflectedMultiplier = damageReflected / 100f;
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                event.getAttacker().addDamageInstance(
-                        event.getWarlordsEntity(),
-                        name,
-                        currentDamageValue * damageReflectedMultiplier,
-                        currentDamageValue * damageReflectedMultiplier,
-                        0,
-                        100,
-                        false
-                );
-                return currentDamageValue * damageTakenMultiplier;
-            }
-
             @Override
             protected Listener getListener() {
                 return new Listener() {
+
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        WarlordsEntity teammate = event.getWarlordsEntity();
+                        if (teammate.isEnemy(wp)) {
+                            return;
+                        }
+                        int hexStacks = (int) new CooldownFilter<>(teammate, RegularCooldown.class)
+                                .filterCooldownFrom(wp)
+                                .filterCooldownClass(FortifyingHex.class)
+                                .stream()
+                                .count();
+                        if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {
+                            return;
+                        }
+                        FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
+                        float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
+                        event.getAttacker().addDamageInstance(
+                                teammate,
+                                name,
+                                event.getMin() * damageToReflect,
+                                event.getMax() * damageToReflect,
+                                0,
+                                100,
+                                false
+                        );
+                        float damageToReduce = 1 - damageToReflect;
+                        event.setMin(event.getMin() * damageToReduce);
+                        event.setMax(event.getMax() * damageToReduce);
+                    }
+
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
                         if (cooldown.getFrom().equals(wp) &&
                                 cooldown instanceof RegularCooldown<?> regularCooldown &&
-                                cooldown.getCooldownObject() instanceof FortifyingHex.FortifyingHexShield shield
+                                cooldown.getCooldownObject() instanceof FortifyingHex
                         ) {
-                            shield.setMaxShieldHealth(shield.getMaxShieldHealth() + hexShieldIncrease);
-                            shield.setShieldHealth(shield.getShieldHealth() + hexShieldIncrease);
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                            if (event.getWarlordsEntity().equals(wp)) {
-                                PlayerFilter.playingGame(wp.getGame()).teammatesOfExcludingSelf(wp)
-                                            .closestFirst(wp)
-                                            .limit(2)
-                                            .forEach(warlordsEntity -> {
-                                                warlordsEntity.getCooldownManager().limitCooldowns(
-                                                        RegularCooldown.class,
-                                                        FortifyingHex.FortifyingHexShield.class,
-                                                        shield.getMaxStacks()
-                                                );
-                                                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                        name,
-                                                        "FHEX",
-                                                        FortifyingHex.FortifyingHexShield.class,
-                                                        new FortifyingHex.FortifyingHexShield(name, shield.getMaxShieldHealth(), shield.getMaxStacks()),
-                                                        wp,
-                                                        CooldownTypes.ABILITY,
-                                                        cooldownManager -> {
-                                                        },
-                                                        regularCooldown.getTicksLeft()
-                                                ));
-                                            });
-                            }
                         }
                     }
                 };
             }
         });
+        PlayerFilter.playingGame(wp.getGame())
+                    .teammatesOf(wp)
+                    .forEach(enemy -> {
+                        new CooldownFilter<>(enemy, RegularCooldown.class)
+                                .filterCooldownClass(FortifyingHex.class)
+                                .filterCooldownFrom(wp)
+                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                    });
         return true;
     }
 

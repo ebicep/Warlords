@@ -1,17 +1,14 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractChain;
-import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilties.internal.AbstractBeam;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class SoulfireBeam extends AbstractPiercingProjectile {
+public class SoulfireBeam extends AbstractBeam {
 
     private int speedBuff = 40;
     private int speedTickDuration = 60;
@@ -56,21 +53,6 @@ public class SoulfireBeam extends AbstractPiercingProjectile {
     }
 
     @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
-        return true;
-    }
-
-    @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
 
@@ -82,7 +64,7 @@ public class SoulfireBeam extends AbstractPiercingProjectile {
                 .stream()
                 .count();
         boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
-        if (hexStacks >= 3) {
+        if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
             if (!hasAstral) {
                 hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
             }
@@ -93,11 +75,8 @@ public class SoulfireBeam extends AbstractPiercingProjectile {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        Location location = Utils.getTargetLocation(player, (int) maxDistance).clone().add(.5, .85, .5).clone();
-        AbstractChain.spawnChain(shooter.getLocation(), location, new ItemStack(Material.CRIMSON_FENCE_GATE));
-        shooter.addSpeedModifier(shooter, name, speedBuff, 60);
-        return super.onActivate(shooter, player);
+    public ItemStack getBeamItem() {
+        return new ItemStack(Material.CRIMSON_FENCE_GATE);
     }
 
     @Nullable

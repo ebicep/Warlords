@@ -32,11 +32,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 20;
-    private float runeTickIncrease = 0.5f;
-    private int tickDuration = 120;
+    private int tickDuration = 80;
+    private int damageReduction = 5;
     private int hexStacksPerHit = 1;
-    private int hexShieldAmount = 320;
-    private int hexMaxStacks = 3;
+    private int maxStacks = 3;
 
     public FortifyingHex() {
         super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 300, true);
@@ -44,27 +43,23 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Fling a hexed tendril forward, hitting ")
+        description = Component.text("Fling a wave of protective energy forward, hitting ")
                                .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
                                .append(Component.text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and "))
                                .append(Component.text(maxAlliesHit, NamedTextColor.RED))
-                               .append(Component.text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy receives "))
+                               .append(Component.text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes "))
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage. The ally receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. If Fortifying Hex hits a target, you receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. Fortifying Hex lasts  "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. Each stack of Fortifying Hex lasts  "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and absorbs"))
-                               .append(Component.text("1", NamedTextColor.YELLOW))
-                               .append(Component.text(" instance of incoming damage, up to "))
-                               .append(Component.text(hexShieldAmount, NamedTextColor.YELLOW))
-                               .append(Component.text(", and stacks up to "))
-                               .append(Component.text(hexMaxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.  Enemies that deal damage to a Fortifying Hex have their rune timers increased by "))
-                               .append(Component.text(formatHundredths(runeTickIncrease), NamedTextColor.YELLOW))
-                               .append(Component.text(" seconds.\n\nHas an optimal range of "))
+                               .append(Component.text(" seconds and grants"))
+                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage reduction. Stacks up to"))
+                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
+                               .append(Component.text(" times.\n\nHas an optimal range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }
@@ -204,40 +199,49 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
     }
 
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
-        FortifyingHex fromHex = Arrays.stream(from.getSpec().getAbilities()).filter(FortifyingHex.class::isInstance)
-                                      .map(FortifyingHex.class::cast)
-                                      .findFirst()
-                                      .orElse(new FortifyingHex());
+        FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
-        int shieldAmount = fromHex.getHexShieldAmount();
-        int maxStacks = fromHex.getHexMaxStacks();
+        int damageReduction = fromHex.getDamageReduction();
+        int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexShield.class, maxStacks);
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, maxStacks);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 hexName,
                 "FHEX",
-                FortifyingHexShield.class,
-                new FortifyingHexShield(hexName, shieldAmount, maxStacks),
+                FortifyingHex.class,
+                new FortifyingHex(),
                 from,
-                CooldownTypes.ABILITY,
+                CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
                 duration
         ) {
             @Override
-            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                event.getAttacker().getSpec().increaseAllCooldownTimersBy(fromHex.runeTickIncrease);
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 - damageReduction / 100f);
+            }
+
+            @Override
+            public PlayerNameData addSuffixFromEnemy() {
+                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), from);
             }
         });
-
     }
 
-    public int getHexShieldAmount() {
-        return hexShieldAmount;
+    @Nonnull
+    public static FortifyingHex getFromHex(WarlordsEntity from) {
+        return Arrays.stream(from.getSpec().getAbilities()).filter(FortifyingHex.class::isInstance)
+                     .map(FortifyingHex.class::cast)
+                     .findFirst()
+                     .orElse(new FortifyingHex());
     }
 
-    public int getHexMaxStacks() {
-        return hexMaxStacks;
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
     }
 
     @Override

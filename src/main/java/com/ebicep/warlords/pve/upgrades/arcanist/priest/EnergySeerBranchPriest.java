@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.priest;
 
-import com.ebicep.warlords.abilties.EnergySeerPriest;
+import com.ebicep.warlords.abilties.EnergySeerCleric;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchPriest extends AbstractUpgradeBranch<EnergySeerPriest> {
+public class EnergySeerBranchPriest extends AbstractUpgradeBranch<EnergySeerCleric> {
 
-    public EnergySeerBranchPriest(AbilityTree abilityTree, EnergySeerPriest ability) {
+    public EnergySeerBranchPriest(AbilityTree abilityTree, EnergySeerCleric ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

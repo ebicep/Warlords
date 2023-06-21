@@ -95,7 +95,6 @@ public class Vindicate extends AbstractAbility implements Duration {
                         .append(Component.text("!", NamedTextColor.GRAY))
                 );
                 vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                        .append(Component.text(" "))
                         .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
                         .append(Component.text("Vindicate", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))

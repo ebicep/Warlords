@@ -21,16 +21,17 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
+public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
 
     private int critMultiplierReducedTo = 100;
+    private int darknessTickDuration = 160;
 
-    public BeaconOfImpair() {
+    public BeaconOfShadow() {
         this(null, null);
     }
 
-    public BeaconOfImpair(Location location, CircleEffect effect) {
-        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 8, 20, effect);
+    public BeaconOfShadow(Location location, CircleEffect effect) {
+        super("Beacon of Shadow", 0, 0, 15, 40, 0, 0, location, 8, 20, effect);
     }
 
     @Override
@@ -39,7 +40,9 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
                         .append(Component.text(radius, NamedTextColor.YELLOW))
                         .append(Component.text(" block radius have their critical multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
-                        .append(Component.text("."));
+                        .append(Component.text(" and receive the Darkness effect for "))
+                        .append(Component.text(darknessTickDuration, NamedTextColor.GOLD))
+                        .append(Component.text(" seconds. Only one beacon can be present on the field at once."));
     }
 
     @Override
@@ -53,19 +56,19 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
     }
 
     @Override
-    public Class<BeaconOfImpair> getBeaconClass() {
-        return BeaconOfImpair.class;
+    public Class<BeaconOfShadow> getBeaconClass() {
+        return BeaconOfShadow.class;
     }
 
     @Override
-    public BeaconOfImpair getObject(Location groundLocation, CircleEffect effect) {
-        return new BeaconOfImpair(groundLocation, effect);
+    public BeaconOfShadow getObject(Location groundLocation, CircleEffect effect) {
+        return new BeaconOfShadow(groundLocation, effect);
     }
 
     @Override
-    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfImpair> cooldown, Integer ticksLeft, Integer ticksElapsed) {
+    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfShadow> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 5 == 0) {
-            BeaconOfImpair beacon = cooldown.getCooldownObject();
+            BeaconOfShadow beacon = cooldown.getCooldownObject();
             int rad = beacon.getRadius();
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
@@ -75,7 +78,7 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         null,
-                        BeaconOfImpair.class,
+                        BeaconOfShadow.class,
                         this,
                         wp,
                         CooldownTypes.ABILITY,
@@ -90,7 +93,7 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
                 });
                 PotionEffect potionEffect = enemy.getEntity().getPotionEffect(PotionEffectType.DARKNESS);
                 if (potionEffect == null) {
-                    enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 160, 0, true, false));
+                    enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, darknessTickDuration, 0, true, false));
                 }
             }
         }

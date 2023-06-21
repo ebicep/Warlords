@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
 
-import com.ebicep.warlords.abilties.EnergySeerGuardian;
+import com.ebicep.warlords.abilties.EnergySeerSentinel;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerGuardian> {
+public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerSentinel> {
 
-    public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerGuardian ability) {
+    public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerSentinel ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

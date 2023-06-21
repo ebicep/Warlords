@@ -247,7 +247,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                 .forEach((p) -> {
                                     playersCrippled++;
                                     wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                            .append(Component.text("Your Healing Totem has crippled ", NamedTextColor.GRAY))
+                                            .append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))
                                             .append(Component.text(p.getName(), NamedTextColor.YELLOW))
                                             .append(Component.text("!", NamedTextColor.GRAY))
                                     );

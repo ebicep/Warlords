@@ -24,17 +24,27 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
 
+    @Nonnull
+    public static PoisonousHex getFromHex(WarlordsEntity from) {
+        return Arrays.stream(from.getSpec().getAbilities()).filter(PoisonousHex.class::isInstance)
+                     .map(PoisonousHex.class::cast)
+                     .findFirst()
+                     .orElse(new PoisonousHex());
+    }
+
     private int maxFullDistance = 30;
     private int hexStacksPerHit = 1;
     private float dotMinDamage = 34;
     private float dotMaxDamage = 46;
+    private int maxStacks = 3;
     private double hitBox = 3.5;
-    private int tickDuration = 80;
+    private int tickDuration = 40;
 
     public PoisonousHex() {
         super("Poisonous Hex", 351, 474, 0, 80, 20, 175, 2, 300, false);
@@ -53,10 +63,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
                                .append(Component.text(" damage every "))
                                .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. for "))
+                               .append(Component.text(" seconds for "))
                                .append(Component.text("2", NamedTextColor.RED))
                                .append(Component.text(" times. Stacks up to "))
-                               .append(Component.text("3", NamedTextColor.RED))
+                               .append(Component.text(maxStacks, NamedTextColor.RED))
                                .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxDistance, NamedTextColor.YELLOW))
@@ -138,9 +148,17 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                 from,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-
+                    to.addDamageInstance(
+                            from,
+                            name,
+                            dotMinDamage,
+                            dotMaxDamage,
+                            0,
+                            100,
+                            trueDamage
+                    );
                 },
-                tickDuration + (from.getCooldownManager().hasCooldown(AstralPlague.class) ? 80 : 40), // base add 20 to delay damage by a second
+                tickDuration * 2, // base add 20 to delay damage by a second
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
@@ -154,7 +172,12 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                         );
                     }
                 })
-        ));
+        ) {
+            @Override
+            public PlayerNameData addSuffixFromEnemy() {
+                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), from);
+            }
+        });
     }
 
     @Override
@@ -309,5 +332,9 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     public void setDotMaxDamage(float dotMaxDamage) {
         this.dotMaxDamage = dotMaxDamage;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
     }
 }

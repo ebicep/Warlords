@@ -1,28 +1,28 @@
-package com.ebicep.warlords.classes.druid.specs;
+package com.ebicep.warlords.classes.arcanist.specs;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.druid.AbstractDruid;
+import com.ebicep.warlords.classes.arcanist.AbstractArcanist;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 
 import java.util.List;
 
-public class Priest extends AbstractDruid {
+public class Sentinel extends AbstractArcanist {
 
-    public Priest() {
+    public Sentinel() {
         super(
-                "Priest",
-                5750,
-                355,
+                "Guardian",
+                6000,
+                305,
                 20,
                 14,
-                0,
-                new MercifulHex(),
-                new BeaconOfLight(),
-                new EnergySeerPriest(),
-                new BeaconOfImpair(),
-                new DivineBlessing()
+                15,
+                new FortifyingHex(),
+                new GuardianBeam(),
+                new EnergySeerSentinel(),
+                new MysticalBarrier(),
+                new Sanctuary()
         );
     }
 
