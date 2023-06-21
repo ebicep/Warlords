@@ -15,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -34,6 +36,7 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
 
     private final Material closed;
     private final Material open;
+    private final BlockFace blockFace;
     private boolean autoDetectShouldBroadcast = true;
     private boolean shouldBroadcast;
 
@@ -53,6 +56,11 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
         this.closed = closed;
         this.open = open;
         this.delay = delay;
+        if (a.getX() == b.getX()) {
+            blockFace = BlockFace.NORTH;
+        } else {
+            blockFace = BlockFace.EAST;
+        }
     }
 
     public GateOption(Location a, Location b, Material closed) {
@@ -79,6 +87,11 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
         this.closed = closed;
         this.open = open;
         this.delay = delay;
+        if (x1 == x2) {
+            blockFace = BlockFace.NORTH;
+        } else {
+            blockFace = BlockFace.EAST;
+        }
     }
 
     public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed) {
@@ -126,6 +139,11 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
                         Block block = min.getWorld().getBlockAt(x, y, z);
                         if (block.getType() == search) {
                             block.setType(replace);
+                            if (replace == closed && block.getBlockData() instanceof MultipleFacing multipleFacing) {
+                                multipleFacing.setFace(blockFace, true);
+                                multipleFacing.setFace(blockFace.getOppositeFace(), true);
+                                block.setBlockData(multipleFacing);
+                            }
                             changed++;
                         }
                     }
