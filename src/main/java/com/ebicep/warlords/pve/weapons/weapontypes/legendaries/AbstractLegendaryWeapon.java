@@ -205,17 +205,17 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             }
             case 2 -> {
                 cost.put(Currencies.COIN, 250000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
             }
             case 3 -> {
                 cost.put(Currencies.COIN, 500000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 30000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
             }
             case 4 -> {
                 cost.put(Currencies.COIN, 1000000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 40000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 25000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
             }
         }
